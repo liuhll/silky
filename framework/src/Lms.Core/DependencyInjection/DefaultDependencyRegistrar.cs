@@ -22,7 +22,12 @@ namespace Lms.Core.DependencyInjection
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .InstancePerDependency();
-
+                
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where(t => typeof(IScopedDependency).GetTypeInfo().IsAssignableFrom(t))
+                    .AsImplementedInterfaces()
+                    .AsSelf()
+                    .InstancePerLifetimeScope();
             }
         }
 

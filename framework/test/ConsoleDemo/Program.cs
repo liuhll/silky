@@ -13,7 +13,7 @@ namespace ConsoleDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices()
+                    .RegisterLmsServices<ConsoleDemoModule>()
                     //.UseRpcServer()
                 ;
             // .ConfigureWebHostDefaults(webBuilder =>

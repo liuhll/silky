@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Lms.Core.Configuration;
 using Lms.Core.DependencyInjection;
+using Lms.Core.Modularity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,7 +49,6 @@ namespace Lms.Core
         public void RegisterDependencies(ContainerBuilder containerBuilder, AppSettings appSettings)
         {
             containerBuilder.RegisterInstance(this).As<IEngine>().SingleInstance();
-            
             containerBuilder.RegisterInstance(_typeFinder).As<ITypeFinder>().SingleInstance();
             
             var dependencyRegistrars = _typeFinder.FindClassesOfType<IDependencyRegistrar>();
@@ -57,6 +57,16 @@ namespace Lms.Core
                 .OrderBy(dependencyRegistrar => dependencyRegistrar.Order);
             foreach (var dependencyRegistrar in instances)
                 dependencyRegistrar.Register(containerBuilder, _typeFinder, appSettings);
+        }
+
+        public void RegisterModules<T>(IServiceCollection services, ContainerBuilder containerBuilder) where T : ILmsModule
+        {
+            var moduleLoader = services.GetSingletonInstance<IModuleLoader>();
+            var modules = moduleLoader.LoadModules(services, typeof(T));
+            foreach (var module in modules)
+            {
+                containerBuilder.RegisterModule((LmsModule)module.Instance);
+            }
         }
     }
 }
