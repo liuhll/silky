@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+﻿using Lms.Core.DependencyInjection;
 
 namespace Lms.Core.Modularity
 {
-    public interface IModuleManager
+    public interface IModuleManager : ISingletonDependency
     {
         void InitializeModules();
         

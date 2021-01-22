@@ -41,5 +41,20 @@ namespace Lms.Core.Modularity
                 !typeInfo.IsGenericType &&
                 typeof(ILmsModule).GetTypeInfo().IsAssignableFrom(type);
         }
+
+        public virtual void Initialize(ApplicationContext applicationContext)
+        {
+            
+        }
+
+        public virtual void Shutdown(ApplicationContext applicationContext)
+        {
+            
+        }
+
+        public override string ToString()
+        {
+            return GetType().Name;
+        }
     }
 }

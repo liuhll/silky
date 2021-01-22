@@ -12,7 +12,9 @@ namespace Lms.Core.Modularity
         public Type Type { get; }
         public Assembly Assembly { get; }
         public ILmsModule Instance { get; }
-        
+
+        public string Name { get; }
+
         public IReadOnlyList<ILmsModuleDescriptor>  Dependencies => _dependencies.ToImmutableList();
         
         private readonly List<ILmsModuleDescriptor> _dependencies;
@@ -32,6 +34,7 @@ namespace Lms.Core.Modularity
             Type = type;
             Assembly = type.Assembly;
             Instance = instance;
+            Name = Instance.ToString();
 
             _dependencies = new List<ILmsModuleDescriptor>();
         }

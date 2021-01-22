@@ -5,6 +5,7 @@ using Lms.Core.Configuration;
 using Lms.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Lms.Core
 {
@@ -21,11 +22,15 @@ namespace Lms.Core
                 {
                    (engine,appSettings) = config.ConfigureLmsServices(hostBuilder.Configuration, hostBuilder.HostingEnvironment);
                    services = config;
+                   
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
                     engine.RegisterDependencies(builder, appSettings);
                     engine.RegisterModules<T>(services,builder);
+                }).ConfigureLogging(logging =>
+                {
+                   
                 })
                 ;
             return builder;

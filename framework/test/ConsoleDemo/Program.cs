@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core;
+using Lms.Rpc;
 using Microsoft.Extensions.Hosting;
 namespace ConsoleDemo
 {
@@ -14,7 +15,8 @@ namespace ConsoleDemo
         {
             return Host.CreateDefaultBuilder(args)
                     .RegisterLmsServices<ConsoleDemoModule>()
-                    //.UseRpcServer()
+                    .UseRpcServer()
+                    
                 ;
             // .ConfigureWebHostDefaults(webBuilder =>
             //  {

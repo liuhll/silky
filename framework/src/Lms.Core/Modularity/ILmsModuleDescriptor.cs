@@ -11,7 +11,9 @@ namespace Lms.Core.Modularity
         Assembly Assembly { get; }
 
         ILmsModule Instance { get; }
-        
+
+        string Name { get; }
+
         IReadOnlyList<ILmsModuleDescriptor> Dependencies { get; }
     }
 }

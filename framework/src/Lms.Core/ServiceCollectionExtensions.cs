@@ -21,10 +21,8 @@ namespace Lms.Core
             var appSettings = new AppSettings();
             configuration.Bind(appSettings);
             services.AddSingleton(appSettings);
-
             var moduleLoder = new ModuleLoader();
             services.TryAddSingleton<IModuleLoader>(moduleLoder);
-            
             return (engine, appSettings);
         }
     }

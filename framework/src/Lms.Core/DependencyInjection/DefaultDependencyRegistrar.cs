@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Lms.Core.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Lms.Core.DependencyInjection
 {
@@ -28,6 +29,12 @@ namespace Lms.Core.DependencyInjection
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .InstancePerLifetimeScope();
+                
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where(t => typeof(IHostedService).GetTypeInfo().IsAssignableFrom(t))
+                    .AsImplementedInterfaces()
+                    .AsSelf()
+                    .SingleInstance();
             }
         }
 
