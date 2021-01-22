@@ -2,7 +2,7 @@
 
 namespace Lms.Core
 {
-    public class EnginContext
+    public class EngineContext
     {
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static IEngine Create()

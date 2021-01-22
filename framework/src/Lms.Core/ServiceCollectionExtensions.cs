@@ -15,7 +15,7 @@ namespace Lms.Core
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             services.AddHttpContextAccessor();
             CommonHelper.DefaultFileProvider = new LmsFileProvider(hostEnvironment);
-            var engine = EnginContext.Create();
+            var engine = EngineContext.Create();
             engine.ConfigureServices(services, configuration);
             
             var appSettings = new AppSettings();
