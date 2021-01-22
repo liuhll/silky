@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace Lms.Core.Modularity
@@ -18,20 +19,20 @@ namespace Lms.Core.Modularity
             _logger = logger;
         }
 
-        public void InitializeModules()
+        public async Task InitializeModules()
         {
             foreach (var module in _moduleContainer.Modules)
             {
                 _logger.LogInformation($"初始化模块{module.Name}");
-                module.Instance.Initialize(new ApplicationContext(_serviceProvider));
+                await module.Instance.Initialize(new ApplicationContext(_serviceProvider));
             }
         }
 
-        public void ShutdownModules()
+        public async Task ShutdownModules()
         {
             foreach (var module in _moduleContainer.Modules)
             {
-                module.Instance.Shutdown(new ApplicationContext(_serviceProvider));
+                await module.Instance.Shutdown(new ApplicationContext(_serviceProvider));
             }
         }
     }

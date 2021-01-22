@@ -17,13 +17,13 @@ namespace Lms.Rpc
         public async Task StartAsync(CancellationToken cancellationToken)
         {
         
-            _moduleManager.InitializeModules();
+            await _moduleManager.InitializeModules();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
           
-            _moduleManager.ShutdownModules();
+            await _moduleManager.ShutdownModules();
         }
     }
 }

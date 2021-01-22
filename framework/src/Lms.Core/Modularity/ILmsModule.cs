@@ -1,8 +1,10 @@
-﻿namespace Lms.Core.Modularity
+﻿using System.Threading.Tasks;
+
+namespace Lms.Core.Modularity
 {
     public interface ILmsModule
     {
-        void Initialize(ApplicationContext applicationContext);
-        void Shutdown(ApplicationContext applicationContext);
+        Task Initialize(ApplicationContext applicationContext);
+        Task Shutdown(ApplicationContext applicationContext);
     }
 }

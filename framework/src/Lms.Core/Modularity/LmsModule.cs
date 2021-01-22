@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Lms.Core.Modularity
 {
@@ -42,14 +43,15 @@ namespace Lms.Core.Modularity
                 typeof(ILmsModule).GetTypeInfo().IsAssignableFrom(type);
         }
 
-        public virtual void Initialize(ApplicationContext applicationContext)
+        // ReSharper disable once ArrangeModifiersOrder
+        public virtual Task Initialize(ApplicationContext applicationContext)
         {
-            
+            return Task.CompletedTask;
         }
 
-        public virtual void Shutdown(ApplicationContext applicationContext)
+        public virtual Task Shutdown(ApplicationContext applicationContext)
         {
-            
+            return Task.CompletedTask;
         }
 
         public override string ToString()

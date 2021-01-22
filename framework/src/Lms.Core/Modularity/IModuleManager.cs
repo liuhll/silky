@@ -1,11 +1,12 @@
-﻿using Lms.Core.DependencyInjection;
+﻿using System.Threading.Tasks;
+using Lms.Core.DependencyInjection;
 
 namespace Lms.Core.Modularity
 {
     public interface IModuleManager : ISingletonDependency
     {
-        void InitializeModules();
+        Task InitializeModules();
         
-        void ShutdownModules();
+        Task ShutdownModules();
     }
 }
