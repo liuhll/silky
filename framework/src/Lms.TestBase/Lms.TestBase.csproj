@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,8 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Message" />
-      <Folder Include="Support" />
+      <PackageReference Include="Moq" Version="4.16.0" />
     </ItemGroup>
 
 </Project>

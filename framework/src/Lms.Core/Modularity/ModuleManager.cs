@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Lms.Core.Modularity
 {
@@ -11,12 +12,11 @@ namespace Lms.Core.Modularity
         private readonly ILogger<ModuleManager> _logger;
 
         public ModuleManager(IModuleContainer moduleContainer, 
-            IServiceProvider serviceProvider, 
-            ILogger<ModuleManager> logger)
+            IServiceProvider serviceProvider)
         {
             _moduleContainer = moduleContainer;
             _serviceProvider = serviceProvider;
-            _logger = logger;
+            _logger = NullLogger<ModuleManager>.Instance;
         }
 
         public async Task InitializeModules()

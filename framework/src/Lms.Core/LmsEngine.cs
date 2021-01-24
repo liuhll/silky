@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Lms.Core.Configuration;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Exceptions;
@@ -11,8 +12,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 
 namespace Lms.Core
 {
@@ -20,13 +19,14 @@ namespace Lms.Core
     {
         private ITypeFinder _typeFinder;
         
-
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             _typeFinder = new AppDomainTypeFinder();
-            
+            ServiceProvider = services.BuildServiceProvider();    
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
+
+        public ITypeFinder TypeFinder => _typeFinder;
 
         public void ConfigureRequestPipeline(IApplicationBuilder application)
         {
@@ -50,6 +50,11 @@ namespace Lms.Core
         public IEnumerable<T> ResolveAll<T>()
         {
             return (IEnumerable<T>)GetServiceProvider().GetServices(typeof(T));
+        }
+
+        public bool IsRegistered(Type type)
+        {
+            return GetServiceProvider().GetAutofacRoot().IsRegistered(type);
         }
 
         public object ResolveUnregistered(Type type)
@@ -128,7 +133,7 @@ namespace Lms.Core
             }
         }
         
-        public virtual IServiceProvider ServiceProvider { get; internal set; }
+        public virtual IServiceProvider ServiceProvider { get; set; }
         
         public IReadOnlyList<ILmsModuleDescriptor> Modules { get; protected set; }
     }
