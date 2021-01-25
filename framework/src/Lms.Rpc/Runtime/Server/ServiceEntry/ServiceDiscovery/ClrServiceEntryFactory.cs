@@ -34,7 +34,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
         {
             var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(serviceType);
             var routeTemplate = serviceBundleProvider.RouteTemplate;
-            var methods = serviceType.GetMethods();
+            var methods = serviceType.GetTypeInfo().GetMethods();
             
             foreach (var method in methods)
             {

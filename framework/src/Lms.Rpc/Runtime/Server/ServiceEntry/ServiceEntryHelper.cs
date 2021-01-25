@@ -15,9 +15,8 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
                     .SelectMany(p => p.ExportedTypes)
                     .Where(p=> p.IsClass
                                && !p.IsAbstract
-                               && p.GetInterfaces()
-                                   .Any(bp => bp.GetCustomAttribute<ServiceBundleAttribute>() != null)
-                    )
+                               && p.GetInterfaces().Any(i=> i.GetCustomAttributes().Any(a=> a is ServiceBundleAttribute))
+                    ).SelectMany(p=> p.GetInterfaces().Where(i=> i.GetCustomAttributes().Any(a=> a is ServiceBundleAttribute)))
                 ;
             return types;
         }
@@ -27,7 +26,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
             var types = typeFinder.GetAssemblies()
                     .SelectMany(p => p.ExportedTypes)
                     .Where(p=> p.IsInterface 
-                               && p.GetCustomAttribute<ServiceBundleAttribute>() != null
+                               && p.GetCustomAttributes().Any(a=> a is ServiceBundleAttribute)
                     )
                 ;
             return types;
