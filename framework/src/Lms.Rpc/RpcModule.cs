@@ -19,8 +19,9 @@ namespace Lms.Rpc
 
         public async override Task Initialize(ApplicationContext applicationContext)
         {
-            //var entries = EngineContext.Current.Resolve<IServiceEntryManager>().GetEntries();
-            
+            var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
+            // var entries = EngineContext.Current.Resolve<IServiceEntryManager>().GetEntries();
+
         }
     }
 }

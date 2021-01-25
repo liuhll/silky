@@ -1,6 +1,6 @@
 namespace Lms.Rpc.Tests.AppService.Dtos
 {
-    public class CreateInput
+    public class TestInput
     {
         public string Name { get; set; }
     }

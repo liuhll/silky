@@ -24,9 +24,9 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
                 var entries = provider.GetEntries();
                 foreach (var entry in entries)
                 {
-                    if (localServiceEntries.Any(p=>p.Descriptor.Id == entry.Descriptor.Id))
+                    if (localServiceEntries.Any(p=>p.ServiceDescriptor.Id == entry.ServiceDescriptor.Id))
                     {
-                        throw new InvalidOperationException($"本地包含多个Id为：{entry.Descriptor.Id} 的服务条目。");
+                        throw new InvalidOperationException($"本地包含多个Id为：{entry.ServiceDescriptor.Id} 的服务条目。");
                     }
                     localServiceEntries.Add(entry);
                 }

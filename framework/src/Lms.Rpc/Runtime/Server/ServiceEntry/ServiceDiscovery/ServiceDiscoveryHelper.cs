@@ -17,10 +17,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
             }
             return serviceTypeInterface.GetCustomAttribute<ServiceBundleAttribute>();
         }
-
-        public static IServiceRouteProvider GetServiceRouteProvider(MethodInfo method)
-        {
-            return method.GetCustomAttribute<ServiceRouteAttribute>();
-        }
+        
     }
 }
