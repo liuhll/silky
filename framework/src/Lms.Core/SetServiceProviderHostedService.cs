@@ -9,7 +9,7 @@ namespace Lms.Core
     {
         public SetServiceProviderHostedService(IServiceProvider serviceProvider)
         {
-            if (EngineContext.Current is LmsEngine && ((LmsEngine)EngineContext.Current).ServiceProvider == null)
+            if (EngineContext.Current is LmsEngine)
             {
                 ((LmsEngine) EngineContext.Current).ServiceProvider = serviceProvider;
             }
