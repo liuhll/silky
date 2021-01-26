@@ -7,6 +7,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
 {
     public interface IHttpMethodProvider : ITransientDependency
     {
-        IReadOnlyList<HttpMethodAttribute> GetHttpMethods(MethodInfo method);
+        (IReadOnlyList<HttpMethodAttribute>,bool) GetHttpMethodsInfo(MethodInfo method);
     }
 }

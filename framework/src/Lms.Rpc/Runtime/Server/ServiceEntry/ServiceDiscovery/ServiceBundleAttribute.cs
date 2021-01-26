@@ -5,13 +5,14 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
     [AttributeUsage(AttributeTargets.Interface)]
     public class ServiceBundleAttribute : Attribute, IServiceBundleProvider
     {
-        public ServiceBundleAttribute(string routeTemplate, bool isPrefix = true)
+        
+        public ServiceBundleAttribute(string template = "{appservice=appservice}/{entry=method}", bool isPrefix = true)
         {
-            RouteTemplate = routeTemplate;
+            Template = template;
             IsPrefix = isPrefix;
         }
 
-        public string RouteTemplate { get; }
+        public string Template { get; }
 
         public bool IsPrefix { get; }
     }

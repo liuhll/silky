@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConsoleDemo.AppService
 {
-    [ServiceBundle("test")]
+    [ServiceBundle("{AppService}/{Method}")]
     public interface ITestAppService
     {
         Task<string> Create(TestDto input);

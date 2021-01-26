@@ -6,6 +6,7 @@ using Lms.Core;
 using Lms.Core.Extensions;
 using Lms.Rpc.Ids;
 using Lms.Rpc.Routing;
+using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -15,17 +16,17 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
     public class ClrServiceEntryFactory : IClrServiceEntryFactory
     {
         private readonly IServiceIdGenerator _serviceIdGenerator;
-        private readonly IRoutePathParser _routePathParser;
+        private readonly IRouteTemplateParser _routeTemplateParser;
         private readonly IParameterProvider _parameterProvider;
         private readonly IHttpMethodProvider _httpMethodProvider;
 
         public ClrServiceEntryFactory(IServiceIdGenerator serviceIdGenerator,
-            IRoutePathParser routePathParser, 
+            IRouteTemplateParser routeTemplateParser, 
             IParameterProvider parameterProvider, 
             IHttpMethodProvider httpMethodProvider)
         {
             _serviceIdGenerator = serviceIdGenerator;
-            _routePathParser = routePathParser;
+            _routeTemplateParser = routeTemplateParser;
             _parameterProvider = parameterProvider;
             _httpMethodProvider = httpMethodProvider;
         }
@@ -33,19 +34,18 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
         public IEnumerable<ServiceEntry> CreateServiceEntry(Type serviceType)
         {
             var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(serviceType);
-            var routeTemplate = serviceBundleProvider.RouteTemplate;
+            var routeTemplate = serviceBundleProvider.Template;
             var methods = serviceType.GetTypeInfo().GetMethods();
             
             foreach (var method in methods)
             {
                 var routeIsReWriteByServiceRoute = false;
                 
-                var httpMethods = _httpMethodProvider.GetHttpMethods(method);
-
+                var (httpMethods,isSpecify) = _httpMethodProvider.GetHttpMethodsInfo(method);
                 foreach (var httpMethod in httpMethods)
                 {
-                    var serviceEntryTemplate = httpMethod.Template;
-                    if (!serviceEntryTemplate.IsNullOrEmpty())
+                    var serviceEntryTemplate = httpMethod.Template?? "";
+                    if (isSpecify)
                     {
                         routeIsReWriteByServiceRoute = true;
                         if (serviceBundleProvider.IsPrefix)
@@ -73,8 +73,8 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,
-               // RoutePath = _routePathParser.Parse(routeTemplate, serviceName, method.Name,
-               //     routeIsReWriteByServiceRoute)
+                // RoutePath = _routeTemplateParser.Parse(routeTemplate, serviceName, method.Name,
+                //    routeIsReWriteByServiceRoute)
             };
             var fastInvoker = GetHandler(serviceId, method);
             var serviceEntry = new ServiceEntry()
