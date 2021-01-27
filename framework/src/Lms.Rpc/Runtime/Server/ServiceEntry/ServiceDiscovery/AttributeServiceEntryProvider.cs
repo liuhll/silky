@@ -23,7 +23,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
 
         public IReadOnlyList<ServiceEntry> GetEntries()
         {
-            var serviceEntryTypes = ServiceEntryHelper.FindServiceEntryTypes(_typeFinder);
+            var serviceEntryTypes = ServiceEntryHelper.FindAllServiceEntryTypes(_typeFinder);
             _logger.LogDebug($"发现了以下服务：{string.Join(",", serviceEntryTypes.Select(i => i.ToString()))}。");
             var entries = new List<ServiceEntry>();
             foreach (var serviceEntryType in serviceEntryTypes)

@@ -5,6 +5,8 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
 {
     public interface IServiceEntryManager : ISingletonDependency
     {
-        IReadOnlyList<ServiceEntry> GetEntries();
+        IReadOnlyList<ServiceEntry> GetLocalEntries();
+        
+        IReadOnlyList<ServiceEntry> GetAllEntries();
     }
 }

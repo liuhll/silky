@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Lms.Core.Exceptions;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry
 {
@@ -17,29 +18,39 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
 
         private void UpdateEntries(IEnumerable<IServiceEntryProvider> providers)
         {
-            var localServiceEntries = new List<ServiceEntry>();
+           
             var allServiceEntries = new List<ServiceEntry>();
             foreach (var provider in providers)
             {
                 var entries = provider.GetEntries();
                 foreach (var entry in entries)
                 {
-                    if (localServiceEntries.Any(p=>p.ServiceDescriptor.Id == entry.ServiceDescriptor.Id))
+                    if (allServiceEntries.Any(p=>p.ServiceDescriptor.Id == entry.ServiceDescriptor.Id))
                     {
                         throw new InvalidOperationException($"本地包含多个Id为：{entry.ServiceDescriptor.Id} 的服务条目。");
                     }
-                    localServiceEntries.Add(entry);
+                    allServiceEntries.Add(entry);
                 }
             }
 
-            m_localServiceEntries = localServiceEntries;
+            if (allServiceEntries.GroupBy(p => p.Router).Any(p => p.Count() > 1))
+            {
+                throw new LmsException("存在重复的路由信息,请检查您设置的服务路由");
+            }
 
+            m_allServiceEntries = allServiceEntries;
+            m_localServiceEntries = allServiceEntries.Where(p => p.IsLocal);
 
         }
 
-        public IReadOnlyList<ServiceEntry> GetEntries()
+        public IReadOnlyList<ServiceEntry> GetLocalEntries()
         {
             return m_localServiceEntries.ToImmutableList();
+        }
+
+        public IReadOnlyList<ServiceEntry> GetAllEntries()
+        {
+            return m_allServiceEntries.ToImmutableList();
         }
     }
 }

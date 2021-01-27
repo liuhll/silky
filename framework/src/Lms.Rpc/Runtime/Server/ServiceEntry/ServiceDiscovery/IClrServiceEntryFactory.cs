@@ -6,6 +6,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
 {
     public interface IClrServiceEntryFactory : ITransientDependency
     {
-        IEnumerable<ServiceEntry> CreateServiceEntry(Type serviceType);
+        IEnumerable<ServiceEntry> CreateServiceEntry((Type,bool) serviceType);
     }
 }

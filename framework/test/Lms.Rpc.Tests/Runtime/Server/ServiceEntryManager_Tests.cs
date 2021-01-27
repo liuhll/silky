@@ -17,7 +17,7 @@ namespace Lms.Rpc.Tests.Runtime.Server
         [Fact]
         public void Should_GetEntries()
         {
-            _serviceEntryManager.GetEntries().ShouldNotBeNull();
+            _serviceEntryManager.GetAllEntries().ShouldNotBeNull();
         }
     }
 }

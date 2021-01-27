@@ -7,13 +7,14 @@ using Lms.Core.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
 {
     public class ParameterProvider : IParameterProvider
     {
         public IReadOnlyList<ParameterDescriptor> GetParameterDescriptors(MethodInfo methodInfo,
-            HttpMethodAttribute httpMethod)
+            HttpMethod httpMethod)
         {
             var parameterDescriptors = new List<ParameterDescriptor>();
             foreach (var parameter in methodInfo.GetParameters())
@@ -32,7 +33,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
         }
 
         private static ParameterDescriptor CreateParameterDescriptor(ParameterInfo parameter,
-            HttpMethodAttribute httpMethod)
+            HttpMethod httpMethod)
         {
             var bindingSourceMetadata =
                 parameter.GetCustomAttributes().OfType<IBindingSourceMetadata>().FirstOrDefault();
@@ -40,7 +41,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
             if (bindingSourceMetadata != null)
             {
                 var parameterFrom = bindingSourceMetadata.BindingSource.Id.To<ParameterFrom>();
-                if (httpMethod is HttpGetAttribute && parameterFrom == ParameterFrom.Body)
+                if (httpMethod == HttpMethod.Get && parameterFrom == ParameterFrom.Body)
                 {
                     throw new LmsException("Get请求不允许通过RequestBody获取参数值");
                 }
@@ -48,7 +49,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
                 parameterDescriptor = new ParameterDescriptor(parameter.Name, parameter.ParameterType, parameterFrom);
             }
 
-            else if (httpMethod is HttpGetAttribute)
+            else if (httpMethod == HttpMethod.Get)
             {
                 parameterDescriptor =
                     new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Query);

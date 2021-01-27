@@ -24,5 +24,10 @@ namespace ConsoleDemo.AppService
         {
             throw new System.NotImplementedException();
         }
+
+        public Task<string> Get(long id)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

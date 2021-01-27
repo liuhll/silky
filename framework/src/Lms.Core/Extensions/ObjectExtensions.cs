@@ -21,7 +21,7 @@ namespace Lms.Core.Extensions
             }
             if (typeof(T).IsEnum)
             {
-                return (T)Enum.Parse(typeof(T), obj as string);
+                return (T)Enum.Parse(typeof(T), obj as string,true);
             }
 
             return (T)Convert.ChangeType(obj, typeof(T), CultureInfo.InvariantCulture);

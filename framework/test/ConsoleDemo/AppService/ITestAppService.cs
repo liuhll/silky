@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConsoleDemo.AppService
 {
-    [ServiceBundle("{AppService}/{Method}")]
+    [ServiceBundle]
     public interface ITestAppService
     {
         Task<string> Create(TestDto input);
@@ -14,5 +14,8 @@ namespace ConsoleDemo.AppService
 
         [HttpGet]
         Task<string> Search(TestDto query);
+        
+        [HttpGet("{id:long}")]
+        Task<string> Get(long id);
     }
 }

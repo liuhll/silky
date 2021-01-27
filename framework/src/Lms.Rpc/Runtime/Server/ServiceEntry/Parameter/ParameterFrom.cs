@@ -6,6 +6,8 @@
         
         Query,
         
+        Path,
+        
         Form,
         
         Header,

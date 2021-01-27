@@ -15,9 +15,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor
         [NotNull]
         public string Id { get; set; }
         
-        [NotNull]
-        public string RoutePath { get; set; }
-
         public IDictionary<string, object> Metadatas { get; set; }
 
         public T GetMetadata<T>(string name, T def = default(T))

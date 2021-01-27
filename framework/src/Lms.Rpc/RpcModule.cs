@@ -12,7 +12,7 @@ namespace Lms.Rpc
         protected override void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterTypes(
-                ServiceEntryHelper.FindServiceEntryTypes(EngineContext.Current.TypeFinder).ToArray())
+                ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder).ToArray())
                 .AsSelf()
                 .AsImplementedInterfaces();
         }
@@ -20,7 +20,7 @@ namespace Lms.Rpc
         public async override Task Initialize(ApplicationContext applicationContext)
         {
             var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
-            var entries = EngineContext.Current.Resolve<IServiceEntryManager>().GetEntries();
+            var entries = EngineContext.Current.Resolve<IServiceEntryManager>().GetAllEntries();
 
         }
     }

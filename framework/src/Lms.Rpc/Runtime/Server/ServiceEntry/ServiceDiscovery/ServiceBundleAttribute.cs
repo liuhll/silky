@@ -6,10 +6,10 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
     public class ServiceBundleAttribute : Attribute, IServiceBundleProvider
     {
         
-        public ServiceBundleAttribute(string template = "{appservice=appservice}/{entry=method}", bool isPrefix = true)
+        public ServiceBundleAttribute(string template = "api/{appservice}")
         {
             Template = template;
-            IsPrefix = isPrefix;
+            
         }
 
         public string Template { get; }
