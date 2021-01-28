@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Lms.Core.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter

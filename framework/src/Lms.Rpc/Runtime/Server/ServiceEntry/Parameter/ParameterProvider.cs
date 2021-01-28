@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
-using Microsoft.AspNetCore.Mvc;
+using Lms.Rpc.Routing.Template;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
@@ -19,7 +19,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
             var parameterDescriptors = new List<ParameterDescriptor>();
             foreach (var parameter in methodInfo.GetParameters())
             {
-                var parameterDescriptor = CreateParameterDescriptor(parameter, httpMethod);
+                var parameterDescriptor = CreateParameterDescriptor(methodInfo, parameter, httpMethod);
                 if (parameterDescriptor.From == ParameterFrom.Body &&
                     parameterDescriptors.Any(p => p.From == ParameterFrom.Body))
                 {
@@ -32,7 +32,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
             return parameterDescriptors.ToImmutableList();
         }
 
-        private static ParameterDescriptor CreateParameterDescriptor(ParameterInfo parameter,
+        private static ParameterDescriptor CreateParameterDescriptor(MethodInfo methodInfo, ParameterInfo parameter,
             HttpMethod httpMethod)
         {
             var bindingSourceMetadata =
@@ -46,17 +46,55 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
                     throw new LmsException("Get请求不允许通过RequestBody获取参数值");
                 }
 
-                parameterDescriptor = new ParameterDescriptor(parameter.Name, parameter.ParameterType, parameterFrom);
-            }
+                if (parameterFrom == ParameterFrom.Path && !parameter.ParameterType.IsSample())
+                {
+                    throw new LmsException($"路由类型参数不允许为复杂数据类型");
+                }
 
-            else if (httpMethod == HttpMethod.Get)
-            {
-                parameterDescriptor =
-                    new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Query);
+                parameterDescriptor = new ParameterDescriptor(parameter.Name, parameter.ParameterType, parameterFrom);
             }
             else
             {
-                parameterDescriptor = parameter.IsSampleType() ? new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Query) : new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Body);
+                if (parameter.IsSampleType())
+                {
+                    var httpMethodAttribute =
+                        methodInfo.GetCustomAttributes().OfType<HttpMethodAttribute>().FirstOrDefault(p =>
+                            p.HttpMethods.Contains(httpMethod.ToString().ToUpper()));
+                    if (httpMethodAttribute == null)
+                    {
+                        parameterDescriptor =
+                            new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Query);
+                    }
+                    else
+                    {
+                        var routeTemplate = httpMethodAttribute.Template;
+                        var routeTemplateSegments = routeTemplate.Split("/");
+                        var parameterFromPath = false; 
+                        foreach (var routeTemplateSegment in routeTemplateSegments)
+                        {
+                            if (TemplateSegmentHelper.IsVariable(routeTemplateSegment)
+                                && TemplateSegmentHelper.GetVariableName(routeTemplateSegment) == parameter.Name)
+                            {
+                                parameterDescriptor =
+                                    new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Path);
+                                parameterFromPath = true;
+                                break;
+                            }
+                        }
+
+                        if (!parameterFromPath)
+                        {
+                            parameterDescriptor =
+                                new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Query);
+                        }
+                    }
+
+                }
+                else
+                {
+                    parameterDescriptor =
+                        new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Body);
+                }
             }
 
             return parameterDescriptor;

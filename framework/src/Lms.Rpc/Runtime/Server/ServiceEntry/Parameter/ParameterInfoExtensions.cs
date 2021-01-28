@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Lms.Core.Extensions;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
 {
@@ -6,12 +7,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
     {
         public static bool IsSampleType(this ParameterInfo parameterInfo)
         {
-            if (parameterInfo.ParameterType.IsValueType || parameterInfo.ParameterType.IsEnum || parameterInfo.ParameterType == typeof(string))
-            {
-                return true;
-            }
-
-            return false;
+            return parameterInfo.ParameterType.IsSample();
         }
     }
 }

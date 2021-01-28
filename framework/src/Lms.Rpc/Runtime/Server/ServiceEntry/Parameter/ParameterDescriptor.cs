@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Lms.Core.Extensions;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
 {
@@ -19,5 +20,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
         public Type Type { get; }
 
         public string Name { get; }
+
+        public bool IsSample => Type.IsSample();
     }
 }

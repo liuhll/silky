@@ -11,7 +11,7 @@ namespace Lms.Rpc.Routing.Template
         private const string segmentValReg = @"(?<=\{)[^}]*(?=\})";
         
 
-        private static bool IsVariable(string segmentLine)
+        public static bool IsVariable(string segmentLine)
         {
             return Regex.IsMatch(segmentLine, isVariableReg);
         }
@@ -60,6 +60,12 @@ namespace Lms.Rpc.Routing.Template
             }
             var segemnetLineVal = Regex.Match(segemnetLine, segmentValReg);
             return segemnetLineVal.Value;
+        }
+
+        public static string GetVariableName(string segemnetLine)
+        {
+            var segmentVal = GetSegmentVal(segemnetLine);
+            return segmentVal.Split(":")[0];
         }
     }
 }

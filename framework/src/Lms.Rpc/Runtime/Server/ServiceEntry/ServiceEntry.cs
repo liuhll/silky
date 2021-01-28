@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Lms.Core;
+using Lms.Core.Convertible;
+using Lms.Core.Exceptions;
 using Lms.Core.MethodExecutor;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor;
@@ -40,22 +42,74 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
             (key, parameters) => Task.Factory.StartNew(() =>
             {
                 object instance = EngineContext.Current.Resolve(_serviceType);
+                var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+                
                 var list = new List<object>();
-                foreach (var parameter in ParameterDescriptors)
+                foreach (var parameterDescriptor in ParameterDescriptors)
                 {
-                    switch (parameter.From)
+                    #region 获取参数
+
+                    var parameter = parameters[parameterDescriptor.From];
+                    switch (parameterDescriptor.From)
                     {
                         case ParameterFrom.Body:
+                            list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
                             break;
                         case ParameterFrom.Form:
+                            if (parameterDescriptor.IsSample)
+                            {
+                                var formVal =
+                                    (IDictionary<string, object>)typeConvertibleService.Convert(parameter, typeof(IDictionary<string, object>));
+                                var parameterVal = formVal[parameterDescriptor.Name];
+                                list.Add(parameterVal);
+                            }
+                            else
+                            {
+                                list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
+                            }
                             break;
                         case ParameterFrom.Header:
+                            if (parameterDescriptor.IsSample)
+                            {
+                                var formVal =
+                                    (IDictionary<string, object>)typeConvertibleService.Convert(parameter, typeof(IDictionary<string, object>));
+                                var parameterVal = formVal[parameterDescriptor.Name];
+                                list.Add(parameterVal);
+                            }
+                            else
+                            {
+                                list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
+                            }                            
                             break;
                         case ParameterFrom.Path:
+                            if (parameterDescriptor.IsSample)
+                            {
+                                var formVal =
+                                    (IDictionary<string, object>)typeConvertibleService.Convert(parameter, typeof(IDictionary<string, object>));
+                                var parameterVal = formVal[parameterDescriptor.Name];
+                                list.Add(parameterVal);
+                            }
+                            else
+                            {
+                                throw new LmsException("复杂数据类型不支持通过路由模板进行获取");
+                            }                            
                             break;
                         case ParameterFrom.Query:
+                            if (parameterDescriptor.IsSample)
+                            {
+                                var formVal =
+                                    (IDictionary<string, object>)typeConvertibleService.Convert(parameter, typeof(IDictionary<string, object>));
+                                var parameterVal = formVal[parameterDescriptor.Name];
+                                list.Add(parameterVal);
+                            }
+                            else
+                            {
+                                list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
+                            }                                 
                             break;
                     }
+
+                    #endregion
                 }
                 
                 return _methodExecutor.ExecuteAsync(instance,list.ToArray()).GetAwaiter().GetResult();
