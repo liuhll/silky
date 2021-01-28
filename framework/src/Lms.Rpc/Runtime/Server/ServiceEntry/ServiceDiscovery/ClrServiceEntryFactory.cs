@@ -83,7 +83,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
             {
                 Id = serviceId,
             };
-            var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, isLocal);
+            var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, parameterDescriptors, isLocal);
             return serviceEntry;
         }
 

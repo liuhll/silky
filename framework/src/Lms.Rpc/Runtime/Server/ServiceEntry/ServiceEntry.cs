@@ -15,10 +15,11 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
         private readonly ObjectMethodExecutor _methodExecutor;
         private readonly Type _serviceType;
         public ServiceEntry(IRouter router, ServiceDescriptor serviceDescriptor, Type serviceType,
-            MethodInfo methodInfo, bool isLocal)
+            MethodInfo methodInfo, IReadOnlyList<ParameterDescriptor> parameterDescriptors, bool isLocal)
         {
             Router = router;
             ServiceDescriptor = serviceDescriptor;
+            ParameterDescriptors = parameterDescriptors;
             IsLocal = isLocal;
             _serviceType = serviceType;
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
@@ -35,18 +36,30 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
 
         public IReadOnlyList<ParameterDescriptor> ParameterDescriptors { get; }
 
-        private Func<string, IDictionary<ParameterFrom, object>, Task<object>> CreateExecutor()
-        {
-            return (key, parameters) =>
+        private Func<string, IDictionary<ParameterFrom, object>, Task<object>> CreateExecutor() =>
+            (key, parameters) => Task.Factory.StartNew(() =>
             {
-                return Task.Factory.StartNew(() =>
+                object instance = EngineContext.Current.Resolve(_serviceType);
+                var list = new List<object>();
+                foreach (var parameter in ParameterDescriptors)
                 {
-                    object instance = EngineContext.Current.Resolve(_serviceType);
-                    var list = new List<object>();
-                    return _methodExecutor.ExecuteAsync(instance,list.ToArray()).GetAwaiter().GetResult();
-                });
-            };
-        }
+                    switch (parameter.From)
+                    {
+                        case ParameterFrom.Body:
+                            break;
+                        case ParameterFrom.Form:
+                            break;
+                        case ParameterFrom.Header:
+                            break;
+                        case ParameterFrom.Path:
+                            break;
+                        case ParameterFrom.Query:
+                            break;
+                    }
+                }
+                
+                return _methodExecutor.ExecuteAsync(instance,list.ToArray()).GetAwaiter().GetResult();
+            });
 
         public ServiceDescriptor ServiceDescriptor { get; }
     }
