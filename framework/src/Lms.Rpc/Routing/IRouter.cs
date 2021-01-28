@@ -10,7 +10,7 @@ namespace Lms.Rpc.Routing
         public HttpMethod HttpMethod { get; }
 
         public string RoutePath { get; }
-
+        
         bool IsMatch(string api,HttpMethod httpMethod);
         
     }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Lms.Core.ObjectMethodExecutor;
 
-namespace Lms.Core.ObjectMethodExecutor
+namespace Lms.Core.MethodExecutor
 {
     internal readonly struct CoercedAwaitableInfo
     {

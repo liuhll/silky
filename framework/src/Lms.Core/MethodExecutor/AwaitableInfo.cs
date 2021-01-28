@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Lms.Core.ObjectMethodExecutor
+namespace Lms.Core.MethodExecutor
 {
     internal readonly struct AwaitableInfo
     {

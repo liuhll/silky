@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Lms.Core.ObjectMethodExecutor
+namespace Lms.Core.MethodExecutor
 {
-    internal class ObjectMethodExecutor
+    public class ObjectMethodExecutor
     {
         private readonly object?[]? _parameterDefaultValues;
         private readonly MethodExecutorAsync? _executorAsync;

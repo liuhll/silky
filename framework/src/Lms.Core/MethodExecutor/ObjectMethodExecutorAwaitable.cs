@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Lms.Core.ObjectMethodExecutor
+namespace Lms.Core.MethodExecutor
 {
  
-    internal readonly struct ObjectMethodExecutorAwaitable
+    public readonly struct ObjectMethodExecutorAwaitable
     {
         private readonly object _customAwaitable;
         private readonly Func<object, object> _getAwaiterMethod;

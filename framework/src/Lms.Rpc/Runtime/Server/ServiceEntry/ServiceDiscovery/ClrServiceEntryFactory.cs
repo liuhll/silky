@@ -5,11 +5,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.Extensions;
+using Lms.Core.MethodExecutor;
 using Lms.Rpc.Ids;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
@@ -47,59 +49,41 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
                         {
                             httpMethod = HttpMethod.Post;
                         }
+
                         if (method.Name.StartsWith("Update"))
                         {
                             httpMethod = HttpMethod.Put;
                         }
+
                         if (method.Name.StartsWith("Delete"))
                         {
                             httpMethod = HttpMethod.Delete;
                         }
                     }
-                    
+
                     var serviceEntryTemplate =
                         TemplateHelper.GenerateServerEntryTemplate(routeTemplate, httpMethodAttribute.Template,
                             httpMethod, isSpecify,
                             method.Name);
 
-                    yield return Create(method, serviceType.Item1.Name, serviceType.Item2, serviceEntryTemplate,
+                    yield return Create(method, serviceType.Item1, serviceType.Item2, serviceEntryTemplate,
                         httpMethod);
                 }
             }
         }
 
-        private ServiceEntry Create(MethodInfo method, string serviceName, bool isLocal, string serviceEntryTemplate,
+        private ServiceEntry Create(MethodInfo method, Type serviceType, bool isLocal, string serviceEntryTemplate,
             HttpMethod httpMethod)
         {
+            var serviceName = serviceType.Name;
+            var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
             var serviceId = _serviceIdGenerator.GenerateServiceId(method, httpMethod);
+            var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,
             };
-            var fastInvoker = GetHandler(serviceId, method);
-            var serviceEntry = new ServiceEntry()
-            {
-                ServiceDescriptor = serviceDescriptor,
-                IsLocal = isLocal,
-                Router = new Router(serviceEntryTemplate, serviceName, method, httpMethod),
-                ParameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod),
-                Func = (key, parameters) =>
-                {
-                    return Task.Factory.StartNew(() =>
-                    {
-                        object instance = EngineContext.Current.Resolve(method.DeclaringType);
-                        var list = new List<object>();
-                        foreach (var parameter in parameters)
-                        {
-                            switch (parameter.Key)
-                            {
-                            }
-                        }
-
-                        return fastInvoker(instance, list.ToArray());
-                    });
-                }
-            };
+            var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, isLocal);
             return serviceEntry;
         }
 
