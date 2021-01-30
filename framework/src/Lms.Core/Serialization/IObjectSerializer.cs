@@ -1,16 +1,14 @@
-﻿namespace Lms.Core.Serialization
+﻿using System;
+
+namespace Lms.Core.Serialization
 {
     public interface IObjectSerializer
     {
         byte[] Serialize<T>(T obj);
 
         T Deserialize<T>(byte[] bytes);
-    }
 
-    public interface IObjectSerializer<T>
-    {
-        byte[] Serialize(T obj);
+        object DeserializeObject(byte[] bytes);
 
-        T Deserialize(byte[] bytes);
     }
 }
