@@ -1,13 +1,12 @@
 ﻿using System.Reflection;
 using Autofac;
-using Lms.Core.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace Lms.Core.DependencyInjection
 {
     public class DefaultDependencyRegistrar : IDependencyRegistrar
     {
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder, AppSettings appSettings)
+        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
             var refAssemblies = typeFinder.GetAssemblies();
             foreach (var assembly in refAssemblies)

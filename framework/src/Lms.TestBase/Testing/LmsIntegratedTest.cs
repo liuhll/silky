@@ -3,7 +3,6 @@ using System.IO;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lms.Core;
-using Lms.Core.Configuration;
 using Lms.Core.Modularity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,8 +19,6 @@ namespace Lms.TestBase.Testing
 
         protected IConfiguration Configuration { get; }
 
-        protected AppSettings AppSettings { get; }
-
         protected IEngine Engine { get; }
 
 
@@ -34,7 +31,7 @@ namespace Lms.TestBase.Testing
             var hostEnvironment = CreateHostEnvironment();
             services.AddSingleton(Configuration);
             
-            (Engine,AppSettings) = services.ConfigureLmsServices(Configuration,hostEnvironment);
+            Engine = services.ConfigureLmsServices(Configuration,hostEnvironment);
 
             AfterAddApplication(services);
 
@@ -42,7 +39,7 @@ namespace Lms.TestBase.Testing
             
             containerBuilder.Populate(services);
             
-            Engine.RegisterDependencies(containerBuilder, AppSettings);
+            Engine.RegisterDependencies(containerBuilder);
             Engine.RegisterModules<TStartupModule>(services,containerBuilder);
 
             var container = containerBuilder.Build(); 

@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Lms.Core.Configuration;
 using Lms.Core.Modularity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,20 +9,17 @@ namespace Lms.Core
 {
     public static class ServiceCollectionExtensions
     {
-        public static (IEngine, AppSettings) ConfigureLmsServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
+        public static IEngine ConfigureLmsServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             services.AddHttpContextAccessor();
             CommonHelper.DefaultFileProvider = new LmsFileProvider(hostEnvironment);
             var engine = EngineContext.Create();
             engine.ConfigureServices(services, configuration);
-            
-            var appSettings = new AppSettings();
-            configuration.Bind(appSettings);
-            services.AddSingleton(appSettings);
+
             var moduleLoder = new ModuleLoader();
             services.TryAddSingleton<IModuleLoader>(moduleLoder);
-            return (engine, appSettings);
+            return engine;
         }
     }
 }

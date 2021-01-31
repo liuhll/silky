@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using Lms.Core.Configuration;
 using Lms.Core.Modularity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +26,7 @@ namespace Lms.Core
         
         object ResolveUnregistered(Type type);
         
-        void RegisterDependencies(ContainerBuilder builder, AppSettings appSettings);
+        void RegisterDependencies(ContainerBuilder builder);
         
         void RegisterModules<T>(IServiceCollection services, ContainerBuilder containerBuilder) where T : ILmsModule;
         

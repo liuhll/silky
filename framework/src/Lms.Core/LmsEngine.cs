@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Lms.Core.Configuration;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
@@ -94,7 +93,7 @@ namespace Lms.Core
             return context?.RequestServices ?? ServiceProvider;
         }
 
-        public void RegisterDependencies(ContainerBuilder containerBuilder, AppSettings appSettings)
+        public void RegisterDependencies(ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterInstance(this).As<IEngine>().SingleInstance();
             containerBuilder.RegisterInstance(_typeFinder).As<ITypeFinder>().SingleInstance();
@@ -104,7 +103,7 @@ namespace Lms.Core
                 .Select(dependencyRegistrar => (IDependencyRegistrar)Activator.CreateInstance(dependencyRegistrar))
                 .OrderBy(dependencyRegistrar => dependencyRegistrar.Order);
             foreach (var dependencyRegistrar in instances)
-                dependencyRegistrar.Register(containerBuilder, _typeFinder, appSettings);
+                dependencyRegistrar.Register(containerBuilder, _typeFinder);
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
