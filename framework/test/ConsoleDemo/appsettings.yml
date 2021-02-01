@@ -1,4 +1,4 @@
 rpc:
     host: 0.0.0.0
-    port: 100
+    rpcPort: 100
   

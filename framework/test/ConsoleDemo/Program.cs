@@ -28,8 +28,8 @@ namespace ConsoleDemo
                               .AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true);
 
                         // Adds YAML settings later
-                        // config.AddYamlFile("appsettings.yml", optional: true) 
-                        //        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
+                        config.AddYamlFile("appsettings.yml", optional: true) 
+                               .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
                         
                     })
                     

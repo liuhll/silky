@@ -5,7 +5,7 @@ using Lms.Rpc.Address.Descriptor;
 
 namespace Lms.Rpc.Address
 {
-    public class AddressModel : IAddressModel
+    public class  AddressModel : IAddressModel
     {
         public AddressModel([NotNull]string address, [NotNull]int port, AddressType addressType = AddressType.Rpc)
         {

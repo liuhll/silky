@@ -9,6 +9,13 @@ namespace Lms.Core.Extensions
 {
   public static class StringExtensions
     {
+        public static bool IsMatch(this string str, string op)
+        {
+            if (str.Equals(String.Empty) || str == null) return false;
+            var re = new Regex(op, RegexOptions.IgnoreCase);
+            return re.IsMatch(str);
+        }
+        
         public static string EnsureEndsWith(this string str, char c, StringComparison comparisonType = StringComparison.Ordinal)
         {
             Check.NotNull(str, nameof(str));
