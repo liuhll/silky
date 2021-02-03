@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lms.Core;
+using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Lms.Rpc.Utils;
+using Microsoft.Extensions.Options;
 
 namespace Lms.Rpc.Routing
 {
@@ -11,11 +14,15 @@ namespace Lms.Rpc.Routing
     {
         protected readonly ServiceRouteCache _serviceRouteCache;
         protected readonly IServiceEntryManager _serviceEntryManager;
+        protected readonly RegistryCenterOptions _registryCenterOptions;
         protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
-            IServiceEntryManager serviceEntryManager)
+            IServiceEntryManager serviceEntryManager, IOptions<RegistryCenterOptions> registryCenterOptions)
         {
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
+            _registryCenterOptions = registryCenterOptions.Value;
+            Check.NotNullOrEmpty(_registryCenterOptions.RoutePath,nameof(_registryCenterOptions.RoutePath));
+            Check.NotNullOrEmpty(_registryCenterOptions.CommandPath,nameof(_registryCenterOptions.CommandPath));
             
         }
         
@@ -39,13 +46,13 @@ namespace Lms.Rpc.Routing
 
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
-                await SetRouteAsync(serviceRouteDescriptor);
+                await RegisterRouteAsync(serviceRouteDescriptor);
             }
 
         }
         
 
-        protected abstract Task SetRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
+        protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
         protected virtual async Task RemoveExceptRouteAsyncs(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors)
         {
@@ -63,7 +70,7 @@ namespace Lms.Rpc.Routing
                     if (removeRoute.AddressDescriptors.Any(p=> p.Equals(hostAddr)))
                     {
                         removeRoute.AddressDescriptors = removeRoute.AddressDescriptors.Where(p => !p.Equals(hostAddr)).ToList();
-                        await SetRouteAsync(removeRoute);
+                        await RegisterRouteAsync(removeRoute);
                     }
                 }
             }

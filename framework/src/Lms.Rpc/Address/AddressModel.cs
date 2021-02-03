@@ -41,7 +41,7 @@ namespace Lms.Rpc.Address
             if (obj.GetType() != GetType())
                 return false;
 
-            return model.ToString() == ToString() && model.ServiceProtocol == ServiceProtocol;
+            return model.Descriptor == Descriptor;
         }
         
         public override int GetHashCode()
