@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lms.Core.DependencyInjection;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;

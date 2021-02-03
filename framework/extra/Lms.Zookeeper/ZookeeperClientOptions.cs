@@ -20,7 +20,7 @@ namespace Lms.Zookeeper
         /// <see cref="BasePath"/> 为null。
         /// <see cref="EnableEphemeralNodeRestore"/> 为true。
         /// </remarks>
-        public ZookeeperClientOptions()
+        protected ZookeeperClientOptions()
         {
             ConnectionTimeout = TimeSpan.FromSeconds(10);
             SessionTimeout = TimeSpan.FromSeconds(20);

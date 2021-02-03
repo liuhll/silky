@@ -23,8 +23,8 @@ namespace Lms.Core
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
-                    engine.RegisterDependencies(builder);
                     engine.RegisterModules<T>(services,builder);
+                    engine.RegisterDependencies(builder);
                 }).ConfigureLogging(logging =>
                 {
                    

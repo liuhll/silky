@@ -201,9 +201,10 @@ namespace Lms.Core
             if (LoadAppDomainAssemblies)
                 AddAssembliesInAppDomain(addedAssemblyNames, assemblies);
             AddConfiguredAssemblies(addedAssemblyNames, assemblies);
-
+           // AddDependModuleAssemblies(addedAssemblyNames, assemblies);
             return assemblies;
         }
+        
 
         #endregion
 

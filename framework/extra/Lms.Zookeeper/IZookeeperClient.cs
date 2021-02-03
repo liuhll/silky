@@ -28,7 +28,7 @@ namespace Lms.Zookeeper
         /// <param name="timeout">最长等待时间。</param>
         /// <returns>如果成功则返回true，否则返回false。</returns>
         bool WaitForKeeperState(Watcher.Event.KeeperState states, TimeSpan timeout);
-
+        
         /// <summary>
         /// 重试直到zk连接上。
         /// </summary>

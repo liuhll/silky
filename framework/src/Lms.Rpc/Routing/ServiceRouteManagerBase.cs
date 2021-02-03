@@ -16,13 +16,9 @@ namespace Lms.Rpc.Routing
         {
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
-            EnterRoutes().GetAwaiter().GetResult();
+            
         }
-
-        protected abstract Task EnterRoutes();
-
-
-
+        
         public virtual async Task RegisterRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
             var localServiceEntries = _serviceEntryManager.GetLocalEntries().Where(p=> p.ServiceDescriptor.ServiceProtocol == serviceProtocol);

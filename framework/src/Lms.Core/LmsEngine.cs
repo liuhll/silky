@@ -17,11 +17,11 @@ namespace Lms.Core
     public class LmsEngine : IEngine, IModuleContainer
     {
         private ITypeFinder _typeFinder;
-        
+
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             _typeFinder = new AppDomainTypeFinder();
-            ServiceProvider = services.BuildServiceProvider();    
+            ServiceProvider = services.BuildServiceProvider();
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
@@ -30,12 +30,11 @@ namespace Lms.Core
         public void ConfigureRequestPipeline(IApplicationBuilder application)
         {
             ServiceProvider = application.ApplicationServices;
-            
         }
 
         public T Resolve<T>() where T : class
         {
-            return (T)Resolve(typeof(T));
+            return (T) Resolve(typeof(T));
         }
 
         public object Resolve(Type type)
@@ -48,7 +47,7 @@ namespace Lms.Core
 
         public IEnumerable<T> ResolveAll<T>()
         {
-            return (IEnumerable<T>)GetServiceProvider().GetServices(typeof(T));
+            return (IEnumerable<T>) GetServiceProvider().GetServices(typeof(T));
         }
 
         public bool IsRegistered(Type type)
@@ -83,7 +82,7 @@ namespace Lms.Core
 
             throw new LmsException("No constructor was found that had all the dependencies satisfied.", innerException);
         }
-        
+
         protected IServiceProvider GetServiceProvider()
         {
             if (ServiceProvider == null)
@@ -97,10 +96,10 @@ namespace Lms.Core
         {
             containerBuilder.RegisterInstance(this).As<IEngine>().SingleInstance();
             containerBuilder.RegisterInstance(_typeFinder).As<ITypeFinder>().SingleInstance();
-            
+
             var dependencyRegistrars = _typeFinder.FindClassesOfType<IDependencyRegistrar>();
             var instances = dependencyRegistrars
-                .Select(dependencyRegistrar => (IDependencyRegistrar)Activator.CreateInstance(dependencyRegistrar))
+                .Select(dependencyRegistrar => (IDependencyRegistrar) Activator.CreateInstance(dependencyRegistrar))
                 .OrderBy(dependencyRegistrar => dependencyRegistrar.Order);
             foreach (var dependencyRegistrar in instances)
                 dependencyRegistrar.Register(containerBuilder, _typeFinder);
@@ -120,20 +119,23 @@ namespace Lms.Core
             assembly = tf.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
             return assembly;
         }
-        
-        public void RegisterModules<T>(IServiceCollection services, ContainerBuilder containerBuilder) where T : ILmsModule
+
+        public void RegisterModules<T>(IServiceCollection services, ContainerBuilder containerBuilder)
+            where T : ILmsModule
         {
-            var moduleLoader = services.GetSingletonInstance<IModuleLoader>(); 
+            var moduleLoader = services.GetSingletonInstance<IModuleLoader>();
             Modules = moduleLoader.LoadModules(services, typeof(T));
             containerBuilder.RegisterInstance(this).As<IModuleContainer>().SingleInstance();
+
             foreach (var module in Modules)
             {
-                containerBuilder.RegisterModule((LmsModule)module.Instance);
+                ((AppDomainTypeFinder)_typeFinder).AssemblyNames.Add(module.Assembly.FullName);
+                containerBuilder.RegisterModule((LmsModule) module.Instance);
             }
         }
-        
+
         public virtual IServiceProvider ServiceProvider { get; set; }
-        
+
         public IReadOnlyList<ILmsModuleDescriptor> Modules { get; protected set; }
     }
 }

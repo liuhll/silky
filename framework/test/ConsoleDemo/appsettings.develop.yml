@@ -2,6 +2,6 @@ rpc:
     host: 0.0.0.0
     rpcPort: 200
 registrycenter:
-    connectionString: 127.0.0.1:2181
+    connectionStrings: 127.0.0.1:2181
     registryCenterType: Zookeeper
   

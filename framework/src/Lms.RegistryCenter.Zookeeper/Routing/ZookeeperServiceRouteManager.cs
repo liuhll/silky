@@ -6,22 +6,26 @@ using Lms.Rpc.Runtime.Server.ServiceEntry;
 
 namespace Lms.RegistryCenter.Zookeeper.Routing
 {
-    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase
+    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, ISingletonDependency
     {
-        public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache, 
-            IServiceEntryManager serviceEntryManager) 
+        private readonly IZookeeperClientProvider _zookeeperClientProvider;
+
+        public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
+            IServiceEntryManager serviceEntryManager,
+            IZookeeperClientProvider zookeeperClientProvider)
             : base(serviceRouteCache, serviceEntryManager)
         {
+            _zookeeperClientProvider = zookeeperClientProvider;
+            EnterRoutes().GetAwaiter().GetResult();
         }
 
-        protected async override Task EnterRoutes()
+        protected async Task EnterRoutes()
         {
-            
+            var zookeeperClient = _zookeeperClientProvider.GetZooKeeperClient();
         }
 
         protected async override Task SetRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor)
         {
-            
         }
     }
 }

@@ -7,9 +7,5 @@ namespace Lms.RegistryCenter.Zookeeper
 {
     public class ZookeeperModule : LmsModule
     {
-        protected override void RegisterServices(ContainerBuilder builder)
-        {
-            builder.RegisterType<ZookeeperServiceRouteManager>().As<IServiceRouteManager>().SingleInstance();
-        }
     }
 }
