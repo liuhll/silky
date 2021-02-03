@@ -11,7 +11,7 @@ namespace Lms.Core.Modularity
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<ModuleManager> _logger;
 
-        public ModuleManager(IModuleContainer moduleContainer, 
+        public ModuleManager(IModuleContainer moduleContainer,
             IServiceProvider serviceProvider)
         {
             _moduleContainer = moduleContainer;
@@ -23,8 +23,17 @@ namespace Lms.Core.Modularity
         {
             foreach (var module in _moduleContainer.Modules)
             {
-                _logger.LogInformation($"初始化模块{module.Name}");
-                await module.Instance.Initialize(new ApplicationContext(_serviceProvider));
+                try
+                {
+                    _logger.LogInformation($"初始化模块{module.Name}");
+                    await module.Instance.Initialize(new ApplicationContext(_serviceProvider, _moduleContainer));
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"初始化{module.Name}模块是错误,原因:{e.Message}");
+                    throw;
+                }
+                
             }
         }
 
@@ -32,7 +41,7 @@ namespace Lms.Core.Modularity
         {
             foreach (var module in _moduleContainer.Modules)
             {
-                await module.Instance.Shutdown(new ApplicationContext(_serviceProvider));
+                await module.Instance.Shutdown(new ApplicationContext(_serviceProvider, _moduleContainer));
             }
         }
     }

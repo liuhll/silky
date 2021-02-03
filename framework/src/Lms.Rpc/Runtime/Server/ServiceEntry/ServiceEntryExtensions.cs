@@ -7,8 +7,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
 {
     public static class ServiceEntryExtensions
     {
-        public static ServiceRouteDescriptor CreateLocalRouteDescriptor(this ServiceEntry serviceEntry,
-            AddressType addressType)
+        public static ServiceRouteDescriptor CreateLocalRouteDescriptor(this ServiceEntry serviceEntry)
         {
             if (!serviceEntry.IsLocal)
             {
@@ -18,7 +17,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
             return new ServiceRouteDescriptor()
             {
                 ServiceDescriptor = serviceEntry.ServiceDescriptor,
-                AddressDescriptors = new[] {NetUtil.GetHostAddress(addressType).Descriptor},
+                AddressDescriptors = new[] {NetUtil.GetHostAddress(serviceEntry.ServiceDescriptor.ServiceProtocol).Descriptor},
             };
         }
     }

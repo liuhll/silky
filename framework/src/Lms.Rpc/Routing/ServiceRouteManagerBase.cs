@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lms.Core.Exceptions;
-using Lms.Rpc.Address;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Lms.Rpc.Utils;
@@ -12,10 +10,12 @@ namespace Lms.Rpc.Routing
     public abstract class ServiceRouteManagerBase : IServiceRouteManager
     {
         protected readonly ServiceRouteCache _serviceRouteCache;
-
-        protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache)
+        protected readonly IServiceEntryManager _serviceEntryManager;
+        protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
+            IServiceEntryManager serviceEntryManager)
         {
             _serviceRouteCache = serviceRouteCache;
+            _serviceEntryManager = serviceEntryManager;
             EnterRoutes().GetAwaiter().GetResult();
         }
 
@@ -23,20 +23,16 @@ namespace Lms.Rpc.Routing
 
 
 
-        public virtual async Task RegisterRoutes(IReadOnlyList<ServiceEntry> localServiceEntries, AddressType address)
+        public virtual async Task RegisterRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
-            if (!localServiceEntries.All(p=>p.IsLocal))
-            {
-                throw new LmsException("注册服务路由时存在远程服务条目,只能注册本地服务条目的服务路由");
-            }
-
-            var serviceRouteDescriptors = localServiceEntries.Select(p => p.CreateLocalRouteDescriptor(address));
+            var localServiceEntries = _serviceEntryManager.GetLocalEntries().Where(p=> p.ServiceDescriptor.ServiceProtocol == serviceProtocol);
+            var serviceRouteDescriptors = localServiceEntries.Select(p => p.CreateLocalRouteDescriptor());
             var registrationCentreServiceRoutes = _serviceRouteCache.ServiceRouteDescriptors.Where(p =>
                 serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
             var centreServiceRoutes = registrationCentreServiceRoutes as ServiceRouteDescriptor[] ?? registrationCentreServiceRoutes.ToArray();
             if (centreServiceRoutes.Any())
             {
-                await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes, NetUtil.GetHostAddress(address));
+                await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes);
                 foreach (var registrationCentreServiceRoute in centreServiceRoutes)
                 {
                     var serviceRouteDescriptor =
@@ -55,10 +51,26 @@ namespace Lms.Rpc.Routing
 
         protected abstract Task SetRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
-        protected virtual async Task RemoveExceptRouteAsyncs(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
-            IAddressModel hostAddress)
+        protected virtual async Task RemoveExceptRouteAsyncs(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors)
         {
-            
+           
+            var oldServiceDescriptorIds = _serviceRouteCache.ServiceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
+            var newServiceDescriptorIds = serviceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
+            var removeServiceDescriptorIds = oldServiceDescriptorIds.Except(newServiceDescriptorIds).ToArray();
+            foreach (var removeServiceDescriptorId in removeServiceDescriptorIds)
+            {
+               
+                var removeRoute = _serviceRouteCache.ServiceRouteDescriptors.FirstOrDefault(p => p.ServiceDescriptor.Id == removeServiceDescriptorId);
+                if (removeRoute != null && removeRoute.AddressDescriptors.Any())
+                {
+                    var hostAddr = NetUtil.GetHostAddress(removeRoute.ServiceDescriptor.ServiceProtocol);
+                    if (removeRoute.AddressDescriptors.Any(p=> p.Equals(hostAddr)))
+                    {
+                        removeRoute.AddressDescriptors = removeRoute.AddressDescriptors.Where(p => !p.Equals(hostAddr)).ToList();
+                        await SetRouteAsync(removeRoute);
+                    }
+                }
+            }
         }
 
     }

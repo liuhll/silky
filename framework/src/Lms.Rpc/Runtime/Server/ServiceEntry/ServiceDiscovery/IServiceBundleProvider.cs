@@ -4,6 +4,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
     { 
         string Template { get; }
         
-        
+        ServiceProtocol ServiceProtocol { get; }
     }
 }

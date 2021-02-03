@@ -66,13 +66,21 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
                             httpMethod, isSpecify,
                             method.Name);
 
-                    yield return Create(method, serviceType.Item1, serviceType.Item2, serviceEntryTemplate,
+                    yield return Create(method, 
+                        serviceType.Item1, 
+                        serviceType.Item2, 
+                        serviceEntryTemplate,
+                        serviceBundleProvider.ServiceProtocol,
                         httpMethod);
                 }
             }
         }
 
-        private ServiceEntry Create(MethodInfo method, Type serviceType, bool isLocal, string serviceEntryTemplate,
+        private ServiceEntry Create(MethodInfo method, 
+            Type serviceType,
+            bool isLocal, 
+            string serviceEntryTemplate,
+            ServiceProtocol serviceProtocol,
             HttpMethod httpMethod)
         {
             var serviceName = serviceType.Name;
@@ -82,6 +90,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,
+                ServiceProtocol = serviceProtocol
             };
             var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, parameterDescriptors, isLocal);
             return serviceEntry;

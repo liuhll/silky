@@ -1,5 +1,6 @@
 using System.Net;
 using Lms.Rpc.Address.Descriptor;
+using Lms.Rpc.Runtime.Server.ServiceEntry;
 
 namespace Lms.Rpc.Address
 {
@@ -18,7 +19,7 @@ namespace Lms.Rpc.Address
         /// <summary>
         /// 地址类型
         /// </summary>
-        AddressType AddressType { get; }
+        ServiceProtocol ServiceProtocol { get; }
 
         /// <summary>
         /// ip终结点

@@ -4,7 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BBAACB71-9C7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Core", "src\Lms.Core\Lms.Core.csproj", "{17D3E946-6069-428A-89EB-63ED642F395B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Zookeeper", "src\Lms.Zookeeper\Lms.Zookeeper.csproj", "{52477F1F-327D-441B-9ED0-BCE759BC3DD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.RegistryCenter.Zookeeper", "src\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj", "{52477F1F-327D-441B-9ED0-BCE759BC3DD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Proxy", "src\Lms.Proxy\Lms.Proxy.csproj", "{B9E60852-6784-469F-8192-BD5B0FAEDD88}"
 EndProject
@@ -24,6 +24,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.TestBase", "src\Lms.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Rpc.Tests", "test\Lms.Rpc.Tests\Lms.Rpc.Tests.csproj", "{C584E1F0-9193-4296-885D-B619AE026150}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extra", "extra", "{35FAF689-BF55-4CBB-BF3E-C6AB26F9006E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Zookeeper", "extra\Lms.Zookeeper\Lms.Zookeeper.csproj", "{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +44,7 @@ Global
 		{E847AD05-A5AE-47A2-A7F6-9FCF3AD32787} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{E63A6BEC-8438-44F2-8071-92E954E1B029} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{C584E1F0-9193-4296-885D-B619AE026150} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
+		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16} = {35FAF689-BF55-4CBB-BF3E-C6AB26F9006E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -82,5 +87,9 @@ Global
 		{C584E1F0-9193-4296-885D-B619AE026150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C584E1F0-9193-4296-885D-B619AE026150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C584E1F0-9193-4296-885D-B619AE026150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

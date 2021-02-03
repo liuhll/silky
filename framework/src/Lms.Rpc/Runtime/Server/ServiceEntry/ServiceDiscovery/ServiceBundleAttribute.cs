@@ -6,14 +6,14 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
     public class ServiceBundleAttribute : Attribute, IServiceBundleProvider
     {
         
-        public ServiceBundleAttribute(string template = "api/{appservice}")
+        public ServiceBundleAttribute(string template = "api/{appservice}", ServiceProtocol serviceProtocol = ServiceProtocol.Tcp)
         {
             Template = template;
-            
+            ServiceProtocol = ServiceProtocol.Tcp;
         }
 
         public string Template { get; }
-
-        public bool IsPrefix { get; }
+        
+        public ServiceProtocol ServiceProtocol { get; }
     }
 }

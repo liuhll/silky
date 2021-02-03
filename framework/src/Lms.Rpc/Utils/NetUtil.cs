@@ -6,6 +6,7 @@ using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Address;
 using Lms.Rpc.Configuration;
+using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Microsoft.Extensions.Options;
 
 namespace Lms.Rpc.Utils
@@ -20,8 +21,8 @@ namespace Lms.Rpc.Utils
         private const string LOCAL_HOSTADRRESS = "localhost";
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
         
-        private static IDictionary<AddressType, IAddressModel> addressModels =
-            new Dictionary<AddressType, IAddressModel>();
+        private static IDictionary<ServiceProtocol, IAddressModel> addressModels =
+            new Dictionary<ServiceProtocol, IAddressModel>();
 
         
         public static string GetHostAddress(string hostAddress)
@@ -57,9 +58,9 @@ namespace Lms.Rpc.Utils
             return result;
         }
 
-        public static IAddressModel GetHostAddress(AddressType addressType)
+        public static IAddressModel GetHostAddress(ServiceProtocol serviceProtocol)
         {
-            if (addressModels.TryGetValue(addressType, out IAddressModel address))
+            if (addressModels.TryGetValue(serviceProtocol, out IAddressModel address))
             {
                 return address;
             }
@@ -67,20 +68,20 @@ namespace Lms.Rpc.Utils
             var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
             string host = GetHostAddress(rpcOptions.Host);
             int port;
-            switch (addressType)
+            switch (serviceProtocol)
             {
-                case AddressType.Rpc:
+                case ServiceProtocol.Tcp:
                     port = rpcOptions.RpcPort;
                     break;
-                case AddressType.Mqtt:
+                case ServiceProtocol.Mqtt:
                     port = rpcOptions.MqttPort;
                     break;
                 default:
                     throw new LmsException("必须指定地址类型");
             }
 
-            address = new AddressModel(host, port, addressType);
-            addressModels.Add(addressType, address);
+            address = new AddressModel(host, port, serviceProtocol);
+            addressModels.Add(serviceProtocol, address);
             return address;
         }
         

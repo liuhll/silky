@@ -2,25 +2,26 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Lms.Core;
 using Lms.Rpc.Address.Descriptor;
+using Lms.Rpc.Runtime.Server.ServiceEntry;
 
 namespace Lms.Rpc.Address
 {
     public class  AddressModel : IAddressModel
     {
-        public AddressModel([NotNull]string address, [NotNull]int port, AddressType addressType = AddressType.Rpc)
+        public AddressModel([NotNull]string address, [NotNull]int port, ServiceProtocol serviceProtocol = ServiceProtocol.Tcp)
         {
             Check.NotNull(address,nameof(address));
             Address = address;
             Port = port;
-            AddressType = addressType;
-            Descriptor = new AddressDescriptor() {Address = Address, Port = Port, AddressType = AddressType};
+            ServiceProtocol = serviceProtocol;
+            Descriptor = new AddressDescriptor() {Address = Address, Port = Port, ServiceProtocol = ServiceProtocol};
         }
 
         public string Address { get; }
 
         public int Port { get; }
 
-        public AddressType AddressType { get; }
+        public ServiceProtocol ServiceProtocol { get; }
 
         public IPEndPoint IPEndPoint => new IPEndPoint(IPAddress.Parse(AddressHelper.GetIp(Address)), Port);
 
@@ -40,7 +41,7 @@ namespace Lms.Rpc.Address
             if (obj.GetType() != GetType())
                 return false;
 
-            return model.ToString() == ToString();
+            return model.ToString() == ToString() && model.ServiceProtocol == ServiceProtocol;
         }
         
         public override int GetHashCode()

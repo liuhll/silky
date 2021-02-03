@@ -15,6 +15,8 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor
         [NotNull]
         public string Id { get; set; }
         
+        public ServiceProtocol ServiceProtocol { get; set; }
+        
         public IDictionary<string, object> Metadatas { get; set; }
 
         public T GetMetadata<T>(string name, T def = default(T))
@@ -38,6 +40,10 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor
 
             if (model.Id != Id)
                 return false;
+            if (model.ServiceProtocol != ServiceProtocol)
+            {
+                return false;
+            }
 
             return model.Metadatas.Count == Metadatas.Count && model.Metadatas.All(metadata =>
             {
