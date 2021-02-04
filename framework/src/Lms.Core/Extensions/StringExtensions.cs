@@ -353,5 +353,6 @@ namespace Lms.Core.Extensions
 
             return encoding.GetBytes(str);
         }
+        
     }
 }

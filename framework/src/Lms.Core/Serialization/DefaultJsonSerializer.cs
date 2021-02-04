@@ -1,10 +1,11 @@
 using System;
+using Lms.Core.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Lms.Core.Serialization
 {
-    public class DefaultJsonSerializer : IJsonSerializer
+    public class DefaultJsonSerializer : IJsonSerializer, ITransientDependency
     {
         public string Serialize(object instance, bool camelCase = true, bool indented = false)
         {

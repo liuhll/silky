@@ -36,21 +36,26 @@ namespace Lms.Rpc.Routing
             if (centreServiceRoutes.Any())
             {
                 await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes);
-                foreach (var registrationCentreServiceRoute in centreServiceRoutes)
-                {
-                    var serviceRouteDescriptor =
-                        serviceRouteDescriptors.Single(p => p.ServiceDescriptor.Equals(registrationCentreServiceRoute.ServiceDescriptor));
-                    serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors.Concat(registrationCentreServiceRoute.AddressDescriptors).Distinct();
-                }
             }
-
+            else
+            {
+                await CreateSubDirectory(serviceProtocol);
+            }
+            
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
+                var centreServiceRoute = registrationCentreServiceRoutes.SingleOrDefault(p =>
+                    p.ServiceDescriptor.Equals(serviceRouteDescriptor.ServiceDescriptor));
+                if (centreServiceRoute != null)
+                {
+                    serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors.Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p=> p.ToString());
+                }
                 await RegisterRouteAsync(serviceRouteDescriptor);
             }
 
         }
-        
+
+        protected abstract Task CreateSubDirectory(ServiceProtocol serviceProtocol);
 
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 

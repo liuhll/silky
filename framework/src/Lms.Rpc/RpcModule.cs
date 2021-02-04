@@ -33,6 +33,10 @@ namespace Lms.Rpc
 
             var serviceRouteProvider = EngineContext.Current.Resolve<IServiceRouteProvider>();
             await serviceRouteProvider.RegisterRpcRoutes(Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds);
+            
+            // cache
+            var cache = EngineContext.Current.Resolve<ServiceRouteCache>();
+            var c = cache.ServiceRoutes;
         }
     }
 }

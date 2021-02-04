@@ -1,8 +1,8 @@
-﻿using System;
+﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using Lms.Core;
 using Lms.Core.DependencyInjection;
+using Lms.Core.Extensions;
 using Lms.Core.Serialization;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
@@ -19,19 +19,81 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
     public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, ISingletonDependency
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
+        private readonly IJsonSerializer _jsonSerializer;
         private readonly ILogger<ZookeeperServiceRouteManager> _logger;
-        private readonly IObjectSerializer _objectSerializer;
+
+        private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher> m_routeWatchers =
+            new ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher>();
+        private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteSubDirectoryWatcher> m_routeSubDirWatchers =
+            new ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteSubDirectoryWatcher>();
+        
 
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
             IZookeeperClientProvider zookeeperClientProvider, IOptions<RegistryCenterOptions> registryCenterOptions,
-            IObjectSerializer objectSerializer)
+            IJsonSerializer jsonSerializer)
             : base(serviceRouteCache, serviceEntryManager, registryCenterOptions)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
-            _objectSerializer = objectSerializer;
+            _jsonSerializer = jsonSerializer;
             _logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
             EnterRoutes().GetAwaiter().GetResult();
+        }
+
+        protected async override Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor)
+        {
+            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            foreach (var zookeeperClient in zookeeperClients)
+            {
+                var routePath = CreateRoutePath(serviceRouteDescriptor.ServiceDescriptor.Id);
+                await CreateSubscribeDataChange(zookeeperClient, routePath);
+                var jsonString = _jsonSerializer.Serialize(serviceRouteDescriptor);
+                var data = jsonString.GetBytes();
+                if (!await zookeeperClient.ExistsAsync(routePath))
+                {
+                    _logger.LogDebug($"节点{routePath}不存在将进行创建");
+                    await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                }
+                else
+                {
+                    var onlineData = (await zookeeperClient.GetDataAsync(routePath)).ToArray();
+                    if (!onlineData.Equals(data))
+                    {
+                        await zookeeperClient.SetDataAsync(routePath,data);
+                        _logger.LogDebug($"{routePath}节点的缓存的路由数据已被更新。");
+                    }
+                }
+            }
+        }
+
+        protected async override Task CreateSubDirectory(ServiceProtocol serviceProtocol)
+        {
+            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            foreach (var zookeeperClient in zookeeperClients)
+            {
+                await CreateSubDirectory(zookeeperClient, serviceProtocol);
+            }
+        }
+
+        private async Task CreateSubDirectory(IZookeeperClient zookeeperClient, ServiceProtocol serviceProtocol)
+        {
+            var subDirectoryPath = _registryCenterOptions.RoutePath;
+            switch (serviceProtocol)
+            {
+                case ServiceProtocol.Mqtt:
+                    subDirectoryPath = _registryCenterOptions.MqttPtah;
+                    break;
+                case ServiceProtocol.Ws:
+                    break;
+                case ServiceProtocol.Tcp:
+                    break;
+            }
+
+            if (!await zookeeperClient.ExistsAsync(subDirectoryPath))
+            {
+                await zookeeperClient.CreateRecursiveAsync(subDirectoryPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+            }
+            await CreateSubscribeChildrenChange(zookeeperClient, subDirectoryPath);
         }
 
         protected async Task EnterRoutes()
@@ -56,6 +118,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         private async Task<ServiceRouteDescriptor> GetRouteDescriptorAsync(string routePath,
             IZookeeperClient zookeeperClient)
         {
+            await CreateSubscribeDataChange(zookeeperClient, routePath);
             if (!await zookeeperClient.ExistsAsync(routePath))
             {
                 return null;
@@ -66,8 +129,9 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             {
                 return null;
             }
-            var routeDescriptor = _objectSerializer.Deserialize<ServiceRouteDescriptor>(data.ToArray());
-            return routeDescriptor;
+
+            var jsonString = data.ToArray().GetString();
+            return _jsonSerializer.Deserialize<ServiceRouteDescriptor>(jsonString);
         }
 
         private string CreateRoutePath(string child)
@@ -82,26 +146,23 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             return routePath;
         }
 
-        protected async override Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor)
+        internal async Task CreateSubscribeDataChange(IZookeeperClient zookeeperClient, string path)
         {
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
-            foreach (var zookeeperClient in zookeeperClients)
+            if (!m_routeWatchers.ContainsKey((path, zookeeperClient)))
             {
-                var routePath = CreateRoutePath(serviceRouteDescriptor.ServiceDescriptor.Id);
-                var data = _objectSerializer.Serialize(serviceRouteDescriptor);
-                if (!await zookeeperClient.ExistsAsync(routePath))
-                {
-                    _logger.LogDebug($"节点：{routePath}不存在将进行创建");
-                    await zookeeperClient.CreateAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                        CreateMode.PERSISTENT);
-                }
-                else
-                {
-                    var onlineData = (await zookeeperClient.GetDataAsync(routePath)).ToArray();
-                    // todo 比较数据是否一致
-                    await zookeeperClient.SetDataAsync(routePath, data);
-                    _logger.LogDebug($"{routePath}节点的缓存的服务路由与服务注册中心不一致,路由数据已被更新。");
-                }
+                var watcher = new ServiceRouteWatcher(path, _serviceRouteCache, _jsonSerializer);
+                await zookeeperClient.SubscribeDataChange(path, watcher.HandleNodeDataChange);
+                m_routeWatchers.GetOrAdd((path, zookeeperClient), watcher);
+            }
+        }
+
+        private async Task CreateSubscribeChildrenChange(IZookeeperClient zookeeperClient, string path)
+        {
+            if (!m_routeSubDirWatchers.ContainsKey((path, zookeeperClient)))
+            {
+                var watcher = new ServiceRouteSubDirectoryWatcher(path,this);
+                await zookeeperClient.SubscribeChildrenChange(path, watcher.SubscribeChildrenChange);
+                m_routeSubDirWatchers.GetOrAdd((path, zookeeperClient), watcher);
             }
         }
     }

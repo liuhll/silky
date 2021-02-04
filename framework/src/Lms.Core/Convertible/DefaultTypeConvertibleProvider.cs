@@ -7,13 +7,10 @@ namespace Lms.Core.Convertible
 {
     public class DefaultTypeConvertibleProvider : ITypeConvertibleProvider
     {
-        private readonly IObjectSerializer _objectSerializer;
         private readonly IJsonSerializer _jsonSerializer;
 
-        public DefaultTypeConvertibleProvider(IObjectSerializer objectSerializer, 
-            IJsonSerializer jsonSerializer)
+        public DefaultTypeConvertibleProvider(IJsonSerializer jsonSerializer)
         {
-            _objectSerializer = objectSerializer;
             _jsonSerializer = jsonSerializer;
         }
 
@@ -53,11 +50,6 @@ namespace Lms.Core.Convertible
 
         private object ComplexTypeConvert(object instance, Type conversionType)
         {
-            //return _serializer.Deserialize(instance, conversionType);
-            if (instance is byte[])
-            {
-               return _objectSerializer.DeserializeObject((byte[])instance);
-            }
             return _jsonSerializer.Deserialize(conversionType, instance.ToString());
         }
     }

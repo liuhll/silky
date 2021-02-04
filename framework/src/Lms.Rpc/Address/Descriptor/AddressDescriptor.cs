@@ -29,7 +29,7 @@ namespace Lms.Rpc.Address.Descriptor
         
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return (ToString() + ServiceProtocol).GetHashCode();
         }
 
         public static bool operator ==(AddressDescriptor model1, AddressDescriptor model2)

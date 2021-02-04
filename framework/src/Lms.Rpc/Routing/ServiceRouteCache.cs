@@ -23,6 +23,12 @@ namespace Lms.Rpc.Routing
                 serviceRouteDescriptor.ConvertToServiceRoute(),
                 (id, _) => serviceRouteDescriptor.ConvertToServiceRoute());
         }
+        
+        public void RemoveCache(string serviceId)
+        {
+            _serviceRouteDescriptorCache.TryRemove(serviceId,out ServiceRouteDescriptor serviceRouteDescriptor);
+            _serviceRouteCache.TryRemove(serviceId, out ServiceRoute serviceRoute);
+        }
 
         public IReadOnlyList<ServiceRouteDescriptor> ServiceRouteDescriptors =>
             _serviceRouteDescriptorCache.Values.ToImmutableArray();
