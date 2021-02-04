@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Timers;
+using Lms.Core;
 using Lms.Core.Exceptions;
 using Lms.Rpc.Configuration;
 using Lms.Zookeeper;
@@ -26,6 +27,8 @@ namespace Lms.RegistryCenter.Zookeeper
         public DefaultZookeeperClientProvider(IOptions<RegistryCenterOptions> registryCenterOptions)
         {
             _registryCenterOptions = registryCenterOptions.Value;
+            Check.NotNullOrEmpty(_registryCenterOptions.ConnectionStrings,
+                nameof(_registryCenterOptions.ConnectionStrings));
             _logger = NullLogger<DefaultZookeeperClientProvider>.Instance;
             CreateZookeeperClients();
             _timer = new Timer(TimeSpan.FromSeconds(_registryCenterOptions.HealthCheckInterval).TotalMilliseconds);

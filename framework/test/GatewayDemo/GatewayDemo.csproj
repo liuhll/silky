@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" NoWarn="NU1605" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1" NoWarn="NU1605" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj" />
+      <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
+      <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
+    </ItemGroup>
+
+</Project>
