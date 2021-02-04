@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extra", "extra", "{35FAF689
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Zookeeper", "extra\Lms.Zookeeper\Lms.Zookeeper.csproj", "{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITestApplication", "test\ITestApplication\ITestApplication.csproj", "{598FBFE0-CF02-4293-99C5-318C10CEFD41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,7 @@ Global
 		{E63A6BEC-8438-44F2-8071-92E954E1B029} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{C584E1F0-9193-4296-885D-B619AE026150} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16} = {35FAF689-BF55-4CBB-BF3E-C6AB26F9006E}
+		{598FBFE0-CF02-4293-99C5-318C10CEFD41} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -91,5 +94,9 @@ Global
 		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD96463C-0EEF-4C9A-891A-F6B39D7EDE16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{598FBFE0-CF02-4293-99C5-318C10CEFD41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{598FBFE0-CF02-4293-99C5-318C10CEFD41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{598FBFE0-CF02-4293-99C5-318C10CEFD41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{598FBFE0-CF02-4293-99C5-318C10CEFD41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

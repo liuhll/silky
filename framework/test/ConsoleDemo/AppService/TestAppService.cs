@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using ConsoleDemo.AppService.Dtos;
+using ITestApplication.Test;
 
 namespace ConsoleDemo.AppService
 {

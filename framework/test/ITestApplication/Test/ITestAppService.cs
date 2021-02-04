@@ -3,7 +3,7 @@ using ConsoleDemo.AppService.Dtos;
 using Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ConsoleDemo.AppService
+namespace ITestApplication.Test
 {
     [ServiceBundle]
     public interface ITestAppService
