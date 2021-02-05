@@ -1,12 +1,13 @@
 using System;
+using Lms.Rpc.Address;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
 {
     [AttributeUsage(AttributeTargets.Interface)]
-    public class ServiceBundleAttribute : Attribute, IServiceBundleProvider
+    public class ServiceRouteAttribute : Attribute, IRouteTemplateProvider
     {
         
-        public ServiceBundleAttribute(string template = "api/{appservice}", ServiceProtocol serviceProtocol = ServiceProtocol.Tcp)
+        public ServiceRouteAttribute(string template = "api/{appservice}", ServiceProtocol serviceProtocol = ServiceProtocol.Tcp)
         {
             Template = template;
             ServiceProtocol = ServiceProtocol.Tcp;

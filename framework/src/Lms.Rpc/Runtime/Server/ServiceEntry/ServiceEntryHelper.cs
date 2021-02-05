@@ -15,7 +15,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
                     .SelectMany(p => p.ExportedTypes)
                     .Where(p=> p.IsClass
                                && !p.IsAbstract
-                               && p.GetInterfaces().Any(i=> i.GetCustomAttributes().Any(a=> a is ServiceBundleAttribute))
+                               && p.GetInterfaces().Any(i=> i.GetCustomAttributes().Any(a=> a is ServiceRouteAttribute))
                     )
                 ;
             return types;
@@ -29,7 +29,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
 
             var entryInterfaces = exportedTypes
                     .Where(p => p.IsInterface
-                                && p.GetCustomAttributes().Any(a => a is ServiceBundleAttribute)
+                                && p.GetCustomAttributes().Any(a => a is ServiceRouteAttribute)
                     )
                 ;
             foreach (var entryInterface in entryInterfaces)

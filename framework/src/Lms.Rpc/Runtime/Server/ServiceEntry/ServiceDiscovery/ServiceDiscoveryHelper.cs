@@ -8,14 +8,14 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
 {
     public static class ServiceDiscoveryHelper
     {
-        public static IServiceBundleProvider GetServiceBundleProvider(Type serviceType)
+        public static IRouteTemplateProvider GetServiceBundleProvider(Type serviceType)
         {
-            var serviceTypeInterface = serviceType.IsInterface ? serviceType : serviceType.GetInterfaces().FirstOrDefault(p => p.GetCustomAttribute<ServiceBundleAttribute>() != null);
+            var serviceTypeInterface = serviceType.IsInterface ? serviceType : serviceType.GetInterfaces().FirstOrDefault(p => p.GetCustomAttribute<ServiceRouteAttribute>() != null);
             if (serviceTypeInterface == null)
             {
                 throw new LmsException($"{serviceType.FullName}不是服务类型,服务类型必须通过ServiceBundleAttribute特性进行标识");
             }
-            return serviceTypeInterface.GetCustomAttribute<ServiceBundleAttribute>();
+            return serviceTypeInterface.GetCustomAttribute<ServiceRouteAttribute>();
         }
         
     }

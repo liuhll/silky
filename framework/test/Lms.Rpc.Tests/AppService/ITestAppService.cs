@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lms.Rpc.Tests.AppService
 {
-    [ServiceBundle("api/test")]
+    [Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery.ServiceRoute("api/test")]
     public interface ITestAppService
     {
         [HttpPost("/test")]

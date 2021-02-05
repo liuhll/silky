@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ITestApplication.Test
 {
-    [ServiceBundle]
+    [ServiceRoute]
     public interface ITestAppService
     {
         Task<string> Create(TestDto input);
