@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
+using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Lms.Swagger.SwaggerGen.DependencyInjection;
 using Lms.Swagger.SwaggerGen.SchemaGenerator;
 using Lms.Swagger.SwaggerGen.SwaggerGenerator;
@@ -35,7 +36,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </param>
         public static void DocInclusionPredicate(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<string, ApiDescription, bool> predicate)
+            Func<string, ServiceEntry, bool> predicate)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.DocInclusionPredicate = predicate;
         }
@@ -55,7 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="resolver"></param>
         public static void ResolveConflictingActions(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<IEnumerable<ApiDescription>, ApiDescription> resolver)
+            Func<IEnumerable<ServiceEntry>, ServiceEntry> resolver)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.ConflictingActionsResolver = resolver;
         }
@@ -65,7 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static void CustomOperationIds(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiDescription, string> operationIdSelector)
+            Func<ServiceEntry, string> operationIdSelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.OperationIdSelector = operationIdSelector;
         }
@@ -79,7 +80,7 @@ namespace Microsoft.Extensions.DependencyInjection
         [Obsolete("Deprecated: Use the overload that accepts a Func that returns a list of tags")]
         public static void TagActionsBy(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiDescription, string> tagSelector)
+            Func<ServiceEntry, string> tagSelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] { tagSelector(apiDesc) };
         }
@@ -91,7 +92,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="tagsSelector"></param>
         public static void TagActionsBy(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiDescription, IList<string>> tagsSelector)
+            Func<ServiceEntry, IList<string>> tagsSelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = tagsSelector;
         }
@@ -103,7 +104,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="sortKeySelector"></param>
         public static void OrderActionsBy(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiDescription, string> sortKeySelector)
+            Func<ServiceEntry, string> sortKeySelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.SortKeySelector = sortKeySelector;
         }

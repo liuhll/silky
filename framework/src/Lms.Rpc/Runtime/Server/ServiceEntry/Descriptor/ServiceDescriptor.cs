@@ -14,7 +14,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor
         
         [NotNull]
         public string Id { get; set; }
-        
+
         public ServiceProtocol ServiceProtocol { get; set; }
         
         public IDictionary<string, object> Metadatas { get; set; }

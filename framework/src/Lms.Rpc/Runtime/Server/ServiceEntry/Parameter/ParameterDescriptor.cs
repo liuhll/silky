@@ -7,20 +7,22 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
 {
     public class ParameterDescriptor
     {
-        
-        public ParameterDescriptor(string name,Type type,ParameterFrom @from)
+        public ParameterDescriptor(ParameterFrom @from, ParameterInfo parameterInfo)
         {
-            Name = name;
-            Type = type;
             From = @from;
+            ParameterInfo = parameterInfo;
+            Name = parameterInfo.Name;
+            Type = parameterInfo.ParameterType;
         }
 
-        public ParameterFrom From { get; private set; }
+        public ParameterFrom From { get; }
         
         public Type Type { get; }
 
         public string Name { get; }
 
         public bool IsSample => Type.IsSample();
+        
+        public ParameterInfo ParameterInfo { get; }
     }
 }

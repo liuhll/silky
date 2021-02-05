@@ -20,19 +20,18 @@ namespace Lms.Swagger.SwaggerGen.XmlComments
 
             if (bodyParameterDescription == null) return;
 
-            var propertyInfo = bodyParameterDescription.PropertyInfo();
-            if (propertyInfo != null)
+            var properties = bodyParameterDescription.Type.GetProperties();
+            foreach (var propertyInfo in properties)
             {
                 ApplyPropertyTags(requestBody, propertyInfo);
                 return;
             }
-
-            var parameterInfo = bodyParameterDescription.ParameterInfo();
-            if (parameterInfo != null)
-            {
-                ApplyParamTags(requestBody, parameterInfo);
-                return;
-            }
+            // var parameterInfo = bodyParameterDescription.ParameterInfo();
+            // if (parameterInfo != null)
+            // {
+            //     ApplyParamTags(requestBody, parameterInfo);
+            //     return;
+            // }
         }
 
         private void ApplyPropertyTags(OpenApiRequestBody requestBody, PropertyInfo propertyInfo)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
@@ -26,17 +27,17 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
 
         public IDictionary<string, OpenApiInfo> SwaggerDocs { get; set; }
 
-        public Func<string, ApiDescription, bool> DocInclusionPredicate { get; set; }
+        public Func<string, ServiceEntry, bool> DocInclusionPredicate { get; set; }
 
         public bool IgnoreObsoleteActions { get; set; }
 
-        public Func<IEnumerable<ApiDescription>, ApiDescription> ConflictingActionsResolver { get; set; }
+        public Func<IEnumerable<ServiceEntry>, ServiceEntry> ConflictingActionsResolver { get; set; }
 
-        public Func<ApiDescription, string> OperationIdSelector { get; set; }
+        public Func<ServiceEntry, string> OperationIdSelector { get; set; }
 
-        public Func<ApiDescription, IList<string>> TagsSelector { get; set; }
+        public Func<ServiceEntry, IList<string>> TagsSelector { get; set; }
 
-        public Func<ApiDescription, string> SortKeySelector { get; set; }
+        public Func<ServiceEntry, string> SortKeySelector { get; set; }
 
         public bool DescribeAllParametersInCamelCase { get; set; }
 
@@ -54,22 +55,22 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
 
         public IList<IDocumentFilter> DocumentFilters { get; set; }
 
-        private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
+        private bool DefaultDocInclusionPredicate(string documentName, ServiceEntry apiDescription)
         {
             return apiDescription.GroupName == null || apiDescription.GroupName == documentName;
         }
 
-        private string DefaultOperationIdSelector(ApiDescription apiDescription)
+        private string DefaultOperationIdSelector(ServiceEntry apiDescription)
         {
-            return apiDescription.ActionDescriptor.AttributeRouteInfo?.Name;
+            return apiDescription.ServiceDescriptor.Id;
         }
 
-        private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
+        private IList<string> DefaultTagsSelector(ServiceEntry apiDescription)
         {
-            return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
+            return new[] {apiDescription.GroupName};
         }
 
-        private string DefaultSortKeySelector(ApiDescription apiDescription)
+        private string DefaultSortKeySelector(ServiceEntry apiDescription)
         {
             return TagsSelector(apiDescription).First();
         }

@@ -48,7 +48,7 @@ namespace Lms.Rpc.Routing.Template
                 }
                 return SegmentType.AppService;
             }
-
+            
             return SegmentType.Path;
         }
 

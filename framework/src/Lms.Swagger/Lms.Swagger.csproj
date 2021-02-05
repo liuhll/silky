@@ -10,6 +10,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
+      <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
     </ItemGroup>
     
     <PropertyGroup Condition="Exists('$(VsInstallRoot)\Web\External\npm.cmd')">

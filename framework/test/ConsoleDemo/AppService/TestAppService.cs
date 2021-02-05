@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using ConsoleDemo.AppService.Dtos;
 using ITestApplication.Test;
+using ITestApplication.Test.Dtos;
 
 namespace ConsoleDemo.AppService
 {
@@ -26,9 +26,15 @@ namespace ConsoleDemo.AppService
             throw new System.NotImplementedException();
         }
 
-        public Task<string> Get(long id)
+        public Task<string> Form(TestDto query)
         {
             throw new System.NotImplementedException();
         }
+
+        public Task<string> Get(long id, string name)
+        {
+            throw new System.NotImplementedException();
+        }
+        
     }
 }

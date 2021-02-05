@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
@@ -12,7 +13,7 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
     public class OperationFilterContext
     {
         public OperationFilterContext(
-            ApiDescription apiDescription,
+            ServiceEntry apiDescription,
             ISchemaGenerator schemaRegistry,
             SchemaRepository schemaRepository,
             MethodInfo methodInfo)
@@ -23,7 +24,7 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
             MethodInfo = methodInfo;
         }
 
-        public ApiDescription ApiDescription { get; }
+        public ServiceEntry ApiDescription { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
 

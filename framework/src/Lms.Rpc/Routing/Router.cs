@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -14,6 +15,7 @@ namespace Lms.Rpc.Routing
     {
         private const string separator = "/";
         private readonly MethodInfo _method;
+        private readonly string _routePath;
 
         public Router(string template, string serviceName,MethodInfo methodInfo, HttpMethod httpMethod)
         {
@@ -21,14 +23,33 @@ namespace Lms.Rpc.Routing
             ParseRouteTemplate(template, serviceName,methodInfo);
             HttpMethod = httpMethod;
             _method = methodInfo;
-            
+            _routePath = GenerateRoutePath();
+        }
+
+        private string GenerateRoutePath()
+        {
+            var routePath = string.Empty;
+            foreach (var segment in RouteTemplate.Segments)
+            {
+                if (!segment.IsParameter)
+                {
+                    routePath += segment.Value + "/";
+                }
+                else
+                {
+                    routePath += "{" + segment.Value + "}" + "/";
+                }
+            }
+
+            return routePath.ToLower().TrimEnd('/');
         }
 
         public RouteTemplate RouteTemplate { get; }
 
         public HttpMethod HttpMethod { get; }
 
-        public string RoutePath => string.Join("/", RouteTemplate.Segments.Select(p => p.Value)).ToLower();
+        public string RoutePath => _routePath;
+        public IList<string> SupportedRequestMediaTypes { get; set; }
 
         public bool IsMatch(string api, HttpMethod httpMethod)
         {
@@ -116,7 +137,7 @@ namespace Lms.Rpc.Routing
                 throw new LmsException("设置路由参数不正常,只允许为简单数据类型设置路径参数",StatusCode.RouteParseError);
             }
 
-            return (new TemplateSegment(SegmentType.Path, parameterName),
+            return (new TemplateSegment(SegmentType.Path, segemnetVal),
                 new TemplateParameter(parameterName, constraint));
 
         }

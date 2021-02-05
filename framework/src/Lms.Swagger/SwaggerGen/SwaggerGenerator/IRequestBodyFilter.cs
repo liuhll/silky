@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
 using Microsoft.OpenApi.Models;
 
 namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
@@ -12,8 +12,8 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
     public class RequestBodyFilterContext
     {
         public RequestBodyFilterContext(
-            ApiParameterDescription bodyParameterDescription,
-            IEnumerable<ApiParameterDescription> formParameterDescriptions,
+            ParameterDescriptor bodyParameterDescription,
+            IEnumerable<ParameterDescriptor> formParameterDescriptions,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository)
         {
@@ -23,9 +23,9 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
             SchemaRepository = schemaRepository;
         }
 
-        public ApiParameterDescription BodyParameterDescription { get; }
+        public ParameterDescriptor BodyParameterDescription { get; }
 
-        public IEnumerable<ApiParameterDescription> FormParameterDescriptions { get; }
+        public IEnumerable<ParameterDescriptor> FormParameterDescriptions { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
 

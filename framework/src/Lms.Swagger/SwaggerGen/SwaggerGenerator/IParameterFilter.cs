@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
@@ -12,7 +13,7 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
     public class ParameterFilterContext
     {
         public ParameterFilterContext(
-            ApiParameterDescription apiParameterDescription,
+            ParameterDescriptor apiParameterDescription,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
             PropertyInfo propertyInfo = null,
@@ -25,7 +26,7 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
             ParameterInfo = parameterInfo;
         }
 
-        public ApiParameterDescription ApiParameterDescription { get; }
+        public ParameterDescriptor ApiParameterDescription { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
 

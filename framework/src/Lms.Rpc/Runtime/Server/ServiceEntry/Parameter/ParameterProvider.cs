@@ -51,7 +51,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
                     throw new LmsException($"路由类型参数不允许为复杂数据类型");
                 }
 
-                parameterDescriptor = new ParameterDescriptor(parameter.Name, parameter.ParameterType, parameterFrom);
+                parameterDescriptor = new ParameterDescriptor(parameterFrom, parameter);
             }
             else
             {
@@ -63,20 +63,20 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
                     if (httpMethodAttribute == null)
                     {
                         parameterDescriptor =
-                            new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Query);
+                            new ParameterDescriptor(ParameterFrom.Query, parameter);
                     }
                     else
                     {
                         var routeTemplate = httpMethodAttribute.Template;
                         var routeTemplateSegments = routeTemplate.Split("/");
-                        var parameterFromPath = false; 
+                        var parameterFromPath = false;
                         foreach (var routeTemplateSegment in routeTemplateSegments)
                         {
                             if (TemplateSegmentHelper.IsVariable(routeTemplateSegment)
                                 && TemplateSegmentHelper.GetVariableName(routeTemplateSegment) == parameter.Name)
                             {
                                 parameterDescriptor =
-                                    new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Path);
+                                    new ParameterDescriptor(ParameterFrom.Path, parameter);
                                 parameterFromPath = true;
                                 break;
                             }
@@ -85,15 +85,14 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
                         if (!parameterFromPath)
                         {
                             parameterDescriptor =
-                                new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Query);
+                                new ParameterDescriptor(ParameterFrom.Query, parameter);
                         }
                     }
-
                 }
                 else
                 {
                     parameterDescriptor =
-                        new ParameterDescriptor(parameter.Name, parameter.ParameterType, ParameterFrom.Body);
+                        new ParameterDescriptor(ParameterFrom.Body, parameter);
                 }
             }
 
