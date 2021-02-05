@@ -11,7 +11,7 @@ namespace ConsoleDemo.AppService
             throw new System.NotImplementedException();
         }
 
-        public Task<string> Create(TestDto input)
+        public Task<TestOut> Create(TestDto input)
         {
             throw new System.NotImplementedException();
         }
@@ -21,7 +21,7 @@ namespace ConsoleDemo.AppService
             throw new System.NotImplementedException();
         }
 
-        public Task<string> Search(TestDto query)
+        public Task<TestOut> Search(TestDto query)
         {
             throw new System.NotImplementedException();
         }

@@ -7,9 +7,8 @@ using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
-using Lms.Swagger;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 
@@ -118,7 +117,7 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                     OperationId = _options.OperationIdSelector(apiDescription),
                     Parameters = GenerateParameters(apiDescription, schemaRepository),
                     RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
-                    //Responses = GenerateResponses(apiDescription, schemaRepository),
+                    Responses = GenerateResponses(apiDescription, schemaRepository),
                     //Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any()
                 };
 
@@ -140,6 +139,59 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                     $"Failed to generate Operation for action - {apiDescription.ServiceDescriptor.Id}. See inner exception",
                     innerException: ex);
             }
+        }
+
+        private OpenApiResponses GenerateResponses(ServiceEntry apiDescription, SchemaRepository schemaRepository)
+        {
+            var responses = new OpenApiResponses();
+            var statusCodeSourcess = StatusCodeHelper.GetResponseStatusCodes();
+            foreach (var statusCodeSource in statusCodeSourcess)
+            {
+                responses.Add(((int)statusCodeSource.Key).ToString(), GenerateResponse(apiDescription, schemaRepository, statusCodeSource));
+            }
+            return responses;
+        }
+
+        private OpenApiResponse GenerateResponse(ServiceEntry apiDescription, SchemaRepository schemaRepository, KeyValuePair<StatusCode, string> statusCodeSource)
+        {
+            var description = statusCodeSource.Value;
+            var responseContentTypes = apiDescription.SupportedResponseMediaTypes;
+            if (statusCodeSource.Key == StatusCode.Success)
+            {
+                return new OpenApiResponse
+                {
+                    Description = description,
+                    Content = responseContentTypes.ToDictionary(
+                        contentType => contentType,
+                        contentType => CreateResponseMediaType(apiDescription.ReturnType, schemaRepository)
+                    )
+                };
+            }
+            else
+            {
+                return new OpenApiResponse
+                {
+                    Description = description,
+                    Content = responseContentTypes.ToDictionary(
+                        contentType => contentType,
+                        contentType => CreateResponseMediaType(typeof(string), schemaRepository)
+                    )
+                };
+            }
+        }
+
+
+        private OpenApiMediaType CreateResponseMediaType(Type returnType, SchemaRepository schemaRepository)
+        {
+            return new OpenApiMediaType
+            {
+                Schema = GenerateSchema(returnType, schemaRepository)
+            };
+        }
+
+        private IEnumerable<string> InferResponseContentTypes(ServiceEntry apiDescription, ApiResponseType apiResponseType)
+        {
+            return apiDescription.SupportedResponseMediaTypes;
         }
 
         private OpenApiRequestBody GenerateRequestBody(ServiceEntry apiDescription, SchemaRepository schemaRepository)

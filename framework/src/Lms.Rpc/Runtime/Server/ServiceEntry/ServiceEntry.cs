@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.Convertible;
@@ -26,14 +27,37 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
             ParameterDescriptors = parameterDescriptors;
             IsLocal = isLocal;
             _serviceType = serviceType;
-            MethodInfo = methodInfo;
             GroupName = serviceType.FullName;
+            MethodInfo = methodInfo;
             CustomAttributes = serviceType.GetCustomAttributes(true);
+            ReturnType = SetReturnType();
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
             _methodExecutor =
                 ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
             Executor = CreateExecutor();
             CreateDefaultSupportedRequestMediaTypes();
+            CreateDefaultSupportedResponseMediaTypes();
+        }
+
+        private Type SetReturnType()
+        {
+            var returnType = MethodInfo.ReturnType;
+            
+            IsAsyncMethod = returnType == typeof(Task) || returnType.BaseType == typeof(Task);
+            if (IsAsyncMethod)
+            {
+                return returnType.GenericTypeArguments.FirstOrDefault();
+            }
+            return returnType;
+        }
+
+        private void CreateDefaultSupportedResponseMediaTypes()
+        {
+            if (ReturnType != null || ReturnType == typeof(void))
+            {
+                SupportedResponseMediaTypes.Add("application/json");
+                SupportedResponseMediaTypes.Add("text/json");
+            }
         }
 
         private void CreateDefaultSupportedRequestMediaTypes()
@@ -44,13 +68,16 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
             }
             else
             {
-                SupportedRequestMediaTypes.Add("Application/json");
+                SupportedRequestMediaTypes.Add("application/json");
+                SupportedRequestMediaTypes.Add("text/json");
             }
         }
 
         public Func<string, IDictionary<ParameterFrom, object>, Task<object>> Executor { get; }
 
         public IList<string> SupportedRequestMediaTypes { get; } = new List<string>();
+
+        public IList<string> SupportedResponseMediaTypes { get; } = new List<string>();
 
         public bool IsLocal { get; }
 
@@ -59,6 +86,10 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
         public IRouter Router { get; }
 
         public MethodInfo MethodInfo { get; }
+
+        public bool IsAsyncMethod { get; private set; }
+
+        public Type ReturnType { get; }
 
         public IReadOnlyList<ParameterDescriptor> ParameterDescriptors { get; }
 
@@ -146,7 +177,12 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
                     #endregion
                 }
 
-                return _methodExecutor.ExecuteAsync(instance, list.ToArray()).GetAwaiter().GetResult();
+                if (IsAsyncMethod)
+                {
+                    return _methodExecutor.ExecuteAsync(instance, list.ToArray()).GetAwaiter().GetResult();
+                }
+                return _methodExecutor.Execute(instance, list.ToArray());
+
             });
 
         public ServiceDescriptor ServiceDescriptor { get; }
