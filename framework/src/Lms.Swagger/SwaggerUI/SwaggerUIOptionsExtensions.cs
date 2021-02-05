@@ -3,7 +3,6 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using Lms.Swagger.SwaggerUI;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder
 {

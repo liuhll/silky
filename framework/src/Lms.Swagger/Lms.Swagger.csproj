@@ -19,7 +19,7 @@
     
     <ItemGroup>
         <EmbeddedResource Include="SwaggerUI/index.html" />
-        <EmbeddedResource Include="SwaggerUI/node_modules/swagger-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md" />
+        <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md" />
     </ItemGroup>
 
     <Target Name="NpmInstall" BeforeTargets="Build">

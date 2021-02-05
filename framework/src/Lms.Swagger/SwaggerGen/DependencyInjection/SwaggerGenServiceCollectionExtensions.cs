@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.Json;
-using Lms.Swagger.Swagger;
+using Lms.Swagger;
 using Lms.Swagger.SwaggerGen.DependencyInjection;
 using Lms.Swagger.SwaggerGen.SchemaGenerator;
 using Lms.Swagger.SwaggerGen.SwaggerGenerator;

@@ -7,7 +7,7 @@ using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
-using Lms.Swagger.Swagger;
+using Lms.Swagger;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;

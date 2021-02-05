@@ -1,27 +1,25 @@
-﻿using System.Reflection;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.StaticFiles;
+using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Lms.Swagger.SwaggerUI;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 
-namespace Swashbuckle.AspNetCore.SwaggerUI
+namespace Lms.Swagger.SwaggerUI
 {
     public class SwaggerUIMiddleware
     {
-        private const string EmbeddedFileNamespace = "Lms.Swagger.SwaggerUI.node_modules.swagger_ui_dist";
+        private const string EmbeddedFileNamespace = "Lms.Swagger.node_modules.swagger_ui_dist";
 
         private readonly SwaggerUIOptions _options;
         private readonly StaticFileMiddleware _staticFileMiddleware;

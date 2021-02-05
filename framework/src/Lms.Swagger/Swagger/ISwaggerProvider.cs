@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 
-namespace Lms.Swagger.Swagger
+namespace Lms.Swagger
 {
     public interface ISwaggerProvider
     {

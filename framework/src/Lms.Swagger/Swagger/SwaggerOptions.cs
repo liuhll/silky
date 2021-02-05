@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 
-namespace Lms.Swagger.Swagger
+namespace Lms.Swagger
 {
     public class SwaggerOptions
     {

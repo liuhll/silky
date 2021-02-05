@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Lms.Swagger.Swagger;
+using Lms.Swagger;
 using Lms.Swagger.SwaggerGen.SwaggerGenerator;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;

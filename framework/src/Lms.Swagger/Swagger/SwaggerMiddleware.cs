@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 
-namespace Lms.Swagger.Swagger
+namespace Lms.Swagger
 {
     public class SwaggerMiddleware
     {

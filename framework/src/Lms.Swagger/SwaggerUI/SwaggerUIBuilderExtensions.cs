@@ -2,7 +2,6 @@
 using Lms.Swagger.SwaggerUI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder
 {
