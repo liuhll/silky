@@ -1,6 +1,6 @@
 namespace Lms.Rpc.Address
 {
-    public interface IServiceRouteProvider
+    public interface IRouteTemplateProvider
     {
         string Template { get; }
     }

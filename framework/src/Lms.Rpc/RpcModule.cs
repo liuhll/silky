@@ -25,18 +25,18 @@ namespace Lms.Rpc
 
         public async override Task Initialize(ApplicationContext applicationContext)
         {
-            var registryCenterOptions = EngineContext.Current.Resolve<IOptions<RegistryCenterOptions>>().Value;
-            if (!applicationContext.ModuleContainer.Modules.Any(p=> p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(),StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new LmsException($"您没有指定依赖{registryCenterOptions.RegistryCenterType}服务注册中心模块");
-            }
-
-            var serviceRouteProvider = EngineContext.Current.Resolve<IServiceRouteProvider>();
-            await serviceRouteProvider.RegisterRpcRoutes(Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds);
-            
-            // cache
-            var cache = EngineContext.Current.Resolve<ServiceRouteCache>();
-            var c = cache.ServiceRoutes;
+            // var registryCenterOptions = EngineContext.Current.Resolve<IOptions<RegistryCenterOptions>>().Value;
+            // if (!applicationContext.ModuleContainer.Modules.Any(p=> p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(),StringComparison.OrdinalIgnoreCase)))
+            // {
+            //     throw new LmsException($"您没有指定依赖{registryCenterOptions.RegistryCenterType}服务注册中心模块");
+            // }
+            //
+            // var serviceRouteProvider = EngineContext.Current.Resolve<IServiceRouteProvider>();
+            // await serviceRouteProvider.RegisterRpcRoutes(Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds);
+            //
+            // // cache
+            // var cache = EngineContext.Current.Resolve<ServiceRouteCache>();
+            // var c = cache.ServiceRoutes;
         }
     }
 }
