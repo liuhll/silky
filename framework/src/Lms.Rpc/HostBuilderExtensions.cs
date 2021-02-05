@@ -15,6 +15,7 @@ namespace Lms.Rpc
                     .Bind(hosting.Configuration.GetSection(RpcOptions.Rpc));
                 services.AddOptions<RegistryCenterOptions>()
                     .Bind(hosting.Configuration.GetSection(RegistryCenterOptions.RegistryCenter));
+                services.AddHostedService<RpcServerHostedService>();
 
             });
         }

@@ -19,7 +19,8 @@ namespace Lms.Core
                 {
                    (engine) = config.ConfigureLmsServices(hostBuilder.Configuration, hostBuilder.HostingEnvironment);
                    services = config;
-                   
+                   services.AddHostedService<InitLmsHostedService>();
+
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {

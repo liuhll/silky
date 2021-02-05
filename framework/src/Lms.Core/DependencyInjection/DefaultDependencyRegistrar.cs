@@ -29,11 +29,11 @@ namespace Lms.Core.DependencyInjection
                     .AsSelf()
                     .InstancePerLifetimeScope();
                 
-                builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => typeof(IHostedService).GetTypeInfo().IsAssignableFrom(t))
-                    .AsImplementedInterfaces()
-                    .AsSelf()
-                    .SingleInstance();
+                // builder.RegisterAssemblyTypes(assembly)
+                //     .Where(t => typeof(IHostedService).GetTypeInfo().IsAssignableFrom(t))
+                //     .AsImplementedInterfaces()
+                //     .AsSelf()
+                //     .SingleInstance();
             }
         }
 

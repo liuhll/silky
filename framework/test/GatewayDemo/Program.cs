@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Lms.Core;
+using Lms.Rpc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +30,7 @@ namespace GatewayDemo
                          .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
                          
                  })
+                .UseRpcServer()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }
