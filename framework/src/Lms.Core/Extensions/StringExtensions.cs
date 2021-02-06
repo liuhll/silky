@@ -227,15 +227,15 @@ namespace Lms.Core.Extensions
         }
 
        
-        public static T ToEnum<T>(this string value)
-            where T : struct
-        {
-            Check.NotNull(value, nameof(value));
-            return (T)Enum.Parse(typeof(T), value);
-        }
+        // public static T ToEnum<T>(this string value)
+        //     where T : struct
+        // {
+        //     Check.NotNull(value, nameof(value));
+        //     return (T)Enum.Parse(typeof(T), value);
+        // }
 
         
-        public static T ToEnum<T>(this string value, bool ignoreCase)
+        public static T ToEnum<T>(this string value, bool ignoreCase = true)
             where T : struct
         {
             Check.NotNull(value, nameof(value));
