@@ -118,10 +118,10 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                     Parameters = GenerateParameters(apiDescription, schemaRepository),
                     RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
                     Responses = GenerateResponses(apiDescription, schemaRepository),
-                    //Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any()
+                    Deprecated = apiDescription.CustomAttributes.OfType<ObsoleteAttribute>().Any()
                 };
 
-                // apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
+
                 var methodInfo = apiDescription.MethodInfo;
                 var filterContext =
                     new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
