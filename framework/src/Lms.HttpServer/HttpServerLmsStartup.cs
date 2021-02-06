@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lms.Gateway
+namespace Lms.HttpServer
 {
-    public class GatewayLmsStartup : ILmsStartup
+    public class HttpServerLmsStartup : ILmsStartup
     {
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

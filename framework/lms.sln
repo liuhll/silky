@@ -34,7 +34,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayDemo", "test\Gateway
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Swagger", "src\Lms.Swagger\Lms.Swagger.csproj", "{63A9EAC9-60F9-479E-B015-B1B160DDAB37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Gateway", "src\Lms.Gateway\Lms.Gateway.csproj", "{545C0F48-6276-4BC3-B66C-D84C2A65A84C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.HttpServer", "src\Lms.HttpServer\Lms.HttpServer.csproj", "{545C0F48-6276-4BC3-B66C-D84C2A65A84C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

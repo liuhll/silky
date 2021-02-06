@@ -4,7 +4,7 @@ using Lms.Rpc.Messages;
 using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Lms.Rpc.Transport;
 
-namespace Lms.Gateway
+namespace Lms.HttpServer
 {
     public class HttpMessageListener : IMessageListener, ISingletonDependency
     {

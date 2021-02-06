@@ -10,7 +10,7 @@ using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
-namespace Lms.Gateway
+namespace Lms.HttpServer
 {
     public class HttpMessageReceivedHandler : ITransientDependency
     {
