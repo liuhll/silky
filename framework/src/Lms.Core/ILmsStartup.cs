@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
 
 namespace Lms.Core
 {
-    public interface ILmsStartup
+    public interface ILmsStartup : IConfigureService
     {
-        void ConfigureServices(IServiceCollection services, IConfiguration configuration);
+        void Configure(IApplicationBuilder application);
     }
 }

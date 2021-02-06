@@ -20,8 +20,18 @@ namespace Lms.Core
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            _typeFinder = new AppDomainTypeFinder();
+            _typeFinder = new LmsAppTypeFinder();
             ServiceProvider = services.BuildServiceProvider();
+            var startupConfigurations = _typeFinder.FindClassesOfType<IConfigureService>();
+
+            //create and sort instances of startup configurations
+            var instances = startupConfigurations
+                .Select(startup => (IConfigureService)Activator.CreateInstance(startup))
+                .OrderBy(startup => startup.Order);
+
+            //configure services
+            foreach (var instance in instances)
+                instance.ConfigureServices(services, configuration);
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
@@ -30,6 +40,17 @@ namespace Lms.Core
         public void ConfigureRequestPipeline(IApplicationBuilder application)
         {
             ServiceProvider = application.ApplicationServices;
+            var typeFinder = Resolve<ITypeFinder>();
+            var startupConfigurations = typeFinder.FindClassesOfType<ILmsStartup>();
+
+            //create and sort instances of startup configurations
+            var instances = startupConfigurations
+                .Select(startup => (ILmsStartup)Activator.CreateInstance(startup))
+                .OrderBy(startup => startup.Order);
+
+            //configure request pipeline
+            foreach (var instance in instances)
+                instance.Configure(application);
         }
 
         public T Resolve<T>() where T : class

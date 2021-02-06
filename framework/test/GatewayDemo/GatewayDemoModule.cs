@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.Modularity;
+using Lms.Gateway;
 using Lms.RegistryCenter.Zookeeper;
 using Lms.Rpc;
 using Lms.Rpc.Configuration;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace GatewayDemo
 {
-    [DependsOn(typeof(RpcModule),typeof(ZookeeperModule))]
+    [DependsOn(typeof(RpcModule),typeof(ZookeeperModule),typeof(GatewayModule))]
     public class GatewayDemoModule : LmsModule
     {
         public async override Task Initialize(ApplicationContext applicationContext)

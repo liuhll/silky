@@ -15,10 +15,9 @@ namespace Lms.Core
             services.AddHttpContextAccessor();
             CommonHelper.DefaultFileProvider = new LmsFileProvider(hostEnvironment);
             var engine = EngineContext.Create();
-            engine.ConfigureServices(services, configuration);
-
             var moduleLoder = new ModuleLoader();
             services.TryAddSingleton<IModuleLoader>(moduleLoder);
+            engine.ConfigureServices(services, configuration);
             return engine;
         }
     }

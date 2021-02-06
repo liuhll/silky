@@ -1,3 +1,4 @@
+using Lms.Core;
 using Lms.Rpc.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,6 +49,8 @@ namespace GatewayDemo
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            app.ConfigureRequestPipeline();
         }
     }
 }
