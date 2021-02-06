@@ -17,6 +17,6 @@ namespace Lms.Gateway
         {
         }
 
-        public int Order { get; } = 1;
+        public int Order { get; } = 2;
     }
 }

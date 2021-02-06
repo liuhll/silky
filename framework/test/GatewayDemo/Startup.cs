@@ -21,10 +21,6 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOptions<RpcOptions>()
-                .Bind(Configuration.GetSection(RpcOptions.Rpc));
-            services.AddOptions<RegistryCenterOptions>()
-                .Bind(Configuration.GetSection(RegistryCenterOptions.RegistryCenter));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
