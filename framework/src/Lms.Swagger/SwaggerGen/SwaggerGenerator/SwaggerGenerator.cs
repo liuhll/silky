@@ -421,9 +421,10 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                     throw new LmsException("指定QString 参数不允许指定复杂类型参数");
                 }
 
-                var name = _options.DescribeAllParametersInCamelCase
-                    ? propertyInfo.Name.ToCamelCase()
-                    : propertyInfo.Name;
+                var name = apiParameter.From == ParameterFrom.Path ? apiParameter.Name : propertyInfo.Name;
+                name = _options.DescribeAllParametersInCamelCase
+                    ? name.ToCamelCase()
+                    : name;
                 var location = ParameterLocationMap[apiParameter.From];
                 var isRequired = (apiParameter.From == ParameterFrom.Path)
                                  || apiParameter.Type.GetCustomAttributes().Any(attr =>

@@ -76,7 +76,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.Parameter
                                 && TemplateSegmentHelper.GetVariableName(routeTemplateSegment) == parameter.Name)
                             {
                                 parameterDescriptor =
-                                    new ParameterDescriptor(ParameterFrom.Path, parameter);
+                                    new ParameterDescriptor(ParameterFrom.Path, parameter, TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment));
                                 parameterFromPath = true;
                                 break;
                             }

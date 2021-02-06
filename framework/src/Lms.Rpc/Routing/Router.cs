@@ -17,10 +17,10 @@ namespace Lms.Rpc.Routing
         private readonly MethodInfo _method;
         private readonly string _routePath;
 
-        public Router(string template, string serviceName,MethodInfo methodInfo, HttpMethod httpMethod)
+        public Router(string template, string serviceName, MethodInfo methodInfo, HttpMethod httpMethod)
         {
             RouteTemplate = new RouteTemplate();
-            ParseRouteTemplate(template, serviceName,methodInfo);
+            ParseRouteTemplate(template, serviceName, methodInfo);
             HttpMethod = httpMethod;
             _method = methodInfo;
             _routePath = GenerateRoutePath();
@@ -37,7 +37,7 @@ namespace Lms.Rpc.Routing
                 }
                 else
                 {
-                    routePath += "{" + segment.Value + "}" + "/";
+                    routePath += "{" + TemplateSegmentHelper.GetSegmentVal(segment.Value) + "}" + "/";
                 }
             }
 
@@ -49,7 +49,6 @@ namespace Lms.Rpc.Routing
         public HttpMethod HttpMethod { get; }
 
         public string RoutePath => _routePath;
-        public IList<string> SupportedRequestMediaTypes { get; set; }
 
         public bool IsMatch(string api, HttpMethod httpMethod)
         {
@@ -57,6 +56,7 @@ namespace Lms.Rpc.Routing
             {
                 return false;
             }
+
             api = TrimPrefix(api);
             var apiSegments = api.Split(separator);
             var parameterIndex = 0;
@@ -68,6 +68,7 @@ namespace Lms.Rpc.Routing
                 {
                     return false;
                 }
+
                 if (routeSegment.IsParameter)
                 {
                     if (parameterIndex >= RouteTemplate.Parameters.Count())
@@ -75,13 +76,15 @@ namespace Lms.Rpc.Routing
                         return false;
                     }
 
-                    var routeParameter= RouteTemplate.Parameters[parameterIndex];
-                    if (!routeParameter.Constraint.IsNullOrEmpty() && !Regex.IsMatch(apiSegment,routeParameter.Constraint))
+                    var routeParameter = RouteTemplate.Parameters[parameterIndex];
+                    if (!routeParameter.Constraint.IsNullOrEmpty() &&
+                        !Regex.IsMatch(apiSegment, routeParameter.Constraint))
                     {
                         return false;
                     }
                 }
             }
+
             return true;
         }
 
@@ -92,31 +95,34 @@ namespace Lms.Rpc.Routing
 
             foreach (var segementLine in segementLines)
             {
-                var segmentType = TemplateSegmentHelper.GetSegmentType(segementLine,serviceName);
+                var segmentType = TemplateSegmentHelper.GetSegmentType(segementLine, serviceName);
                 switch (segmentType)
                 {
                     case SegmentType.Literal:
-                        RouteTemplate.Segments.Add(new TemplateSegment(SegmentType.Literal,segementLine));
+                        RouteTemplate.Segments.Add(new TemplateSegment(SegmentType.Literal, segementLine));
                         break;
                     case SegmentType.AppService:
                     {
-                        var appServiceName = ParseAppServiceName(TemplateSegmentHelper.GetSegmentVal(segementLine), serviceName);
-                        RouteTemplate.Segments.Add(new TemplateSegment(SegmentType.AppService,appServiceName));
+                        var appServiceName = ParseAppServiceName(TemplateSegmentHelper.GetSegmentVal(segementLine),
+                            serviceName);
+                        RouteTemplate.Segments.Add(new TemplateSegment(SegmentType.AppService, appServiceName));
                         break;
                     }
                     case SegmentType.Path:
                     {
-                        var pathParameterSegment = ParsePathParameterSegment(TemplateSegmentHelper.GetSegmentVal(segementLine),methodInfo);
+                        var pathParameterSegment =
+                            ParsePathParameterSegment(TemplateSegmentHelper.GetSegmentVal(segementLine), methodInfo);
                         RouteTemplate.Segments.Add(pathParameterSegment.Item1);
                         RouteTemplate.Parameters.Add(pathParameterSegment.Item2);
                         break;
                     }
                 }
             }
+
             var appServiceSegmentCount = RouteTemplate.Segments?.Count(p => p.SegmentType == SegmentType.AppService);
             if (appServiceSegmentCount != 1)
             {
-                throw new LmsException("路由模板未指定服务应用",StatusCode.RouteParseError);
+                throw new LmsException("路由模板未指定服务应用", StatusCode.RouteParseError);
             }
         }
 
@@ -134,12 +140,11 @@ namespace Lms.Rpc.Routing
             if (!methodInfo.GetParameters().Any(p =>
                 p.Name.Equals(parameterName, StringComparison.OrdinalIgnoreCase) && p.IsSampleType()))
             {
-                throw new LmsException("设置路由参数不正常,只允许为简单数据类型设置路径参数",StatusCode.RouteParseError);
+                throw new LmsException("设置路由参数不正常,只允许为简单数据类型设置路径参数", StatusCode.RouteParseError);
             }
 
             return (new TemplateSegment(SegmentType.Path, segemnetVal),
                 new TemplateParameter(parameterName, constraint));
-
         }
 
         private string ParseAppServiceName(string segemnetVal, string serviceName)
@@ -148,10 +153,10 @@ namespace Lms.Rpc.Routing
             {
                 return segemnetVal.Split("=")[1].ToLower();
             }
-            return serviceName.Substring(1, serviceName.Length - segemnetVal.Length - 1).ToLower();
 
+            return serviceName.Substring(1, serviceName.Length - segemnetVal.Length - 1).ToLower();
         }
-        
+
         private static string TrimPrefix(string template)
         {
             if (template.StartsWith("~/", StringComparison.Ordinal))
@@ -166,6 +171,7 @@ namespace Lms.Rpc.Routing
             {
                 throw new LmsException($"{template}设置的路由模板格式不正常", StatusCode.RouteParseError);
             }
+
             return template;
         }
 
@@ -188,7 +194,7 @@ namespace Lms.Rpc.Routing
         {
             return (RoutePath + HttpMethod).GetHashCode();
         }
-        
+
         public static bool operator ==(Router model1, Router model2)
         {
             return Equals(model1, model2);
