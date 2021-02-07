@@ -81,7 +81,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
         {
             var serviceName = serviceType.Name;
             var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
-            var serviceId = _serviceIdGenerator.GenerateServiceId(method, httpMethod);
+            var serviceId = _serviceIdGenerator.GenerateServiceId(method);
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
             var serviceDescriptor = new ServiceDescriptor
             {
