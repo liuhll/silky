@@ -6,7 +6,7 @@ using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Address;
 using Lms.Rpc.Configuration;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
 
 namespace Lms.Rpc.Utils

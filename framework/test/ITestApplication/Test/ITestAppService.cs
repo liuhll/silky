@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
-using Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery;
+using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITestApplication.Test

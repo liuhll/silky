@@ -1,4 +1,4 @@
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 using Lms.TestBase.Testing;
 using Shouldly;
 using Xunit;

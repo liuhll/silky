@@ -1,7 +1,5 @@
-using Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery;
-using Lms.Rpc.Tests.AppService;
+using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Lms.TestBase.Testing;
-using Shouldly;
 using Xunit;
 
 namespace Lms.Rpc.Tests.Runtime.Server.ServiceDiscovery

@@ -5,8 +5,8 @@ using Lms.Core.DependencyInjection;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
+using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 

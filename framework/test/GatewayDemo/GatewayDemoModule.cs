@@ -5,7 +5,7 @@ using Lms.HttpServer;
 using Lms.RegistryCenter.Zookeeper;
 using Lms.Rpc;
 using Lms.Rpc.Configuration;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
 
 namespace GatewayDemo

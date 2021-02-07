@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Lms.Core.Utils;
 using Lms.Rpc.Address.Descriptor;
-using Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor;
+using Lms.Rpc.Runtime.Server.Descriptor;
 
 namespace Lms.Rpc.Routing.Descriptor
 {

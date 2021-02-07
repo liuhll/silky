@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Lms.Rpc.Runtime.Server;
 using Microsoft.OpenApi.Models;
 
 namespace Lms.Swagger.SwaggerGen.SwaggerGenerator

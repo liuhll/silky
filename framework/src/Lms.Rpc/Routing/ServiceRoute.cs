@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Lms.Rpc.Address;
-using Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor;
+using Lms.Rpc.Runtime.Server.Descriptor;
 
 namespace Lms.Rpc.Routing
 {

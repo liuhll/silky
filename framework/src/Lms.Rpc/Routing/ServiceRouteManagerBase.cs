@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing.Descriptor;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Utils;
 using Microsoft.Extensions.Options;
 

@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
-using Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery;
+using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Lms.Rpc.Tests.AppService.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lms.Rpc.Tests.AppService
 {
-    [Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery.ServiceRoute("api/test")]
+    [ServiceRoute("api/test")]
     public interface ITestAppService
     {
         [HttpPost("/test")]

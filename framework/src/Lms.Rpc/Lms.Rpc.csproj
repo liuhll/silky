@@ -8,4 +8,8 @@
       <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Runtime\Client" />
+    </ItemGroup>
+
 </Project>

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
+using Lms.Rpc.Runtime.Server.Parameter;
 using Microsoft.OpenApi.Models;
 
 namespace Lms.Swagger.SwaggerGen.SwaggerGenerator

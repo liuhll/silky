@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Lms.Core;
 using Lms.Core.Modularity;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 
 namespace Lms.Rpc
 {

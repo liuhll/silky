@@ -7,7 +7,7 @@ using Lms.Core.Serialization;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Descriptor;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 using Lms.Zookeeper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

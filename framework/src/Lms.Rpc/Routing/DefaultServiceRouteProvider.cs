@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
-using Lms.Rpc.Address;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 

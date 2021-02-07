@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
+using Lms.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 

@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core.Serialization;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
-using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
+using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Http;
 
 namespace Lms.HttpServer

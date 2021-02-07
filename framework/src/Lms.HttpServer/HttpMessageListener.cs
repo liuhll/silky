@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Rpc.Messages;
-using Lms.Rpc.Runtime.Server.ServiceEntry;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Transport;
 
 namespace Lms.HttpServer

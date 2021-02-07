@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Lms.Core.Exceptions;
 using Lms.Rpc.Routing.Template;
-using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
+using Lms.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.Rpc.Routing
