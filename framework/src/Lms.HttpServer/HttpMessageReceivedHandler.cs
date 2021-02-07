@@ -1,12 +1,12 @@
-using System.Collections.Generic;
-using System.IO;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
-using Lms.Core;
 using Lms.Core.DependencyInjection;
+using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.ServiceEntry;
-using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
@@ -16,12 +16,18 @@ namespace Lms.HttpServer
     {
         private readonly IServiceEntryLocate _serviceEntryLocate;
         private readonly IParameterParser _parameterParser;
+        private readonly IServiceExecutor _serverExecutor;
+        private readonly IJsonSerializer _jsonSerializer;
 
         public HttpMessageReceivedHandler(IServiceEntryLocate serviceEntryLocate,
-            IParameterParser parameterParser)
+            IParameterParser parameterParser,
+            IServiceExecutor serverExecutor,
+            IJsonSerializer jsonSerializer)
         {
             _serviceEntryLocate = serviceEntryLocate;
             _parameterParser = parameterParser;
+            _serverExecutor = serverExecutor;
+            _jsonSerializer = jsonSerializer;
         }
 
         internal async Task Handle(HttpContext context)
@@ -29,14 +35,24 @@ namespace Lms.HttpServer
             var path = context.Request.Path;
             var method = context.Request.Method.ToEnum<HttpMethod>();
             var serviceEntry = _serviceEntryLocate.GetServiceEntryByApi(path, method);
-
-            if (serviceEntry.IsLocal)
+            if (serviceEntry == null)
             {
-                var parameters = await _parameterParser.Parser(context.Request, serviceEntry);
-                var responseData = await serviceEntry.Executor(null, parameters);
-
-                await context.Response.WriteAsync(EngineContext.Current.Resolve<IJsonSerializer>()
-                    .Serialize(responseData));
+                throw new LmsException($"通过{path}-{method}无法找到服务条目");
+            }
+            var parameters = await _parameterParser.Parser(context.Request, serviceEntry);
+            var excuteResult = await _serverExecutor.Execute(serviceEntry, parameters);
+            context.Response.ContentType = "application/json;charset=utf-8";
+            context.Response.StatusCode = 200;
+            if (excuteResult != null)
+            {
+                var responseData = _jsonSerializer.Serialize(excuteResult);
+                context.Response.ContentLength = responseData.GetBytes().Length;
+                await context.Response.WriteAsync(responseData);
+            }
+            else
+            {
+                context.Response.ContentLength = 0;
+                await context.Response.WriteAsync(null);
             }
         }
     }

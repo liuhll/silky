@@ -2,16 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using Lms.Core;
 using Lms.Core.Extensions;
-using Lms.Core.MethodExecutor;
 using Lms.Rpc.Ids;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
@@ -96,10 +92,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry.ServiceDiscovery
             var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, parameterDescriptors, isLocal);
             return serviceEntry;
         }
-
-        private FastInvokeHandler GetHandler(string serviceId, MethodInfo method)
-        {
-            return FastInvoke.GetMethodInvoker(method);
-        }
+        
     }
 }
