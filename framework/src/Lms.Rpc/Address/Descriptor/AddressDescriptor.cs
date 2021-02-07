@@ -1,4 +1,5 @@
 using Lms.Rpc.Runtime.Server;
+using Newtonsoft.Json;
 
 namespace Lms.Rpc.Address.Descriptor
 {
@@ -9,7 +10,7 @@ namespace Lms.Rpc.Address.Descriptor
         public int Port { get; set; } 
 
         public ServiceProtocol ServiceProtocol { get; set; }
-
+        
         public override bool Equals(object obj)
         {
             var model = obj as AddressDescriptor;

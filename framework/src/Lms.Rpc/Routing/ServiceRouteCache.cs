@@ -34,5 +34,17 @@ namespace Lms.Rpc.Routing
             _serviceRouteDescriptorCache.Values.ToImmutableArray();
 
         public IReadOnlyList<ServiceRoute> ServiceRoutes => _serviceRouteCache.Values.ToImmutableArray();
+
+        public ServiceRoute this[string serviceId]
+        {
+            get
+            {
+                if ( _serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
+                {
+                    return serviceRoute;
+                }
+                return null;
+            }
+        }
     }
 }

@@ -111,7 +111,7 @@ namespace Lms.Rpc.Runtime.Server
                     return _methodExecutor.Execute(instance, parameters.ToArray());
                 }
                 var remoteServiceExecutor = EngineContext.Current.Resolve<IRemoteServiceExecutor>();
-                return remoteServiceExecutor.Execute(ServiceDescriptor.Id, parameters).GetAwaiter().GetResult();
+                return remoteServiceExecutor.Execute(this, parameters).GetAwaiter().GetResult();
             });
 
         public IList<object> ResolveParameters(IDictionary<ParameterFrom, object> parameters)

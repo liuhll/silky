@@ -9,5 +9,7 @@ namespace Lms.Rpc.Runtime.Client
     public interface IRemoteServiceExecutor : ITransientDependency
     {
         Task<object> Execute(string serviceId, IList<object> parameters);
+        
+        Task<object> Execute(ServiceEntry serviceEntry, IList<object> parameters);
     }
 }

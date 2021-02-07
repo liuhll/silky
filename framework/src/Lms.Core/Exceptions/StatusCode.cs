@@ -16,6 +16,14 @@ namespace Lms.Core.Exceptions
         [Description("路由解析异常")]
         RouteParseError = 502,
         
+        [Description("未找到服务路由")]
+        [IsResponseStatus]
+        NotFindServiceRoute = 503,
+        
+        [Description("未找到可用的服务地址")]
+        [IsResponseStatus]
+        NotFindServiceRouteAddress = 504,
+        
         // RouteMatchError = 503,
         //
         // DataAccessError = 504,
