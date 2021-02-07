@@ -3,10 +3,10 @@ using Lms.Core.Modularity;
 using Lms.RegistryCenter.Zookeeper;
 using Lms.Rpc;
 
-namespace ConsoleDemo
+namespace NormHostDemo
 {
     [DependsOn(typeof(RpcModule),typeof(ZookeeperModule))]
-    public class ConsoleDemoModule : LmsModule
+    public class NormDemoModule : LmsModule
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {

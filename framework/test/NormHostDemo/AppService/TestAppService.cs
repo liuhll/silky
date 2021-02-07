@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 
-namespace ConsoleDemo.AppService
+namespace NormHostDemo.AppService
 {
     public class TestAppService : ITestAppService
     {

@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0ADAAB32-4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Rpc", "src\Lms.Rpc\Lms.Rpc.csproj", "{85CC1802-9656-47C9-8175-988D6AE619BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDemo", "test\ConsoleDemo\ConsoleDemo.csproj", "{A35B6E14-4157-4BF1-A40D-EED44066879C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NormHostDemo", "test\NormHostDemo\NormHostDemo.csproj", "{A35B6E14-4157-4BF1-A40D-EED44066879C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LmsTestBase", "test\LmsTestBase\LmsTestBase.csproj", "{E847AD05-A5AE-47A2-A7F6-9FCF3AD32787}"
 EndProject
