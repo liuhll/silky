@@ -147,10 +147,9 @@ namespace Lms.Core
             var moduleLoader = services.GetSingletonInstance<IModuleLoader>();
             Modules = moduleLoader.LoadModules(services, typeof(T));
             containerBuilder.RegisterInstance(this).As<IModuleContainer>().SingleInstance();
-
+            var assemblyNames = ((AppDomainTypeFinder) _typeFinder).AssemblyNames;
             foreach (var module in Modules)
             {
-                var assemblyNames = ((AppDomainTypeFinder) _typeFinder).AssemblyNames;
                 if (!assemblyNames.Contains(module.Assembly.FullName))
                 {
                     ((AppDomainTypeFinder)_typeFinder).AssemblyNames.Add(module.Assembly.FullName);
