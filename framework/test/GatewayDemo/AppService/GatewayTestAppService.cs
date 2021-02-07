@@ -1,34 +1,42 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Lms.Core.Serialization;
 
 namespace GatewayDemo.AppService
 {
     public class GatewayTestAppService : ITestAppService
     {
-        public async Task<TestOut> Create(TestDto input)
+        private readonly IJsonSerializer _serializer;
+
+        public GatewayTestAppService(IJsonSerializer serializer)
         {
-            return new TestOut() { Address = "test", Name = "test"};
+            _serializer = serializer;
         }
 
-        public Task<string> Update(TestDto input)
+        public async Task<string> Create(TestDto input)
         {
-            throw new System.NotImplementedException();
+            return _serializer.Serialize(input);
         }
 
-        public Task<TestOut> Search(TestDto query)
+        public async Task<string> Update(TestDto input)
         {
-            throw new System.NotImplementedException();
+            return _serializer.Serialize(input);
         }
 
-        public Task<string> Form(TestDto query)
+        public async Task<string> Search(TestDto query)
         {
-            throw new System.NotImplementedException();
+            return _serializer.Serialize(query);
         }
 
-        public Task<string> Get(long id, string name)
+        public async Task<string> Form(TestDto query)
+        { 
+            return _serializer.Serialize(query);
+        }
+
+        public async Task<string> Get(long id, string name)
         {
-            throw new System.NotImplementedException();
+            return $"Id:{id} -- Name:{name}";
         }
     }
 }

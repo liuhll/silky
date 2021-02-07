@@ -11,7 +11,7 @@ namespace NormHostDemo.AppService
             throw new System.NotImplementedException();
         }
 
-        public Task<TestOut> Create(TestDto input)
+        public Task<string> Create(TestDto input)
         {
             throw new System.NotImplementedException();
         }
@@ -21,7 +21,7 @@ namespace NormHostDemo.AppService
             throw new System.NotImplementedException();
         }
 
-        public Task<TestOut> Search(TestDto query)
+        public Task<string> Search(TestDto query)
         {
             throw new System.NotImplementedException();
         }

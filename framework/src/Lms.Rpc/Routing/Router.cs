@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Lms.Core.Exceptions;
-using Lms.Core.Extensions;
 using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
@@ -59,12 +57,16 @@ namespace Lms.Rpc.Routing
 
             api = TrimPrefix(api);
             var apiSegments = api.Split(separator);
+            if (apiSegments.Length != RouteTemplate.Segments.Count())
+            {
+                return false;
+            }
             var parameterIndex = 0;
             for (var index = 0; index < apiSegments.Length; index++)
             {
                 var apiSegment = apiSegments[index];
                 var routeSegment = RouteTemplate.Segments[index];
-                if (!routeSegment.IsParameter && !routeSegment.Value.Equals(apiSegment))
+                if (!routeSegment.IsParameter && !routeSegment.Value.Equals(apiSegment,StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -76,16 +78,36 @@ namespace Lms.Rpc.Routing
                         return false;
                     }
 
+                    // todo 校验路由参数
                     var routeParameter = RouteTemplate.Parameters[parameterIndex];
-                    if (!routeParameter.Constraint.IsNullOrEmpty() &&
-                        !Regex.IsMatch(apiSegment, routeParameter.Constraint))
+                    /* if (!routeParameter.Constraint.IsNullOrEmpty()&&
+                             !Regex.IsMatch(apiSegment, routeParameter.Constraint))
                     {
                         return false;
-                    }
+                    }*/
                 }
             }
 
             return true;
+        }
+
+        public IDictionary<string, object> ParserRouteParameters(string path)
+        {
+            var routeParameters = new Dictionary<string, object>();
+            var api = TrimPrefix(path);
+            var apiSegments = api.Split(separator);
+            for (var index = 0; index < apiSegments.Length; index++)
+            {
+                var apiSegment = apiSegments[index];
+                var routeSegment = RouteTemplate.Segments[index];
+                if (!routeSegment.IsParameter)
+                {
+                    continue;
+                }
+                routeParameters.Add(TemplateSegmentHelper.GetVariableName(routeSegment.Value),apiSegment);
+            }
+
+            return routeParameters;
         }
 
         private void ParseRouteTemplate(string template, string serviceName, MethodInfo methodInfo)

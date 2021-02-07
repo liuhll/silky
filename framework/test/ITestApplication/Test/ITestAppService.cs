@@ -9,12 +9,12 @@ namespace ITestApplication.Test
     [ServiceRoute]
     public interface ITestAppService
     {
-        Task<TestOut> Create(TestDto input);
+        Task<string> Create(TestDto input);
 
         Task<string> Update(TestDto input);
 
         [HttpGet]
-        Task<TestOut> Search([FromQuery]TestDto query);
+        Task<string> Search([FromQuery]TestDto query);
         
         [HttpPost]
         Task<string> Form([FromForm]TestDto query);

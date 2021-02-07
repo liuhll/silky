@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
 using Lms.Core.MethodExecutor;
 using Lms.Rpc.Routing;
+using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Descriptor;
 using Lms.Rpc.Runtime.Server.ServiceEntry.Parameter;
 
@@ -148,8 +150,8 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
                                 var formVal =
                                     (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
                                         typeof(IDictionary<string, object>));
-                                var parameterVal = formVal[parameterDescriptor.Name];
-                                list.Add(parameterVal);
+                                var parameterVal = formVal[TemplateSegmentHelper.GetVariableName(parameterDescriptor.Name)];
+                                list.Add(typeConvertibleService.Convert(parameterVal,parameterDescriptor.Type));
                             }
                             else
                             {
@@ -164,7 +166,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceEntry
                                     (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
                                         typeof(IDictionary<string, object>));
                                 var parameterVal = formVal[parameterDescriptor.Name];
-                                list.Add(parameterVal);
+                                list.Add(typeConvertibleService.Convert(parameterVal,parameterDescriptor.Type));
                             }
                             else
                             {
