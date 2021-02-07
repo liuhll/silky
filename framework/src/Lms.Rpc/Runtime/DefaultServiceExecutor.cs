@@ -10,25 +10,13 @@ namespace Lms.Rpc.Runtime
 {
     public class DefaultServiceExecutor : IServiceExecutor
     {
-        private readonly IRemoteServiceExecutor _remoteServiceExecutor;
-
-        public DefaultServiceExecutor(IRemoteServiceExecutor remoteServiceExecutor)
-        {
-            _remoteServiceExecutor = remoteServiceExecutor;
-        }
-
         public async Task<object> Execute([NotNull] ServiceEntry serviceEntry,
-            [NotNull] IDictionary<ParameterFrom, object> parameters)
+            [NotNull] IDictionary<ParameterFrom, object> requestParameters)
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
-            Check.NotNull(parameters, nameof(parameters));
-            if (serviceEntry.IsLocal)
-            {
-                var result = await serviceEntry.Executor(null, parameters);
-                return result;
-            }
-            
-            return await _remoteServiceExecutor.Execute(serviceEntry, parameters);
+            Check.NotNull(requestParameters, nameof(requestParameters));
+            var parameters = serviceEntry.ResolveParameters(requestParameters);
+            return await serviceEntry.Executor(null, parameters);
         }
     }
 }

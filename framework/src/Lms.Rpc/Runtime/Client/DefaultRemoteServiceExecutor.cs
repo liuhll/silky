@@ -7,7 +7,7 @@ namespace Lms.Rpc.Runtime.Client
 {
     public class DefaultRemoteServiceExecutor : IRemoteServiceExecutor
     {
-        public async Task<object> Execute(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters)
+        public async Task<object> Execute(string serviceId, IList<object> parameters)
         {
             return "远程服务执行者";
         }

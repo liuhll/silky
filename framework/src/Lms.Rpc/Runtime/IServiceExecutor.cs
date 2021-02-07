@@ -8,6 +8,6 @@ namespace Lms.Rpc.Runtime
 {
     public interface IServiceExecutor : ITransientDependency
     {
-         Task<object> Execute(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters);
+         Task<object> Execute(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> requestParameters);
     }
 }
