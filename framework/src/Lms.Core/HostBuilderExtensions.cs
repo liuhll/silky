@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lms.Core.Modularity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -26,7 +27,18 @@ namespace Lms.Core
                 {
                     engine.RegisterModules<T>(services,builder);
                     engine.RegisterDependencies(builder);
-                }).ConfigureLogging(logging =>
+                })
+                .ConfigureAppConfiguration((hosting,config) =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true);
+
+                    // Adds YAML settings later
+                    config.AddYamlFile("appsettings.yml", optional: true) 
+                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
+                        
+                })
+                .ConfigureLogging(logging =>
                 {
                    
                 })

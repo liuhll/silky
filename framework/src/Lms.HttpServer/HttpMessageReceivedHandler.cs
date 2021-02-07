@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.HttpServer
 {
-    public class HttpMessageReceivedHandler : ITransientDependency
+    internal class HttpMessageReceivedHandler : ITransientDependency
     {
         private readonly IServiceEntryLocate _serviceEntryLocate;
 

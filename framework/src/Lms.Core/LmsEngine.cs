@@ -150,7 +150,11 @@ namespace Lms.Core
 
             foreach (var module in Modules)
             {
-                ((AppDomainTypeFinder)_typeFinder).AssemblyNames.Add(module.Assembly.FullName);
+                var assemblyNames = ((AppDomainTypeFinder) _typeFinder).AssemblyNames;
+                if (!assemblyNames.Contains(module.Assembly.FullName))
+                {
+                    ((AppDomainTypeFinder)_typeFinder).AssemblyNames.Add(module.Assembly.FullName);
+                }
                 containerBuilder.RegisterModule((LmsModule) module.Instance);
             }
         }
