@@ -1,10 +1,12 @@
 ﻿using System.IO;
+using System.Linq;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lms.Core.Modularity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Lms.Core
 {
@@ -38,10 +40,10 @@ namespace Lms.Core
                         .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
                         
                 })
-                .ConfigureLogging(logging =>
-                {
-                   
-                })
+                // .ConfigureLogging(logging =>
+                // {
+                //     
+                // })
                 ;
             return builder;
         }

@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.RegistryCenter.Zookeepe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Proxy", "src\Lms.Proxy\Lms.Proxy.csproj", "{B9E60852-6784-469F-8192-BD5B0FAEDD88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.DotNetty", "src\Lms.DotNetty\Lms.DotNetty.csproj", "{509CB0F3-072D-4FC4-9E59-10D1099F90D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.DotNetty.Tcp", "src\Lms.DotNetty.Tcp\Lms.DotNetty.Tcp.csproj", "{509CB0F3-072D-4FC4-9E59-10D1099F90D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Caching", "src\Lms.Caching\Lms.Caching.csproj", "{84B7FB5E-8AF6-492E-B7B0-89FEBAB20495}"
 EndProject
