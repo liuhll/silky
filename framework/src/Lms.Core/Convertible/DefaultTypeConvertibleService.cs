@@ -13,9 +13,10 @@ namespace Lms.Core.Convertible
         private readonly IEnumerable<TypeConvertDelegate> _converters;
         private readonly ILogger<DefaultTypeConvertibleService> _logger;
 
-        public DefaultTypeConvertibleService(IEnumerable<ITypeConvertibleProvider> converterProviders)
+        public DefaultTypeConvertibleService(IEnumerable<ITypeConvertibleProvider> converterProviders,
+            ILogger<DefaultTypeConvertibleService> logger)
         {
-            _logger = NullLogger<DefaultTypeConvertibleService>.Instance;
+            _logger = logger;
             _logger.LogDebug($"发现了以下类型转换提供程序：{string.Join(",", converterProviders.Select(p => p.ToString()))}。");
             _converters = converterProviders.SelectMany(p=> p.GetConverters());
          

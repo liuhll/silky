@@ -13,18 +13,22 @@ namespace Lms.Core.DependencyInjection
             {
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => typeof(ISingletonDependency).GetTypeInfo().IsAssignableFrom(t))
+                    .PropertiesAutowired()
                     .AsImplementedInterfaces()
                     .AsSelf()
-                    .SingleInstance();
-                
+                    .SingleInstance()
+                    .PropertiesAutowired();
+
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => typeof(ITransientDependency).GetTypeInfo().IsAssignableFrom(t))
+                    .PropertiesAutowired()
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .InstancePerDependency();
                 
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => typeof(IScopedDependency).GetTypeInfo().IsAssignableFrom(t))
+                    .PropertiesAutowired()
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .InstancePerLifetimeScope();

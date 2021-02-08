@@ -10,20 +10,20 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
     {
         private readonly ITypeFinder _typeFinder;
         private readonly IClrServiceEntryFactory _clrServiceEntryFactory;
-        private readonly ILogger<AttributeServiceEntryProvider> _logger;
+        public ILogger<AttributeServiceEntryProvider> Logger { get; set; }
 
         public AttributeServiceEntryProvider(ITypeFinder typeFinder,
             IClrServiceEntryFactory clrServiceEntryFactory)
         {
             _typeFinder = typeFinder;
             _clrServiceEntryFactory = clrServiceEntryFactory;
-            _logger = NullLogger<AttributeServiceEntryProvider>.Instance;;
+            Logger = NullLogger<AttributeServiceEntryProvider>.Instance;;
         }
 
         public IReadOnlyList<ServiceEntry> GetEntries()
         {
             var serviceEntryTypes = ServiceEntryHelper.FindAllServiceEntryTypes(_typeFinder);
-            _logger.LogDebug($"发现了以下服务：{string.Join(",", serviceEntryTypes.Select(i => i.ToString()))}。");
+            Logger.LogDebug($"发现了以下服务：{string.Join(",", serviceEntryTypes.Select(i => i.ToString()))}。");
             var entries = new List<ServiceEntry>();
             foreach (var serviceEntryType in serviceEntryTypes)
             {

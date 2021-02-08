@@ -20,7 +20,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
         private readonly IJsonSerializer _jsonSerializer;
-        private readonly ILogger<ZookeeperServiceRouteManager> _logger;
+        public ILogger<ZookeeperServiceRouteManager> Logger { get; set; }
 
         private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher> m_routeWatchers =
             new ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher>();
@@ -36,7 +36,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         {
             _zookeeperClientProvider = zookeeperClientProvider;
             _jsonSerializer = jsonSerializer;
-            _logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
+            Logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
             EnterRoutes().GetAwaiter().GetResult();
         }
 
@@ -51,7 +51,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
                 var data = jsonString.GetBytes();
                 if (!await zookeeperClient.ExistsAsync(routePath))
                 {
-                    _logger.LogDebug($"节点{routePath}不存在将进行创建");
+                    Logger.LogDebug($"节点{routePath}不存在将进行创建");
                     await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
                 }
                 else
@@ -60,7 +60,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
                     if (!onlineData.Equals(data))
                     {
                         await zookeeperClient.SetDataAsync(routePath,data);
-                        _logger.LogDebug($"{routePath}节点的缓存的路由数据已被更新。");
+                        Logger.LogDebug($"{routePath}节点的缓存的路由数据已被更新。");
                     }
                 }
             }

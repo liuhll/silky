@@ -22,14 +22,14 @@ namespace Lms.RegistryCenter.Zookeeper
 
         private Timer _timer;
         private readonly RegistryCenterOptions _registryCenterOptions;
-        private readonly ILogger<DefaultZookeeperClientProvider> _logger;
+        public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
 
         public DefaultZookeeperClientProvider(IOptions<RegistryCenterOptions> registryCenterOptions)
         {
             _registryCenterOptions = registryCenterOptions.Value;
             Check.NotNullOrEmpty(_registryCenterOptions.ConnectionStrings,
                 nameof(_registryCenterOptions.ConnectionStrings));
-            _logger = NullLogger<DefaultZookeeperClientProvider>.Instance;
+            Logger = NullLogger<DefaultZookeeperClientProvider>.Instance;
             CreateZookeeperClients();
             _timer = new Timer(TimeSpan.FromSeconds(_registryCenterOptions.HealthCheckInterval).TotalMilliseconds);
             _timer.Enabled = true;
@@ -77,7 +77,7 @@ namespace Lms.RegistryCenter.Zookeeper
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"无法理解服务注册中心{connStr},原因:{e.Message}");
+                Logger.LogWarning($"无法理解服务注册中心{connStr},原因:{e.Message}");
             }
         }
 

@@ -8,11 +8,11 @@ namespace Lms.Rpc.Ids
 {
     public class DefaultServiceIdGenerator : IServiceIdGenerator
     {
-        private readonly ILogger<DefaultServiceIdGenerator> _logger;
+        public ILogger<DefaultServiceIdGenerator> Logger { get; set; }
 
         public DefaultServiceIdGenerator()
         {
-            _logger = NullLogger<DefaultServiceIdGenerator>.Instance;
+            Logger = NullLogger<DefaultServiceIdGenerator>.Instance;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Lms.Rpc.Ids
             {
                 id += "_" + string.Join("_", parameters.Select(i => i.Name));
             }
-            _logger.LogDebug($"为方法：{method}生成服务Id：{id}。");
+            Logger.LogDebug($"为方法：{method}生成服务Id：{id}。");
             return id;
         }
 

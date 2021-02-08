@@ -8,13 +8,13 @@ namespace Lms.Rpc.Routing
     public class DefaultServiceRouteProvider : IServiceRouteProvider
     {
         private readonly IServiceRouteManager _serviceRouteManager;
-        private readonly ILogger<DefaultServiceRouteProvider> _logger;
+        public ILogger<DefaultServiceRouteProvider> Logger { get; set; }
 
         public DefaultServiceRouteProvider(IServiceRouteManager serviceRouteManager)
         {
 
             _serviceRouteManager = serviceRouteManager;
-            _logger = NullLogger<DefaultServiceRouteProvider>.Instance;
+            Logger = NullLogger<DefaultServiceRouteProvider>.Instance;
         }
 
         public async Task RegisterRpcRoutes(double processorTime)

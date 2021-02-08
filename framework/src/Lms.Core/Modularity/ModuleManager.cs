@@ -9,14 +9,14 @@ namespace Lms.Core.Modularity
     {
         private readonly IModuleContainer _moduleContainer;
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<ModuleManager> _logger;
+        public ILogger<ModuleManager> Logger { get; set; }
 
         public ModuleManager(IModuleContainer moduleContainer,
             IServiceProvider serviceProvider)
         {
             _moduleContainer = moduleContainer;
             _serviceProvider = serviceProvider;
-            _logger = NullLogger<ModuleManager>.Instance;
+            Logger = NullLogger<ModuleManager>.Instance;
         }
 
         public async Task InitializeModules()
@@ -25,12 +25,12 @@ namespace Lms.Core.Modularity
             {
                 try
                 {
-                    _logger.LogInformation($"初始化模块{module.Name}");
+                    Logger.LogInformation($"初始化模块{module.Name}");
                     await module.Instance.Initialize(new ApplicationContext(_serviceProvider, _moduleContainer));
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"初始化{module.Name}模块是错误,原因:{e.Message}");
+                    Logger.LogError($"初始化{module.Name}模块是错误,原因:{e.Message}");
                     throw;
                 }
                 
