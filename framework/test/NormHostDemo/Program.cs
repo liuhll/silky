@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Lms.Core;
-using Lms.Rpc;
 using Microsoft.Extensions.Hosting;
 namespace NormHostDemo
 {

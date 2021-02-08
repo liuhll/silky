@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Builder;
+using Lms.Core;
 
-namespace Lms.Core
+namespace Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {

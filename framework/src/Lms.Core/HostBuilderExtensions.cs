@@ -1,14 +1,12 @@
 ﻿using System.IO;
-using System.Linq;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Lms.Core;
 using Lms.Core.Modularity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace Lms.Core
+namespace Microsoft.Extensions.Hosting
 {
     public static class HostBuilderExtensions
     {
