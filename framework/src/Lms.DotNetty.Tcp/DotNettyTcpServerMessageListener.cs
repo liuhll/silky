@@ -10,6 +10,7 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
 using Lms.Core;
+using Lms.DotNetty.Tcp.Adapter;
 using Lms.Rpc.Address;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Messages;
@@ -23,27 +24,29 @@ using Microsoft.Extensions.Options;
 
 namespace Lms.DotNetty.Tcp
 {
-    public class DotNettyTcpServerMessageListener : IMessageListener
+    public class DotNettyTcpServerMessageListener : MessageListenerBase
     {
         public ILogger<DotNettyTcpServerMessageListener> Logger { get; set; }
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly IAddressModel _hostAddress;
         private IChannel boundChannel;
+
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment)
         {
             _hostEnvironment = hostEnvironment;
-            _hostAddress= NetUtil.GetHostAddress(ServiceProtocol.Tcp);
+            _hostAddress = NetUtil.GetHostAddress(ServiceProtocol.Tcp);
             _rpcOptions = rpcOptions.Value;
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
             }
+
             Logger = NullLogger<DotNettyTcpServerMessageListener>.Instance;
         }
 
-        public async Task Listen()
+        public override async Task Listen()
         {
             IEventLoopGroup bossGroup;
             IEventLoopGroup workerGroup;
@@ -80,10 +83,18 @@ namespace Lms.DotNetty.Tcp
                     if (tlsCertificate != null)
                     {
                         pipeline.AddLast("tls", TlsHandler.Server(tlsCertificate));
-                        pipeline.AddLast(new LengthFieldPrepender(4));
-                        pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-                        
                     }
+
+                    pipeline.AddLast(new LengthFieldPrepender(4));
+                    pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
+                    pipeline.AddLast(new ServerHandler((channelContext, message) =>
+                    {
+                        if (message.IsInvokeMessage())
+                        {
+                            var sender = new DotNettyTcpServerMessageSender(channelContext);
+                            OnReceived(sender, message);
+                        }
+                    }));
                 }));
             try
             {
@@ -95,11 +106,6 @@ namespace Lms.DotNetty.Tcp
                 Logger.LogInformation($"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol}");
                 throw;
             }
-        }
-
-        public Task OnReceived(IMessageSender sender, TransportMessage message)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

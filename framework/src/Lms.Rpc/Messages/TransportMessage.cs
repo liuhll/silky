@@ -39,5 +39,6 @@ namespace Lms.Rpc.Messages
         {
             return (T)Content;
         }
+        
     }
 }

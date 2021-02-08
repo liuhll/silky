@@ -1,6 +1,4 @@
 using System.Threading.Tasks;
-using Lms.Core;
-using Lms.Rpc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 

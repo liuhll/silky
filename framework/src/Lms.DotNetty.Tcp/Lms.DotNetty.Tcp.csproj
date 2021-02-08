@@ -4,13 +4,13 @@
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="DotNetty.Codecs" Version="0.6.0"/>
-        <PackageReference Include="DotNetty.Handlers" Version="0.6.0"/>
-        <PackageReference Include="DotNetty.Transport" Version="0.6.0"/>
-        <PackageReference Include="DotNetty.Transport.Libuv" Version="0.6.0"/>
+        <PackageReference Include="DotNetty.Codecs" Version="0.6.0" />
+        <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
+        <PackageReference Include="DotNetty.Transport" Version="0.6.0" />
+        <PackageReference Include="DotNetty.Transport.Libuv" Version="0.6.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj"/>
+        <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
     </ItemGroup>
 
 </Project>
