@@ -8,5 +8,7 @@ namespace Lms.Rpc.Routing
         // Task SetRoutesAsync(IReadOnlyList<ServiceRouteDescriptor> serviceRouteDescriptors);
         
         Task RegisterRoutes(double processorTime, ServiceProtocol serviceProtocol);
+
+        Task EnterRoutes();
     }
 }

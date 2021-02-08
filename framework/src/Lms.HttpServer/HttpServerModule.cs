@@ -3,12 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
+using Lms.Rpc;
 using Lms.Rpc.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Lms.HttpServer
 {
+    [DependsOn(typeof(RpcModule))]
     public class HttpServerModule : LmsModule
     {
         public async override Task Initialize(ApplicationContext applicationContext)

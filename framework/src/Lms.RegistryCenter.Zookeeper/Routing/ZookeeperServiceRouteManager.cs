@@ -37,7 +37,6 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             _zookeeperClientProvider = zookeeperClientProvider;
             _jsonSerializer = jsonSerializer;
             Logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
-            EnterRoutes().GetAwaiter().GetResult();
         }
 
         protected async override Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor)
@@ -96,7 +95,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             await CreateSubscribeChildrenChange(zookeeperClient, subDirectoryPath);
         }
 
-        protected async Task EnterRoutes()
+        public override async Task EnterRoutes()
         {
             var zookeeperClient = _zookeeperClientProvider.GetZooKeeperClient();
 

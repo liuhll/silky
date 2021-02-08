@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
+using Lms.Rpc;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace Lms.DotNetty.Tcp
 {
+    [DependsOn(typeof(RpcModule))]
     public class DotnetTcpModule : LmsModule
     {
         
