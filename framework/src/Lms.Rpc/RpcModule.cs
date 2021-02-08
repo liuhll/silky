@@ -10,6 +10,7 @@ using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Transport;
+using Lms.Rpc.Transport.Codec;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lms.Rpc
@@ -19,9 +20,11 @@ namespace Lms.Rpc
         protected override void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterTypes(
-                ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder).ToArray())
+                    ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder).ToArray())
                 .AsSelf()
                 .AsImplementedInterfaces();
+            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces();
+            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces();
         }
 
         public async override Task Initialize(ApplicationContext applicationContext)
@@ -35,6 +38,12 @@ namespace Lms.Rpc
             var messageListeners = applicationContext.ServiceProvider.GetServices<IMessageListener>();
             if (messageListeners.Any())
             {
+                if (!EngineContext.Current.IsRegistered(typeof(ITransportMessageDecoder))
+                    || !EngineContext.Current.IsRegistered(typeof(ITransportMessageEncoder)))
+                {
+                    throw new LmsException("必须指定消息编解码器");
+                }
+
                 var serviceEntryLocate = applicationContext.ServiceProvider.GetService<IServiceEntryLocate>();
                 foreach (var messageListener in messageListeners)
                 {
@@ -62,13 +71,11 @@ namespace Lms.Rpc
                                 StatusCode = e.GetExceptionStatusCode()
                             };
                         }
-
                         var resultTransportMessage = new TransportMessage(remoteResultMessage);
                         await sender.SendAndFlushAsync(resultTransportMessage);
                     };
                 }
             }
         }
-        
     }
 }

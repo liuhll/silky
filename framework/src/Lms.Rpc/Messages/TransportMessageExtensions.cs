@@ -1,5 +1,6 @@
 ﻿using Lms.Core;
 using Lms.Rpc.Transport;
+using Lms.Rpc.Transport.Codec;
 
 namespace Lms.Rpc.Messages
 {

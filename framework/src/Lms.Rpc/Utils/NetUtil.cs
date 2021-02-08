@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using Lms.Core;
@@ -21,8 +22,8 @@ namespace Lms.Rpc.Utils
         private const string LOCAL_HOSTADRRESS = "localhost";
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
         
-        private static IDictionary<ServiceProtocol, IAddressModel> addressModels =
-            new Dictionary<ServiceProtocol, IAddressModel>();
+        private static ConcurrentDictionary<ServiceProtocol, IAddressModel> addressModels =
+            new ConcurrentDictionary<ServiceProtocol, IAddressModel>();
 
         
         public static string GetHostAddress(string hostAddress)
@@ -81,8 +82,7 @@ namespace Lms.Rpc.Utils
             }
 
             address = new AddressModel(host, port, serviceProtocol);
-            addressModels.Add(serviceProtocol, address);
-            return address;
+            return addressModels.GetOrAdd(serviceProtocol, address);
         }
         
         private static bool IsValidAddress(string address)

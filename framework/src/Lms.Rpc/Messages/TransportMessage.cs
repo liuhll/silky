@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using Lms.Core.Exceptions;
 using Lms.Core.Utils;
 
 namespace Lms.Rpc.Messages
@@ -35,8 +36,12 @@ namespace Lms.Rpc.Messages
         
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetContent<T>()
+        public T GetContent<T>() where T : IRemoteMessage
         {
+            if (typeof(T).FullName != ContentType)
+            {
+                throw new LmsException("指定的消息数据类型不正确");
+            }
             return (T)Content;
         }
         

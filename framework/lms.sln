@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.RegistryCenter.Zookeepe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Proxy", "src\Lms.Proxy\Lms.Proxy.csproj", "{B9E60852-6784-469F-8192-BD5B0FAEDD88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.DotNetty.Tcp", "src\Lms.DotNetty.Tcp\Lms.DotNetty.Tcp.csproj", "{509CB0F3-072D-4FC4-9E59-10D1099F90D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.DotNetty.Protocol.Tcp", "src\Lms.DotNetty.Protocol.Tcp\Lms.DotNetty.Protocol.Tcp.csproj", "{509CB0F3-072D-4FC4-9E59-10D1099F90D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Caching", "src\Lms.Caching\Lms.Caching.csproj", "{84B7FB5E-8AF6-492E-B7B0-89FEBAB20495}"
 EndProject
@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Swagger", "src\Lms.Swag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.HttpServer", "src\Lms.HttpServer\Lms.HttpServer.csproj", "{545C0F48-6276-4BC3-B66C-D84C2A65A84C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.DotNetty.Abstractions", "src\Lms.DotNetty.Abstractions\Lms.DotNetty.Abstractions.csproj", "{222EB00C-1C22-46E9-91BB-89B8219F1AB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,7 @@ Global
 		{DC79E441-2703-4090-8D40-3BC1E23FCF85} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{63A9EAC9-60F9-479E-B015-B1B160DDAB37} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{545C0F48-6276-4BC3-B66C-D84C2A65A84C} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{222EB00C-1C22-46E9-91BB-89B8219F1AB4} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -119,5 +122,9 @@ Global
 		{545C0F48-6276-4BC3-B66C-D84C2A65A84C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{545C0F48-6276-4BC3-B66C-D84C2A65A84C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{545C0F48-6276-4BC3-B66C-D84C2A65A84C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{222EB00C-1C22-46E9-91BB-89B8219F1AB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{222EB00C-1C22-46E9-91BB-89B8219F1AB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{222EB00C-1C22-46E9-91BB-89B8219F1AB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{222EB00C-1C22-46E9-91BB-89B8219F1AB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

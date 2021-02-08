@@ -2,7 +2,7 @@
 using DotNetty.Transport.Channels;
 using Lms.Rpc.Messages;
 
-namespace Lms.DotNetty.Tcp.Adapter
+namespace Lms.DotNetty.Adapter
 {
     public class ServerHandler : ChannelHandlerAdapter
     {

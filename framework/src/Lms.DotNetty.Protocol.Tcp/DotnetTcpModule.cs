@@ -12,7 +12,7 @@ using Lms.Rpc.Runtime.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Lms.DotNetty.Tcp
+namespace Lms.DotNetty.Protocol.Tcp
 {
     [DependsOn(typeof(RpcModule))]
     public class DotnetTcpModule : LmsModule

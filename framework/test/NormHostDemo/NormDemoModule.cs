@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Lms.Core.Modularity;
-using Lms.DotNetty.Tcp;
+using Lms.DotNetty.Protocol.Tcp;
 using Lms.RegistryCenter.Zookeeper;
 
 namespace NormHostDemo

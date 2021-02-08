@@ -10,19 +10,20 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
 using Lms.Core;
-using Lms.DotNetty.Tcp.Adapter;
+using Lms.DotNetty.Adapter;
 using Lms.Rpc.Address;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Transport;
+using Lms.Rpc.Transport.Codec;
 using Lms.Rpc.Utils;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Lms.DotNetty.Tcp
+namespace Lms.DotNetty.Protocol.Tcp
 {
     public class DotNettyTcpServerMessageListener : MessageListenerBase
     {
@@ -31,11 +32,13 @@ namespace Lms.DotNetty.Tcp
         private readonly IHostEnvironment _hostEnvironment;
         private readonly IAddressModel _hostAddress;
         private IChannel boundChannel;
-
+        private readonly ITransportMessageDecoder _transportMessageDecoder;
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
-            IHostEnvironment hostEnvironment)
+            IHostEnvironment hostEnvironment,
+            ITransportMessageDecoder transportMessageDecoder)
         {
             _hostEnvironment = hostEnvironment;
+            _transportMessageDecoder = transportMessageDecoder;
             _hostAddress = NetUtil.GetHostAddress(ServiceProtocol.Tcp);
             _rpcOptions = rpcOptions.Value;
             if (_rpcOptions.IsSsl)
@@ -87,6 +90,7 @@ namespace Lms.DotNetty.Tcp
 
                     pipeline.AddLast(new LengthFieldPrepender(4));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
+                    pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
                     pipeline.AddLast(new ServerHandler((channelContext, message) =>
                     {
                         if (message.IsInvokeMessage())
@@ -103,7 +107,7 @@ namespace Lms.DotNetty.Tcp
             }
             catch (Exception e)
             {
-                Logger.LogInformation($"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol}");
+                Logger.LogInformation($"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol},原因: {e.Message}");
                 throw;
             }
         }
