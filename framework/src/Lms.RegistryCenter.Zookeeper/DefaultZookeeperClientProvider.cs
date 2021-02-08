@@ -77,7 +77,7 @@ namespace Lms.RegistryCenter.Zookeeper
             }
             catch (Exception e)
             {
-                Logger.LogWarning($"无法理解服务注册中心{connStr},原因:{e.Message}");
+                Logger.LogWarning($"无法链接服务注册中心{connStr},原因:{e.Message}");
             }
         }
 
