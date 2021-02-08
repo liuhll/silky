@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
 using Lms.Core.MethodExecutor;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
@@ -31,7 +32,7 @@ namespace Lms.Rpc.Runtime.Server
             GroupName = serviceType.FullName;
             MethodInfo = methodInfo;
             CustomAttributes = serviceType.GetCustomAttributes(true);
-            ReturnType = SetReturnType();
+            (IsAsyncMethod,ReturnType) = MethodInfo.MethodInfoReturnType();
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
             _methodExecutor =
                 ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
@@ -39,19 +40,7 @@ namespace Lms.Rpc.Runtime.Server
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
         }
-
-        private Type SetReturnType()
-        {
-            var returnType = MethodInfo.ReturnType;
-
-            IsAsyncMethod = returnType == typeof(Task) || returnType.BaseType == typeof(Task);
-            if (IsAsyncMethod)
-            {
-                return returnType.GenericTypeArguments.FirstOrDefault();
-            }
-
-            return returnType;
-        }
+        
 
         private void CreateDefaultSupportedResponseMediaTypes()
         {
