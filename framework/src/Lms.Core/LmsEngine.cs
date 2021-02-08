@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lms.Core
 {
-    public class LmsEngine : IEngine, IModuleContainer
+    internal class LmsEngine : IEngine, IModuleContainer
     {
         private ITypeFinder _typeFinder;
 

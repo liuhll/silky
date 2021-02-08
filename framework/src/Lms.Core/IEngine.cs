@@ -10,6 +10,8 @@ namespace Lms.Core
 {
     public interface IEngine
     {
+        IServiceProvider ServiceProvider { get; set; }
+        
         ITypeFinder TypeFinder { get; }
         
         void ConfigureServices(IServiceCollection services, IConfiguration configuration);

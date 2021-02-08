@@ -44,7 +44,7 @@ namespace Lms.TestBase.Testing
 
             var container = containerBuilder.Build(); 
             ServiceProvider = new AutofacServiceProvider(container);
-            ((LmsEngine)Engine).ServiceProvider = ServiceProvider;
+            Engine.ServiceProvider = ServiceProvider;
             TestServiceScope = ServiceProvider.CreateScope();
         }
 

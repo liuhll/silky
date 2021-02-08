@@ -15,7 +15,7 @@ namespace Lms.Core
         {
             if (EngineContext.Current is LmsEngine)
             {
-                ((LmsEngine) EngineContext.Current).ServiceProvider = serviceProvider;
+                EngineContext.Current.ServiceProvider = serviceProvider;
             }
 
             _moduleManager = moduleManager;
