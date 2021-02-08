@@ -35,7 +35,7 @@ namespace Lms.Rpc
                 await serviceRouteManager.EnterRoutes();
             }
 
-            var messageListeners = applicationContext.ServiceProvider.GetServices<IMessageListener>();
+            var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
                 if (!EngineContext.Current.IsRegistered(typeof(ITransportMessageDecoder))

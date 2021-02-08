@@ -6,6 +6,6 @@ namespace Lms.Rpc.Transport
 {
     public interface ITransportClient
     {
-        Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, CancellationToken cancellationToken);
+        Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout);
     }
 }

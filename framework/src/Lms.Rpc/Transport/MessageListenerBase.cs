@@ -3,7 +3,7 @@ using Lms.Rpc.Messages;
 
 namespace Lms.Rpc.Transport
 {
-    public abstract class MessageListenerBase : IMessageListener
+    public abstract class MessageListenerBase : IServerMessageListener
     {
         public event ReceivedDelegate Received;
         

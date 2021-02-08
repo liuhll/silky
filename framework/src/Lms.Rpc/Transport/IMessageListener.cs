@@ -6,9 +6,7 @@ namespace Lms.Rpc.Transport
     public interface IMessageListener
     {
         event ReceivedDelegate Received;
-        
-        Task Listen();
-        
+
         Task OnReceived(IMessageSender sender, TransportMessage message);
     }
 }
