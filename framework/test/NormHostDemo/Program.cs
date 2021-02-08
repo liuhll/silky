@@ -8,7 +8,7 @@ namespace NormHostDemo
     {
         public static async Task Main(string[] args)
         {
-            await CreateHostBuilder(args).RunConsoleAsync();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args)
@@ -16,8 +16,6 @@ namespace NormHostDemo
 
             return Host.CreateDefaultBuilder(args)
                     .RegisterLmsServices<NormDemoModule>()
-                    .UseRpcServer()
-                    
                 ;
 
         }

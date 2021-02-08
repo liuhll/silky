@@ -16,7 +16,6 @@ namespace GatewayDemo
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .RegisterLmsServices<GatewayDemoModule>()
-                .UseRpcServer()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

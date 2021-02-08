@@ -12,14 +12,13 @@ namespace Lms.Rpc.Routing
 
         public DefaultServiceRouteProvider(IServiceRouteManager serviceRouteManager)
         {
-
             _serviceRouteManager = serviceRouteManager;
             Logger = NullLogger<DefaultServiceRouteProvider>.Instance;
         }
 
-        public async Task RegisterRpcRoutes(double processorTime)
+        public async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
-            await _serviceRouteManager.RegisterRoutes(processorTime, ServiceProtocol.Tcp);
+            await _serviceRouteManager.RegisterRoutes(processorTime, serviceProtocol);
         }
     }
 }

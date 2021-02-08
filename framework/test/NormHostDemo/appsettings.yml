@@ -1,7 +1,3 @@
-rpc:
-    host: 0.0.0.0
-    rpcPort: 100
-
 Logging:
     LogLevel:
         Default: "Information"

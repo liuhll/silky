@@ -1,7 +1,4 @@
-﻿using Autofac;
-using Lms.Core.Modularity;
-using Lms.RegistryCenter.Zookeeper.Routing;
-using Lms.Rpc.Routing;
+﻿using Lms.Core.Modularity;
 
 namespace Lms.RegistryCenter.Zookeeper
 {
