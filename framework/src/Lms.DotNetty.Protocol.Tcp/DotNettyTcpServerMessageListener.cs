@@ -25,7 +25,7 @@ using Microsoft.Extensions.Options;
 
 namespace Lms.DotNetty.Protocol.Tcp
 {
-    public class DotNettyTcpServerMessageListener : MessageListenerBase
+    public class DotNettyTcpServerMessageListener : MessageListenerBase, IServerMessageListener
     {
         public ILogger<DotNettyTcpServerMessageListener> Logger { get; set; }
         private readonly RpcOptions _rpcOptions;
@@ -33,6 +33,7 @@ namespace Lms.DotNetty.Protocol.Tcp
         private readonly IAddressModel _hostAddress;
         private IChannel boundChannel;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
+
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder)
@@ -45,11 +46,10 @@ namespace Lms.DotNetty.Protocol.Tcp
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
             }
-
             Logger = NullLogger<DotNettyTcpServerMessageListener>.Instance;
         }
 
-        public override async Task Listen()
+        public async Task Listen()
         {
             IEventLoopGroup bossGroup;
             IEventLoopGroup workerGroup;
@@ -88,8 +88,8 @@ namespace Lms.DotNetty.Protocol.Tcp
                         pipeline.AddLast("tls", TlsHandler.Server(tlsCertificate));
                     }
 
-                    pipeline.AddLast(new LengthFieldPrepender(4));
-                    pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
+                    pipeline.AddLast(new LengthFieldPrepender(8));
+                    pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
                     pipeline.AddLast(new ServerHandler((channelContext, message) =>
                     {
@@ -107,7 +107,8 @@ namespace Lms.DotNetty.Protocol.Tcp
             }
             catch (Exception e)
             {
-                Logger.LogInformation($"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol},原因: {e.Message}");
+                Logger.LogInformation(
+                    $"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol},原因: {e.Message}");
                 throw;
             }
         }

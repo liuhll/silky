@@ -6,14 +6,10 @@ namespace NormHostDemo.AppService
 {
     public class TestAppService : ITestAppService
     {
-        public Task<string> CreateTest(TestDto input)
+        
+        public async Task<string> Create(TestDto input)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<string> Create(TestDto input)
-        {
-            throw new System.NotImplementedException();
+            return "OK";
         }
 
         public Task<string> Update(TestDto input)

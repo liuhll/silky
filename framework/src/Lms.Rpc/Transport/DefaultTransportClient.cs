@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Lms.Core.Exceptions;
 using Lms.Rpc.Messages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Lms.Rpc.Transport
 {
@@ -16,16 +17,15 @@ namespace Lms.Rpc.Transport
 
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;
-        private readonly ILogger<DefaultTransportClient> _logger;
+        public ILogger<DefaultTransportClient> Logger { get; set; }
 
         public DefaultTransportClient(IMessageSender messageSender,
-            IMessageListener messageListener,
-            ILogger<DefaultTransportClient> logger)
+            IMessageListener messageListener)
         {
             _messageSender = messageSender;
             _messageListener = messageListener;
             _messageListener.Received += MessageListenerOnReceived;
-            _logger = logger;
+            Logger = NullLogger<DefaultTransportClient>.Instance;
         }
 
         private async Task MessageListenerOnReceived(IMessageSender sender, TransportMessage message)
@@ -45,7 +45,7 @@ namespace Lms.Rpc.Transport
             }
         }
 
-        public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout)
+        public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout = Timeout.Infinite)
         {
             var transportMessage = new TransportMessage(message);
             var callbackTask = RegisterResultCallbackAsync(transportMessage.Id);
@@ -60,17 +60,9 @@ namespace Lms.Rpc.Transport
             m_resultDictionary.TryAdd(id, tcs);
             try
             {
-                using (var clt = CancellationTokenSource.CreateLinkedTokenSource())
-                {
-                    if (timeout != Timeout.Infinite)
-                    {
-                        clt.CancelAfter(timeout);
-                    }
-                    clt.Token.Register(() => tcs.TrySetCanceled(), useSynchronizationContext: false);
-                    var task = tcs.Task;
-                    var resultMessage = await task;
-                    return resultMessage.GetContent<RemoteResultMessage>();
-                }
+                var task = tcs.Task;
+                var resultMessage = await task;
+                return resultMessage.GetContent<RemoteResultMessage>();
             }
             finally
             {

@@ -1,29 +1,29 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Transport;
 
-namespace Lms.DotNetty.Protocol.Tcp
+namespace Lms.DotNetty
 {
-    public class DotNettyTcpServerMessageSender : IMessageSender
+    public class DotNettyClientMessageSender : IMessageSender
     {
-        private readonly IChannelHandlerContext _channelContext;
-        public DotNettyTcpServerMessageSender(IChannelHandlerContext channelContext)
+        private readonly IChannel _channel;
+        public DotNettyClientMessageSender(IChannel channel)
         {
-            _channelContext = channelContext;
+            _channel= channel;
         }
 
         public async Task SendAsync(TransportMessage message)
         {
             var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await _channelContext.WriteAsync(buffer);
+            await _channel.WriteAsync(buffer);
         }
 
         public async Task SendAndFlushAsync(TransportMessage message)
         {
             var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await _channelContext.WriteAndFlushAsync(buffer);
+            await _channel.WriteAndFlushAsync(buffer);
         }
     }
 }

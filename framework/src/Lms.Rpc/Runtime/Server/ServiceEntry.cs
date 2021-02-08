@@ -32,7 +32,7 @@ namespace Lms.Rpc.Runtime.Server
             GroupName = serviceType.FullName;
             MethodInfo = methodInfo;
             CustomAttributes = serviceType.GetCustomAttributes(true);
-            (IsAsyncMethod,ReturnType) = MethodInfo.MethodInfoReturnType();
+            (IsAsyncMethod, ReturnType) = MethodInfo.MethodInfoReturnType();
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
             _methodExecutor =
                 ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
@@ -40,7 +40,7 @@ namespace Lms.Rpc.Runtime.Server
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
         }
-        
+
 
         private void CreateDefaultSupportedResponseMediaTypes()
         {
@@ -92,6 +92,15 @@ namespace Lms.Rpc.Runtime.Server
                 if (IsLocal)
                 {
                     object instance = EngineContext.Current.Resolve(_serviceType);
+                    for (int i = 0; i < parameters.Count; i++)
+                    {
+                        if (parameters[i].GetType() != ParameterDescriptors[i].Type)
+                        {
+                            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+                            parameters[i] = typeConvertibleService.Convert(parameters[i], ParameterDescriptors[i].Type);
+                        }
+                    }
+
                     if (IsAsyncMethod)
                     {
                         return _methodExecutor.ExecuteAsync(instance, parameters.ToArray()).GetAwaiter().GetResult();
@@ -99,6 +108,7 @@ namespace Lms.Rpc.Runtime.Server
 
                     return _methodExecutor.Execute(instance, parameters.ToArray());
                 }
+
                 var remoteServiceExecutor = EngineContext.Current.Resolve<IRemoteServiceExecutor>();
                 return remoteServiceExecutor.Execute(this, parameters).GetAwaiter().GetResult();
             });
@@ -115,7 +125,10 @@ namespace Lms.Rpc.Runtime.Server
                 switch (parameterDescriptor.From)
                 {
                     case ParameterFrom.Body:
-                        list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
+                        list.Add(IsLocal
+                            ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
+                            : parameter);
+
                         break;
                     case ParameterFrom.Form:
                         if (parameterDescriptor.IsSample)
@@ -128,7 +141,9 @@ namespace Lms.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
+                            list.Add(IsLocal
+                                ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
+                                : parameter);
                         }
 
                         break;
@@ -143,7 +158,9 @@ namespace Lms.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
+                            list.Add(IsLocal
+                                ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
+                                : parameter);
                         }
 
                         break;
@@ -173,7 +190,9 @@ namespace Lms.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(typeConvertibleService.Convert(parameter, parameterDescriptor.Type));
+                            list.Add(IsLocal
+                                ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
+                                : parameter);
                         }
 
                         break;

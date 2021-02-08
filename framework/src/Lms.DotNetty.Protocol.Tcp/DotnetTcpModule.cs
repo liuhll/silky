@@ -15,10 +15,9 @@ using Microsoft.Extensions.Options;
 
 namespace Lms.DotNetty.Protocol.Tcp
 {
-    [DependsOn(typeof(RpcModule))]
+    [DependsOn(typeof(RpcModule), typeof(DotNettyModule))]
     public class DotnetTcpModule : LmsModule
     {
-        
         protected override void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<DotNettyTcpServerMessageListener>()
@@ -33,10 +32,12 @@ namespace Lms.DotNetty.Protocol.Tcp
         {
             var registryCenterOptions =
                 applicationContext.ServiceProvider.GetService<IOptions<RegistryCenterOptions>>().Value;
-            if (!applicationContext.ModuleContainer.Modules.Any(p=> p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(),StringComparison.OrdinalIgnoreCase)))
+            if (!applicationContext.ModuleContainer.Modules.Any(p =>
+                p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(), StringComparison.OrdinalIgnoreCase)))
             {
                 throw new LmsException($"您没有指定依赖的{registryCenterOptions.RegistryCenterType}服务注册中心模块");
             }
+
             var messageListener = applicationContext.ServiceProvider.GetService<DotNettyTcpServerMessageListener>();
             await messageListener.Listen();
             var serviceRouteProvider = applicationContext.ServiceProvider.GetService<IServiceRouteProvider>();

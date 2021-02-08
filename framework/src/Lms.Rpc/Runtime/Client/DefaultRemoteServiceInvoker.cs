@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lms.Core.Exceptions;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
+using Lms.Rpc.Transport;
 
 namespace Lms.Rpc.Runtime.Client
 {
@@ -10,12 +11,14 @@ namespace Lms.Rpc.Runtime.Client
     {
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly IRemoteServiceSupervisor _remoteServiceSupervisor;
-
+        private readonly ITransportClientFactory _transportClientFactory;
         public DefaultRemoteServiceInvoker(ServiceRouteCache serviceRouteCache,
-            IRemoteServiceSupervisor remoteServiceSupervisor)
+            IRemoteServiceSupervisor remoteServiceSupervisor, 
+            ITransportClientFactory transportClientFactory)
         {
             _serviceRouteCache = serviceRouteCache;
             _remoteServiceSupervisor = remoteServiceSupervisor;
+            _transportClientFactory = transportClientFactory;
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage)
@@ -37,7 +40,9 @@ namespace Lms.Rpc.Runtime.Client
             // todo 分布式事务
             // todo 远程调用
             // todo 获取调用结果
-            return new RemoteResultMessage() {StatusCode = StatusCode.Success, Result = remoteInvokeMessage.ServiceId};
+            var selectedAddress = serviceRoute.Addresses.First();
+            var client = await _transportClientFactory.CreateClientAsync(selectedAddress.IPEndPoint);
+            return await client.SendAsync(remoteInvokeMessage);
         }
     }
 }

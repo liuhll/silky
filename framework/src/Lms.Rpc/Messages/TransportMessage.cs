@@ -22,7 +22,7 @@ namespace Lms.Rpc.Messages
             Id = GuidGenerator.CreateGuidStrWithNoUnderline();
             Content = content;
             ContentType = content.GetType().FullName;
-            if (ContentType != TransportMessageType.RemoteInvokeMessage || ContentType != TransportMessageType.RemoteResultMessage)
+            if (ContentType != TransportMessageType.RemoteInvokeMessage && ContentType != TransportMessageType.RemoteResultMessage)
             {
                 throw new ArgumentException(nameof(content));
             }
