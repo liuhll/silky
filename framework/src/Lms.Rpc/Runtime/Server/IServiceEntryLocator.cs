@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.Rpc.Runtime.Server
 {
-    public interface IServiceEntryLocate : ISingletonDependency
+    public interface IServiceEntryLocator : ISingletonDependency
     {
         ServiceEntry GetServiceEntryByApi(string path, HttpMethod httpMethod);
 

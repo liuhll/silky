@@ -44,7 +44,7 @@ namespace Lms.Rpc
                     throw new LmsException("必须指定消息编解码器");
                 }
 
-                var serviceEntryLocate = applicationContext.ServiceProvider.GetService<IServiceEntryLocate>();
+                var serviceEntryLocate = applicationContext.ServiceProvider.GetService<IServiceEntryLocator>();
                 foreach (var messageListener in messageListeners)
                 {
                     messageListener.Received += async (sender, message) =>

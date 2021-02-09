@@ -14,17 +14,17 @@ namespace Lms.HttpServer
 {
     internal class HttpMessageReceivedHandler : ITransientDependency
     {
-        private readonly IServiceEntryLocate _serviceEntryLocate;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IParameterParser _parameterParser;
         private readonly IServiceExecutor _serverExecutor;
         private readonly ISerializer _serializer;
 
-        public HttpMessageReceivedHandler(IServiceEntryLocate serviceEntryLocate,
+        public HttpMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
             IParameterParser parameterParser,
             IServiceExecutor serverExecutor,
             ISerializer serializer)
         {
-            _serviceEntryLocate = serviceEntryLocate;
+            _serviceEntryLocator = serviceEntryLocator;
             _parameterParser = parameterParser;
             _serverExecutor = serverExecutor;
             _serializer = serializer;
@@ -34,7 +34,7 @@ namespace Lms.HttpServer
         {
             var path = context.Request.Path;
             var method = context.Request.Method.ToEnum<HttpMethod>();
-            var serviceEntry = _serviceEntryLocate.GetServiceEntryByApi(path, method);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryByApi(path, method);
             if (serviceEntry == null)
             {
                 throw new LmsException($"通过{path}-{method}无法找到服务条目");

@@ -8,17 +8,17 @@ namespace Lms.Rpc.Runtime.Client
     public class DefaultRemoteServiceExecutor : IRemoteServiceExecutor
     {
         private readonly IRemoteServiceInvoker _remoteServiceInvoker;
-        private readonly IServiceEntryLocate _serviceEntryLocate;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
         public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker, 
-            IServiceEntryLocate serviceEntryLocate)
+            IServiceEntryLocator serviceEntryLocator)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
-            _serviceEntryLocate = serviceEntryLocate;
+            _serviceEntryLocator = serviceEntryLocator;
         }
 
         public async Task<object> Execute(string serviceId, IList<object> parameters)
         {
-            var serviceEntry = _serviceEntryLocate.GetServiceEntryById(serviceId);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceId);
             if (serviceEntry.IsLocal)
             {
                 return serviceEntry.Executor(null, parameters);

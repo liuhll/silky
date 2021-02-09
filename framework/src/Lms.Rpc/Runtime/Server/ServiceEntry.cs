@@ -91,7 +91,7 @@ namespace Lms.Rpc.Runtime.Server
             {
                 if (IsLocal)
                 {
-                    object instance = EngineContext.Current.Resolve(_serviceType);
+                    var instance = EngineContext.Current.Resolve(_serviceType);
                     for (int i = 0; i < parameters.Count; i++)
                     {
                         if (parameters[i] != null && parameters[i].GetType() != ParameterDescriptors[i].Type)

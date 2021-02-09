@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Lms.Rpc.Runtime.Server
 {
-    public class DefaultServiceEntryLocate : IServiceEntryLocate
+    public class DefaultServiceEntryLocator : IServiceEntryLocator
     {
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly ServiceEntryCache _serviceEntryCache;
 
-        public DefaultServiceEntryLocate(IServiceEntryManager serviceEntryManager,
+        public DefaultServiceEntryLocator(IServiceEntryManager serviceEntryManager,
             ServiceEntryCache serviceEntryCache)
         {
             _serviceEntryManager = serviceEntryManager;
