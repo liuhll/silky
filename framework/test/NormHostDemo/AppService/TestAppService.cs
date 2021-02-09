@@ -9,32 +9,32 @@ namespace NormHostDemo.AppService
         
         public async Task<string> Create(TestDto input)
         {
-            return "OK";
+            return "Create";
         }
 
-        public Task<string> Update(TestDto input)
+        public void Update(TestDto input)
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public Task<string> Search(TestDto query)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult("Search");
         }
 
-        public Task<string> Form(TestDto query)
+        public string Form(TestDto query)
         {
-            throw new System.NotImplementedException();
+            return "Form";
         }
 
-        public Task<string> Get(long id, string name)
+        public async Task<string> Get(long id, string name)
         {
-            throw new System.NotImplementedException();
+            return "Get";
         }
 
-        public Task<string> UpdatePart(TestDto input)
+        public async Task UpdatePart(TestDto input)
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

@@ -11,19 +11,19 @@ namespace ITestApplication.Test
     {
         Task<string> Create(TestDto input);
 
-        Task<string> Update(TestDto input);
+        void Update(TestDto input);
 
         [HttpGet]
         Task<string> Search([FromQuery]TestDto query);
         
         [HttpPost]
-        Task<string> Form([FromForm]TestDto query);
+        string Form([FromForm]TestDto query);
         
         [HttpGet("{id:long}")]
         Task<string> Get(long id,string name);
         
         //[HttpPatch("patch")]
         [HttpPatch]
-        Task<string> UpdatePart(TestDto input);
+        Task UpdatePart(TestDto input);
     }
 }

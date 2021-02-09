@@ -39,6 +39,7 @@ namespace Lms.HttpServer
             {
                 throw new LmsException($"通过{path}-{method}无法找到服务条目");
             }
+
             var parameters = await _parameterParser.Parser(context.Request, serviceEntry);
             var excuteResult = await _serverExecutor.Execute(serviceEntry, parameters);
             context.Response.ContentType = "application/json;charset=utf-8";
@@ -52,7 +53,7 @@ namespace Lms.HttpServer
             else
             {
                 context.Response.ContentLength = 0;
-                await context.Response.WriteAsync(null);
+                await context.Response.WriteAsync(string.Empty);
             }
         }
     }
