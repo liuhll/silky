@@ -2,10 +2,12 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -73,8 +75,6 @@ namespace Lms.DotNetty
 
         private Bootstrap CreateBootstrap()
         {
-           
-
             var bootstrap = new Bootstrap();
             if (_rpcOptions.UseLibuv)
             {
@@ -88,11 +88,13 @@ namespace Lms.DotNetty
             }
 
             X509Certificate2 tlsCertificate = null;
+            string targetHost = null;
             if (_rpcOptions.IsSsl)
             {
                 tlsCertificate =
                     new X509Certificate2(Path.Combine(_hostEnvironment.ContentRootPath, _rpcOptions.SslCertificateName),
                         _rpcOptions.SslCertificatePassword);
+                targetHost = tlsCertificate.GetNameInfo(X509NameType.DnsName, false);
             }
 
             bootstrap
@@ -104,6 +106,10 @@ namespace Lms.DotNetty
                 .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
                 {
                     var pipeline = c.Pipeline;
+                    if (tlsCertificate != null)
+                    {
+                        pipeline.AddLast("tls", new TlsHandler(stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true), new ClientTlsSettings(targetHost)));
+                    }
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
