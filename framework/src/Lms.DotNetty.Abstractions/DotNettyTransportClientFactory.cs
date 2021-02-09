@@ -10,8 +10,10 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
+using Lms.Core;
 using Lms.DotNetty.Adapter;
 using Lms.Rpc.Address;
+using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Transport;
 using Lms.Rpc.Transport.Codec;
@@ -24,22 +26,48 @@ namespace Lms.DotNetty
 {
     public class DotNettyTransportClientFactory : ITransportClientFactory
     {
-        private ConcurrentDictionary<IAddressModel, Lazy<Task<ITransportClient>>> m_clients =
-            new ConcurrentDictionary<IAddressModel, Lazy<Task<ITransportClient>>>();
+        private ConcurrentDictionary<IAddressModel, Lazy<Task<ITransportClient>>> m_clients = new();
 
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
         private readonly Bootstrap _bootstrap;
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
+        private readonly IHealthCheck _healthCheck;
 
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
-            ITransportMessageDecoder transportMessageDecoder)
+            ITransportMessageDecoder transportMessageDecoder,
+            IHealthCheck healthCheck)
         {
             _rpcOptions = rpcOptions.Value;
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
+            _healthCheck = healthCheck;
+            _healthCheck.OnUnhealth += async addressModel =>
+            {
+                Check.NotNull(addressModel, nameof(addressModel));
+                m_clients.TryRemove(addressModel, out var remoteModule);
+            };
+            _healthCheck.OnHealthChange += async (addressModel, health) =>
+            {
+                Check.NotNull(addressModel, nameof(addressModel));
+                if (!health)
+                {
+                    m_clients.TryRemove(addressModel, out var remoteModule);
+                }
+                else
+                {
+                    await GetOrCreateClient(addressModel);
+                }
+
+            };
+            _healthCheck.OnRemveAddress += async addressModel =>
+            {
+                Check.NotNull(addressModel, nameof(addressModel));
+                m_clients.TryRemove(addressModel, out var remoteModule);
+            };       
+            
             _bootstrap = CreateBootstrap();
             Logger = NullLogger<DotNettyTransportClientFactory>.Instance;
         }
@@ -88,22 +116,12 @@ namespace Lms.DotNetty
         {
             try
             {
-                addressModel.HealthChange += async (model, health) =>
-                {
-                    if (!health)
-                    {
-                        m_clients.TryRemove(model, out var remoteModule);
-                    }
-                    else
-                    {
-                        await GetOrCreateClient(addressModel);
-                    }
-                };
                 return await GetOrCreateClient(addressModel);
             }
             catch (Exception ex)
             {
                 //移除
+                _healthCheck.RemoveAddress(addressModel);
                 m_clients.TryRemove(addressModel, out var value);
                 throw;
             }

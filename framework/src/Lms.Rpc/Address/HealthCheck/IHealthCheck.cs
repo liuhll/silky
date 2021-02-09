@@ -13,12 +13,15 @@ namespace Lms.Rpc.Address.HealthCheck
         bool IsHealth(AddressDescriptor addressDescriptor);
 
         bool IsHealth(IAddressModel addressModel);
-
-        event HealthChange HealthChange;
-
-        event ReachUnHealthCeilingTimes ReachUnHealthCeilingTimes;
-
-
+        
         void ChangeHealthStatus(IAddressModel addressModel, bool isHealth);
+
+        void RemoveAddress(IAddressModel addressModel);
+        
+        event HealthChange OnHealthChange;
+        event RemveAddress OnRemveAddress;
+        event Unhealth OnUnhealth;
+
+
     }
 }

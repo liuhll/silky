@@ -1,6 +1,6 @@
 Logging:
     LogLevel:
-        Default: "Information"
+        Default: "Debug"
         Microsoft: "Warning"
         Microsoft.Hosting.Lifetime: "Information"
     

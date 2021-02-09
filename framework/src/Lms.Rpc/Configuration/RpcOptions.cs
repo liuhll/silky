@@ -9,10 +9,12 @@ namespace Lms.Rpc.Configuration
         public int MqttPort { get; set; } = 2300;
         public bool UseLibuv { get; set; } = true;
         public bool IsSsl { get; set; } = false;
-
         public string SslCertificateName { get; set; }
-
         public string SslCertificatePassword { get; set; }
         public int SoBacklog { get; set; } = 8192;
+
+        public bool RemoveUnhealthServer { get; set; } = true;
+
+        public int UnHealthCeilingTimes { get; set; } = 3;
     }
 }

@@ -36,7 +36,8 @@ namespace Lms.DotNetty
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage)
         {
-            var serviceRoute = _serviceRouteCache[remoteInvokeMessage.ServiceId];
+            //var serviceRoute = _serviceRouteCache[remoteInvokeMessage.ServiceId];
+            var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
             if (serviceRoute == null)
             {
                 throw new LmsException($"通过{remoteInvokeMessage.ServiceId}找不到服务路由", StatusCode.NotFindServiceRoute);
@@ -61,7 +62,7 @@ namespace Lms.DotNetty
             }
             catch (IOException ex)
             {
-                _healthCheck.ChangeHealthStatus(selectedAddress, false);
+                _healthCheck.RemoveAddress(selectedAddress);
                 throw;
             }
             catch (ConnectException ex)

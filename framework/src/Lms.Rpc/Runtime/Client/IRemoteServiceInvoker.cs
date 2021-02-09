@@ -4,7 +4,7 @@ using Lms.Rpc.Messages;
 
 namespace Lms.Rpc.Runtime.Client
 {
-    public interface IRemoteServiceInvoker : ITransientDependency
+    public interface IRemoteServiceInvoker : IScopedDependency
     {
         Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage);
     }

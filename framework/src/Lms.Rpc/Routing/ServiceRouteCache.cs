@@ -1,22 +1,60 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
+using Lms.Core;
 using Lms.Core.DependencyInjection;
+using Lms.Rpc.Address;
+using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Routing.Descriptor;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Lms.Rpc.Routing
 {
     public class ServiceRouteCache : ISingletonDependency
     {
-        private readonly ConcurrentDictionary<string, ServiceRoute> _serviceRouteCache =
-            new ConcurrentDictionary<string, ServiceRoute>();
+        private readonly ConcurrentDictionary<string, ServiceRoute> _serviceRouteCache = new();
+        private readonly IHealthCheck _healthCheck;
+        public ILogger<ServiceRouteCache> Logger { get; set; }
 
-        public void UpdateCache(ServiceRouteDescriptor serviceRouteDescriptor)
+        public ServiceRouteCache(IHealthCheck healthCheck)
         {
+            _healthCheck = healthCheck;
+            _healthCheck.OnRemveAddress += HealthCheckOnOnRemveAddress;
+            Logger = NullLogger<ServiceRouteCache>.Instance;
+        }
+
+        private async Task HealthCheckOnOnRemveAddress(IAddressModel addressmodel)
+        {
+            var remveAddressServiceRoutes =
+                ServiceRoutes.Where(p => p.Addresses.Any(q => q.Descriptor == addressmodel.Descriptor));
+            foreach (var remveAddressServiceRoute in remveAddressServiceRoutes)
+            {
+                remveAddressServiceRoute.Addresses =
+                    remveAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressmodel.Descriptor);
+                _serviceRouteCache.AddOrUpdate(remveAddressServiceRoute.ServiceDescriptor.Id,
+                    remveAddressServiceRoute, (id, _) => remveAddressServiceRoute);
+            }
+        }
+
+
+        public void UpdateCache([NotNull] ServiceRouteDescriptor serviceRouteDescriptor)
+        {
+            Check.NotNull(serviceRouteDescriptor, nameof(serviceRouteDescriptor));
+            var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
             _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
-                serviceRouteDescriptor.ConvertToServiceRoute(),
-                (id, _) => serviceRouteDescriptor.ConvertToServiceRoute());
+                serviceRoute, (id, _) => serviceRoute);
+
+            Logger.LogDebug(
+                $"更新服务路由缓存,路由地址为:{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}");
+
+            foreach (var address in serviceRoute.Addresses)
+            {
+                _healthCheck.Monitor(address);
+            }
         }
 
         public void RemoveCache(string serviceId)
@@ -26,7 +64,7 @@ namespace Lms.Rpc.Routing
             {
                 foreach (var routeAddress in serviceRoute.Addresses)
                 {
-                    routeAddress.ChangeHealthState(false);
+                    _healthCheck.RemoveAddress(routeAddress);
                 }
             }
         }
@@ -36,17 +74,27 @@ namespace Lms.Rpc.Routing
 
         public IReadOnlyList<ServiceRoute> ServiceRoutes => _serviceRouteCache.Values.ToImmutableArray();
 
-        public ServiceRoute this[string serviceId]
+        public ServiceRoute GetServiceRoute(string serviceId)
         {
-            get
+            if (_serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
             {
-                if (_serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
-                {
-                    return serviceRoute;
-                }
-
-                return null;
+                return serviceRoute;
             }
+
+            return null;
         }
+
+        // public ServiceRoute this[string serviceId]
+        // {
+        //     get
+        //     {
+        //         if (_serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
+        //         {
+        //             return serviceRoute;
+        //         }
+        //
+        //         return null;
+        //     }
+        // }
     }
 }
