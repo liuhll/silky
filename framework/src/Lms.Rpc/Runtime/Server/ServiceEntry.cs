@@ -94,7 +94,7 @@ namespace Lms.Rpc.Runtime.Server
                     object instance = EngineContext.Current.Resolve(_serviceType);
                     for (int i = 0; i < parameters.Count; i++)
                     {
-                        if (parameters[i].GetType() != ParameterDescriptors[i].Type)
+                        if (parameters[i] != null && parameters[i].GetType() != ParameterDescriptors[i].Type)
                         {
                             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
                             parameters[i] = typeConvertibleService.Convert(parameters[i], ParameterDescriptors[i].Type);
@@ -121,23 +121,23 @@ namespace Lms.Rpc.Runtime.Server
             {
                 #region 获取参数
 
-                var parameter = parameters[parameterDescriptor.From];
+                var parameter = parameterDescriptor.From.DefaultValue();
+                if (parameters.ContainsKey(parameterDescriptor.From))
+                {
+                    parameter = parameters[parameterDescriptor.From];
+                }
+
                 switch (parameterDescriptor.From)
                 {
                     case ParameterFrom.Body:
                         list.Add(IsLocal
                             ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
                             : parameter);
-
                         break;
                     case ParameterFrom.Form:
                         if (parameterDescriptor.IsSample)
                         {
-                            var formVal =
-                                (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
-                                    typeof(IDictionary<string, object>));
-                            var parameterVal = formVal[parameterDescriptor.Name];
-                            list.Add(parameterVal);
+                            SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                         }
                         else
                         {
@@ -150,11 +150,7 @@ namespace Lms.Rpc.Runtime.Server
                     case ParameterFrom.Header:
                         if (parameterDescriptor.IsSample)
                         {
-                            var formVal =
-                                (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
-                                    typeof(IDictionary<string, object>));
-                            var parameterVal = formVal[parameterDescriptor.Name];
-                            list.Add(parameterVal);
+                            SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                         }
                         else
                         {
@@ -167,10 +163,16 @@ namespace Lms.Rpc.Runtime.Server
                     case ParameterFrom.Path:
                         if (parameterDescriptor.IsSample)
                         {
-                            var formVal =
+                            var pathVal =
                                 (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
                                     typeof(IDictionary<string, object>));
-                            var parameterVal = formVal[TemplateSegmentHelper.GetVariableName(parameterDescriptor.Name)];
+                            var parameterName = TemplateSegmentHelper.GetVariableName(parameterDescriptor.Name);
+                            if (!pathVal.ContainsKey(parameterName))
+                            {
+                                throw new LmsException("path参数不允许为空,请确认您传递的参数是否正确");
+                            }
+
+                            var parameterVal = pathVal[parameterName];
                             list.Add(typeConvertibleService.Convert(parameterVal, parameterDescriptor.Type));
                         }
                         else
@@ -182,11 +184,7 @@ namespace Lms.Rpc.Runtime.Server
                     case ParameterFrom.Query:
                         if (parameterDescriptor.IsSample)
                         {
-                            var formVal =
-                                (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
-                                    typeof(IDictionary<string, object>));
-                            var parameterVal = formVal[parameterDescriptor.Name];
-                            list.Add(typeConvertibleService.Convert(parameterVal, parameterDescriptor.Type));
+                            SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                         }
                         else
                         {
@@ -202,6 +200,24 @@ namespace Lms.Rpc.Runtime.Server
             }
 
             return list;
+        }
+
+        private void SetSampleParameterValue(ITypeConvertibleService typeConvertibleService, object parameter,
+            ParameterDescriptor parameterDescriptor, List<object> list)
+        {
+            var dict =
+                (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
+                    typeof(IDictionary<string, object>));
+            ParameterDefaultValue.TryGetDefaultValue(parameterDescriptor.ParameterInfo,
+                out var parameterVal);
+            if (dict.ContainsKey(parameterDescriptor.Name))
+            {
+                parameterVal = dict[parameterDescriptor.Name];
+            }
+
+            list.Add(IsLocal
+                ? typeConvertibleService.Convert(parameterVal, parameterDescriptor.Type)
+                : parameterVal);
         }
 
         public ServiceDescriptor ServiceDescriptor { get; }
