@@ -11,7 +11,7 @@ namespace Lms.Rpc.Runtime.Server
         {
             if (!serviceEntry.IsLocal)
             {
-                throw new LmsException("只允许本地服务条目生产路由描述符");
+                throw new LmsException("只允许本地服务条目生成路由描述符");
             }
 
             return new ServiceRouteDescriptor()
