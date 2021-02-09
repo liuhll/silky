@@ -23,12 +23,10 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         private readonly ISerializer _serializer;
         public ILogger<ZookeeperServiceRouteManager> Logger { get; set; }
 
-        private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher> m_routeWatchers =
-            new ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher>();
+        private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher> m_routeWatchers = new();
 
-        private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteSubDirectoryWatcher> m_routeSubDirWatchers
-            =
-            new ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteSubDirectoryWatcher>();
+        private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteSubDirectoryWatcher>
+            m_routeSubDirWatchers = new();
 
 
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
