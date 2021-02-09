@@ -33,7 +33,7 @@ namespace Lms.Rpc.Transport
             TaskCompletionSource<TransportMessage> task;
             if (!m_resultDictionary.TryGetValue(message.Id, out task))
                 return;
-            Debug.Assert(message.IsResultMessage(),"服务消费者接受到的消息类型不正确");
+            Debug.Assert(message.IsResultMessage(), "服务消费者接受到的消息类型不正确");
             var content = message.GetContent<RemoteResultMessage>();
             if (content.StatusCode != StatusCode.Success)
             {
@@ -51,12 +51,13 @@ namespace Lms.Rpc.Transport
             var callbackTask = RegisterResultCallbackAsync(transportMessage.Id);
             await _messageSender.SendAndFlushAsync(transportMessage);
             return await callbackTask;
-
         }
 
-        private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id, int timeout = Timeout.Infinite)
+        private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id,
+            CancellationToken ct = default(CancellationToken))
         {
             var tcs = new TaskCompletionSource<TransportMessage>();
+            ct.Register(() => tcs.TrySetCanceled(),useSynchronizationContext: false);
             m_resultDictionary.TryAdd(id, tcs);
             try
             {
