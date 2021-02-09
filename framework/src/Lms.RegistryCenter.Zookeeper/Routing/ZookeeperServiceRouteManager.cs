@@ -81,7 +81,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         private async Task CreateSubDirectory(IZookeeperClient zookeeperClient, ServiceProtocol serviceProtocol)
         {
             var subDirectoryPath = _registryCenterOptions.GetRoutePath(serviceProtocol);
-            
+
             if (!await zookeeperClient.ExistsAsync(subDirectoryPath))
             {
                 await zookeeperClient.CreateRecursiveAsync(subDirectoryPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
@@ -96,7 +96,8 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
 
             if (await zookeeperClient.ExistsAsync(_registryCenterOptions.GetRoutePath(serviceProtocol)))
             {
-                var children = await zookeeperClient.GetChildrenAsync(_registryCenterOptions.GetRoutePath(serviceProtocol));
+                var children =
+                    await zookeeperClient.GetChildrenAsync(_registryCenterOptions.GetRoutePath(serviceProtocol));
                 foreach (var child in children)
                 {
                     var routePath = CreateRoutePath(serviceProtocol, child);
@@ -147,7 +148,17 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
 
         private async Task CreateSubscribeDataChanges()
         {
-            var allServiceIds = _serviceEntryManager.GetAllEntries().Select(p => p.ServiceDescriptor.Id);
+            var allServiceEntries = _serviceEntryManager.GetAllEntries();
+            foreach (var serviceEntry in allServiceEntries)
+            {
+                var serviceRoutePath = CreateRoutePath(serviceEntry.ServiceDescriptor.ServiceProtocol,
+                    serviceEntry.ServiceDescriptor.Id);
+                var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+                foreach (var zookeeperClient in zookeeperClients)
+                {
+                    await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
+                }
+            }
         }
 
         internal async Task CreateSubscribeDataChange(IZookeeperClient zookeeperClient, string path)
