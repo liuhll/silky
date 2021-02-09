@@ -55,7 +55,7 @@ namespace Lms.Rpc.Routing
 
         }
 
-        public abstract Task EnterRoutes();
+        public abstract Task EnterRoutes(ServiceProtocol serviceProtocol);
 
         protected abstract Task CreateSubDirectory(ServiceProtocol serviceProtocol);
 

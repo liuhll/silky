@@ -32,7 +32,7 @@ namespace Lms.Rpc
             var serviceRouteManager = applicationContext.ServiceProvider.GetService<IServiceRouteManager>();
             if (serviceRouteManager != null)
             {
-                await serviceRouteManager.EnterRoutes();
+                await serviceRouteManager.EnterRoutes(ServiceProtocol.Tcp);
             }
 
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();

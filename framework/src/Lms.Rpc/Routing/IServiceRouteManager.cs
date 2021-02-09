@@ -9,6 +9,6 @@ namespace Lms.Rpc.Routing
         
         Task RegisterRoutes(double processorTime, ServiceProtocol serviceProtocol);
 
-        Task EnterRoutes();
+        Task EnterRoutes(ServiceProtocol serviceProtocol);
     }
 }
