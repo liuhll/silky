@@ -12,6 +12,7 @@ namespace Lms.Rpc.Routing.Template
             {HttpMethod.Get, "Get"},
             {HttpMethod.Post, "Create"},
             {HttpMethod.Put, "Update"},
+            {HttpMethod.Patch, "Update"},
             {HttpMethod.Delete, "Delete"},
         };
 
@@ -22,7 +23,7 @@ namespace Lms.Rpc.Routing.Template
             var serverEntryTemplate = routeTemplate;
             if (isSpecify)
             {
-                if (methodEntryTemplate.IsNullOrEmpty())
+                if (methodEntryTemplate.IsNullOrEmpty() && constraintDefualtMethods.ContainsKey(httpMethod))
                 {
                     var constraintDefualtMethod = constraintDefualtMethods[httpMethod];
                     if (!constraintDefualtMethod.IsNullOrEmpty() &&
@@ -30,6 +31,7 @@ namespace Lms.Rpc.Routing.Template
                     {
                         serverEntryTemplate = $"{routeTemplate}/{methodName}";
                     }
+                    
                 }
                 else
                 {

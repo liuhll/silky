@@ -31,6 +31,10 @@ namespace NormHostDemo.AppService
         {
             throw new System.NotImplementedException();
         }
-        
+
+        public Task<string> UpdatePart(TestDto input)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

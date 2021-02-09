@@ -21,5 +21,9 @@ namespace ITestApplication.Test
         
         [HttpGet("{id:long}")]
         Task<string> Get(long id,string name);
+        
+        //[HttpPatch("patch")]
+        [HttpPatch]
+        Task<string> UpdatePart(TestDto input);
     }
 }
