@@ -12,6 +12,7 @@ using DotNetty.Transport.Libuv;
 using Lms.Core;
 using Lms.DotNetty.Adapter;
 using Lms.Rpc.Address;
+using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Runtime.Server;
@@ -31,28 +32,32 @@ namespace Lms.DotNetty.Protocol.Tcp
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly IAddressModel _hostAddress;
-        private IChannel boundChannel;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
+        private readonly IHealthCheck _healthCheck;
+        private IChannel m_boundChannel;
+        private IEventLoopGroup bossGroup;
+        private IEventLoopGroup workerGroup;
 
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
-            ITransportMessageDecoder transportMessageDecoder)
+            ITransportMessageDecoder transportMessageDecoder,
+            IHealthCheck healthCheck)
         {
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
+            _healthCheck = healthCheck;
             _hostAddress = NetUtil.GetHostAddress(ServiceProtocol.Tcp);
             _rpcOptions = rpcOptions.Value;
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
             }
+
             Logger = NullLogger<DotNettyTcpServerMessageListener>.Instance;
         }
 
         public async Task Listen()
         {
-            IEventLoopGroup bossGroup;
-            IEventLoopGroup workerGroup;
             var bootstrap = new ServerBootstrap();
             if (_rpcOptions.UseLibuv)
             {
@@ -98,11 +103,11 @@ namespace Lms.DotNetty.Protocol.Tcp
                             var sender = new DotNettyTcpServerMessageSender(channelContext);
                             OnReceived(sender, message);
                         }
-                    }));
+                    }, _healthCheck));
                 }));
             try
             {
-                boundChannel = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
+                m_boundChannel = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
                 Logger.LogInformation($"服务监听者启动成功,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol}");
             }
             catch (Exception e)
@@ -111,6 +116,13 @@ namespace Lms.DotNetty.Protocol.Tcp
                     $"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol},原因: {e.Message}");
                 throw;
             }
+        }
+
+        public async void Dispose()
+        {
+            await m_boundChannel.CloseAsync();
+            await bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            await workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
         }
     }
 }

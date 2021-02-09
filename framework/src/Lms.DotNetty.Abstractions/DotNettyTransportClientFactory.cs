@@ -24,7 +24,7 @@ using Microsoft.Extensions.Options;
 
 namespace Lms.DotNetty
 {
-    public class DotNettyTransportClientFactory : ITransportClientFactory
+    public class DotNettyTransportClientFactory : IDisposable, ITransportClientFactory
     {
         private ConcurrentDictionary<IAddressModel, Lazy<Task<ITransportClient>>> m_clients = new();
 
@@ -34,7 +34,7 @@ namespace Lms.DotNetty
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IHealthCheck _healthCheck;
-
+        private IEventLoopGroup group;
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
@@ -60,21 +60,20 @@ namespace Lms.DotNetty
                 {
                     await GetOrCreateClient(addressModel);
                 }
-
             };
             _healthCheck.OnRemveAddress += async addressModel =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 m_clients.TryRemove(addressModel, out var remoteModule);
-            };       
-            
+            };
+
             _bootstrap = CreateBootstrap();
             Logger = NullLogger<DotNettyTransportClientFactory>.Instance;
         }
 
         private Bootstrap CreateBootstrap()
         {
-            IEventLoopGroup group;
+           
 
             var bootstrap = new Bootstrap();
             if (_rpcOptions.UseLibuv)
@@ -138,11 +137,20 @@ namespace Lms.DotNetty
                         var pipeline = channel.Pipeline;
                         var messageListener = new ClientMessageListener();
                         var messageSender = new DotNettyClientMessageSender(channel);
-                        pipeline.AddLast(new ClientHandler(messageListener, messageSender));
+                        pipeline.AddLast(new ClientHandler(messageListener, _healthCheck));
                         var client = new DefaultTransportClient(messageSender, messageListener);
                         return client;
                     }
                 )).Value;
+        }
+
+        public async void Dispose()
+        {
+            if (group != null)
+            {
+                await group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            }
+            
         }
     }
 }

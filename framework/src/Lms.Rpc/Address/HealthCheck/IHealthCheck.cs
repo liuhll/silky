@@ -17,11 +17,12 @@ namespace Lms.Rpc.Address.HealthCheck
         void ChangeHealthStatus(IAddressModel addressModel, bool isHealth);
 
         void RemoveAddress(IAddressModel addressModel);
+
+        void RemoveAddress(IPAddress ipAddress, int port);
         
-        event HealthChange OnHealthChange;
-        event RemveAddress OnRemveAddress;
-        event Unhealth OnUnhealth;
-
-
+        event HealthChangeEvent OnHealthChange;
+        event RemoveAddressEvent OnRemveAddress;
+        event UnhealthEvent OnUnhealth;
+        
     }
 }

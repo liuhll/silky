@@ -29,7 +29,7 @@ namespace Lms.Rpc.Address
 
         public ServiceProtocol ServiceProtocol { get; }
 
-        public event HealthChange HealthChange;
+        public event HealthChangeEvent HealthChange;
 
         public void ChangeHealthState(bool isHealth)
         {

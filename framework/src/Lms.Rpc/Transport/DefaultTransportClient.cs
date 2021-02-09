@@ -13,8 +13,8 @@ namespace Lms.Rpc.Transport
 {
     public class DefaultTransportClient : ITransportClient
     {
-        private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary =
-            new ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>>();
+        private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
+            
 
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;

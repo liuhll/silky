@@ -11,7 +11,9 @@ namespace Lms.Rpc.Address.HealthCheck
     {
         private ConcurrentDictionary<IAddressModel, HealthCheckModel> m_healthCheckAddresses = new();
         private readonly RpcOptions _rpcOptions;
-
+        public event HealthChangeEvent OnHealthChange;
+        public event RemoveAddressEvent OnRemveAddress;
+        public event UnhealthEvent OnUnhealth;
         public DefaultHealthCheck(IOptions<RpcOptions> rpcOptions)
         {
             _rpcOptions = rpcOptions.Value;
@@ -27,9 +29,14 @@ namespace Lms.Rpc.Address.HealthCheck
             }
         }
 
-        public event HealthChange OnHealthChange;
-        public event RemveAddress OnRemveAddress;
-        public event Unhealth OnUnhealth;
+        public void RemoveAddress(IPAddress ipAddress, int port)
+        {
+            var key = m_healthCheckAddresses.Keys.FirstOrDefault(p => p.IPEndPoint.Address.MapToIPv4().Equals(ipAddress) && p.Port == port);
+            if (key != null)
+            {
+                RemoveAddress(key);
+            }
+        }
 
         public void Monitor(IAddressModel addressModel)
         {
@@ -38,10 +45,10 @@ namespace Lms.Rpc.Address.HealthCheck
                 m_healthCheckAddresses.GetOrAdd(addressModel, new HealthCheckModel(true, 0));
             }
         }
-
-        public bool IsHealth(IPEndPoint ipEndPoint)
+        
+        public bool IsHealth(IPEndPoint ipEndpoint)
         {
-            var key = m_healthCheckAddresses.Keys.FirstOrDefault(p => p.IPEndPoint == ipEndPoint);
+            var key = m_healthCheckAddresses.Keys.FirstOrDefault(p => p.IPEndPoint.Equals(ipEndpoint));
             if (key != null)
             {
                 return IsHealth(key);
@@ -78,7 +85,8 @@ namespace Lms.Rpc.Address.HealthCheck
                 var newHealthCheckModel =
                     new HealthCheckModel(isHealth, isHealth ? 0 : healthCheckModel.UnHealthTimes + 1);
                 m_healthCheckAddresses.TryUpdate(addressModel, newHealthCheckModel, healthCheckModel);
-                if (!isHealth && healthCheckModel.UnHealthTimes >= _rpcOptions.UnHealthCeilingTimes && OnRemveAddress != null)
+                if (!isHealth && healthCheckModel.UnHealthTimes >= _rpcOptions.UnHealthCeilingTimes &&
+                    OnRemveAddress != null)
                 {
                     OnRemveAddress(addressModel);
                 }
@@ -88,6 +96,7 @@ namespace Lms.Rpc.Address.HealthCheck
                     OnHealthChange(addressModel, isHealth);
                 }
             }
+
             healthCheckModel = new HealthCheckModel(isHealth, isHealth ? 0 : 1);
             m_healthCheckAddresses.TryAdd(addressModel, healthCheckModel);
             if (!isHealth && OnUnhealth != null)
