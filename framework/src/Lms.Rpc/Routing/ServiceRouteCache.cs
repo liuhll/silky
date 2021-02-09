@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Lms.Core.DependencyInjection;
 using Lms.Rpc.Routing.Descriptor;
 
@@ -8,30 +9,30 @@ namespace Lms.Rpc.Routing
 {
     public class ServiceRouteCache : ISingletonDependency
     {
-        private readonly ConcurrentDictionary<string, ServiceRouteDescriptor> _serviceRouteDescriptorCache =
-            new ConcurrentDictionary<string, ServiceRouteDescriptor>();
-
         private readonly ConcurrentDictionary<string, ServiceRoute> _serviceRouteCache =
             new ConcurrentDictionary<string, ServiceRoute>();
 
         public void UpdateCache(ServiceRouteDescriptor serviceRouteDescriptor)
         {
-            _serviceRouteDescriptorCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
-                serviceRouteDescriptor, 
-                (id, _) => serviceRouteDescriptor);
-            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id, 
+            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
                 serviceRouteDescriptor.ConvertToServiceRoute(),
                 (id, _) => serviceRouteDescriptor.ConvertToServiceRoute());
         }
-        
+
         public void RemoveCache(string serviceId)
         {
-            _serviceRouteDescriptorCache.TryRemove(serviceId,out ServiceRouteDescriptor serviceRouteDescriptor);
             _serviceRouteCache.TryRemove(serviceId, out ServiceRoute serviceRoute);
+            if (serviceRoute != null)
+            {
+                foreach (var routeAddress in serviceRoute.Addresses)
+                {
+                    routeAddress.ChangeHealthState(false);
+                }
+            }
         }
 
         public IReadOnlyList<ServiceRouteDescriptor> ServiceRouteDescriptors =>
-            _serviceRouteDescriptorCache.Values.ToImmutableArray();
+            _serviceRouteCache.Values.Select(p => p.ConvertToDescriptor()).ToImmutableArray();
 
         public IReadOnlyList<ServiceRoute> ServiceRoutes => _serviceRouteCache.Values.ToImmutableArray();
 
@@ -39,10 +40,11 @@ namespace Lms.Rpc.Routing
         {
             get
             {
-                if ( _serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
+                if (_serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
                 {
                     return serviceRoute;
                 }
+
                 return null;
             }
         }

@@ -17,15 +17,15 @@ namespace Lms.Rpc.Utils
         private const string ANYHOST = "0.0.0.0";
         private const int MIN_PORT = 0;
         private const int MAX_PORT = 65535;
-        
+
         private const string LOCAL_IP_PATTERN = "127(\\.\\d{1,3}){3}$";
         private const string LOCAL_HOSTADRRESS = "localhost";
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
-        
+
         private static ConcurrentDictionary<ServiceProtocol, IAddressModel> addressModels =
             new ConcurrentDictionary<ServiceProtocol, IAddressModel>();
 
-        
+
         public static string GetHostAddress(string hostAddress)
         {
             var result = hostAddress;
@@ -33,6 +33,7 @@ namespace Lms.Rpc.Utils
             {
                 result = GetAnyHostAddress();
             }
+
             return result;
         }
 
@@ -56,6 +57,7 @@ namespace Lms.Rpc.Utils
                     }
                 }
             }
+
             return result;
         }
 
@@ -84,20 +86,20 @@ namespace Lms.Rpc.Utils
             address = new AddressModel(host, port, serviceProtocol);
             return addressModels.GetOrAdd(serviceProtocol, address);
         }
-        
+
         private static bool IsValidAddress(string address)
         {
             return (address != null
                     && !ANYHOST.Equals(address)
                     && address.IsMatch(IP_PATTERN));
         }
-        
+
         private static bool IsAnyHost(String host)
         {
             return ANYHOST.Equals(host);
         }
 
-        
+
         private static bool IsLocalHost(string host)
         {
             return host != null

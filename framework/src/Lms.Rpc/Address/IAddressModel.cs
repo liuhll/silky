@@ -20,6 +20,10 @@ namespace Lms.Rpc.Address
         /// 地址类型
         /// </summary>
         ServiceProtocol ServiceProtocol { get; }
+        
+        event HealthChange HealthChange;
+
+        void ChangeHealthState(bool isHealth);
 
         /// <summary>
         /// ip终结点

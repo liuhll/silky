@@ -6,7 +6,7 @@ namespace Lms.Rpc.Routing
 {
     public class ServiceRoute
     {
-        public IEnumerable<IAddressModel> Addresses { get; set; }
+        public IEnumerable<IAddressModel> Addresses { get; set; } = new List<IAddressModel>();
         
         public ServiceDescriptor ServiceDescriptor { get; set; }
     }

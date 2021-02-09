@@ -7,7 +7,7 @@ namespace Lms.Rpc.Address.Descriptor
     {
         public string Address { get; set; }
 
-        public int Port { get; set; } 
+        public int Port { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
         
@@ -22,15 +22,15 @@ namespace Lms.Rpc.Address.Descriptor
 
             return model.ToString() == ToString() && model.ServiceProtocol == ServiceProtocol;
         }
-        
+
         public override string ToString()
         {
-            return string.Concat(new[] {AddressHelper.GetIp(Address), ":", Port.ToString()});
+            return string.Concat(new[] {AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString()});
         }
-        
+
         public override int GetHashCode()
         {
-            return (ToString() + ServiceProtocol).GetHashCode();
+            return ToString().GetHashCode();
         }
 
         public static bool operator ==(AddressDescriptor model1, AddressDescriptor model2)

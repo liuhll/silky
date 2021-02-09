@@ -1,25 +1,37 @@
+using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetty.Transport.Channels;
 using Lms.Core.Exceptions;
+using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
+using Lms.Rpc.Runtime.Client;
 using Lms.Rpc.Transport;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Lms.Rpc.Runtime.Client
+namespace Lms.DotNetty
 {
-    public class DefaultRemoteServiceInvoker : IRemoteServiceInvoker
+    public class DotNettyRemoteServiceInvoker : IRemoteServiceInvoker
     {
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly IRemoteServiceSupervisor _remoteServiceSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
+        private readonly IHealthCheck _healthCheck;
+        public ILogger<DotNettyRemoteServiceInvoker> Logger { get; set; }
 
-        public DefaultRemoteServiceInvoker(ServiceRouteCache serviceRouteCache,
+        public DotNettyRemoteServiceInvoker(ServiceRouteCache serviceRouteCache,
             IRemoteServiceSupervisor remoteServiceSupervisor,
-            ITransportClientFactory transportClientFactory)
+            ITransportClientFactory transportClientFactory,
+            IHealthCheck healthCheck)
         {
             _serviceRouteCache = serviceRouteCache;
             _remoteServiceSupervisor = remoteServiceSupervisor;
             _transportClientFactory = transportClientFactory;
+            _healthCheck = healthCheck;
+            Logger = NullLogger<DotNettyRemoteServiceInvoker>.Instance;
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage)
@@ -42,8 +54,21 @@ namespace Lms.Rpc.Runtime.Client
             // todo 远程调用
             // todo 获取调用结果
             var selectedAddress = serviceRoute.Addresses.First();
-            var client = await _transportClientFactory.CreateClientAsync(selectedAddress.IPEndPoint);
-            return await client.SendAsync(remoteInvokeMessage);
+            try
+            {
+                var client = await _transportClientFactory.GetClient(selectedAddress);
+                return await client.SendAsync(remoteInvokeMessage);
+            }
+            catch (IOException ex)
+            {
+                _healthCheck.ChangeHealthStatus(selectedAddress, false);
+                throw;
+            }
+            catch (ConnectException ex)
+            {
+                _healthCheck.ChangeHealthStatus(selectedAddress, false);
+                throw;
+            }
         }
     }
 }

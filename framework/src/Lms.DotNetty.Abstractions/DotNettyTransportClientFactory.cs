@@ -11,6 +11,7 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
 using Lms.DotNetty.Adapter;
+using Lms.Rpc.Address;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Transport;
 using Lms.Rpc.Transport.Codec;
@@ -23,8 +24,8 @@ namespace Lms.DotNetty
 {
     public class DotNettyTransportClientFactory : ITransportClientFactory
     {
-        private ConcurrentDictionary<EndPoint, Lazy<Task<ITransportClient>>> m_clients =
-            new ConcurrentDictionary<EndPoint, Lazy<Task<ITransportClient>>>();
+        private ConcurrentDictionary<IAddressModel, Lazy<Task<ITransportClient>>> m_clients =
+            new ConcurrentDictionary<IAddressModel, Lazy<Task<ITransportClient>>>();
 
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
         private readonly Bootstrap _bootstrap;
@@ -83,31 +84,47 @@ namespace Lms.DotNetty
             return bootstrap;
         }
 
-        public async Task<ITransportClient> CreateClientAsync(EndPoint endPoint)
+        public async Task<ITransportClient> GetClient(IAddressModel addressModel)
         {
             try
             {
-                return await m_clients.GetOrAdd(endPoint
-                    , k => new Lazy<Task<ITransportClient>>(async () =>
-                        {
-                            Logger.LogInformation($"准备为服务端地址：{endPoint}创建客户端");
-                            var bootstrap = _bootstrap;
-                            var channel = await bootstrap.ConnectAsync(k);
-                            var pipeline = channel.Pipeline;
-                            var messageListener = new ClientMessageListener();
-                            var messageSender = new DotNettyClientMessageSender(channel);
-                            pipeline.AddLast(new ClientHandler(messageListener,messageSender));
-                            var client = new DefaultTransportClient(messageSender, messageListener);
-                            return client;
-                        }
-                    )).Value;
+                addressModel.HealthChange += async (model, health) =>
+                {
+                    if (!health)
+                    {
+                        m_clients.TryRemove(model, out var remoteModule);
+                    }
+                    else
+                    {
+                        await GetOrCreateClient(addressModel);
+                    }
+                };
+                return await GetOrCreateClient(addressModel);
             }
             catch (Exception ex)
             {
                 //移除
-                m_clients.TryRemove(endPoint, out var value);
+                m_clients.TryRemove(addressModel, out var value);
                 throw;
             }
+        }
+
+        private async Task<ITransportClient> GetOrCreateClient(IAddressModel addressModel)
+        {
+            return await m_clients.GetOrAdd(addressModel
+                , k => new Lazy<Task<ITransportClient>>(async () =>
+                    {
+                        Logger.LogInformation($"准备为服务端地址：{addressModel.IPEndPoint}创建客户端");
+                        var bootstrap = _bootstrap;
+                        var channel = await bootstrap.ConnectAsync(k.IPEndPoint);
+                        var pipeline = channel.Pipeline;
+                        var messageListener = new ClientMessageListener();
+                        var messageSender = new DotNettyClientMessageSender(channel);
+                        pipeline.AddLast(new ClientHandler(messageListener, messageSender));
+                        var client = new DefaultTransportClient(messageSender, messageListener);
+                        return client;
+                    }
+                )).Value;
         }
     }
 }

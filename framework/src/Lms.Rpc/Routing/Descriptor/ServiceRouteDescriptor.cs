@@ -15,7 +15,7 @@ namespace Lms.Rpc.Routing.Descriptor
 
         public ServiceDescriptor ServiceDescriptor { get; set; }
 
-        public IEnumerable<AddressDescriptor> AddressDescriptors { get; set; }
+        public IEnumerable<AddressDescriptor> AddressDescriptors { get; set; } = new List<AddressDescriptor>();
 
         public long TimeStamp { get; set; }
         
