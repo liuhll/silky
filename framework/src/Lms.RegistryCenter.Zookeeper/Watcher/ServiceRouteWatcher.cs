@@ -14,16 +14,16 @@ namespace Lms.RegistryCenter.Zookeeper
     {
         internal string Path { get; }
         private readonly ServiceRouteCache _serviceRouteCache;
-        private readonly IJsonSerializer _jsonSerializer;
+        private readonly ISerializer _serializer;
         
         public ServiceRouteWatcher(
             string path,
             ServiceRouteCache serviceRouteCache,
-            IJsonSerializer jsonSerializer)
+            ISerializer serializer)
         {
             Path = path;
             _serviceRouteCache = serviceRouteCache;
-            _jsonSerializer = jsonSerializer;
+            _serializer = serializer;
 
         }
 
@@ -44,13 +44,13 @@ namespace Lms.RegistryCenter.Zookeeper
                 case Watcher.Event.EventType.NodeCreated: 
                     Check.NotNullOrEmpty(nodeData, nameof(nodeData));
                     var createdJsonString = nodeData.GetString();
-                    var createdServiceRouteDescriptor = _jsonSerializer.Deserialize<ServiceRouteDescriptor>(createdJsonString);
+                    var createdServiceRouteDescriptor = _serializer.Deserialize<ServiceRouteDescriptor>(createdJsonString);
                     _serviceRouteCache.UpdateCache(createdServiceRouteDescriptor);
                     break;
                 case Watcher.Event.EventType.NodeDataChanged:
                     Check.NotNullOrEmpty(nodeData, nameof(nodeData));
                     var updateJsonString = nodeData.GetString();
-                    var updateServiceRouteDescriptor = _jsonSerializer.Deserialize<ServiceRouteDescriptor>(updateJsonString);
+                    var updateServiceRouteDescriptor = _serializer.Deserialize<ServiceRouteDescriptor>(updateJsonString);
                     _serviceRouteCache.UpdateCache(updateServiceRouteDescriptor);
                     break;
             }

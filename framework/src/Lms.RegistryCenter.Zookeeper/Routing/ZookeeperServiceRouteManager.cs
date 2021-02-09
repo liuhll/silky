@@ -19,7 +19,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
     public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, ISingletonDependency
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
-        private readonly IJsonSerializer _jsonSerializer;
+        private readonly ISerializer _serializer;
         public ILogger<ZookeeperServiceRouteManager> Logger { get; set; }
 
         private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher> m_routeWatchers =
@@ -31,11 +31,11 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
             IZookeeperClientProvider zookeeperClientProvider, IOptions<RegistryCenterOptions> registryCenterOptions,
-            IJsonSerializer jsonSerializer)
+            ISerializer serializer)
             : base(serviceRouteCache, serviceEntryManager, registryCenterOptions)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
-            _jsonSerializer = jsonSerializer;
+            _serializer = serializer;
             Logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
         }
 
@@ -46,7 +46,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             {
                 var routePath = CreateRoutePath(serviceRouteDescriptor.ServiceDescriptor.Id);
                 await CreateSubscribeDataChange(zookeeperClient, routePath);
-                var jsonString = _jsonSerializer.Serialize(serviceRouteDescriptor);
+                var jsonString = _serializer.Serialize(serviceRouteDescriptor);
                 var data = jsonString.GetBytes();
                 if (!await zookeeperClient.ExistsAsync(routePath))
                 {
@@ -130,7 +130,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             }
 
             var jsonString = data.ToArray().GetString();
-            return _jsonSerializer.Deserialize<ServiceRouteDescriptor>(jsonString);
+            return _serializer.Deserialize<ServiceRouteDescriptor>(jsonString);
         }
 
         private string CreateRoutePath(string child)
@@ -149,7 +149,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         {
             if (!m_routeWatchers.ContainsKey((path, zookeeperClient)))
             {
-                var watcher = new ServiceRouteWatcher(path, _serviceRouteCache, _jsonSerializer);
+                var watcher = new ServiceRouteWatcher(path, _serviceRouteCache, _serializer);
                 await zookeeperClient.SubscribeDataChange(path, watcher.HandleNodeDataChange);
                 m_routeWatchers.GetOrAdd((path, zookeeperClient), watcher);
             }

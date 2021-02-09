@@ -17,17 +17,17 @@ namespace Lms.HttpServer
         private readonly IServiceEntryLocate _serviceEntryLocate;
         private readonly IParameterParser _parameterParser;
         private readonly IServiceExecutor _serverExecutor;
-        private readonly IJsonSerializer _jsonSerializer;
+        private readonly ISerializer _serializer;
 
         public HttpMessageReceivedHandler(IServiceEntryLocate serviceEntryLocate,
             IParameterParser parameterParser,
             IServiceExecutor serverExecutor,
-            IJsonSerializer jsonSerializer)
+            ISerializer serializer)
         {
             _serviceEntryLocate = serviceEntryLocate;
             _parameterParser = parameterParser;
             _serverExecutor = serverExecutor;
-            _jsonSerializer = jsonSerializer;
+            _serializer = serializer;
         }
 
         internal async Task Handle(HttpContext context)
@@ -45,7 +45,7 @@ namespace Lms.HttpServer
             context.Response.StatusCode = 200;
             if (excuteResult != null)
             {
-                var responseData = _jsonSerializer.Serialize(excuteResult);
+                var responseData = _serializer.Serialize(excuteResult);
                 context.Response.ContentLength = responseData.GetBytes().Length;
                 await context.Response.WriteAsync(responseData);
             }

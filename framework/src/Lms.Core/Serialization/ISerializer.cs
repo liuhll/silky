@@ -2,7 +2,7 @@ using System;
 
 namespace Lms.Core.Serialization
 {
-    public interface IJsonSerializer
+    public interface ISerializer
     {
         string Serialize(object instance, bool camelCase = true, bool indented = false);
 

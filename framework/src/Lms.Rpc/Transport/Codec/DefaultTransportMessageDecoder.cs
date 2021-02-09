@@ -7,9 +7,9 @@ namespace Lms.Rpc.Transport.Codec
 {
     public sealed class DefaultTransportMessageDecoder : ITransportMessageDecoder
     {
-        private IJsonSerializer _serializer;
+        private ISerializer _serializer;
 
-        public DefaultTransportMessageDecoder(IJsonSerializer serializer)
+        public DefaultTransportMessageDecoder(ISerializer serializer)
         {
             _serializer = serializer;
         }

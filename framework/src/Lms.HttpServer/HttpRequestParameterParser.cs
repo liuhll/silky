@@ -12,9 +12,9 @@ namespace Lms.HttpServer
 {
     public class HttpRequestParameterParser : IParameterParser
     {
-        private readonly IJsonSerializer _serializer;
+        private readonly ISerializer _serializer;
 
-        public HttpRequestParameterParser(IJsonSerializer serializer)
+        public HttpRequestParameterParser(ISerializer serializer)
         {
             _serializer = serializer;
         }

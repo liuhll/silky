@@ -5,7 +5,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Lms.Core.Serialization
 {
-    public class DefaultJsonSerializer : IJsonSerializer, ITransientDependency
+    public class DefaultSerializer : ISerializer, ITransientDependency
     {
         public string Serialize(object instance, bool camelCase = true, bool indented = false)
         {
