@@ -20,6 +20,6 @@ namespace ITestApplication.Test
         Task<string> Form([FromForm]TestDto query);
         
         [HttpGet("{id:long}")]
-        Task<string> Get(long id,[Required(ErrorMessage = "姓名不允许为空")]string name);
+        Task<string> Get(long id,string name);
     }
 }

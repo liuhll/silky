@@ -71,7 +71,8 @@ namespace Lms.Rpc
                                 StatusCode = e.GetExceptionStatusCode()
                             };
                         }
-                        var resultTransportMessage = new TransportMessage(remoteResultMessage);
+
+                        var resultTransportMessage = new TransportMessage(remoteResultMessage, message.Id);
                         await sender.SendAndFlushAsync(resultTransportMessage);
                     };
                 }
