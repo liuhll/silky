@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
 using Lms.Rpc.Messages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -48,21 +49,19 @@ namespace Lms.Rpc.Transport
         public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout = Timeout.Infinite)
         {
             var transportMessage = new TransportMessage(message);
-            var callbackTask = RegisterResultCallbackAsync(transportMessage.Id);
+            var callbackTask = RegisterResultCallbackAsync(transportMessage.Id, timeout);
             await _messageSender.SendAndFlushAsync(transportMessage);
             return await callbackTask;
         }
 
-        private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id,
-            CancellationToken ct = default(CancellationToken))
+        private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id, int timeout = Timeout.Infinite)
+
         {
             var tcs = new TaskCompletionSource<TransportMessage>();
-            ct.Register(() => tcs.TrySetCanceled(),useSynchronizationContext: false);
             m_resultDictionary.TryAdd(id, tcs);
             try
             {
-                var task = tcs.Task;
-                var resultMessage = await task;
+                var resultMessage = await tcs.WaitAsync(timeout);
                 return resultMessage.GetContent<RemoteResultMessage>();
             }
             finally
