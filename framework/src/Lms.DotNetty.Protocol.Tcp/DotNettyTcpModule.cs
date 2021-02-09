@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 namespace Lms.DotNetty.Protocol.Tcp
 {
     [DependsOn(typeof(RpcModule), typeof(DotNettyModule))]
-    public class DotnetTcpModule : LmsModule
+    public class DotNettyTcpModule : LmsModule
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {
