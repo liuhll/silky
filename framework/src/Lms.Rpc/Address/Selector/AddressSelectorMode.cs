@@ -6,8 +6,6 @@ namespace Lms.Rpc.Address.Selector
         
         Random,
         
-        FairPolling,
-        
         HashAlgorithm,
         
     }
