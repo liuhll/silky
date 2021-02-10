@@ -9,7 +9,8 @@ namespace Lms.Rpc.Runtime.Client
     {
         private readonly IRemoteServiceInvoker _remoteServiceInvoker;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker, 
+
+        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker,
             IServiceEntryLocator serviceEntryLocator)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
@@ -35,10 +36,9 @@ namespace Lms.Rpc.Runtime.Client
                 ServiceId = serviceEntry.ServiceDescriptor.Id,
                 Parameters = parameters,
             };
-            
-            var invokeResult = await _remoteServiceInvoker.Invoke(remoteInvokeMessage);
-            return invokeResult.Result;
 
+            var invokeResult = await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions);
+            return invokeResult.Result;
         }
     }
 }

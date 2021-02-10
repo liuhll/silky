@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Lms.Core.Extensions;
+using Lms.Rpc.Configuration;
 using Lms.Rpc.Ids;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using Microsoft.Extensions.Options;
 
 namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
 {
@@ -17,14 +19,17 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
         private readonly IServiceIdGenerator _serviceIdGenerator;
         private readonly IParameterProvider _parameterProvider;
         private readonly IHttpMethodProvider _httpMethodProvider;
+        private readonly GovernanceOptions _governanceOptions;
 
         public ClrServiceEntryFactory(IServiceIdGenerator serviceIdGenerator,
             IParameterProvider parameterProvider,
-            IHttpMethodProvider httpMethodProvider)
+            IHttpMethodProvider httpMethodProvider,
+            IOptions<GovernanceOptions> governanceOptions)
         {
             _serviceIdGenerator = serviceIdGenerator;
             _parameterProvider = parameterProvider;
             _httpMethodProvider = httpMethodProvider;
+            _governanceOptions = governanceOptions.Value;
         }
 
         public IEnumerable<ServiceEntry> CreateServiceEntry((Type, bool) serviceType)
@@ -62,9 +67,9 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
                             httpMethod, isSpecify,
                             method.Name);
 
-                    yield return Create(method, 
-                        serviceType.Item1, 
-                        serviceType.Item2, 
+                    yield return Create(method,
+                        serviceType.Item1,
+                        serviceType.Item2,
                         serviceEntryTemplate,
                         serviceBundleProvider.ServiceProtocol,
                         httpMethod);
@@ -72,9 +77,9 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
             }
         }
 
-        private ServiceEntry Create(MethodInfo method, 
+        private ServiceEntry Create(MethodInfo method,
             Type serviceType,
-            bool isLocal, 
+            bool isLocal,
             string serviceEntryTemplate,
             ServiceProtocol serviceProtocol,
             HttpMethod httpMethod)
@@ -88,10 +93,10 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
                 Id = serviceId,
                 ServiceProtocol = serviceProtocol
             };
-            
-            var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, parameterDescriptors, isLocal);
+
+            var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, parameterDescriptors,
+                isLocal, _governanceOptions);
             return serviceEntry;
         }
-        
     }
 }

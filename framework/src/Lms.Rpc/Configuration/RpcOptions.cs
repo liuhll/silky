@@ -14,7 +14,6 @@ namespace Lms.Rpc.Configuration
         public int SoBacklog { get; set; } = 8192;
 
         public bool RemoveUnhealthServer { get; set; } = true;
-
-        public int UnHealthCeilingTimes { get; set; } = 3;
+        
     }
 }

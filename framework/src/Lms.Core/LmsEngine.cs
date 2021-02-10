@@ -26,7 +26,7 @@ namespace Lms.Core
 
             //create and sort instances of startup configurations
             var instances = startupConfigurations
-                .Select(startup => (IConfigureService)Activator.CreateInstance(startup))
+                .Select(startup => (IConfigureService) Activator.CreateInstance(startup))
                 .OrderBy(startup => startup.Order);
 
             //configure services
@@ -45,7 +45,7 @@ namespace Lms.Core
 
             //create and sort instances of startup configurations
             var instances = startupConfigurations
-                .Select(startup => (ILmsStartup)Activator.CreateInstance(startup))
+                .Select(startup => (ILmsStartup) Activator.CreateInstance(startup))
                 .OrderBy(startup => startup.Order);
 
             //configure request pipeline
@@ -66,6 +66,22 @@ namespace Lms.Core
             return sp.GetService(type);
         }
 
+        public object ResolveNamed(string name, Type type)
+        {
+            var sp = GetServiceProvider();
+            if (sp == null)
+                return null;
+            var autofacSp = sp as AutofacServiceProvider; 
+            if (autofacSp == null)
+                return null;
+            return autofacSp.LifetimeScope.ResolveNamed(name, type);
+        }
+
+        public T ResolveNamed<T>(string name)
+        {
+            return (T)ResolveNamed(name, typeof(T));
+        }
+        
         public IEnumerable<T> ResolveAll<T>()
         {
             return (IEnumerable<T>) GetServiceProvider().GetServices(typeof(T));
@@ -152,8 +168,9 @@ namespace Lms.Core
             {
                 if (!assemblyNames.Contains(module.Assembly.FullName))
                 {
-                    ((AppDomainTypeFinder)_typeFinder).AssemblyNames.Add(module.Assembly.FullName);
+                    ((AppDomainTypeFinder) _typeFinder).AssemblyNames.Add(module.Assembly.FullName);
                 }
+
                 containerBuilder.RegisterModule((LmsModule) module.Instance);
             }
         }

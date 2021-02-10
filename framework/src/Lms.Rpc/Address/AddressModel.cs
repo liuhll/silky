@@ -1,6 +1,6 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using JetBrains.Annotations;
 using Lms.Core;
 using Lms.Rpc.Address.Descriptor;
 using Lms.Rpc.Runtime.Server;
@@ -9,6 +9,7 @@ namespace Lms.Rpc.Address
 {
     public class AddressModel : IAddressModel
     {
+        private int m_fuseTimes;
         public AddressModel(
             [NotNull] string address,
             [NotNull] int port,
@@ -19,6 +20,7 @@ namespace Lms.Rpc.Address
             Address = address;
             Port = port;
             ServiceProtocol = serviceProtocol;
+            m_fuseTimes = 0;
             Descriptor = new AddressDescriptor()
                 {Address = Address, Port = Port, ServiceProtocol = ServiceProtocol};
         }
@@ -29,25 +31,42 @@ namespace Lms.Rpc.Address
 
         public ServiceProtocol ServiceProtocol { get; }
 
-        public event HealthChangeEvent HealthChange;
+        public IPEndPoint IPEndPoint => new(IPAddress.Parse(AddressHelper.GetIp(Address)), Port);
 
-        public void ChangeHealthState(bool isHealth)
+        public bool Enabled
         {
-            HealthChange?.Invoke(this, isHealth);
+            get
+            {
+                if (!LastDisableTime.HasValue)
+                    return true;
+                
+                return DateTime.Now > LastDisableTime.Value;
+            }
         }
 
-        public IPEndPoint IPEndPoint => new IPEndPoint(IPAddress.Parse(AddressHelper.GetIp(Address)), Port);
+        public DateTime? LastDisableTime { get; private set; }
+
+        public void MakeFusing(int fuseSleepDuration)
+        {
+            m_fuseTimes++;
+            LastDisableTime = DateTime.Now.AddSeconds(fuseSleepDuration);
+        }
+
+        public int FuseTimes => m_fuseTimes;
 
         public AddressDescriptor Descriptor { get; }
 
         public override string ToString()
         {
-            return string.Concat(new[]
-                {AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString()});
+            return string.Concat(AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString());
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals([CanBeNull]object obj)
         {
+            var endpoint = obj as IPEndPoint;
+            if (endpoint != null)
+                return endpoint.Address.MapToIPv4() == IPEndPoint.Address && endpoint.Port == IPEndPoint.Port;
+            
             var model = obj as AddressModel;
             if (model == null)
                 return false;

@@ -38,7 +38,6 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             _zookeeperClientProvider = zookeeperClientProvider;
             _serializer = serializer;
             Logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
-            CreateSubscribeDataChanges().GetAwaiter().GetResult();
         }
 
 
@@ -144,7 +143,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             return routePath;
         }
 
-        private async Task CreateSubscribeDataChanges()
+        public async override Task CreateSubscribeDataChanges()
         {
             var allServiceEntries = _serviceEntryManager.GetAllEntries();
             foreach (var serviceEntry in allServiceEntries)

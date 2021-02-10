@@ -12,7 +12,7 @@ namespace Lms.Rpc.Routing.Descriptor
             var serviceRoute = new ServiceRoute()
             {
                 ServiceDescriptor = serviceRouteDescriptor.ServiceDescriptor,
-                Addresses = serviceRouteDescriptor.AddressDescriptors.Select(p => p.ConvertToAddressModel())
+                Addresses = serviceRouteDescriptor.AddressDescriptors.Select(p => p.ConvertToAddressModel()).ToArray()
             };
             return serviceRoute;
         }

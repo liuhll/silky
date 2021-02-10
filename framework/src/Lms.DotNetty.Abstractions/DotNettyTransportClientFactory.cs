@@ -36,6 +36,7 @@ namespace Lms.DotNetty
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IHealthCheck _healthCheck;
         private IEventLoopGroup m_group;
+
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
@@ -107,8 +108,12 @@ namespace Lms.DotNetty
                     var pipeline = c.Pipeline;
                     if (tlsCertificate != null)
                     {
-                        pipeline.AddLast("tls", new TlsHandler(stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true), new ClientTlsSettings(targetHost)));
+                        pipeline.AddLast("tls",
+                            new TlsHandler(
+                                stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true),
+                                new ClientTlsSettings(targetHost)));
                     }
+
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
@@ -125,7 +130,6 @@ namespace Lms.DotNetty
             catch (Exception ex)
             {
                 //移除
-                _healthCheck.RemoveAddress(addressModel);
                 m_clients.TryRemove(addressModel, out var value);
                 throw;
             }
@@ -155,7 +159,6 @@ namespace Lms.DotNetty
             {
                 await m_group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
             }
-            
         }
     }
 }

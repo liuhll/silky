@@ -25,7 +25,11 @@ namespace Lms.Rpc.Routing
             Check.NotNullOrEmpty(_registryCenterOptions.CommandPath,nameof(_registryCenterOptions.CommandPath));
             
         }
-        
+
+        public abstract Task CreateSubscribeDataChanges();
+
+        public abstract Task EnterRoutes(ServiceProtocol serviceProtocol);
+
         public virtual async Task RegisterRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
             var localServiceEntries = _serviceEntryManager.GetLocalEntries().Where(p=> p.ServiceDescriptor.ServiceProtocol == serviceProtocol);
@@ -54,9 +58,7 @@ namespace Lms.Rpc.Routing
             }
 
         }
-
-        public abstract Task EnterRoutes(ServiceProtocol serviceProtocol);
-
+        
         protected abstract Task CreateSubDirectory(ServiceProtocol serviceProtocol);
 
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);

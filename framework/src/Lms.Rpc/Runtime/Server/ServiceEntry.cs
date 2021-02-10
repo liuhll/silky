@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Core.MethodExecutor;
+using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Client;
@@ -22,7 +24,8 @@ namespace Lms.Rpc.Runtime.Server
         private readonly Type _serviceType;
 
         public ServiceEntry(IRouter router, ServiceDescriptor serviceDescriptor, Type serviceType,
-            MethodInfo methodInfo, IReadOnlyList<ParameterDescriptor> parameterDescriptors, bool isLocal)
+            MethodInfo methodInfo, IReadOnlyList<ParameterDescriptor> parameterDescriptors, bool isLocal,
+            GovernanceOptions governanceOptions)
         {
             Router = router;
             ServiceDescriptor = serviceDescriptor;
@@ -33,12 +36,28 @@ namespace Lms.Rpc.Runtime.Server
             MethodInfo = methodInfo;
             CustomAttributes = serviceType.GetCustomAttributes(true);
             (IsAsyncMethod, ReturnType) = MethodInfo.MethodInfoReturnType();
+            GovernanceOptions = governanceOptions;
+            ReConfiguration(); 
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
             _methodExecutor =
                 ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
             Executor = CreateExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
+        }
+
+        private void ReConfiguration()
+        {
+            var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
+            if (governanceProvider != null)
+            {
+                GovernanceOptions.CacheEnabled = governanceProvider.CacheEnabled;
+                GovernanceOptions.ExecutionTimeout = governanceProvider.ExecutionTimeout;
+                GovernanceOptions.FuseProtection = governanceProvider.FuseProtection;
+                GovernanceOptions.MaxConcurrent = governanceProvider.MaxConcurrent;
+                GovernanceOptions.ShuntStrategy = governanceProvider.ShuntStrategy;
+                GovernanceOptions.FuseSleepDuration = governanceProvider.FuseSleepDuration;
+            }
         }
 
 
@@ -85,6 +104,9 @@ namespace Lms.Rpc.Runtime.Server
         public IReadOnlyList<ParameterDescriptor> ParameterDescriptors { get; }
 
         public IReadOnlyCollection<object> CustomAttributes { get; }
+
+        public GovernanceOptions GovernanceOptions { get; }
+
 
         private Func<string, IList<object>, Task<object>> CreateExecutor() =>
             (key, parameters) => Task.Factory.StartNew(() =>

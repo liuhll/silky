@@ -13,8 +13,8 @@ namespace Lms.Rpc.Address.HealthCheck
         bool IsHealth(AddressDescriptor addressDescriptor);
 
         bool IsHealth(IAddressModel addressModel);
-        
-        void ChangeHealthStatus(IAddressModel addressModel, bool isHealth);
+
+        void ChangeHealthStatus(IAddressModel addressModel, bool isHealth, int unHealthCeilingTimes = 0);
 
         void RemoveAddress(IAddressModel addressModel);
 

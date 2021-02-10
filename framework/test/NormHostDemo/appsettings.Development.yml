@@ -1,6 +1,6 @@
 rpc:
     host: 0.0.0.0
-    rpcPort: 2200
+    rpcPort: 2205
     useLibuv: false
 registrycenter:
     connectionStrings: 127.0.0.1:2181

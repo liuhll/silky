@@ -34,7 +34,7 @@ namespace Lms.Rpc.Routing
             foreach (var remveAddressServiceRoute in remveAddressServiceRoutes)
             {
                 remveAddressServiceRoute.Addresses =
-                    remveAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressmodel.Descriptor);
+                    remveAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressmodel.Descriptor).ToArray();
                 _serviceRouteCache.AddOrUpdate(remveAddressServiceRoute.ServiceDescriptor.Id,
                     remveAddressServiceRoute, (id, _) => remveAddressServiceRoute);
             }

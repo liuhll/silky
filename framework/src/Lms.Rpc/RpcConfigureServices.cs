@@ -13,6 +13,8 @@ namespace Lms.Rpc
                 .Bind(configuration.GetSection(RpcOptions.Rpc));
             services.AddOptions<RegistryCenterOptions>()
                 .Bind(configuration.GetSection(RegistryCenterOptions.RegistryCenter));
+            services.AddOptions<GovernanceOptions>()
+                .Bind(configuration.GetSection(GovernanceOptions.Governance));
         }
 
         public int Order { get; } = 1;

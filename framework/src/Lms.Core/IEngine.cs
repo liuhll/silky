@@ -21,6 +21,9 @@ namespace Lms.Core
         T Resolve<T>() where T : class;
         
         object Resolve(Type type);
+        object ResolveNamed(string name, Type type);
+
+        T ResolveNamed<T>(string name);
         
         IEnumerable<T> ResolveAll<T>();
         

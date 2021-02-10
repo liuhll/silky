@@ -6,6 +6,7 @@ using Autofac;
 using Lms.Core;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
+using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server;
@@ -25,6 +26,11 @@ namespace Lms.Rpc
                 .AsImplementedInterfaces();
             builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces();
             builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces();
+            builder.RegisterType<PollingAddressSelector>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IAddressSelector>(AddressSelectorMode.Polling.ToString());
+                
         }
 
         public async override Task Initialize(ApplicationContext applicationContext)
@@ -32,6 +38,7 @@ namespace Lms.Rpc
             var serviceRouteManager = applicationContext.ServiceProvider.GetService<IServiceRouteManager>();
             if (serviceRouteManager != null)
             {
+                await serviceRouteManager.CreateSubscribeDataChanges();
                 await serviceRouteManager.EnterRoutes(ServiceProtocol.Tcp);
             }
 
