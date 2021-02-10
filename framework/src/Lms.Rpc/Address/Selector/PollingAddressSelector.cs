@@ -34,6 +34,8 @@ namespace Lms.Rpc.Address.Selector
             };
         }
 
+        public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.Polling;
+
         protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
         {
             var selectAdderessItem = (0, context.AddressModels);

@@ -13,6 +13,8 @@ namespace Lms.Rpc.Address.Selector
             _generate = (min, max) => _random.Next(min, max);
         }
 
+        public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.Random;
+
         protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
         {
              var index = _generate(0, context.AddressModels.Length);
