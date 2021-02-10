@@ -156,9 +156,7 @@ namespace Lms.DotNetty
         public async void Dispose()
         {
             if (m_group != null)
-            {
                 await m_group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
-            }
         }
     }
 }

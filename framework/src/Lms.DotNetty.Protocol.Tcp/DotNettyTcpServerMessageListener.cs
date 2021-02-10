@@ -120,9 +120,11 @@ namespace Lms.DotNetty.Protocol.Tcp
 
         public async void Dispose()
         {
-            await m_boundChannel?.CloseAsync();
-            await m_bossGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
-            await m_workerGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            if (m_boundChannel != null) await m_boundChannel.CloseAsync();
+            if (m_bossGroup != null)
+                await m_bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            if (m_workerGroup != null)
+                await m_workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
         }
     }
 }
