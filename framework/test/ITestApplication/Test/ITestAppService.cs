@@ -11,7 +11,7 @@ namespace ITestApplication.Test
     {
         Task<string> Create(TestDto input);
 
-        void Update(TestDto input);
+        Task<string> Update(TestDto input);
 
         [HttpGet]
         Task<string> Search([FromQuery]TestDto query);

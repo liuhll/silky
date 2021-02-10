@@ -6,15 +6,14 @@ namespace NormHostDemo.AppService
 {
     public class TestAppService : ITestAppService
     {
-        
         public async Task<string> Create(TestDto input)
         {
             return "Create";
         }
 
-        public void Update(TestDto input)
+        public async Task<string> Update(TestDto input)
         {
-            
+            return "Update";
         }
 
         public Task<string> Search(TestDto query)
@@ -34,7 +33,6 @@ namespace NormHostDemo.AppService
 
         public async Task UpdatePart(TestDto input)
         {
-            
         }
     }
 }
