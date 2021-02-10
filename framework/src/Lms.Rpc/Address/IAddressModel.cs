@@ -42,6 +42,8 @@ namespace Lms.Rpc.Address
         /// </summary>
         void MakeFusing(int fuseSleepDuration);
 
+        void InitFuseTimes();
+        
         int FuseTimes { get; }
 
         /// <summary>

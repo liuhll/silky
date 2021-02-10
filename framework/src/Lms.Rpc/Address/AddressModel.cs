@@ -52,6 +52,11 @@ namespace Lms.Rpc.Address
             LastDisableTime = DateTime.Now.AddSeconds(fuseSleepDuration);
         }
 
+        public void InitFuseTimes()
+        {
+            m_fuseTimes = 0;
+        }
+
         public int FuseTimes => m_fuseTimes;
 
         public AddressDescriptor Descriptor { get; }

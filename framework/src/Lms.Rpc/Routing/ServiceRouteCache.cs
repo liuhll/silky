@@ -29,6 +29,7 @@ namespace Lms.Rpc.Routing
 
         private async Task HealthCheckOnOnRemveAddress(IAddressModel addressmodel)
         {
+            addressmodel.InitFuseTimes();
             var remveAddressServiceRoutes =
                 ServiceRoutes.Where(p => p.Addresses.Any(q => q.Descriptor == addressmodel.Descriptor));
             foreach (var remveAddressServiceRoute in remveAddressServiceRoutes)
