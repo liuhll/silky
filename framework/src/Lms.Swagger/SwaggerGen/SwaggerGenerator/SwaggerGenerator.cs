@@ -308,7 +308,7 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
         private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(ServiceEntry apiDescription, SchemaRepository schemaRepository, ParameterDescriptor bodyParameter)
         {
             var contentTypes = InferRequestContentTypes(apiDescription);
-            var isRequired = apiDescription.CustomAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            var isRequired = bodyParameter.Type.CustomAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
             var schema = GenerateSchema(
                 bodyParameter.Type,
                 schemaRepository,
