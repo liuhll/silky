@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ namespace Lms.DotNetty
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IHealthCheck _healthCheck;
-        private IEventLoopGroup group;
+        private IEventLoopGroup m_group;
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
@@ -78,12 +77,12 @@ namespace Lms.DotNetty
             var bootstrap = new Bootstrap();
             if (_rpcOptions.UseLibuv)
             {
-                group = new EventLoopGroup();
+                m_group = new EventLoopGroup();
                 bootstrap.Channel<TcpServerChannel>();
             }
             else
             {
-                group = new MultithreadEventLoopGroup();
+                m_group = new MultithreadEventLoopGroup();
                 bootstrap.Channel<TcpServerSocketChannel>();
             }
 
@@ -102,7 +101,7 @@ namespace Lms.DotNetty
                 // .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
                 .Option(ChannelOption.TcpNodelay, true)
                 .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
-                .Group(group)
+                .Group(m_group)
                 .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
                 {
                     var pipeline = c.Pipeline;
@@ -152,9 +151,9 @@ namespace Lms.DotNetty
 
         public async void Dispose()
         {
-            if (group != null)
+            if (m_group != null)
             {
-                await group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+                await m_group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
             }
             
         }

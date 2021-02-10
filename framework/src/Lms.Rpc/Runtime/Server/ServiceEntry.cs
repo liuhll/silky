@@ -78,7 +78,7 @@ namespace Lms.Rpc.Runtime.Server
 
         public MethodInfo MethodInfo { get; }
 
-        public bool IsAsyncMethod { get; private set; }
+        public bool IsAsyncMethod { get; }
 
         public Type ReturnType { get; }
 

@@ -6,14 +6,12 @@ namespace Lms.Rpc.Runtime.Server
 {
     public class ServiceEntryCache : ISingletonDependency
     {
-        private ConcurrentDictionary<string, ServiceEntry> _allServiceEntriesCache =
-            new ConcurrentDictionary<string, ServiceEntry>();
+        private ConcurrentDictionary<string, ServiceEntry> _allServiceEntriesCache = new();
+        
+        private ConcurrentDictionary<string, ServiceEntry> _localServiceEntriesCache = new();
+        
+        private ConcurrentDictionary<(string, HttpMethod), ServiceEntry> _requestServiceEntriesCache = new();
 
-        private ConcurrentDictionary<string, ServiceEntry> _localServiceEntriesCache =
-            new ConcurrentDictionary<string, ServiceEntry>();
-
-        private ConcurrentDictionary<(string, HttpMethod), ServiceEntry> _requestServiceEntriesCache =
-            new ConcurrentDictionary<(string, HttpMethod), ServiceEntry>();
 
         public bool TryGetLocalServiceEntry(string serviceId, out ServiceEntry serviceEntry)
         {
@@ -34,12 +32,12 @@ namespace Lms.Rpc.Runtime.Server
         {
             _localServiceEntriesCache.AddOrUpdate(serviceId, serviceEntry, (k, _) => serviceEntry);
         }
-        
+
         public void UpdateServiceEntryCache(string serviceId, ServiceEntry serviceEntry)
         {
             _allServiceEntriesCache.AddOrUpdate(serviceId, serviceEntry, (k, _) => serviceEntry);
         }
-        
+
         public void UpdateRequestServiceEntryCache((string, HttpMethod) requestApi, ServiceEntry serviceEntry)
         {
             _requestServiceEntriesCache.AddOrUpdate(requestApi, serviceEntry, (key, _) => serviceEntry);

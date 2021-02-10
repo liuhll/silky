@@ -35,8 +35,8 @@ namespace Lms.DotNetty.Protocol.Tcp
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IHealthCheck _healthCheck;
         private IChannel m_boundChannel;
-        private IEventLoopGroup bossGroup;
-        private IEventLoopGroup workerGroup;
+        private IEventLoopGroup m_bossGroup;
+        private IEventLoopGroup m_workerGroup;
 
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
@@ -62,14 +62,14 @@ namespace Lms.DotNetty.Protocol.Tcp
             if (_rpcOptions.UseLibuv)
             {
                 var dispatcher = new DispatcherEventLoopGroup();
-                bossGroup = dispatcher;
-                workerGroup = new WorkerEventLoopGroup(dispatcher);
+                m_bossGroup = dispatcher;
+                m_workerGroup = new WorkerEventLoopGroup(dispatcher);
                 bootstrap.Channel<TcpServerChannel>();
             }
             else
             {
-                bossGroup = new MultithreadEventLoopGroup(1);
-                workerGroup = new MultithreadEventLoopGroup();
+                m_bossGroup = new MultithreadEventLoopGroup(1);
+                m_workerGroup = new MultithreadEventLoopGroup();
                 bootstrap.Channel<TcpServerSocketChannel>();
             }
 
@@ -84,7 +84,7 @@ namespace Lms.DotNetty.Protocol.Tcp
             bootstrap
                 .Option(ChannelOption.SoBacklog, _rpcOptions.SoBacklog)
                 .ChildOption(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
-                .Group(bossGroup, workerGroup)
+                .Group(m_bossGroup, m_workerGroup)
                 .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                 {
                     var pipeline = channel.Pipeline;
@@ -121,8 +121,8 @@ namespace Lms.DotNetty.Protocol.Tcp
         public async void Dispose()
         {
             await m_boundChannel.CloseAsync();
-            await bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
-            await workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            await m_bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            await m_workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
         }
     }
 }
