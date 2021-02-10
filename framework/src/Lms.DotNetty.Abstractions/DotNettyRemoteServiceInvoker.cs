@@ -39,7 +39,7 @@ namespace Lms.DotNetty
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
-            GovernanceOptions governanceOptions)
+            GovernanceOptions governanceOptions, string hashKey = null)
         {
             //var serviceRoute = _serviceRouteCache[remoteInvokeMessage.ServiceId];
             var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
@@ -57,7 +57,8 @@ namespace Lms.DotNetty
             var addressSelector =
                 EngineContext.Current.ResolveNamed<IAddressSelector>(governanceOptions.ShuntStrategy.ToString());
             var selectedAddress =
-                addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceId, serviceRoute.Addresses));
+                addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceId, serviceRoute.Addresses,
+                    hashKey));
             // todo 远程调用监视
             // todo 分布式事务
             // todo 远程调用

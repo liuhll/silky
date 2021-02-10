@@ -8,6 +8,6 @@ namespace Lms.Rpc.Runtime.Client
     public interface IRemoteServiceInvoker : IScopedDependency
     {
         Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
-            GovernanceOptions governanceOptions);
+            GovernanceOptions governanceOptions, string hashKey = null);
     }
 }

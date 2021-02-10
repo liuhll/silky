@@ -34,7 +34,7 @@ namespace Lms.Rpc.Runtime.Server
             _serviceType = serviceType;
             GroupName = serviceType.FullName;
             MethodInfo = methodInfo;
-            CustomAttributes = serviceType.GetCustomAttributes(true);
+            CustomAttributes = MethodInfo.GetCustomAttributes(true);
             (IsAsyncMethod, ReturnType) = MethodInfo.MethodInfoReturnType();
             GovernanceOptions = governanceOptions;
             ReConfiguration(); 

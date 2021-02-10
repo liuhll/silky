@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Ids;
@@ -88,6 +89,10 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
             var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
             var serviceId = _serviceIdGenerator.GenerateServiceId(method);
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
+            if (parameterDescriptors.Count(p=> p.IsHashKey) > 1)
+            {
+                throw new LmsException("不允许指定多个HashKey");
+            }
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,

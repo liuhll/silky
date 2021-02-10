@@ -5,7 +5,7 @@ using Lms.Rpc.Address.Selector;
 
 namespace Lms.Rpc.Runtime.Server
 {
-    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class GovernanceAttribute : Attribute, IGovernanceProvider
     {
         /// <summary>

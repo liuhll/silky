@@ -30,6 +30,14 @@ namespace Lms.Rpc
                 .SingleInstance()
                 .AsSelf()
                 .Named<IAddressSelector>(AddressSelectorMode.Polling.ToString());
+            builder.RegisterType<PollingAddressSelector>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IAddressSelector>(AddressSelectorMode.Random.ToString());
+            builder.RegisterType<HashAlgorithmAddressSelector>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
                 
         }
 

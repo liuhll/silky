@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Runtime.Server;
 
@@ -36,8 +38,14 @@ namespace Lms.Rpc.Runtime.Client
                 ServiceId = serviceEntry.ServiceDescriptor.Id,
                 Parameters = parameters,
             };
+            string hashKey = null;
+            if (serviceEntry.GovernanceOptions.ShuntStrategy == AddressSelectorMode.HashAlgorithm)
+            {
+                hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
+            }
 
-            var invokeResult = await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions);
+            var invokeResult =
+                await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions, hashKey);
             return invokeResult.Result;
         }
     }

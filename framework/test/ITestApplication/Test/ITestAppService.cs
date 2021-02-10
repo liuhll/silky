@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
+using Lms.Rpc.Address.Selector;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +16,7 @@ namespace ITestApplication.Test
         Task<string> Update(TestDto input);
 
         [HttpGet]
+        [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
         Task<string> Search([FromQuery]TestDto query);
         
         [HttpPost]

@@ -6,18 +6,18 @@ namespace Lms.Rpc.Address.Selector
 {
     public class AddressSelectContext
     {
-        public AddressSelectContext([NotNull] string serviceId, [NotNull] IAddressModel[] addressModels,string hashKey = null)
+        public AddressSelectContext([NotNull] string serviceId, [NotNull] IAddressModel[] addressModels,string hash = null)
         {
             Check.NotNullOrEmpty(serviceId, nameof(serviceId));
             Check.NotNull(addressModels, nameof(addressModels));
             ServiceId = serviceId;
             AddressModels = addressModels;
-            HashKey = hashKey;
+            Hash = hash;
         }
 
         [NotNull] public string ServiceId { get; }
 
-        public string HashKey { get; }
+        public string Hash { get; }
 
         [NotNull] public IAddressModel[] AddressModels { get; }
     }

@@ -46,6 +46,7 @@ namespace Lms.Rpc.Address.Selector
 
         protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
         {
+            Check.NotNullOrEmpty(context.Hash, nameof(context.Hash));
             var addressModels = _consistentHashAddressPools.GetOrAdd(context.ServiceId, v =>
             {
                 var consistentHash = new ConsistentHash<IAddressModel>();
@@ -55,7 +56,7 @@ namespace Lms.Rpc.Address.Selector
                 }
                 return consistentHash;
             });
-            return addressModels.GetItemNode(context.HashKey);
+            return addressModels.GetItemNode(context.Hash);
         }
     }
 }
