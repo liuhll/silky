@@ -22,7 +22,7 @@ namespace Lms.Rpc.Runtime.Server
             {
                 ServiceDescriptor = serviceEntry.ServiceDescriptor,
                 AddressDescriptors = new[]
-                    {NetUtil.GetHostAddress(serviceEntry.ServiceDescriptor.ServiceProtocol).Descriptor},
+                    {NetUtil.GetHostAddressModel(serviceEntry.ServiceDescriptor.ServiceProtocol).Descriptor},
             };
         }
 

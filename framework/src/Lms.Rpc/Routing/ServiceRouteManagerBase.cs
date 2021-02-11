@@ -94,7 +94,7 @@ namespace Lms.Rpc.Routing
                         p.ServiceDescriptor.Id == removeServiceDescriptorId);
                 if (removeRoute != null && removeRoute.AddressDescriptors.Any())
                 {
-                    var hostAddr = NetUtil.GetHostAddress(removeRoute.ServiceDescriptor.ServiceProtocol);
+                    var hostAddr = NetUtil.GetHostAddressModel(removeRoute.ServiceDescriptor.ServiceProtocol);
                     if (removeRoute.AddressDescriptors.Any(p => p.Equals(hostAddr)))
                     {
                         removeRoute.AddressDescriptors =

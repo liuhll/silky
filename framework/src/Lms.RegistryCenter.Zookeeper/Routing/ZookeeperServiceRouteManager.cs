@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
@@ -9,6 +10,7 @@ using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.Descriptor;
+using Lms.Rpc.Utils;
 using Lms.Zookeeper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -17,7 +19,7 @@ using org.apache.zookeeper;
 
 namespace Lms.RegistryCenter.Zookeeper.Routing
 {
-    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, ISingletonDependency
+    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, IDisposable, ISingletonDependency
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
         private readonly ISerializer _serializer;
@@ -178,6 +180,28 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
                 await zookeeperClient.SubscribeChildrenChange(path, watcher.SubscribeChildrenChange);
                 m_routeSubDirWatchers.GetOrAdd((path, zookeeperClient), watcher);
             }
+        }
+
+        private async Task RemoveLocalHostServiceRoute()
+        {
+            var serviceRouteDescriptors = _serviceRouteCache.ServiceRouteDescriptors
+                .Where(p => p.AddressDescriptors.Any(p =>
+                    p == NetUtil.GetHostAddressModel(ServiceProtocol.Mqtt).Descriptor ||
+                    p == NetUtil.GetHostAddressModel(ServiceProtocol.Tcp).Descriptor ||
+                    p == NetUtil.GetHostAddressModel(ServiceProtocol.Ws).Descriptor
+                ));
+            foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
+            {
+                serviceRouteDescriptor.AddressDescriptors =
+                    serviceRouteDescriptor.AddressDescriptors.Where(p =>
+                        p != NetUtil.GetHostAddressModel(p.ServiceProtocol));
+                await RegisterRouteAsync(serviceRouteDescriptor);
+            }
+        }
+
+        public async void Dispose()
+        {
+            await RemoveLocalHostServiceRoute();
         }
     }
 }

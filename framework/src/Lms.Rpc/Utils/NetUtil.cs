@@ -60,8 +60,8 @@ namespace Lms.Rpc.Utils
 
             return result;
         }
-
-        public static IAddressModel GetHostAddress(ServiceProtocol serviceProtocol)
+        
+        public static IAddressModel GetHostAddressModel(ServiceProtocol serviceProtocol)
         {
             if (addressModels.TryGetValue(serviceProtocol, out IAddressModel address))
             {
