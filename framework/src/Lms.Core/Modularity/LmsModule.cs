@@ -2,6 +2,7 @@
 using Autofac;
 using System.Reflection;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Lms.Core.Extensions;
 
 namespace Lms.Core.Modularity
@@ -13,13 +14,13 @@ namespace Lms.Core.Modularity
             Name = GetType().Name.RemovePostFix(StringComparison.OrdinalIgnoreCase, "Module");
         }
 
-        protected override void Load(ContainerBuilder builder)
+        protected override void Load([NotNull]ContainerBuilder builder)
         {
             base.Load(builder);
             RegisterServices(builder);
         }
 
-        protected virtual void RegisterServices(ContainerBuilder builder)
+        protected virtual void RegisterServices([NotNull]ContainerBuilder builder)
         {
         }
 
@@ -48,12 +49,12 @@ namespace Lms.Core.Modularity
 
         public virtual string Name { get; }
 
-        public virtual Task Initialize(ApplicationContext applicationContext)
+        public virtual Task Initialize([NotNull]ApplicationContext applicationContext)
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task Shutdown(ApplicationContext applicationContext)
+        public virtual Task Shutdown([NotNull]ApplicationContext applicationContext)
         {
             return Task.CompletedTask;
         }

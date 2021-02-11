@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using JetBrains.Annotations;
+using Lms.Core;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
 using Lms.Rpc;
@@ -30,6 +32,7 @@ namespace Lms.DotNetty.Protocol.Tcp
 
         public async override Task Initialize(ApplicationContext applicationContext)
         {
+            Check.NotNull(applicationContext, nameof(applicationContext));
             var registryCenterOptions =
                 applicationContext.ServiceProvider.GetService<IOptions<RegistryCenterOptions>>().Value;
             if (!applicationContext.ModuleContainer.Modules.Any(p =>
