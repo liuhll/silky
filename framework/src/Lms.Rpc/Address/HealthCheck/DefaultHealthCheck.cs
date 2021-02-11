@@ -11,6 +11,7 @@ namespace Lms.Rpc.Address.HealthCheck
         public event HealthChangeEvent OnHealthChange;
         public event RemoveAddressEvent OnRemveAddress;
         public event UnhealthEvent OnUnhealth;
+        public event AddMonitorEvent OnAddMonitor;
 
         public void RemoveAddress(IAddressModel addressModel)
         {
@@ -36,6 +37,7 @@ namespace Lms.Rpc.Address.HealthCheck
             if (!m_healthCheckAddresses.ContainsKey(addressModel))
             {
                 m_healthCheckAddresses.GetOrAdd(addressModel, new HealthCheckModel(true, 0));
+                OnAddMonitor?.Invoke(addressModel);
             }
         }
 
@@ -89,6 +91,7 @@ namespace Lms.Rpc.Address.HealthCheck
             if (!isHealth && healthCheckModel.UnHealthTimes >= unHealthCeilingTimes)
             {
                 OnRemveAddress?.Invoke(addressModel);
+                m_healthCheckAddresses.TryRemove(addressModel, out var value);
             }
 
             if (healthCheckModel.IsHealth != isHealth)

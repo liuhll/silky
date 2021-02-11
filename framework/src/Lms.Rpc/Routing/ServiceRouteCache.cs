@@ -20,6 +20,8 @@ namespace Lms.Rpc.Routing
         private readonly IHealthCheck _healthCheck;
         public ILogger<ServiceRouteCache> Logger { get; set; }
 
+        public event OnRemoveServiceRoutes OnRemoveServiceRoutes;
+
         public ServiceRouteCache(IHealthCheck healthCheck)
         {
             _healthCheck = healthCheck;
@@ -32,13 +34,17 @@ namespace Lms.Rpc.Routing
             addressmodel.InitFuseTimes();
             var remveAddressServiceRoutes =
                 ServiceRoutes.Where(p => p.Addresses.Any(q => q.Descriptor == addressmodel.Descriptor));
+            var updateRegisterServiceRouteDescriptors = new List<ServiceRouteDescriptor>();
             foreach (var remveAddressServiceRoute in remveAddressServiceRoutes)
             {
                 remveAddressServiceRoute.Addresses =
                     remveAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressmodel.Descriptor).ToArray();
                 _serviceRouteCache.AddOrUpdate(remveAddressServiceRoute.ServiceDescriptor.Id,
                     remveAddressServiceRoute, (id, _) => remveAddressServiceRoute);
+                updateRegisterServiceRouteDescriptors.Add(remveAddressServiceRoute.ConvertToDescriptor());
             }
+
+            OnRemoveServiceRoutes?.Invoke(updateRegisterServiceRouteDescriptors);
         }
 
 
@@ -84,18 +90,5 @@ namespace Lms.Rpc.Routing
 
             return null;
         }
-
-        // public ServiceRoute this[string serviceId]
-        // {
-        //     get
-        //     {
-        //         if (_serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
-        //         {
-        //             return serviceRoute;
-        //         }
-        //
-        //         return null;
-        //     }
-        // }
     }
 }

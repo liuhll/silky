@@ -7,9 +7,10 @@ namespace Lms.Rpc.Address.Selector
 {
     public class HashAlgorithmAddressSelector : AddressSelectorBase
     {
-        private ConcurrentDictionary<string,ConsistentHash<IAddressModel>> _consistentHashAddressPools= new ();
+        private ConcurrentDictionary<string, ConsistentHash<IAddressModel>> _consistentHashAddressPools = new();
 
         private readonly IHealthCheck _healthCheck;
+
         public HashAlgorithmAddressSelector(IHealthCheck healthCheck)
         {
             _healthCheck = healthCheck;
@@ -17,7 +18,7 @@ namespace Lms.Rpc.Address.Selector
             {
                 var removeItems = _consistentHashAddressPools
                     .Where(p => p.Value.ContainNode(addressModel))
-                    .Select(p=> p.Value);
+                    .Select(p => p.Value);
                 foreach (var consistentHash in removeItems)
                 {
                     consistentHash.Remove(addressModel);
@@ -27,7 +28,7 @@ namespace Lms.Rpc.Address.Selector
             {
                 var changeItems = _consistentHashAddressPools
                     .Where(p => p.Value.ContainNode(addressModel))
-                    .Select(p=> p.Value);
+                    .Select(p => p.Value);
                 foreach (var consistentHash in changeItems)
                 {
                     if (!isHealth)
@@ -54,8 +55,20 @@ namespace Lms.Rpc.Address.Selector
                 {
                     consistentHash.Add(address);
                 }
+
                 return consistentHash;
             });
+            if (addressModels.GetNodeCount() < context.AddressModels.Length)
+            {
+                foreach (var addressModel in context.AddressModels)
+                {
+                    if (!addressModels.ContainNode(addressModel))
+                    {
+                        addressModels.Add(addressModel);
+                    }
+                }
+            }
+
             return addressModels.GetItemNode(context.Hash);
         }
     }

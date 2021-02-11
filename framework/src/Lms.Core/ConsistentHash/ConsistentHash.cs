@@ -103,5 +103,10 @@ namespace Lms.Core
 
             return end;
         }
+
+        public int GetNodeCount()
+        {
+            return _ring.Count();
+        }
     }
 }

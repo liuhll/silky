@@ -31,9 +31,11 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
 
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
-            IZookeeperClientProvider zookeeperClientProvider, IOptions<RegistryCenterOptions> registryCenterOptions,
+            IZookeeperClientProvider zookeeperClientProvider,
+            IOptions<RegistryCenterOptions> registryCenterOptions,
+            IOptions<RpcOptions> rpcOptions,
             ISerializer serializer)
-            : base(serviceRouteCache, serviceEntryManager, registryCenterOptions)
+            : base(serviceRouteCache, serviceEntryManager, registryCenterOptions, rpcOptions)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
             _serializer = serializer;

@@ -8,4 +8,6 @@ namespace Lms.Rpc.Address
     
     public delegate Task RemoveAddressEvent(IAddressModel addressModel);
 
+    public delegate Task AddMonitorEvent(IAddressModel addressModel);
+
 }

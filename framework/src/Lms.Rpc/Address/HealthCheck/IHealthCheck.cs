@@ -23,6 +23,7 @@ namespace Lms.Rpc.Address.HealthCheck
         event HealthChangeEvent OnHealthChange;
         event RemoveAddressEvent OnRemveAddress;
         event UnhealthEvent OnUnhealth;
+        event AddMonitorEvent OnAddMonitor;
         
     }
 }
