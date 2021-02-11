@@ -17,11 +17,5 @@ namespace GatewayDemo
         typeof(DotNettyModule))]
     public class GatewayDemoModule : LmsModule
     {
-        public async override Task Initialize(ApplicationContext applicationContext)
-        {
-            var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
-            var entries = serviceEntryManager.GetAllEntries();
-            var options = EngineContext.Current.Resolve<IOptions<RegistryCenterOptions>>();
-        }
     }
 }
