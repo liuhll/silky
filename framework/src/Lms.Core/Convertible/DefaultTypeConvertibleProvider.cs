@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Lms.Core.Serialization;
 
@@ -22,7 +24,7 @@ namespace Lms.Core.Convertible
             yield return SimpleTypeConvert;
             //guid转换器
             yield return GuidTypeConvert;
-            
+
             yield return ComplexTypeConvert;
         }
 
@@ -45,11 +47,16 @@ namespace Lms.Core.Convertible
         {
             if (instance == null || !conversionType.GetTypeInfo().IsEnum)
                 return null;
-            return Enum.Parse(conversionType, instance.ToString(),true);
+            return Enum.Parse(conversionType, instance.ToString(), true);
         }
 
         private object ComplexTypeConvert(object instance, Type conversionType)
         {
+            if (instance.GetType().GetInterfaces().Any(p => p == typeof(IDictionary)))
+            {
+                instance = _serializer.Serialize(instance);
+            }
+
             return _serializer.Deserialize(conversionType, instance.ToString());
         }
     }

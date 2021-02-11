@@ -152,9 +152,7 @@ namespace Lms.Rpc.Runtime.Server
                 switch (parameterDescriptor.From)
                 {
                     case ParameterFrom.Body:
-                        list.Add(IsLocal
-                            ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
-                            : parameter);
+                        list.Add(parameter);
                         break;
                     case ParameterFrom.Form:
                         if (parameterDescriptor.IsSample)
@@ -163,9 +161,7 @@ namespace Lms.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(IsLocal
-                                ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
-                                : parameter);
+                            list.Add(parameter);
                         }
 
                         break;
@@ -176,9 +172,7 @@ namespace Lms.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(IsLocal
-                                ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
-                                : parameter);
+                            list.Add(parameter);
                         }
 
                         break;
@@ -210,9 +204,7 @@ namespace Lms.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(IsLocal
-                                ? typeConvertibleService.Convert(parameter, parameterDescriptor.Type)
-                                : parameter);
+                            list.Add(parameter);
                         }
 
                         break;
@@ -237,9 +229,7 @@ namespace Lms.Rpc.Runtime.Server
                 parameterVal = dict[parameterDescriptor.Name];
             }
 
-            list.Add(IsLocal
-                ? typeConvertibleService.Convert(parameterVal, parameterDescriptor.Type)
-                : parameterVal);
+            list.Add(parameterVal);
         }
 
         public ServiceDescriptor ServiceDescriptor { get; }

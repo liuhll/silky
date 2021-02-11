@@ -7,9 +7,9 @@ namespace GatewayDemo.AppService
 {
     public class GatewayTestAppService : ITestAppService
     {
-        private readonly IJsonSerializer _serializer;
+        private readonly ISerializer _serializer;
 
-        public GatewayTestAppService(IJsonSerializer serializer)
+        public GatewayTestAppService(ISerializer serializer)
         {
             _serializer = serializer;
         }
@@ -29,6 +29,11 @@ namespace GatewayDemo.AppService
             return _serializer.Serialize(query);
         }
 
+        string ITestAppService.Form(TestDto query)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task<string> Form(TestDto query)
         { 
             return _serializer.Serialize(query);
@@ -37,6 +42,11 @@ namespace GatewayDemo.AppService
         public async Task<string> Get(long id, string name)
         {
             return $"Id:{id} -- Name:{name}";
+        }
+
+        public Task UpdatePart(TestDto input)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
