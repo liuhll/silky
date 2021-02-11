@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Core", "src\Lms.Core\Lm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.RegistryCenter.Zookeeper", "src\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj", "{52477F1F-327D-441B-9ED0-BCE759BC3DD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Proxy", "src\Lms.Proxy\Lms.Proxy.csproj", "{B9E60852-6784-469F-8192-BD5B0FAEDD88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Rpc.Proxy", "src\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj", "{B9E60852-6784-469F-8192-BD5B0FAEDD88}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.DotNetty.Protocol.Tcp", "src\Lms.DotNetty.Protocol.Tcp\Lms.DotNetty.Protocol.Tcp.csproj", "{509CB0F3-072D-4FC4-9E59-10D1099F90D3}"
 EndProject
