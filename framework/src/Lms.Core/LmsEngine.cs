@@ -71,10 +71,7 @@ namespace Lms.Core
             var sp = GetServiceProvider();
             if (sp == null)
                 return null;
-            var autofacSp = sp as AutofacServiceProvider; 
-            if (autofacSp == null)
-                return null;
-            return autofacSp.LifetimeScope.ResolveNamed(name, type);
+            return sp.GetAutofacRoot().ResolveNamed(name, type);
         }
 
         public T ResolveNamed<T>(string name)
