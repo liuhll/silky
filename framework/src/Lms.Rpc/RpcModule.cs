@@ -44,12 +44,12 @@ namespace Lms.Rpc
         public async override Task Initialize(ApplicationContext applicationContext)
         {
             var serviceRouteManager = applicationContext.ServiceProvider.GetService<IServiceRouteManager>();
-            if (serviceRouteManager != null)
+            if (serviceRouteManager == null)
             {
-                await serviceRouteManager.CreateSubscribeDataChanges();
-                await serviceRouteManager.EnterRoutes(ServiceProtocol.Tcp);
+                throw new LmsException("您必须指定依赖的服务注册中心模块");
             }
-
+            await serviceRouteManager.CreateSubscribeDataChanges();
+            await serviceRouteManager.EnterRoutes(ServiceProtocol.Tcp);
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
