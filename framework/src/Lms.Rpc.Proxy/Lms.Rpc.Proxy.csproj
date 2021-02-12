@@ -4,4 +4,10 @@
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Lms.Castle\Lms.Castle.csproj" />
+      <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
+      <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
+    </ItemGroup>
+
 </Project>

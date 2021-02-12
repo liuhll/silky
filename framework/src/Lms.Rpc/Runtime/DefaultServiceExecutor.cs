@@ -15,7 +15,15 @@ namespace Lms.Rpc.Runtime
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             Check.NotNull(requestParameters, nameof(requestParameters));
             var parameters = serviceEntry.ResolveParameters(requestParameters);
-            return await serviceEntry.Executor(null, parameters);
+            return await Execute(serviceEntry, parameters, null);
+        }
+
+        public async Task<object> Execute([NotNull] ServiceEntry serviceEntry, [NotNull] IList<object> parameters,
+            [CanBeNull] string serviceKey = null)
+        {
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            Check.NotNull(parameters, nameof(parameters));
+            return await serviceEntry.Executor(serviceKey, parameters);
         }
     }
 }

@@ -6,12 +6,13 @@ using Lms.HttpServer;
 using Lms.RegistryCenter.Zookeeper;
 using Lms.Rpc;
 using Lms.Rpc.Configuration;
+using Lms.Rpc.Proxy;
 using Lms.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
 
 namespace GatewayDemo
 {
-    [DependsOn(typeof(RpcModule),
+    [DependsOn(typeof(RpcProxyModule),
         typeof(ZookeeperModule),
         typeof(HttpServerModule),
         typeof(DotNettyModule))]
