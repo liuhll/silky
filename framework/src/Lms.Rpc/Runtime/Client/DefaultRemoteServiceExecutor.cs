@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Lms.Core.Exceptions;
 using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Runtime.Server;
+using Polly;
 
 namespace Lms.Rpc.Runtime.Client
 {
@@ -44,9 +49,17 @@ namespace Lms.Rpc.Runtime.Client
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
             }
 
-            var invokeResult =
-                await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions, hashKey);
-            return invokeResult.Result;
+            var policy = Policy.Handle<TimeoutException>()
+                .Or<CommunicatonException>()
+                .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
+                ;
+            return await policy.ExecuteAsync(async () =>
+            {
+                var invokeResult =
+                    await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions, hashKey);
+                return invokeResult.Result;
+            });
+           
         }
     }
 }

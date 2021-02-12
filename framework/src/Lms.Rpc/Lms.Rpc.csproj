@@ -7,5 +7,9 @@
     <ItemGroup>
       <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Polly" Version="7.2.1" />
+    </ItemGroup>
     
 </Project>

@@ -73,19 +73,19 @@ namespace Lms.DotNetty
             {
                 Logger.LogError($"服务提供者{selectedAddress}不可用,IO异常,原因:{ex.Message}");
                 _healthCheck.RemoveAddress(selectedAddress);
-                throw;
+                throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (ConnectException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}链接异常,原因:{ex.Message}");
                 MarkAddressFail(governanceOptions, selectedAddress);
-                throw;
+                throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (ChannelException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}通信异常,原因:{ex.Message}");
                 MarkAddressFail(governanceOptions, selectedAddress);
-                throw;
+                throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (TimeoutException ex)
             {

@@ -22,6 +22,8 @@ namespace Lms.Rpc.Runtime.Server
         private readonly ObjectMethodExecutor _methodExecutor;
         private readonly Type _serviceType;
 
+        public bool FailoverCountIsDefaultValue { get; private set; }
+
         public ServiceEntry(IRouter router, ServiceDescriptor serviceDescriptor, Type serviceType,
             MethodInfo methodInfo, IReadOnlyList<ParameterDescriptor> parameterDescriptors, bool isLocal,
             GovernanceOptions governanceOptions)
@@ -36,7 +38,7 @@ namespace Lms.Rpc.Runtime.Server
             CustomAttributes = MethodInfo.GetCustomAttributes(true);
             (IsAsyncMethod, ReturnType) = MethodInfo.MethodInfoReturnType();
             GovernanceOptions = governanceOptions;
-            ReConfiguration(); 
+            ReConfiguration();
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
             _methodExecutor =
                 ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
@@ -56,6 +58,8 @@ namespace Lms.Rpc.Runtime.Server
                 GovernanceOptions.MaxConcurrent = governanceProvider.MaxConcurrent;
                 GovernanceOptions.ShuntStrategy = governanceProvider.ShuntStrategy;
                 GovernanceOptions.FuseSleepDuration = governanceProvider.FuseSleepDuration;
+                GovernanceOptions.FailoverCount = governanceProvider.FailoverCount;
+                FailoverCountIsDefaultValue = GovernanceOptions.FailoverCount == 0;
             }
         }
 

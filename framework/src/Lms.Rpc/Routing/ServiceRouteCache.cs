@@ -9,6 +9,7 @@ using Lms.Core.DependencyInjection;
 using Lms.Rpc.Address;
 using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Routing.Descriptor;
+using Lms.Rpc.Runtime.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -18,13 +19,16 @@ namespace Lms.Rpc.Routing
     {
         private readonly ConcurrentDictionary<string, ServiceRoute> _serviceRouteCache = new();
         private readonly IHealthCheck _healthCheck;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
         public ILogger<ServiceRouteCache> Logger { get; set; }
 
         public event OnRemoveServiceRoutes OnRemoveServiceRoutes;
 
-        public ServiceRouteCache(IHealthCheck healthCheck)
+        public ServiceRouteCache(IHealthCheck healthCheck,
+            IServiceEntryLocator serviceEntryLocator)
         {
             _healthCheck = healthCheck;
+            _serviceEntryLocator = serviceEntryLocator;
             _healthCheck.OnRemveAddress += HealthCheckOnOnRemveAddress;
             Logger = NullLogger<ServiceRouteCache>.Instance;
         }
@@ -51,6 +55,12 @@ namespace Lms.Rpc.Routing
         public void UpdateCache([NotNull] ServiceRouteDescriptor serviceRouteDescriptor)
         {
             Check.NotNull(serviceRouteDescriptor, nameof(serviceRouteDescriptor));
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceRouteDescriptor.ServiceDescriptor.Id);
+            if (serviceEntry.FailoverCountIsDefaultValue)
+            {
+                serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.AddressDescriptors.Count();
+            }
+
             var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
             _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
                 serviceRoute, (id, _) => serviceRoute);

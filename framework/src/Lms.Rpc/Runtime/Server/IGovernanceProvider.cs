@@ -33,5 +33,10 @@ namespace Lms.Rpc.Runtime.Server
         /// 是否开启熔断保护
         /// </summary>
         bool FuseProtection { get; set; }
+        
+        /// <summary>
+        /// 故障转移次数
+        /// </summary>
+        int FailoverCount { get; set; }
     }
 }

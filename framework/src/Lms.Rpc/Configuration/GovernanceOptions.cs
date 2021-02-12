@@ -11,7 +11,7 @@ namespace Lms.Rpc.Configuration
         /// 负载分流策略
         /// </summary>
         public AddressSelectorMode ShuntStrategy { get; set; } = AddressSelectorMode.Polling;
-        
+
         /// <summary>
         /// 执行超时时间
         /// </summary>
@@ -21,11 +21,11 @@ namespace Lms.Rpc.Configuration
         /// 是否开启缓存拦截
         /// </summary>
         public bool CacheEnabled { get; set; } = true;
-        
+
         /// <summary>
         /// 允许的最大并发量
         /// </summary>
-        public int MaxConcurrent { get; set; } = 10;
+        public int MaxConcurrent { get; set; } = 100;
 
         /// <summary>
         /// 熔断休眠时长
@@ -40,6 +40,11 @@ namespace Lms.Rpc.Configuration
         /// <summary>
         /// 熔断几次之后标识服务地址不健康
         /// </summary>
-        public int FuseTimes { get; set; } = 1;
+        public int FuseTimes { get; set; } = 3;
+
+        /// <summary>
+        /// 故障转移次数
+        /// </summary>
+        public int FailoverCount { get; set; } = 0;
     }
 }

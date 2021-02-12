@@ -19,6 +19,8 @@ namespace Lms.Core.Exceptions
         NotFindServiceRouteAddress = 504,
 
         [Description("非平台异常")] UnPlatformError = 505,
+        
+        [Description("通信异常")] CommunicatonError = 506,
 
         [Description("业务异常")] BusinessError = 1000,
 
