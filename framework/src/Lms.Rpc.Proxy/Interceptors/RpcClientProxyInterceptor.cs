@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Core.DynamicProxy;
-using Lms.Rpc.Ids;
 using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Runtime.Server.Ids;
 
 namespace Lms.Rpc.Proxy.Interceptors
 {

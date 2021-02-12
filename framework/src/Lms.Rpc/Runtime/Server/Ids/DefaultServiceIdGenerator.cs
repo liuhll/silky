@@ -4,7 +4,7 @@ using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Lms.Rpc.Ids
+namespace Lms.Rpc.Runtime.Server.Ids
 {
     public class DefaultServiceIdGenerator : IServiceIdGenerator
     {
