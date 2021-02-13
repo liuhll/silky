@@ -1,9 +1,10 @@
-using Lms.Rpc.Runtime.Support.Ids;
+using Lms.Rpc.Runtime;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Tests.AppService;
 using Lms.TestBase.Testing;
 using Xunit;
 
-namespace Lms.Rpc.Tests.Runtime.Server.Ids
+namespace Lms.Rpc.Tests.Runtime
 {
     public class DefaultServiceIdGenerator_Test : LmsIntegratedTest<LmsRpcTestModule>
     {

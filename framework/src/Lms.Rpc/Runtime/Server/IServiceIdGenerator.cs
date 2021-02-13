@@ -1,7 +1,7 @@
 using System.Reflection;
 using Lms.Core.DependencyInjection;
 
-namespace Lms.Rpc.Runtime.Support.Ids
+namespace Lms.Rpc.Runtime.Server
 {
     public interface IServiceIdGenerator : ITransientDependency
     {

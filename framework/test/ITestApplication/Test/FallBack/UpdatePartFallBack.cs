@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lms.Rpc.Runtime.Support;
+using Lms.Rpc.Runtime.Client;
 
 namespace ITestApplication.Test.FallBack
 {
