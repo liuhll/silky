@@ -12,6 +12,7 @@ namespace Lms.Rpc.Configuration
         /// </summary>
         public AddressSelectorMode ShuntStrategy { get; set; } = AddressSelectorMode.Polling;
 
+        
         /// <summary>
         /// 执行超时时间
         /// </summary>
@@ -41,10 +42,6 @@ namespace Lms.Rpc.Configuration
         /// 熔断几次之后标识服务地址不健康
         /// </summary>
         public int FuseTimes { get; set; } = 3;
-
-        /// <summary>
-        /// 故障转移次数
-        /// </summary>
-        public int FailoverCount { get; set; } = 0;
+        
     }
 }

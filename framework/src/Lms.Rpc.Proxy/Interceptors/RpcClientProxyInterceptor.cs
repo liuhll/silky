@@ -1,20 +1,22 @@
+using System;
 using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Core.DynamicProxy;
+using Lms.Core.Exceptions;
 using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Runtime.Server.Ids;
+using Lms.Rpc.Runtime.Support.Ids;
 
 namespace Lms.Rpc.Proxy.Interceptors
 {
-    public class RpcClientProxyInterceptor: LmsInterceptor, ITransientDependency
+    public class RpcClientProxyInterceptor : LmsInterceptor, ITransientDependency
     {
         private readonly IServiceIdGenerator _serviceIdGenerator;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IServiceExecutor _serviceExecutor;
 
         public RpcClientProxyInterceptor(IServiceIdGenerator serviceIdGenerator,
-            IServiceEntryLocator serviceEntryLocator, 
+            IServiceEntryLocator serviceEntryLocator,
             IServiceExecutor serviceExecutor)
         {
             _serviceIdGenerator = serviceIdGenerator;
@@ -26,8 +28,21 @@ namespace Lms.Rpc.Proxy.Interceptors
         {
             var servcieId = _serviceIdGenerator.GenerateServiceId(invocation.Method);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(servcieId);
-            invocation.ReturnValue = await _serviceExecutor.Execute(serviceEntry, invocation.Arguments);
-            
+            try
+            {
+                invocation.ReturnValue = await _serviceExecutor.Execute(serviceEntry, invocation.Arguments);
+            }
+            catch (Exception e)
+            {
+                if (!e.IsBusinessException() && serviceEntry.FallBackExecutor != null)
+                {
+                    await invocation.ProceedAsync();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Lms.Core.Exceptions;
 using Lms.Rpc.Address.Selector;
@@ -49,17 +47,27 @@ namespace Lms.Rpc.Runtime.Client
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
             }
 
-            var policy = Policy.Handle<TimeoutException>()
-                .Or<CommunicatonException>()
-                .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
+            IAsyncPolicy<object> executePolicy = Policy<object>.Handle<TimeoutException>()
+                    .Or<CommunicatonException>()
+                    .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
                 ;
-            return await policy.ExecuteAsync(async () =>
+            if (serviceEntry.FallBackExecutor != null)
             {
-                var invokeResult =
-                    await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions, hashKey);
-                return invokeResult.Result;
-            });
-           
+                var dictParams = serviceEntry.CreateDictParameters(parameters.ToArray());
+                var fallbackPolicy = Policy<object>.Handle<LmsException>()
+                    .FallbackAsync<object>(serviceEntry.FallBackExecutor(new object[] {dictParams}).GetAwaiter()
+                        .GetResult());
+                executePolicy = Policy.WrapAsync(executePolicy, fallbackPolicy);
+            }
+
+            return await executePolicy
+                .ExecuteAsync(async () =>
+                {
+                    var invokeResult =
+                        await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions,
+                            hashKey);
+                    return invokeResult.Result;
+                });
         }
     }
 }

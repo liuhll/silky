@@ -17,5 +17,10 @@ namespace GatewayDemo.AppService
         {
             return await _testAppService.Create(testDto);
         }
+
+        public Task<string> UpdatePart(TestDto input)
+        {
+            return _testAppService.UpdatePart(input);
+        }
     }
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Net.Mail;
 using System.Threading;
+using JetBrains.Annotations;
 using Lms.Rpc.Address.Selector;
+using Lms.Rpc.Runtime.Support;
 
 namespace Lms.Rpc.Runtime.Server
 {
@@ -12,7 +14,7 @@ namespace Lms.Rpc.Runtime.Server
         /// 负载分流策略
         /// </summary>
         public AddressSelectorMode ShuntStrategy { get; set; } = AddressSelectorMode.Polling;
-        
+
         /// <summary>
         /// 执行超时时间
         /// </summary>
@@ -22,7 +24,7 @@ namespace Lms.Rpc.Runtime.Server
         /// 是否开启缓存拦截
         /// </summary>
         public bool CacheEnabled { get; set; } = true;
-        
+
         /// <summary>
         /// 允许的最大并发量
         /// </summary>
@@ -42,5 +44,8 @@ namespace Lms.Rpc.Runtime.Server
         /// 故障转移次数
         /// </summary>
         public int FailoverCount { get; set; } = 0;
+
+        
+        [CanBeNull] public Type FallBackType { get; set; }
     }
 }

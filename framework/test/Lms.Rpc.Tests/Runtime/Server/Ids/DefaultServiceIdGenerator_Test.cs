@@ -1,4 +1,4 @@
-using Lms.Rpc.Runtime.Server.Ids;
+using Lms.Rpc.Runtime.Support.Ids;
 using Lms.Rpc.Tests.AppService;
 using Lms.TestBase.Testing;
 using Xunit;

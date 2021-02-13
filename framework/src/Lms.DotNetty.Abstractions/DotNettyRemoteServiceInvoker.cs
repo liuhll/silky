@@ -41,7 +41,6 @@ namespace Lms.DotNetty
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
             GovernanceOptions governanceOptions, string hashKey = null)
         {
-            //var serviceRoute = _serviceRouteCache[remoteInvokeMessage.ServiceId];
             var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
             if (serviceRoute == null)
             {
@@ -50,8 +49,7 @@ namespace Lms.DotNetty
 
             if (!serviceRoute.Addresses.Any(p => p.Enabled))
             {
-                throw new LmsException($"通过{remoteInvokeMessage.ServiceId}找不到可用的服务提供者",
-                    StatusCode.NotFindServiceRouteAddress);
+                throw new NotFindServiceRouteAddressException($"通过{remoteInvokeMessage.ServiceId}找不到可用的服务提供者");
             }
 
             var addressSelector =

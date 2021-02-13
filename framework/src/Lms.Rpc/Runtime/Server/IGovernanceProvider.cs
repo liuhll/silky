@@ -1,4 +1,7 @@
+using System;
+using JetBrains.Annotations;
 using Lms.Rpc.Address.Selector;
+using Lms.Rpc.Runtime.Support;
 
 namespace Lms.Rpc.Runtime.Server
 {
@@ -38,5 +41,12 @@ namespace Lms.Rpc.Runtime.Server
         /// 故障转移次数
         /// </summary>
         int FailoverCount { get; set; }
+        
+        /// <summary>
+        /// 失败回调指定的FallBack
+        /// </summary>
+        
+        [CanBeNull] public Type FallBackType { get; set; }
+        
     }
 }

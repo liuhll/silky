@@ -31,8 +31,9 @@ namespace NormHostDemo.AppService
             return "Get";
         }
 
-        public async Task UpdatePart(TestDto input)
+        public async Task<string> UpdatePart(TestDto input)
         {
+            return "UpdatePart";
         }
     }
 }
