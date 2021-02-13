@@ -29,11 +29,11 @@ namespace Lms.Rpc.Routing
         {
             _healthCheck = healthCheck;
             _serviceEntryLocator = serviceEntryLocator;
-            _healthCheck.OnRemveAddress += HealthCheckOnOnRemveAddress;
+            _healthCheck.OnRemveAddress += OnRemveAddressHandler;
             Logger = NullLogger<ServiceRouteCache>.Instance;
         }
 
-        private async Task HealthCheckOnOnRemveAddress(IAddressModel addressmodel)
+        private async Task OnRemveAddressHandler(IAddressModel addressmodel)
         {
             addressmodel.InitFuseTimes();
             var remveAddressServiceRoutes =
