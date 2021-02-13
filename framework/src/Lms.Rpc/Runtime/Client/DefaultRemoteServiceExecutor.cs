@@ -54,7 +54,7 @@ namespace Lms.Rpc.Runtime.Client
             if (serviceEntry.FallBackExecutor != null)
             {
                 var dictParams = serviceEntry.CreateDictParameters(parameters.ToArray());
-                var fallbackPolicy = Policy<object>.Handle<LmsException>()
+                var fallbackPolicy = Policy<object>.Handle<LmsException>(ex=> !ex.IsBusinessException())
                     .FallbackAsync<object>(serviceEntry.FallBackExecutor(new object[] {dictParams}).GetAwaiter()
                         .GetResult());
                 executePolicy = Policy.WrapAsync(executePolicy, fallbackPolicy);

@@ -152,11 +152,7 @@ namespace Lms.Rpc.Runtime.Server
         public ServiceEntryGovernance GovernanceOptions { get; }
 
         [CanBeNull] public Func<object[], Task<object>> FallBackExecutor { get; private set; }
-
-        // [CanBeNull] public Type FallbackType { get; private set; }
-        //
-        // [CanBeNull] public MethodInfo FallBackMethod { get; private set; }
-
+        
         private Func<string, IList<object>, Task<object>> CreateExecutor() =>
             (key, parameters) => Task.Factory.StartNew(() =>
             {
