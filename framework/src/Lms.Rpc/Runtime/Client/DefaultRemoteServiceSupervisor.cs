@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Concurrent;
-using Lms.Core.Exceptions;
+using System.Linq;
 using Lms.Rpc.Address;
+using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Configuration;
+using Lms.Rpc.Runtime.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -11,10 +13,36 @@ namespace Lms.Rpc.Runtime.Client
     public class DefaultRemoteServiceSupervisor : IRemoteServiceSupervisor
     {
         private ConcurrentDictionary<(string, IAddressModel), ServiceInvokeInfo> m_monitor = new();
+        private readonly IHealthCheck _healthCheck;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
         public ILogger<DefaultRemoteServiceSupervisor> Logger { get; set; }
 
-        public DefaultRemoteServiceSupervisor()
+
+        public DefaultRemoteServiceSupervisor(IHealthCheck healthCheck,
+            IServiceEntryLocator serviceEntryLocator)
         {
+            _healthCheck = healthCheck;
+            _serviceEntryLocator = serviceEntryLocator;
+            _healthCheck.OnHealthChange += async (model, health) =>
+            {
+                if (!health)
+                {
+                    var keys = m_monitor.Keys.Where(p => p.Item2.Equals(model));
+                    foreach (var key in keys)
+                    {
+                        var serviceEntry = _serviceEntryLocator.GetServiceEntryById(key.Item1);
+                        key.Item2.MakeFusing(serviceEntry.GovernanceOptions.FuseSleepDuration);
+                    }
+                }
+            };
+            _healthCheck.OnRemveAddress += async model =>
+            {
+                var keys = m_monitor.Keys.Where(p => p.Item2.Equals(model));
+                foreach (var key in keys)
+                {
+                    m_monitor.TryRemove(key, out var value);
+                }
+            };
             Logger = NullLogger<DefaultRemoteServiceSupervisor>.Instance;
         }
 
@@ -49,6 +77,7 @@ namespace Lms.Rpc.Runtime.Client
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests--;
+            serviceInvokeInfo.FaultRequests++;
             serviceInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
             m_monitor.AddOrUpdate(item, serviceInvokeInfo, (key, _) => serviceInvokeInfo);
         }
