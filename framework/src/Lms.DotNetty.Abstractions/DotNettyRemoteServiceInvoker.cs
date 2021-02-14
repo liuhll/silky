@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -61,9 +62,12 @@ namespace Lms.DotNetty
             // todo 分布式事务
             // todo 远程调用
             // todo 获取调用结果
-
+            bool isInvakeSuccess = true;
+            var sp = Stopwatch.StartNew();
             try
             {
+                _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
+                    governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }
@@ -71,25 +75,43 @@ namespace Lms.DotNetty
             {
                 Logger.LogError($"服务提供者{selectedAddress}不可用,IO异常,原因:{ex.Message}");
                 _healthCheck.RemoveAddress(selectedAddress);
+                isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (ConnectException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}链接异常,原因:{ex.Message}");
                 MarkAddressFail(governanceOptions, selectedAddress);
+                isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (ChannelException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}通信异常,原因:{ex.Message}");
                 MarkAddressFail(governanceOptions, selectedAddress);
+                isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (TimeoutException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}执行超时,原因:{ex.Message}");
                 MarkAddressFail(governanceOptions, selectedAddress, true);
+                isInvakeSuccess = false;
                 throw;
+            }
+            finally
+            {
+                sp.Stop();
+                if (isInvakeSuccess)
+                {
+                    _remoteServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceId, selectedAddress),
+                        sp.Elapsed.TotalMilliseconds);
+                }
+                else
+                {
+                    _remoteServiceSupervisor.ExceFail((remoteInvokeMessage.ServiceId, selectedAddress),
+                        sp.Elapsed.TotalMilliseconds);
+                }
             }
         }
 

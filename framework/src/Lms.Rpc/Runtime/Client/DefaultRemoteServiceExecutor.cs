@@ -47,14 +47,16 @@ namespace Lms.Rpc.Runtime.Client
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
             }
 
-            IAsyncPolicy<object> executePolicy = Policy<object>.Handle<TimeoutException>()
+            IAsyncPolicy<object> executePolicy = Policy<object>
+                    .Handle<TimeoutException>()
                     .Or<CommunicatonException>()
+                    .Or<OverflowException>()
                     .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
                 ;
             if (serviceEntry.FallBackExecutor != null)
             {
                 var dictParams = serviceEntry.CreateDictParameters(parameters.ToArray());
-                var fallbackPolicy = Policy<object>.Handle<LmsException>(ex=> !ex.IsBusinessException())
+                var fallbackPolicy = Policy<object>.Handle<LmsException>(ex => !ex.IsBusinessException())
                     .FallbackAsync<object>(serviceEntry.FallBackExecutor(new object[] {dictParams}).GetAwaiter()
                         .GetResult());
                 executePolicy = Policy.WrapAsync(executePolicy, fallbackPolicy);
