@@ -1,10 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Lms.Core.DependencyInjection;
 
 namespace Lms.Rpc.Runtime.Server
 {
-    public interface IServiceIdGenerator : ITransientDependency
+    public interface IServiceIdGenerator : ISingletonDependency
     {
-        string GenerateServiceId(MethodInfo method);
+        string GenerateServiceId([NotNull]MethodInfo method);
     }
 }
