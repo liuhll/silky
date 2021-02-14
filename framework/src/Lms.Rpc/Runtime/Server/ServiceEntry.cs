@@ -39,7 +39,16 @@ namespace Lms.Rpc.Runtime.Server
             CustomAttributes = MethodInfo.GetCustomAttributes(true);
             (IsAsyncMethod, ReturnType) = MethodInfo.MethodInfoReturnType();
             GovernanceOptions = new ServiceEntryGovernance();
-            ReConfiguration(governanceOptions);
+            var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
+            if (governanceProvider != null)
+            {
+                ReConfiguration(governanceProvider);
+            }
+            else
+            {
+                ReConfiguration(governanceOptions);
+            }
+
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
             _methodExecutor =
                 ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
@@ -48,9 +57,8 @@ namespace Lms.Rpc.Runtime.Server
             CreateDefaultSupportedResponseMediaTypes();
         }
 
-        private void ReConfiguration(GovernanceOptions governanceOptions)
+        private void ReConfiguration(IGovernanceProvider governanceProvider)
         {
-            var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
             if (governanceProvider != null)
             {
                 GovernanceOptions.CacheEnabled = governanceProvider.CacheEnabled;
@@ -60,36 +68,37 @@ namespace Lms.Rpc.Runtime.Server
                 GovernanceOptions.ShuntStrategy = governanceProvider.ShuntStrategy;
                 GovernanceOptions.FuseSleepDuration = governanceProvider.FuseSleepDuration;
                 GovernanceOptions.FailoverCount = governanceProvider.FailoverCount;
-                FailoverCountIsDefaultValue = GovernanceOptions.FailoverCount == 0;
-                if (governanceProvider.FallBackType != null)
+                FailoverCountIsDefaultValue = governanceProvider.FailoverCount == 0;
+            }
+            var governanceAttribute = governanceProvider as GovernanceAttribute;
+            if (governanceAttribute?.FallBackType != null)
+            {
+                Type fallBackType;
+                if (ReturnType == typeof(void))
                 {
-                    Type fallBackType;
-                    if (ReturnType == typeof(void))
+                    fallBackType = EngineContext.Current.TypeFinder.FindClassesOfType<IFallbackInvoker>()
+                        .FirstOrDefault(p => p == governanceAttribute.FallBackType);
+                    if (fallBackType == null)
                     {
-                        fallBackType = EngineContext.Current.TypeFinder.FindClassesOfType<IFallbackInvoker>()
-                            .FirstOrDefault(p => p == governanceProvider.FallBackType);
-                        if (fallBackType == null)
-                        {
-                            throw new LmsException($"未能找到{governanceProvider.FallBackType.FullName}的实现类");
-                        }
+                        throw new LmsException($"未能找到{governanceAttribute.FallBackType.FullName}的实现类");
                     }
-                    else
-                    {
-                        fallBackType = typeof(IFallbackInvoker<>);
-                        fallBackType = fallBackType.MakeGenericType(ReturnType);
-                        if (!EngineContext.Current.TypeFinder.FindClassesOfType(fallBackType)
-                            .Any(p => p == governanceProvider.FallBackType))
-                        {
-                            throw new LmsException($"未能找到{governanceProvider.FallBackType.FullName}的实现类");
-                        }
-                    }
-
-                    var invokeMethod = fallBackType.GetMethods().First(p => p.Name == "Invoke");
-
-                    var fallbackMethodExcutor = ObjectMethodExecutor.Create(invokeMethod, fallBackType.GetTypeInfo(),
-                        ParameterDefaultValues.GetParameterDefaultValues(invokeMethod));
-                    FallBackExecutor = CreateFallBackExecutor(fallbackMethodExcutor, fallBackType);
                 }
+                else
+                {
+                    fallBackType = typeof(IFallbackInvoker<>);
+                    fallBackType = fallBackType.MakeGenericType(ReturnType);
+                    if (!EngineContext.Current.TypeFinder.FindClassesOfType(fallBackType)
+                        .Any(p => p == governanceAttribute.FallBackType))
+                    {
+                        throw new LmsException($"未能找到{governanceAttribute.FallBackType.FullName}的实现类");
+                    }
+                }
+
+                var invokeMethod = fallBackType.GetMethods().First(p => p.Name == "Invoke");
+
+                var fallbackMethodExcutor = ObjectMethodExecutor.Create(invokeMethod, fallBackType.GetTypeInfo(),
+                    ParameterDefaultValues.GetParameterDefaultValues(invokeMethod));
+                FallBackExecutor = CreateFallBackExecutor(fallbackMethodExcutor, fallBackType);
             }
         }
 
@@ -151,7 +160,7 @@ namespace Lms.Rpc.Runtime.Server
         public ServiceEntryGovernance GovernanceOptions { get; }
 
         [CanBeNull] public Func<object[], Task<object>> FallBackExecutor { get; private set; }
-        
+
         private Func<string, IList<object>, Task<object>> CreateExecutor() =>
             (key, parameters) => Task.Factory.StartNew(() =>
             {

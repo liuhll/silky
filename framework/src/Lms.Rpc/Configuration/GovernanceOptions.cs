@@ -1,9 +1,10 @@
 using System.Threading;
 using Lms.Rpc.Address.Selector;
+using Lms.Rpc.Runtime.Server;
 
 namespace Lms.Rpc.Configuration
 {
-    public class GovernanceOptions
+    public class GovernanceOptions : IGovernanceProvider
     {
         public static string Governance = "Governance";
 
@@ -42,6 +43,10 @@ namespace Lms.Rpc.Configuration
         /// 熔断几次之后标识服务地址不健康
         /// </summary>
         public int FuseTimes { get; set; } = 3;
-        
+
+        /// <summary>
+        /// 故障转移次数
+        /// </summary>
+        public int FailoverCount { get; set; } = 0;
     }
 }

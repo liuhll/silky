@@ -27,7 +27,7 @@ namespace Lms.Rpc.Runtime.Server
                 .FirstOrDefault(p => p.Router.IsMatch(path, httpMethod));
             if (serviceEntry != null && serviceEntry.ParameterDescriptors.All(p => p.From != ParameterFrom.Path))
             {
-                _serviceEntryCache.UpdateRequestServiceEntryCache((path,httpMethod),serviceEntry);
+                _serviceEntryCache.UpdateRequestServiceEntryCache((path, httpMethod), serviceEntry);
             }
 
             return serviceEntry;
@@ -40,11 +40,13 @@ namespace Lms.Rpc.Runtime.Server
                 return serviceEntry;
             }
 
-            serviceEntry = _serviceEntryManager.GetAllEntries().FirstOrDefault(p => p.ServiceDescriptor.Id == serviceId);
+            serviceEntry = _serviceEntryManager.GetAllEntries()
+                .FirstOrDefault(p => p.ServiceDescriptor.Id == serviceId);
             if (serviceEntry != null)
             {
-                _serviceEntryCache.UpdateServiceEntryCache(serviceId,serviceEntry);
+                _serviceEntryCache.UpdateServiceEntryCache(serviceEntry);
             }
+
             return serviceEntry;
         }
 
@@ -55,11 +57,13 @@ namespace Lms.Rpc.Runtime.Server
                 return serviceEntry;
             }
 
-            serviceEntry = _serviceEntryManager.GetLocalEntries().FirstOrDefault(p => p.ServiceDescriptor.Id == serviceId);
+            serviceEntry = _serviceEntryManager.GetLocalEntries()
+                .FirstOrDefault(p => p.ServiceDescriptor.Id == serviceId);
             if (serviceEntry != null)
             {
-                _serviceEntryCache.UpdateLocalServiceEntryCache(serviceId,serviceEntry);
+                _serviceEntryCache.UpdateLocalServiceEntryCache(serviceEntry);
             }
+
             return serviceEntry;
         }
     }

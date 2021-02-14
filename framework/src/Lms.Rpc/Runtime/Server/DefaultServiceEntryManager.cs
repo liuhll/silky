@@ -18,17 +18,17 @@ namespace Lms.Rpc.Runtime.Server
 
         private void UpdateEntries(IEnumerable<IServiceEntryProvider> providers)
         {
-           
             var allServiceEntries = new List<ServiceEntry>();
             foreach (var provider in providers)
             {
                 var entries = provider.GetEntries();
                 foreach (var entry in entries)
                 {
-                    if (allServiceEntries.Any(p=>p.ServiceDescriptor.Id == entry.ServiceDescriptor.Id))
+                    if (allServiceEntries.Any(p => p.ServiceDescriptor.Id == entry.ServiceDescriptor.Id))
                     {
                         throw new InvalidOperationException($"本地包含多个Id为：{entry.ServiceDescriptor.Id} 的服务条目。");
                     }
+
                     allServiceEntries.Add(entry);
                 }
             }
@@ -40,7 +40,6 @@ namespace Lms.Rpc.Runtime.Server
 
             m_allServiceEntries = allServiceEntries;
             m_localServiceEntries = allServiceEntries.Where(p => p.IsLocal);
-
         }
 
         public IReadOnlyList<ServiceEntry> GetLocalEntries()
@@ -51,6 +50,20 @@ namespace Lms.Rpc.Runtime.Server
         public IReadOnlyList<ServiceEntry> GetAllEntries()
         {
             return m_allServiceEntries.ToImmutableList();
+        }
+
+        public event EventHandler<ServiceEntry> OnUpdate;
+
+        public void Update(ServiceEntry serviceEntry)
+        {
+            m_allServiceEntries = m_allServiceEntries
+                .Where(p => !p.ServiceDescriptor.Id.Equals(serviceEntry.ServiceDescriptor.Id)).Append(serviceEntry);
+            if (serviceEntry.IsLocal)
+            {
+                m_localServiceEntries = m_localServiceEntries
+                    .Where(p => !p.ServiceDescriptor.Id.Equals(serviceEntry.ServiceDescriptor.Id)).Append(serviceEntry);
+            }
+            OnUpdate?.Invoke(this, serviceEntry);
         }
     }
 }

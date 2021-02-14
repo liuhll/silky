@@ -20,15 +20,19 @@ namespace Lms.Rpc.Routing
         private readonly ConcurrentDictionary<string, ServiceRoute> _serviceRouteCache = new();
         private readonly IHealthCheck _healthCheck;
         private readonly IServiceEntryLocator _serviceEntryLocator;
+        private readonly IServiceEntryManager _serviceEntryManager;
+
         public ILogger<ServiceRouteCache> Logger { get; set; }
 
         public event OnRemoveServiceRoutes OnRemoveServiceRoutes;
 
         public ServiceRouteCache(IHealthCheck healthCheck,
-            IServiceEntryLocator serviceEntryLocator)
+            IServiceEntryLocator serviceEntryLocator, 
+            IServiceEntryManager serviceEntryManager)
         {
             _healthCheck = healthCheck;
             _serviceEntryLocator = serviceEntryLocator;
+            _serviceEntryManager = serviceEntryManager;
             _healthCheck.OnRemveAddress += OnRemveAddressHandler;
             Logger = NullLogger<ServiceRouteCache>.Instance;
         }
@@ -59,6 +63,7 @@ namespace Lms.Rpc.Routing
             if (serviceEntry.FailoverCountIsDefaultValue)
             {
                 serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.AddressDescriptors.Count();
+                _serviceEntryManager.Update(serviceEntry);
             }
 
             var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();

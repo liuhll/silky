@@ -41,11 +41,6 @@ namespace Lms.Rpc.Runtime.Server
         /// </summary>
         int FailoverCount { get; set; }
         
-        /// <summary>
-        /// 失败回调指定的FallBack
-        /// </summary>
-        
-        [CanBeNull] public Type FallBackType { get; set; }
         
     }
 }
