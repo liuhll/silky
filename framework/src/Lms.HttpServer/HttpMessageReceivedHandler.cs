@@ -7,6 +7,8 @@ using Lms.Core.Extensions;
 using Lms.Core.Serialization;
 using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Runtime.Server.Parameter;
+using Lms.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
@@ -41,6 +43,7 @@ namespace Lms.HttpServer
             }
 
             var parameters = await _parameterParser.Parser(context.Request, serviceEntry);
+            RpcContext.GetContext().SetAttachment("requestHeader", parameters[ParameterFrom.Header]);
             var excuteResult = await _serverExecutor.Execute(serviceEntry, parameters);
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = 200;

@@ -38,7 +38,6 @@ namespace Lms.Rpc
                 .SingleInstance()
                 .AsSelf()
                 .Named<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
-                
         }
 
         public async override Task Initialize(ApplicationContext applicationContext)
@@ -48,6 +47,7 @@ namespace Lms.Rpc
             {
                 throw new LmsException("您必须指定依赖的服务注册中心模块");
             }
+
             await serviceRouteManager.CreateSubscribeDataChanges();
             await serviceRouteManager.EnterRoutes(ServiceProtocol.Tcp);
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
@@ -66,6 +66,7 @@ namespace Lms.Rpc
                     {
                         Debug.Assert(message.IsInvokeMessage());
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
+                        RpcContext.GetContext().SetAttachments(remoteInvokeMessage.Attachments);
                         var serviceEntry =
                             serviceEntryLocate.GetLocalServiceEntryById(remoteInvokeMessage.ServiceId);
                         RemoteResultMessage remoteResultMessage;

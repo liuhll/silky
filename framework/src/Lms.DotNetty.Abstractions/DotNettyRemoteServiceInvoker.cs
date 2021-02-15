@@ -14,6 +14,7 @@ using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Client;
 using Lms.Rpc.Transport;
+using Lms.Rpc.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -69,6 +70,9 @@ namespace Lms.DotNetty
                 _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
+                RpcContext.GetContext().SetAttachment("localAddress",
+                    NetUtil.GetHostAddressModel(selectedAddress.ServiceProtocol).ToString());
+                RpcContext.GetContext().SetAttachment("remoteAddress", selectedAddress.ToString());
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }
             catch (IOException ex)

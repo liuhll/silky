@@ -14,7 +14,7 @@ namespace Lms.Rpc.Transport
     public class DefaultTransportClient : ITransportClient
     {
         private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
-            
+
 
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;
@@ -48,6 +48,7 @@ namespace Lms.Rpc.Transport
 
         public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout = Timeout.Infinite)
         {
+            message.Attachments = RpcContext.GetContext().GetContextAttachments();
             var transportMessage = new TransportMessage(message);
             var callbackTask = RegisterResultCallbackAsync(transportMessage.Id, timeout);
             await _messageSender.SendAndFlushAsync(transportMessage);
