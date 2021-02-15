@@ -6,7 +6,7 @@ using Lms.RegistryCenter.Zookeeper;
 
 namespace NormHostDemo
 {
-    [DependsOn(typeof(ZookeeperModule), typeof(DotNettyTcpModule), typeof(MessagePackModule))]
+    [DependsOn(typeof(ZookeeperModule), typeof(DotNettyTcpModule), typeof(ProtoBufferModule))]
     public class NormDemoModule : LmsModule
     {
         protected override void RegisterServices(ContainerBuilder builder)

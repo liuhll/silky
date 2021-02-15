@@ -17,7 +17,8 @@ namespace GatewayDemo
         typeof(ZookeeperModule),
         typeof(HttpServerModule),
         typeof(DotNettyModule),
-        typeof(MessagePackModule))]
+        typeof(ProtoBufferModule)
+        )]
     public class GatewayDemoModule : LmsModule
     {
     }

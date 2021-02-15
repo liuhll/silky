@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <RootNamespace>Lms.Codec</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="protobuf-net" Version="3.0.73" />
+        <PackageReference Include="protobuf-net.Core" Version="3.0.73" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
+    </ItemGroup>
+
+</Project>
