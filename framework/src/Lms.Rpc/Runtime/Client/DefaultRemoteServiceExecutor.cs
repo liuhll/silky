@@ -50,13 +50,17 @@ namespace Lms.Rpc.Runtime.Client
             IAsyncPolicy<object> executePolicy = Policy<object>
                     .Handle<TimeoutException>()
                     .Or<CommunicatonException>()
-                    .Or<OverflowException>()
+                    .Or<OverflowMaxRequestException>()
                     .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
                 ;
             if (serviceEntry.FallBackExecutor != null)
             {
                 var dictParams = serviceEntry.CreateDictParameters(parameters.ToArray());
-                var fallbackPolicy = Policy<object>.Handle<LmsException>(ex => !ex.IsBusinessException())
+                var fallbackPolicy = Policy<object>.Handle<LmsException>(
+                        ex => !ex.IsBusinessException()
+                              && !(ex is CommunicatonException)
+                              && !(ex is OverflowMaxRequestException)
+                    )
                     .FallbackAsync<object>(serviceEntry.FallBackExecutor(new object[] {dictParams}).GetAwaiter()
                         .GetResult());
                 executePolicy = Policy.WrapAsync(executePolicy, fallbackPolicy);
