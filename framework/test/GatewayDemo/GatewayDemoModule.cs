@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Lms.Codec;
 using Lms.Core;
 using Lms.Core.Modularity;
 using Lms.DotNetty;
@@ -15,7 +16,8 @@ namespace GatewayDemo
     [DependsOn(typeof(RpcProxyModule),
         typeof(ZookeeperModule),
         typeof(HttpServerModule),
-        typeof(DotNettyModule))]
+        typeof(DotNettyModule),
+        typeof(MessagePackModule))]
     public class GatewayDemoModule : LmsModule
     {
     }

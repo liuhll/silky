@@ -24,8 +24,8 @@ namespace Lms.Rpc
                     ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder).ToArray())
                 .AsSelf()
                 .AsImplementedInterfaces();
-            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces();
-            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces();
+            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces().InstancePerDependency();
+            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces().InstancePerDependency();
             builder.RegisterType<PollingAddressSelector>()
                 .SingleInstance()
                 .AsSelf()

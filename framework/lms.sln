@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.AutoMapper", "src\Lms.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Castle", "src\Lms.Castle\Lms.Castle.csproj", "{D96C901F-546D-4B6B-8981-3E0F9178B286}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Codec.MessagePack", "src\Lms.Codec.MessagePack\Lms.Codec.MessagePack.csproj", "{2DE0C2DC-EAA1-46AD-B7BD-26A029F6E24F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,7 @@ Global
 		{222EB00C-1C22-46E9-91BB-89B8219F1AB4} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{F6F06209-968E-4FE7-98EE-2C25D74367C2} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{D96C901F-546D-4B6B-8981-3E0F9178B286} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{2DE0C2DC-EAA1-46AD-B7BD-26A029F6E24F} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -140,5 +143,9 @@ Global
 		{D96C901F-546D-4B6B-8981-3E0F9178B286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D96C901F-546D-4B6B-8981-3E0F9178B286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D96C901F-546D-4B6B-8981-3E0F9178B286}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DE0C2DC-EAA1-46AD-B7BD-26A029F6E24F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DE0C2DC-EAA1-46AD-B7BD-26A029F6E24F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DE0C2DC-EAA1-46AD-B7BD-26A029F6E24F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DE0C2DC-EAA1-46AD-B7BD-26A029F6E24F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
