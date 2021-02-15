@@ -13,6 +13,7 @@ namespace Lms.Core
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             services.AddHttpContextAccessor();
+            services.AddHostedService<InitLmsHostedService>();
             CommonHelper.DefaultFileProvider = new LmsFileProvider(hostEnvironment);
             var engine = EngineContext.Create();
             var moduleLoder = new ModuleLoader();

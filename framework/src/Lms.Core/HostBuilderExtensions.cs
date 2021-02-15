@@ -20,7 +20,6 @@ namespace Microsoft.Extensions.Hosting
                 {
                    (engine) = config.ConfigureLmsServices(hostBuilder.Configuration, hostBuilder.HostingEnvironment);
                    services = config;
-                   services.AddHostedService<InitLmsHostedService>();
 
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
