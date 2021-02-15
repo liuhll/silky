@@ -13,7 +13,7 @@ namespace Lms.Rpc.Address.Descriptor
                     Singleton<IAddressModel>.Instance ?? new AddressModel(addressDescriptor.Address,
                         addressDescriptor.Port, addressDescriptor.ServiceProtocol);
             }
-
+            SingletonDictionary<string, IAddressModel>.Instance[addressDescriptor.ToString()].InitFuseTimes();
             return SingletonDictionary<string, IAddressModel>.Instance[addressDescriptor.ToString()];
         }
     }

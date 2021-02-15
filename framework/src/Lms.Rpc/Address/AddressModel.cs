@@ -10,6 +10,7 @@ namespace Lms.Rpc.Address
     public class AddressModel : IAddressModel
     {
         private int m_fuseTimes;
+
         public AddressModel(
             [NotNull] string address,
             [NotNull] int port,
@@ -39,7 +40,7 @@ namespace Lms.Rpc.Address
             {
                 if (!LastDisableTime.HasValue)
                     return true;
-                
+
                 return DateTime.Now > LastDisableTime.Value;
             }
         }
@@ -54,6 +55,7 @@ namespace Lms.Rpc.Address
 
         public void InitFuseTimes()
         {
+            LastDisableTime = null;
             m_fuseTimes = 0;
         }
 
@@ -66,12 +68,12 @@ namespace Lms.Rpc.Address
             return string.Concat(AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString());
         }
 
-        public override bool Equals([CanBeNull]object obj)
+        public override bool Equals([CanBeNull] object obj)
         {
             var endpoint = obj as IPEndPoint;
             if (endpoint != null)
                 return endpoint.Address.MapToIPv4() == IPEndPoint.Address && endpoint.Port == IPEndPoint.Port;
-            
+
             var model = obj as AddressModel;
             if (model == null)
                 return false;
