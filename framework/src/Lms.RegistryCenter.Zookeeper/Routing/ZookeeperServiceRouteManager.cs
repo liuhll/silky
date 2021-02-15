@@ -201,7 +201,13 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
 
         public async void Dispose()
         {
-            await RemoveLocalHostServiceRoute();
+            try
+            {
+                await RemoveLocalHostServiceRoute();
+            }
+            catch
+            {
+            }
         }
     }
 }
