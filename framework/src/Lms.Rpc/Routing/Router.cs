@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
+using Lms.Core.Utils;
 using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
@@ -61,12 +64,14 @@ namespace Lms.Rpc.Routing
             {
                 return false;
             }
+
             var parameterIndex = 0;
             for (var index = 0; index < apiSegments.Length; index++)
             {
                 var apiSegment = apiSegments[index];
                 var routeSegment = RouteTemplate.Segments[index];
-                if (!routeSegment.IsParameter && !routeSegment.Value.Equals(apiSegment,StringComparison.OrdinalIgnoreCase))
+                if (!routeSegment.IsParameter &&
+                    !routeSegment.Value.Equals(apiSegment, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -77,14 +82,28 @@ namespace Lms.Rpc.Routing
                     {
                         return false;
                     }
-
-                    // todo 校验路由参数
+                    
                     var routeParameter = RouteTemplate.Parameters[parameterIndex];
-                    /* if (!routeParameter.Constraint.IsNullOrEmpty()&&
-                             !Regex.IsMatch(apiSegment, routeParameter.Constraint))
+                    if (!routeParameter.Constraint.IsNullOrEmpty())
                     {
-                        return false;
-                    }*/
+                        if (TypeUtils.GetSampleType(routeParameter.Constraint, out var convertType))
+                        {
+                            try
+                            {
+                                var val = Convert.ChangeType(apiSegment, convertType);
+                                return true;
+                            }
+                            catch (Exception e)
+                            {
+                                return false;
+                            }
+                        }
+
+                        if (!Regex.IsMatch(apiSegment, routeParameter.Constraint))
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
 
@@ -104,7 +123,8 @@ namespace Lms.Rpc.Routing
                 {
                     continue;
                 }
-                routeParameters.Add(TemplateSegmentHelper.GetVariableName(routeSegment.Value),apiSegment);
+
+                routeParameters.Add(TemplateSegmentHelper.GetVariableName(routeSegment.Value), apiSegment);
             }
 
             return routeParameters;
