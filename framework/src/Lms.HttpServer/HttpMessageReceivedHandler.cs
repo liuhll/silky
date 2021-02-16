@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Lms.HttpServer
 {
-    internal class HttpMessageReceivedHandler : ITransientDependency
+    internal class HttpMessageReceivedHandler : IScopedDependency
     {
         private readonly IParameterParser _parameterParser;
         private readonly IServiceExecutor _serverExecutor;

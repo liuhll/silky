@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core;
-using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
@@ -11,18 +10,20 @@ namespace Lms.HttpServer.Middlewares
     public class LmsMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
 
-        public LmsMiddleware(RequestDelegate next)
+        public LmsMiddleware(RequestDelegate next, 
+            IServiceEntryLocator serviceEntryLocator)
         {
             _next = next;
+            _serviceEntryLocator = serviceEntryLocator;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             var path = context.Request.Path;
             var method = context.Request.Method.ToEnum<HttpMethod>();
-            var serviceEntryLocator = EngineContext.Current.Resolve<IServiceEntryLocator>();
-            var serviceEntry = serviceEntryLocator.GetServiceEntryByApi(path, method);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryByApi(path, method);
             if (serviceEntry == null)
             {
                 await _next(context);
