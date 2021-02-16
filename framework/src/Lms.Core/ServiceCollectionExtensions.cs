@@ -12,8 +12,6 @@ namespace Lms.Core
         public static IEngine ConfigureLmsServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            services.AddHttpContextAccessor();
-            services.AddHostedService<InitLmsHostedService>();
             CommonHelper.DefaultFileProvider = new LmsFileProvider(hostEnvironment);
             var engine = EngineContext.Create();
             var moduleLoder = new ModuleLoader();

@@ -1,4 +1,6 @@
 ﻿using System;
+using Lms.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Lms.Core.Exceptions
 {
@@ -42,6 +44,11 @@ namespace Lms.Core.Exceptions
             }
             return statusCode;
 
+        }
+        
+        public static LogLevel GetLogLevel(this Exception exception, LogLevel defaultLevel = LogLevel.Error)
+        {
+            return (exception as IHasLogLevel)?.LogLevel ?? defaultLevel;
         }
     }
 }
