@@ -22,7 +22,7 @@ namespace Lms.Rpc.Runtime.Client
             _serviceEntryLocator = serviceEntryLocator;
         }
 
-        public async Task<object> Execute(string serviceId, IList<object> parameters)
+        public async Task<object> Execute(string serviceId, object[] parameters)
         {
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceId);
             if (serviceEntry.IsLocal)
@@ -33,7 +33,7 @@ namespace Lms.Rpc.Runtime.Client
             return await Execute(serviceEntry, parameters);
         }
 
-        public async Task<object> Execute(ServiceEntry serviceEntry, IList<object> parameters)
+        public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters)
         {
             // todo 1. 失败重试 2. 缓存拦截 3.确定返回值 
             var remoteInvokeMessage = new RemoteInvokeMessage()

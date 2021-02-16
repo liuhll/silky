@@ -7,7 +7,7 @@ namespace Lms.Rpc.Messages
     {
         public string ServiceId { get; set; }
         
-        public IList<object> Parameters { get; set; }
+        public object[] Parameters { get; set; }
 
         public IDictionary<string, object> Attachments { get; set; }
     }

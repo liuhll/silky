@@ -70,6 +70,7 @@ namespace Lms.Rpc.Runtime.Server
                 GovernanceOptions.FailoverCount = governanceProvider.FailoverCount;
                 FailoverCountIsDefaultValue = governanceProvider.FailoverCount == 0;
             }
+
             var governanceAttribute = governanceProvider as GovernanceAttribute;
             if (governanceAttribute?.FallBackType != null)
             {
@@ -135,7 +136,7 @@ namespace Lms.Rpc.Runtime.Server
             }
         }
 
-        public Func<string, IList<object>, Task<object>> Executor { get; }
+        public Func<string, object[], Task<object>> Executor { get; }
 
         public IList<string> SupportedRequestMediaTypes { get; } = new List<string>();
 
@@ -161,13 +162,13 @@ namespace Lms.Rpc.Runtime.Server
 
         [CanBeNull] public Func<object[], Task<object>> FallBackExecutor { get; private set; }
 
-        private Func<string, IList<object>, Task<object>> CreateExecutor() =>
+        private Func<string, object[], Task<object>> CreateExecutor() =>
             (key, parameters) => Task.Factory.StartNew(() =>
             {
                 if (IsLocal)
                 {
                     var instance = EngineContext.Current.Resolve(_serviceType);
-                    for (int i = 0; i < parameters.Count; i++)
+                    for (int i = 0; i < parameters.Length; i++)
                     {
                         if (parameters[i] != null && parameters[i].GetType() != ParameterDescriptors[i].Type)
                         {
@@ -188,7 +189,33 @@ namespace Lms.Rpc.Runtime.Server
                 return remoteServiceExecutor.Execute(this, parameters).GetAwaiter().GetResult();
             });
 
-        public IList<object> ResolveParameters(IDictionary<ParameterFrom, object> parameters)
+        public ServiceDescriptor ServiceDescriptor { get; }
+
+        public IDictionary<string, object> CreateDictParameters([NotNull] object[] parameters)
+        {
+            Check.NotNull(parameters, nameof(parameters));
+            var dictionaryParms = new Dictionary<string, object>();
+            var index = 0;
+            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+            foreach (var parameter in ParameterDescriptors)
+            {
+                if (parameter.IsSample)
+                {
+                    dictionaryParms[parameter.Name] = parameters[index];
+                }
+                else
+                {
+                    dictionaryParms[parameter.Name] = typeConvertibleService.Convert(parameters[index], parameter.Type);
+                }
+
+                index++;
+            }
+
+            return dictionaryParms;
+        }
+
+
+        public object[] ResolveParameters(IDictionary<ParameterFrom, object> parameters)
         {
             var list = new List<object>();
             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
@@ -266,7 +293,7 @@ namespace Lms.Rpc.Runtime.Server
                 #endregion
             }
 
-            return list;
+            return list.ToArray();
         }
 
         private void SetSampleParameterValue(ITypeConvertibleService typeConvertibleService, object parameter,
@@ -275,38 +302,13 @@ namespace Lms.Rpc.Runtime.Server
             var dict =
                 (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
                     typeof(IDictionary<string, object>));
-            ParameterDefaultValue.TryGetDefaultValue(parameterDescriptor.ParameterInfo,
-                out var parameterVal);
+            var parameterVal = parameterDescriptor.ParameterInfo.GetDefaultValue();
             if (dict.ContainsKey(parameterDescriptor.Name))
             {
                 parameterVal = dict[parameterDescriptor.Name];
             }
 
             list.Add(parameterVal);
-        }
-
-        public ServiceDescriptor ServiceDescriptor { get; }
-
-        public IDictionary<string, object> CreateDictParameters(object[] parameters)
-        {
-            var dictionaryParms = new Dictionary<string, object>();
-            var index = 0;
-            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-            foreach (var parameter in ParameterDescriptors)
-            {
-                if (parameter.IsSample)
-                {
-                    dictionaryParms[parameter.Name] = parameters[index];
-                }
-                else
-                {
-                    dictionaryParms[parameter.Name] = typeConvertibleService.Convert(parameters[index], parameter.Type);
-                }
-
-                index++;
-            }
-
-            return dictionaryParms;
         }
     }
 }

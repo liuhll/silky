@@ -22,7 +22,7 @@ namespace Lms.Codec.Message
         public string ServiceId { get; set; }
 
         [Key(2)]
-        public IList<object> Parameters { get; set; }
+        public object[] Parameters { get; set; }
 
         [Key(3)]
         public IDictionary<string, object> Attachments { get; set; }

@@ -9,7 +9,6 @@ using Lms.Core.Exceptions;
 using Lms.Core.Logging;
 using Lms.Core.Threading;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
