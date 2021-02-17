@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Extensions;
@@ -27,7 +28,15 @@ namespace Lms.HttpServer
             var requestParameters = await _parameterParser.Parser(context.Request, serviceEntry);
             RpcContext.GetContext().SetAttachment("requestHeader", requestParameters[ParameterFrom.Header]);
             var rpcParameters = serviceEntry.ResolveParameters(requestParameters);
-            var excuteResult = await serviceEntry.Executor(null, rpcParameters);
+            string serviceKey = null;
+
+            if (context.Request.Headers.ContainsKey("serviceKey"))
+            {
+                serviceKey = context.Request.Headers["serviceKey"].ToString();
+                RpcContext.GetContext().SetAttachment("serviceKey", serviceKey);
+            }
+
+            var excuteResult = await serviceEntry.Executor(serviceKey, rpcParameters);
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = 200;
             if (excuteResult != null)

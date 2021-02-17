@@ -6,8 +6,6 @@ namespace Lms.Rpc.Runtime.Client
 {
     public interface IRemoteServiceExecutor : ITransientDependency
     {
-        Task<object> Execute(string serviceId, object[] parameters);
-
-        Task<object> Execute(ServiceEntry serviceEntry, object[] parameters);
+        Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null);
     }
 }

@@ -22,7 +22,7 @@ namespace Lms.Castle.Adapter
         public MethodInfo Method => Invocation.MethodInvocationTarget ?? Invocation.Method;
 
         public bool IsAsyncMethod => Method.IsAsyncMethodInfo();
-        
+
         public object ReturnValue { get; set; }
 
         protected IInvocation Invocation { get; }

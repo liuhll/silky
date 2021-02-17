@@ -26,6 +26,8 @@ namespace Lms.Core.Exceptions
 
         [Description("验证异常")] ValidateError = 1001,
 
-        [Description("超过最大并发量")] OverflowMaxRequest = 507, 
+        [Description("超过最大并发量")] OverflowMaxRequest = 507,
+
+        [Description("UnServiceKeyImplementation")] UnServiceKeyImplementation = 508,
     }
 }

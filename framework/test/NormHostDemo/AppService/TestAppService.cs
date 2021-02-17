@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Lms.Rpc.Runtime.Server;
 
 namespace NormHostDemo.AppService
 {
+    [ServiceKey("v1", 3)]
     public class TestAppService : ITestAppService
     {
         public async Task<string> Create(TestDto input)

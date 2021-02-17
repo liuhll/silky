@@ -28,6 +28,8 @@ namespace Lms.Core
         IEnumerable<T> ResolveAll<T>();
         
         bool IsRegistered(Type type);
+
+        bool IsRegisteredWithName(string name, Type type);
         
         object ResolveUnregistered(Type type);
         

@@ -25,14 +25,24 @@ namespace Lms.Rpc.Runtime.Server
 
         public bool FailoverCountIsDefaultValue { get; private set; }
 
-        public ServiceEntry(IRouter router, ServiceDescriptor serviceDescriptor, Type serviceType,
-            MethodInfo methodInfo, IReadOnlyList<ParameterDescriptor> parameterDescriptors, bool isLocal,
+        public bool MultipleServiceKey { get; private set; }
+
+        public string Id => ServiceDescriptor.Id;
+
+        public ServiceEntry(IRouter router,
+            ServiceDescriptor serviceDescriptor,
+            Type serviceType,
+            MethodInfo methodInfo,
+            IReadOnlyList<ParameterDescriptor> parameterDescriptors,
+            bool multipleServiceKey,
+            bool isLocal,
             GovernanceOptions governanceOptions)
         {
             Router = router;
             ServiceDescriptor = serviceDescriptor;
             ParameterDescriptors = parameterDescriptors;
             IsLocal = isLocal;
+            MultipleServiceKey = multipleServiceKey;
             _serviceType = serviceType;
             GroupName = serviceType.FullName;
             MethodInfo = methodInfo;
@@ -167,7 +177,20 @@ namespace Lms.Rpc.Runtime.Server
             {
                 if (IsLocal)
                 {
-                    var instance = EngineContext.Current.Resolve(_serviceType);
+                    object instance = null;
+                    if (!key.IsNullOrEmpty())
+                    {
+                        if (!EngineContext.Current.IsRegisteredWithName(key, _serviceType))
+                        {
+                            throw new UnServiceKeyImplementationException($"系统中没有存在serviceKey为{key}的{_serviceType.FullName}接口的实现类");
+                        }
+                        instance = EngineContext.Current.ResolveNamed(key, _serviceType);
+                    }
+                    else
+                    {
+                        instance = EngineContext.Current.Resolve(_serviceType);
+                    }
+
                     for (int i = 0; i < parameters.Length; i++)
                     {
                         if (parameters[i] != null && parameters[i].GetType() != ParameterDescriptors[i].Type)
@@ -186,7 +209,7 @@ namespace Lms.Rpc.Runtime.Server
                 }
 
                 var remoteServiceExecutor = EngineContext.Current.Resolve<IRemoteServiceExecutor>();
-                return remoteServiceExecutor.Execute(this, parameters).GetAwaiter().GetResult();
+                return remoteServiceExecutor.Execute(this, parameters, key).GetAwaiter().GetResult();
             });
 
         public ServiceDescriptor ServiceDescriptor { get; }

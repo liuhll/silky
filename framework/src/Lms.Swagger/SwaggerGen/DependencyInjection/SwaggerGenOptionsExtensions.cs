@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using Lms.Rpc.Runtime.Server;
 using Lms.Swagger.SwaggerGen.DependencyInjection;
+using Lms.Swagger.SwaggerGen.Filters;
 using Lms.Swagger.SwaggerGen.SchemaGenerator;
 using Lms.Swagger.SwaggerGen.SwaggerGenerator;
 using Lms.Swagger.SwaggerGen.XmlComments;
@@ -81,7 +82,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this SwaggerGenOptions swaggerGenOptions,
             Func<ServiceEntry, string> tagSelector)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] { tagSelector(apiDesc) };
+            swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] {tagSelector(apiDesc)};
         }
 
         /// <summary>
@@ -430,6 +431,11 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
         }
 
+        public static void MultipleServiceKey(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.OperationFilter<AddServiceKeyOperationFilter>();
+        }
+
         /// <summary>
         /// Generate polymorphic schemas (i.e. "oneOf") based on discovered subtypes.
         /// Deprecated: Use the \"UseOneOfForPolymorphism\" and \"UseAllOfForInheritance\" settings instead
@@ -437,7 +443,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="swaggerGenOptions"></param>
         /// <param name="subTypesResolver"></param>
         /// <param name="discriminatorSelector"></param>
-        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalent behavior")]
+        [Obsolete(
+            "You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalent behavior")]
         public static void GeneratePolymorphicSchemas(
             this SwaggerGenOptions swaggerGenOptions,
             Func<Type, IEnumerable<Type>> subTypesResolver = null,

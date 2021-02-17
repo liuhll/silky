@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Lms.Swagger;
 using Lms.Swagger.SwaggerGen.DependencyInjection;
+using Lms.Swagger.SwaggerGen.Filters;
 using Lms.Swagger.SwaggerGen.SchemaGenerator;
 using Lms.Swagger.SwaggerGen.SwaggerGenerator;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
-
+            services.TryAddTransient<IOperationFilter, AddServiceKeyOperationFilter>();
             // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 

@@ -7,22 +7,24 @@ using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Lms.Rpc.Runtime.Server
 {
-    public  static class ServiceEntryHelper
+    public static class ServiceEntryHelper
     {
         internal static IEnumerable<Type> FindServiceLocalEntryTypes(ITypeFinder typeFinder)
         {
             var types = typeFinder.GetAssemblies()
                     .SelectMany(p => p.ExportedTypes)
-                    .Where(p=> p.IsClass
-                               && !p.IsAbstract
-                               && !p.IsGenericType
-                               && p.GetInterfaces().Any(i=> i.GetCustomAttributes().Any(a=> a is ServiceRouteAttribute))
+                    .Where(p => p.IsClass
+                                && !p.IsAbstract
+                                && !p.IsGenericType
+                                && p.GetInterfaces().Any(i =>
+                                    i.GetCustomAttributes().Any(a => a is ServiceRouteAttribute))
                     )
+                    .OrderBy(p => p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(p => p.Weight).FirstOrDefault())
                 ;
             return types;
         }
 
-        internal static IEnumerable<(Type,bool)> FindAllServiceEntryTypes(ITypeFinder typeFinder)
+        internal static IEnumerable<(Type, bool)> FindAllServiceEntryTypes(ITypeFinder typeFinder)
         {
             var entryTypes = new List<(Type, bool)>();
             var exportedTypes = typeFinder.GetAssemblies()
@@ -43,13 +45,12 @@ namespace Lms.Rpc.Runtime.Server
 
             return entryTypes;
         }
-        
+
         public static IEnumerable<Type> FindServiceEntryProxyTypes(ITypeFinder typeFinder)
         {
             var proxyTypes = FindAllServiceEntryTypes(typeFinder).Where(p => !p.Item2)
                 .Select(p => p.Item1);
             return proxyTypes;
         }
-        
     }
 }

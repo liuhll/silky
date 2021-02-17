@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core.Exceptions;
@@ -13,27 +12,13 @@ namespace Lms.Rpc.Runtime.Client
     public class DefaultRemoteServiceExecutor : IRemoteServiceExecutor
     {
         private readonly IRemoteServiceInvoker _remoteServiceInvoker;
-        private readonly IServiceEntryLocator _serviceEntryLocator;
 
-        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker,
-            IServiceEntryLocator serviceEntryLocator)
+        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
-            _serviceEntryLocator = serviceEntryLocator;
         }
-
-        public async Task<object> Execute(string serviceId, object[] parameters)
-        {
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceId);
-            if (serviceEntry.IsLocal)
-            {
-                return serviceEntry.Executor(null, parameters);
-            }
-
-            return await Execute(serviceEntry, parameters);
-        }
-
-        public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters)
+        
+        public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
             // todo 1. 失败重试 2. 缓存拦截 3.确定返回值 
             var remoteInvokeMessage = new RemoteInvokeMessage()

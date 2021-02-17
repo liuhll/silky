@@ -25,6 +25,7 @@ namespace GatewayDemo
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "WebApplication", Version = "v1"});
+                c.MultipleServiceKey();
             });
         }
 
@@ -45,7 +46,7 @@ namespace GatewayDemo
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            
+
             app.ConfigureRequestPipeline();
         }
     }

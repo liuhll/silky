@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
+using Lms.Rpc.Address;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
@@ -71,7 +72,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
                         serviceType.Item1,
                         serviceType.Item2,
                         serviceEntryTemplate,
-                        serviceBundleProvider.ServiceProtocol,
+                        serviceBundleProvider,
                         httpMethod);
                 }
             }
@@ -81,25 +82,32 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
             Type serviceType,
             bool isLocal,
             string serviceEntryTemplate,
-            ServiceProtocol serviceProtocol,
+            IRouteTemplateProvider routeTemplateProvider,
             HttpMethod httpMethod)
         {
             var serviceName = serviceType.Name;
             var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
             var serviceId = _serviceIdGenerator.GenerateServiceId(method);
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
-            if (parameterDescriptors.Count(p=> p.IsHashKey) > 1)
+            if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
             {
                 throw new LmsException("不允许指定多个HashKey");
             }
+
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,
-                ServiceProtocol = serviceProtocol
+                ServiceProtocol = routeTemplateProvider.ServiceProtocol
             };
 
-            var serviceEntry = new ServiceEntry(router, serviceDescriptor, serviceType, method, parameterDescriptors,
-                isLocal, _governanceOptions);
+            var serviceEntry = new ServiceEntry(router,
+                serviceDescriptor,
+                serviceType,
+                method,
+                parameterDescriptors,
+                routeTemplateProvider.MultipleServiceKey,
+                isLocal,
+                _governanceOptions);
             return serviceEntry;
         }
     }

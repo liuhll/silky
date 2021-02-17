@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using Lms.Core;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
+using Lms.Rpc.Address;
 using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
@@ -20,12 +22,28 @@ namespace Lms.Rpc
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterTypes(
-                    ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder).ToArray())
+            var localEntryTypes = ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder)
+                .ToArray();
+            builder.RegisterTypes(localEntryTypes)
+                .PropertiesAutowired()
                 .AsSelf()
                 .AsImplementedInterfaces();
-            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces().InstancePerDependency();
-            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces().InstancePerDependency();
+
+            var serviceKeyTypes =
+                localEntryTypes.Where(p => p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Any());
+            foreach (var serviceKeyType in serviceKeyTypes)
+            {
+                var serviceKeyAttribute = serviceKeyType.GetCustomAttributes().OfType<ServiceKeyAttribute>().First();
+                builder.RegisterType(serviceKeyType).Named(serviceKeyAttribute.Name,
+                        serviceKeyType.GetInterfaces().First(p =>
+                            p.GetCustomAttributes().OfType<IRouteTemplateProvider>().Any()))
+                    ;
+            }
+
+            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces()
+                .InstancePerDependency();
+            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces()
+                .InstancePerDependency();
             builder.RegisterType<PollingAddressSelector>()
                 .SingleInstance()
                 .AsSelf()
@@ -72,7 +90,9 @@ namespace Lms.Rpc
                         RemoteResultMessage remoteResultMessage;
                         try
                         {
-                            var result = await serviceEntry.Executor(null, remoteInvokeMessage.Parameters);
+                            var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
+                            var result = await serviceEntry.Executor(currentServiceKey.ServiceKey,
+                                remoteInvokeMessage.Parameters);
                             remoteResultMessage = new RemoteResultMessage()
                             {
                                 Result = result,

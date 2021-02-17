@@ -8,5 +8,7 @@ namespace Lms.Rpc.Address
         string Template { get; }
         
         ServiceProtocol ServiceProtocol { get; }
+        
+        bool MultipleServiceKey { get; }
     }
 }

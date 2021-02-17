@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ITestApplication.Test
 {
-    [ServiceRoute]
+    [ServiceRoute(multipleServiceKey: true)]
     public interface ITestAppService
     {
         Task<string> Create(TestDto input);

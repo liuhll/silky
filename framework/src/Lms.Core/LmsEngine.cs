@@ -76,9 +76,9 @@ namespace Lms.Core
 
         public T ResolveNamed<T>(string name)
         {
-            return (T)ResolveNamed(name, typeof(T));
+            return (T) ResolveNamed(name, typeof(T));
         }
-        
+
         public IEnumerable<T> ResolveAll<T>()
         {
             return (IEnumerable<T>) GetServiceProvider().GetServices(typeof(T));
@@ -87,6 +87,11 @@ namespace Lms.Core
         public bool IsRegistered(Type type)
         {
             return GetServiceProvider().GetAutofacRoot().IsRegistered(type);
+        }
+
+        public bool IsRegisteredWithName(string name, Type type)
+        {
+            return GetServiceProvider().GetAutofacRoot().IsRegisteredWithName(name, type);
         }
 
         public object ResolveUnregistered(Type type)

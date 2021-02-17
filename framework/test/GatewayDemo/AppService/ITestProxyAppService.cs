@@ -9,7 +9,7 @@ namespace GatewayDemo.AppService
     public interface ITestProxyAppService
     {
         Task<string> CreateProxy(TestDto testDto);
-        
+
         [HttpPatch]
         Task<string> UpdatePart(TestDto input);
     }
