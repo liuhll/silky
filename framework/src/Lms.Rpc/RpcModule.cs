@@ -12,6 +12,7 @@ using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Security;
 using Lms.Rpc.Transport;
 using Lms.Rpc.Transport.Codec;
 using Microsoft.Extensions.DependencyInjection;
@@ -84,12 +85,17 @@ namespace Lms.Rpc
                     {
                         Debug.Assert(message.IsInvokeMessage());
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
-                        RpcContext.GetContext().SetAttachments(remoteInvokeMessage.Attachments);
                         var serviceEntry =
                             serviceEntryLocate.GetLocalServiceEntryById(remoteInvokeMessage.ServiceId);
                         RemoteResultMessage remoteResultMessage;
                         try
                         {
+                            var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
+                            if (!tokenValidator.Validate())
+                            {
+                                throw new RpcAuthenticationException("rpc token不合法");
+                            }
+
                             var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
                             var result = await serviceEntry.Executor(currentServiceKey.ServiceKey,
                                 remoteInvokeMessage.Parameters);

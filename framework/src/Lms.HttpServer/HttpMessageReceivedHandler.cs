@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
+using Lms.Rpc.Configuration;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Lms.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace Lms.HttpServer
 {
@@ -14,13 +16,16 @@ namespace Lms.HttpServer
     {
         private readonly IParameterParser _parameterParser;
         private readonly ISerializer _serializer;
+        private readonly RpcOptions _rpcOptions;
 
         public HttpMessageReceivedHandler(
             IParameterParser parameterParser,
-            ISerializer serializer)
+            ISerializer serializer,
+            IOptions<RpcOptions> rpcOptions)
         {
             _parameterParser = parameterParser;
             _serializer = serializer;
+            _rpcOptions = rpcOptions.Value;
         }
 
         internal async Task Handle(HttpContext context, ServiceEntry serviceEntry)
@@ -36,6 +41,7 @@ namespace Lms.HttpServer
                 RpcContext.GetContext().SetAttachment("serviceKey", serviceKey);
             }
 
+            RpcContext.GetContext().SetAttachment("token", _rpcOptions.Token);
             var excuteResult = await serviceEntry.Executor(serviceKey, rpcParameters);
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = 200;

@@ -101,6 +101,8 @@ namespace Lms.DotNetty.Protocol.Tcp
                         if (message.IsInvokeMessage())
                         {
                             var sender = new DotNettyTcpServerMessageSender(channelContext);
+                            RpcContext.GetContext()
+                                .SetAttachments(message.GetContent<RemoteInvokeMessage>().Attachments);
                             OnReceived(sender, message);
                         }
                     }, _healthCheck));

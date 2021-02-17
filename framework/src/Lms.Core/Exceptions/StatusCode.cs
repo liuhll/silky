@@ -29,5 +29,7 @@ namespace Lms.Core.Exceptions
         [Description("超过最大并发量")] OverflowMaxRequest = 507,
 
         [Description("UnServiceKeyImplementation")] UnServiceKeyImplementation = 508,
+        
+        [Description("rpc通信认证失败")]RpcUnAuthentication,
     }
 }

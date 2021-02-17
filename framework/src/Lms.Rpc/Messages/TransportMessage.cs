@@ -47,7 +47,6 @@ namespace Lms.Rpc.Messages
 
         public object Content { get; set; }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetContent<T>() where T : IRemoteMessage
         {

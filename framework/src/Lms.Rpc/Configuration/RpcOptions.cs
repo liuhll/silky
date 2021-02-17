@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
+
 namespace Lms.Rpc.Configuration
 {
-    public class RpcOptions 
+    public class RpcOptions
     {
         public static string Rpc = "Rpc";
 
@@ -15,5 +17,6 @@ namespace Lms.Rpc.Configuration
 
         public bool RemoveUnhealthServer { get; set; } = true;
         
+        [NotNull] public string Token { get; set; }
     }
 }
