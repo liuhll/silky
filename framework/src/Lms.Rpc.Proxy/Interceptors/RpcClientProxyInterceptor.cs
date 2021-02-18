@@ -14,7 +14,7 @@ namespace Lms.Rpc.Proxy.Interceptors
         private readonly ICurrentServiceKey _currentServiceKey;
 
         public RpcClientProxyInterceptor(IServiceIdGenerator serviceIdGenerator,
-            IServiceEntryLocator serviceEntryLocator, 
+            IServiceEntryLocator serviceEntryLocator,
             ICurrentServiceKey currentServiceKey)
         {
             _serviceIdGenerator = serviceIdGenerator;
@@ -28,7 +28,8 @@ namespace Lms.Rpc.Proxy.Interceptors
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(servcieId);
             try
             {
-                invocation.ReturnValue = await serviceEntry.Executor(_currentServiceKey.ServiceKey, invocation.Arguments);
+                invocation.ReturnValue =
+                    await serviceEntry.Executor(_currentServiceKey.ServiceKey, invocation.Arguments);
             }
             catch (Exception e)
             {

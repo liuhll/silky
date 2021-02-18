@@ -99,6 +99,7 @@ namespace Lms.Rpc
                             var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
                             var result = await serviceEntry.Executor(currentServiceKey.ServiceKey,
                                 remoteInvokeMessage.Parameters);
+
                             remoteResultMessage = new RemoteResultMessage()
                             {
                                 Result = result,

@@ -1,3 +1,5 @@
+using Lms.Core.DependencyInjection;
+
 namespace Lms.Caching
 {
     public interface IDistributedCacheSerializer

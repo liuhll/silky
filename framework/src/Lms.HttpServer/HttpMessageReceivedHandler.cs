@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Extensions;

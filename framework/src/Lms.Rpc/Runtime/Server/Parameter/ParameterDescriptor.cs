@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
+using Lms.Rpc.Transport.CachingIntercept;
 
 namespace Lms.Rpc.Runtime.Server.Parameter
 {
@@ -15,6 +17,50 @@ namespace Lms.Rpc.Runtime.Server.Parameter
             Name = !name.IsNullOrEmpty() ? name : parameterInfo.Name;
             Type = parameterInfo.ParameterType;
             IsHashKey = DecideIsHashKey();
+            CacheKeys = CreateCacheKeys();
+        }
+
+        private IReadOnlyCollection<ICacheKeyProvider> CreateCacheKeys()
+        {
+            var cacheKeys = new List<ICacheKeyProvider>();
+            var parameterInfoCacheKeyProvider =
+                ParameterInfo.GetCustomAttributes().OfType<ICacheKeyProvider>().FirstOrDefault();
+            if (IsSample && parameterInfoCacheKeyProvider != null)
+            {
+                parameterInfoCacheKeyProvider.PropName = Name;
+                if (parameterInfoCacheKeyProvider.Name.IsNullOrEmpty())
+                {
+                    parameterInfoCacheKeyProvider.Name = Name;
+                }
+
+                cacheKeys.Add(parameterInfoCacheKeyProvider);
+            }
+            else if (!IsSample && parameterInfoCacheKeyProvider != null)
+            {
+                throw new LmsException("复杂参数类型不允许使用CacheKeyAttribute");
+            }
+            else
+            {
+                var propCacheKeyProviderInfos =
+                    Type.GetProperties().Select(p => new
+                        {
+                            CacheKeyProvider = p.GetCustomAttributes().OfType<ICacheKeyProvider>().FirstOrDefault(),
+                            PropertyInfo = p
+                        })
+                        .Where(p => p.CacheKeyProvider != null);
+                foreach (var propCacheKeyProviderInfo in propCacheKeyProviderInfos)
+                {
+                    var propInfoCacheKeyProvider = propCacheKeyProviderInfo.CacheKeyProvider;
+                    propInfoCacheKeyProvider.PropName = propCacheKeyProviderInfo.PropertyInfo.Name;
+                    if (propInfoCacheKeyProvider.Name.IsNullOrEmpty())
+                    {
+                        propInfoCacheKeyProvider.Name = propCacheKeyProviderInfo.PropertyInfo.Name;
+                    }
+                    cacheKeys.Add(propInfoCacheKeyProvider);
+                }
+            }
+
+            return cacheKeys;
         }
 
         private bool DecideIsHashKey()
@@ -49,5 +95,7 @@ namespace Lms.Rpc.Runtime.Server.Parameter
         public bool IsSample => Type.IsSample();
 
         public ParameterInfo ParameterInfo { get; }
+
+        public IReadOnlyCollection<ICacheKeyProvider> CacheKeys { get; }
     }
 }

@@ -9,6 +9,7 @@ using Lms.Core.Exceptions;
 using Lms.Core.Logging;
 using Lms.Core.Threading;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -699,6 +700,24 @@ namespace Lms.Caching
 
                 throw;
             }
+        }
+    }
+    
+    public class DistributedCache<TCacheItem> : DistributedCache<TCacheItem, string>, IDistributedCache<TCacheItem>
+        where TCacheItem : class
+    {
+        public DistributedCache(
+            IOptions<LmsDistributedCacheOptions> distributedCacheOption,
+            IDistributedCache cache,
+            ICancellationTokenProvider cancellationTokenProvider,
+            IDistributedCacheSerializer serializer,
+            IDistributedCacheKeyNormalizer keyNormalizer) : base(
+            distributedCacheOption: distributedCacheOption,
+            cache: cache,
+            cancellationTokenProvider: cancellationTokenProvider,
+            serializer: serializer,
+            keyNormalizer: keyNormalizer)
+        {
         }
     }
 }
