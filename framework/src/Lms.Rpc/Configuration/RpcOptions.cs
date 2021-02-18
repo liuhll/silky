@@ -16,7 +16,8 @@ namespace Lms.Rpc.Configuration
         public int SoBacklog { get; set; } = 8192;
 
         public bool RemoveUnhealthServer { get; set; } = true;
-        
+
         [NotNull] public string Token { get; set; }
+        public double ConnectTimeout { get; set; } = 500;
     }
 }

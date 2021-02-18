@@ -99,9 +99,10 @@ namespace Lms.DotNetty
 
             bootstrap
                 .Channel<TcpSocketChannel>()
-                // .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
+                 .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
                 .Option(ChannelOption.TcpNodelay, true)
                 .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
+                
                 .Group(m_group)
                 .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
                 {
