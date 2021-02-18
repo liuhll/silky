@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Lms.Caching\Lms.Caching.csproj" />
       <ProjectReference Include="..\Lms.Castle\Lms.Castle.csproj" />
       <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
       <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />

@@ -2,6 +2,6 @@
 {
     public interface IUpdateCachingInterceptProvider : ICachingInterceptProvider
     {
-        public string[] CacheName { get; }
+        string CacheName { get; }
     }
 }

@@ -21,7 +21,7 @@ namespace Lms.Caching
     {
         public ILogger<DistributedCache<TCacheItem, TCacheKey>> Logger { get; set; }
 
-        protected string CacheName { get; set; }
+        internal string CacheName { get; set; }
 
         protected bool IgnoreMultiTenancy { get; set; }
 

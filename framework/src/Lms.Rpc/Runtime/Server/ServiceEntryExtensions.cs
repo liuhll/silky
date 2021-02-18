@@ -1,10 +1,15 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using Lms.Core;
 using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
+using Lms.Rpc.Transport.CachingIntercept;
 using Lms.Rpc.Utils;
 
 namespace Lms.Rpc.Runtime.Server
@@ -33,7 +38,7 @@ namespace Lms.Rpc.Runtime.Server
             {
                 hashKey = serviceEntry.Router.RoutePath + serviceEntry.Router.HttpMethod;
             }
-            
+
             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
             if (serviceEntry.ParameterDescriptors.Any(p => p.IsHashKey))
             {
@@ -60,6 +65,85 @@ namespace Lms.Rpc.Runtime.Server
             }
 
             return hashKey;
+        }
+
+        public static IDictionary<string, object> CreateDictParameters(this ServiceEntry serviceEntry,
+            [NotNull] object[] parameters)
+        {
+            Check.NotNull(parameters, nameof(parameters));
+            var dictionaryParms = new Dictionary<string, object>();
+            var index = 0;
+            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+            foreach (var parameter in serviceEntry.ParameterDescriptors)
+            {
+                if (parameter.IsSample)
+                {
+                    dictionaryParms[parameter.Name] = parameters[index];
+                }
+                else
+                {
+                    dictionaryParms[parameter.Name] = typeConvertibleService.Convert(parameters[index], parameter.Type);
+                }
+
+                index++;
+            }
+
+            return dictionaryParms;
+        }
+
+        public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,
+            string templte = "")
+        {
+            Check.NotNull(parameters, nameof(parameters));
+            if (serviceEntry.CachingInterceptProvider == null)
+            {
+                throw new LmsException("未配置缓存拦截,获取缓存拦截Key值失败");
+            }
+
+            var cachingInterceptKey = string.Empty;
+            var cacheKeyProviders = new List<ICacheKeyProvider>();
+            var index = 0;
+            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+            foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+            {
+                if (parameterDescriptor.CacheKeys.Any())
+                {
+                    if (parameterDescriptor.IsSample)
+                    {
+                        var cacheKeyProvider = parameterDescriptor.CacheKeys.First();
+                        cacheKeyProvider.Value = parameters[index].ToString();
+                        cacheKeyProviders.Add(cacheKeyProvider);
+                    }
+                    else
+                    {
+                        var parameterValue =
+                            typeConvertibleService.Convert(parameters[index], parameterDescriptor.Type);
+                        foreach (var cacheKey in parameterDescriptor.CacheKeys)
+                        {
+                            var cacheKeyProp = parameterDescriptor.Type.GetProperty(cacheKey.PropName);
+                            Debug.Assert(cacheKeyProp != null, nameof(cacheKeyProp));
+                            cacheKey.Value = cacheKeyProp.GetValue(parameterValue)?.ToString();
+                            cacheKeyProviders.Add(cacheKey);
+                        }
+                    }
+                }
+
+                index++;
+            }
+
+
+            if (templte.IsNullOrEmpty())
+            {
+                cacheKeyProviders = cacheKeyProviders.OrderBy(p => p.Order).ToList();
+                var cacheKeyValues = cacheKeyProviders.Select(p => p.Name + ":" + p.Value);
+                cachingInterceptKey = string.Join(':', cacheKeyValues);
+            }
+            else
+            {
+                // todo 解析参数
+            }
+
+            return cachingInterceptKey;
         }
 
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,

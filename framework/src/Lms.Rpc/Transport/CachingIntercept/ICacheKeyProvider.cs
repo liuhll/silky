@@ -7,5 +7,7 @@
         public string Name { get; set; }
 
         string PropName  { get; internal set; }
+
+        string Value { get; internal set; }
     }
 }

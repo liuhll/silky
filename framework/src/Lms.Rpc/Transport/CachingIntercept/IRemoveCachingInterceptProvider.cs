@@ -2,7 +2,6 @@
 {
     public interface IRemoveCachingInterceptProvider : ICachingInterceptProvider
     {
-        string[] CacheName { get; }
-        
+        RemoveRemoveCachingKeyInfo[] RemoveRemoveCachingKeyInfos { get; }
     }
 }

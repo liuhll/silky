@@ -3,6 +3,6 @@
     public interface ICachingInterceptProvider
     {
         CachingMethod CachingMethod { get; }
-        
+
     }
 }

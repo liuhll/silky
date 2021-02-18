@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Client;
 using Lms.Rpc.Runtime.Server.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
+using Lms.Rpc.Transport.CachingIntercept;
 
 namespace Lms.Rpc.Runtime.Server
 {
@@ -182,8 +184,10 @@ namespace Lms.Rpc.Runtime.Server
                     {
                         if (!EngineContext.Current.IsRegisteredWithName(key, _serviceType))
                         {
-                            throw new UnServiceKeyImplementationException($"系统中没有存在serviceKey为{key}的{_serviceType.FullName}接口的实现类");
+                            throw new UnServiceKeyImplementationException(
+                                $"系统中没有存在serviceKey为{key}的{_serviceType.FullName}接口的实现类");
                         }
+
                         instance = EngineContext.Current.ResolveNamed(key, _serviceType);
                     }
                     else
@@ -213,30 +217,11 @@ namespace Lms.Rpc.Runtime.Server
             });
 
         public ServiceDescriptor ServiceDescriptor { get; }
+        
 
-        public IDictionary<string, object> CreateDictParameters([NotNull] object[] parameters)
-        {
-            Check.NotNull(parameters, nameof(parameters));
-            var dictionaryParms = new Dictionary<string, object>();
-            var index = 0;
-            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-            foreach (var parameter in ParameterDescriptors)
-            {
-                if (parameter.IsSample)
-                {
-                    dictionaryParms[parameter.Name] = parameters[index];
-                }
-                else
-                {
-                    dictionaryParms[parameter.Name] = typeConvertibleService.Convert(parameters[index], parameter.Type);
-                }
-
-                index++;
-            }
-
-            return dictionaryParms;
-        }
-
+        public ICachingInterceptProvider CachingInterceptProvider =>
+            CustomAttributes.OfType<ICachingInterceptProvider>().FirstOrDefault();
+        
 
         public object[] ResolveParameters(IDictionary<ParameterFrom, object> parameters)
         {
