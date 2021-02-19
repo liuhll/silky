@@ -107,7 +107,7 @@ namespace Lms.Rpc.Runtime.Server
                     if (parameterDescriptor.IsSample)
                     {
                         var cacheKeyProvider = parameterDescriptor.CacheKeys.First();
-                        cacheKeyProvider.Value = parameters[index].ToString();
+                        cacheKeyProvider.Value = parameters[index]?.ToString();
                         cacheKeyProviders.Add(cacheKeyProvider);
                     }
                     else
