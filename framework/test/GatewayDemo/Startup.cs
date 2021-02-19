@@ -24,7 +24,7 @@ namespace GatewayDemo
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "WebApplication", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lms Gateway Demo", Version = "v1"});
                 c.MultipleServiceKey();
             });
         }
@@ -36,18 +36,16 @@ namespace GatewayDemo
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApplication v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lms Gateway Demo v1"));
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            app.ConfigureRequestPipeline();
+            app.ConfigureLmsRequestPipeline();
         }
     }
 }
