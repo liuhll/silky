@@ -2,6 +2,6 @@
 {
     public interface IGetCachingInterceptProvider : ICachingInterceptProvider
     {
-        string CacheName { get; }
+       
     }
 }

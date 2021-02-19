@@ -28,10 +28,6 @@ namespace Lms.Rpc.Runtime.Server.Parameter
             if (IsSample && parameterInfoCacheKeyProvider != null)
             {
                 parameterInfoCacheKeyProvider.PropName = Name;
-                if (parameterInfoCacheKeyProvider.Name.IsNullOrEmpty())
-                {
-                    parameterInfoCacheKeyProvider.Name = Name;
-                }
 
                 cacheKeys.Add(parameterInfoCacheKeyProvider);
             }
@@ -52,10 +48,6 @@ namespace Lms.Rpc.Runtime.Server.Parameter
                 {
                     var propInfoCacheKeyProvider = propCacheKeyProviderInfo.CacheKeyProvider;
                     propInfoCacheKeyProvider.PropName = propCacheKeyProviderInfo.PropertyInfo.Name;
-                    if (propInfoCacheKeyProvider.Name.IsNullOrEmpty())
-                    {
-                        propInfoCacheKeyProvider.Name = propCacheKeyProviderInfo.PropertyInfo.Name;
-                    }
                     cacheKeys.Add(propInfoCacheKeyProvider);
                 }
             }

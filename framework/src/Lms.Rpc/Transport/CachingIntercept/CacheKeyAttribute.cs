@@ -8,14 +8,12 @@ namespace Lms.Rpc.Transport.CachingIntercept
         private string _propName;
         private string _value;
 
-        public CacheKeyAttribute(int order)
+        public CacheKeyAttribute(int index)
         {
-            Order = order;
+            Index = index;
         }
 
-        public int Order { get; }
-
-        public string Name { get; set; }
+        public int Index { get; }
 
         string ICacheKeyProvider.PropName
         {

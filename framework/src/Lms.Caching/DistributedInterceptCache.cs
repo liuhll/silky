@@ -1,4 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -30,7 +37,7 @@ namespace Lms.Caching
             CancellationToken token = default)
         {
             token = CancellationTokenProvider.FallbackToProvider(token);
-            var value = await GetAsync(key, hideErrors, token);
+            var value = await GetAsync(key, type, hideErrors, token);
             if (value != null)
             {
                 return value;
@@ -38,7 +45,7 @@ namespace Lms.Caching
 
             using (await SyncSemaphore.LockAsync(token))
             {
-                value = await GetAsync(key, hideErrors, token);
+                value = await GetAsync(key, type, hideErrors, token);
                 if (value != null)
                 {
                     return value;
@@ -101,6 +108,45 @@ namespace Lms.Caching
             }
 
             return ToCacheItem(cachedBytes, type);
+        }
+        
+        public async override Task RemoveAsync(string key, bool? hideErrors = null, CancellationToken token = default)
+        {
+            if (key.Contains("*") && Cache is MemoryDistributedCache)
+            { 
+                var  matchKeys = SearchKeys(key);
+                foreach (var matchKey in matchKeys)
+                {
+                    await base.RemoveAsync(matchKey, hideErrors, token);
+                }
+            }
+            else
+            {
+                await base.RemoveAsync(key, hideErrors, token);
+            }
+            
+        }
+
+        protected virtual IReadOnlyCollection<string> SearchKeys(string key)
+        {
+            var cacheKeys = GetCacheKeys();
+            return cacheKeys.Where(k => Regex.IsMatch(k, key)).ToImmutableArray();
+        }
+        
+        private List<string> GetCacheKeys()
+        {
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var memCache = Cache.GetType().GetField("_memCache", flags).GetValue(Cache);
+            Debug.Assert(memCache != null);
+            var entries = memCache.GetType().GetField("_entries", flags).GetValue(memCache);
+            var cacheItems = entries as IDictionary;
+            var keys = new List<string>();
+            if (cacheItems == null) return keys;
+            foreach (DictionaryEntry cacheItem in cacheItems)
+            {
+                keys.Add(cacheItem.Key.ToString());
+            }
+            return keys;
         }
 
         [CanBeNull]

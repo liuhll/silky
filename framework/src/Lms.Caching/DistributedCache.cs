@@ -1,6 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -9,6 +13,7 @@ using Lms.Core.Exceptions;
 using Lms.Core.Logging;
 using Lms.Core.Threading;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -458,7 +463,7 @@ namespace Lms.Caching
             RemoveRealCache();
         }
 
-        public async Task RemoveAsync(TCacheKey key, bool? hideErrors = null, CancellationToken token = default)
+        public async virtual Task RemoveAsync(TCacheKey key, bool? hideErrors = null, CancellationToken token = default)
         {
             async Task RemoveRealCache()
             {
@@ -718,6 +723,41 @@ namespace Lms.Caching
             serializer: serializer,
             keyNormalizer: keyNormalizer)
         {
+        }
+
+        public async override Task RemoveAsync(string key, bool? hideErrors = null, CancellationToken token = default)
+        {
+            if (!key.Contains("*"))
+            { 
+                await base.RemoveAsync(key, hideErrors, token);
+            }
+
+            var  matchKeys = SearchKeys(key);
+            foreach (var matchKey in matchKeys)
+            {
+                await base.RemoveAsync(matchKey, hideErrors, token);
+            }
+
+        }
+
+        protected virtual IList<string> SearchKeys(string key)
+        {
+            var cacheKeys = GetCacheKeys();
+            return cacheKeys.Where(k => Regex.IsMatch(k, key)).ToImmutableArray();
+        }
+        
+        private IReadOnlyCollection<string> GetCacheKeys()
+        {
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var entries = Cache.GetType().GetField("_entries", flags).GetValue(Cache);
+            var cacheItems = entries as IDictionary;
+            var keys = new List<string>();
+            if (cacheItems == null) return keys;
+            foreach (DictionaryEntry cacheItem in cacheItems)
+            {
+                keys.Add(cacheItem.Key.ToString());
+            }
+            return keys;
         }
     }
 }

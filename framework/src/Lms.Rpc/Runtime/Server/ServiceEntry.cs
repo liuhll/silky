@@ -64,6 +64,7 @@ namespace Lms.Rpc.Runtime.Server
             var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
             _methodExecutor =
                 ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
+
             Executor = CreateExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
@@ -217,11 +218,19 @@ namespace Lms.Rpc.Runtime.Server
             });
 
         public ServiceDescriptor ServiceDescriptor { get; }
-        
 
-        public ICachingInterceptProvider CachingInterceptProvider =>
-            CustomAttributes.OfType<ICachingInterceptProvider>().FirstOrDefault();
+
+        public ICachingInterceptProvider GetCachingInterceptProvider =>
+            CustomAttributes.OfType<IGetCachingInterceptProvider>()
+                .FirstOrDefault();
+
+        public ICachingInterceptProvider UpdateCachingInterceptProvider =>
+            CustomAttributes.OfType<IUpdateCachingInterceptProvider>()
+                .FirstOrDefault();
         
+        public IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders =>
+            CustomAttributes.OfType<IRemoveCachingInterceptProvider>()
+                .ToImmutableList();
 
         public object[] ResolveParameters(IDictionary<ParameterFrom, object> parameters)
         {

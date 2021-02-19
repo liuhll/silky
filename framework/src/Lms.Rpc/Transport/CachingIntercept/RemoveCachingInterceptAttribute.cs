@@ -1,34 +1,23 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using Lms.Core;
 
 namespace Lms.Rpc.Transport.CachingIntercept
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class RemoveCachingInterceptAttribute : Attribute, IRemoveCachingInterceptProvider
     {
-        public RemoveCachingInterceptAttribute([NotNull] params RemoveRemoveCachingKeyInfo[] removeCachingKeys)
+        public RemoveCachingInterceptAttribute([NotNull]string cacheName,[NotNull]string keyTemplete)
         {
-            Check.NotNull(removeCachingKeys, nameof(removeCachingKeys));
-            RemoveRemoveCachingKeyInfos = removeCachingKeys;
-            CachingMethod = CachingMethod.Remove;
-        }
-
-        public RemoveRemoveCachingKeyInfo[] RemoveRemoveCachingKeyInfos { get; }
-
-        public CachingMethod CachingMethod { get; }
-    }
-
-    public class RemoveRemoveCachingKeyInfo
-    {
-        public RemoveRemoveCachingKeyInfo(string cacheName, string removeKeyTemplete)
-        {
+            Check.NotNullOrEmpty(cacheName, nameof(cacheName));
+            Check.NotNullOrEmpty(keyTemplete, nameof(keyTemplete));
             CacheName = cacheName;
-            RemoveKeyTemplete = removeKeyTemplete;
+            KeyTemplete = keyTemplete;
         }
-
-        public string CacheName { get; set; }
-
-        public string RemoveKeyTemplete { get; set; }
+        
+        public string CacheName { get; }
+        public string KeyTemplete { get; }
     }
+    
 }

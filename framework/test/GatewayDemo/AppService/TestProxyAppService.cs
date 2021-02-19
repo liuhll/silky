@@ -17,13 +17,23 @@ namespace GatewayDemo.AppService
             _currentServiceKey = currentServiceKey;
         }
 
-        public async Task<string> CreateProxy(TestDto testDto)
+        public async Task<TestOut> CreateProxy(TestInput testInput)
         {
             _currentServiceKey.Change("v2");
-            return await _testAppService.Create(testDto);
+            return await _testAppService.Create(testInput);
         }
 
-        public Task<string> UpdatePart(TestDto input)
+        public async Task<TestOut> GetProxy(string name)
+        {
+            return await _testAppService.Get(name);
+        }
+
+        public async Task<string> DeleteProxy(string name)
+        {
+            return await _testAppService.Delete(name);
+        }
+
+        public Task<string> UpdatePart(TestInput input)
         {
             return _testAppService.UpdatePart(input);
         }

@@ -2,9 +2,8 @@
 {
     public interface ICacheKeyProvider 
     {
-        public int Order { get; }
-
-        public string Name { get; set; }
+        public int Index { get; }
+        
 
         string PropName  { get; internal set; }
 

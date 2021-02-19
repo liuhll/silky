@@ -2,7 +2,9 @@
 {
     public interface ICachingInterceptProvider
     {
-        CachingMethod CachingMethod { get; }
 
+        string CacheName { get; }
+
+        string KeyTemplete { get; }
     }
 }

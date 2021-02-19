@@ -8,9 +8,13 @@ namespace GatewayDemo.AppService
     [ServiceRoute(template: "test/{appservice=proxy}")]
     public interface ITestProxyAppService
     {
-        Task<string> CreateProxy(TestDto testDto);
+        Task<TestOut> CreateProxy(TestInput testInput);
+
+        Task<TestOut> GetProxy(string name);
+        
+        Task<string> DeleteProxy(string name);
 
         [HttpPatch]
-        Task<string> UpdatePart(TestDto input);
+        Task<string> UpdatePart(TestInput input);
     }
 }

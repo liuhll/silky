@@ -92,14 +92,10 @@ namespace Lms.Rpc.Runtime.Server
         }
 
         public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,
-            string templte = "")
+            [NotNull] string templete)
         {
             Check.NotNull(parameters, nameof(parameters));
-            if (serviceEntry.CachingInterceptProvider == null)
-            {
-                throw new LmsException("未配置缓存拦截,获取缓存拦截Key值失败");
-            }
-
+            Check.NotNull(templete, nameof(templete));
             var cachingInterceptKey = string.Empty;
             var cacheKeyProviders = new List<ICacheKeyProvider>();
             var index = 0;
@@ -131,18 +127,8 @@ namespace Lms.Rpc.Runtime.Server
                 index++;
             }
 
-
-            if (templte.IsNullOrEmpty())
-            {
-                cacheKeyProviders = cacheKeyProviders.OrderBy(p => p.Order).ToList();
-                var cacheKeyValues = cacheKeyProviders.Select(p => p.Name + ":" + p.Value);
-                cachingInterceptKey = string.Join(':', cacheKeyValues);
-            }
-            else
-            {
-                // todo 解析参数
-            }
-
+            var templeteAgrs = cacheKeyProviders.OrderBy(p => p.Index).ToList().Select(ckp => ckp.Value).ToArray();
+            cachingInterceptKey = string.Format(templete, templeteAgrs);
             return cachingInterceptKey;
         }
 
