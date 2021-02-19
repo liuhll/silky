@@ -1,3 +1,4 @@
+using System;
 using Lms.Core.DependencyInjection;
 
 namespace Lms.Caching
@@ -7,5 +8,7 @@ namespace Lms.Caching
         byte[] Serialize<T>(T obj);
 
         T Deserialize<T>(byte[] bytes);
+
+        object Deserialize(byte[] bytes, Type type);
     }
 }

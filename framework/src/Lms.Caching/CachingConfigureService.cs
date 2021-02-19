@@ -15,7 +15,7 @@ namespace Lms.Caching
 
             services.AddSingleton(typeof(IDistributedCache<>), typeof(DistributedCache<>));
             services.AddSingleton(typeof(IDistributedCache<,>), typeof(DistributedCache<,>));
-
+            services.AddTransient(typeof(IDistributedInterceptCache), typeof(DistributedInterceptCache));
             services.Configure<LmsDistributedCacheOptions>(cacheOptions =>
             {
                 //cacheOptions.GlobalCacheEntryOptions.SlidingExpiration = TimeSpan.FromMinutes(20);

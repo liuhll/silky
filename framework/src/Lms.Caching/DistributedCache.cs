@@ -21,7 +21,7 @@ namespace Lms.Caching
     {
         public ILogger<DistributedCache<TCacheItem, TCacheKey>> Logger { get; set; }
 
-        internal string CacheName { get; set; }
+        protected string CacheName { get; set; }
 
         protected bool IgnoreMultiTenancy { get; set; }
 
@@ -37,7 +37,7 @@ namespace Lms.Caching
 
         protected DistributedCacheEntryOptions DefaultCacheOptions;
 
-        private readonly LmsDistributedCacheOptions _distributedCacheOption;
+        protected readonly LmsDistributedCacheOptions _distributedCacheOption;
 
         public DistributedCache(
             IOptions<LmsDistributedCacheOptions> distributedCacheOption,

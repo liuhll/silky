@@ -49,7 +49,7 @@ namespace Lms.Rpc.Runtime.Server
             GroupName = serviceType.FullName;
             MethodInfo = methodInfo;
             CustomAttributes = MethodInfo.GetCustomAttributes(true);
-            (IsAsyncMethod, ReturnType) = MethodInfo.MethodInfoReturnType();
+            (IsAsyncMethod, ReturnType) = MethodInfo.ReturnTypeInfo();
             GovernanceOptions = new ServiceEntryGovernance();
             var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
             if (governanceProvider != null)

@@ -1,14 +1,12 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Lms.Caching;
 using Lms.Core.DependencyInjection;
 using Lms.Core.DynamicProxy;
 using Lms.Core.Exceptions;
-using Lms.Rpc.Configuration;
+using Lms.Core.Extensions;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Transport.CachingIntercept;
-using Microsoft.Extensions.Options;
 
 namespace Lms.Rpc.Proxy.Interceptors
 {
@@ -23,7 +21,7 @@ namespace Lms.Rpc.Proxy.Interceptors
             IServiceIdGenerator serviceIdGenerator,
             IServiceEntryLocator serviceEntryLocator,
             ICurrentServiceKey currentServiceKey,
-            IDistributedCache<object> distributedCache)
+            IDistributedInterceptCache distributedCache)
         {
             _serviceIdGenerator = serviceIdGenerator;
             _serviceEntryLocator = serviceEntryLocator;
@@ -33,6 +31,15 @@ namespace Lms.Rpc.Proxy.Interceptors
 
         public async override Task InterceptAsync(ILmsMethodInvocation invocation)
         {
+            async Task<object> GetResultFirstFromCache(string cacheName, string cacheKey, ServiceEntry entry)
+            {
+                _distributedCache.UpdateCacheName(cacheName);
+                return await _distributedCache.GetOrAddAsync(cacheKey,
+                    invocation.Method.GetReturnType(),
+                    async () => await entry.Executor(_currentServiceKey.ServiceKey,
+                        invocation.Arguments));
+            }
+
             var servcieId = _serviceIdGenerator.GenerateServiceId(invocation.Method);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(servcieId);
             try
@@ -47,10 +54,22 @@ namespace Lms.Rpc.Proxy.Interceptors
                             case CachingMethod.Get:
                                 var getCachingInterceptProvider =
                                     cachingInterceptProvider as IGetCachingInterceptProvider;
-
+                                var getCacheKey = serviceEntry.GetCachingInterceptKey(invocation.Arguments);
+                                invocation.ReturnValue =
+                                    await GetResultFirstFromCache(getCachingInterceptProvider.CacheName, getCacheKey,
+                                        serviceEntry);
+                                break;
+                            case CachingMethod.Update:
+                                var updateCachingInterceptProvider =
+                                    cachingInterceptProvider as IUpdateCachingInterceptProvider;
+                                _distributedCache.UpdateCacheName(updateCachingInterceptProvider.CacheName);
+                                var updateCacheKey = serviceEntry.GetCachingInterceptKey(invocation.Arguments);
+                                await _distributedCache.RemoveAsync(updateCacheKey);
+                                invocation.ReturnValue =
+                                    await GetResultFirstFromCache(updateCachingInterceptProvider.CacheName,
+                                        updateCacheKey, serviceEntry);
                                 break;
                             case CachingMethod.Remove:
-
                                 foreach (var removeRemoveCachingKey in
                                     (cachingInterceptProvider as IRemoveCachingInterceptProvider)
                                     .RemoveRemoveCachingKeyInfos)

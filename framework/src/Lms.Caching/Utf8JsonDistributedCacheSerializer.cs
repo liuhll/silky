@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Serialization;
@@ -21,6 +22,11 @@ namespace Lms.Caching
         public T Deserialize<T>(byte[] bytes)
         {
             return (T)Jerializer.Deserialize(typeof(T), Encoding.UTF8.GetString(bytes));
+        }
+
+        public object Deserialize(byte[] bytes, Type type)
+        {
+            return Jerializer.Deserialize(type, Encoding.UTF8.GetString(bytes));
         }
     }
 }

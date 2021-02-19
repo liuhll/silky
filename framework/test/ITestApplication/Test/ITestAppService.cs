@@ -5,6 +5,7 @@ using ITestApplication.Test.FallBack;
 using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Lms.Rpc.Transport.CachingIntercept;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITestApplication.Test
@@ -12,6 +13,7 @@ namespace ITestApplication.Test
     [ServiceRoute(multipleServiceKey: true)]
     public interface ITestAppService
     {
+        [GetCachingIntercept("ITestAppService.Create")]
         Task<string> Create(TestDto input);
 
         Task<string> Update(TestDto input);
