@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Core.Registration;
 using Lms.Core;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
@@ -78,45 +79,14 @@ namespace Lms.Rpc
                     throw new LmsException("必须指定消息编解码器");
                 }
 
-                var serviceEntryLocate = applicationContext.ServiceProvider.GetService<IServiceEntryLocator>();
                 foreach (var messageListener in messageListeners)
                 {
                     messageListener.Received += async (sender, message) =>
                     {
                         Debug.Assert(message.IsInvokeMessage());
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
-                        var serviceEntry =
-                            serviceEntryLocate.GetLocalServiceEntryById(remoteInvokeMessage.ServiceId);
-                        RemoteResultMessage remoteResultMessage;
-                        try
-                        {
-                            var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
-                            if (!tokenValidator.Validate())
-                            {
-                                throw new RpcAuthenticationException("rpc token不合法");
-                            }
-
-                            var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
-                            var result = await serviceEntry.Executor(currentServiceKey.ServiceKey,
-                                remoteInvokeMessage.Parameters);
-
-                            remoteResultMessage = new RemoteResultMessage()
-                            {
-                                Result = result,
-                                StatusCode = StatusCode.Success
-                            };
-                        }
-                        catch (Exception e)
-                        {
-                            remoteResultMessage = new RemoteResultMessage()
-                            {
-                                ExceptionMessage = e.GetExceptionMessage(),
-                                StatusCode = e.GetExceptionStatusCode()
-                            };
-                        }
-
-                        var resultTransportMessage = new TransportMessage(remoteResultMessage, message.Id);
-                        await sender.SendAndFlushAsync(resultTransportMessage);
+                        var messageReceivedHandler = EngineContext.Current.Resolve<IServiceMessageReceivedHandler>();
+                        await messageReceivedHandler.Handle(message.Id, sender, remoteInvokeMessage);
                     };
                 }
             }

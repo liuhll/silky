@@ -5,7 +5,7 @@ using Lms.Rpc.Runtime.Server;
 
 namespace NormHostDemo.AppService
 {
-    [ServiceKey("v2",2)]
+    [ServiceKey("v2",1)]
     public class TestV2AppService : ITestAppService
     {
         public async Task<TestOut> Create(TestInput input)

@@ -19,7 +19,9 @@ namespace Lms.Rpc.Runtime.Server
                                 && p.GetInterfaces().Any(i =>
                                     i.GetCustomAttributes().Any(a => a is ServiceRouteAttribute))
                     )
-                    .OrderBy(p => p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(p => p.Weight).FirstOrDefault())
+                    .OrderBy(p =>
+                        p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(q => q.Weight).FirstOrDefault()
+                    )
                 ;
             return types;
         }

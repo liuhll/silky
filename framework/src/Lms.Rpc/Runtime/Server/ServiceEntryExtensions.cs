@@ -129,6 +129,11 @@ namespace Lms.Rpc.Runtime.Server
 
             var templeteAgrs = cacheKeyProviders.OrderBy(p => p.Index).ToList().Select(ckp => ckp.Value).ToArray();
             cachingInterceptKey = string.Format(templete, templeteAgrs);
+            var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
+            if (!currentServiceKey.ServiceKey.IsNullOrEmpty())
+            {
+                cachingInterceptKey = $"serviceKey:{currentServiceKey.ServiceKey}:" + cachingInterceptKey;
+            }
             return cachingInterceptKey;
         }
 

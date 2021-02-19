@@ -3,6 +3,7 @@ using Lms.Core.DependencyInjection;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
 using Lms.Rpc.Configuration;
+using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Lms.Rpc.Transport;
@@ -16,14 +17,17 @@ namespace Lms.HttpServer
         private readonly IParameterParser _parameterParser;
         private readonly ISerializer _serializer;
         private readonly RpcOptions _rpcOptions;
+        private readonly IServiceExecutor _serviceExecutor;
 
         public HttpMessageReceivedHandler(
             IParameterParser parameterParser,
             ISerializer serializer,
-            IOptions<RpcOptions> rpcOptions)
+            IOptions<RpcOptions> rpcOptions, 
+            IServiceExecutor serviceExecutor)
         {
             _parameterParser = parameterParser;
             _serializer = serializer;
+            _serviceExecutor = serviceExecutor;
             _rpcOptions = rpcOptions.Value;
         }
 
@@ -41,7 +45,7 @@ namespace Lms.HttpServer
             }
 
             RpcContext.GetContext().SetAttachment("token", _rpcOptions.Token);
-            var excuteResult = await serviceEntry.Executor(serviceKey, rpcParameters);
+            var excuteResult = await _serviceExecutor.Execute(serviceEntry, rpcParameters, serviceKey);
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = 200;
             if (excuteResult != null)
