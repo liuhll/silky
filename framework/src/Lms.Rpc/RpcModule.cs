@@ -73,12 +73,6 @@ namespace Lms.Rpc
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
-                if (!EngineContext.Current.IsRegistered(typeof(ITransportMessageDecoder))
-                    || !EngineContext.Current.IsRegistered(typeof(ITransportMessageEncoder)))
-                {
-                    throw new LmsException("必须指定消息编解码器");
-                }
-
                 foreach (var messageListener in messageListeners)
                 {
                     messageListener.Received += async (sender, message) =>
