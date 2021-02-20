@@ -4,9 +4,12 @@
 
 # lms 微服务框架
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/liuhll/lms/main/LICENSE)
-[![HitCount](http://hits.dwyl.com/liuhll/lms.svg)](http://hits.dwyl.com/liuhll/lms)
+[![Downloads](https://img.shields.io/github/downloads/liuhll/lms/total?label=downloads&logo=github&style=flat-square)](https://img.shields.io/github/downloads/liuhll/lms/total?label=downloads&logo=github&style=flat-square)
+[![HitCount](http://hits.dwyl.io/liuhll/lms.svg)](http://hits.dwyl.io/liuhll/lms)
+[![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
 
-Lms是一个旨在快速通过.net平台构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。lms内部通过[dotnetty](https://github.com/Azure/DotNetty)实现高性能的rpc通信,使用zookeeper作为服务注册中心。RPC通信支持随机轮询、哈希一致性、随机路由等负载均衡算法。
+
+Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。lms内部通过[dotnetty](https://github.com/Azure/DotNetty)实现高性能的rpc通信,使用zookeeper作为服务注册中心。RPC通信支持随机轮询、哈希一致性、随机路由等负载均衡算法。
 
 您还可以很方便的与[CAP](https://github.com/dotnetcore/CAP)或是[MassTransit](https://github.com/MassTransit/MassTransit)集成,使用事件总线进行内部通信。
 
@@ -190,14 +193,63 @@ registrycenter:
 
 ### 配置
 
+Lms支持通过`json`或是`yml`格式的对框架进行配置。一般的,您可以通过`appsettings.json`或是`appsettings.yml`文件对系统进行配置，并且您可以通过`appsettings.{Environment}.yml`或是`appsettings.{Environment}.json`指定在不同的运行环境中加载相应的环境变量。有关详细信息，请参阅[在 ASP.NET Core 中使用多个环境](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/environments)。
+
 #### RPC通信参数配置
+
+| 配置项 | 名称 | 缺省值 | 备注 |
+|:------|:------|:------|:------|
+| Host | 主机地址 | 0.0.0.0 | 缺省配置则自动获取当前服务器的IP为rpc服务IP |
+| RpcPort | Rpc通信端口 | 2200 | 指定的rpc通信端口号 |
+| MqttPort | mqtt协议通信端口 | 2300 | 当前暂未实现mqtt通信协议 |
+| UseLibuv | 使用libuv  | 2300 | dotnetty通信是否使用libuv网络库,缺省值为`true` |
+| IsSsl | 使用Ssl加密  | false |  |
+| SslCertificateName | Ssl证书名称  |  | Ssl证书的相对路径全名称 |
+| SslCertificatePassword | Ssl证书密码  |  |  |
+| SoBacklog | dotnetty SoBacklog  | 8192 | 过大或过小会影响性能 |
+| RemoveUnhealthServer | 移除不健康服务 | true | 是否从服务注册中心移除不健康的服务提供者 |
+
 
 #### 服务注册中心配置
 
+| 配置项 | 名称 | 缺省值 | 备注 |
+|:------|:------|:------|:------|
+| RegistryCenterType | 服务注册中心类型 | RegistryCenterType.Zookeepe | 当前仅实现了zookeeper作为服务注册中心 |
+| ConnectionTimeout | 连接超时 | 20 | 单位(秒)  |
+| SessionTimeout | session会话超时 | 30 | 单位(秒)  |
+| OperatingTimeout | 操作超时 | 60 | 单位(秒)  |
+| ConnectionStrings | 服务注册中心地址 |  | 支持多服务注册中心,通一个集群的地址使用逗号(,)分割，多个服务注册中心使用(;)进行分割。例如:`zookeeper1:2181,zookeeper1:2182,zookeeper1:2183;zookeeper2:2181,zookeeper2:2182,zookeeper2:2183` |
+| RoutePath | 服务条目的路由地址 | /services/serviceroutes | 当服务启动时会自动注册路由信息到服务注册中心 |
+| MqttPtah | Mqtt协议的服务条目的路由地址 | /services/serviceroutes | 暂未实现 |
+| HealthCheckInterval |  | | 暂未实现心跳检查 |
+
+
 ##### 服务治理相关配置
+
+可以通过`Governance`配置节点统一的rpc通信过程进行配置,但是该配置的可以被服务条目的`GovernanceAttribute`特性进行改写。
+
+| 配置项 | 名称 | 缺省值 | 备注 |
+|:------|:------|:------|:------|
+| ShuntStrategy | 负载分流策略 | | rpc通信过程中的服务路由的地址选择器 |
+| ExecutionTimeout | 执行超时时间 | -1 | 单位(ms),0或-1表示不会超时,建议值:1000 |
+| MaxConcurrent | 允许的最大并发量 | 100 | 超过最大的并发量则会路由到其他的服务提供者实例,如果不存在则会发生熔断保护 |
+| FuseSleepDuration | 熔断休眠时间 | 60 | 单位(s)，熔断期间不会被路由到服务提供者实例 |
+| FuseProtection | 是否开启熔断保护 | true | 服务提供者无法到达时,开启熔断保护则不会立即将该服务提供者的实例标识为不健康,但是在熔断休眠时间内该实例不会被路由 |
+| FuseTimes |  | | 熔断几次之后标识服务提供者实例不健康 |
+| FailoverCount | 故障转移次数  | | 服务提供者不可达时,允许的重新路由的次数,缺省值为0,则服务提供者实例有几个,则会重试几次 |
+
+更对关于服务通信的治理请查看[服务治理](#)节点相关文档。
 
 ### 缓存拦截
 
 在rpc通信过程中,您可以使用缓存拦截。通过使用缓存拦截,可以大大提升系统的性能。在一个应用接口方法配置了缓存拦截,那么在方法执行前,如果存在缓存,则会从缓存中取出数据。
 
+您可以在服务条目的方法上通过如下特性对缓存拦截进行配置。
 
+1. `GetCachingInterceptAttribute` 优先从缓存中读取缓存数据,如果缓存中不存在,才执行本地或是远程方法。
+
+2. `UpdateCachingInterceptAttribute` 执行本地或远程方法并更新缓存数据。
+
+3. `RemoveCachingInterceptAttribute` 执行本地或远程方法,并删除相应的缓存数据。
+
+更对缓存拦截的使用和配置请查看[缓存拦截文档](#)。
