@@ -27,7 +27,6 @@ namespace Lms.Rpc.Routing
             _registryCenterOptions = registryCenterOptions.Value;
             _rpcOptions = rpcOptions.Value;
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
-            Check.NotNullOrEmpty(_registryCenterOptions.CommandPath, nameof(_registryCenterOptions.CommandPath));
             Check.NotNullOrEmpty(_rpcOptions.Token, nameof(_rpcOptions.Token));
             _serviceRouteCache.OnRemoveServiceRoutes += async descriptors =>
             {

@@ -4,7 +4,7 @@
     {
         public static string RegistryCenter = "RegistryCenter";
 
-        public RegistryCenterType RegistryCenterType { get; set; }
+        public RegistryCenterType RegistryCenterType { get; set; } = RegistryCenterType.Zookeeper;
 
         public double ConnectionTimeout { get; set; } = 20;
         
@@ -17,7 +17,6 @@
         public string RoutePath { get; set; } = "/services/serviceroutes";
 
         public string MqttPtah { get; set; }= "/services/servicemqttroutes";
-        public string CommandPath { get; set; } = "/services/servicecommands";
         public double HealthCheckInterval { get; set; } = 30;
     }
 }
