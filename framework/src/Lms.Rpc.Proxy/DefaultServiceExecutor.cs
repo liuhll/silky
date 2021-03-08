@@ -23,7 +23,7 @@ namespace Lms.Rpc.Proxy
                 _distributedCache.UpdateCacheName(cacheName);
                 return await _distributedCache.GetOrAddAsync(cacheKey,
                     serviceEntry.MethodInfo.GetReturnType(),
-                    async () => await entry.Executor(serviceKey, parameters));
+                    async () => entry.Executor(serviceKey, parameters));
             }
 
             if (serviceEntry.GovernanceOptions.CacheEnabled)
@@ -59,12 +59,12 @@ namespace Lms.Rpc.Proxy
                 }
                 else
                 {
-                    return await serviceEntry.Executor(serviceKey, parameters);
+                    return serviceEntry.Executor(serviceKey, parameters);
                 }
             }
             else
             {
-                return await serviceEntry.Executor(serviceKey, parameters);
+                return serviceEntry.Executor(serviceKey, parameters);
             }
         }
     }

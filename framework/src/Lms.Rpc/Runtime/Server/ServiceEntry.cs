@@ -153,7 +153,7 @@ namespace Lms.Rpc.Runtime.Server
             }
         }
 
-        public Func<string, object[], Task<object>> Executor { get; }
+        public Func<string, object[], object> Executor { get; }
 
         public IList<string> SupportedRequestMediaTypes { get; } = new List<string>();
 
@@ -179,8 +179,8 @@ namespace Lms.Rpc.Runtime.Server
 
         [CanBeNull] public Func<object[], Task<object>> FallBackExecutor { get; private set; }
 
-        private Func<string, object[], Task<object>> CreateExecutor() =>
-            (key, parameters) => Task.Factory.StartNew(() =>
+        private Func<string, object[], object> CreateExecutor() =>
+            (key, parameters) =>
             {
                 if (IsLocal)
                 {
@@ -190,7 +190,7 @@ namespace Lms.Rpc.Runtime.Server
 
                 var remoteServiceExecutor = EngineContext.Current.Resolve<IRemoteServiceExecutor>();
                 return remoteServiceExecutor.Execute(this, parameters, key).GetAwaiter().GetResult();
-            });
+            };
 
         public ServiceDescriptor ServiceDescriptor { get; }
 
@@ -202,7 +202,7 @@ namespace Lms.Rpc.Runtime.Server
         public ICachingInterceptProvider UpdateCachingInterceptProvider =>
             CustomAttributes.OfType<IUpdateCachingInterceptProvider>()
                 .FirstOrDefault();
-        
+
         public IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders =>
             CustomAttributes.OfType<IRemoveCachingInterceptProvider>()
                 .ToImmutableList();
