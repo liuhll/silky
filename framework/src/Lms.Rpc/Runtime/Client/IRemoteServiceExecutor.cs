@@ -4,7 +4,7 @@ using Lms.Rpc.Runtime.Server;
 
 namespace Lms.Rpc.Runtime.Client
 {
-    public interface IRemoteServiceExecutor : ITransientDependency
+    public interface IRemoteServiceExecutor : IScopedDependency
     {
         Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null);
     }

@@ -31,6 +31,10 @@ namespace Lms.Rpc.Runtime.Server
 
         public string Id => ServiceDescriptor.Id;
 
+        public Type ServiceType => _serviceType;
+
+        public ObjectMethodExecutor MethodExecutor => _methodExecutor;
+
         public ServiceEntry(IRouter router,
             ServiceDescriptor serviceDescriptor,
             Type serviceType,
@@ -180,37 +184,8 @@ namespace Lms.Rpc.Runtime.Server
             {
                 if (IsLocal)
                 {
-                    object instance = null;
-                    if (!key.IsNullOrEmpty())
-                    {
-                        if (!EngineContext.Current.IsRegisteredWithName(key, _serviceType))
-                        {
-                            throw new UnServiceKeyImplementationException(
-                                $"系统中没有存在serviceKey为{key}的{_serviceType.FullName}接口的实现类");
-                        }
-
-                        instance = EngineContext.Current.ResolveNamed(key, _serviceType);
-                    }
-                    else
-                    {
-                        instance = EngineContext.Current.Resolve(_serviceType);
-                    }
-
-                    for (int i = 0; i < parameters.Length; i++)
-                    {
-                        if (parameters[i] != null && parameters[i].GetType() != ParameterDescriptors[i].Type)
-                        {
-                            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-                            parameters[i] = typeConvertibleService.Convert(parameters[i], ParameterDescriptors[i].Type);
-                        }
-                    }
-
-                    if (IsAsyncMethod)
-                    {
-                        return _methodExecutor.ExecuteAsync(instance, parameters.ToArray()).GetAwaiter().GetResult();
-                    }
-
-                    return _methodExecutor.Execute(instance, parameters.ToArray());
+                    var localServiceExecutor = EngineContext.Current.Resolve<ILocalExecutor>();
+                    return localServiceExecutor.Execute(this, parameters, key);
                 }
 
                 var remoteServiceExecutor = EngineContext.Current.Resolve<IRemoteServiceExecutor>();
