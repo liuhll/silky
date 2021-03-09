@@ -1,4 +1,4 @@
-﻿namespace Lms.Rpc.XaResource
+﻿namespace Lms.Rpc.Resource
 {
     public class XId
     {

@@ -1,6 +1,6 @@
 ﻿namespace Lms.Rpc.Transaction
 {
-    public enum TccActionStage
+    public enum ActionStage
     {
         PreTry = 0,
         

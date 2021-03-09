@@ -5,6 +5,7 @@ using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport.CachingIntercept;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ namespace ITestApplication.Test
         Task<string> Update(TestInput input);
         
         [RemoveCachingIntercept("ITestAppService.TestOut", "name:{0}")]
+        [Transaction]
         Task<string> Delete([CacheKey(0)]string name);
 
         [HttpGet]

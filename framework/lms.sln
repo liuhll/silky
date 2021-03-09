@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Codec.MessagePack", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Codec.ProtoBuf", "src\Lms.Codec.ProtoBuf\Lms.Codec.ProtoBuf.csproj", "{6D165B91-B522-47B2-82D2-422A647BE79B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Transaction.Tcc", "src\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj", "{8619E755-200B-4FB8-A040-706C67B267B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,7 @@ Global
 		{D96C901F-546D-4B6B-8981-3E0F9178B286} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{2DE0C2DC-EAA1-46AD-B7BD-26A029F6E24F} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{6D165B91-B522-47B2-82D2-422A647BE79B} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{8619E755-200B-4FB8-A040-706C67B267B6} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -154,5 +157,9 @@ Global
 		{6D165B91-B522-47B2-82D2-422A647BE79B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D165B91-B522-47B2-82D2-422A647BE79B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D165B91-B522-47B2-82D2-422A647BE79B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8619E755-200B-4FB8-A040-706C67B267B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8619E755-200B-4FB8-A040-706C67B267B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8619E755-200B-4FB8-A040-706C67B267B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8619E755-200B-4FB8-A040-706C67B267B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -23,6 +23,8 @@ namespace Lms.Core
         object Resolve(Type type);
         object ResolveNamed(string name, Type type);
 
+        object ResolveServiceEntryInstance(string serviceKey, Type serviceType);
+
         T ResolveNamed<T>(string name);
         
         IEnumerable<T> ResolveAll<T>();

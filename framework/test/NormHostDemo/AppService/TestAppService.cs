@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using Lms.Rpc.Runtime.Server;
+using Lms.Transaction.Tcc;
 
 namespace NormHostDemo.AppService
 {
@@ -21,7 +22,7 @@ namespace NormHostDemo.AppService
         {
             return "Update";
         }
-
+        [TccTransaction(ConfirmMethod = "DeleteConfirm",CancelMethod = "DeleteCancel")]
         public async Task<string> Delete(string name)
         {
             return name + "v1";

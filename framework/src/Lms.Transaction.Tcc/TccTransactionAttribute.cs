@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction.Tcc
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
-    public class TccTransactionAttribute : Attribute
+    public class TccTransactionAttribute : Attribute, ITccTransactionProvider
     {
         public string ConfirmMethod { get; set; }
 

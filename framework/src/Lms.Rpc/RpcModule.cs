@@ -1,10 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
-using Autofac.Core.Registration;
 using Lms.Castle;
 using Lms.Core;
 using Lms.Core.Exceptions;
@@ -14,7 +12,6 @@ using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Security;
 using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport;
 using Lms.Rpc.Transport.Codec;
@@ -46,7 +43,10 @@ namespace Lms.Rpc
 
             RegisterServicesForAddressSelector(builder);
 
-            RegisterServicesForServiceExecutor(builder);
+            builder.RegisterType<DefaultLocalExecutor>()
+                .As<ILocalExecutor>()
+                .InstancePerLifetimeScope()
+                ;
         }
 
         public async override Task Initialize(ApplicationContext applicationContext)
@@ -75,15 +75,7 @@ namespace Lms.Rpc
             }
         }
 
-        private void RegisterServicesForServiceExecutor(ContainerBuilder builder)
-        {
-            builder.RegisterType<DefaultLocalExecutor>()
-                .As<ILocalExecutor>()
-                .InstancePerLifetimeScope()
-                .AddInterceptors(
-                    typeof(TransactionInterceptor))
-                ;
-        }
+       
 
         private void RegisterServicesForAddressSelector(ContainerBuilder builder)
         {

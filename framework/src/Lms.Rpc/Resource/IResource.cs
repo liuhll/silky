@@ -1,6 +1,7 @@
-﻿namespace Lms.Rpc.XaResource
+﻿
+namespace Lms.Rpc.Resource
 {
-    public interface IXaResource
+    public interface IResource
     {
         void Commit(XId xId, bool var2);
 
@@ -10,7 +11,7 @@
 
         int GetTransactionTimeout();
 
-        bool IsSameRM(IXaResource var1);
+        bool IsSameRM(IResource var1);
 
         int Prepare(XId var1);
 

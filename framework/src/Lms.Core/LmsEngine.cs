@@ -6,6 +6,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
 using Lms.Core.Modularity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -72,6 +73,27 @@ namespace Lms.Core
             if (sp == null)
                 return null;
             return sp.GetAutofacRoot().ResolveNamed(name, type);
+        }
+
+        public object ResolveServiceEntryInstance(string serviceKey, Type serviceType)
+        {
+            object instance = null;
+            if (!serviceKey.IsNullOrEmpty())
+            {
+                if (!EngineContext.Current.IsRegisteredWithName(serviceKey, serviceType))
+                {
+                    throw new UnServiceKeyImplementationException(
+                        $"系统中没有存在serviceKey为{serviceKey}的{serviceType.FullName}接口的实现类");
+                }
+
+                instance = EngineContext.Current.ResolveNamed(serviceKey, serviceType);
+            }
+            else
+            {
+                instance = EngineContext.Current.Resolve(serviceType);
+            }
+
+            return instance;
         }
 
         public T ResolveNamed<T>(string name)
