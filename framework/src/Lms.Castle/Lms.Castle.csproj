@@ -9,6 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
         <PackageReference Include="Castle.Core" Version="4.4.1" />
         <PackageReference Include="Castle.Core.AsyncInterceptor" Version="2.0.21-alpha" />
     </ItemGroup>

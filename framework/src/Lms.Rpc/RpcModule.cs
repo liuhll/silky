@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core.Registration;
+using Lms.Castle;
 using Lms.Core;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
@@ -14,6 +15,7 @@ using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Security;
+using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport;
 using Lms.Rpc.Transport.Codec;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,22 +44,9 @@ namespace Lms.Rpc
                     ;
             }
 
-            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces()
-                .InstancePerDependency();
-            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces()
-                .InstancePerDependency();
-            builder.RegisterType<PollingAddressSelector>()
-                .SingleInstance()
-                .AsSelf()
-                .Named<IAddressSelector>(AddressSelectorMode.Polling.ToString());
-            builder.RegisterType<PollingAddressSelector>()
-                .SingleInstance()
-                .AsSelf()
-                .Named<IAddressSelector>(AddressSelectorMode.Random.ToString());
-            builder.RegisterType<HashAlgorithmAddressSelector>()
-                .SingleInstance()
-                .AsSelf()
-                .Named<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
+            RegisterServicesForAddressSelector(builder);
+
+            RegisterServicesForServiceExecutor(builder);
         }
 
         public async override Task Initialize(ApplicationContext applicationContext)
@@ -84,6 +73,37 @@ namespace Lms.Rpc
                     };
                 }
             }
+        }
+
+        private void RegisterServicesForServiceExecutor(ContainerBuilder builder)
+        {
+            builder.RegisterType<DefaultLocalExecutor>()
+                .As<ILocalExecutor>()
+                .InstancePerLifetimeScope()
+                .AddInterceptors(
+                    typeof(TransactionInterceptor))
+                ;
+        }
+
+        private void RegisterServicesForAddressSelector(ContainerBuilder builder)
+        {
+            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces()
+                .InstancePerDependency();
+            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces()
+                .InstancePerDependency();
+
+            builder.RegisterType<PollingAddressSelector>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IAddressSelector>(AddressSelectorMode.Polling.ToString());
+            builder.RegisterType<PollingAddressSelector>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IAddressSelector>(AddressSelectorMode.Random.ToString());
+            builder.RegisterType<HashAlgorithmAddressSelector>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
         }
     }
 }

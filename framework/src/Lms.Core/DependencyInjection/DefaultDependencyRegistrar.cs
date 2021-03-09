@@ -17,7 +17,8 @@ namespace Lms.Core.DependencyInjection
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .SingleInstance()
-                    .PropertiesAutowired();
+                    .PropertiesAutowired()
+                    ;
 
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => typeof(ITransientDependency).GetTypeInfo().IsAssignableFrom(t))
@@ -32,12 +33,6 @@ namespace Lms.Core.DependencyInjection
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .InstancePerLifetimeScope();
-                
-                // builder.RegisterAssemblyTypes(assembly)
-                //     .Where(t => typeof(IHostedService).GetTypeInfo().IsAssignableFrom(t))
-                //     .AsImplementedInterfaces()
-                //     .AsSelf()
-                //     .SingleInstance();
             }
         }
 
