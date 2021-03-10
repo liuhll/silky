@@ -1,4 +1,5 @@
 ﻿using System;
+using Lms.Rpc.Transaction;
 
 namespace Lms.Transaction.Tcc
 {

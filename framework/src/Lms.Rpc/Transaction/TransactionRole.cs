@@ -5,5 +5,9 @@
         Start = 0,
         
         Participant,
+        
+        Local,
+        
+        Consumer
     }
 }

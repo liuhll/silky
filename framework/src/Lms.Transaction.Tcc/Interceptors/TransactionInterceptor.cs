@@ -3,16 +3,13 @@ using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Core.DynamicProxy;
 using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Transaction;
+using Lms.Rpc.Transport;
 
-namespace Lms.Transaction.Tcc.Interceptor
+namespace Lms.Transaction.Tcc.Interceptors
 {
     public class TransactionInterceptor : LmsInterceptor, ITransientDependency
     {
-        public TransactionInterceptor()
-        {
-            
-        }
-
         public async override Task InterceptAsync(ILmsMethodInvocation invocation)
         {
             var argumentsDictionary = invocation.ArgumentsDictionary;
@@ -24,14 +21,10 @@ namespace Lms.Transaction.Tcc.Interceptor
             }
             else
             {
-                if (serviceEntry.IsLocal)
-                {
-                    var serviceKey = argumentsDictionary["serviceKey"] as string;
-                    var tccTransactionProvider = serviceEntry.GetTccTransactionProvider(serviceKey);
-                }
-                
+                var transactionContext =
+                    RpcContext.GetContext().GetAttachment("transactionContext") as TransactionContext;
+                await TransactionAspectInvoker.GetInstance().Invoke(transactionContext, invocation);
             }
-
         }
     }
 }
