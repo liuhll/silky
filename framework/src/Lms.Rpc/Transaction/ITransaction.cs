@@ -1,20 +1,26 @@
-﻿namespace Lms.Rpc.Transaction
+﻿using System;
+using System.Collections.Generic;
+
+namespace Lms.Rpc.Transaction
 {
     public interface ITransaction
     {
-        void FireBeforeTransactionCompletion();
+        string TransId { get; set; }
 
-        void FireBeforeTransactionCompletionQuietly();
+        ActionStage Status { get; set; }
 
-        void FireAfterTransactionCompletion();
+        TransactionType TransType { get; set; }
 
-        TransactionStatus GetTransactionStatus();
+        DateTime CreateTime { get; }
 
-        void Resume();
+        DateTime UpdateTime { get; set; }
 
-        void Suspend();
+        int ReTry { get; set; }
 
-        bool IsTiming();
-        
+        IReadOnlyCollection<IParticipant> Participants { get; }
+
+        void RegisterParticipant(IParticipant participant);
+
+        void RegisterParticipantList(IEnumerable<IParticipant> participants);
     }
 }
