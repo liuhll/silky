@@ -29,10 +29,6 @@ namespace Lms.Rpc.Proxy
             services.AddTransient(rpcProxyInterceptorType);
             var interceptorAdapterType =
                 typeof(LmsAsyncDeterminationInterceptor<>).MakeGenericType(rpcProxyInterceptorType);
-            // var fallbackInterceptor = typeof(FallbackInterceptor);
-            // var fallbackInterceptorAdapterType = typeof(LmsAsyncDeterminationInterceptor<>).MakeGenericType(fallbackInterceptor);
-            // services.AddTransient(rpcProxyInterceptorType);
-            
             services.AddTransient(
                 type,
                 serviceProvider => ProxyGeneratorInstance

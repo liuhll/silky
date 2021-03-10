@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj" />
       <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
     </ItemGroup>
 
