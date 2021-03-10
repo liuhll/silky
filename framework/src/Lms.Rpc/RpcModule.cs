@@ -9,8 +9,11 @@ using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
 using Lms.Rpc.Address;
 using Lms.Rpc.Address.Selector;
+using Lms.Rpc.Interceptors;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Routing;
+using Lms.Rpc.Runtime;
+using Lms.Rpc.Runtime.Client;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport;
@@ -42,11 +45,7 @@ namespace Lms.Rpc
             }
 
             RegisterServicesForAddressSelector(builder);
-
-            builder.RegisterType<DefaultLocalExecutor>()
-                .As<ILocalExecutor>()
-                .InstancePerLifetimeScope()
-                ;
+            RegisterServicesExecutor(builder);
         }
 
         public async override Task Initialize(ApplicationContext applicationContext)
@@ -75,7 +74,6 @@ namespace Lms.Rpc
             }
         }
 
-       
 
         private void RegisterServicesForAddressSelector(ContainerBuilder builder)
         {
@@ -96,6 +94,25 @@ namespace Lms.Rpc
                 .SingleInstance()
                 .AsSelf()
                 .Named<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
+        }
+
+        private void RegisterServicesExecutor(ContainerBuilder builder)
+        {
+            builder.RegisterType<DefaultLocalExecutor>()
+                .As<ILocalExecutor>()
+                .InstancePerLifetimeScope()
+                .AddInterceptors(
+                    typeof(TransactionInterceptor));
+
+            builder.RegisterType<DefaultRemoteServiceExecutor>()
+                .As<IRemoteServiceExecutor>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<DefaultServiceExecutor>()
+                .As<IServiceExecutor>()
+                .InstancePerLifetimeScope()
+                .AddInterceptors(
+                    typeof(CachingInterceptor));
         }
     }
 }

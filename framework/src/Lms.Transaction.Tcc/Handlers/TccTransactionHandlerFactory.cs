@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Lms.Core.DependencyInjection;
 using Lms.Rpc.Transaction;
 
 namespace Lms.Transaction.Tcc.Handlers
 {
-    public class TccTransactionHandlerFactory : AbstractTransactionHandlerFactory
+    public class TccTransactionHandlerFactory : AbstractTransactionHandlerFactory, ITransientDependency
     {
         private static IDictionary<TransactionRole, ITransactionHandler> _handlersMap =
             new Dictionary<TransactionRole, ITransactionHandler>();

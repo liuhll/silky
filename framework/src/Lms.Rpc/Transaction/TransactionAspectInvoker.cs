@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.DynamicProxy;
-using Lms.Rpc.Transaction;
 
-namespace Lms.Transaction.Tcc
+namespace Lms.Rpc.Transaction
 {
     public class TransactionAspectInvoker
     {
@@ -22,8 +21,16 @@ namespace Lms.Transaction.Tcc
         public async Task Invoke(TransactionContext transactionContext, ILmsMethodInvocation invocation)
         {
             var transactionHandlerFactory = EngineContext.Current.Resolve<ITransactionHandlerFactory>();
-            var transactionHandler = transactionHandlerFactory.FactoryOf(transactionContext);
-            await transactionHandler.Handler(transactionContext, invocation);
+            if (transactionHandlerFactory != null)
+            {
+                var transactionHandler = transactionHandlerFactory.FactoryOf(transactionContext);
+                await transactionHandler.Handler(transactionContext, invocation);
+            }
+            else
+            {
+                await invocation.ProceedAsync();
+            }
+
         }
     }
 }

@@ -6,7 +6,7 @@ using Lms.Core.DynamicProxy;
 using Lms.Core.Extensions;
 using Lms.Rpc.Runtime.Server;
 
-namespace Lms.Rpc.Proxy.Interceptors
+namespace Lms.Rpc.Interceptors
 {
     public class CachingInterceptor : LmsInterceptor, ITransientDependency
     {
@@ -28,7 +28,7 @@ namespace Lms.Rpc.Proxy.Interceptors
                 _distributedCache.UpdateCacheName(cacheName);
                 return await _distributedCache.GetOrAddAsync(cacheKey,
                     serviceEntry.MethodInfo.GetReturnType(),
-                    async () => entry.Executor(serviceKey, parameters));
+                    async () => await entry.Executor(serviceKey, parameters));
             }
 
             if (serviceEntry.GovernanceOptions.CacheEnabled)
