@@ -16,8 +16,8 @@ namespace Lms.Rpc.Transaction
         public ActionStage Status { get; set; }
         public TransactionRole Role { get; set; }
         public int ReTry { get; set; }
-        public string ConfirmMethod { get; set; }
-        public string CancelMethod { get; set; }
+        // public string ConfirmMethod { get; set; }
+        // public string CancelMethod { get; set; }
         public DateTime CreateTime { get; }
         public DateTime UpdateTime { get; set; }
         

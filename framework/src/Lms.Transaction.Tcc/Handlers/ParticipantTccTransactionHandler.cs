@@ -1,14 +1,26 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core.DynamicProxy;
 using Lms.Rpc.Transaction;
+using Lms.Transaction.Tcc.Executor;
 
 namespace Lms.Transaction.Tcc.Handlers
 {
     public class ParticipantTccTransactionHandler : ITransactionHandler
     {
-        public Task Handler(TransactionContext context, ILmsMethodInvocation invocation)
+        private TccTransactionExecutor executor = TccTransactionExecutor.Executor;
+
+        public async Task Handler(TransactionContext context, ILmsMethodInvocation invocation)
         {
-            throw new System.NotImplementedException();
+            IParticipant participant = null;
+            switch (context.Action)
+            {
+                case ActionStage.Trying:
+                    participant = executor.PreTryParticipant(context, invocation);
+                    
+                    await invocation.ProceedAsync();
+                    participant.Status = ActionStage.Trying;
+                    break;
+            }
         }
     }
 }

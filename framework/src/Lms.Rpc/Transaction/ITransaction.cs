@@ -5,7 +5,7 @@ namespace Lms.Rpc.Transaction
 {
     public interface ITransaction
     {
-        string TransId { get; set; }
+        string TransId { get; }
 
         ActionStage Status { get; set; }
 

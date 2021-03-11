@@ -106,7 +106,9 @@ namespace Lms.Rpc
 
             builder.RegisterType<DefaultRemoteServiceExecutor>()
                 .As<IRemoteServiceExecutor>()
-                .InstancePerLifetimeScope();
+                .InstancePerLifetimeScope()
+                .AddInterceptors(
+                    typeof(TransactionInterceptor));
 
             builder.RegisterType<DefaultServiceExecutor>()
                 .As<IServiceExecutor>()

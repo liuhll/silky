@@ -4,7 +4,7 @@ namespace Lms.Rpc.Transaction
 {
     public class LmsTransactionHolder
     {
-        private static LmsTransactionHolder instance = new LmsTransactionHolder();
+        private static LmsTransactionHolder instance = new ();
 
         private static AsyncLocal<ITransaction> CURRENT = new();
 
@@ -17,6 +17,11 @@ namespace Lms.Rpc.Transaction
         public void Set(ITransaction transaction)
         {
             CURRENT.Value = transaction;
+        }
+
+        public ITransaction GetCurrentTransaction()
+        {
+            return CURRENT.Value;
         }
 
         public void remove()

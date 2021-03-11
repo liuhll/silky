@@ -12,7 +12,7 @@ namespace Lms.Transaction.Tcc.Executor
 {
     public sealed class TccTransactionExecutor
     {
-        private static TccTransactionExecutor executor = new ();
+        private static TccTransactionExecutor executor = new();
         public ILogger<TccTransactionExecutor> Logger { get; set; }
 
         private TccTransactionExecutor()
@@ -30,36 +30,49 @@ namespace Lms.Transaction.Tcc.Executor
             var participant = BuildParticipant(invocation, null, null, TransactionRole.Start, transaction.TransId);
             transaction.RegisterParticipant(participant);
             LmsTransactionHolder.Instance.Set(transaction);
-            var context = new TransactionContext();
+            var context = new TransactionContext
+            {
+                Action = ActionStage.Trying,
+                TransId = transaction.TransId,
+                TransactionRole = TransactionRole.Start,
+                TransType = TransactionType.Tcc
+            };
             //set action is try
-            context.Action = ActionStage.Trying;
-            context.TransId = transaction.TransId;
-            context.TransactionRole = TransactionRole.Start;
-            context.TransType = TransactionType.Tcc;
             RpcContext.GetContext().SetAttachment("transactionContext", context);
 
             return transaction;
         }
 
+        public IParticipant PreTryParticipant(TransactionContext context, ILmsMethodInvocation invocation)
+        {
+            Logger.LogDebug($"participant tcc transaction start..：{context}");
+            IParticipant participant = BuildParticipant(invocation, context.ParticipantId,
+                context.ParticipantId, TransactionRole.Participant, context.TransId);
+            LmsTransactionHolder.Instance.GetCurrentTransaction().RegisterParticipant(participant);
+            context.TransactionRole = TransactionRole.Participant;
+            //ContextHolder.set(context);
+            return participant;
+        }
+
         private IParticipant BuildParticipant(ILmsMethodInvocation invocation, string participantId,
             string participantRefId, TransactionRole transactionRole, string transId)
         {
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            Debug.Assert(serviceEntry != null);
-            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-            var tccTransactionProvider = serviceEntry.GetTccTransactionProvider(serviceKey);
-            if (tccTransactionProvider == null)
-            {
-                return null;
-            }
+            // var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+            // Debug.Assert(serviceEntry != null);
+            // var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
+            // var tccTransactionProvider = serviceEntry.GetTccTransactionProvider(serviceKey);
+            // if (tccTransactionProvider == null)
+            // {
+            //     return null;
+            // }
 
             var participant = new LmsParticipant()
             {
                 Role = transactionRole,
                 TransId = transId,
                 TransType = TransactionType.Tcc,
-                ConfirmMethod = tccTransactionProvider.ConfirmMethod,
-                CancelMethod = tccTransactionProvider.CancelMethod
+                // ConfirmMethod = tccTransactionProvider.ConfirmMethod,
+                // CancelMethod = tccTransactionProvider.CancelMethod
             };
             if (participantId.IsNullOrEmpty())
             {

@@ -14,9 +14,9 @@ namespace Lms.Rpc.Transaction
 
         int ReTry { get; set; }
 
-        string ConfirmMethod { get; set; }
-
-        string CancelMethod { get; set; }
+        // string ConfirmMethod { get; set; }
+        //
+        // string CancelMethod { get; set; }
         
         DateTime CreateTime { get; }
 

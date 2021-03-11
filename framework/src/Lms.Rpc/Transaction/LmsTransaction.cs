@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
 
 namespace Lms.Rpc.Transaction
 {
@@ -8,7 +9,7 @@ namespace Lms.Rpc.Transaction
     {
         private IList<IParticipant> m_participants;
 
-        public LmsTransaction()
+        private LmsTransaction()
         {
             CreateTime = DateTime.Now;
             UpdateTime = DateTime.Now;
@@ -20,10 +21,10 @@ namespace Lms.Rpc.Transaction
             TransId = transId;
         }
 
-        public string TransId { get; set; }
-        
+        public string TransId { get; }
+
         public ActionStage Status { get; set; }
-        
+
         public TransactionType TransType { get; set; }
         public DateTime CreateTime { get; }
         public DateTime UpdateTime { get; set; }

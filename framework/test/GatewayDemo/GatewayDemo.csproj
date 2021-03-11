@@ -18,6 +18,7 @@
       <ProjectReference Include="..\..\src\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj" />
       <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
       <ProjectReference Include="..\..\src\Lms.Swagger\Lms.Swagger.csproj" />
+      <ProjectReference Include="..\..\src\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
 
