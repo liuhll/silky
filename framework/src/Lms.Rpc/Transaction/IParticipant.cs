@@ -1,4 +1,5 @@
 ﻿using System;
+using Lms.Core.DynamicProxy;
 
 namespace Lms.Rpc.Transaction
 {
@@ -12,12 +13,12 @@ namespace Lms.Rpc.Transaction
 
         TransactionRole Role { get; set; }
 
+        ParticipantType ParticipantType { get; set; }
+
         int ReTry { get; set; }
 
-        // string ConfirmMethod { get; set; }
-        //
-        // string CancelMethod { get; set; }
-        
+        ILmsMethodInvocation Invocation { get; set; }
+
         DateTime CreateTime { get; }
 
         DateTime UpdateTime { get; set; }

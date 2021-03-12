@@ -8,10 +8,13 @@ namespace Lms.Transaction.Tcc.Handlers
     public class StarterTccTransactionHandler : ITransactionHandler
     {
         private TccTransactionExecutor executor = TccTransactionExecutor.Executor;
-        public Task Handler(TransactionContext context, ILmsMethodInvocation invocation)
+        public async Task Handler(TransactionContext context, ILmsMethodInvocation invocation)
         {
             var transaction = executor.PreTry(invocation);
-            return invocation.ProceedAsync();
+            await invocation.ProceedAsync();
+            transaction.Status = ActionStage.Trying;
+            executor.UpdateStartStatus(transaction);
+            await  executor.GlobalConfirm(transaction);
         }
     }
 }

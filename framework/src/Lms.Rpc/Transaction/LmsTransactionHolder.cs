@@ -19,10 +19,8 @@ namespace Lms.Rpc.Transaction
             CURRENT.Value = transaction;
         }
 
-        public ITransaction GetCurrentTransaction()
-        {
-            return CURRENT.Value;
-        }
+        public ITransaction CurrentTransaction => CURRENT.Value;
+       
 
         public void remove()
         {

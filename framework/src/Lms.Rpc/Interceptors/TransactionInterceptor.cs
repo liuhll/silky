@@ -21,8 +21,7 @@ namespace Lms.Rpc.Interceptors
             }
             else
             {
-                var transactionContext =
-                    RpcContext.GetContext().GetAttachment("transactionContext") as TransactionContext;
+                var transactionContext = RpcContext.GetContext().GetTransactionContext();
                 await TransactionAspectInvoker.GetInstance().Invoke(transactionContext, invocation);
             }
         }

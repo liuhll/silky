@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Lms.Core.DynamicProxy;
 using Lms.Core.Extensions;
 using Lms.Core.Utils;
@@ -27,7 +28,12 @@ namespace Lms.Transaction.Tcc.Executor
         {
             Logger.LogDebug("tcc transaction starter");
             var transaction = CreateTransaction();
-            var participant = BuildParticipant(invocation, null, null, TransactionRole.Start, transaction.TransId);
+            var participant = BuildParticipant(invocation,
+                null,
+                null,
+                TransactionRole.Start,
+                ParticipantType.Local,
+                transaction.TransId);
             transaction.RegisterParticipant(participant);
             LmsTransactionHolder.Instance.Set(transaction);
             var context = new TransactionContext
@@ -46,33 +52,52 @@ namespace Lms.Transaction.Tcc.Executor
         public IParticipant PreTryParticipant(TransactionContext context, ILmsMethodInvocation invocation)
         {
             Logger.LogDebug($"participant tcc transaction start..：{context}");
-            IParticipant participant = BuildParticipant(invocation, context.ParticipantId,
-                context.ParticipantId, TransactionRole.Participant, context.TransId);
-            LmsTransactionHolder.Instance.GetCurrentTransaction().RegisterParticipant(participant);
-            context.TransactionRole = TransactionRole.Participant;
-            //ContextHolder.set(context);
-            return participant;
+            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+            Debug.Assert(serviceEntry != null);
+            //var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
+            if (serviceEntry.IsTransactionServiceEntry())
+            {
+                var participantType = serviceEntry.IsLocal ? ParticipantType.Local : ParticipantType.Inline;
+                IParticipant participant = BuildParticipant(invocation,
+                    null,
+                    context.ParticipantId,
+                    TransactionRole.Participant,
+                    participantType,
+                    context.TransId);
+                if (LmsTransactionHolder.Instance.CurrentTransaction != null)
+                {
+                    LmsTransactionHolder.Instance.CurrentTransaction.RegisterParticipant(participant);
+                }
+                else
+                {
+                    var transaction = CreateTransaction(context.TransId);
+                    participant.Role = TransactionRole.Consumer;
+                    transaction.RegisterParticipant(participant);
+                    context.TransactionRole = TransactionRole.Consumer;
+                    LmsTransactionHolder.Instance.Set(transaction);
+                }
+
+                //ContextHolder.set(context);
+                return participant;
+            }
+
+            return null;
         }
 
-        private IParticipant BuildParticipant(ILmsMethodInvocation invocation, string participantId,
-            string participantRefId, TransactionRole transactionRole, string transId)
+        private IParticipant BuildParticipant(ILmsMethodInvocation invocation,
+            string participantId,
+            string participantRefId,
+            TransactionRole transactionRole,
+            ParticipantType participantType,
+            string transId)
         {
-            // var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            // Debug.Assert(serviceEntry != null);
-            // var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-            // var tccTransactionProvider = serviceEntry.GetTccTransactionProvider(serviceKey);
-            // if (tccTransactionProvider == null)
-            // {
-            //     return null;
-            // }
-
             var participant = new LmsParticipant()
             {
                 Role = transactionRole,
                 TransId = transId,
                 TransType = TransactionType.Tcc,
-                // ConfirmMethod = tccTransactionProvider.ConfirmMethod,
-                // CancelMethod = tccTransactionProvider.CancelMethod
+                ParticipantType = participantType,
+                Invocation = invocation,
             };
             if (participantId.IsNullOrEmpty())
             {
@@ -97,6 +122,36 @@ namespace Lms.Transaction.Tcc.Executor
             transaction.Status = ActionStage.PreTry;
             transaction.TransType = TransactionType.Tcc;
             return transaction;
+        }
+
+        private ITransaction CreateTransaction(string transId)
+        {
+            var transaction = new LmsTransaction(transId);
+            transaction.Status = ActionStage.PreTry;
+            transaction.TransType = TransactionType.Tcc;
+            return transaction;
+        }
+
+        public void UpdateStartStatus(ITransaction transaction)
+        {
+            foreach (var participant in transaction.Participants)
+            {
+                participant.Status = transaction.Status;
+            }
+        }
+
+        public async Task GlobalConfirm(ITransaction transaction)
+        {
+            transaction.Status = ActionStage.Confirming;
+            foreach (var participant in transaction.Participants)
+            {
+                participant.Status = ActionStage.Confirming;
+                RpcContext.GetContext().GetTransactionContext().TransactionRole =
+                    participant.ParticipantType == ParticipantType.Local
+                        ? TransactionRole.Local
+                        : TransactionRole.Inline;
+                await participant.Invocation.ProceedAsync();
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.DynamicProxy;
+using Lms.Rpc.Runtime.Server;
 
 namespace Lms.Rpc.Transaction
 {
@@ -23,14 +24,17 @@ namespace Lms.Rpc.Transaction
             var transactionHandlerFactory = EngineContext.Current.Resolve<ITransactionHandlerFactory>();
             if (transactionHandlerFactory != null)
             {
-                var transactionHandler = transactionHandlerFactory.FactoryOf(transactionContext);
+                var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+                var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
+
+                var transactionHandler =
+                    transactionHandlerFactory.FactoryOf(transactionContext, serviceEntry, serviceKey);
                 await transactionHandler.Handler(transactionContext, invocation);
             }
             else
             {
                 await invocation.ProceedAsync();
             }
-
         }
     }
 }

@@ -16,9 +16,13 @@ namespace Lms.Transaction.Tcc.Handlers
             {
                 case ActionStage.Trying:
                     participant = executor.PreTryParticipant(context, invocation);
-                    
                     await invocation.ProceedAsync();
-                    participant.Status = ActionStage.Trying;
+                    if (participant != null)
+                    {
+                        participant.Status = ActionStage.Trying;
+                    }
+                    break;
+                case ActionStage.Confirming:
                     break;
             }
         }

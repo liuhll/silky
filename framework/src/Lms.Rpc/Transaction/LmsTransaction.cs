@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
+using Lms.Rpc.Transport;
 
 namespace Lms.Rpc.Transaction
 {
@@ -23,7 +24,21 @@ namespace Lms.Rpc.Transaction
 
         public string TransId { get; }
 
-        public ActionStage Status { get; set; }
+        private ActionStage _status;
+        
+        public ActionStage Status
+        {
+            get => _status;
+            set
+            {
+                var transContext = RpcContext.GetContext().GetTransactionContext();
+                if (transContext != null)
+                {
+                    transContext.Action = value;
+                }
+                _status = value;
+            }
+        }
 
         public TransactionType TransType { get; set; }
         public DateTime CreateTime { get; }
