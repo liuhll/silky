@@ -29,7 +29,15 @@ namespace Lms.Rpc.Transaction
 
                 var transactionHandler =
                     transactionHandlerFactory.FactoryOf(transactionContext, serviceEntry, serviceKey);
-                await transactionHandler.Handler(transactionContext, invocation);
+                if (transactionHandler != null)
+                {
+                    await transactionHandler.Handler(transactionContext, invocation);
+                }
+                else
+                {
+                    await invocation.ProceedAsync();
+                }
+
             }
             else
             {

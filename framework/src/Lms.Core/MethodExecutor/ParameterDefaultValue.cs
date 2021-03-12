@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Lms.Rpc.Runtime.Server.Parameter
+namespace Lms.Core.MethodExecutor
 {
     internal class ParameterDefaultValue
     {

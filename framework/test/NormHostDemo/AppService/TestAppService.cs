@@ -22,10 +22,21 @@ namespace NormHostDemo.AppService
         {
             return "Update";
         }
-        [TccTransaction(ConfirmMethod = "DeleteConfirm",CancelMethod = "DeleteCancel")]
+
+        [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteConcel")]
         public async Task<string> Delete(string name)
         {
-            return name + "v1";
+            return name + " v1";
+        }
+
+        public async Task<string> DeleteConfirm(string name)
+        {
+            return name + " DeleteConfirm v1";
+        }
+
+        public async Task<string> DeleteConcel(string name)
+        {
+            return name + "DeleteConcel v1";
         }
 
         public Task<string> Search(TestInput query)
@@ -45,7 +56,7 @@ namespace NormHostDemo.AppService
                 Name = name + "v1"
             };
         }
-        
+
 
         public async Task<string> UpdatePart(TestInput input)
         {

@@ -7,8 +7,13 @@ namespace Lms.Rpc.Transaction
         public static TransactionContext GetTransactionContext(this RpcContext rpcContext)
         {
             var transactionContext =
-                RpcContext.GetContext().GetAttachment("transactionContext") as TransactionContext;
+                rpcContext.GetAttachment("transactionContext") as TransactionContext;
             return transactionContext;
+        }
+
+        public static void SetTransactionContext(this RpcContext rpcContext, TransactionContext transactionContext)
+        {
+            rpcContext.SetAttachment("transactionContext", transactionContext);
         }
     }
 }

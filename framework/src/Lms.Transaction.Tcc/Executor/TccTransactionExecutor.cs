@@ -43,9 +43,7 @@ namespace Lms.Transaction.Tcc.Executor
                 TransactionRole = TransactionRole.Start,
                 TransType = TransactionType.Tcc
             };
-            //set action is try
-            RpcContext.GetContext().SetAttachment("transactionContext", context);
-
+            RpcContext.GetContext().SetTransactionContext(context);
             return transaction;
         }
 
@@ -83,6 +81,25 @@ namespace Lms.Transaction.Tcc.Executor
 
             return null;
         }
+
+        public void UpdateStartStatus(ITransaction transaction)
+        {
+            foreach (var participant in transaction.Participants)
+            {
+                participant.Status = transaction.Status;
+            }
+        }
+
+        public async Task GlobalConfirm(ITransaction transaction)
+        {
+            transaction.Status = ActionStage.Confirming;
+            foreach (var participant in transaction.Participants)
+            {
+                participant.Status = ActionStage.Confirming;
+                await participant.ParticipantConfirm();
+            }
+        }
+
 
         private IParticipant BuildParticipant(ILmsMethodInvocation invocation,
             string participantId,
@@ -130,28 +147,6 @@ namespace Lms.Transaction.Tcc.Executor
             transaction.Status = ActionStage.PreTry;
             transaction.TransType = TransactionType.Tcc;
             return transaction;
-        }
-
-        public void UpdateStartStatus(ITransaction transaction)
-        {
-            foreach (var participant in transaction.Participants)
-            {
-                participant.Status = transaction.Status;
-            }
-        }
-
-        public async Task GlobalConfirm(ITransaction transaction)
-        {
-            transaction.Status = ActionStage.Confirming;
-            foreach (var participant in transaction.Participants)
-            {
-                participant.Status = ActionStage.Confirming;
-                RpcContext.GetContext().GetTransactionContext().TransactionRole =
-                    participant.ParticipantType == ParticipantType.Local
-                        ? TransactionRole.Local
-                        : TransactionRole.Inline;
-                await participant.Invocation.ProceedAsync();
-            }
         }
     }
 }

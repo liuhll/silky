@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Lms.Rpc.Runtime.Server.Parameter
+namespace Lms.Core.MethodExecutor
 {
     public static class ParameterDefaultValues
     {

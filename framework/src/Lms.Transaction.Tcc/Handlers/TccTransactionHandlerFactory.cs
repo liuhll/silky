@@ -13,15 +13,14 @@ namespace Lms.Transaction.Tcc.Handlers
         static TccTransactionHandlerFactory()
         {
             _handlersMap.Add(TransactionRole.Start, new StarterTccTransactionHandler());
-            _handlersMap.Add(TransactionRole.Local, new LocalTccTransactionHandler());
-            _handlersMap.Add(TransactionRole.Inline, new InlineTccTransactionHandler());
             _handlersMap.Add(TransactionRole.Participant, new ParticipantTccTransactionHandler());
             _handlersMap.Add(TransactionRole.Consumer, new ConsumerTccTransactionHandler());
         }
 
-        protected override IDictionary<TransactionRole, ITransactionHandler> Handlers  => _handlersMap;
-  
-        public override ITransactionHandler FactoryOf(TransactionContext context, ServiceEntry serviceEntry, string serviceKey)
+        protected override IDictionary<TransactionRole, ITransactionHandler> Handlers => _handlersMap;
+
+        public override ITransactionHandler FactoryOf(TransactionContext context, ServiceEntry serviceEntry,
+            string serviceKey)
         {
             if (context == null)
             {
@@ -37,12 +36,6 @@ namespace Lms.Transaction.Tcc.Handlers
             ITransactionHandler handler = null;
             switch (context.TransactionRole)
             {
-                case TransactionRole.Local:
-                    handler = Handlers[TransactionRole.Local];
-                    break;
-                case TransactionRole.Inline:
-                    handler = Handlers[TransactionRole.Inline];
-                    break;
                 case TransactionRole.Participant:
                 case TransactionRole.Start:
                     handler = Handlers[TransactionRole.Participant];

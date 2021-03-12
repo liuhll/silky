@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using Lms.Core.Extensions;
 
-namespace Lms.Rpc.Runtime.Server.Parameter
+namespace Lms.Core.MethodExecutor
 {
     public static class ParameterInfoExtensions
     {

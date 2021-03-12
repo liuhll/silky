@@ -21,8 +21,10 @@ namespace Lms.Transaction.Tcc.Handlers
                     {
                         participant.Status = ActionStage.Trying;
                     }
+
                     break;
                 case ActionStage.Confirming:
+                    await invocation.ExcuteTccMethod(TccMethodType.Confirm);
                     break;
             }
         }

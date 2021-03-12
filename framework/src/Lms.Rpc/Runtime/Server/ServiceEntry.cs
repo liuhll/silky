@@ -65,10 +65,7 @@ namespace Lms.Rpc.Runtime.Server
                 ReConfiguration(governanceOptions);
             }
 
-            var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(methodInfo);
-            _methodExecutor =
-                ObjectMethodExecutor.Create(methodInfo, serviceType.GetTypeInfo(), parameterDefaultValues);
-
+            _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();

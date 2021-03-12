@@ -8,8 +8,8 @@
 
         Consumer,
 
-        Local,
-
-        Inline
+        // Local,
+        //
+        // Inline
     }
 }
