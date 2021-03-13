@@ -10,8 +10,10 @@
       <ProjectReference Include="..\..\src\Lms.Core\Lms.Core.csproj" />
       <ProjectReference Include="..\..\src\Lms.DotNetty.Protocol.Tcp\Lms.DotNetty.Protocol.Tcp.csproj" />
       <ProjectReference Include="..\..\src\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj" />
+      <ProjectReference Include="..\..\src\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj" />
       <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
       <ProjectReference Include="..\..\src\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
+      <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
 

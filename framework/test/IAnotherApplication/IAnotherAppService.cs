@@ -2,10 +2,10 @@ using System.Threading.Tasks;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Lms.Rpc.Transaction;
 
-namespace GatewayDemo.AppService
+namespace IAnotherApplication
 {
-    [ServiceRoute(template: "test/{appservice=trans}")]
-    public interface ITransTestAppService
+    [ServiceRoute]
+    public interface IAnotherAppService
     {
         [Transaction]
         Task<string> Delete(string name);

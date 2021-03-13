@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Lms.Codec.MessagePack\Lms.Codec.MessagePack.csproj" />
+        <ProjectReference Include="..\..\src\Lms.Codec.ProtoBuf\Lms.Codec.ProtoBuf.csproj" />
+        <ProjectReference Include="..\..\src\Lms.Core\Lms.Core.csproj" />
+        <ProjectReference Include="..\..\src\Lms.DotNetty.Protocol.Tcp\Lms.DotNetty.Protocol.Tcp.csproj" />
+        <ProjectReference Include="..\..\src\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj" />
+        <ProjectReference Include="..\..\src\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj" />
+        <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
+        <ProjectReference Include="..\..\src\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
+        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    </ItemGroup>
+
+</Project>

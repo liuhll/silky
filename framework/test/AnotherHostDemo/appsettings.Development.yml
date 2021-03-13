@@ -1,0 +1,9 @@
+rpc:
+    host: 0.0.0.0
+    rpcPort: 2202
+    useLibuv: false
+    token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+registrycenter:
+    connectionStrings: 127.0.0.1:2181
+    registryCenterType: Zookeeper
+  

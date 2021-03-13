@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using Lms.Rpc.Runtime.Server;
@@ -9,6 +10,14 @@ namespace NormHostDemo.AppService
     [ServiceKey("v1", 3)]
     public class TestAppService : ITestAppService
     {
+
+        private readonly IAnotherAppService _anotherAppService;
+
+        public TestAppService(IAnotherAppService anotherAppService)
+        {
+            _anotherAppService = anotherAppService;
+        }
+
         public async Task<TestOut> Create(TestInput input)
         {
             return new()
@@ -26,6 +35,7 @@ namespace NormHostDemo.AppService
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteConcel")]
         public async Task<string> Delete(string name)
         {
+            await _anotherAppService.Delete(name);
             return name + " v1";
         }
 

@@ -13,21 +13,21 @@ namespace GatewayDemo.AppService
             _testAppService = testAppService;
         }
 
-        [TccTransaction(ConfirmMethod = "CreateConfirm", CancelMethod = "CreateCancel")]
-        public async Task<string> Create(string name)
+        [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
+        public async Task<string> Delete(string name)
         {
             await _testAppService.Delete(name);
             return "Tyring";
         }
         
-        public async Task<string> CreateConfirm(string name)
+        public async Task<string> DeleteConfirm(string name)
         {
-            return "CreateConfirm";
+            return "DeleteConfirm";
         }
         
-        public async Task<string> CreateCancel(string name)
+        public async Task<string> DeleteCancel(string name)
         {
-            return "CancelConfirm";
+            return "DeleteConfirm";
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Lms.Rpc.Routing
         public event OnRemoveServiceRoutes OnRemoveServiceRoutes;
 
         public ServiceRouteCache(IHealthCheck healthCheck,
-            IServiceEntryLocator serviceEntryLocator, 
+            IServiceEntryLocator serviceEntryLocator,
             IServiceEntryManager serviceEntryManager)
         {
             _healthCheck = healthCheck;
@@ -59,23 +59,27 @@ namespace Lms.Rpc.Routing
         public void UpdateCache([NotNull] ServiceRouteDescriptor serviceRouteDescriptor)
         {
             Check.NotNull(serviceRouteDescriptor, nameof(serviceRouteDescriptor));
+
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceRouteDescriptor.ServiceDescriptor.Id);
-            if (serviceEntry.FailoverCountIsDefaultValue)
+            if (serviceEntry != null)
             {
-                serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.AddressDescriptors.Count();
-                _serviceEntryManager.Update(serviceEntry);
-            }
+                if (serviceEntry.FailoverCountIsDefaultValue)
+                {
+                    serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.AddressDescriptors.Count();
+                    _serviceEntryManager.Update(serviceEntry);
+                }
 
-            var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
-            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
-                serviceRoute, (id, _) => serviceRoute);
+                var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
+                _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
+                    serviceRoute, (id, _) => serviceRoute);
 
-            Logger.LogDebug(
-                $"更新服务路由缓存,路由地址为:{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}");
+                Logger.LogDebug(
+                    $"更新服务路由缓存,路由地址为:{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}");
 
-            foreach (var address in serviceRoute.Addresses)
-            {
-                _healthCheck.Monitor(address);
+                foreach (var address in serviceRoute.Addresses)
+                {
+                    _healthCheck.Monitor(address);
+                }
             }
         }
 
