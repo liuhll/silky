@@ -52,7 +52,6 @@ namespace Lms.Transaction.Tcc.Executor
             Logger.LogDebug($"participant tcc transaction start..：{context}");
             var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
             Debug.Assert(serviceEntry != null);
-            //var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
             if (serviceEntry.IsTransactionServiceEntry())
             {
                 var participantType = serviceEntry.IsLocal ? ParticipantType.Local : ParticipantType.Inline;
@@ -75,7 +74,6 @@ namespace Lms.Transaction.Tcc.Executor
                     LmsTransactionHolder.Instance.Set(transaction);
                 }
 
-                //ContextHolder.set(context);
                 return participant;
             }
 
@@ -97,6 +95,16 @@ namespace Lms.Transaction.Tcc.Executor
             {
                 participant.Status = ActionStage.Confirming;
                 await participant.ParticipantConfirm();
+            }
+        }
+
+        public async Task GlobalCancel(ITransaction transaction)
+        {
+            transaction.Status = ActionStage.Canceling;
+            foreach (var participant in transaction.Participants)
+            {
+                participant.Status = ActionStage.Canceling;
+                await participant.ParticipantCancel();
             }
         }
 
@@ -149,10 +157,11 @@ namespace Lms.Transaction.Tcc.Executor
             return transaction;
         }
 
-        public async Task<object> ConsumerParticipantExecute(ServiceEntry serviceEntry, string serviceKey, object[] parameters, TccMethodType tccMethodType)
+        public async Task<object> ConsumerParticipantExecute(ServiceEntry serviceEntry, string serviceKey,
+            object[] parameters, TccMethodType tccMethodType)
         {
             var excutorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
-            
+
             if (excutorInfo.Item2)
             {
                 return await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, parameters);
@@ -162,6 +171,5 @@ namespace Lms.Transaction.Tcc.Executor
                 return excutorInfo.Item1.Execute(excutorInfo.Item3, parameters);
             }
         }
-        
     }
 }

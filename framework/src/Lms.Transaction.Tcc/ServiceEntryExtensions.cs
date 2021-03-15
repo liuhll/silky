@@ -20,6 +20,7 @@ namespace Lms.Transaction.Tcc
             {
                 return null;
             }
+
             var instance =
                 EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
             var methods = instance.GetType().GetTypeInfo().GetMethods();
@@ -46,13 +47,22 @@ namespace Lms.Transaction.Tcc
 
             var tccTransactionProvider =
                 implementationMethod.GetCustomAttributes().OfType<ITccTransactionProvider>().First();
-            var confirmMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.ConfirmMethod);
-            if (confirmMethod == null)
+            MethodInfo execMethod;
+            if (tccMethodType == TccMethodType.Confirm)
             {
-                throw new LmsException("未定义confirmMethod方法");
+                execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.ConfirmMethod);
+            }
+            else
+            {
+                execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.CancelMethod);
             }
 
-            return (confirmMethod.CreateExecutor(instance.GetType()), implementationMethod.IsAsyncMethodInfo(),
+            if (execMethod == null)
+            {
+                throw new LmsException($"未定义{tccMethodType}方法");
+            }
+
+            return (execMethod.CreateExecutor(instance.GetType()), implementationMethod.IsAsyncMethodInfo(),
                 instance);
         }
 

@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Lms.Core.Exceptions;
 using Lms.Transaction.Tcc;
 
 namespace AnotherHostDemo.AppService
@@ -19,6 +20,7 @@ namespace AnotherHostDemo.AppService
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
         public async Task<string> Delete(string name)
         {
+            throw new BusinessException("测试异常");
             return "Delete " + name;
         }
 
@@ -32,7 +34,7 @@ namespace AnotherHostDemo.AppService
         {
             return "DeleteConfirm " + name;
         }
-        
+
         public async Task<string> DeleteCancel(string name)
         {
             return "DeleteCancel " + name;

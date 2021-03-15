@@ -18,5 +18,19 @@ namespace Lms.Transaction.Tcc
                 await invocation.ProceedAsync();
             }
         }
+
+        public static async Task ParticipantCancel(this IParticipant participant)
+        {
+            var invocation = participant.Invocation;
+            if (participant.ParticipantType == ParticipantType.Local
+                && (participant.Role == TransactionRole.Start || participant.Role == TransactionRole.Consumer))
+            {
+                await invocation.ExcuteTccMethod(TccMethodType.Cancel);
+            }
+            else
+            {
+                await invocation.ProceedAsync();
+            }
+        }
     }
 }

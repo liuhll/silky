@@ -19,15 +19,15 @@ namespace GatewayDemo.AppService
             await _testAppService.Delete(name);
             return "Tyring";
         }
-        
+
         public async Task<string> DeleteConfirm(string name)
         {
             return "DeleteConfirm";
         }
-        
+
         public async Task<string> DeleteCancel(string name)
         {
-            return "DeleteConfirm";
+            return "DeleteCancel";
         }
     }
 }
