@@ -148,5 +148,20 @@ namespace Lms.Transaction.Tcc.Executor
             transaction.TransType = TransactionType.Tcc;
             return transaction;
         }
+
+        public async Task<object> ConsumerParticipantExecute(ServiceEntry serviceEntry, string serviceKey, object[] parameters, TccMethodType tccMethodType)
+        {
+            var excutorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
+            
+            if (excutorInfo.Item2)
+            {
+                return await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, parameters);
+            }
+            else
+            {
+                return excutorInfo.Item1.Execute(excutorInfo.Item3, parameters);
+            }
+        }
+        
     }
 }
