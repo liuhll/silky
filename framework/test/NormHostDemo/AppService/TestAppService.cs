@@ -32,7 +32,7 @@ namespace NormHostDemo.AppService
             return "Update";
         }
 
-        [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteConcel")]
+        [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
         public async Task<string> Delete(string name)
         {
             await _anotherAppService.Delete(name);
@@ -44,7 +44,7 @@ namespace NormHostDemo.AppService
             return name + " DeleteConfirm v1";
         }
 
-        public async Task<string> DeleteConcel(string name)
+        public async Task<string> DeleteCancel(string name)
         {
             return name + "DeleteConcel v1";
         }
