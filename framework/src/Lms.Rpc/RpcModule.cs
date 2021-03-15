@@ -102,19 +102,22 @@ namespace Lms.Rpc
                 .As<ILocalExecutor>()
                 .InstancePerLifetimeScope()
                 .AddInterceptors(
-                    typeof(TransactionInterceptor));
+                    typeof(TransactionInterceptor))
+                ;
 
             builder.RegisterType<DefaultRemoteServiceExecutor>()
                 .As<IRemoteServiceExecutor>()
                 .InstancePerLifetimeScope()
                 .AddInterceptors(
-                    typeof(TransactionInterceptor));
+                    typeof(TransactionInterceptor))
+                ;
 
             builder.RegisterType<DefaultServiceExecutor>()
                 .As<IServiceExecutor>()
                 .InstancePerLifetimeScope()
                 .AddInterceptors(
-                    typeof(CachingInterceptor));
+                    typeof(CachingInterceptor))
+                ;
         }
     }
 }

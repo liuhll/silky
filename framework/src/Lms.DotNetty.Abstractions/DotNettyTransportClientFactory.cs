@@ -18,6 +18,7 @@ using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Transport;
 using Lms.Rpc.Transport.Codec;
+using Lms.Rpc.Utils;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -35,7 +36,7 @@ namespace Lms.DotNetty
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IHealthCheck _healthCheck;
-        private IEventLoopGroup m_group;
+       // private IEventLoopGroup m_group;
 
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
@@ -75,16 +76,15 @@ namespace Lms.DotNetty
 
         private Bootstrap CreateBootstrap()
         {
+            IEventLoopGroup group;
             var bootstrap = new Bootstrap();
             if (_rpcOptions.UseLibuv)
             {
-                m_group = new EventLoopGroup();
-                bootstrap.Channel<TcpServerChannel>();
+                group = new EventLoopGroup();
             }
             else
             {
-                m_group = new MultithreadEventLoopGroup();
-                bootstrap.Channel<TcpServerSocketChannel>();
+                group = new MultithreadEventLoopGroup();
             }
 
             X509Certificate2 tlsCertificate = null;
@@ -99,11 +99,10 @@ namespace Lms.DotNetty
 
             bootstrap
                 .Channel<TcpSocketChannel>()
-                 .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
+                .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
                 .Option(ChannelOption.TcpNodelay, true)
                 .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
-                
-                .Group(m_group)
+                .Group(group)
                 .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
                 {
                     var pipeline = c.Pipeline;
@@ -156,8 +155,12 @@ namespace Lms.DotNetty
 
         public async void Dispose()
         {
-            if (m_group != null)
-                await m_group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
+            foreach (var client in m_clients.Values)
+            {
+                (client as IDisposable)?.Dispose();
+            }
+            // if (m_group != null)
+            //     await m_group.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1));
         }
     }
 }

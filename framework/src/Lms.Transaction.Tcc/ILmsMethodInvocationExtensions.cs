@@ -18,8 +18,7 @@ namespace Lms.Transaction.Tcc
                 var excutorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
                 if (excutorInfo.Item2)
                 {
-                    invocation.ReturnValue = excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, parameters)
-                        .GetAwaiter().GetResult();
+                    invocation.ReturnValue = await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, parameters);
                 }
                 else
                 {

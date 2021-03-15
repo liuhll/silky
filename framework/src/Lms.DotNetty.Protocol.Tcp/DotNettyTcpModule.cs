@@ -41,7 +41,7 @@ namespace Lms.DotNetty.Protocol.Tcp
                 throw new LmsException($"您没有指定依赖的{registryCenterOptions.RegistryCenterType}服务注册中心模块");
             }
 
-            var messageListener = applicationContext.ServiceProvider.GetService<DotNettyTcpServerMessageListener>();
+            var messageListener = applicationContext.ServiceProvider.GetService<IServerMessageListener>();
             await messageListener.Listen();
             var serviceRouteProvider = applicationContext.ServiceProvider.GetService<IServiceRouteProvider>();
             await serviceRouteProvider.RegisterRpcRoutes(

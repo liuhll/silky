@@ -9,5 +9,8 @@ namespace IAnotherApplication
     {
         [Transaction]
         Task<string> Delete(string name);
+        
+    
+        Task<string> Create(string name);
     }
 }

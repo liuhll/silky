@@ -13,6 +13,7 @@
         <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
         <ProjectReference Include="..\..\src\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
+        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
 
     <ItemGroup>

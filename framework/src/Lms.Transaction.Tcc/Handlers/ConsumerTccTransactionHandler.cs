@@ -8,7 +8,7 @@ namespace Lms.Transaction.Tcc.Handlers
     {
         public Task Handler(TransactionContext context, ILmsMethodInvocation invocation)
         {
-            throw new System.NotImplementedException();
+            return invocation.ProceedAsync();
         }
     }
 }

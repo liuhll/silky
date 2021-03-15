@@ -38,12 +38,12 @@ namespace Lms.Transaction.Tcc.Handlers
             {
                 case TransactionRole.Participant:
                 case TransactionRole.Start:
-                case TransactionRole.Consumer:
+                //case TransactionRole.Consumer:
                     handler = Handlers[TransactionRole.Participant];
                     break;
-                // default:
-                //     handler = Handlers[TransactionRole.Consumer];
-                //     break;
+                default:
+                    handler = Handlers[TransactionRole.Consumer];
+                    break;
             }
 
             return handler;
