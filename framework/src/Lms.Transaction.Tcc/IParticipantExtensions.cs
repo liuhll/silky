@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Lms.Rpc.Transaction;
+using Lms.Rpc.Transport;
 
 namespace Lms.Transaction.Tcc
 {
@@ -15,6 +16,9 @@ namespace Lms.Transaction.Tcc
             }
             else
             {
+                var context = RpcContext.GetContext().GetTransactionContext();
+                context.TransactionRole = TransactionRole.Participant;
+                context.Action = ActionStage.Confirming;
                 await invocation.ProceedAsync();
             }
         }
@@ -29,6 +33,9 @@ namespace Lms.Transaction.Tcc
             }
             else
             {
+                var context = RpcContext.GetContext().GetTransactionContext();
+                context.TransactionRole = TransactionRole.Participant;
+                context.Action = ActionStage.Canceling;
                 await invocation.ProceedAsync();
             }
         }

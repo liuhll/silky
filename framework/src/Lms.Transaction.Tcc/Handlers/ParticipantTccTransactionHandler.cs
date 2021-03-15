@@ -12,16 +12,27 @@ namespace Lms.Transaction.Tcc.Handlers
 
         public async Task Handler(TransactionContext context, ILmsMethodInvocation invocation)
         {
+            IParticipant participant = null;
             switch (context.Action)
             {
                 case ActionStage.Trying:
-                    var participant = executor.PreTryParticipant(context, invocation);
-                    await invocation.ProceedAsync();
-                    if (participant != null)
+                    try
                     {
-                        participant.Status = ActionStage.Trying;
+                        participant = executor.PreTryParticipant(context, invocation);
+                        await invocation.ProceedAsync();
+                        if (participant != null)
+                        {
+                            participant.Status = ActionStage.Trying;
+                        }
                     }
-
+                    catch (Exception e)
+                    {
+                        if (participant != null)
+                        {
+                            LmsTransactionHolder.Instance.CurrentTransaction.RemoveParticipant(participant);
+                        }
+                        throw;
+                    }
                     break;
                 case ActionStage.Confirming:
                     await invocation.ExcuteTccMethod(TccMethodType.Confirm);

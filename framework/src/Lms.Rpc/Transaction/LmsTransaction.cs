@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Threading;
 using Lms.Rpc.Transport;
 
 namespace Lms.Rpc.Transaction
@@ -25,7 +24,7 @@ namespace Lms.Rpc.Transaction
         public string TransId { get; }
 
         private ActionStage _status;
-        
+
         public ActionStage Status
         {
             get => _status;
@@ -36,6 +35,7 @@ namespace Lms.Rpc.Transaction
                 {
                     transContext.Action = value;
                 }
+
                 _status = value;
             }
         }
@@ -53,6 +53,14 @@ namespace Lms.Rpc.Transaction
             if (participant != null)
             {
                 m_participants.Add(participant);
+            }
+        }
+
+        public void RemoveParticipant(IParticipant participant)
+        {
+            if (participant != null)
+            {
+                m_participants.Remove(participant);
             }
         }
 

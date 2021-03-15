@@ -21,6 +21,8 @@ namespace Lms.Rpc.Transaction
 
         void RegisterParticipant(IParticipant participant);
 
+        void RemoveParticipant(IParticipant participant);
+
         void RegisterParticipantList(IEnumerable<IParticipant> participants);
     }
 }

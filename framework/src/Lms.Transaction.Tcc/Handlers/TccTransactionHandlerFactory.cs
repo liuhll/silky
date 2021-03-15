@@ -29,7 +29,6 @@ namespace Lms.Transaction.Tcc.Handlers
                 {
                     return Handlers[TransactionRole.Start];
                 }
-
                 return null;
             }
 
@@ -38,7 +37,6 @@ namespace Lms.Transaction.Tcc.Handlers
             {
                 case TransactionRole.Participant:
                 case TransactionRole.Start:
-                //case TransactionRole.Consumer:
                     handler = Handlers[TransactionRole.Participant];
                     break;
                 default:

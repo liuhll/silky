@@ -103,12 +103,14 @@ namespace Lms.Transaction.Tcc.Executor
             transaction.Status = ActionStage.Canceling;
             foreach (var participant in transaction.Participants)
             {
-                participant.Status = ActionStage.Canceling;
-                await participant.ParticipantCancel();
+                if (participant.Status == ActionStage.Trying)
+                {
+                    participant.Status = ActionStage.Canceling;
+                    await participant.ParticipantCancel();
+                }
             }
         }
-
-
+        
         private IParticipant BuildParticipant(ILmsMethodInvocation invocation,
             string participantId,
             string participantRefId,
@@ -156,10 +158,15 @@ namespace Lms.Transaction.Tcc.Executor
             transaction.TransType = TransactionType.Tcc;
             return transaction;
         }
+        
 
-        public async Task<object> ConsumerParticipantExecute(ServiceEntry serviceEntry, string serviceKey,
-            object[] parameters, TccMethodType tccMethodType)
+        public async Task<object> ConsumerParticipantExecute(TransactionContext context, ILmsMethodInvocation invocation, TccMethodType tccMethodType)
         {
+            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+            Debug.Assert(serviceEntry != null);
+            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
+            var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
+            PreTryParticipant(context, invocation);
             var excutorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
 
             if (excutorInfo.Item2)

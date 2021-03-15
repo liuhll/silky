@@ -16,28 +16,60 @@ namespace Lms.Transaction.Tcc.Handlers
         {
             var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
             Debug.Assert(serviceEntry != null);
-            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-            var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
+
             if (serviceEntry.IsLocal)
             {
                 try
                 {
-                    await executor.ConsumerParticipantExecute(serviceEntry, serviceKey, parameters, TccMethodType.Try);
+                    context.Action = ActionStage.PreTry;
+                    await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Try);
+
+                    context.Action = ActionStage.Trying;
+                    var currentTrans = LmsTransactionHolder.Instance.CurrentTransaction;
+                    if (currentTrans != null)
+                    {
+                        foreach (var participant in currentTrans.Participants)
+                        {
+                            if (participant.Role == TransactionRole.Participant)
+                            {
+                                await participant.ParticipantConfirm();
+                            }
+                        }
+                    }
+
+                    invocation.ReturnValue =
+                        await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Confirm);
+
                     context.Action = ActionStage.Confirming;
-                    invocation.ReturnValue = await executor.ConsumerParticipantExecute(serviceEntry, serviceKey,
-                        parameters, TccMethodType.Confirm);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    await executor.ConsumerParticipantExecute(serviceEntry, serviceKey, parameters,
-                        TccMethodType.Cancel);
-                    throw ex;
+                    var currentTrans = LmsTransactionHolder.Instance.CurrentTransaction;
+                    if (currentTrans != null)
+                    {
+                        foreach (var participant in currentTrans.Participants)
+                        {
+                            if (participant.Role == TransactionRole.Participant)
+                            {
+                                await participant.ParticipantConfirm();
+                            }
+                        }
+                    }
+
+                    invocation.ReturnValue =
+                        await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Cancel);
+
+
+                    throw;
                 }
             }
             else
             {
-                context.TransactionRole = TransactionRole.Consumer;
-                context.Action = ActionStage.Trying;
+                if (context.Action != ActionStage.PreTry)
+                {
+                    context.TransactionRole = TransactionRole.Participant;
+                }
+
                 await invocation.ProceedAsync();
             }
         }
