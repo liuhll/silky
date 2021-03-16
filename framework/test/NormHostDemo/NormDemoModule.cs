@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Lms.Caching.StackExchangeRedis;
 using Lms.Codec;
 using Lms.Core.Modularity;
 using Lms.DotNetty;

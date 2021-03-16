@@ -5,5 +5,9 @@ rpc:
 registrycenter:
     connectionStrings: 127.0.0.1:2181
     registryCenterType: Zookeeper
+distributedCache:
+    redis:
+        isEnabled: true
+        configuration: 127.0.0.1:6379,defaultDatabase=0 
 lock:
     lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1 

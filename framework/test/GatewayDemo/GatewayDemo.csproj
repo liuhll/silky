@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Lms.Caching.StackExchangeRedis\Lms.Caching.StackExchangeRedis.csproj" />
         <ProjectReference Include="..\..\src\Lms.Codec.MessagePack\Lms.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Lms.Codec.ProtoBuf\Lms.Codec.ProtoBuf.csproj" />
         <ProjectReference Include="..\..\src\Lms.DotNetty.Abstractions\Lms.DotNetty.Abstractions.csproj" />
