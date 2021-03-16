@@ -1,8 +1,10 @@
 rpc:
-    host: 0.0.0.0
-    rpcPort: 2201
-    token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+  host: 0.0.0.0
+  rpcPort: 2201
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 registrycenter:
-    connectionStrings: 127.0.0.1:2181
-    registryCenterType: Zookeeper
+  connectionStrings: 127.0.0.1:2181
+  registryCenterType: Zookeeper
+lock:
+  lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
   

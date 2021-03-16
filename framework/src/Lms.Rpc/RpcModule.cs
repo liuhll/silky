@@ -7,6 +7,7 @@ using Lms.Castle;
 using Lms.Core;
 using Lms.Core.Exceptions;
 using Lms.Core.Modularity;
+using Lms.Lock;
 using Lms.Rpc.Address;
 using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Interceptors;
@@ -15,13 +16,13 @@ using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Client;
 using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport;
 using Lms.Rpc.Transport.Codec;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lms.Rpc
 {
+    [DependsOn(typeof(LockModule))]
     public class RpcModule : LmsModule
     {
         protected override void RegisterServices(ContainerBuilder builder)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lms.Core.DependencyInjection;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
+using Lms.Lock.Provider;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Descriptor;
@@ -34,10 +35,15 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
             IZookeeperClientProvider zookeeperClientProvider,
+            ILockerProvider lockerProvider,
             IOptions<RegistryCenterOptions> registryCenterOptions,
             IOptions<RpcOptions> rpcOptions,
             ISerializer serializer)
-            : base(serviceRouteCache, serviceEntryManager, registryCenterOptions, rpcOptions)
+            : base(serviceRouteCache,
+                serviceEntryManager,
+                lockerProvider,
+                registryCenterOptions,
+                rpcOptions)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
             _serializer = serializer;
@@ -195,7 +201,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
                 serviceRouteDescriptor.AddressDescriptors =
                     serviceRouteDescriptor.AddressDescriptors.Where(p =>
                         p != NetUtil.GetHostAddressModel(p.ServiceProtocol));
-                await RegisterRouteAsync(serviceRouteDescriptor);
+                await RegisterRouteWithLockAsync(serviceRouteDescriptor);
             }
         }
 

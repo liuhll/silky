@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core;
+using Lms.Lock;
+using Lms.Lock.Provider;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server;
@@ -16,14 +18,17 @@ namespace Lms.Rpc.Routing
         protected readonly IServiceEntryManager _serviceEntryManager;
         protected readonly RegistryCenterOptions _registryCenterOptions;
         protected readonly RpcOptions _rpcOptions;
+        protected readonly ILockerProvider _lockerProvider;
 
         protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
+            ILockerProvider lockerProvider, 
             IOptions<RegistryCenterOptions> registryCenterOptions,
             IOptions<RpcOptions> rpcOptions)
         {
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
+            _lockerProvider = lockerProvider;
             _registryCenterOptions = registryCenterOptions.Value;
             _rpcOptions = rpcOptions.Value;
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
@@ -34,7 +39,7 @@ namespace Lms.Rpc.Routing
                 {
                     foreach (var descriptor in descriptors)
                     {
-                        await RegisterRouteAsync(descriptor);
+                        await RegisterRouteWithLockAsync(descriptor);
                     }
                 }
             };
@@ -72,11 +77,20 @@ namespace Lms.Rpc.Routing
                         .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
                 }
 
-                await RegisterRouteAsync(serviceRouteDescriptor);
+                await RegisterRouteWithLockAsync(serviceRouteDescriptor);
             }
         }
 
         protected abstract Task CreateSubDirectory(ServiceProtocol serviceProtocol);
+
+        protected async Task RegisterRouteWithLockAsync(ServiceRouteDescriptor serviceRouteDescriptor)
+        {
+            using var locker = await _lockerProvider.CreateLockAsync(serviceRouteDescriptor.ServiceDescriptor.Id);
+            await locker.Lock(async () =>
+            {
+                await RegisterRouteAsync(serviceRouteDescriptor);
+            });
+        }
 
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
@@ -99,7 +113,7 @@ namespace Lms.Rpc.Routing
                     {
                         removeRoute.AddressDescriptors =
                             removeRoute.AddressDescriptors.Where(p => !p.Equals(hostAddr)).ToList();
-                        await RegisterRouteAsync(removeRoute);
+                        await RegisterRouteWithLockAsync(removeRoute);
                     }
                 }
             }
