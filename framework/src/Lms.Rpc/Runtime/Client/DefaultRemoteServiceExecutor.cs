@@ -20,7 +20,6 @@ namespace Lms.Rpc.Runtime.Client
         
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
-            // todo 1. 失败重试 2. 缓存拦截 3.确定返回值 
             var remoteInvokeMessage = new RemoteInvokeMessage()
             {
                 ServiceId = serviceEntry.ServiceDescriptor.Id,

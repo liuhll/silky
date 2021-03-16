@@ -59,10 +59,6 @@ namespace Lms.DotNetty
             var selectedAddress =
                 addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceId, serviceRoute.Addresses,
                     hashKey));
-            // todo 远程调用监视
-            // todo 分布式事务
-            // todo 远程调用
-            // todo 获取调用结果
             bool isInvakeSuccess = true;
             var sp = Stopwatch.StartNew();
             try
