@@ -5,6 +5,8 @@ using Lms.Core.DependencyInjection;
 using Lms.Core.DynamicProxy;
 using Lms.Core.Extensions;
 using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Transaction;
+using Lms.Rpc.Transport;
 
 namespace Lms.Rpc.Interceptors
 {
@@ -36,33 +38,67 @@ namespace Lms.Rpc.Interceptors
                 var removeCachingInterceptProviders = serviceEntry.RemoveCachingInterceptProviders;
                 if (removeCachingInterceptProviders.Any())
                 {
-                    foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
+                    if (serviceEntry.IsTransactionServiceEntry())
                     {
-                        var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            removeCachingInterceptProvider.KeyTemplete);
-                        _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
-                        await _distributedCache.RemoveAsync(removeCacheKey, true);
+                        var transContext = RpcContext.GetContext().GetTransactionContext();
+                        if (transContext.Action == ActionStage.Confirming)
+                        {
+                            foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
+                            {
+                                var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
+                                    removeCachingInterceptProvider.KeyTemplete);
+                                _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
+                                await _distributedCache.RemoveAsync(removeCacheKey, true);
+                            }
+                        }
                     }
+                    else
+                    {
+                        foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
+                        {
+                            var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
+                                removeCachingInterceptProvider.KeyTemplete);
+                            _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
+                            await _distributedCache.RemoveAsync(removeCacheKey, true);
+                        }
+                    }
+
                 }
 
                 if (serviceEntry.GetCachingInterceptProvider != null)
                 {
-                    var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                        serviceEntry.GetCachingInterceptProvider.KeyTemplete);
-                    invocation.ReturnValue = await GetResultFirstFromCache(
-                        serviceEntry.GetCachingInterceptProvider.CacheName,
-                        getCacheKey,
-                        serviceEntry);
+                    if (serviceEntry.IsTransactionServiceEntry())
+                    {
+                        await invocation.ProceedAsync();
+                    }
+                    else
+                    {
+                        var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
+                            serviceEntry.GetCachingInterceptProvider.KeyTemplete);
+                        invocation.ReturnValue = await GetResultFirstFromCache(
+                            serviceEntry.GetCachingInterceptProvider.CacheName,
+                            getCacheKey,
+                            serviceEntry);
+                    }
+
+                  
                 }
                 else if (serviceEntry.UpdateCachingInterceptProvider != null)
                 {
-                    var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                        serviceEntry.UpdateCachingInterceptProvider.KeyTemplete);
-                    await _distributedCache.RemoveAsync(updateCacheKey);
-                    invocation.ReturnValue = await GetResultFirstFromCache(
-                        serviceEntry.GetCachingInterceptProvider.CacheName,
-                        updateCacheKey,
-                        serviceEntry);
+                    if (serviceEntry.IsTransactionServiceEntry())
+                    {
+                        await invocation.ProceedAsync();
+                    }
+                    else
+                    {
+                        var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
+                            serviceEntry.UpdateCachingInterceptProvider.KeyTemplete);
+                        await _distributedCache.RemoveAsync(updateCacheKey);
+                        invocation.ReturnValue = await GetResultFirstFromCache(
+                            serviceEntry.GetCachingInterceptProvider.CacheName,
+                            updateCacheKey,
+                            serviceEntry);
+                    }
                 }
                 else
                 {
