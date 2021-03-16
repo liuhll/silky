@@ -25,7 +25,7 @@
     <!-- Mongo2Go https://www.nuget.org/packages/Mongo2Go -->
     <Mongo2GoPackageVersion>2.2.14</Mongo2GoPackageVersion>
 	
-	<LangVersion>latest</LangVersion>
+	  <LangVersion>latest</LangVersion>
     
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     

@@ -1,5 +1,7 @@
-<Project>
-    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    </PropertyGroup>
     <PropertyGroup>
         <Description>该包包含用于构建LM通用微服务主机的组件包</Description>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
@@ -21,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\extra\Lms.Zookeeper\Lms.Zookeeper.csproj" />
+      <ProjectReference Include="..\Lms.Caching.StackExchangeRedis\Lms.Caching.StackExchangeRedis.csproj" />
       <ProjectReference Include="..\Lms.Caching\Lms.Caching.csproj" />
       <ProjectReference Include="..\Lms.Castle\Lms.Castle.csproj" />
       <ProjectReference Include="..\Lms.Codec.MessagePack\Lms.Codec.MessagePack.csproj" />

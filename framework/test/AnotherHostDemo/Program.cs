@@ -15,7 +15,6 @@ namespace AnotherHostDemo
             return Host.CreateDefaultBuilder(args)
                     .RegisterLmsServices<AnotherDemoModule>()
                 ;
-
         }
     }
 }

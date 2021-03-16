@@ -5,7 +5,7 @@ using Lms.RegistryCenter.Zookeeper;
 using Lms.Rpc.Proxy;
 using Lms.Transaction.Tcc;
 
-namespace Lms.NormHost
+namespace Microsoft.Extensions.Hosting
 {
     [DependsOn(typeof(ZookeeperModule),
         typeof(DotNettyTcpModule),

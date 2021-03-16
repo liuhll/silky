@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+
 namespace NormHostDemo
 {
     public class Program
@@ -12,9 +13,8 @@ namespace NormHostDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<NormDemoModule>()
+                    .RegisterLmsServices<NormHostModule>()
                 ;
-
         }
     }
 }
