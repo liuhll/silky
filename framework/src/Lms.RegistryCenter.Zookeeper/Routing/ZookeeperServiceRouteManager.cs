@@ -20,7 +20,7 @@ using org.apache.zookeeper;
 
 namespace Lms.RegistryCenter.Zookeeper.Routing
 {
-    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, IDisposable, ISingletonDependency
+    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, ISingletonDependency
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
         private readonly ISerializer _serializer;
@@ -188,7 +188,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        private async Task RemoveLocalHostServiceRoute()
+        public async Task RemoveLocalHostServiceRoute()
         {
             var serviceRouteDescriptors = _serviceRouteCache.ServiceRouteDescriptors
                 .Where(p => p.AddressDescriptors.Any(p =>
@@ -202,17 +202,6 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
                     serviceRouteDescriptor.AddressDescriptors.Where(p =>
                         p != NetUtil.GetHostAddressModel(p.ServiceProtocol));
                 await RegisterRouteWithLockAsync(serviceRouteDescriptor);
-            }
-        }
-
-        public async void Dispose()
-        {
-            try
-            {
-                await RemoveLocalHostServiceRoute();
-            }
-            catch
-            {
             }
         }
     }

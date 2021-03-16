@@ -60,7 +60,7 @@ namespace Lms.Rpc.Utils
 
             return result;
         }
-        
+
         public static IAddressModel GetHostAddressModel(ServiceProtocol serviceProtocol)
         {
             if (addressModels.TryGetValue(serviceProtocol, out IAddressModel address))
@@ -79,8 +79,12 @@ namespace Lms.Rpc.Utils
                 case ServiceProtocol.Mqtt:
                     port = rpcOptions.MqttPort;
                     break;
+                case ServiceProtocol.Ws:
+                    port = rpcOptions.WsPort;
+                    break;
                 default:
-                    throw new LmsException("必须指定地址类型");
+                     throw new LmsException("必须指定地址类型");
+                    break;
             }
 
             address = new AddressModel(host, port, serviceProtocol);
