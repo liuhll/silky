@@ -3,12 +3,6 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" NoWarn="NU1605" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1" NoWarn="NU1605" />
-    </ItemGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\..\src\Lms.Caching.StackExchangeRedis\Lms.Caching.StackExchangeRedis.csproj" />
         <ProjectReference Include="..\..\src\Lms.Codec.MessagePack\Lms.Codec.MessagePack.csproj" />

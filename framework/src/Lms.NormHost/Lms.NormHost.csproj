@@ -1,0 +1,59 @@
+<Project>
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+    <PropertyGroup>
+        <Description>该包包含用于构建LM通用微服务主机的组件包</Description>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <PackageId>Lms.NormHost</PackageId>
+        <PackageTags>lms;normhost;micro-service;rpc</PackageTags>
+        <PackageProjectUrl>https://github.com/liuhll/lms</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/liuhll/lms.git</RepositoryUrl>
+
+        <!-- Package contains only the final .nuspec file with a few listed dependencies. -->
+        <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IncludeContentInPack>false</IncludeContentInPack>
+        <IncludeSource>false</IncludeSource>
+        <IncludeSymbols>false</IncludeSymbols>
+        <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+        <MicrosoftExtensionsApiDescriptionServerPackageVersion>3.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\extra\Lms.Zookeeper\Lms.Zookeeper.csproj" />
+      <ProjectReference Include="..\Lms.Caching\Lms.Caching.csproj" />
+      <ProjectReference Include="..\Lms.Castle\Lms.Castle.csproj" />
+      <ProjectReference Include="..\Lms.Codec.MessagePack\Lms.Codec.MessagePack.csproj" />
+      <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
+      <ProjectReference Include="..\Lms.DotNetty.Abstractions\Lms.DotNetty.Abstractions.csproj" />
+      <ProjectReference Include="..\Lms.DotNetty.Protocol.Tcp\Lms.DotNetty.Protocol.Tcp.csproj" />
+      <ProjectReference Include="..\Lms.HttpServer\Lms.HttpServer.csproj" />
+      <ProjectReference Include="..\Lms.Lock\Lms.Lock.csproj" />
+      <ProjectReference Include="..\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj" />
+      <ProjectReference Include="..\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj" />
+      <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
+      <ProjectReference Include="..\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
+    </ItemGroup>
+    
+    <Target Name="PopulateNuspec">
+        <PropertyGroup>
+            <NuspecProperties>
+                id=$(PackageId);
+                authors=$(Authors);
+                configuration=$(Configuration);
+                description=$(PackageDescription);
+                licenseExpression=$(PackageLicenseExpression);
+                licenseUrl=$(LicenseUrl);
+                projectUrl=$(PackageProjectUrl);
+                repositoryType=$(RepositoryType);
+                repositoryUrl=$(RepositoryUrl);
+                tags=$(PackageTags.Replace(';', ' '));
+                targetPath=$(TargetPath);
+                version=$(PackageVersion);
+                microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
+            </NuspecProperties>
+        </PropertyGroup>
+    </Target>
+
+    <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherHostDemo", "test\Ano
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.Caching.StackExchangeRedis", "src\Lms.Caching.StackExchangeRedis\Lms.Caching.StackExchangeRedis.csproj", "{239843BB-C84C-4AF0-BAA0-01323991EA21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lms.NormHost", "src\Lms.NormHost\Lms.NormHost.csproj", "{ABAE7444-271F-489D-884D-3FB8E84B2973}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,7 @@ Global
 		{4C0493DB-AC99-4189-BAFB-93EC82DD46D8} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{B076C910-08A0-4820-BC34-CA936E980077} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{239843BB-C84C-4AF0-BAA0-01323991EA21} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{ABAE7444-271F-489D-884D-3FB8E84B2973} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -189,5 +192,9 @@ Global
 		{239843BB-C84C-4AF0-BAA0-01323991EA21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{239843BB-C84C-4AF0-BAA0-01323991EA21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{239843BB-C84C-4AF0-BAA0-01323991EA21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABAE7444-271F-489D-884D-3FB8E84B2973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABAE7444-271F-489D-884D-3FB8E84B2973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABAE7444-271F-489D-884D-3FB8E84B2973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABAE7444-271F-489D-884D-3FB8E84B2973}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

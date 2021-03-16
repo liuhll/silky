@@ -26,5 +26,18 @@
     <Mongo2GoPackageVersion>2.2.14</Mongo2GoPackageVersion>
 	
 	<LangVersion>latest</LangVersion>
+    
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    
+    <LicenseUrl>https://licenses.nuget.org/MIT</LicenseUrl>
+    
+    <VersionPrefix>0.0.1</VersionPrefix>
+
   </PropertyGroup>
 </Project>
