@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Lms.Core.DynamicProxy;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Transaction;
+using Lms.Rpc.Transport;
 using Lms.Transaction.Tcc.Executor;
 
 namespace Lms.Transaction.Tcc.Handlers
@@ -19,49 +20,11 @@ namespace Lms.Transaction.Tcc.Handlers
 
             if (serviceEntry.IsLocal)
             {
-                try
-                {
-                    context.Action = ActionStage.PreTry;
-                    await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Try);
-
-                    context.Action = ActionStage.Trying;
-                    var currentTrans = LmsTransactionHolder.Instance.CurrentTransaction;
-                    if (currentTrans != null)
-                    {
-                        foreach (var participant in currentTrans.Participants)
-                        {
-                            if (participant.Role == TransactionRole.Participant)
-                            {
-                                await participant.ParticipantConfirm();
-                            }
-                        }
-                    }
-
-                    invocation.ReturnValue =
-                        await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Confirm);
-
-                    context.Action = ActionStage.Confirming;
-                }
-                catch (Exception)
-                {
-                    var currentTrans = LmsTransactionHolder.Instance.CurrentTransaction;
-                    if (currentTrans != null)
-                    {
-                        foreach (var participant in currentTrans.Participants)
-                        {
-                            if (participant.Role == TransactionRole.Participant)
-                            {
-                                await participant.ParticipantConfirm();
-                            }
-                        }
-                    }
-
-                    invocation.ReturnValue =
-                        await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Cancel);
-
-
-                    throw;
-                }
+                context.Action = ActionStage.PreTry;
+                await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Try);
+                context.Action = ActionStage.Trying;
+                invocation.ReturnValue = await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Confirm);
+                context.Action = ActionStage.Confirming;
             }
             else
             {
@@ -70,7 +33,41 @@ namespace Lms.Transaction.Tcc.Handlers
                     context.TransactionRole = TransactionRole.Participant;
                 }
 
-                await invocation.ProceedAsync();
+                var participant = executor.PreTryParticipant(context, invocation);
+                try
+                {
+                    await invocation.ProceedAsync();
+                    if (participant != null)
+                    {
+                        participant.Status = ActionStage.Trying;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var currentTrans = LmsTransactionHolder.Instance.CurrentTransaction;
+                    foreach (var participantItem in currentTrans.Participants)
+                    {
+                        if (participantItem.Role == TransactionRole.Participant &&
+                            participantItem.Status == ActionStage.Trying)
+                        {
+                            context.Action = ActionStage.Canceling;
+                            context.TransactionRole = TransactionRole.Participant;
+                            context.ParticipantId = participantItem.ParticipantId;
+                            context.ParticipantRefId = participantItem.ParticipantRefId;
+                            RpcContext.GetContext().SetTransactionContext(context);
+                            await participantItem.Invocation.ProceedAsync();
+                        }
+                        
+                        if (participantItem.Role == TransactionRole.Consumer &&
+                            participantItem.Status == ActionStage.Trying)
+                        {
+                            invocation.ReturnValue = await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Cancel);
+                            context.Action = ActionStage.Canceling;
+                        }
+                    }
+
+                    throw;
+                }
             }
         }
     }

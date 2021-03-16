@@ -35,7 +35,8 @@ namespace NormHostDemo.AppService
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
         public async Task<string> Delete(string name)
         {
-            await _anotherAppService.Delete(name);
+            await _anotherAppService.DeleteOne(name);
+            await _anotherAppService.DeleteTwo(name);
             return name + " v1";
         }
 

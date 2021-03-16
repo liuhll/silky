@@ -18,10 +18,17 @@ namespace AnotherHostDemo.AppService
 
 
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
-        public async Task<string> Delete(string name)
+        public async Task<string> DeleteOne(string name)
         {
             //throw new BusinessException("测试异常");
-            return "Delete " + name;
+            return "DeleteOne " + name;
+        }
+
+        [TccTransaction(ConfirmMethod = "DeleteTwoConfirm", CancelMethod = "DeleteTwoCancel")]
+        public async Task<string> DeleteTwo(string name)
+        {
+            throw new BusinessException("测试异常");
+            return "DeleteTwo " + name;
         }
 
         public async Task<string> Create(string name)
@@ -30,6 +37,16 @@ namespace AnotherHostDemo.AppService
             return "ok";
         }
 
+        public async Task<string> DeleteTwoConfirm(string name)
+        {
+            return "DeleteTwoConfirm " + name;
+        }
+
+        public async Task<string> DeleteTwoCancel(string name)
+        {
+            return "DeleteTwoCancel " + name;
+        }
+        
         public async Task<string> DeleteConfirm(string name)
         {
             return "DeleteConfirm " + name;
