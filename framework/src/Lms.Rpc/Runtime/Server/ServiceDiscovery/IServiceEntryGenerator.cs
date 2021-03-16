@@ -4,7 +4,7 @@ using Lms.Core.DependencyInjection;
 
 namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
 {
-    public interface IClrServiceEntryFactory : ITransientDependency
+    public interface IServiceEntryGenerator : ITransientDependency
     {
         IEnumerable<ServiceEntry> CreateServiceEntry((Type,bool) serviceType);
     }

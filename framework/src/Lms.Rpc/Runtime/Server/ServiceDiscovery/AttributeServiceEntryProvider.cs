@@ -9,14 +9,14 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
     public class AttributeServiceEntryProvider : IServiceEntryProvider
     {
         private readonly ITypeFinder _typeFinder;
-        private readonly IClrServiceEntryFactory _clrServiceEntryFactory;
+        private readonly IServiceEntryGenerator _serviceEntryGenerator;
         public ILogger<AttributeServiceEntryProvider> Logger { get; set; }
 
         public AttributeServiceEntryProvider(ITypeFinder typeFinder,
-            IClrServiceEntryFactory clrServiceEntryFactory)
+            IServiceEntryGenerator serviceEntryGenerator)
         {
             _typeFinder = typeFinder;
-            _clrServiceEntryFactory = clrServiceEntryFactory;
+            _serviceEntryGenerator = serviceEntryGenerator;
             Logger = NullLogger<AttributeServiceEntryProvider>.Instance;;
         }
 
@@ -27,7 +27,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
             var entries = new List<ServiceEntry>();
             foreach (var serviceEntryType in serviceEntryTypes)
             {
-                entries.AddRange(_clrServiceEntryFactory.CreateServiceEntry(serviceEntryType));
+                entries.AddRange(_serviceEntryGenerator.CreateServiceEntry(serviceEntryType));
             }
             return entries;
         }

@@ -15,14 +15,14 @@ using Microsoft.Extensions.Options;
 
 namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
 {
-    public class ClrServiceEntryFactory : IClrServiceEntryFactory
+    public class DefaultServiceEntryGenerator : IServiceEntryGenerator
     {
         private readonly IServiceIdGenerator _serviceIdGenerator;
         private readonly IParameterProvider _parameterProvider;
         private readonly IHttpMethodProvider _httpMethodProvider;
         private readonly GovernanceOptions _governanceOptions;
 
-        public ClrServiceEntryFactory(IServiceIdGenerator serviceIdGenerator,
+        public DefaultServiceEntryGenerator(IServiceIdGenerator serviceIdGenerator,
             IParameterProvider parameterProvider,
             IHttpMethodProvider httpMethodProvider,
             IOptions<GovernanceOptions> governanceOptions)
