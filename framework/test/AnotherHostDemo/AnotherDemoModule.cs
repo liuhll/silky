@@ -1,19 +1,25 @@
-﻿using Lms.Codec;
+﻿using System.Threading.Tasks;
 using Lms.Core.Modularity;
-using Lms.DotNetty.Protocol.Tcp;
-using Lms.RegistryCenter.Zookeeper;
-using Lms.Rpc.Proxy;
-using Lms.Transaction.Tcc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AnotherHostDemo
 {
-    [DependsOn(typeof(ZookeeperModule),
-        typeof(DotNettyTcpModule),
-        typeof(MessagePackModule),
-        typeof(RpcProxyModule),
-        typeof(TransactionTccModule))]
-    public class AnotherDemoModule : LmsModule
+  
+    //[DependsOn(typeof(NormHostModule))]
+    public class AnotherDemoModule : NormHostModule
     {
-       
+        public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
+        
+        public async override Task Initialize(ApplicationContext applicationContext)
+        {
+            Logger.LogInformation("服务启动时执行方法");
+        }
+
+        public async override Task Shutdown(ApplicationContext applicationContext)
+        {
+            Logger.LogInformation("服务停止时执行的方法");
+        }
     }
 }
