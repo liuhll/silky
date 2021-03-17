@@ -3,9 +3,8 @@
 </p>
 
 # lms 微服务框架
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/liuhll/lms/main/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitee.com/dotnetchina/lms/raw/main/LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/liuhll/lms/total?label=downloads&logo=github&style=flat-square)](https://img.shields.io/github/downloads/liuhll/lms/total?label=downloads&logo=github&style=flat-square)
-[![HitCount](http://hits.dwyl.io/liuhll/lms.svg)](http://hits.dwyl.io/liuhll/lms)
 [![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
 
 
@@ -42,29 +41,38 @@ Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有�
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<NormModule>() //注册lms服务，并指定启动的模块
+                    .RegisterLmsServices<NormHostModule>() //注册lms服务，并指定启动的模块
                 ;
 
         }
     }
 ```
 
-2. 指定启动模块
+2. 启动模块
 
-```csharp
-    [DependsOn(typeof(ZookeeperModule), 
-      typeof(DotNettyTcpModule), 
-      typeof(RpcProxyModule),
-      typeof(MessagePackModule))]
-    public class NormModule : LmsModule
-    {
-        
-    }
-```
+您也可以指定自定义的启动模块,在主机启动或是停止时执行相应的方法。
 
 启动模块必须要继承`LmsModule`基类，通过`DependsOn`特性指定依赖的模块组件，一般的,您需要依赖服务注册中心组件(`ZookeeperModule`)、和通信框架组件(`DotNettyTcpModule`)、Rpc通信代理组件(`RpcProxyModule`),也可以指定编解码组件(`MessagePackModule`或是`ProtoBufferModule`),如果未指定编解码组件,则默认使用json作为rpc内部的通信编解码格式。同一个集群内部，必须要保证使用的编解码一致。
 
 在启动模块中,您也可以通过重写`RegisterServices`来注册需要注入ioc的类，通过重写`Initialize`方法在应用启动时执行初始化方法,重写`Shutdown`方法在应用结束时执行释放资源的方法。
+
+```csharp
+    public class AnotherDemoModule : NormHostModule
+    {
+        public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
+        
+        public async override Task Initialize(ApplicationContext applicationContext)
+        {
+            Logger.LogInformation("服务启动时执行方法");
+        }
+
+        public async override Task Shutdown(ApplicationContext applicationContext)
+        {
+            Logger.LogInformation("服务停止时执行的方法");
+        }
+    }
+
+```
 
 3. 配置
 
@@ -101,27 +109,15 @@ registrycenter:
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .RegisterLmsServices<GatewayModule>()
+                .RegisterLmsServices<WebHostModule>()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 ```
 
 2. 启动模块
 
-```csharp
-    [DependsOn(typeof(RpcProxyModule),
-        typeof(ZookeeperModule),
-        typeof(HttpServerModule),
-        typeof(DotNettyModule),
-        typeof(MessagePackModule)
-        )]
-    public class GatewayModule : LmsModule
-    {
-    }
+您可以使用系统默认`WebHostModule`启动模块，或是自定义启动模块。与使用通用主机注册LMS服务一致，您可以在自定义的启动模块重写`Initialize`方法和`Shutdown`方法。
 
-```
-
-与通用主机的指定的启动模块相比,需要额外依赖`HttpServerModule`模块。
 
 3. StartUp类
 
@@ -141,7 +137,6 @@ registrycenter:
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lms Gateway", Version = "v1"});
@@ -157,13 +152,6 @@ registrycenter:
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lms Gateway Demo v1"));
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
             app.ConfigureLmsRequestPipeline();
         }
     }
@@ -253,3 +241,42 @@ Lms支持通过`json`或是`yml`格式的对框架进行配置。一般的,您�
 3. `RemoveCachingInterceptAttribute` 执行本地或远程方法,并删除相应的缓存数据。
 
 更对缓存拦截的使用和配置请查看[缓存拦截文档](#)。
+
+### 分布式事务
+
+LMS支持通过TCC的方式实现分布式事务。在应用接口中通过`Transaction`特性标识这是一个分布式事务方法。并在其实现的方法`TccTransaction`来指定`ConfirmMethod`和`DeleteTwoCancel`。
+
+您并不需要将`ConfirmMethod`和`CancelMethod`在应用接口中暴露出来。但是必须保证`ConfirmMethod`和`CancelMethod`与`Try`方法有着一致的输入参数。
+
+所有的分支事务的`Try`方法(即事务参与者的状态都为:`Trying`)都执行成功，那么所有的参与事务的分支就会执行`ConfirmMethod`。如果存在分支执行Try方法存在失败,那么分支事务状态为`Trying`的将得到回滚(通过方法`DeleteCancel`进行)，未成功执行`Try`方法(状态为`PreTry`)的分支事务则不会执行`DeleteCancel`。
+
+例如:
+
+```csharp
+// 应用接口注释
+[Transaction]
+Task<string> Delete(string name);
+
+
+
+// 应用接口的实现方法,Try方法
+[TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
+public async Task<string> Delete(string name)
+{
+    await _anotherAppService.DeleteOne(name); // Rpc调用，分支事务
+    await _anotherAppService.DeleteTwo(name); // Rpc调用，分支事务
+    return name + " v1";
+}
+
+// Confirm方法
+public async Task<string> DeleteConfirm(string name)
+{
+    return name + " DeleteConfirm v1";
+
+// Cancel方法
+public async Task<string> DeleteCancel(string name)
+{
+    return name + "DeleteConcel v1";
+}
+
+```
