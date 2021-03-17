@@ -38,29 +38,12 @@ namespace Lms.Rpc.Interceptors
                 var removeCachingInterceptProviders = serviceEntry.RemoveCachingInterceptProviders;
                 if (removeCachingInterceptProviders.Any())
                 {
-                    if (serviceEntry.IsTransactionServiceEntry())
+                    foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
                     {
-                        var transContext = RpcContext.GetContext().GetTransactionContext();
-                        if (transContext.Action == ActionStage.Confirming)
-                        {
-                            foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
-                            {
-                                var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                                    removeCachingInterceptProvider.KeyTemplete);
-                                _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
-                                await _distributedCache.RemoveAsync(removeCacheKey, true);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
-                        {
-                            var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                                removeCachingInterceptProvider.KeyTemplete);
-                            _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
-                            await _distributedCache.RemoveAsync(removeCacheKey, true);
-                        }
+                        var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
+                            removeCachingInterceptProvider.KeyTemplete);
+                        _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
+                        await _distributedCache.RemoveAsync(removeCacheKey, true);
                     }
 
                 }
