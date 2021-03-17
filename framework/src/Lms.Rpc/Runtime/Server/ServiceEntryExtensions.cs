@@ -9,7 +9,6 @@ using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
-using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport.CachingIntercept;
 using Lms.Rpc.Utils;
 
@@ -141,7 +140,7 @@ namespace Lms.Rpc.Runtime.Server
         public static bool IsTransactionServiceEntry([NotNull]this ServiceEntry serviceEntry)
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
-            return serviceEntry.CustomAttributes.OfType<TransactionAttribute>().Any();
+            return serviceEntry.CustomAttributes.Any(p=> p.GetType().GetTypeInfo().FullName == "Lms.Transaction.TransactionAttribute");
         }
         
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,

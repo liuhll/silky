@@ -1,4 +1,4 @@
-﻿namespace Lms.Rpc.Transaction
+﻿namespace Lms.Transaction
 {
     public enum TransactionType
     {

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lms.Transaction.Participant;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction
 {
     public interface ITransaction
     {

@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction
 {
     public class LmsTransactionHolder
     {

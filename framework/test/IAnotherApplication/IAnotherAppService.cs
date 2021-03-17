@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Lms.Rpc.Transaction;
+using Lms.Transaction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IAnotherApplication

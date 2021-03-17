@@ -5,9 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
       <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
-      <ProjectReference Include="..\Lms.Transaction\Lms.Transaction.csproj" />
     </ItemGroup>
 
 </Project>

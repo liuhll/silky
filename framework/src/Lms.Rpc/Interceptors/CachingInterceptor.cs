@@ -5,8 +5,6 @@ using Lms.Core.DependencyInjection;
 using Lms.Core.DynamicProxy;
 using Lms.Core.Extensions;
 using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Transaction;
-using Lms.Rpc.Transport;
 
 namespace Lms.Rpc.Interceptors
 {

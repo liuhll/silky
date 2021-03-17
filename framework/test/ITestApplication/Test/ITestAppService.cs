@@ -5,8 +5,8 @@ using Lms.Rpc.Address.Selector;
 using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport.CachingIntercept;
+using Lms.Transaction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITestApplication.Test

@@ -1,6 +1,6 @@
 ﻿using Lms.Rpc.Transport;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction
 {
     public static class RpcContextExtensions
     {

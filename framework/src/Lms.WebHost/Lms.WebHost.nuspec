@@ -27,6 +27,7 @@
                 <dependency id="Lms.RegistryCenter.Zookeeper" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Rpc.Proxy" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Rpc" version="$version$" exclude="Build,Analyzers" />
+                <dependency id="Lms.Transaction" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Transaction.Tcc" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Swagger" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.HttpServer" version="$version$" exclude="Build,Analyzers" />

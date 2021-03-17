@@ -1,7 +1,7 @@
 using System;
 using Lms.Core.DynamicProxy;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction.Participant
 {
     public class LmsParticipant : IParticipant
     {

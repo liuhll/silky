@@ -1,4 +1,4 @@
-﻿namespace Lms.Rpc.Transaction
+﻿namespace Lms.Transaction.Participant
 {
     public enum ParticipantType
     {

@@ -102,17 +102,11 @@ namespace Lms.Rpc
             builder.RegisterType<DefaultLocalExecutor>()
                 .As<ILocalExecutor>()
                 .InstancePerLifetimeScope()
-                .AddInterceptors(
-                    typeof(TransactionInterceptor)
-                )
                 ;
 
             builder.RegisterType<DefaultRemoteServiceExecutor>()
                 .As<IRemoteServiceExecutor>()
                 .InstancePerLifetimeScope()
-                .AddInterceptors(
-                    typeof(TransactionInterceptor)
-                )
                 ;
 
             builder.RegisterType<DefaultServiceExecutor>()

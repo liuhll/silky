@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
+      <ProjectReference Include="..\..\src\Lms.Transaction\Lms.Transaction.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport;
+using Lms.Transaction.Participant;
 
 namespace Lms.Transaction.Tcc
 {

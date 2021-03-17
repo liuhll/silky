@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Lms.Rpc.Transport;
+using Lms.Transaction.Participant;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction
 {
     public class LmsTransaction : ITransaction
     {

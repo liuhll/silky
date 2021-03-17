@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
     public class TransactionAttribute : Attribute

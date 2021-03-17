@@ -1,4 +1,4 @@
-﻿namespace Lms.Rpc.Transaction
+﻿namespace Lms.Transaction
 {
     public enum TransactionRole
     {
@@ -7,9 +7,5 @@
         Participant,
 
         Consumer,
-
-        // Local,
-        //
-        // Inline
     }
 }

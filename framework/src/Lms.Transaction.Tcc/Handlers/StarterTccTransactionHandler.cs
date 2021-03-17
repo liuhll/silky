@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Lms.Core.DynamicProxy;
-using Lms.Rpc.Transaction;
+using Lms.Transaction.Handler;
 using Lms.Transaction.Tcc.Executor;
 
 namespace Lms.Transaction.Tcc.Handlers

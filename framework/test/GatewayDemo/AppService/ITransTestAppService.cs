@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Lms.Rpc.Transaction;
+using Lms.Transaction;
 
 namespace GatewayDemo.AppService
 {

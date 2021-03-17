@@ -4,8 +4,8 @@ using Lms.Core.DynamicProxy;
 using Lms.Core.Extensions;
 using Lms.Core.Utils;
 using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Transaction;
 using Lms.Rpc.Transport;
+using Lms.Transaction.Participant;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 

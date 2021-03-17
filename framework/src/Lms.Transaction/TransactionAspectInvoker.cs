@@ -2,8 +2,9 @@
 using Lms.Core;
 using Lms.Core.DynamicProxy;
 using Lms.Rpc.Runtime.Server;
+using Lms.Transaction.Handler;
 
-namespace Lms.Rpc.Transaction
+namespace Lms.Transaction
 {
     public class TransactionAspectInvoker
     {
