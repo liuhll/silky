@@ -21,7 +21,6 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lms Gateway Demo", Version = "v1"});
@@ -38,13 +37,6 @@ namespace GatewayDemo
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lms Gateway Demo v1"));
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-            
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
             app.ConfigureLmsRequestPipeline();
         }
     }

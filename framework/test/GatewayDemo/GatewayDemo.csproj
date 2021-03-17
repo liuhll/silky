@@ -4,16 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Lms.Caching.StackExchangeRedis\Lms.Caching.StackExchangeRedis.csproj" />
-        <ProjectReference Include="..\..\src\Lms.Codec.MessagePack\Lms.Codec.MessagePack.csproj" />
-        <ProjectReference Include="..\..\src\Lms.Codec.ProtoBuf\Lms.Codec.ProtoBuf.csproj" />
-        <ProjectReference Include="..\..\src\Lms.DotNetty.Abstractions\Lms.DotNetty.Abstractions.csproj" />
-        <ProjectReference Include="..\..\src\Lms.HttpServer\Lms.HttpServer.csproj" />
-        <ProjectReference Include="..\..\src\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj" />
-        <ProjectReference Include="..\..\src\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj" />
-        <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
-        <ProjectReference Include="..\..\src\Lms.Swagger\Lms.Swagger.csproj" />
-        <ProjectReference Include="..\..\src\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
+        <ProjectReference Include="..\..\src\Lms.WebHost\Lms.WebHost.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>

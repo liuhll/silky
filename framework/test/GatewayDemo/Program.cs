@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Lms.WebHost;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -13,7 +14,7 @@ namespace GatewayDemo
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .RegisterLmsServices<GatewayDemoModule>()
+                .RegisterLmsServices<WebHostModule>()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }
