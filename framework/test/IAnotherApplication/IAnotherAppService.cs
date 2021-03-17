@@ -9,11 +9,11 @@ namespace IAnotherApplication
     public interface IAnotherAppService
     {
         [Transaction]
-        [HttpDelete("delete/one")]
+        [HttpDelete("one")]
         Task<string> DeleteOne(string name);
         
         [Transaction]
-        [HttpDelete("delete/two")]
+        [HttpDelete("two")]
         Task<string> DeleteTwo(string name);
     
         Task<string> Create(string name);
