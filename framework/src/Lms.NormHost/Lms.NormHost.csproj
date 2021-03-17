@@ -30,7 +30,6 @@
       <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
       <ProjectReference Include="..\Lms.DotNetty.Abstractions\Lms.DotNetty.Abstractions.csproj" />
       <ProjectReference Include="..\Lms.DotNetty.Protocol.Tcp\Lms.DotNetty.Protocol.Tcp.csproj" />
-      <ProjectReference Include="..\Lms.HttpServer\Lms.HttpServer.csproj" />
       <ProjectReference Include="..\Lms.Lock\Lms.Lock.csproj" />
       <ProjectReference Include="..\Lms.RegistryCenter.Zookeeper\Lms.RegistryCenter.Zookeeper.csproj" />
       <ProjectReference Include="..\Lms.Rpc.Proxy\Lms.Rpc.Proxy.csproj" />
@@ -57,6 +56,4 @@
             </NuspecProperties>
         </PropertyGroup>
     </Target>
-
-    <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

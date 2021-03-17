@@ -16,12 +16,12 @@
             <group>
                 <dependency id="Lms.Zookeeper" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Caching" version="$version$" exclude="Build,Analyzers" />
+                <dependency id="Lms.Caching.StackExchangeRedis" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Castle" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Codec.MessagePack" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Core" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.DotNetty.Abstractions" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.DotNetty.Protocol.Tcp" version="$version$" exclude="Build,Analyzers" />
-                <dependency id="Lms.HttpServer" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Lock" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.RegistryCenter.Zookeeper" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Rpc.Proxy" version="$version$" exclude="Build,Analyzers" />
