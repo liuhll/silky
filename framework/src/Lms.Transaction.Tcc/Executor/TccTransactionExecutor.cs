@@ -90,27 +90,29 @@ namespace Lms.Transaction.Tcc.Executor
 
         public async Task GlobalConfirm(ITransaction transaction)
         {
-            transaction.Status = ActionStage.Confirming;
             foreach (var participant in transaction.Participants)
             {
-                participant.Status = ActionStage.Confirming;
                 await participant.ParticipantConfirm();
+                participant.Status = ActionStage.Confirming;
             }
+
+            transaction.Status = ActionStage.Confirming;
         }
 
         public async Task GlobalCancel(ITransaction transaction)
         {
-            transaction.Status = ActionStage.Canceling;
             foreach (var participant in transaction.Participants)
             {
                 if (participant.Status == ActionStage.Trying)
                 {
-                    participant.Status = ActionStage.Canceling;
                     await participant.ParticipantCancel();
+                    participant.Status = ActionStage.Canceling;
                 }
+
+                transaction.Status = ActionStage.Canceling;
             }
         }
-        
+
         private IParticipant BuildParticipant(ILmsMethodInvocation invocation,
             string participantId,
             string participantRefId,
@@ -158,9 +160,10 @@ namespace Lms.Transaction.Tcc.Executor
             transaction.TransType = TransactionType.Tcc;
             return transaction;
         }
-        
 
-        public async Task<object> ConsumerParticipantExecute(TransactionContext context, ILmsMethodInvocation invocation, TccMethodType tccMethodType)
+
+        public async Task<object> ConsumerParticipantExecute(TransactionContext context,
+            ILmsMethodInvocation invocation, TccMethodType tccMethodType)
         {
             var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
             Debug.Assert(serviceEntry != null);
