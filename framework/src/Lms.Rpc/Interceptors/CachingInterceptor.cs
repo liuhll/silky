@@ -38,8 +38,7 @@ namespace Lms.Rpc.Interceptors
                 {
                     foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
                     {
-                        var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            removeCachingInterceptProvider.KeyTemplete);
+                        var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,removeCachingInterceptProvider);
                         _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
                         await _distributedCache.RemoveAsync(removeCacheKey, true);
                     }
@@ -55,7 +54,7 @@ namespace Lms.Rpc.Interceptors
                     else
                     {
                         var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            serviceEntry.GetCachingInterceptProvider.KeyTemplete);
+                            serviceEntry.GetCachingInterceptProvider);
                         invocation.ReturnValue = await GetResultFirstFromCache(
                             serviceEntry.GetCachingInterceptProvider.CacheName,
                             getCacheKey,
@@ -73,7 +72,7 @@ namespace Lms.Rpc.Interceptors
                     else
                     {
                         var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            serviceEntry.UpdateCachingInterceptProvider.KeyTemplete);
+                            serviceEntry.UpdateCachingInterceptProvider);
                         await _distributedCache.RemoveAsync(updateCacheKey);
                         invocation.ReturnValue = await GetResultFirstFromCache(
                             serviceEntry.GetCachingInterceptProvider.CacheName,

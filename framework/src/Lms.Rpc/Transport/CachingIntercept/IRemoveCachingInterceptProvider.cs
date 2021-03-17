@@ -1,10 +1,6 @@
 ﻿namespace Lms.Rpc.Transport.CachingIntercept
 {
-    public interface IRemoveCachingInterceptProvider
+    public interface IRemoveCachingInterceptProvider : ICachingInterceptProvider
     {
-        
-        string CacheName { get; }
-
-        string KeyTemplete { get; }
     }
 }

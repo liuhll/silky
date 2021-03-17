@@ -30,6 +30,8 @@ namespace Lms.Core.Exceptions
 
         [Description("UnServiceKeyImplementation")] UnServiceKeyImplementation = 508,
         
-        [Description("rpc通信认证失败")]RpcUnAuthentication,
+        [Description("rpc通信认证失败")]RpcUnAuthentication = 509,
+        
+        [Description("")]CachingInterceptError = 510,
     }
 }

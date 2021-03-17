@@ -13,9 +13,12 @@ namespace Lms.Rpc.Transport.CachingIntercept
             Check.NotNullOrEmpty(keyTemplete, nameof(keyTemplete));
             CacheName = cacheName;
             KeyTemplete = keyTemplete;
+            OnlyCurrentUserData = false;
         }
         
         public string KeyTemplete { get; }
+        
+        public bool OnlyCurrentUserData { get; set; }
         public string CacheName { get; }
     }
 }

@@ -9,6 +9,7 @@ using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
+using Lms.Rpc.Runtime.Session;
 using Lms.Rpc.Transport.CachingIntercept;
 using Lms.Rpc.Utils;
 
@@ -92,10 +93,15 @@ namespace Lms.Rpc.Runtime.Server
         }
 
         public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,
-            [NotNull] string templete)
+            [NotNull] ICachingInterceptProvider cachingInterceptProvider)
         {
             Check.NotNull(parameters, nameof(parameters));
-            Check.NotNull(templete, nameof(templete));
+            Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
+            var templete = cachingInterceptProvider.KeyTemplete;
+            if (templete.IsNullOrEmpty())
+            {
+                throw new LmsException("缓存拦截指定的KeyTemplete不允许为空",StatusCode.CachingInterceptError);
+            }
             var cachingInterceptKey = string.Empty;
             var cacheKeyProviders = new List<ICacheKeyProvider>();
             var index = 0;
@@ -133,6 +139,16 @@ namespace Lms.Rpc.Runtime.Server
             if (!currentServiceKey.ServiceKey.IsNullOrEmpty())
             {
                 cachingInterceptKey = $"serviceKey:{currentServiceKey.ServiceKey}:" + cachingInterceptKey;
+            }
+
+            if (cachingInterceptProvider.OnlyCurrentUserData)
+            {
+                var session = NullSession.Instance;
+                if (!session.IsLogin())
+                {
+                    throw new LmsException("缓存数据如果指定与当前登录用户相关,那么必须登录系统才允许使用缓存拦截",StatusCode.CachingInterceptError);
+                }
+                cachingInterceptKey = cachingInterceptKey + $":userId:{session.UserId}";
             }
             return cachingInterceptKey;
         }
