@@ -1,4 +1,5 @@
-﻿using Lms.Codec;
+﻿using Lms.AutoMapper;
+using Lms.Codec;
 using Lms.Core.Modularity;
 using Lms.DotNetty.Protocol.Tcp;
 using Lms.RegistryCenter.Zookeeper;
@@ -11,7 +12,8 @@ namespace Microsoft.Extensions.Hosting
         typeof(DotNettyTcpModule),
         typeof(MessagePackModule),
         typeof(RpcProxyModule),
-        typeof(TransactionTccModule)
+        typeof(TransactionTccModule),
+        typeof(AutoMapperModule)
     )]
     public class NormHostModule : LmsModule
     {

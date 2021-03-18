@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\extra\Lms.Zookeeper\Lms.Zookeeper.csproj" />
+      <ProjectReference Include="..\Lms.AutoMapper\Lms.AutoMapper.csproj" />
       <ProjectReference Include="..\Lms.Caching.StackExchangeRedis\Lms.Caching.StackExchangeRedis.csproj" />
       <ProjectReference Include="..\Lms.Caching\Lms.Caching.csproj" />
       <ProjectReference Include="..\Lms.Castle\Lms.Castle.csproj" />

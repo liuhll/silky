@@ -4,4 +4,12 @@
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="10.1.1" />
+    </ItemGroup>
+
 </Project>

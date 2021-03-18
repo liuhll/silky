@@ -28,6 +28,7 @@
                 <dependency id="Lms.Rpc" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Transaction" version="$version$" exclude="Build,Analyzers" />
                 <dependency id="Lms.Transaction.Tcc" version="$version$" exclude="Build,Analyzers" />
+                <dependency id="Lms.AutoMapper" version="$version$" exclude="Build,Analyzers" />
             </group>
         </dependencies>
     </metadata>
