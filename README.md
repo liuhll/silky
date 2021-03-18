@@ -52,7 +52,9 @@ Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有�
 
 您也可以指定自定义的启动模块,在主机启动或是停止时执行相应的方法。
 
-启动模块必须要继承`LmsModule`基类，通过`DependsOn`特性指定依赖的模块组件，一般的,您需要依赖服务注册中心组件(`ZookeeperModule`)、和通信框架组件(`DotNettyTcpModule`)、Rpc通信代理组件(`RpcProxyModule`),也可以指定编解码组件(`MessagePackModule`或是`ProtoBufferModule`),如果未指定编解码组件,则默认使用json作为rpc内部的通信编解码格式。同一个集群内部，必须要保证使用的编解码一致。
+启动模块需要继承`LmsModule`基类或是`NormHostModule`，通过`DependsOn`特性指定依赖的模块组件，一般的,您需要在启动类中直接或间接依赖服务注册中心组件(`ZookeeperModule`)、和通信框架组件(`DotNettyTcpModule`)、Rpc通信代理组件(`RpcProxyModule`),也可以指定编解码组件(`MessagePackModule`或是`ProtoBufferModule`),如果未指定编解码组件,则默认使用json作为rpc内部的通信编解码格式。同一个集群内部，必须要保证使用的编解码一致。
+
+如果指定的启动类是`NormHostModule`或是继承自`NormHostModule`,则服务在启动是自动会依赖`ZookeeperModule`、`DotNettyTcpModule`、`MessagePackModule`、`RpcProxyModule`、`TransactionTccModule`、`AutoMapperModule`。
 
 在启动模块中,您也可以通过重写`RegisterServices`来注册需要注入ioc的类，通过重写`Initialize`方法在应用启动时执行初始化方法,重写`Shutdown`方法在应用结束时执行释放资源的方法。
 
@@ -61,6 +63,11 @@ Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有�
     {
         public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
         
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
+            // 向ioc容器注册服务
+        }
+
         public async override Task Initialize(ApplicationContext applicationContext)
         {
             Logger.LogInformation("服务启动时执行方法");
@@ -98,9 +105,9 @@ lock:
 
 #### 使用Web主机注册和托管LMS服务
 
-您可以使用.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host)来注册和托管lms服务,通过这种形式构建的服务主机,可以通过引用各个微服务模块的应用接口,通过web主机指定的http端口对外提供访问。web主机可以通过应用接口生成的代理与微服务集群内部各个服务主机进行通信。
+您可以使用.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host)来注册和托管lms应用,通过这种形式构建的服务主机,可以通过引用各个微服务模块的应用接口,通过web主机指定的http端口对外提供访问。web主机可以通过应用接口生成的代理与微服务集群内部各个服务主机进行通信。
 
-通过web主机注册LMS服务时,一般不需要实现应用接口(即，不需要托管应用服务),只需要引用各个微服务模块的应用接口,通过HTTP端口提供一个与集群外部通信的方式。
+通过web主机注册LMS服务条目时,一般不需要实现应用接口(即，不需要托管应用服务),只需要引用各个微服务模块的应用接口,通过HTTP端口提供一个与集群外部通信的方式。
 
 1. 注册LMS服务
 
@@ -126,7 +133,7 @@ lock:
 
 3. StartUp类
 
-在[StartUp类](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/startup)中,您可以通过`ConfigureServices`配置服务的注入,以及在`Configure`方法中配置Http请求中间件。例如: 您可以在StartUp类中配置mvc路由、SwaggerAPI稳定等。
+在[StartUp类](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/startup)中,您可以通过`ConfigureServices`配置服务的注入,以及在`Configure`方法中配置Http请求中间件。例如: 您可以在StartUp类中配置mvc路由、SwaggerAPI文档等。
 
 需要注意的是必须在`Configure`中必须要配置`app.ConfigureLmsRequestPipeline()`,只有这样Http请求才可以通过lms框架预先设置的中间件。
 
