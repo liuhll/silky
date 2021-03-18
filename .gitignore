@@ -254,3 +254,5 @@ paket-files/
 *.sln.iml
 
 .DS_Store
+
+yarn.lock
