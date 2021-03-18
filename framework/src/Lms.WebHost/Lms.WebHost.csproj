@@ -3,10 +3,10 @@
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     </PropertyGroup>
     <PropertyGroup>
-        <Description>该包包含用于构建LM通用微服务主机的组件包</Description>
+        <Description>该包包含用于构建LMS微服务Web主机的组件包</Description>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-        <PackageId>Lms.NormHost</PackageId>
-        <PackageTags>lms;normhost;micro-service;rpc</PackageTags>
+        <PackageId>Lms.WebHost</PackageId>
+        <PackageTags>lms;webhost;micro-service;rpc</PackageTags>
         <PackageProjectUrl>https://github.com/liuhll/lms</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/liuhll/lms.git</RepositoryUrl>
