@@ -7,7 +7,7 @@ Param(
 
 # Paths
 $packFolder = (Get-Item -Path "./" -Verbose).FullName
-$slnPath = Join-Path $packFolder ".."
+$rootFolder = Join-Path $packFolder ".."
 $srcPath = Join-Path $packFolder "../framework/src"
 
 
@@ -48,5 +48,10 @@ if($push) {
         Write-Warning -Message "未设置nuget仓库的APIKEY"
 		exit 1
 	}
-	dotnet nuget push *.nupkg -s $repo -k $apikey
+	[xml]$propsXml = Get-Content (Join-Path $rootFolder "Directory.Build.props")
+    $version = $propsXml.Project.PropertyGroup.VersionPrefix
+	foreach($project in $projects) {
+      $projectName = ($project -Split "/" )[-1]
+      & dotnet nuget push ($projectName + "." + $version + ".nupkg") -s $repo -k $apikey --skip-duplicate
+    }
 }
