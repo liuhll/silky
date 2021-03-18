@@ -37,7 +37,7 @@
     
     <LicenseUrl>https://licenses.nuget.org/MIT</LicenseUrl>
     
-    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionPrefix>0.0.1-bate.1</VersionPrefix>
 
   </PropertyGroup>
 </Project>
