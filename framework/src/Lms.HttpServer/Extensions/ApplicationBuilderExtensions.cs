@@ -35,7 +35,7 @@ namespace Lms.HttpServer.Extensions
                             return Task.CompletedTask;
 
                         context.Response.ContentType = "application/text;charset=utf-8";
-                        context.Response.StatusCode = 500;
+                        context.Response.StatusCode = 400;
                         return context.Response.WriteAsync(exception.Message);
                     });
                 });
