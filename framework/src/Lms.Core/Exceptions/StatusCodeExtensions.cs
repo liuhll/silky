@@ -6,9 +6,19 @@ namespace Lms.Core.Exceptions
 {
     public static class StatusCodeExtensions
     {
-        public static bool IsResponseStatus(this StatusCode statusCode)
+        public static bool IsBusinessStatus(this StatusCode statusCode)
         {
-            if (statusCode.GetAttribute<IsResponseStatusAttribute>() != null)
+            if (statusCode.GetAttribute<IsBusinessExceptionAttribute>() != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsUnauthorized(this StatusCode statusCode)
+        {
+            if (statusCode.GetAttribute<IsUnAuthorizedExceptionAttribute>() != null)
             {
                 return true;
             }
@@ -20,15 +30,10 @@ namespace Lms.Core.Exceptions
 
     public static class StatusCodeHelper
     {
-        public static IDictionary<StatusCode,string> GetResponseStatusCodes()
+        public static IDictionary<StatusCode, string> GetAllStatusCodes()
         {
-            var statusCodes = typeof(StatusCode).GetEnumSources<StatusCode>()
-                .Where(p => p.Key.IsResponseStatus());
-            return statusCodes.ToDictionary(p=> p.Key,p=> p.Value);
+            var statusCodes = typeof(StatusCode).GetEnumSources<StatusCode>();
+            return statusCodes.ToDictionary(p => p.Key, p => p.Value);
         }
     }
-
-
 }
-    
-    

@@ -144,19 +144,36 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
         private OpenApiResponses GenerateResponses(ServiceEntry apiDescription, SchemaRepository schemaRepository)
         {
             var responses = new OpenApiResponses();
-            var statusCodeSourcess = StatusCodeHelper.GetResponseStatusCodes();
-            foreach (var statusCodeSource in statusCodeSourcess)
-            {
-                responses.Add(((int)statusCodeSource.Key).ToString(), GenerateResponse(apiDescription, schemaRepository, statusCodeSource));
-            }
+            var allResponseCodes = ResponsesCodeHelper.GetAllCodes();
+            // foreach (var responseCode in allResponseCodes)
+            // {
+            //     responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(apiDescription, schemaRepository, responseCode));
+            // }
+            responses.Add(((int) ResponsesCode.Success).ToString(), GenerateResponse(apiDescription, schemaRepository));
             return responses;
         }
 
-        private OpenApiResponse GenerateResponse(ServiceEntry apiDescription, SchemaRepository schemaRepository, KeyValuePair<StatusCode, string> statusCodeSource)
+        private OpenApiResponse GenerateResponse(ServiceEntry apiDescription, SchemaRepository schemaRepository)
         {
-            var description = statusCodeSource.Value;
+            var description = ResponsesCode.Success.GetDisplay();
             var responseContentTypes = apiDescription.SupportedResponseMediaTypes;
-            if (statusCodeSource.Key == StatusCode.Success)
+            return new OpenApiResponse
+            {
+                Description = description,
+                Content = responseContentTypes.ToDictionary(
+                    contentType => contentType,
+                    contentType => CreateResponseMediaType(apiDescription.ReturnType, schemaRepository)
+                )
+            };
+        }
+
+
+        private OpenApiResponse GenerateResponse(ServiceEntry apiDescription, SchemaRepository schemaRepository,
+            KeyValuePair<ResponsesCode, string> responseCodeSValuePair)
+        {
+            var description = responseCodeSValuePair.Value;
+            var responseContentTypes = apiDescription.SupportedResponseMediaTypes;
+            if (responseCodeSValuePair.Key == ResponsesCode.Success)
             {
                 return new OpenApiResponse
                 {
@@ -189,7 +206,8 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
             };
         }
 
-        private IEnumerable<string> InferResponseContentTypes(ServiceEntry apiDescription, ApiResponseType apiResponseType)
+        private IEnumerable<string> InferResponseContentTypes(ServiceEntry apiDescription,
+            ApiResponseType apiResponseType)
         {
             return apiDescription.SupportedResponseMediaTypes;
         }
@@ -223,6 +241,7 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                     schemaGenerator: _schemaGenerator,
                     schemaRepository: schemaRepository);
             }
+
             if (requestBody != null)
             {
                 foreach (var filter in _options.RequestBodyFilters)
@@ -230,32 +249,35 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                     filter.Apply(requestBody, filterContext);
                 }
             }
+
             return requestBody;
         }
 
-        private OpenApiRequestBody GenerateRequestBodyFromFormParameters(ServiceEntry apiDescription, SchemaRepository schemaRepository, IEnumerable<ParameterDescriptor> formParameters)
+        private OpenApiRequestBody GenerateRequestBodyFromFormParameters(ServiceEntry apiDescription,
+            SchemaRepository schemaRepository, IEnumerable<ParameterDescriptor> formParameters)
         {
-           var contentTypes = InferRequestContentTypes(apiDescription);
-                       contentTypes = contentTypes.Any() ? contentTypes : new[] { "multipart/form-data" };
-           var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
-           return new OpenApiRequestBody
-           {
-               Content = contentTypes
-                   .ToDictionary(
-                       contentType => contentType,
-                       contentType => new OpenApiMediaType
-                       {
-                           Schema = schema,
-                           Encoding = schema.Properties.ToDictionary(
-                               entry => entry.Key,
-                               entry => new OpenApiEncoding { Style = ParameterStyle.Form }
-                           )
-                       }
-                   )
-           };
+            var contentTypes = InferRequestContentTypes(apiDescription);
+            contentTypes = contentTypes.Any() ? contentTypes : new[] {"multipart/form-data"};
+            var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
+            return new OpenApiRequestBody
+            {
+                Content = contentTypes
+                    .ToDictionary(
+                        contentType => contentType,
+                        contentType => new OpenApiMediaType
+                        {
+                            Schema = schema,
+                            Encoding = schema.Properties.ToDictionary(
+                                entry => entry.Key,
+                                entry => new OpenApiEncoding {Style = ParameterStyle.Form}
+                            )
+                        }
+                    )
+            };
         }
 
-        private OpenApiSchema GenerateSchemaFromFormParameters(IEnumerable<ParameterDescriptor> formParameters, SchemaRepository schemaRepository)
+        private OpenApiSchema GenerateSchemaFromFormParameters(IEnumerable<ParameterDescriptor> formParameters,
+            SchemaRepository schemaRepository)
         {
             var properties = new Dictionary<string, OpenApiSchema>();
             var requiredPropertyNames = new List<string>();
@@ -272,7 +294,8 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                         null,
                         formParameter.ParameterInfo);
                     properties.Add(name, schema);
-                    if (formParameter.Type.GetCustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
+                    if (formParameter.Type.GetCustomAttributes()
+                        .Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
                     {
                         requiredPropertyNames.Add(name);
                     }
@@ -290,13 +313,15 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
                             propertyInfo,
                             null);
                         properties.Add(name, schema);
-                        if (propertyInfo.GetCustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
+                        if (propertyInfo.GetCustomAttributes()
+                            .Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
                         {
                             requiredPropertyNames.Add(name);
                         }
                     }
                 }
             }
+
             return new OpenApiSchema
             {
                 Type = "object",
@@ -305,10 +330,12 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
             };
         }
 
-        private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(ServiceEntry apiDescription, SchemaRepository schemaRepository, ParameterDescriptor bodyParameter)
+        private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(ServiceEntry apiDescription,
+            SchemaRepository schemaRepository, ParameterDescriptor bodyParameter)
         {
             var contentTypes = InferRequestContentTypes(apiDescription);
-            var isRequired = bodyParameter.Type.CustomAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            var isRequired =
+                bodyParameter.Type.CustomAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
             var schema = GenerateSchema(
                 bodyParameter.Type,
                 schemaRepository,
