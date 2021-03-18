@@ -80,13 +80,18 @@ Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有�
 
 ```yml
 rpc:
-    host: 0.0.0.0 # 主机地址
-    rpcPort: 2201 # rpc通信端口号
-    token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW # token令牌
+  host: 0.0.0.0
+  rpcPort: 2201
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 registrycenter:
-    connectionStrings: 127.0.0.1:2181 # 服务注册中心地址
-    registryCenterType: Zookeeper # 服务注册中心类型
-  
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+  registryCenterType: Zookeeper
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+lock:
+  lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
 ```
 
 4. 完成主机构建后,您可以引用各个微服务模块的应用接口,或是托管服务自身的应用服务。集群内部使用dotntty实现的RPC框架进行通信。
@@ -253,11 +258,11 @@ LMS支持通过TCC的方式实现分布式事务。在应用接口中通过`Tran
 例如:
 
 ```csharp
-// 应用接口注释
+// 应用接口特性
 [Transaction]
 Task<string> Delete(string name);
 
-
+//=================================================================================//
 
 // 应用接口的实现方法,Try方法
 [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
