@@ -1,0 +1,32 @@
+{
+  "name": "lms-docs",
+  "version": "1.0.0",
+  "description": "lms 微服务在线文档",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liuhll/lms.git"
+  },
+  "keywords": [
+    "lms",
+    "rpc",
+    "lms docs",
+    "micro-service"
+  ],
+  "author": "liuhll",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/liuhll/lms/issues"
+  },
+  "homepage": "https://github.com/liuhll/lms#readme",
+  "devDependencies": {
+    "vuepress": "^1.8.0"
+  }
+}
