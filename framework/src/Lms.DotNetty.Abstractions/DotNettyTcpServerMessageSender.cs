@@ -4,7 +4,7 @@ using DotNetty.Transport.Channels;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Transport;
 
-namespace Lms.DotNetty.Protocol.Tcp
+namespace Lms.DotNetty
 {
     public class DotNettyTcpServerMessageSender : IMessageSender
     {

@@ -4,7 +4,7 @@ using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Messages;
 using Lms.Rpc.Transport;
 
-namespace Lms.DotNetty.Adapter
+namespace Lms.DotNetty.Handlers
 {
     public class ClientHandler : ChannelHandlerAdapter
     {

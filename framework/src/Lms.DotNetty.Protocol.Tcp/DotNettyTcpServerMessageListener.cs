@@ -10,7 +10,7 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
 using Lms.Core;
-using Lms.DotNetty.Adapter;
+using Lms.DotNetty.Handlers;
 using Lms.Rpc.Address;
 using Lms.Rpc.Address.HealthCheck;
 using Lms.Rpc.Configuration;

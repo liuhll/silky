@@ -17,6 +17,7 @@ namespace Lms.Rpc.Configuration
         public string SslCertificatePassword { get; set; }
         public int SoBacklog { get; set; } = 8192;
 
+        public string WebsocketPath = "/websocket";
         public bool RemoveUnhealthServer { get; set; } = true;
 
         [NotNull] public string Token { get; set; }

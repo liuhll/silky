@@ -3,7 +3,7 @@ using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
 using Lms.Rpc.Transport.Codec;
 
-namespace Lms.DotNetty.Adapter
+namespace Lms.DotNetty.Handlers
 {
     public class TransportMessageChannelHandlerAdapter : ChannelHandlerAdapter
     {
