@@ -24,6 +24,7 @@ namespace Lms.DotNetty.Protocol.Ws
             builder.RegisterType<DotNettyWsServerMessageListener>()
                 .AsSelf()
                 .SingleInstance()
+                .AsImplementedInterfaces()
                 .PropertiesAutowired();
                
         }

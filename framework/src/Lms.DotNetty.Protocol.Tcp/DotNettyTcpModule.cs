@@ -10,6 +10,7 @@ using Lms.Rpc;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Transport;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -23,6 +24,7 @@ namespace Lms.DotNetty.Protocol.Tcp
             builder.RegisterType<DotNettyTcpServerMessageListener>()
                 .AsSelf()
                 .SingleInstance()
+                .AsImplementedInterfaces()
                 .PropertiesAutowired();
         }
 
