@@ -16,7 +16,9 @@
 
         public string RoutePath { get; set; } = "/services/serviceroutes";
 
-        public string MqttPtah { get; set; }= "/services/servicemqttroutes";
+        public string MqttRoutePtah { get; set; }= "/services/servicemqttroutes";
+        
+        public string WsRoutePtah { get; set; }= "/services/servicewsroutes";
         public double HealthCheckInterval { get; set; } = 30;
     }
 }

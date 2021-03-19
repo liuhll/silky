@@ -17,7 +17,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
 
         public string Template { get; }
 
-        public ServiceProtocol ServiceProtocol { get; }
+        public ServiceProtocol ServiceProtocol { get; set; }
 
         public bool MultipleServiceKey { get; }
     }

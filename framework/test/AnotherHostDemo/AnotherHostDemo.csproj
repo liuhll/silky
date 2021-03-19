@@ -5,6 +5,7 @@
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Lms.DotNetty.Protocol.Ws\Lms.DotNetty.Protocol.Ws.csproj" />
         <ProjectReference Include="..\..\src\Lms.NormHost\Lms.NormHost.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />

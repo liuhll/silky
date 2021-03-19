@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Core.Extensions;
+using Lms.HttpServer.Handlers;
 using Lms.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
@@ -12,7 +13,7 @@ namespace Lms.HttpServer.Middlewares
         private readonly RequestDelegate _next;
         private readonly IServiceEntryLocator _serviceEntryLocator;
 
-        public LmsMiddleware(RequestDelegate next, 
+        public LmsMiddleware(RequestDelegate next,
             IServiceEntryLocator serviceEntryLocator)
         {
             _next = next;
@@ -26,13 +27,21 @@ namespace Lms.HttpServer.Middlewares
             var serviceEntry = _serviceEntryLocator.GetServiceEntryByApi(path, method);
             if (serviceEntry == null)
             {
-                await _next(context);
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    
+                }
+                else
+                {
+                    await _next(context);
+                }
             }
             else
             {
-                await EngineContext.Current.Resolve<HttpMessageReceivedHandler>().Handle(context, serviceEntry);
+                await EngineContext.Current
+                    .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceDescriptor.ServiceProtocol.ToString())
+                    .Handle(context, serviceEntry);
             }
         }
     }
-    
 }

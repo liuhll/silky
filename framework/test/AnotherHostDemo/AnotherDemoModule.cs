@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core.Modularity;
+using Lms.DotNetty.Protocol.Ws;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace AnotherHostDemo
 {
   
-    //[DependsOn(typeof(NormHostModule))]
+    [DependsOn(typeof(DotNettyHttpModule))]
     public class AnotherDemoModule : NormHostModule
     {
         public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;

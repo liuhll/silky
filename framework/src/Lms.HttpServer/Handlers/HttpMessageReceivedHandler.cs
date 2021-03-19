@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Lms.Core.DependencyInjection;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
 using Lms.Rpc.Configuration;
@@ -10,9 +9,9 @@ using Lms.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Lms.HttpServer
+namespace Lms.HttpServer.Handlers
 {
-    internal class HttpMessageReceivedHandler : IScopedDependency
+    internal class HttpMessageReceivedHandler : IMessageReceivedHandler
     {
         private readonly IParameterParser _parameterParser;
         private readonly ISerializer _serializer;
@@ -31,7 +30,7 @@ namespace Lms.HttpServer
             _rpcOptions = rpcOptions.Value;
         }
 
-        internal async Task Handle(HttpContext context, ServiceEntry serviceEntry)
+        public async Task Handle(HttpContext context, ServiceEntry serviceEntry)
         {
             var requestParameters = await _parameterParser.Parser(context.Request, serviceEntry);
             RpcContext.GetContext().SetAttachment("requestHeader", requestParameters[ParameterFrom.Header]);

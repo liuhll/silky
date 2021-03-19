@@ -84,9 +84,7 @@ namespace Lms.Rpc.Utils
                     break;
                 default:
                      throw new LmsException("必须指定地址类型");
-                    break;
             }
-
             address = new AddressModel(host, port, serviceProtocol);
             return addressModels.GetOrAdd(serviceProtocol, address);
         }

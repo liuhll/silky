@@ -12,10 +12,13 @@ namespace Lms.Rpc.Configuration
             switch (serviceProtocol)
             {
                 case ServiceProtocol.Mqtt:
-                    routePath = options.MqttPtah;
+                    routePath = options.MqttRoutePtah;
                     break;
                 case ServiceProtocol.Tcp:
                     routePath = options.RoutePath;
+                    break;
+                case ServiceProtocol.Ws:
+                    routePath = options.WsRoutePtah;
                     break;
                 default:
                     throw new LmsException($"暂未实现{serviceProtocol}的通信协议");
