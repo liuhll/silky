@@ -97,7 +97,8 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,
-                ServiceProtocol = ServiceProtocol.Tcp
+                ServiceProtocol = routeTemplateProvider.ServiceProtocol,
+                RpcPort = routeTemplateProvider.RpcPort
             };
 
             var serviceEntry = new ServiceEntry(router,
@@ -105,7 +106,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
                 serviceType,
                 method,
                 parameterDescriptors,
-                routeTemplateProvider.MultipleServiceKey,
+                routeTemplateProvider,
                 isLocal,
                 _governanceOptions);
             return serviceEntry;

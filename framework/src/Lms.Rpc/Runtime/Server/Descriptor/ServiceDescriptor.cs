@@ -11,12 +11,13 @@ namespace Lms.Rpc.Runtime.Server.Descriptor
         {
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
-        
-        [NotNull]
-        public string Id { get; set; }
+
+        [NotNull] public string Id { get; set; }
+
+        public int RpcPort { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
-        
+
         public IDictionary<string, object> Metadatas { get; set; }
 
         public T GetMetadata<T>(string name, T def = default(T))
@@ -24,11 +25,11 @@ namespace Lms.Rpc.Runtime.Server.Descriptor
             if (!Metadatas.ContainsKey(name))
                 return def;
 
-            return (T)Metadatas[name];
+            return (T) Metadatas[name];
         }
 
         #region Equality Members
-        
+
         public override bool Equals(object obj)
         {
             var model = obj as ServiceDescriptor;
@@ -41,6 +42,11 @@ namespace Lms.Rpc.Runtime.Server.Descriptor
             if (model.Id != Id)
                 return false;
             if (model.ServiceProtocol != ServiceProtocol)
+            {
+                return false;
+            }
+
+            if (model.RpcPort != RpcPort)
             {
                 return false;
             }
@@ -59,7 +65,7 @@ namespace Lms.Rpc.Runtime.Server.Descriptor
                 return metadata.Value.Equals(value);
             });
         }
-        
+
         public static bool operator ==(ServiceDescriptor model1, ServiceDescriptor model2)
         {
             return Equals(model1, model2);
@@ -81,6 +87,5 @@ namespace Lms.Rpc.Runtime.Server.Descriptor
         }
 
         #endregion
-
     }
 }

@@ -22,10 +22,6 @@ namespace Lms.Rpc.Utils
         private const string LOCAL_HOSTADRRESS = "localhost";
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
 
-        private static ConcurrentDictionary<ServiceProtocol, IAddressModel> addressModels =
-            new ConcurrentDictionary<ServiceProtocol, IAddressModel>();
-
-
         public static string GetHostAddress(string hostAddress)
         {
             var result = hostAddress;
@@ -61,32 +57,12 @@ namespace Lms.Rpc.Utils
             return result;
         }
 
-        public static IAddressModel GetHostAddressModel(ServiceProtocol serviceProtocol)
+        public static IAddressModel GetRpcAddressModel(int port, ServiceProtocol serviceProtocol)
         {
-            if (addressModels.TryGetValue(serviceProtocol, out IAddressModel address))
-            {
-                return address;
-            }
-
             var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
             string host = GetHostAddress(rpcOptions.Host);
-            int port;
-            switch (serviceProtocol)
-            {
-                case ServiceProtocol.Tcp:
-                    port = rpcOptions.RpcPort;
-                    break;
-                case ServiceProtocol.Mqtt:
-                    port = rpcOptions.MqttPort;
-                    break;
-                case ServiceProtocol.Ws:
-                    port = rpcOptions.WsPort;
-                    break;
-                default:
-                     throw new LmsException("必须指定地址类型");
-            }
-            address = new AddressModel(host, port, serviceProtocol);
-            return addressModels.GetOrAdd(serviceProtocol, address);
+            var address = new AddressModel(host, port, serviceProtocol);
+            return address;
         }
 
         private static bool IsValidAddress(string address)

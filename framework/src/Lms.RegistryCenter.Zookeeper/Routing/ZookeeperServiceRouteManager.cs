@@ -5,6 +5,7 @@ using Lms.Core.DependencyInjection;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
 using Lms.Lock.Provider;
+using Lms.Rpc.Address.Descriptor;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Descriptor;
@@ -191,15 +192,13 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
         {
             var serviceRouteDescriptors = _serviceRouteCache.ServiceRouteDescriptors
                 .Where(p => p.AddressDescriptors.Any(p =>
-                    p == NetUtil.GetHostAddressModel(ServiceProtocol.Mqtt).Descriptor ||
-                    p == NetUtil.GetHostAddressModel(ServiceProtocol.Tcp).Descriptor ||
-                    p == NetUtil.GetHostAddressModel(ServiceProtocol.Ws).Descriptor
-                ));
+                    p.Address == NetUtil.GetHostAddress(_rpcOptions.Host)));
+
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
                 serviceRouteDescriptor.AddressDescriptors =
                     serviceRouteDescriptor.AddressDescriptors.Where(p =>
-                        p != NetUtil.GetHostAddressModel(p.ServiceProtocol));
+                        p != p.ConvertToAddressModel().Descriptor);
                 await RegisterRouteWithLockAsync(serviceRouteDescriptor);
             }
         }

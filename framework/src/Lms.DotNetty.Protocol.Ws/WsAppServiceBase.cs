@@ -1,13 +1,14 @@
 ﻿using System.Threading.Tasks;
+using DotNetty.Transport.Channels;
 
 namespace Lms.DotNetty.Protocol.Ws
 {
     public abstract class WsAppServiceBase
     {
-       public abstract Task OnOpen();
+        protected abstract Task OnOpen(IChannelHandlerContext context);
 
-       public abstract Task OnClose();
+        protected abstract Task OnClose(IChannelHandlerContext context);
 
-       public abstract Task OnReceive();
+        protected abstract Task OnReceive(IChannelHandlerContext context);
     }
 }

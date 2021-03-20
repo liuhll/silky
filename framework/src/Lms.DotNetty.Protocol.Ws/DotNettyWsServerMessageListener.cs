@@ -37,7 +37,6 @@ namespace Lms.DotNetty.Protocol.Ws
         public ILogger<DotNettyWsServerMessageListener> Logger { get; set; }
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
-        private readonly IAddressModel _hostAddress;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IHealthCheck _healthCheck;
         private readonly IServiceEntryLocator _serviceEntryLocator;
@@ -59,7 +58,6 @@ namespace Lms.DotNetty.Protocol.Ws
             _healthCheck = healthCheck;
             _serviceEntryLocator = serviceEntryLocator;
             _typeFinder = typeFinder;
-            _hostAddress = NetUtil.GetHostAddressModel(ServiceProtocol.Ws);
             _rpcOptions = rpcOptions.Value;
             _wsAppServiceTypes = _typeFinder.FindClassesOfType<WsAppServiceBase>().Where(p=> !p.IsAbstract);
             if (_rpcOptions.IsSsl)
@@ -130,13 +128,13 @@ namespace Lms.DotNetty.Protocol.Ws
                     // pipeline.AddLast(new WebSocketServerFrameHandler());
                 }));
             
-            var bootstrapChannel = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
-            async void DoBind()
-            {
-                await bootstrapChannel.CloseAsync();
-                var ch = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
-                Interlocked.Exchange(ref bootstrapChannel, ch);
-            }
+            // var bootstrapChannel = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
+            // async void DoBind()
+            // {
+            //     await bootstrapChannel.CloseAsync();
+            //     var ch = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
+            //     Interlocked.Exchange(ref bootstrapChannel, ch);
+            // }
         }
 
         private string GetWebSocketPathAppServiceType(Type wsAppServiceType)

@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Lms.DotNetty.Protocol.Ws;
 
 namespace IAnotherApplication
 {
-    //[ServiceRoute(ServiceProtocol = ServiceProtocol.Ws)]
+    [WsServiceRoute(1010)]
     public interface IWsTestAppService
     {
         Task Echo(string msg);

@@ -66,8 +66,7 @@ namespace Lms.DotNetty
                 _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
-                RpcContext.GetContext().SetAttachment("localAddress",
-                    NetUtil.GetHostAddressModel(selectedAddress.ServiceProtocol).ToString());
+                //RpcContext.GetContext().SetAttachment("localAddress", NetUtil.GetRpcAddressModel().ToString());
                 RpcContext.GetContext().SetAttachment("remoteAddress", selectedAddress.ToString());
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }

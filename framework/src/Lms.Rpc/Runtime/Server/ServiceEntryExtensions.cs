@@ -7,6 +7,7 @@ using Lms.Core;
 using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
+using Lms.Rpc.Address;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Lms.Rpc.Runtime.Session;
@@ -28,8 +29,14 @@ namespace Lms.Rpc.Runtime.Server
             {
                 ServiceDescriptor = serviceEntry.ServiceDescriptor,
                 AddressDescriptors = new[]
-                    {NetUtil.GetHostAddressModel(serviceEntry.ServiceDescriptor.ServiceProtocol).Descriptor},
+                    {serviceEntry.GetRpcAddressModel().Descriptor},
             };
+        }
+
+        public static IAddressModel GetRpcAddressModel(this ServiceEntry serviceEntry)
+        {
+            return NetUtil.GetRpcAddressModel(serviceEntry.ServiceDescriptor.RpcPort,
+                serviceEntry.ServiceDescriptor.ServiceProtocol);
         }
 
         public static string GetHashKeyValue(this ServiceEntry serviceEntry, object[] parameterValues)
@@ -100,8 +107,9 @@ namespace Lms.Rpc.Runtime.Server
             var templete = cachingInterceptProvider.KeyTemplete;
             if (templete.IsNullOrEmpty())
             {
-                throw new LmsException("缓存拦截指定的KeyTemplete不允许为空",StatusCode.CachingInterceptError);
+                throw new LmsException("缓存拦截指定的KeyTemplete不允许为空", StatusCode.CachingInterceptError);
             }
+
             var cachingInterceptKey = string.Empty;
             var cacheKeyProviders = new List<ICacheKeyProvider>();
             var index = 0;
@@ -146,19 +154,22 @@ namespace Lms.Rpc.Runtime.Server
                 var session = NullSession.Instance;
                 if (!session.IsLogin())
                 {
-                    throw new LmsException("缓存数据如果指定与当前登录用户相关,那么必须登录系统才允许使用缓存拦截",StatusCode.CachingInterceptError);
+                    throw new LmsException("缓存数据如果指定与当前登录用户相关,那么必须登录系统才允许使用缓存拦截", StatusCode.CachingInterceptError);
                 }
+
                 cachingInterceptKey = cachingInterceptKey + $":userId:{session.UserId}";
             }
+
             return cachingInterceptKey;
         }
 
-        public static bool IsTransactionServiceEntry([NotNull]this ServiceEntry serviceEntry)
+        public static bool IsTransactionServiceEntry([NotNull] this ServiceEntry serviceEntry)
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
-            return serviceEntry.CustomAttributes.Any(p=> p.GetType().GetTypeInfo().FullName == "Lms.Transaction.TransactionAttribute");
+            return serviceEntry.CustomAttributes.Any(p =>
+                p.GetType().GetTypeInfo().FullName == "Lms.Transaction.TransactionAttribute");
         }
-        
+
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,
             ITypeConvertibleService typeConvertibleService)
         {

@@ -4,6 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Lms.DotNetty.Protocol.Ws\Lms.DotNetty.Protocol.Ws.csproj" />
         <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
         <ProjectReference Include="..\..\src\Lms.Transaction\Lms.Transaction.csproj" />
     </ItemGroup>

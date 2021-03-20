@@ -22,7 +22,7 @@ namespace Lms.Rpc.Routing
 
         protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
-            ILockerProvider lockerProvider, 
+            ILockerProvider lockerProvider,
             IOptions<RegistryCenterOptions> registryCenterOptions,
             IOptions<RpcOptions> rpcOptions)
         {
@@ -86,10 +86,7 @@ namespace Lms.Rpc.Routing
         protected async Task RegisterRouteWithLockAsync(ServiceRouteDescriptor serviceRouteDescriptor)
         {
             using var locker = await _lockerProvider.CreateLockAsync(serviceRouteDescriptor.ServiceDescriptor.Id);
-            await locker.Lock(async () =>
-            {
-                await RegisterRouteAsync(serviceRouteDescriptor);
-            });
+            await locker.Lock(async () => { await RegisterRouteAsync(serviceRouteDescriptor); });
         }
 
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
@@ -108,7 +105,8 @@ namespace Lms.Rpc.Routing
                         p.ServiceDescriptor.Id == removeServiceDescriptorId);
                 if (removeRoute != null && removeRoute.AddressDescriptors.Any())
                 {
-                    var hostAddr = NetUtil.GetHostAddressModel(removeRoute.ServiceDescriptor.ServiceProtocol);
+                    var hostAddr = NetUtil.GetRpcAddressModel(removeRoute.ServiceDescriptor.RpcPort,
+                        removeRoute.ServiceDescriptor.ServiceProtocol);
                     if (removeRoute.AddressDescriptors.Any(p => p.Equals(hostAddr)))
                     {
                         removeRoute.AddressDescriptors =

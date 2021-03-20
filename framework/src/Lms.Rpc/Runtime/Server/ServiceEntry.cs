@@ -10,6 +10,7 @@ using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Core.MethodExecutor;
+using Lms.Rpc.Address;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
@@ -32,7 +33,7 @@ namespace Lms.Rpc.Runtime.Server
         public string Id => ServiceDescriptor.Id;
 
         public Type ServiceType => _serviceType;
-
+        
         public ObjectMethodExecutor MethodExecutor => _methodExecutor;
 
         public ServiceEntry(IRouter router,
@@ -40,16 +41,16 @@ namespace Lms.Rpc.Runtime.Server
             Type serviceType,
             MethodInfo methodInfo,
             IReadOnlyList<ParameterDescriptor> parameterDescriptors,
-            bool multipleServiceKey,
+            IRouteTemplateProvider routeTemplateProvider,
             bool isLocal,
             GovernanceOptions governanceOptions)
         {
             Router = router;
             ServiceDescriptor = serviceDescriptor;
             ParameterDescriptors = parameterDescriptors;
-            IsLocal = isLocal;
-            MultipleServiceKey = multipleServiceKey;
             _serviceType = serviceType;
+            IsLocal = isLocal;
+            MultipleServiceKey = routeTemplateProvider.MultipleServiceKey;
             GroupName = serviceType.FullName;
             MethodInfo = methodInfo;
             CustomAttributes = MethodInfo.GetCustomAttributes(true);

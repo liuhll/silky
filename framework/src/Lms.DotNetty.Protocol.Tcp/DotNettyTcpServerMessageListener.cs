@@ -46,8 +46,8 @@ namespace Lms.DotNetty.Protocol.Tcp
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
             _healthCheck = healthCheck;
-            _hostAddress = NetUtil.GetHostAddressModel(ServiceProtocol.Tcp);
             _rpcOptions = rpcOptions.Value;
+            _hostAddress = NetUtil.GetRpcAddressModel(_rpcOptions.RpcPort, ServiceProtocol.Tcp);
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
