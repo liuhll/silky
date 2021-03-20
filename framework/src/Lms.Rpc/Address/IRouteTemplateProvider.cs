@@ -11,8 +11,6 @@ namespace Lms.Rpc.Address
     {
         string Template { get; }
 
-        ServiceProtocol ServiceProtocol { get; }
-
         bool MultipleServiceKey { get; }
     }
 
@@ -20,14 +18,9 @@ namespace Lms.Rpc.Address
     {
         private const string separator = "/";
 
-        public static string GetWsPath([NotNull] this IRouteTemplateProvider routeTemplateProvider,string serviceName)
+        public static string GetWsPath([NotNull] this IRouteTemplateProvider routeTemplateProvider, string serviceName)
         {
             Check.NotNull(routeTemplateProvider, nameof(routeTemplateProvider));
-            if (routeTemplateProvider.ServiceProtocol != ServiceProtocol.Ws)
-            {
-                throw new LmsException("指定的服务协议不是Ws");
-            }
-
             var template = TrimPrefix(routeTemplateProvider.Template);
             var segementLines = template.Split(separator);
             var wsPath = "/";
@@ -45,10 +38,11 @@ namespace Lms.Rpc.Address
                     wsPath += TemplateSegmentHelper.GetSegmentVal(segementLine);
                 }
             }
+
             return wsPath;
         }
 
-        
+
         private static string ParseAppServiceName(string segemnetVal, string serviceName)
         {
             if (segemnetVal.Contains("="))
@@ -58,6 +52,7 @@ namespace Lms.Rpc.Address
 
             return serviceName.Substring(1, serviceName.Length - segemnetVal.Length - 1).ToLower();
         }
+
         private static string TrimPrefix(string template)
         {
             if (template.StartsWith("~/", StringComparison.Ordinal))

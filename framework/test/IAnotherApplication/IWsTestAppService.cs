@@ -4,7 +4,7 @@ using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace IAnotherApplication
 {
-    [ServiceRoute(ServiceProtocol = ServiceProtocol.Ws)]
+    //[ServiceRoute(ServiceProtocol = ServiceProtocol.Ws)]
     public interface IWsTestAppService
     {
         Task Echo(string msg);

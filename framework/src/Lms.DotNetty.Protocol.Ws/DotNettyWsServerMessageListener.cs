@@ -148,10 +148,10 @@ namespace Lms.DotNetty.Protocol.Ws
                 throw new LmsException("您必须要在应用接口中通过ServiceRoute特性标识服务");
             }
 
-            if (routeTemplateProvider.ServiceProtocol != ServiceProtocol.Ws)
-            {
-                throw new LmsException("指定的服务协议不是WS");
-            }
+            // if (routeTemplateProvider.ServiceProtocol != ServiceProtocol.Ws)
+            // {
+            //     throw new LmsException("指定的服务协议不是WS");
+            // }
 
             return routeTemplateProvider.GetWsPath(wsAppServiceType.Name);
         }

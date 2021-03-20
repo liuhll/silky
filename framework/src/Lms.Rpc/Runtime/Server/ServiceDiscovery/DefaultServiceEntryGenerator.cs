@@ -97,7 +97,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,
-                ServiceProtocol = routeTemplateProvider.ServiceProtocol
+                ServiceProtocol = ServiceProtocol.Tcp
             };
 
             var serviceEntry = new ServiceEntry(router,
