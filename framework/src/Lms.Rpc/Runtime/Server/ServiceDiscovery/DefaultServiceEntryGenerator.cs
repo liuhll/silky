@@ -10,6 +10,7 @@ using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
 using Lms.Rpc.Runtime.Server.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
+using Lms.Rpc.Utils;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Options;
 
@@ -47,7 +48,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
                     var httpMethod = httpMethodAttribute.HttpMethods.First().To<HttpMethod>();
                     if (!isSpecify)
                     {
-                        if (method.Name.StartsWith("Generator"))
+                        if (method.Name.StartsWith("Create"))
                         {
                             httpMethod = HttpMethod.Post;
                         }
@@ -60,6 +61,21 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
                         if (method.Name.StartsWith("Delete"))
                         {
                             httpMethod = HttpMethod.Delete;
+                        }
+
+                        if (method.Name.StartsWith("Search"))
+                        {
+                            httpMethod = HttpMethod.Get;
+                        }
+
+                        if (method.Name.StartsWith("Query"))
+                        {
+                            httpMethod = HttpMethod.Get;
+                        }
+
+                        if (method.Name.StartsWith("Get"))
+                        {
+                            httpMethod = HttpMethod.Get;
                         }
                     }
 
@@ -98,7 +114,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
             {
                 Id = serviceId,
                 ServiceProtocol = routeTemplateProvider.ServiceProtocol,
-                RpcPort = routeTemplateProvider.RpcPort
             };
 
             var serviceEntry = new ServiceEntry(router,

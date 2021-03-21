@@ -10,7 +10,7 @@ namespace Lms.Rpc.Routing.Template
         private static IDictionary<HttpMethod, string> constraintDefualtMethods = new Dictionary<HttpMethod, string>()
         {
             {HttpMethod.Get, "Get"},
-            {HttpMethod.Post, "Generator"},
+            {HttpMethod.Post, "Create"},
             {HttpMethod.Put, "Update"},
             {HttpMethod.Patch, "Update"},
             {HttpMethod.Delete, "Delete"},

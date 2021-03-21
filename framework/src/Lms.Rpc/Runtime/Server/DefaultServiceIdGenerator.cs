@@ -11,9 +11,8 @@ namespace Lms.Rpc.Runtime.Server
 {
     public class DefaultServiceIdGenerator : IServiceIdGenerator
     {
-        private ConcurrentDictionary<MethodInfo, string> m_serviceIdCache =
-            new ConcurrentDictionary<MethodInfo, string>();
-
+        private ConcurrentDictionary<MethodInfo, string> m_serviceIdCache = new();
+        
         public ILogger<DefaultServiceIdGenerator> Logger { get; set; }
 
         public DefaultServiceIdGenerator()
@@ -44,6 +43,7 @@ namespace Lms.Rpc.Runtime.Server
             {
                 id += "_" + string.Join("_", parameters.Select(i => i.Name));
             }
+
             Logger.LogDebug($"为方法：{method}生成服务Id：{id}。");
             return m_serviceIdCache.GetOrAdd(method, id);
         }
