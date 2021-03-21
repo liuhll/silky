@@ -112,7 +112,7 @@ namespace Lms.DotNetty.Protocol.Tcp
             }
             catch (Exception e)
             {
-                Logger.LogInformation(
+                Logger.LogError(
                     $"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol},原因: {e.Message}");
                 throw;
             }

@@ -76,16 +76,16 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        protected async override Task CreateSubDirectory(ServiceProtocol serviceProtocol)
+        protected async override Task CreateSubDirectory()
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
-                await CreateSubDirectory(zookeeperClient, serviceProtocol);
+                await CreateSubDirectory(zookeeperClient);
             }
         }
 
-        private async Task CreateSubDirectory(IZookeeperClient zookeeperClient, ServiceProtocol serviceProtocol)
+        private async Task CreateSubDirectory(IZookeeperClient zookeeperClient)
         {
             var subDirectoryPath = _registryCenterOptions.RoutePath;
 
@@ -159,6 +159,20 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             foreach (var serviceEntry in allServiceEntries)
             {
                 var serviceRoutePath = CreateRoutePath(serviceEntry.ServiceDescriptor.Id);
+                var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+                foreach (var zookeeperClient in zookeeperClients)
+                {
+                    await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
+                }
+            }
+        }
+
+        public async override Task CreateWsSubscribeDataChanges(string[] wsPaths)
+        {
+            foreach (var wsPath in wsPaths)
+            {
+                var wsServiceId = WebSocketResolverHelper.Generator(wsPath);
+                var serviceRoutePath = CreateRoutePath(wsServiceId);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
                 foreach (var zookeeperClient in zookeeperClients)
                 {

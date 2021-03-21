@@ -3,7 +3,7 @@ using Lms.DotNetty.Protocol.Ws;
 
 namespace IAnotherApplication
 {
-    [WsServiceRoute(1010)]
+    [WsServiceRoute(2120)]
     public interface IWsTestAppService
     {
         Task Echo(string msg);

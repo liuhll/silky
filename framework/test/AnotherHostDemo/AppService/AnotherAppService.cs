@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
-using Lms.Core.Exceptions;
 using Lms.Transaction.Tcc;
 
 namespace AnotherHostDemo.AppService

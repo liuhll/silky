@@ -30,7 +30,7 @@ namespace Lms.Swagger.SwaggerGen.DependencyInjection
         {
             DeepCopy(_swaggerGenOptions.SwaggerGeneratorOptions, options);
 
-            // Create and add any filters that were specified through the FilterDescriptor lists ...
+            // Generator and add any filters that were specified through the FilterDescriptor lists ...
 
             _swaggerGenOptions.ParameterFilterDescriptors.ForEach(
                 filterDescriptor => options.ParameterFilters.Add(CreateFilter<IParameterFilter>(filterDescriptor)));

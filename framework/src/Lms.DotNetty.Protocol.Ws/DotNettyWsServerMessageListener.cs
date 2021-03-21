@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,7 +51,7 @@ namespace Lms.DotNetty.Protocol.Ws
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
             IHealthCheck healthCheck,
-            IServiceEntryLocator serviceEntryLocator, 
+            IServiceEntryLocator serviceEntryLocator,
             ITypeFinder typeFinder)
         {
             _hostEnvironment = hostEnvironment;
@@ -59,7 +60,7 @@ namespace Lms.DotNetty.Protocol.Ws
             _serviceEntryLocator = serviceEntryLocator;
             _typeFinder = typeFinder;
             _rpcOptions = rpcOptions.Value;
-            _wsAppServiceTypes = _typeFinder.FindClassesOfType<WsAppServiceBase>().Where(p=> !p.IsAbstract);
+            _wsAppServiceTypes = _typeFinder.FindClassesOfType<WsAppServiceBase>().Where(p => !p.IsAbstract);
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
@@ -69,6 +70,24 @@ namespace Lms.DotNetty.Protocol.Ws
         }
 
         public async Task Listen()
+        {
+            foreach (var appServiceType in _wsAppServiceTypes)
+            {
+                var routeTemplateProvider = appServiceType.GetInterfaces()
+                    .Select(p =>
+                        p.GetTypeInfo().GetCustomAttributes().OfType<IRouteTemplateProvider>().FirstOrDefault())
+                    .Where(p => p != null)
+                    .FirstOrDefault();
+                if (routeTemplateProvider != null)
+                {
+                    var webSocketPath = WebSocketResolverHelper.ParseWsPath(routeTemplateProvider.Template,
+                        appServiceType.Name);
+                    await WsListen(webSocketPath, routeTemplateProvider.RpcPort);
+                }
+            }
+        }
+
+        public async Task WsListen(string webSocketPath, int rpcPort)
         {
             var bootstrap = new ServerBootstrap();
             if (_rpcOptions.UseLibuv)
@@ -109,32 +128,40 @@ namespace Lms.DotNetty.Protocol.Ws
                     pipeline.AddLast(new HttpServerCodec());
                     pipeline.AddLast(new HttpObjectAggregator(65536));
                     pipeline.AddLast(new WebSocketServerCompressionHandler());
-                    foreach (var wsAppServiceType in _wsAppServiceTypes)
-                    {
-                        var wsAppServiceWebSocketPath = GetWebSocketPathAppServiceType(wsAppServiceType);
-                        pipeline.AddLast(new WebSocketServerProtocolHandler(
-                            websocketPath: wsAppServiceWebSocketPath,
-                            subprotocols: null,
-                            allowExtensions: true,
-                            maxFrameSize: 65536,
-                            allowMaskMismatch: true,
-                            checkStartsWith: false,
-                            dropPongFrames: true,
-                            enableUtf8Validator: false));
-                        pipeline.AddLast(new WebSocketServerHttpHandler(_serviceEntryLocator));
-                    }
-                   
+                    pipeline.AddLast(new WebSocketServerProtocolHandler(
+                        websocketPath: webSocketPath,
+                        subprotocols: null,
+                        allowExtensions: true,
+                        maxFrameSize: 65536,
+                        allowMaskMismatch: true,
+                        checkStartsWith: false,
+                        dropPongFrames: true,
+                        enableUtf8Validator: false));
+                    pipeline.AddLast(new WebSocketServerHttpHandler(_serviceEntryLocator));
+
                     // pipeline.AddLast(new WebSocketFrameAggregator(65536));
                     // pipeline.AddLast(new WebSocketServerFrameHandler());
                 }));
-            
-            // var bootstrapChannel = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
-            // async void DoBind()
-            // {
-            //     await bootstrapChannel.CloseAsync();
-            //     var ch = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
-            //     Interlocked.Exchange(ref bootstrapChannel, ch);
-            // }
+            var hostAddress = NetUtil.GetRpcAddressModel(rpcPort, ServiceProtocol.Ws);
+            try
+            {
+                var bootstrapChannel = await bootstrap.BindAsync(hostAddress.IPEndPoint);
+                Logger.LogInformation($"服务监听者启动成功,监听地址:{hostAddress},通信协议:{hostAddress.ServiceProtocol}");
+
+                async void DoBind()
+                {
+                    await bootstrapChannel.CloseAsync();
+                    var ch = await bootstrap.BindAsync(hostAddress.IPEndPoint);
+                    Interlocked.Exchange(ref bootstrapChannel, ch);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(
+                    $"服务监听启动失败,监听地址:{hostAddress},通信协议:{hostAddress.ServiceProtocol},原因: {e.Message}");
+                throw;
+                throw;
+            }
         }
 
         private string GetWebSocketPathAppServiceType(Type wsAppServiceType)
@@ -145,11 +172,6 @@ namespace Lms.DotNetty.Protocol.Ws
             {
                 throw new LmsException("您必须要在应用接口中通过ServiceRoute特性标识服务");
             }
-
-            // if (routeTemplateProvider.ServiceProtocol != ServiceProtocol.Ws)
-            // {
-            //     throw new LmsException("指定的服务协议不是WS");
-            // }
 
             return routeTemplateProvider.GetWsPath(wsAppServiceType.Name);
         }

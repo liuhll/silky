@@ -47,7 +47,7 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
                     var httpMethod = httpMethodAttribute.HttpMethods.First().To<HttpMethod>();
                     if (!isSpecify)
                     {
-                        if (method.Name.StartsWith("Create"))
+                        if (method.Name.StartsWith("Generator"))
                         {
                             httpMethod = HttpMethod.Post;
                         }

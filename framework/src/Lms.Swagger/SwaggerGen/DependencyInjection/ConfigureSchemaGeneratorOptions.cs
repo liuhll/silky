@@ -24,7 +24,7 @@ namespace Lms.Swagger.SwaggerGen.DependencyInjection
         {
             DeepCopy(_swaggerGenOptions.SchemaGeneratorOptions, options);
 
-            // Create and add any filters that were specified through the FilterDescriptor lists
+            // Generator and add any filters that were specified through the FilterDescriptor lists
             _swaggerGenOptions.SchemaFilterDescriptors.ForEach(
                 filterDescriptor => options.SchemaFilters.Add(CreateFilter<ISchemaFilter>(filterDescriptor)));
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Lms.Core;
+using Lms.Rpc.Address;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Lms.Rpc.Runtime.Server
@@ -53,6 +54,33 @@ namespace Lms.Rpc.Runtime.Server
             var proxyTypes = FindAllServiceEntryTypes(typeFinder).Where(p => !p.Item2)
                 .Select(p => p.Item1);
             return proxyTypes;
+        }
+
+        public static IEnumerable<(Type, bool)> FindWsServiceTypeInfos(ITypeFinder typeFinder)
+        {
+            var entryTypes = new List<(Type, bool)>();
+            var exportedTypes = typeFinder.GetAssemblies()
+                .SelectMany(p => p.ExportedTypes);
+
+            var entryInterfaces = exportedTypes
+                    .Where(p => p.IsInterface
+                                && p.GetCustomAttributes().Any(a =>
+                                    (a as IRouteTemplateProvider)?.ServiceProtocol == ServiceProtocol.Ws)
+                                && !p.IsGenericType
+                    )
+                ;
+            foreach (var entryInterface in entryInterfaces)
+            {
+                entryTypes.Add(exportedTypes.Any(t => entryInterface.IsAssignableFrom(t)
+                                                      && t.IsClass
+                                                      && t.BaseType?.FullName ==
+                                                      "Lms.DotNetty.Protocol.Ws.WsAppServiceBase"
+                                                      && !t.IsAbstract)
+                    ? (entryInterface, true)
+                    : (entryInterface, false));
+            }
+
+            return entryTypes;
         }
     }
 }

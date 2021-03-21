@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lms.Core;
@@ -7,6 +8,7 @@ using Lms.Lock.Provider;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server;
+using Lms.Rpc.Runtime.Server.Descriptor;
 using Lms.Rpc.Utils;
 using Microsoft.Extensions.Options;
 
@@ -47,6 +49,8 @@ namespace Lms.Rpc.Routing
 
         public abstract Task CreateSubscribeDataChanges();
 
+        public abstract Task CreateWsSubscribeDataChanges(string[] wsPaths);
+
         public abstract Task EnterRoutes();
 
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
@@ -54,6 +58,29 @@ namespace Lms.Rpc.Routing
             var localServiceEntries = _serviceEntryManager.GetLocalEntries()
                 .Where(p => p.ServiceDescriptor.ServiceProtocol == serviceProtocol);
             var serviceRouteDescriptors = localServiceEntries.Select(p => p.CreateLocalRouteDescriptor());
+            await RegisterRoutes(serviceRouteDescriptors);
+        }
+
+        public virtual async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes)
+        {
+            var serviceRouteDescriptors = wsAppServiceTypes.Select(p => new ServiceRouteDescriptor()
+            {
+                ServiceDescriptor = new ServiceDescriptor()
+                {
+                    Id = WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(p)),
+                    ServiceProtocol = ServiceProtocol.Ws,
+                },
+                AddressDescriptors = new[]
+                {
+                    NetUtil.GetRpcAddressModel(WebSocketResolverHelper.GetWsRpcPort(p), ServiceProtocol.Ws).Descriptor
+                },
+            });
+
+            await RegisterRoutes(serviceRouteDescriptors);
+        }
+
+        protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors)
+        {
             var registrationCentreServiceRoutes = _serviceRouteCache.ServiceRouteDescriptors.Where(p =>
                 serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
             var centreServiceRoutes = registrationCentreServiceRoutes as ServiceRouteDescriptor[] ??
@@ -64,7 +91,7 @@ namespace Lms.Rpc.Routing
             }
             else
             {
-                await CreateSubDirectory(serviceProtocol);
+                await CreateSubDirectory();
             }
 
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
@@ -81,7 +108,7 @@ namespace Lms.Rpc.Routing
             }
         }
 
-        protected abstract Task CreateSubDirectory(ServiceProtocol serviceProtocol);
+        protected abstract Task CreateSubDirectory();
 
         protected async Task RegisterRouteWithLockAsync(ServiceRouteDescriptor serviceRouteDescriptor)
         {
