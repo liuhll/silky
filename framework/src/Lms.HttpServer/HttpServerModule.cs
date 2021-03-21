@@ -27,6 +27,7 @@ namespace Lms.HttpServer
             builder.RegisterType<WsMessageReceivedHandler>()
                 .InstancePerLifetimeScope()
                 .AsSelf()
+                .As<IWsShakeHandHandler>()
                 .Named<IMessageReceivedHandler>(ServiceProtocol.Ws.ToString());
 
             builder.RegisterType<MqttMessageReceivedHandler>()

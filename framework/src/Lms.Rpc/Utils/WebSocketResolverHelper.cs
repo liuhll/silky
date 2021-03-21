@@ -29,18 +29,6 @@ namespace Lms.Rpc.Utils
             return wsPath.Replace("/", "_");
         }
 
-        public static int GetWsRpcPort(Type wsAppServiceType)
-        {
-            var routeTemplateProvider = wsAppServiceType.GetCustomAttributes().OfType<IRouteTemplateProvider>()
-                .FirstOrDefault();
-            if (routeTemplateProvider == null)
-            {
-                throw new LmsException("ws服务必须要通过WsServiceRoute特性进行注解");
-            }
-
-            return routeTemplateProvider.RpcPort;
-        }
-
         private static string TrimPrefix(string template)
         {
             if (template.StartsWith("~/", StringComparison.Ordinal))

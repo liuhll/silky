@@ -8,6 +8,9 @@ namespace Lms.Rpc.Configuration
 
         public string Host { get; set; } = "0.0.0.0";
         public int RpcPort { get; set; } = 2200;
+        public int WsPort { get; set; } = 3000;
+
+        public int MqttPort { get; set; } = 4000;
         public bool UseLibuv { get; set; } = true;
         public bool IsSsl { get; set; } = false;
         public string SslCertificateName { get; set; }

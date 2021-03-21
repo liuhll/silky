@@ -60,6 +60,19 @@ namespace Lms.Rpc.Routing
         {
             Check.NotNull(serviceRouteDescriptor, nameof(serviceRouteDescriptor));
 
+
+            var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
+            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
+                serviceRoute, (id, _) => serviceRoute);
+
+            Logger.LogDebug(
+                $"更新服务路由缓存,路由地址为:{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}");
+
+            foreach (var address in serviceRoute.Addresses)
+            {
+                _healthCheck.Monitor(address);
+            }
+
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceRouteDescriptor.ServiceDescriptor.Id);
             if (serviceEntry != null)
             {
@@ -67,18 +80,6 @@ namespace Lms.Rpc.Routing
                 {
                     serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.AddressDescriptors.Count();
                     _serviceEntryManager.Update(serviceEntry);
-                }
-
-                var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
-                _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
-                    serviceRoute, (id, _) => serviceRoute);
-
-                Logger.LogDebug(
-                    $"更新服务路由缓存,路由地址为:{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}");
-
-                foreach (var address in serviceRoute.Addresses)
-                {
-                    _healthCheck.Monitor(address);
                 }
             }
         }

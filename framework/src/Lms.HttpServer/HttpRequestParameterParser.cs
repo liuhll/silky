@@ -25,34 +25,34 @@ namespace Lms.HttpServer
             if (request.HasFormContentType)
             {
                 var formData = request.Form.ToDictionary(p => p.Key, p => p.Value.ToString());
-                parameters.Add(ParameterFrom.Form,_serializer.Serialize(formData));
+                parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
             }
 
             if (request.Query.Any())
             {
                 var queryData = request.Query.ToDictionary(p => p.Key, p => p.Value.ToString());
-                parameters.Add(ParameterFrom.Query,_serializer.Serialize(queryData));
+                parameters.Add(ParameterFrom.Query, _serializer.Serialize(queryData));
             }
 
             if (request.Headers.Any())
             {
                 var headerData = request.Headers.ToDictionary(p => p.Key, p => p.Value.ToString());
-                parameters.Add(ParameterFrom.Header,_serializer.Serialize(headerData));
+                parameters.Add(ParameterFrom.Header, _serializer.Serialize(headerData));
             }
 
-            if (!request.Method.Equals("GET",StringComparison.OrdinalIgnoreCase))
+            if (!request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 var streamReader = new StreamReader(request.Body);
                 var bodyData = await streamReader.ReadToEndAsync();
-                parameters.Add(ParameterFrom.Body,bodyData);
+                parameters.Add(ParameterFrom.Body, bodyData);
             }
 
-            if (serviceEntry.ParameterDescriptors.Any(p=> p.From == ParameterFrom.Path))
+            if (serviceEntry != null && serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path))
             {
                 var pathData = serviceEntry.Router.ParserRouteParameters(request.Path);
-                parameters.Add(ParameterFrom.Path,_serializer.Serialize(pathData));
+                parameters.Add(ParameterFrom.Path, _serializer.Serialize(pathData));
             }
-            
+
             return parameters;
         }
     }

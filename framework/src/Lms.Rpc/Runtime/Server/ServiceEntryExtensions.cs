@@ -35,8 +35,7 @@ namespace Lms.Rpc.Runtime.Server
 
         public static IAddressModel GetRpcAddressModel(this ServiceEntry serviceEntry)
         {
-            return NetUtil.GetRpcAddressModel(serviceEntry.ServiceDescriptor.RpcPort,
-                serviceEntry.ServiceDescriptor.ServiceProtocol);
+            return NetUtil.GetRpcAddressModel(serviceEntry.ServiceDescriptor.ServiceProtocol);
         }
 
         public static string GetHashKeyValue(this ServiceEntry serviceEntry, object[] parameterValues)

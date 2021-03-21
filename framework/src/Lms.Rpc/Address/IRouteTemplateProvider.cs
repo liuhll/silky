@@ -12,8 +12,6 @@ namespace Lms.Rpc.Address
         string Template { get; }
 
         ServiceProtocol ServiceProtocol { get; }
-        
-        int RpcPort { get; }
 
         bool MultipleServiceKey { get; }
     }

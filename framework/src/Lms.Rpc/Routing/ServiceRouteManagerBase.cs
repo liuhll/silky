@@ -72,7 +72,7 @@ namespace Lms.Rpc.Routing
                 },
                 AddressDescriptors = new[]
                 {
-                    NetUtil.GetRpcAddressModel(WebSocketResolverHelper.GetWsRpcPort(p), ServiceProtocol.Ws).Descriptor
+                    NetUtil.GetRpcAddressModel(ServiceProtocol.Ws).Descriptor
                 },
             });
 
@@ -132,8 +132,7 @@ namespace Lms.Rpc.Routing
                         p.ServiceDescriptor.Id == removeServiceDescriptorId);
                 if (removeRoute != null && removeRoute.AddressDescriptors.Any())
                 {
-                    var hostAddr = NetUtil.GetRpcAddressModel(removeRoute.ServiceDescriptor.RpcPort,
-                        removeRoute.ServiceDescriptor.ServiceProtocol);
+                    var hostAddr = NetUtil.GetRpcAddressModel(removeRoute.ServiceDescriptor.ServiceProtocol);
                     if (removeRoute.AddressDescriptors.Any(p => p.Equals(hostAddr)))
                     {
                         removeRoute.AddressDescriptors =

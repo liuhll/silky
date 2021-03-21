@@ -14,8 +14,6 @@ namespace Lms.Rpc.Runtime.Server.Descriptor
 
         [NotNull] public string Id { get; set; }
 
-        public int RpcPort { get; set; }
-
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public IDictionary<string, object> Metadatas { get; set; }
@@ -42,11 +40,6 @@ namespace Lms.Rpc.Runtime.Server.Descriptor
             if (model.Id != Id)
                 return false;
             if (model.ServiceProtocol != ServiceProtocol)
-            {
-                return false;
-            }
-
-            if (model.RpcPort != RpcPort)
             {
                 return false;
             }

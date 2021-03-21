@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 using Lms.Core;
 using Lms.Core.Exceptions;
@@ -57,10 +58,26 @@ namespace Lms.Rpc.Utils
             return result;
         }
 
-        public static IAddressModel GetRpcAddressModel(int port, ServiceProtocol serviceProtocol)
+        public static IAddressModel GetRpcAddressModel(ServiceProtocol serviceProtocol)
         {
             var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
             string host = GetHostAddress(rpcOptions.Host);
+            int port;
+            switch (serviceProtocol)
+            {
+                case ServiceProtocol.Tcp:
+                    port = rpcOptions.RpcPort;
+                    break;
+                case ServiceProtocol.Ws:
+                    port = rpcOptions.WsPort;
+                    break;
+                case ServiceProtocol.Mqtt:
+                    port = rpcOptions.MqttPort;
+                    break;
+                default:
+                    throw new LmsException("指定的服务协议不正确");
+                    break;
+            }
             var address = new AddressModel(host, port, serviceProtocol);
             return address;
         }
