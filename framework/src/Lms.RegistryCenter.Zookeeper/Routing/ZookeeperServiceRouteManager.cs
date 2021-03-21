@@ -87,7 +87,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
 
         private async Task CreateSubDirectory(IZookeeperClient zookeeperClient, ServiceProtocol serviceProtocol)
         {
-            var subDirectoryPath = _registryCenterOptions.GetRoutePath(serviceProtocol);
+            var subDirectoryPath = _registryCenterOptions.RoutePath;
 
             if (!await zookeeperClient.ExistsAsync(subDirectoryPath))
             {
@@ -97,17 +97,17 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             await CreateSubscribeChildrenChange(zookeeperClient, subDirectoryPath);
         }
 
-        public override async Task EnterRoutes(ServiceProtocol serviceProtocol)
+        public override async Task EnterRoutes()
         {
             var zookeeperClient = _zookeeperClientProvider.GetZooKeeperClient();
 
-            if (await zookeeperClient.ExistsAsync(_registryCenterOptions.GetRoutePath(serviceProtocol)))
+            if (await zookeeperClient.ExistsAsync(_registryCenterOptions.RoutePath))
             {
                 var children =
-                    await zookeeperClient.GetChildrenAsync(_registryCenterOptions.GetRoutePath(serviceProtocol));
+                    await zookeeperClient.GetChildrenAsync(_registryCenterOptions.RoutePath);
                 foreach (var child in children)
                 {
-                    var routePath = CreateRoutePath(serviceProtocol, child);
+                    var routePath = CreateRoutePath(child);
                     var serviceRouteDescriptor = await GetRouteDescriptorAsync(routePath, zookeeperClient);
                     if (serviceRouteDescriptor != null)
                     {
@@ -138,12 +138,12 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
 
         private string CreateRoutePath(ServiceDescriptor serviceDescriptor)
         {
-            return CreateRoutePath(serviceDescriptor.ServiceProtocol, serviceDescriptor.Id);
+            return CreateRoutePath(serviceDescriptor.Id);
         }
 
-        private string CreateRoutePath(ServiceProtocol serviceProtocol, string child)
+        private string CreateRoutePath(string child)
         {
-            var routePath = _registryCenterOptions.GetRoutePath(serviceProtocol);
+            var routePath = _registryCenterOptions.RoutePath;
             if (!routePath.EndsWith("/"))
             {
                 routePath += "/";
@@ -158,8 +158,7 @@ namespace Lms.RegistryCenter.Zookeeper.Routing
             var allServiceEntries = _serviceEntryManager.GetAllEntries();
             foreach (var serviceEntry in allServiceEntries)
             {
-                var serviceRoutePath = CreateRoutePath(serviceEntry.ServiceDescriptor.ServiceProtocol,
-                    serviceEntry.ServiceDescriptor.Id);
+                var serviceRoutePath = CreateRoutePath(serviceEntry.ServiceDescriptor.Id);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
                 foreach (var zookeeperClient in zookeeperClients)
                 {

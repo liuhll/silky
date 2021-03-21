@@ -18,7 +18,7 @@ namespace Lms.Rpc.Routing
 
         public async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
-            await _serviceRouteManager.RegisterRoutes(processorTime, serviceProtocol);
+            await _serviceRouteManager.RegisterRpcRoutes(processorTime, serviceProtocol);
         }
     }
 }

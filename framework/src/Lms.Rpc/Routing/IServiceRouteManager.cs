@@ -9,8 +9,8 @@ namespace Lms.Rpc.Routing
 
         Task CreateSubscribeDataChanges();
         
-        Task RegisterRoutes(double processorTime, ServiceProtocol serviceProtocol);
+        Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol);
         
-        Task EnterRoutes(ServiceProtocol serviceProtocol);
+        Task EnterRoutes();
     }
 }

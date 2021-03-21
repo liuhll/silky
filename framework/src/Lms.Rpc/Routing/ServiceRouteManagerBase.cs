@@ -47,9 +47,9 @@ namespace Lms.Rpc.Routing
 
         public abstract Task CreateSubscribeDataChanges();
 
-        public abstract Task EnterRoutes(ServiceProtocol serviceProtocol);
+        public abstract Task EnterRoutes();
 
-        public virtual async Task RegisterRoutes(double processorTime, ServiceProtocol serviceProtocol)
+        public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
             var localServiceEntries = _serviceEntryManager.GetLocalEntries()
                 .Where(p => p.ServiceDescriptor.ServiceProtocol == serviceProtocol);

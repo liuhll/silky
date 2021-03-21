@@ -58,7 +58,7 @@ namespace Lms.Rpc
             }
 
             await serviceRouteManager.CreateSubscribeDataChanges();
-            await serviceRouteManager.EnterRoutes(ServiceProtocol.Tcp);
+            await serviceRouteManager.EnterRoutes();
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
