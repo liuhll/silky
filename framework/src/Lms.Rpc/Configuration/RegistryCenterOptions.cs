@@ -6,11 +6,11 @@
 
         public RegistryCenterType RegistryCenterType { get; set; } = RegistryCenterType.Zookeeper;
 
-        public double ConnectionTimeout { get; set; } = 20;
+        public double ConnectionTimeout { get; set; } = 1000;
 
-        public double SessionTimeout { get; set; } = 30;
+        public double SessionTimeout { get; set; } = 2000;
 
-        public double OperatingTimeout { get; set; } = 60;
+        public double OperatingTimeout { get; set; } = 4000;
 
         public string ConnectionStrings { get; set; }
 

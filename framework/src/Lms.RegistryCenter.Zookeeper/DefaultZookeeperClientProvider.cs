@@ -66,9 +66,9 @@ namespace Lms.RegistryCenter.Zookeeper
         {
             var zookeeperClientOptions = new ZookeeperClientOptions(connStr)
             {
-                ConnectionTimeout = TimeSpan.FromSeconds(_registryCenterOptions.ConnectionTimeout),
-                OperatingTimeout = TimeSpan.FromSeconds(_registryCenterOptions.OperatingTimeout),
-                SessionTimeout = TimeSpan.FromSeconds(_registryCenterOptions.SessionTimeout),
+                ConnectionTimeout = TimeSpan.FromMilliseconds(_registryCenterOptions.ConnectionTimeout),
+                OperatingTimeout = TimeSpan.FromMilliseconds(_registryCenterOptions.OperatingTimeout),
+                SessionTimeout = TimeSpan.FromMilliseconds(_registryCenterOptions.SessionTimeout),
             };
             try
             {
