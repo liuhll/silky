@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="200" src="./logo.png">
+  <img height="200" src="./docs/assets/img/logo.word.svg">
 </p>
 
 # lms 微服务框架
@@ -224,7 +224,7 @@ Lms支持通过`json`或是`yml`格式的对框架进行配置。一般的,您�
 | HealthCheckInterval |  | | 暂未实现心跳检查 |
 
 
-##### 服务治理相关配置
+#### 服务治理相关配置
 
 可以通过`Governance`配置节点统一的rpc通信过程进行配置,但是该配置的可以被服务条目的`GovernanceAttribute`特性进行改写。
 
