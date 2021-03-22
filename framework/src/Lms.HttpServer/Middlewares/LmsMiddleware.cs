@@ -14,18 +14,11 @@ namespace Lms.HttpServer.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly ServiceRouteCache _serviceRouteCache;
-        private readonly IWsShakeHandHandler _wsShakeHandHandler;
-
         public LmsMiddleware(RequestDelegate next,
-            IServiceEntryLocator serviceEntryLocator,
-            ServiceRouteCache serviceRouteCache,
-            IWsShakeHandHandler wsShakeHandHandler)
+            IServiceEntryLocator serviceEntryLocator)
         {
             _next = next;
             _serviceEntryLocator = serviceEntryLocator;
-            _serviceRouteCache = serviceRouteCache;
-            _wsShakeHandHandler = wsShakeHandHandler;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -43,15 +36,7 @@ namespace Lms.HttpServer.Middlewares
             }
             else
             {
-                var serviceRoute = _serviceRouteCache.GetServiceRoute(WebSocketResolverHelper.Generator(path));
-                if (serviceRoute != null)
-                {
-                    await _wsShakeHandHandler.Connection(serviceRoute, context);
-                }
-                else
-                {
-                    await _next(context);
-                }
+                await _next(context);
             }
         }
     }

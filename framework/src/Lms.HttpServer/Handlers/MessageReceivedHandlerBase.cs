@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Lms.Core;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
 using Lms.Rpc.Configuration;
@@ -32,6 +33,8 @@ namespace Lms.HttpServer.Handlers
 
         public virtual async Task Handle(HttpContext context, ServiceEntry serviceEntry)
         {
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
             var requestParameters = await _parameterParser.Parser(context.Request, serviceEntry);
             RpcContext.GetContext().SetAttachment("requestHeader", requestParameters[ParameterFrom.Header]);
             var rpcParameters = serviceEntry.ResolveParameters(requestParameters);

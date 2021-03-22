@@ -5,6 +5,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Lms.WebHost\Lms.WebHost.csproj" />
+        <ProjectReference Include="..\..\src\Lms.WebSocketServer\Lms.WebSocketServer.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>

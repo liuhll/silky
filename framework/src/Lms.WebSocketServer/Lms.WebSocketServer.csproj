@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
+        <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
+    </ItemGroup>
+
+</Project>
