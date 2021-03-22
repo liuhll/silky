@@ -11,7 +11,7 @@ namespace Lms.RegistryCenter.Zookeeper
     {
         public override async Task Shutdown(ApplicationContext applicationContext)
         {
-            var serviceRouteManager = applicationContext.ServiceProvider.GetService<ZookeeperServiceRouteManager>();
+            var serviceRouteManager = applicationContext.ServiceProvider.GetRequiredService<ZookeeperServiceRouteManager>();
             if (serviceRouteManager != null)
             {
                 await serviceRouteManager.RemoveLocalHostServiceRoute();

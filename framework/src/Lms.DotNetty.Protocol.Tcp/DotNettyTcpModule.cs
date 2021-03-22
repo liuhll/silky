@@ -32,16 +32,16 @@ namespace Lms.DotNetty.Protocol.Tcp
         {
             Check.NotNull(applicationContext, nameof(applicationContext));
             var registryCenterOptions =
-                applicationContext.ServiceProvider.GetService<IOptions<RegistryCenterOptions>>().Value;
+                applicationContext.ServiceProvider.GetRequiredService<IOptions<RegistryCenterOptions>>().Value;
             if (!applicationContext.ModuleContainer.Modules.Any(p =>
                 p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(), StringComparison.OrdinalIgnoreCase)))
             {
                 throw new LmsException($"您没有指定依赖的{registryCenterOptions.RegistryCenterType}服务注册中心模块");
             }
 
-            var messageListener = applicationContext.ServiceProvider.GetService<DotNettyTcpServerMessageListener>();
+            var messageListener = applicationContext.ServiceProvider.GetRequiredService<DotNettyTcpServerMessageListener>();
             await messageListener.Listen();
-            var serviceRouteProvider = applicationContext.ServiceProvider.GetService<IServiceRouteProvider>();
+            var serviceRouteProvider = applicationContext.ServiceProvider.GetRequiredService<IServiceRouteProvider>();
             await serviceRouteProvider.RegisterRpcRoutes(
                 Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds, ServiceProtocol.Tcp);
         }

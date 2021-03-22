@@ -38,7 +38,7 @@ namespace Lms.HttpServer
         public async override Task Initialize(ApplicationContext applicationContext)
         {
             var registryCenterOptions =
-                applicationContext.ServiceProvider.GetService<IOptions<RegistryCenterOptions>>().Value;
+                applicationContext.ServiceProvider.GetRequiredService<IOptions<RegistryCenterOptions>>().Value;
             if (!applicationContext.ModuleContainer.Modules.Any(p =>
                 p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(), StringComparison.OrdinalIgnoreCase)))
             {
