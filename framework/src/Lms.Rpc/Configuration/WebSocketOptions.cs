@@ -1,4 +1,4 @@
-﻿namespace Lms.WebSocket.Configuration
+﻿namespace Lms.Rpc.Configuration
 {
     public class WebSocketOptions
     {
@@ -21,5 +21,7 @@
         public int WaitTime { get; set; } = 1;
 
         public bool KeepClean { get; set; } = false;
+
+        public string Token { get; set; } = "websocket";
     }
 }

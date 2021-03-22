@@ -46,7 +46,7 @@ namespace Lms.HttpServer.Handlers
                 RpcContext.GetContext().SetAttachment("serviceKey", serviceKey);
             }
 
-            RpcContext.GetContext().SetAttachment("token", _rpcOptions.Token);
+            RpcContext.GetContext().SetAttachment("rpcToken", _rpcOptions.Token);
             var excuteResult = await _serviceExecutor.Execute(serviceEntry, rpcParameters, serviceKey);
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = 200;

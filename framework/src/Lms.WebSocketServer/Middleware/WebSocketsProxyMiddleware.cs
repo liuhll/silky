@@ -29,15 +29,15 @@ namespace Lms.WebSocketServer.Middleware
         private const int StreamCopyBufferSize = 81920;
         private readonly RequestDelegate _next;
         private readonly ServiceRouteCache _serviceRouteCache;
-        private readonly RpcOptions _rpcOptions;
+        private readonly WebSocketOptions _webSocketOptions;
 
         public WebSocketsProxyMiddleware(RequestDelegate next,
             ServiceRouteCache serviceRouteCache,
-            IOptions<RpcOptions> rpcOptions)
+            IOptions<WebSocketOptions> webSocketOptions)
         {
             _next = next;
             _serviceRouteCache = serviceRouteCache;
-            _rpcOptions = rpcOptions.Value;
+            _webSocketOptions = webSocketOptions.Value;
         }
 
         public async Task Invoke(HttpContext context)
@@ -90,11 +90,26 @@ namespace Lms.WebSocketServer.Middleware
                 }
             }
 
-            var hashKey = GetHashKey(context);
+            client.Options.SetRequestHeader("wsToken", _webSocketOptions.Token);
+            var businessId = GetKeyValue(context, "businessId");
+            if (!businessId.IsNullOrEmpty())
+            {
+                client.Options.SetRequestHeader("businessId", businessId);
+            }
+            
+            var hashKey = GetKeyValue(context, "hashKey");
             if (hashKey.IsNullOrEmpty())
             {
-                throw new LmsException("websocket在建立会话链接时,必须通过header或是qString指定hashkey");
+                if (!businessId.IsNullOrEmpty())
+                {
+                    hashKey = businessId;
+                }
+                else
+                {
+                     throw new LmsException("websocket在建立会话链接时,必须通过header或是qString指定hashkey或是businessId");
+                }
             }
+
 
             var addressSelector =
                 EngineContext.Current.ResolveNamed<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
@@ -106,14 +121,15 @@ namespace Lms.WebSocketServer.Middleware
             using (var server = await context.WebSockets.AcceptWebSocketAsync(client.SubProtocol))
             {
                 var bufferSize = DefaultWebSocketBufferSize;
-                await Task.WhenAll(PumpWebSocket(client, server, bufferSize, context.RequestAborted), PumpWebSocket(server, client, bufferSize, context.RequestAborted));
+                await Task.WhenAll(PumpWebSocket(client, server, bufferSize, context.RequestAborted),
+                    PumpWebSocket(server, client, bufferSize, context.RequestAborted));
             }
         }
 
         private Uri CreateDestinationUri(IAddressModel address, string path)
         {
             var scheme = "ws";
-            if (_rpcOptions.IsSsl)
+            if (_webSocketOptions.IsSsl)
             {
                 scheme = "wss";
             }
@@ -122,20 +138,20 @@ namespace Lms.WebSocketServer.Middleware
             return new Uri(wsAddress);
         }
 
-        private string GetHashKey(HttpContext context)
+        private string GetKeyValue(HttpContext context, string key)
         {
-            string hashKey = null;
-            if (context.Request.Headers.TryGetValue("hashKey", out var headerhashKeyVal))
+            string val = null;
+            if (context.Request.Headers.TryGetValue(key, out var headerKeyVal))
             {
-                hashKey = headerhashKeyVal.ToString();
+                val = headerKeyVal.ToString();
             }
 
-            if (context.Request.Query.TryGetValue("hashKey", out var queryHashKeyVal))
+            if (context.Request.Query.TryGetValue(key, out var qStringKeyVal))
             {
-                hashKey = queryHashKeyVal.ToString();
+                val = qStringKeyVal.ToString();
             }
 
-            return hashKey;
+            return val;
         }
 
 

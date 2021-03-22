@@ -15,6 +15,8 @@ namespace Lms.Rpc
                 .Bind(configuration.GetSection(RegistryCenterOptions.RegistryCenter));
             services.AddOptions<GovernanceOptions>()
                 .Bind(configuration.GetSection(GovernanceOptions.Governance));
+            services.AddOptions<WebSocketOptions>()
+                .Bind(configuration.GetSection(WebSocketOptions.WebSocket));
         }
 
         public int Order { get; } = 1;

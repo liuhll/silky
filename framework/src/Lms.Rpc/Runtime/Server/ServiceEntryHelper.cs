@@ -73,10 +73,8 @@ namespace Lms.Rpc.Runtime.Server
             {
                 entryTypes.Add(exportedTypes.Any(t => entryInterface.IsAssignableFrom(t)
                                                       && t.IsClass
-                                                      && (t.BaseType?.FullName ==
-                                                          "Lms.WebSocket.WsAppServiceBase"
-                                                          || t.BaseType?.FullName ==
-                                                          "WebSocketSharp.Server.WebSocketBehavior")
+                                                      && t.BaseType?.FullName ==
+                                                      "Lms.WebSocket.WsAppServiceBase"
                                                       && !t.IsAbstract)
                     ? (entryInterface, true)
                     : (entryInterface, false));
@@ -94,10 +92,8 @@ namespace Lms.Rpc.Runtime.Server
                                 && !p.IsGenericType
                                 && p.GetInterfaces().Any(i =>
                                     i.GetCustomAttributes().Any(a => a is ServiceRouteAttribute))
-                                && (p.BaseType?.FullName ==
-                                    "Lms.WebSocket.WsAppServiceBase"
-                                    || p.BaseType?.FullName ==
-                                    "WebSocketSharp.Server.WebSocketBehavior")
+                                && p.BaseType?.FullName ==
+                                "Lms.WebSocket.WsAppServiceBase"
                     )
                     .OrderBy(p =>
                         p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(q => q.Weight).FirstOrDefault()
