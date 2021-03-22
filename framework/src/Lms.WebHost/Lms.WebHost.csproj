@@ -36,6 +36,7 @@
         <ProjectReference Include="..\Lms.Rpc\Lms.Rpc.csproj" />
         <ProjectReference Include="..\Lms.Swagger\Lms.Swagger.csproj" />
         <ProjectReference Include="..\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
+        <ProjectReference Include="..\Lms.WebSocketServer\Lms.WebSocketServer.csproj" />
     </ItemGroup>
 
     <Target Name="PopulateNuspec">
