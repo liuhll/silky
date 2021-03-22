@@ -18,8 +18,6 @@ namespace Lms.Rpc.Runtime.Server.ServiceDiscovery
 
         public string Template { get; }
 
-        public virtual ServiceProtocol ServiceProtocol { get; } = ServiceProtocol.Tcp;
-        
         public bool MultipleServiceKey { get; }
     }
 }

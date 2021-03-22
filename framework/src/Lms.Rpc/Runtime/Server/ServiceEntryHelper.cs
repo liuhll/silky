@@ -65,7 +65,7 @@ namespace Lms.Rpc.Runtime.Server
             var entryInterfaces = exportedTypes
                     .Where(p => p.IsInterface
                                 && p.GetCustomAttributes().Any(a =>
-                                    (a as IRouteTemplateProvider)?.ServiceProtocol == ServiceProtocol.Ws)
+                                    (a is IRouteTemplateProvider))
                                 && !p.IsGenericType
                     )
                 ;
@@ -73,14 +73,37 @@ namespace Lms.Rpc.Runtime.Server
             {
                 entryTypes.Add(exportedTypes.Any(t => entryInterface.IsAssignableFrom(t)
                                                       && t.IsClass
-                                                      && t.BaseType?.FullName ==
-                                                      "Lms.DotNetty.Protocol.Ws.WsAppServiceBase"
+                                                      && (t.BaseType?.FullName ==
+                                                          "Lms.WebSocket.WsAppServiceBase"
+                                                          || t.BaseType?.FullName ==
+                                                          "WebSocketSharp.Server.WebSocketBehavior")
                                                       && !t.IsAbstract)
                     ? (entryInterface, true)
                     : (entryInterface, false));
             }
 
             return entryTypes;
+        }
+
+        public static IEnumerable<Type> FindServiceLocalWsEntryTypes(ITypeFinder typeFinder)
+        {
+            var types = typeFinder.GetAssemblies()
+                    .SelectMany(p => p.ExportedTypes)
+                    .Where(p => p.IsClass
+                                && !p.IsAbstract
+                                && !p.IsGenericType
+                                && p.GetInterfaces().Any(i =>
+                                    i.GetCustomAttributes().Any(a => a is ServiceRouteAttribute))
+                                && (p.BaseType?.FullName ==
+                                    "Lms.WebSocket.WsAppServiceBase"
+                                    || p.BaseType?.FullName ==
+                                    "WebSocketSharp.Server.WebSocketBehavior")
+                    )
+                    .OrderBy(p =>
+                        p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(q => q.Weight).FirstOrDefault()
+                    )
+                ;
+            return types;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Lms.Rpc.Routing
 
         Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol);
 
-        Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes);
+        Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort);
 
         Task EnterRoutes();
     }

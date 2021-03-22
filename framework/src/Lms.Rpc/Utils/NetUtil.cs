@@ -58,26 +58,26 @@ namespace Lms.Rpc.Utils
             return result;
         }
 
-        public static IAddressModel GetRpcAddressModel(ServiceProtocol serviceProtocol)
+        public static IAddressModel GetRpcAddressModel()
         {
             var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
             string host = GetHostAddress(rpcOptions.Host);
-            int port;
-            switch (serviceProtocol)
-            {
-                case ServiceProtocol.Tcp:
-                    port = rpcOptions.RpcPort;
-                    break;
-                case ServiceProtocol.Ws:
-                    port = rpcOptions.WsPort;
-                    break;
-                case ServiceProtocol.Mqtt:
-                    port = rpcOptions.MqttPort;
-                    break;
-                default:
-                    throw new LmsException("指定的服务协议不正确");
-                    break;
-            }
+            int port = rpcOptions.RpcPort;
+            var address = new AddressModel(host, port, ServiceProtocol.Tcp);
+            return address;
+        }
+
+        public static IAddressModel GetAddressModel(int port, ServiceProtocol serviceProtocol)
+        {
+            var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
+            string host = GetHostAddress(GetAnyHostAddress());
+            var address = new AddressModel(host, port, serviceProtocol);
+            return address;
+        }
+
+        public static IAddressModel GetAddressModel(string host, int port, ServiceProtocol serviceProtocol)
+        {
+            var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
             var address = new AddressModel(host, port, serviceProtocol);
             return address;
         }

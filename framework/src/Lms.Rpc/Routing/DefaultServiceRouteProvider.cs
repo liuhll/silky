@@ -22,9 +22,9 @@ namespace Lms.Rpc.Routing
             await _serviceRouteManager.RegisterRpcRoutes(processorTime, serviceProtocol);
         }
 
-        public async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes)
+        public async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort)
         {
-            await _serviceRouteManager.RegisterWsRoutes(processorTime, wsAppServiceTypes);
+            await _serviceRouteManager.RegisterWsRoutes(processorTime, wsAppServiceTypes, wsPort);
         }
     }
 }

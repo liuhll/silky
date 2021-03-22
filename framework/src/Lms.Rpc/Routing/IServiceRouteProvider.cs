@@ -8,6 +8,6 @@ namespace Lms.Rpc.Routing
     public interface IServiceRouteProvider : ISingletonDependency
     {
         Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol);
-        Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes);
+        Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort);
     }
 }

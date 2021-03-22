@@ -32,6 +32,7 @@ namespace Lms.Rpc
             builder.RegisterTypes(localEntryTypes)
                 .PropertiesAutowired()
                 .AsSelf()
+                .InstancePerDependency()
                 .AsImplementedInterfaces();
 
             var serviceKeyTypes =

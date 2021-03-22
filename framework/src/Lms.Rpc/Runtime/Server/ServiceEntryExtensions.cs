@@ -29,14 +29,10 @@ namespace Lms.Rpc.Runtime.Server
             {
                 ServiceDescriptor = serviceEntry.ServiceDescriptor,
                 AddressDescriptors = new[]
-                    {serviceEntry.GetRpcAddressModel().Descriptor},
+                    {NetUtil.GetRpcAddressModel().Descriptor},
             };
         }
 
-        public static IAddressModel GetRpcAddressModel(this ServiceEntry serviceEntry)
-        {
-            return NetUtil.GetRpcAddressModel(serviceEntry.ServiceDescriptor.ServiceProtocol);
-        }
 
         public static string GetHashKeyValue(this ServiceEntry serviceEntry, object[] parameterValues)
         {

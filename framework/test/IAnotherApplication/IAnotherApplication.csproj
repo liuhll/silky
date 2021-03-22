@@ -7,5 +7,6 @@
         <ProjectReference Include="..\..\src\Lms.DotNetty.Protocol.Ws\Lms.DotNetty.Protocol.Ws.csproj" />
         <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
         <ProjectReference Include="..\..\src\Lms.Transaction\Lms.Transaction.csproj" />
+        <ProjectReference Include="..\..\src\Lms.WebSocket\Lms.WebSocket.csproj" />
     </ItemGroup>
 </Project>

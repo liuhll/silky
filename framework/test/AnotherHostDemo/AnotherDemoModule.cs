@@ -1,18 +1,17 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core.Modularity;
-using Lms.DotNetty.Protocol.Ws;
+using Lms.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AnotherHostDemo
 {
-  
-    [DependsOn(typeof(DotNettyHttpModule))]
+    [DependsOn(typeof(WebSocketModule))]
     public class AnotherDemoModule : NormHostModule
     {
         public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
-        
+
         public async override Task Initialize(ApplicationContext applicationContext)
         {
             Logger.LogInformation("服务启动时执行方法");

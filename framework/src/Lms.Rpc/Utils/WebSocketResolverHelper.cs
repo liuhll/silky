@@ -1,9 +1,12 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Castle.DynamicProxy.Internal;
 using Lms.Core.Exceptions;
 using Lms.Rpc.Address;
+using Lms.Rpc.Routing;
 using Lms.Rpc.Routing.Template;
+using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Lms.Rpc.Utils
 {
@@ -13,11 +16,22 @@ namespace Lms.Rpc.Utils
 
         public static string ParseWsPath(Type wsAppServiceType)
         {
-            var routeTemplateProvider = wsAppServiceType.GetCustomAttributes().OfType<IRouteTemplateProvider>()
-                .FirstOrDefault();
+            IRouteTemplateProvider routeTemplateProvider = null;
+            if (wsAppServiceType.GetTypeInfo().IsInterface)
+            {
+                routeTemplateProvider = wsAppServiceType.GetCustomAttributes().OfType<ServiceRouteAttribute>()
+                    .FirstOrDefault();
+            }
+            else
+            {
+                routeTemplateProvider = wsAppServiceType.GetAllInterfaces()
+                    .Select(p => p.GetCustomAttributes().OfType<ServiceRouteAttribute>().FirstOrDefault())
+                    .Where(p => p != null).FirstOrDefault();
+            }
+
             if (routeTemplateProvider == null)
             {
-                throw new LmsException("ws服务必须要通过WsServiceRoute特性进行注解");
+                throw new LmsException("ws服务必须要通过ServiceRoute特性进行注解");
             }
 
             return ParseWsPath(routeTemplateProvider.Template, wsAppServiceType.Name);

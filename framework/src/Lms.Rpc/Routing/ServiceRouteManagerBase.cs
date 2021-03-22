@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lms.Core;
 using Lms.Lock;
 using Lms.Lock.Provider;
+using Lms.Rpc.Address.Descriptor;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server;
@@ -55,14 +56,16 @@ namespace Lms.Rpc.Routing
 
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
+            var hostAddr = NetUtil.GetRpcAddressModel();
             var localServiceEntries = _serviceEntryManager.GetLocalEntries()
                 .Where(p => p.ServiceDescriptor.ServiceProtocol == serviceProtocol);
             var serviceRouteDescriptors = localServiceEntries.Select(p => p.CreateLocalRouteDescriptor());
-            await RegisterRoutes(serviceRouteDescriptors);
+            await RegisterRoutes(serviceRouteDescriptors, hostAddr.Descriptor);
         }
 
-        public virtual async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes)
+        public virtual async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort)
         {
+            var hostAddr = NetUtil.GetAddressModel(wsPort, ServiceProtocol.Ws);
             var serviceRouteDescriptors = wsAppServiceTypes.Select(p => new ServiceRouteDescriptor()
             {
                 ServiceDescriptor = new ServiceDescriptor()
@@ -72,14 +75,15 @@ namespace Lms.Rpc.Routing
                 },
                 AddressDescriptors = new[]
                 {
-                    NetUtil.GetRpcAddressModel(ServiceProtocol.Ws).Descriptor
+                    hostAddr.Descriptor
                 },
             });
 
-            await RegisterRoutes(serviceRouteDescriptors);
+            await RegisterRoutes(serviceRouteDescriptors, hostAddr.Descriptor);
         }
 
-        protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors)
+        protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
+            AddressDescriptor addressDescriptor)
         {
             var registrationCentreServiceRoutes = _serviceRouteCache.ServiceRouteDescriptors.Where(p =>
                 serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
@@ -87,7 +91,7 @@ namespace Lms.Rpc.Routing
                                       registrationCentreServiceRoutes.ToArray();
             if (centreServiceRoutes.Any())
             {
-                await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes);
+                await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes, addressDescriptor);
             }
             else
             {
@@ -119,7 +123,7 @@ namespace Lms.Rpc.Routing
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
         protected virtual async Task RemoveExceptRouteAsyncs(
-            IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors)
+            IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors, AddressDescriptor addressDescriptor)
         {
             var oldServiceDescriptorIds =
                 _serviceRouteCache.ServiceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
@@ -132,11 +136,10 @@ namespace Lms.Rpc.Routing
                         p.ServiceDescriptor.Id == removeServiceDescriptorId);
                 if (removeRoute != null && removeRoute.AddressDescriptors.Any())
                 {
-                    var hostAddr = NetUtil.GetRpcAddressModel(removeRoute.ServiceDescriptor.ServiceProtocol);
-                    if (removeRoute.AddressDescriptors.Any(p => p.Equals(hostAddr)))
+                    if (removeRoute.AddressDescriptors.Any(p => p.Equals(addressDescriptor)))
                     {
                         removeRoute.AddressDescriptors =
-                            removeRoute.AddressDescriptors.Where(p => !p.Equals(hostAddr)).ToList();
+                            removeRoute.AddressDescriptors.Where(p => !p.Equals(addressDescriptor)).ToList();
                         await RegisterRouteWithLockAsync(removeRoute);
                     }
                 }

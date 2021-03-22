@@ -1,30 +1,25 @@
 ﻿using System.Threading.Tasks;
-using DotNetty.Transport.Channels;
 using IAnotherApplication;
-using Lms.DotNetty.Protocol.Ws;
+using Lms.WebSocket;
+using WebSocketSharp;
 
 namespace AnotherHostDemo.AppService
 {
     public class WsTestAppService : WsAppServiceBase, IWsTestAppService
     {
-        public Task Echo(string msg)
+        protected override void OnOpen()
         {
-            throw new System.NotImplementedException();
+            base.OnOpen();
         }
 
-        protected override Task OnOpen(IChannelHandlerContext context)
+        protected override void OnClose(CloseEventArgs e)
         {
-            throw new System.NotImplementedException();
+            base.OnClose(e);
         }
 
-        protected override Task OnClose(IChannelHandlerContext context)
+        public async Task Echo(string msg)
         {
-            throw new System.NotImplementedException();
-        }
-
-        protected override Task OnReceive(IChannelHandlerContext context)
-        {
-            throw new System.NotImplementedException();
+            Send(msg);
         }
     }
 }
