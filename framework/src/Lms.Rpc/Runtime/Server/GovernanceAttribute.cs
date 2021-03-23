@@ -44,7 +44,15 @@ namespace Lms.Rpc.Runtime.Server
         /// </summary>
         public int FailoverCount { get; set; } = 0;
 
-        
+        /// <summary>
+        /// 失败回调指定的类型
+        /// </summary>
         [CanBeNull] public Type FallBackType { get; set; }
+        
+        /// <summary>
+        /// 是否禁止外网访问
+        /// 缺省值:false
+        /// </summary>
+        public bool ProhibitExtranet{ get; set; } = false;
     }
 }

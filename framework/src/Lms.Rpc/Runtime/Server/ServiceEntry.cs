@@ -29,11 +29,11 @@ namespace Lms.Rpc.Runtime.Server
         public bool FailoverCountIsDefaultValue { get; private set; }
 
         public bool MultipleServiceKey { get; private set; }
-
+        
         public string Id => ServiceDescriptor.Id;
 
         public Type ServiceType => _serviceType;
-        
+
         public ObjectMethodExecutor MethodExecutor => _methodExecutor;
 
         public ServiceEntry(IRouter router,
@@ -116,6 +116,8 @@ namespace Lms.Rpc.Runtime.Server
                     ParameterDefaultValues.GetParameterDefaultValues(invokeMethod));
                 FallBackExecutor = CreateFallBackExecutor(fallbackMethodExcutor, fallBackType);
             }
+
+            GovernanceOptions.ProhibitExtranet = governanceAttribute?.ProhibitExtranet ?? false;
         }
 
         private Func<object[], Task<object>> CreateFallBackExecutor(

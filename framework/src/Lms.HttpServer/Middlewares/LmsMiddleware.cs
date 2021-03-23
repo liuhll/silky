@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core;
+using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.HttpServer.Handlers;
 using Lms.Rpc.Routing;
@@ -30,6 +31,10 @@ namespace Lms.HttpServer.Middlewares
             var serviceEntry = _serviceEntryLocator.GetServiceEntryByApi(path, method);
             if (serviceEntry != null)
             {
+                if (serviceEntry.GovernanceOptions.ProhibitExtranet)
+                {
+                    throw new FuseProtectionException($"Id为{serviceEntry.Id}的服务条目不允许外网访问");
+                }
                 await EngineContext.Current
                     .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceDescriptor.ServiceProtocol.ToString())
                     .Handle(context, serviceEntry);

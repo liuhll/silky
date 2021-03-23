@@ -55,7 +55,8 @@ namespace Lms.Swagger.SwaggerGen.SwaggerGenerator
 
         private OpenApiPaths GeneratePaths(IReadOnlyList<ServiceEntry> entries, SchemaRepository schemaRepository)
         {
-            var entriesByPath = entries.OrderBy(_options.SortKeySelector)
+            var entriesByPath = entries.Where(p => !p.GovernanceOptions.ProhibitExtranet)
+                .OrderBy(_options.SortKeySelector)
                 .GroupBy(p => p.Router.RoutePath);
 
             var paths = new OpenApiPaths();
