@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 
 namespace Lms.Core
 {
-    public class SingletonDictionary<TKey, TValue> : Singleton<IDictionary<TKey, TValue>>
+    public class SingletonDictionary<TKey, TValue> : Singleton<ConcurrentDictionary<TKey, TValue>>
     {
         static SingletonDictionary()
         {
-            Singleton<Dictionary<TKey, TValue>>.Instance = new Dictionary<TKey, TValue>();
+            Singleton<ConcurrentDictionary<TKey, TValue>>.Instance = new ConcurrentDictionary<TKey, TValue>();
         }
         
-        public static new IDictionary<TKey, TValue> Instance => Singleton<Dictionary<TKey, TValue>>.Instance;
+        public static new ConcurrentDictionary<TKey, TValue> Instance => Singleton<ConcurrentDictionary<TKey, TValue>>.Instance;
     }
 }
