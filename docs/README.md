@@ -26,3 +26,22 @@ features:
 
 footer: MIT Licensed | Copyright © 2021-present Liuhll
 ---
+
+## 简单、方便的构建您的微服务主机
+
+```csharp
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        await CreateHostBuilder(args).Build().RunAsync();
+    }
+
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+                .RegisterLmsServices<NormHostModule>()
+            ;
+    }
+}
+```
