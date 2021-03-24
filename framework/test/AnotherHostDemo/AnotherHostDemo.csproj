@@ -5,8 +5,8 @@
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Lms.NormHost\Lms.NormHost.csproj" />
         <ProjectReference Include="..\..\src\Lms.WebSocket\Lms.WebSocket.csproj" />
+        <ProjectReference Include="..\..\src\Lms.WsHost\Lms.WsHost.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>该包包含用于构建LMS微服务websocket主机的组件包</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Lms.NormHost\Lms.NormHost.csproj" />
+      <ProjectReference Include="..\Lms.WebSocket\Lms.WebSocket.csproj" />
+    </ItemGroup>
+
+</Project>

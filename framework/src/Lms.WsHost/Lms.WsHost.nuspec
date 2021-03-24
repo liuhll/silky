@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <authors>$authors$</authors>
+        <owners>$authors$</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">$licenseExpression$</license>
+        <licenseUrl>$licenseUrl$</licenseUrl>
+        <projectUrl>$projectUrl$</projectUrl>
+        <description>$description$</description>
+        <tags>$tags$</tags>
+        <repository type="$repositoryType$" url="$repositoryUrl$" />
+        <dependencies>
+            <group>
+                <dependency id="Lms.NormHost" version="$version$" exclude="Build,Analyzers" />
+                <dependency id="Lms.WebSocket" version="$version$" exclude="Build,Analyzers" />
+            </group>
+        </dependencies>
+    </metadata>
+</package>

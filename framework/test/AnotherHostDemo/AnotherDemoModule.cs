@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core.Modularity;
 using Lms.WebSocket;
+using Lms.WsHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AnotherHostDemo
 {
-    [DependsOn(typeof(WebSocketModule))]
-    public class AnotherDemoModule : NormHostModule
+    public class AnotherDemoModule : WsHostModule
     {
         public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
 
