@@ -36,9 +36,9 @@ module.exports = {
                 },
                 {
                     title: '开发文档',
-                    collapsable: false,
+                    collapsable: true,
                     children: [
-                        'dev-docs/appserver',
+                        'dev-docs/quick-start',
                     ]
                 }
             ],
