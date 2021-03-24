@@ -1,17 +1,28 @@
 ---
 home: true
-heroText: Lms微服务
-tagline:  Lms框架在线文档
+heroText: Lms框架
+heroImage: /assets/img/logo.word.svg
+tagline:  基于.net平台的微服务开发框架
 actionText: 快速上手 →
+actionLink: /lms/index
 features:
 - title: 安全
-  details: 1.只有请求来源于网关,才被认为是合法的请求。集群外部无法通过rpc端口与主机直接通信;  2.服务内部通信过程中,同一个集群只有配置的token一致, 通信才会被被认为是合法的。
+  details: 1.只有请求来源于网关,才被认为是合法的请求，集群外部无法通过rpc端口与主机直接通信;  2.服务内部通信过程中,同一个集群只有配置的token一致, 通信才会被被认为是合法的。
 
 - title: 稳定
-  details: 1. 使用.net平台提供的主机寄宿应用,保证服务能够稳定的运行。
+  details: 1. 使用.net平台提供的主机托管应用服务,保证服务能够稳定的运行。
 
 - title: 高性能
-  details: 1. 基于高性能的通信框架dotnetty实现的rpc通信框架; 2. rpc通信过程中支持缓存拦截
+  details: 1. 基于高性能的通信框架dotnetty实现的rpc通信框架; 2. rpc通信过程中支持缓存拦截。
+
+- title: 易扩展
+  details: 1. Lms基于模块化设计,开发者可以很方便的扩展自定义模块 2. lms采用非侵入的设计,很方便与第三方组件整合。
+
+- title: 使用方便
+  details: 1. lms只需要简单的配置和一句代码即可构建一个主机托管lms服务。
+
+- title: 分布式事务
+  details: 1. Lms通过缓存拦截的方式实现TCC分布式事务。
 
 footer: MIT Licensed | Copyright © 2021-present Liuhll
 ---

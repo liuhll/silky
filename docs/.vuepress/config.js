@@ -3,6 +3,7 @@ module.exports = {
     description: 'Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。',
     port: 8081,
     themeConfig: {
+        logo: '/assets/img/logo.png',
         nav: [
             { text: '首页', link: '/' },
             { text: '文档', link: '/lms/' },
