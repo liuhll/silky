@@ -3,22 +3,8 @@
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     </PropertyGroup>
     <PropertyGroup>
-        <Description>该包包含用于构建LMS微服务Web主机的组件包</Description>
+        <Description>The package contains the component package for building LMS microservice web host</Description>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-        <PackageId>Lms.WebHost</PackageId>
-        <PackageTags>lms;webhost;micro-service;rpc</PackageTags>
-        <PackageProjectUrl>https://github.com/liuhll/lms</PackageProjectUrl>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/liuhll/lms.git</RepositoryUrl>
-
-        <!-- Package contains only the final .nuspec file with a few listed dependencies. -->
-        <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
-        <IncludeContentInPack>false</IncludeContentInPack>
-        <IncludeSource>false</IncludeSource>
-        <IncludeSymbols>false</IncludeSymbols>
-        <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
-        <MicrosoftExtensionsApiDescriptionServerPackageVersion>3.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\extra\Lms.Zookeeper\Lms.Zookeeper.csproj" />
@@ -38,25 +24,4 @@
         <ProjectReference Include="..\Lms.Transaction.Tcc\Lms.Transaction.Tcc.csproj" />
         <ProjectReference Include="..\Lms.WebSocketServer\Lms.WebSocketServer.csproj" />
     </ItemGroup>
-
-    <Target Name="PopulateNuspec">
-        <PropertyGroup>
-            <NuspecProperties>
-                id=$(PackageId);
-                authors=$(Authors);
-                configuration=$(Configuration);
-                description=$(PackageDescription);
-                licenseExpression=$(PackageLicenseExpression);
-                licenseUrl=$(LicenseUrl);
-                projectUrl=$(PackageProjectUrl);
-                repositoryType=$(RepositoryType);
-                repositoryUrl=$(RepositoryUrl);
-                tags=$(PackageTags.Replace(';', ' '));
-                targetPath=$(TargetPath);
-                version=$(PackageVersion);
-                microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
-            </NuspecProperties>
-        </PropertyGroup>
-    </Target>
-    
 </Project>

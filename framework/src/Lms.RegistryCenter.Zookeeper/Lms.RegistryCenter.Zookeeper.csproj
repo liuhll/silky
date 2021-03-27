@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>LMS uses zookeeper as the service registry</Description>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\extra\Lms.Zookeeper\Lms.Zookeeper.csproj" />

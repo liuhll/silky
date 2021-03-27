@@ -33,11 +33,19 @@
     
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <License>MIT</License>
     
-    <LicenseUrl>https://licenses.nuget.org/MIT</LicenseUrl>
+    <LicenseUrl>https://raw.githubusercontent.com/liuhll/lms/main/LICENSE</LicenseUrl>
     
-    <VersionPrefix>0.0.1-bate.1</VersionPrefix>
+    <VersionPrefix>0.0.1-bate.3</VersionPrefix>
+
+    <IconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/img/logo.png</IconUrl>
+	
+		<RepositoryUrl>https://github.com/liuhll/lms</RepositoryUrl>
+
+    <PackageTags>lms;micro-service;rpc;distributed-transactions;tcc-transaction</PackageTags>
+		
+    <RepositoryType>Github</RepositoryType>
 
   </PropertyGroup>
 </Project>

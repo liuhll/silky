@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>LMS redis cache component</Description>
     </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\Lms.Caching\Lms.Caching.csproj" />
     </ItemGroup>

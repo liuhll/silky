@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <Description>The necessary basic component package for LMS framework testing</Description>
     </PropertyGroup>
 
     <ItemGroup>

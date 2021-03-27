@@ -6,7 +6,7 @@
     <Authors>majian</Authors>
       <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Lms.Rabbit.Zookeeper</PackageId>
+    <PackageId>Lms.Zookeeper</PackageId>
     <PackageTags>RabbitHub;Rabbit;Zookeeper;ZKClient;ZookeeperClient</PackageTags>
     <PackageReleaseNotes>1.优化接口的调用
 2.支持短暂类型节点的恢复</PackageReleaseNotes>
