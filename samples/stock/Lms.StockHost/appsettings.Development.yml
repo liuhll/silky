@@ -1,0 +1,14 @@
+rpc:
+  host: 0.0.0.0
+  rpcPort: 2203
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+registrycenter:
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+  registryCenterType: Zookeeper
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+lock:
+  lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
+  

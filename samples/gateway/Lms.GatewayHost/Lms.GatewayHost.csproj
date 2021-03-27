@@ -8,6 +8,16 @@
     <ItemGroup>
       <PackageReference Include="Lms.WebHost" Version="0.0.1-bate.3" />
     </ItemGroup>
-    
 
+    <ItemGroup>
+        <None Update="appsettings.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Production.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Development.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
