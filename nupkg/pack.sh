@@ -24,7 +24,7 @@ push=""
 apikey=""
 build="yes"
 workdir=$(cd $(dirname $0); pwd)
-srcPath="${workdir}/../src"
+srcPath="${workdir}/.."
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -52,8 +52,8 @@ function pack() {
   echo "this is ${packageName}"
   cd ${packagePath}
   rm -fr "${packagePath}/bin/Release"
-  dotnet msbuild /p:Configuration=Release /p:SourceLinkCreate=true
-  dotnet msbuild /t:pack /p:Configuration=Release /p:SourceLinkCreate=true
+  dotnet restore
+  dotnet pack -c Release
   componentPath="${packagePath}/bin/Release/${packageName}.*.nupkg"
   mv ${componentPath} ${workdir}
 }
@@ -62,7 +62,6 @@ components=(`cat ${workdir}/Components`)
 
 if [[ $build ]]; then
   cd "${workdir}/.."
-  dotnet restore jingshonline.auth.sln
   for component in ${components[@]}
   do
     OLD_IFS="$IFS"

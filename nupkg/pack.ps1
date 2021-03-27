@@ -8,7 +8,7 @@ Param(
 # Paths
 $packFolder = (Get-Item -Path "./" -Verbose).FullName
 $rootFolder = Join-Path $packFolder ".."
-$srcPath = Join-Path $packFolder "../framework/src"
+$srcPath = Join-Path $packFolder "../framework"
 
 
 
