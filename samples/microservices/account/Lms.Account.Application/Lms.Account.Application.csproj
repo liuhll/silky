@@ -9,4 +9,8 @@
       <ProjectReference Include="..\Lms.Account.Domain\Lms.Account.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Lms.AutoMapper" Version="0.0.1-bate.3" />
+    </ItemGroup>
+
 </Project>

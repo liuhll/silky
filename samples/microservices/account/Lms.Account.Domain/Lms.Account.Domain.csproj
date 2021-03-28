@@ -9,4 +9,8 @@
       <ProjectReference Include="..\Lms.Account.Domain.Shared\Lms.Account.Domain.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.UnitOfWork" Version="3.1.0" />
+    </ItemGroup>
+
 </Project>

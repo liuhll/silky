@@ -23,5 +23,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Lms.Account.Application\Lms.Account.Application.csproj" />
+      <ProjectReference Include="..\Lms.Account.EntityFrameworkCore\Lms.Account.EntityFrameworkCore.csproj" />
     </ItemGroup>
 </Project>
