@@ -6,8 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.NormHost" Version="0.0.1-bate.3" />
+      <PackageReference Include="Lms.WebHost" Version="0.0.1-bate.3" />
     </ItemGroup>
+
     <ItemGroup>
         <None Update="appsettings.yml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -18,5 +19,11 @@
         <None Update="appsettings.Development.yml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\microservices\account\Lms.Account.Application.Contracts\Lms.Account.Application.Contracts.csproj" />
+      <ProjectReference Include="..\..\microservices\order\Lms.Order.Application.Contracts\Lms.Order.Application.Contracts.csproj" />
+      <ProjectReference Include="..\..\microservices\stock\Lms.Stock.Application.Contracts\Lms.Stock.Application.Contracts.csproj" />
     </ItemGroup>
 </Project>

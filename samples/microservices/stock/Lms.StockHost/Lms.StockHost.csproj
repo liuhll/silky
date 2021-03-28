@@ -19,4 +19,7 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Lms.Stock.Application\Lms.Stock.Application.csproj" />
+    </ItemGroup>
 </Project>

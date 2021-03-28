@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Lms.Order.Application.Contracts\Lms.Order.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Lms.Order.Domain\Lms.Order.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -12,7 +12,7 @@ namespace Lms.AccountHost
 
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+            return Host.CreateDefaultBuilder(args)
                     .RegisterLmsServices<NormHostModule>()
                 ;
         }
