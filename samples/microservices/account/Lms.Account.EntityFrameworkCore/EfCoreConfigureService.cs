@@ -11,9 +11,8 @@ namespace Lms.Account.EntityFrameworkCore
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<UserDbContext>(opt =>
-                    opt.UseMySql(ServerVersion.AutoDetect("Server=localhost;database=account;uid=root;pwd=pwd;")))
+                    opt.UseMySql(configuration.GetConnectionString("Default")))
                 .AddUnitOfWork<UserDbContext>()
-                .AddScoped(typeof(IRepository<>), typeof(Repository<>))
                 ;
         }
 

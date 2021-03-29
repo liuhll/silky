@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  lms.mysql:
+    image: mysql:8.0.15
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "qwe!P4ss"
+      MYSQL_PASSWORD: "qwe!P4ss"
+    volumes:
+      - ./.mysql/data:/var/lib/mysql
+      - ../../db/sql:/docker-entrypoint-initdb.d
+
+    ports:
+      - "3306:3306"
+    networks:
+      - lms_service_net
+networks:
+  lms_service_net:
+    external:
+      name: lms_service_net

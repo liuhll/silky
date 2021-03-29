@@ -13,7 +13,7 @@ namespace Lms.Account.EntityFrameworkCore
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.EnableAutoHistory(null);
+            modelBuilder.Entity<Domain.Accounts.Account>();
         }
     }
 }
