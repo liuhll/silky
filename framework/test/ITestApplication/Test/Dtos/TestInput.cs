@@ -13,7 +13,7 @@ namespace ITestApplication.Test.Dtos
         [CacheKey(1)]
         public string Address { get; set; }
 
-        [Phone]
+        [Phone(ErrorMessage = "手机号码格式不正确")]
         public string Phone { get; set; }
     }
 }

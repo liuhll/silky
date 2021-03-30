@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Lms.Core.DependencyInjection;
+using Lms.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using ValidationException = Lms.Core.Exceptions.ValidationException;
 
 namespace Lms.Validation
 {
@@ -24,7 +26,7 @@ namespace Lms.Validation
 
             if (errors.Any())
             {
-                throw new LmsValidationException(
+                throw new ValidationException(
                     "Object state is not valid! See ValidationErrors for details.",
                     errors
                 );

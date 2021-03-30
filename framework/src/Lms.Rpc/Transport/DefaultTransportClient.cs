@@ -40,9 +40,18 @@ namespace Lms.Rpc.Transport
             {
                 if (content.StatusCode == StatusCode.ValidateError)
                 {
-                    
+                    var validateException = new ValidationException(content.ExceptionMessage);
+                    foreach (var validateError in content.ValidateErrors)
+                    {
+                        validateException.WithValidationError(validateError.ErrorMessage, validateError.MemberNames);
+                    }
+
+                    task.TrySetException(validateException);
                 }
-                task.TrySetException(new LmsException(content.ExceptionMessage, content.StatusCode));
+                else
+                {
+                    task.TrySetException(new LmsException(content.ExceptionMessage, content.StatusCode));
+                }
             }
             else
             {

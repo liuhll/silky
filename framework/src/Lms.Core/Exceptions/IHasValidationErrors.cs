@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lms.Validation
+namespace Lms.Core.Exceptions
 {
     public interface IHasValidationErrors
     {

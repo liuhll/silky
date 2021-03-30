@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Lms.Core;
 using Lms.Core.DependencyInjection;
+using Lms.Core.Exceptions;
 using Lms.Core.Extensions.Collections.Generic;
 using Lms.Core.Utils;
 
@@ -77,7 +78,7 @@ namespace Lms.Validation
 
         protected virtual void ThrowValidationError(MethodInvocationValidationContext context)
         {
-            throw new LmsValidationException(
+            throw new ValidationException(
                 "Method arguments are not valid! See ValidationErrors for details.",
                 context.Errors         
             );

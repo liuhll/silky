@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using JetBrains.Annotations;
-using Lms.Core;
 using Lms.Core.Extensions.Collections.Generic;
 
-namespace Lms.Validation
+namespace Lms.Core.Exceptions
 {
     public static class HasValidationErrorsExtensions
     {
@@ -27,6 +27,23 @@ namespace Lms.Validation
                 : new ValidationResult(errorMessage, memberNames);
 
             return exception.WithValidationError(validationResult);
+        }
+
+        public static IEnumerable<ValidateError> GetValidateErrors<TException>(this TException exception)
+            where TException : IHasValidationErrors
+        {
+            var validateErrors = new List<ValidateError>();
+            
+            foreach (var validateError in exception.ValidationErrors)
+            {
+                validateErrors.Add(new ValidateError()
+                {
+                    ErrorMessage = validateError.ErrorMessage,
+                    MemberNames = validateError.MemberNames.ToArray()
+                });
+            }
+            return validateErrors;
+
         }
     }
 }

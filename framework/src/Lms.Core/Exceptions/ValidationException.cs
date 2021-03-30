@@ -2,22 +2,21 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using Lms.Core.Exceptions;
 using Lms.Core.Extensions.Collections.Generic;
 using Lms.Core.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace Lms.Validation
+namespace Lms.Core.Exceptions
 {
-    public class LmsValidationException : LmsException, IHasValidationErrors, IExceptionWithSelfLogging
+    public class ValidationException : LmsException, IHasValidationErrors, IExceptionWithSelfLogging
     {
-        public LmsValidationException(string message) : base(message, StatusCode.ValidateError)
+        public ValidationException(string message) : base(message, StatusCode.ValidateError)
         {
             ValidationErrors = new List<ValidationResult>();
             LogLevel = LogLevel.Warning;
         }
 
-        public LmsValidationException(string message, IList<ValidationResult> validationErrors) : this(message)
+        public ValidationException(string message, IList<ValidationResult> validationErrors) : this(message)
         {
             ValidationErrors = validationErrors;
             LogLevel = LogLevel.Warning;

@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lms.Core;
+using Lms.Core.Exceptions;
+using Lms.Core.Serialization;
 using Lms.HttpServer.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -16,28 +19,29 @@ namespace Lms.HttpServer.Extensions
         {
             var webHostEnvironment = EngineContext.Current.Resolve<IWebHostEnvironment>();
             var gatewayOptions = EngineContext.Current.Resolve<IOptions<GatewayOptions>>().Value;
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            
             var useDetailedExceptionPage = gatewayOptions.DisplayFullErrorStack || webHostEnvironment.IsDevelopment();
-            if (useDetailedExceptionPage)
+            
+            application.UseExceptionHandler(handler =>
             {
-                //get detailed exceptions for developing and testing purposes
-                application.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                application.UseExceptionHandler(handler =>
+                handler.Run(context =>
                 {
-                    handler.Run(context =>
+                    var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+                    if (exception == null)
+                        return Task.CompletedTask;
+                    context.Response.ContentType = "application/text;charset=utf-8";
+                    context.Response.StatusCode = 400;
+                    if (exception is IHasValidationErrors)
                     {
-                        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-                        if (exception == null)
-                            return Task.CompletedTask;
-
-                        context.Response.ContentType = "application/text;charset=utf-8";
-                        context.Response.StatusCode = 400;
-                        return context.Response.WriteAsync(exception.Message);
-                    });
+                        var validateErrors = exception.GetValidateErrors();
+                        var validateErrorsJsonString = serializer.Serialize(validateErrors);
+                        return context.Response.WriteAsync(validateErrorsJsonString);
+                        
+                    }
+                    return context.Response.WriteAsync(exception.Message);
                 });
-            }
+            });
         }
     }
 }

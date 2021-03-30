@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Lms.Core.Logging;
 using Microsoft.Extensions.Logging;
 
@@ -19,13 +21,29 @@ namespace Lms.Core.Exceptions
             }
             return message;
         }
-        
+
+        public static IEnumerable<ValidateError> GetValidateErrors(this Exception exception)
+        {
+            var validateErrors = new List<ValidateError>();
+            if (exception is IHasValidationErrors)
+            {
+                foreach (var validationError in ((IHasValidationErrors)exception).ValidationErrors)
+                {
+                    validateErrors.Add(new ValidateError()
+                    {
+                        ErrorMessage = validationError.ErrorMessage,
+                        MemberNames = validationError.MemberNames.ToArray()
+                    });
+                }
+            }
+
+            return validateErrors;
+        }
+
         public static bool IsBusinessException(this Exception exception)
         {
             var statusCode = exception.GetExceptionStatusCode();
-            return statusCode == StatusCode.Success
-                   || statusCode == StatusCode.ValidateError
-                   || statusCode == StatusCode.BusinessError;
+            return statusCode.IsBusinessStatus();
 
         }
         

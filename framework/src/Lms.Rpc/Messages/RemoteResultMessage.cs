@@ -1,4 +1,5 @@
-﻿using Lms.Core.Exceptions;
+﻿using System.Collections.Generic;
+using Lms.Core.Exceptions;
 
 namespace Lms.Rpc.Messages
 {
@@ -8,6 +9,10 @@ namespace Lms.Rpc.Messages
 
         public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
+        public IEnumerable<ValidateError> ValidateErrors { get; set; }
+
         public object Result { get; set; }
     }
+
+
 }

@@ -49,7 +49,8 @@ namespace Lms.Rpc.Runtime.Server
                 remoteResultMessage = new RemoteResultMessage()
                 {
                     ExceptionMessage = e.GetExceptionMessage(),
-                    StatusCode = e.GetExceptionStatusCode()
+                    StatusCode = e.GetExceptionStatusCode(),
+                    ValidateErrors = e.GetValidateErrors()
                 };
             }
 
