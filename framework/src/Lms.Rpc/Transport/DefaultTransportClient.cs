@@ -38,6 +38,10 @@ namespace Lms.Rpc.Transport
             var content = message.GetContent<RemoteResultMessage>();
             if (content.StatusCode != StatusCode.Success)
             {
+                if (content.StatusCode == StatusCode.ValidateError)
+                {
+                    
+                }
                 task.TrySetException(new LmsException(content.ExceptionMessage, content.StatusCode));
             }
             else

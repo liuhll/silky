@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>A package used by the lms framework to verify input parameters</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
+    </ItemGroup>
+
+</Project>

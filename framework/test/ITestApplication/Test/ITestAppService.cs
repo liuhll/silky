@@ -14,7 +14,7 @@ namespace ITestApplication.Test
     [ServiceRoute(multipleServiceKey: true)]
     public interface ITestAppService
     {
-        [GetCachingIntercept("ITestAppService.TestOut", "name:{0}")]
+       // [GetCachingIntercept("ITestAppService.TestOut", "name:{0}")]
         Task<TestOut> Create(TestInput input);
 
         Task<string> Update(TestInput input);

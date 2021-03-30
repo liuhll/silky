@@ -1,7 +1,5 @@
-using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Lms.Core;
-using Lms.Core.Exceptions;
 using Lms.HttpServer.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;

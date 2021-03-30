@@ -13,6 +13,7 @@ namespace ITestApplication.Test.Dtos
         [CacheKey(1)]
         public string Address { get; set; }
 
+        [Phone]
         public string Phone { get; set; }
     }
 }

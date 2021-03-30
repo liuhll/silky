@@ -4,6 +4,7 @@ using Lms.Castle.Adapter;
 using Lms.Core;
 using Lms.Rpc.Proxy.Interceptors;
 using Lms.Rpc.Runtime.Server;
+using Lms.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,11 +30,15 @@ namespace Lms.Rpc.Proxy
             services.AddTransient(rpcProxyInterceptorType);
             var interceptorAdapterType =
                 typeof(LmsAsyncDeterminationInterceptor<>).MakeGenericType(rpcProxyInterceptorType);
+            var validationInterceptorType =  typeof(ValidationInterceptor);
+            var validationInterceptorAdapterType =  
+                typeof(LmsAsyncDeterminationInterceptor<>).MakeGenericType(validationInterceptorType);
             services.AddTransient(
                 type,
                 serviceProvider => ProxyGeneratorInstance
                     .CreateInterfaceProxyWithoutTarget(
                         type,
+                        (IInterceptor) serviceProvider.GetRequiredService(validationInterceptorAdapterType),
                         (IInterceptor) serviceProvider.GetRequiredService(interceptorAdapterType)
                        // (IInterceptor) serviceProvider.GetRequiredService(fallbackInterceptorAdapterType)
                     )
