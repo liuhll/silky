@@ -22,3 +22,5 @@ src/Lms.WebHost
 src/Lms.WebSocket
 src/Lms.WebSocketServer
 src/Lms.WsHost
+src/Lms.FluentValidation
+src/Lms.Transaction
