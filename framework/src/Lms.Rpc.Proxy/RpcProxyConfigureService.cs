@@ -28,10 +28,10 @@ namespace Lms.Rpc.Proxy
         {
             var rpcProxyInterceptorType = typeof(RpcClientProxyInterceptor);
             services.AddTransient(rpcProxyInterceptorType);
-            var interceptorAdapterType =
+            var rpcInterceptorAdapterType =
                 typeof(LmsAsyncDeterminationInterceptor<>).MakeGenericType(rpcProxyInterceptorType);
-            var validationInterceptorType =  typeof(ValidationInterceptor);
-            var validationInterceptorAdapterType =  
+            var validationInterceptorType = typeof(ValidationInterceptor);
+            var validationInterceptorAdapterType =
                 typeof(LmsAsyncDeterminationInterceptor<>).MakeGenericType(validationInterceptorType);
             services.AddTransient(
                 type,
@@ -39,8 +39,7 @@ namespace Lms.Rpc.Proxy
                     .CreateInterfaceProxyWithoutTarget(
                         type,
                         (IInterceptor) serviceProvider.GetRequiredService(validationInterceptorAdapterType),
-                        (IInterceptor) serviceProvider.GetRequiredService(interceptorAdapterType)
-                       // (IInterceptor) serviceProvider.GetRequiredService(fallbackInterceptorAdapterType)
+                        (IInterceptor) serviceProvider.GetRequiredService(rpcInterceptorAdapterType)
                     )
             );
         }
