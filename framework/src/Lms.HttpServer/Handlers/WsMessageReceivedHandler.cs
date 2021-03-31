@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lms.Core.Exceptions;
 using Lms.Core.Serialization;
+using Lms.HttpServer.Configuration;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Client;
@@ -16,12 +17,14 @@ namespace Lms.HttpServer.Handlers
         public WsMessageReceivedHandler(IParameterParser parameterParser,
             ISerializer serializer,
             IOptions<RpcOptions> rpcOptions,
+            IOptions<GatewayOptions> gatewayOptions,
             IServiceExecutor serviceExecutor,
             IRemoteServiceInvoker remoteServiceInvoker,
             IOptions<GovernanceOptions> governanceOptions)
             : base(parameterParser,
                 serializer,
                 rpcOptions,
+                gatewayOptions,
                 serviceExecutor)
         {
         }

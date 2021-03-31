@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using Lms.Core;
+using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
 using Lms.Core.Serialization;
+using Lms.HttpServer.Configuration;
 using Lms.Rpc.Configuration;
 using Lms.Rpc.Runtime;
 using Lms.Rpc.Runtime.Server;
@@ -18,17 +20,20 @@ namespace Lms.HttpServer.Handlers
         protected readonly ISerializer _serializer;
         protected readonly RpcOptions _rpcOptions;
         protected readonly IServiceExecutor _serviceExecutor;
+        protected readonly GatewayOptions _gatewayOptions;
 
         protected MessageReceivedHandlerBase(
             IParameterParser parameterParser,
             ISerializer serializer,
             IOptions<RpcOptions> rpcOptions,
+            IOptions<GatewayOptions> gatewayOptions,
             IServiceExecutor serviceExecutor)
         {
             _parameterParser = parameterParser;
             _serializer = serializer;
             _serviceExecutor = serviceExecutor;
             _rpcOptions = rpcOptions.Value;
+            _gatewayOptions = gatewayOptions.Value;
         }
 
         public virtual async Task Handle(HttpContext context, ServiceEntry serviceEntry)
@@ -49,18 +54,33 @@ namespace Lms.HttpServer.Handlers
             RpcContext.GetContext().SetAttachment("rpcToken", _rpcOptions.Token);
             var excuteResult = await _serviceExecutor.Execute(serviceEntry, rpcParameters, serviceKey);
             context.Response.ContentType = "application/json;charset=utf-8";
-            context.Response.StatusCode = 200;
-            if (excuteResult != null)
+            context.Response.StatusCode = ResponseStatusCode.Success;
+            if (_gatewayOptions.WrapResult)
             {
-                var responseData = _serializer.Serialize(excuteResult);
+                var responseResult = new ResponseResultDto()
+                {
+                    Data = excuteResult,
+                    Status = StatusCode.Success,
+                };
+                var responseData = _serializer.Serialize(responseResult);
                 context.Response.ContentLength = responseData.GetBytes().Length;
                 await context.Response.WriteAsync(responseData);
             }
             else
             {
-                context.Response.ContentLength = 0;
-                await context.Response.WriteAsync(string.Empty);
+                if (excuteResult != null)
+                {
+                    var responseData = _serializer.Serialize(excuteResult);
+                    context.Response.ContentLength = responseData.GetBytes().Length;
+                    await context.Response.WriteAsync(responseData);
+                }
+                else
+                {
+                    context.Response.ContentLength = 0;
+                    await context.Response.WriteAsync(string.Empty);
+                }
             }
+            
         }
     }
 }

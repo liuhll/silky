@@ -29,14 +29,14 @@ namespace Lms.Core.Exceptions
             return exception.WithValidationError(validationResult);
         }
 
-        public static IEnumerable<ValidateError> GetValidateErrors<TException>(this TException exception)
+        public static IEnumerable<ValidError> GetValidateErrors<TException>(this TException exception)
             where TException : IHasValidationErrors
         {
-            var validateErrors = new List<ValidateError>();
+            var validateErrors = new List<ValidError>();
             
             foreach (var validateError in exception.ValidationErrors)
             {
-                validateErrors.Add(new ValidateError()
+                validateErrors.Add(new ValidError()
                 {
                     ErrorMessage = validateError.ErrorMessage,
                     MemberNames = validateError.MemberNames.ToArray()

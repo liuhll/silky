@@ -9,7 +9,7 @@ namespace Lms.Rpc.Messages
 
         public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
-        public IEnumerable<ValidateError> ValidateErrors { get; set; }
+        public IEnumerable<ValidError> ValidateErrors { get; set; }
 
         public object Result { get; set; }
     }

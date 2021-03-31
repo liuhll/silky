@@ -27,7 +27,7 @@ namespace Lms.Validation
             if (errors.Any())
             {
                 throw new ValidationException(
-                    "Object state is not valid! See ValidationErrors for details.",
+                    "输入参数校验未通过",
                     errors
                 );
             }

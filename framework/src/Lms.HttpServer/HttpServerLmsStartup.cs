@@ -1,7 +1,7 @@
 using System;
 using Lms.Core;
 using Lms.HttpServer.Configuration;
-using Lms.HttpServer.Extensions;
+using Lms.HttpServer.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

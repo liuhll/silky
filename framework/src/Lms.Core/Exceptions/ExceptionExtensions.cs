@@ -22,14 +22,14 @@ namespace Lms.Core.Exceptions
             return message;
         }
 
-        public static IEnumerable<ValidateError> GetValidateErrors(this Exception exception)
+        public static IEnumerable<ValidError> GetValidateErrors(this Exception exception)
         {
-            var validateErrors = new List<ValidateError>();
+            var validateErrors = new List<ValidError>();
             if (exception is IHasValidationErrors)
             {
                 foreach (var validationError in ((IHasValidationErrors)exception).ValidationErrors)
                 {
-                    validateErrors.Add(new ValidateError()
+                    validateErrors.Add(new ValidError()
                     {
                         ErrorMessage = validationError.ErrorMessage,
                         MemberNames = validationError.MemberNames.ToArray()
@@ -44,6 +44,13 @@ namespace Lms.Core.Exceptions
         {
             var statusCode = exception.GetExceptionStatusCode();
             return statusCode.IsBusinessStatus();
+
+        }
+        
+        public static bool IsUnauthorized(this Exception exception)
+        {
+            var statusCode = exception.GetExceptionStatusCode();
+            return statusCode.IsUnauthorized();
 
         }
         

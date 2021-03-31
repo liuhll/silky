@@ -1,6 +1,6 @@
 namespace Lms.Core.Exceptions
 {
-    public class ValidateError
+    public class ValidError
     {
         public string[] MemberNames { get; set; }
 

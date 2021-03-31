@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,13 @@ namespace Lms.Core.Exceptions
     public class ValidationException : LmsException, IHasValidationErrors, IExceptionWithSelfLogging
     {
         public ValidationException(string message) : base(message, StatusCode.ValidateError)
+        {
+            ValidationErrors = new List<ValidationResult>();
+            LogLevel = LogLevel.Warning;
+        }
+
+        public ValidationException(string message, Exception innerException) : base(message, innerException,
+            StatusCode.ValidateError)
         {
             ValidationErrors = new List<ValidationResult>();
             LogLevel = LogLevel.Warning;

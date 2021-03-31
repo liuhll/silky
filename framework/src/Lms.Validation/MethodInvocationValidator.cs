@@ -79,7 +79,7 @@ namespace Lms.Validation
         protected virtual void ThrowValidationError(MethodInvocationValidationContext context)
         {
             throw new ValidationException(
-                "Method arguments are not valid! See ValidationErrors for details.",
+                "输入参数校验未通过",
                 context.Errors         
             );
         }
