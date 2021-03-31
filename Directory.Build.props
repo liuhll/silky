@@ -37,9 +37,9 @@
     
     <LicenseUrl>https://raw.githubusercontent.com/liuhll/lms/main/LICENSE</LicenseUrl>
     
-    <VersionPrefix>0.0.1-bate.5</VersionPrefix>
+    <VersionPrefix>0.0.1-bate.6</VersionPrefix>
 
-    <IconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/img/logo.png</IconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/img/logo.png</PackageIconUrl>
 	
 		<RepositoryUrl>https://github.com/liuhll/lms</RepositoryUrl>
 
