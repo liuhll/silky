@@ -7,7 +7,6 @@ using Lms.Core;
 using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
 using Lms.Core.Extensions;
-using Lms.Rpc.Address;
 using Lms.Rpc.Routing.Descriptor;
 using Lms.Rpc.Runtime.Server.Parameter;
 using Lms.Rpc.Runtime.Session;
@@ -92,6 +91,20 @@ namespace Lms.Rpc.Runtime.Server
             }
 
             return dictionaryParms;
+        }
+
+        public static object[] ConvertParameters(this ServiceEntry serviceEntry, object[] parameters)
+        {
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type)
+                {
+                    var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+                    parameters[i] =
+                        typeConvertibleService.Convert(parameters[i], serviceEntry.ParameterDescriptors[i].Type);
+                }
+            }
+            return parameters;
         }
 
         public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,

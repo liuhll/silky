@@ -10,6 +10,7 @@
       <ProjectReference Include="..\Lms.Castle\Lms.Castle.csproj" />
       <ProjectReference Include="..\Lms.Core\Lms.Core.csproj" />
       <ProjectReference Include="..\Lms.Lock\Lms.Lock.csproj" />
+      <ProjectReference Include="..\Lms.Validation\Lms.Validation.csproj" />
     </ItemGroup>
 
     <ItemGroup>

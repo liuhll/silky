@@ -114,7 +114,9 @@ namespace Lms.Rpc
                 .As<IServiceExecutor>()
                 .InstancePerLifetimeScope()
                 .AddInterceptors(
-                    typeof(CachingInterceptor)
+                    typeof(CachingInterceptor),
+                    typeof(RpcValidationInterceptor)
+                   
                 )
                 ;
         }
