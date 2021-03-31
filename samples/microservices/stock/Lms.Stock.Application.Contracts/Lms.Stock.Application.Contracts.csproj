@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.Rpc" Version="0.0.1-bate.3" />
+      <PackageReference Include="Lms.Rpc" Version="$(VersionPrefix)"/>
     </ItemGroup>
 
 </Project>

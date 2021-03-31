@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.NormHost" Version="0.0.1-bate.3" />
+      <PackageReference Include="Lms.NormHost" Version="$(VersionPrefix)" />
     </ItemGroup>
 
     <ItemGroup>

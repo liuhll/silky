@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.AutoMapper" Version="0.0.1-bate.3" />
+      <PackageReference Include="Lms.AutoMapper" Version="$(VersionPrefix)"/>
     </ItemGroup>
 
 </Project>
