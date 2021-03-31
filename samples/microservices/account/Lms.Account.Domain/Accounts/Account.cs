@@ -1,11 +1,20 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Lms.Rpc.Runtime.Session;
 
 namespace Lms.Account.Domain.Accounts
 {
     public class Account
     {
+        private readonly ISession _session;
+        public Account()
+        {
+            _session = NullSession.Instance;
+            CreateTime = DateTime.Now;
+            CreateBy = _session.UserId;
+        }
+
         [Key]
         public long Id { get; set; }
 
@@ -24,7 +33,7 @@ namespace Lms.Account.Domain.Accounts
 
         public DateTime CreateTime { get; set; }
         
-        public long CreateBy { get; set; }
+        public long? CreateBy { get; set; }
         
         public DateTime UpdateTime { get; set; }
 

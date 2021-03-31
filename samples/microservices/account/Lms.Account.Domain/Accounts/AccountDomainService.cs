@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Arch.EntityFrameworkCore.UnitOfWork;
+using Lms.Core.Exceptions;
 
 namespace Lms.Account.Domain.Accounts
 {
@@ -21,6 +22,17 @@ namespace Lms.Account.Domain.Accounts
         public async Task<Account> Create(Account account)
         {
             var accountRepository = _unitOfWork.GetRepository<Account>();
+            var exsitAccountCount = accountRepository.Count(p => p.Name == account.Name);
+            if (exsitAccountCount > 0)
+            {
+                throw new BusinessException($"已经存在{account.Name}名称的账号");
+            }
+
+            exsitAccountCount = accountRepository.Count(p => p.Email == account.Email);
+            if (exsitAccountCount > 0)
+            {
+                throw new BusinessException($"已经存在{account.Email}Email的账号");
+            }
             var insertResult = await accountRepository.InsertAsync(account);
             await _unitOfWork.SaveChangesAsync();
             return insertResult.Entity;
