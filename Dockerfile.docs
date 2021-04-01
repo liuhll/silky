@@ -1,0 +1,20 @@
+FROM node:12.13.0 as build
+LABEL maintainer="1029765111@qq.com"
+WORKDIR /usr/src/app
+
+COPY ./package.json .
+COPY ./docs .
+
+RUN npm install -g nrm && \
+    nrm use yarn
+
+RUN yarn install && \
+    yarn run docs:build
+
+FROM nginx:latest
+LABEL maintainer="1029765111@qq.com"
+WORKDIR /usr/app
+COPY --from=build /usr/src/app/docs/.vuepress/dist .
+ENV HOST 0.0.0.0
+EXPOSE 80
+ENTRYPOINT ["nginx","-g","daemon off;"]
