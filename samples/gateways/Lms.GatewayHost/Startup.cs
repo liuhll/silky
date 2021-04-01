@@ -1,3 +1,8 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Lms.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +28,17 @@ namespace Lms.GatewayHost
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lms Gateway", Version = "v1"});
                 c.MultipleServiceKey();
+                var applicationAssemblies = EngineContext.Current.TypeFinder.GetAssemblies()
+                    .Where(p => p.FullName.Contains("Application") ||  p.FullName.Contains("Domain"));
+                foreach (var applicationAssembly in applicationAssemblies)
+                {
+                    var xmlFile = $"{applicationAssembly.GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    if (File.Exists(xmlPath))
+                    {
+                        c.IncludeXmlComments(xmlPath);
+                    }
+                }
             });
         }
 

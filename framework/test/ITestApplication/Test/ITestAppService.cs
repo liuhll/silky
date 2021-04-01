@@ -14,6 +14,11 @@ namespace ITestApplication.Test
     [ServiceRoute(multipleServiceKey: true)]
     public interface ITestAppService
     {
+        /// <summary>
+        ///  新增接口测试
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [GetCachingIntercept("ITestAppService.TestOut", "name:{0}")]
         Task<TestOut> Create(TestInput input);
 

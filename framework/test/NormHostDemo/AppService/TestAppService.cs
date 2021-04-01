@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Lms.Core.Exceptions;
 using Lms.Rpc.Runtime.Server;
 using Lms.Transaction.Tcc;
 
@@ -29,7 +30,7 @@ namespace NormHostDemo.AppService
 
         public async Task<string> Update(TestInput input)
         {
-            return "Update";
+            throw new BusinessException("test exception");
         }
 
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
