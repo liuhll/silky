@@ -4,4 +4,8 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Lms.WsHost" Version="0.0.1-bate.7" />
+    </ItemGroup>
+
 </Project>

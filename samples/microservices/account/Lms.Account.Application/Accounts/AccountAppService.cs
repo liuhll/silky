@@ -21,5 +21,23 @@ namespace Lms.Account.Application.Accounts
             account = await _accountDomainService.Create(account);
             return account.MapTo<GetAccountOutput>();
         }
+
+        public async Task<GetAccountOutput> GetAccountByName(string name)
+        {
+            var account = await _accountDomainService.GetAccountByName(name);
+            return account.MapTo<GetAccountOutput>();
+        }
+
+        public async Task<GetAccountOutput> GetAccountById(long id)
+        {
+            var account = await _accountDomainService.GetAccountById(id);
+            return account.MapTo<GetAccountOutput>();
+        }
+
+        public async Task<GetAccountOutput> Update(UpdateAccountInput input)
+        {
+            var account = await _accountDomainService.Update(input);
+            return account.MapTo<GetAccountOutput>();
+        }
     }
 }

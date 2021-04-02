@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Arch.EntityFrameworkCore.UnitOfWork;
+using Lms.Account.Application.Contracts.Accounts.Dtos;
+using Lms.AutoMapper;
 using Lms.Core.Exceptions;
 
 namespace Lms.Account.Domain.Accounts
@@ -36,6 +38,38 @@ namespace Lms.Account.Domain.Accounts
             var insertResult = await accountRepository.InsertAsync(account);
             await _unitOfWork.SaveChangesAsync();
             return insertResult.Entity;
+        }
+
+        public async Task<Account> GetAccountByName(string name)
+        {
+            var accountRepository = _unitOfWork.GetRepository<Account>();
+            var accountEntry = await accountRepository.GetFirstOrDefaultAsync(predicate: p=> p.Name == name);
+            if (accountEntry == null)
+            {
+                throw new BusinessException($"不存在名称为{name}的账号");
+            }
+            return accountEntry;
+        }
+
+        public async Task<Account> GetAccountById(long id)
+        {
+            var accountRepository = _unitOfWork.GetRepository<Account>();
+            var accountEntry = await accountRepository.GetFirstOrDefaultAsync(predicate: p=> p.Id == id);
+            if (accountEntry == null)
+            {
+                throw new BusinessException($"不存在Id为{id}的账号");
+            }
+            return accountEntry;
+        }
+
+        public async Task<Account> Update(UpdateAccountInput input)
+        {
+            var account = await GetAccountById(input.Id);
+            account = input.MapTo(account);
+            var accountRepository = _unitOfWork.GetRepository<Account>(); 
+            accountRepository.Update(account);
+            await _unitOfWork.SaveChangesAsync();
+            return account;
         }
     }
 }

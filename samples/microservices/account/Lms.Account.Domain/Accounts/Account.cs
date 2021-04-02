@@ -37,6 +37,6 @@ namespace Lms.Account.Domain.Accounts
         
         public DateTime UpdateTime { get; set; }
 
-        public long UpdateBy { get; set; }
+        public long? UpdateBy { get; set; }
     }
 }
