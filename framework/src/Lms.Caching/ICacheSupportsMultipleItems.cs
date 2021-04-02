@@ -25,6 +25,8 @@ namespace Lms.Caching
             IEnumerable<KeyValuePair<string, byte[]>> items,
             DistributedCacheEntryOptions options,
             CancellationToken token = default
-        ); 
+        );
+
+        Task RemoveMatchKeyAsync(string key, bool? hideErrors, CancellationToken token);
     }
 }

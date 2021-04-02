@@ -131,6 +131,19 @@ namespace Lms.Caching.StackExchangeRedis
             await Task.WhenAll(PipelineSetMany(items, options));
         }
 
+        public async Task RemoveMatchKeyAsync(string key, bool? hideErrors, CancellationToken token)
+        {
+            Check.NotNull(key, nameof(key));
+            
+            await ConnectAsync(token);
+            
+            RedisDatabase.ScriptEvaluate(@" local keys = redis.call('keys', ARGV[1]) 
+                for i=1,#keys,5000 do 
+                redis.call('del', unpack(keys, i, math.min(i+4999, #keys)))
+                end", values: new RedisValue[] { Instance + key });
+        }
+        
+        
         public void RefreshMany(
             IEnumerable<string> keys)
         {
@@ -154,7 +167,7 @@ namespace Lms.Caching.StackExchangeRedis
 
             Connect();
 
-            RedisDatabase.KeyDelete(keys.Select(key => (RedisKey)(Instance + key)).ToArray());
+            RedisDatabase.KeyDelete(keys.Select(key => (RedisKey) (Instance + key)).ToArray());
         }
 
         public async Task RemoveManyAsync(IEnumerable<string> keys, CancellationToken token = default)
@@ -164,7 +177,7 @@ namespace Lms.Caching.StackExchangeRedis
             token.ThrowIfCancellationRequested();
             await ConnectAsync(token);
 
-            await RedisDatabase.KeyDeleteAsync(keys.Select(key => (RedisKey)(Instance + key)).ToArray());
+            await RedisDatabase.KeyDeleteAsync(keys.Select(key => (RedisKey) (Instance + key)).ToArray());
         }
 
         protected virtual byte[][] GetAndRefreshMany(

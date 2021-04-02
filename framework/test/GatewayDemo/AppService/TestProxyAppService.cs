@@ -19,7 +19,7 @@ namespace GatewayDemo.AppService
 
         public async Task<TestOut> CreateProxy(TestInput testInput)
         {
-            _currentServiceKey.Change("v2");
+            // _currentServiceKey.Change("v2");
             return await _testAppService.Create(testInput);
         }
 

@@ -724,40 +724,6 @@ namespace Lms.Caching
             keyNormalizer: keyNormalizer)
         {
         }
-
-        public async override Task RemoveAsync(string key, bool? hideErrors = null, CancellationToken token = default)
-        {
-            if (!key.Contains("*"))
-            { 
-                await base.RemoveAsync(key, hideErrors, token);
-            }
-
-            var  matchKeys = SearchKeys(key);
-            foreach (var matchKey in matchKeys)
-            {
-                await base.RemoveAsync(matchKey, hideErrors, token);
-            }
-
-        }
-
-        protected virtual IList<string> SearchKeys(string key)
-        {
-            var cacheKeys = GetCacheKeys();
-            return cacheKeys.Where(k => Regex.IsMatch(k, key)).ToImmutableArray();
-        }
         
-        private IReadOnlyCollection<string> GetCacheKeys()
-        {
-            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var entries = Cache.GetType().GetField("_entries", flags).GetValue(Cache);
-            var cacheItems = entries as IDictionary;
-            var keys = new List<string>();
-            if (cacheItems == null) return keys;
-            foreach (DictionaryEntry cacheItem in cacheItems)
-            {
-                keys.Add(cacheItem.Key.ToString());
-            }
-            return keys;
-        }
     }
 }

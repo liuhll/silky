@@ -109,22 +109,29 @@ namespace Lms.Caching
 
             return ToCacheItem(cachedBytes, type);
         }
-        
+
         public async override Task RemoveAsync(string key, bool? hideErrors = null, CancellationToken token = default)
         {
-            if (key.Contains("*") && Cache is MemoryDistributedCache)
-            { 
-                var  matchKeys = SearchKeys(key);
-                foreach (var matchKey in matchKeys)
+            if (key.Contains("*") || key.Contains("^") || key.Contains("$") || key.Contains("?"))
+            {
+                var distributedInterceptCache = (Cache as ICacheSupportsMultipleItems);
+                if (distributedInterceptCache == null)
                 {
-                    await base.RemoveAsync(matchKey, hideErrors, token);
+                    var matchKeys = SearchKeys(key);
+                    foreach (var matchKey in matchKeys)
+                    {
+                        await base.RemoveAsync(matchKey, hideErrors, token);
+                    }
+                }
+                else
+                {
+                    await distributedInterceptCache.RemoveMatchKeyAsync(NormalizeKey(key), hideErrors, token);
                 }
             }
             else
             {
                 await base.RemoveAsync(key, hideErrors, token);
             }
-            
         }
 
         protected virtual IReadOnlyCollection<string> SearchKeys(string key)
@@ -132,7 +139,7 @@ namespace Lms.Caching
             var cacheKeys = GetCacheKeys();
             return cacheKeys.Where(k => Regex.IsMatch(k, key)).ToImmutableArray();
         }
-        
+
         private List<string> GetCacheKeys()
         {
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -146,6 +153,7 @@ namespace Lms.Caching
             {
                 keys.Add(cacheItem.Key.ToString());
             }
+
             return keys;
         }
 
