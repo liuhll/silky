@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  lms-docs:
+    image: lms-docs:${TAG:-latest}
+    build:
+      context: ..
+      dockerfile: Dockerfile.docs
+    ports:
+      - 8080:80
