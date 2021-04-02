@@ -69,6 +69,14 @@ namespace NormHostDemo.AppService
             };
         }
 
+        public async Task<TestOut> GetById(long id)
+        {
+            return new()
+            {
+                Id = id
+            };
+        }
+
 
         public async Task<string> UpdatePart(TestInput input)
         {

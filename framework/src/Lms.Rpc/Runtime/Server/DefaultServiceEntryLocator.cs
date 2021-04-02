@@ -24,6 +24,7 @@ namespace Lms.Rpc.Runtime.Server
             }
 
             serviceEntry = _serviceEntryManager.GetAllEntries()
+                .OrderByDescending(p => p.Router.RouteTemplate.Order)
                 .FirstOrDefault(p => p.Router.IsMatch(path, httpMethod));
             if (serviceEntry != null && serviceEntry.ParameterDescriptors.All(p => p.From != ParameterFrom.Path))
             {

@@ -6,8 +6,8 @@
         {
             Name = name;
         }
-        
-        public TemplateParameter(string name,string constraint)
+
+        public TemplateParameter(string name, string constraint)
         {
             Name = name;
             Constraint = constraint;
@@ -16,5 +16,7 @@
         public string Name { get; }
 
         public string Constraint { get; }
+
+      
     }
 }

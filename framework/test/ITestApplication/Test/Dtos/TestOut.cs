@@ -6,5 +6,7 @@ namespace ITestApplication.Test.Dtos
         public string Name { get; set; }
 
         public string Address { get; set; }
+        
+        public long Id { get; set; }
     }
 }

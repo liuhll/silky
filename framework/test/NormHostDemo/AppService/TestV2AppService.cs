@@ -44,7 +44,12 @@ namespace NormHostDemo.AppService
                 Name = name + "v2"
             };
         }
-        
+
+        public Task<TestOut> GetById(long id)
+        {
+            throw new System.NotImplementedException();
+        }
+
 
         public Task<string> UpdatePart(TestInput input)
         {

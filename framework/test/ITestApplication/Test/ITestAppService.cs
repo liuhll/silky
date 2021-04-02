@@ -39,6 +39,11 @@ namespace ITestApplication.Test
         [GetCachingIntercept("ITestAppService.TestOut", "name:{0}")]
         Task<TestOut> Get([HashKey][CacheKey(0)] string name);
 
+        [HttpGet("{id:long}")]
+        [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
+        [GetCachingIntercept("ITestAppService.TestOut", "id:{0}")]
+        Task<TestOut> GetById([HashKey] [CacheKey(0)]long id);
+
         //[HttpPatch("patch")]
         [HttpPatch]
         [Governance(FallBackType = typeof(UpdatePartFallBack))]
