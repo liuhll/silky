@@ -13,7 +13,7 @@ namespace Lms.Account.EntityFrameworkCore
             services.AddDbContext<UserDbContext>(opt =>
                     opt.UseMySql(configuration.GetConnectionString("Default"),
                         ServerVersion.AutoDetect(configuration.GetConnectionString("Default"))))
-                .AddGenericRepository<UserDbContext>()
+                .AddGenericRepository<UserDbContext>(ServiceLifetime.Transient)
                 ;
         }
 

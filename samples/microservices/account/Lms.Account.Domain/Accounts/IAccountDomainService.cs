@@ -4,7 +4,7 @@ using Lms.Core.DependencyInjection;
 
 namespace Lms.Account.Domain.Accounts
 {
-    public interface IAccountDomainService : IScopedDependency
+    public interface IAccountDomainService : ITransientDependency
     {
         Task<Account> Create(Account account);
         Task<Account> GetAccountByName(string name);
