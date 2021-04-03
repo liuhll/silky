@@ -81,9 +81,9 @@ namespace Lms.Account.Domain.Accounts
                 }
             }
 
+            await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
             account = input.MapTo(account);
             await _repository.UpdateAsync(account);
-            await _accountCache.RemoveAsync($"Account:Name:{input.Name}");
             return account;
         }
     }
