@@ -2,9 +2,7 @@
 {
     public interface ICachingInterceptProvider
     {
-
-        string CacheName { get; }
-
+        
         string KeyTemplete { get; }
 
         bool OnlyCurrentUserData { get; set; }

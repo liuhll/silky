@@ -56,7 +56,7 @@ namespace Lms.Rpc.Interceptors
                         var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
                             serviceEntry.GetCachingInterceptProvider);
                         invocation.ReturnValue = await GetResultFirstFromCache(
-                            serviceEntry.GetCachingInterceptProvider.CacheName,
+                            serviceEntry.GetCacheName(),
                             getCacheKey,
                             serviceEntry);
                     }
@@ -75,7 +75,7 @@ namespace Lms.Rpc.Interceptors
                             serviceEntry.UpdateCachingInterceptProvider);
                         await _distributedCache.RemoveAsync(updateCacheKey);
                         invocation.ReturnValue = await GetResultFirstFromCache(
-                            serviceEntry.GetCachingInterceptProvider.CacheName,
+                            serviceEntry.GetCacheName(),
                             updateCacheKey,
                             serviceEntry);
                     }

@@ -19,30 +19,30 @@ namespace ITestApplication.Test
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [GetCachingIntercept("ITestAppService.TestOut", "name:{0}")]
+        [GetCachingIntercept("name:{0}")]
         Task<TestOut> Create(TestInput input);
 
         Task<string> Update(TestInput input);
-        
-        [RemoveCachingIntercept("ITestAppService.TestOut", "name:{0}")]
+
+        [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
         [Transaction]
-        Task<string> Delete([CacheKey(0)]string name);
+        Task<string> Delete([CacheKey(0)] string name);
 
         [HttpGet]
         Task<string> Search([FromQuery] TestInput query);
 
         [HttpPost]
-        string Form([FromForm] TestInput query);     
+        string Form([FromForm] TestInput query);
 
         [HttpGet("{name:string}")]
         [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
-        [GetCachingIntercept("ITestAppService.TestOut", "name:{0}")]
-        Task<TestOut> Get([HashKey][CacheKey(0)] string name);
+        [GetCachingIntercept("name:{0}")]
+        Task<TestOut> Get([HashKey] [CacheKey(0)] string name);
 
         [HttpGet("{id:long}")]
         [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
-        [GetCachingIntercept("ITestAppService.TestOut", "id:{0}")]
-        Task<TestOut> GetById([HashKey] [CacheKey(0)]long id);
+        [GetCachingIntercept("id:{0}")]
+        Task<TestOut> GetById([HashKey] [CacheKey(0)] long id);
 
         //[HttpPatch("patch")]
         [HttpPatch]

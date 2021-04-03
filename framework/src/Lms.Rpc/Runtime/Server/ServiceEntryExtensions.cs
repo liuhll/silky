@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
+using Lms.Caching;
 using Lms.Core;
 using Lms.Core.Convertible;
 using Lms.Core.Exceptions;
@@ -104,6 +105,7 @@ namespace Lms.Rpc.Runtime.Server
                         typeConvertibleService.Convert(parameters[i], serviceEntry.ParameterDescriptors[i].Type);
                 }
             }
+
             return parameters;
         }
 
@@ -176,6 +178,18 @@ namespace Lms.Rpc.Runtime.Server
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             return serviceEntry.CustomAttributes.Any(p =>
                 p.GetType().GetTypeInfo().FullName == "Lms.Transaction.TransactionAttribute");
+        }
+
+        public static string GetCacheName([NotNull] this ServiceEntry serviceEntry)
+        {
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            var returnType = serviceEntry.ReturnType;
+            var cacheNameAttribute = returnType.GetCustomAttributes().OfType<CacheNameAttribute>().FirstOrDefault();
+            if (cacheNameAttribute != null)
+            {
+                return cacheNameAttribute.Name;
+            }
+            return returnType.FullName.RemovePostFix("CacheItem");
         }
 
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,
