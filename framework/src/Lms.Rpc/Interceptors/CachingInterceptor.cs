@@ -38,11 +38,11 @@ namespace Lms.Rpc.Interceptors
                 {
                     foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
                     {
-                        var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters,removeCachingInterceptProvider);
-                        _distributedCache.UpdateCacheName(removeCachingInterceptProvider.CacheName);
-                        await _distributedCache.RemoveAsync(removeCacheKey, true);
+                        var removeCacheKey =
+                            serviceEntry.GetCachingInterceptKey(parameters, removeCachingInterceptProvider);
+                        await _distributedCache.RemoveAsync(removeCacheKey, removeCachingInterceptProvider.CacheName,
+                            true);
                     }
-
                 }
 
                 if (serviceEntry.GetCachingInterceptProvider != null)
@@ -60,8 +60,6 @@ namespace Lms.Rpc.Interceptors
                             getCacheKey,
                             serviceEntry);
                     }
-
-                  
                 }
                 else if (serviceEntry.UpdateCachingInterceptProvider != null)
                 {
@@ -73,7 +71,8 @@ namespace Lms.Rpc.Interceptors
                     {
                         var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
                             serviceEntry.UpdateCachingInterceptProvider);
-                        await _distributedCache.RemoveAsync(updateCacheKey);
+                        await _distributedCache.RemoveAsync(updateCacheKey, serviceEntry.GetCacheName(),
+                            hideErrors: true);
                         invocation.ReturnValue = await GetResultFirstFromCache(
                             serviceEntry.GetCacheName(),
                             updateCacheKey,
