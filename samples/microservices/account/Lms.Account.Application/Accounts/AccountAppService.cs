@@ -39,5 +39,10 @@ namespace Lms.Account.Application.Accounts
             var account = await _accountDomainService.Update(input);
             return account.MapTo<GetAccountOutput>();
         }
+
+        public Task Delete(long id)
+        {
+            return _accountDomainService.Delete(id);
+        }
     }
 }

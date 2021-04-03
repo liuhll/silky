@@ -44,5 +44,14 @@ namespace Lms.Account.Application.Contracts.Accounts
         /// <returns></returns>
         [UpdateCachingIntercept( "Account:Id:{0}")]
         Task<GetAccountOutput> Update(UpdateAccountInput input);
+
+        /// <summary>
+        /// 删除账号信息
+        /// </summary>
+        /// <param name="id">账号Id</param>
+        /// <returns></returns>
+        [RemoveCachingIntercept("GetAccountOutput","Account:Id:{0}")]
+        [HttpDelete("{id:long}")]
+        Task Delete([CacheKey(0)]long id);
     }
 }

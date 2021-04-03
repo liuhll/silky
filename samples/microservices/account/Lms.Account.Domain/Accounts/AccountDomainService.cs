@@ -86,5 +86,12 @@ namespace Lms.Account.Domain.Accounts
             await _repository.UpdateAsync(account);
             return account;
         }
+
+        public async Task Delete(long id)
+        {
+            var account = await GetAccountById(id);
+            await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
+            await _repository.DeleteAsync(account);
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace Lms.Account.Domain.Accounts
         Task<Account> GetAccountByName(string name);
         Task<Account> GetAccountById(long id);
         Task<Account> Update(UpdateAccountInput input);
+        Task Delete(long id);
     }
 }
