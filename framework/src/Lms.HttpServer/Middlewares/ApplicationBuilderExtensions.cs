@@ -35,7 +35,7 @@ namespace Lms.HttpServer.Middlewares
                         var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
                         if (exception == null)
                             return Task.CompletedTask;
-                        context.Response.ContentType = "application/text;charset=utf-8";
+                        context.Response.ContentType = "application/json;charset=utf-8";
 
                         if (gatewayOptions.WrapResult)
                         {
