@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
 using Lms.AutoMapper;
+using Lms.Caching;
 using Lms.Core.Exceptions;
 using TanvirArjel.EFCore.GenericRepository;
 
@@ -10,10 +11,13 @@ namespace Lms.Account.Domain.Accounts
     public class AccountDomainService : IAccountDomainService
     {
         private readonly IRepository _repository;
+        private readonly IDistributedCache<GetAccountOutput, string> _accountCache;
 
-        public AccountDomainService(IRepository repository)
+        public AccountDomainService(IRepository repository,
+            IDistributedCache<GetAccountOutput, string> accountCache)
         {
             _repository = repository;
+            _accountCache = accountCache;
         }
 
         public async Task<Account> Create(Account account)
@@ -78,8 +82,8 @@ namespace Lms.Account.Domain.Accounts
             }
 
             account = input.MapTo(account);
-
             await _repository.UpdateAsync(account);
+            await _accountCache.RemoveAsync($"Account:Name:{input.Name}");
             return account;
         }
     }

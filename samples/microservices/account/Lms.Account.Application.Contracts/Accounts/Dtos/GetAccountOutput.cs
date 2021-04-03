@@ -1,5 +1,8 @@
+using Lms.Caching;
+
 namespace Lms.Account.Application.Contracts.Accounts.Dtos
 {
+    [CacheName("GetAccountOutput")]
     public class GetAccountOutput
     {
         /// <summary>

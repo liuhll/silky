@@ -24,26 +24,25 @@ namespace Lms.Account.Application.Contracts.Accounts
         /// </summary>
         /// <param name="name">账号名称</param>
         /// <returns></returns>
-        [GetCachingIntercept("IAccountAppService","Account:Name:{0}")]
+        [GetCachingIntercept("Account:Name:{0}")]
         [HttpGet("{name:string}")]
-        Task<GetAccountOutput> GetAccountByName([CacheKey(0)]string name);
-        
+        Task<GetAccountOutput> GetAccountByName([CacheKey(0)] string name);
+
         /// <summary>
         /// 通过Id获取账号信息
         /// </summary>
         /// <param name="id">账号Id</param>
         /// <returns></returns>
-        [GetCachingIntercept("IAccountAppService","Account:Id:{0}")]
+        [GetCachingIntercept("Account:Id:{0}")]
         [HttpGet("{id:long}")]
-        Task<GetAccountOutput> GetAccountById([CacheKey(0)]long id);
+        Task<GetAccountOutput> GetAccountById([CacheKey(0)] long id);
 
         /// <summary>
         /// 更新账号信息
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [RemoveCachingIntercept("IAccountAppService","Account:Id:{0}")]
-        [RemoveCachingIntercept("IAccountAppService","Account:Name:*")]
+        [UpdateCachingIntercept( "Account:Id:{0}")]
         Task<GetAccountOutput> Update(UpdateAccountInput input);
     }
 }
