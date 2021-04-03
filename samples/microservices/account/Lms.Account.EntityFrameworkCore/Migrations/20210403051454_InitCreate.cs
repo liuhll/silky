@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Lms.Account.EntityFrameworkCore.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,9 +19,9 @@ namespace Lms.Account.EntityFrameworkCore.Migrations
                     Email = table.Column<string>(type: "varchar(100) CHARACTER SET utf8mb4", maxLength: 100, nullable: true),
                     Balance = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     CreateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CreateBy = table.Column<long>(type: "bigint", nullable: false),
+                    CreateBy = table.Column<long>(type: "bigint", nullable: true),
                     UpdateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdateBy = table.Column<long>(type: "bigint", nullable: false)
+                    UpdateBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {

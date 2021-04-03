@@ -12,10 +12,11 @@ namespace Lms.Account.EntityFrameworkCore
             var configuration = BuildConfiguration();
 
             var builder = new DbContextOptionsBuilder<UserDbContext>()
-                .UseMySql(configuration.GetConnectionString("Default"));
+                .UseMySql(configuration.GetConnectionString("Default"),
+                    ServerVersion.AutoDetect(configuration.GetConnectionString("Default")));
             return new UserDbContext(builder.Options);
         }
-        
+
         private static IConfiguration BuildConfiguration()
         {
             var builder = new ConfigurationBuilder()

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lms.Account.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20210329093514_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210403051454_InitCreate")]
+    partial class InitCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,7 +32,7 @@ namespace Lms.Account.EntityFrameworkCore.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<long>("CreateBy")
+                    b.Property<long?>("CreateBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreateTime")
@@ -47,7 +47,7 @@ namespace Lms.Account.EntityFrameworkCore.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
 
-                    b.Property<long>("UpdateBy")
+                    b.Property<long?>("UpdateBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("UpdateTime")

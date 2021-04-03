@@ -11,7 +11,7 @@
 
     <ItemGroup>
       <PackageReference Include="Lms.AutoMapper" Version="0.0.1-bate.7" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.UnitOfWork" Version="3.1.0" />
+      <PackageReference Include="TanvirArjel.EFCore.GenericRepository" Version="5.3.0" />
     </ItemGroup>
 
 </Project>

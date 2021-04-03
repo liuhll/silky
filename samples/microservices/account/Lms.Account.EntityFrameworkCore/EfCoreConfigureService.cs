@@ -1,8 +1,8 @@
-using Arch.EntityFrameworkCore.UnitOfWork;
 using Lms.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TanvirArjel.EFCore.GenericRepository;
 
 namespace Lms.Account.EntityFrameworkCore
 {
@@ -11,8 +11,9 @@ namespace Lms.Account.EntityFrameworkCore
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<UserDbContext>(opt =>
-                    opt.UseMySql(configuration.GetConnectionString("Default")))
-                .AddUnitOfWork<UserDbContext>()
+                    opt.UseMySql(configuration.GetConnectionString("Default"),
+                        ServerVersion.AutoDetect(configuration.GetConnectionString("Default"))))
+                .AddGenericRepository<UserDbContext>()
                 ;
         }
 
