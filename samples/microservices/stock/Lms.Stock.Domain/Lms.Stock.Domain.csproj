@@ -8,5 +8,10 @@
       <ProjectReference Include="..\Lms.Stock.Application.Contracts\Lms.Stock.Application.Contracts.csproj" />
       <ProjectReference Include="..\Lms.Stock.Domain.Shared\Lms.Stock.Domain.Shared.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Lms.AutoMapper" Version="$(VersionPrefix)" />
+        <PackageReference Include="Lms.Caching" Version="$(VersionPrefix)" />
+        <PackageReference Include="TanvirArjel.EFCore.GenericRepository" Version="5.3.0" />
+    </ItemGroup>
 
 </Project>
