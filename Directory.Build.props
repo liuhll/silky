@@ -37,7 +37,7 @@
     
     <LicenseUrl>https://raw.githubusercontent.com/liuhll/lms/main/LICENSE</LicenseUrl>
     
-    <VersionPrefix>0.0.1-bate.12</VersionPrefix>
+    <VersionPrefix>0.0.1-bate.13</VersionPrefix>
 
     <PackageIconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/img/logo.png</PackageIconUrl>
 	

@@ -103,7 +103,7 @@ namespace Lms.Transaction.Tcc.Executor
         {
             foreach (var participant in transaction.Participants)
             {
-                if (participant.Status == ActionStage.Trying)
+                if (participant.Status == ActionStage.Trying || participant.Role == TransactionRole.Start)
                 {
                     await participant.ParticipantCancel();
                     participant.Status = ActionStage.Canceling;
