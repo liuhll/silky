@@ -11,5 +11,6 @@ namespace Lms.Stock.Domain.Products
 
         Task<Product> GetById(long id);
         Task Delete(long id);
+        Task<Product> DeductStock(DeductStockInput input);
     }
 }

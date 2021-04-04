@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Lms.Rpc.Transport.CachingIntercept;
 using Lms.Stock.Application.Contracts.Products.Dtos;
+using Lms.Transaction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lms.Stock.Application.Contracts.Products
@@ -41,5 +43,10 @@ namespace Lms.Stock.Application.Contracts.Products
         [RemoveCachingIntercept("GetProductOutput","Product:Id:{0}")]
         [HttpDelete("{id:long}")]
         Task Delete([CacheKey(0)]long id);
+
+        [Transaction]
+        [RemoveCachingIntercept("GetProductOutput","Product:Id:{0}")]
+        [Governance(ProhibitExtranet = true)]
+        Task<GetProductOutput> DeductStock(DeductStockInput input);
     }
 }

@@ -93,5 +93,14 @@ namespace Lms.Account.Domain.Accounts
             await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
             await _repository.DeleteAsync(account);
         }
+
+        public async Task DeductBalance(DeductBalanceInput input)
+        {
+            var account = await GetAccountById(input.AccountId);
+            account.Balance -= input.OrderBalance;
+            await _repository.UpdateAsync(account);
+            await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
+            
+        }
     }
 }

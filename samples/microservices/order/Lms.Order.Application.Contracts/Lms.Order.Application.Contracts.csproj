@@ -6,6 +6,11 @@
 
     <ItemGroup>
       <PackageReference Include="Lms.Rpc" Version="$(VersionPrefix)" />
+      <PackageReference Include="Lms.Transaction.Tcc" Version="$(VersionPrefix)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Lms.Order.Domain.Shared\Lms.Order.Domain.Shared.csproj" />
     </ItemGroup>
 
 </Project>

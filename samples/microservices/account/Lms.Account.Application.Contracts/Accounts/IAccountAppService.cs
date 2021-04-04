@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
+using Lms.Rpc.Runtime.Server;
 using Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Lms.Rpc.Transport.CachingIntercept;
+using Lms.Transaction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lms.Account.Application.Contracts.Accounts
@@ -53,5 +55,15 @@ namespace Lms.Account.Application.Contracts.Accounts
         [RemoveCachingIntercept("GetAccountOutput","Account:Id:{0}")]
         [HttpDelete("{id:long}")]
         Task Delete([CacheKey(0)]long id);
+
+        /// <summary>
+        /// 订单扣款
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [Governance(ProhibitExtranet = true)]
+        [RemoveCachingIntercept("GetAccountOutput","Account:Id:{0}")]
+        [Transaction]
+        Task DeductBalance(DeductBalanceInput input);
     }
 }

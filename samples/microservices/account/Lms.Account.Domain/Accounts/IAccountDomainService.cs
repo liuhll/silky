@@ -11,5 +11,6 @@ namespace Lms.Account.Domain.Accounts
         Task<Account> GetAccountById(long id);
         Task<Account> Update(UpdateAccountInput input);
         Task Delete(long id);
+        Task DeductBalance(DeductBalanceInput input);
     }
 }

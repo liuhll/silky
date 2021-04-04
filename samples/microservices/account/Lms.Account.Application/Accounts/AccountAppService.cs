@@ -3,6 +3,8 @@ using Lms.Account.Application.Contracts.Accounts;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
 using Lms.Account.Domain.Accounts;
 using Lms.AutoMapper;
+using Lms.Core.Exceptions;
+using Lms.Transaction.Tcc;
 
 namespace Lms.Account.Application.Accounts
 {
@@ -43,6 +45,27 @@ namespace Lms.Account.Application.Accounts
         public Task Delete(long id)
         {
             return _accountDomainService.Delete(id);
+        }
+
+        [TccTransaction(ConfirmMethod = "DeductBalanceConfirm",CancelMethod = "DeductBalanceCancel")]
+        public async Task DeductBalance(DeductBalanceInput input)
+        {
+            var account = await _accountDomainService.GetAccountById(input.AccountId);
+            if (input.OrderBalance > account.Balance)
+            {
+                throw new BusinessException("账号余额不足");
+            }
+           
+        }
+        
+        public Task DeductBalanceConfirm(DeductBalanceInput input)
+        {
+            return _accountDomainService.DeductBalance(input);
+        }
+        
+        public Task DeductBalanceCancel(DeductBalanceInput input)
+        {
+            return Task.CompletedTask;
         }
     }
 }

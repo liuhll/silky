@@ -52,5 +52,13 @@ namespace Lms.Stock.Domain.Products
             var account = await GetById(id);
             await _repository.DeleteAsync(account);
         }
+
+        public async Task<Product> DeductStock(DeductStockInput input)
+        {
+            var product = await GetById(input.ProductId);
+            product.Stock -= input.Quantity;
+            await _repository.UpdateAsync(product);
+            return product;
+        }
     }
 }

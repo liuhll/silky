@@ -20,6 +20,7 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\account\Lms.Account.Application\Lms.Account.Application.csproj" />
+      <ProjectReference Include="..\Lms.Order.Application\Lms.Order.Application.csproj" />
+      <ProjectReference Include="..\Lms.Order.EntityFrameworkCore\Lms.Order.EntityFrameworkCore.csproj" />
     </ItemGroup>
 </Project>
