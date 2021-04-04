@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 
 namespace Lms.Rpc.Routing.Template
 {
@@ -39,10 +40,16 @@ namespace Lms.Rpc.Routing.Template
                     order = 997;
                 }
 
+                if (Parameters.Any(p => !p.Constraint.IsNullOrEmpty() &&
+                                        !"string".Equals(p.Constraint)))
+                {
+                    order = 996;
+                }
+
                 if (Parameters.Any(p => "string".Equals(p.Constraint)
                 ))
                 {
-                    order = 996;
+                    order = 995;
                 }
 
                 return order;
