@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using Lms.Core;
 using Lms.Core.Convertible;
+using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
 
 namespace Lms.Rpc.Transport
 {
@@ -35,6 +37,14 @@ namespace Lms.Rpc.Transport
                 var convertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
                 value = convertibleService.Convert(value, typeof(IDictionary<string, object>));
             }
+
+            if (value.GetType().GetObjectDataType() == ObjectDataType.Complex &&
+                !(value is IDictionary<string,object>) && 
+                value.GetType().FullName != "Lms.Transaction.TransactionContext")
+            {
+                throw new LmsException("rpcContext attachments 不允许设置复杂类型参数");
+            }
+
             contextAttachments.AddOrUpdate(key, value, (k, v) => value);
         }
 
