@@ -27,27 +27,33 @@ module.exports = {
 
                 },
                 {
-                    title: '开发环境',
+                    title: '开发文档',
                     collapsable: false,
                     children: [
-                        'development-env'
-                    ]
-
-                },
-                {
-                    title: '开发文档',
-                    collapsable: true,
-                    children: [
                         'dev-docs/quick-start',
+                        'dev-docs/host',
+                        'dev-docs/modularity',
+                        'dev-docs/routing',
+                        'dev-docs/service-registry',                        
+                        'dev-docs/rpc',
+                        'dev-docs/service-governance',
+                        'dev-docs/caching',
+                        'dev-docs/distributed-transactions',
+                        'dev-docs/aggregation-and-gateway',
+                        'dev-docs/microservice-architecture',
+                        'dev-docs/object-mapping',
+                        'dev-docs/samples',
+                        'dev-docs/noun-explanation',
+                        
                     ]
-                }
+                },
             ],
             '/blog/': [
                 {
                     title: 'lms框架博文',
                     collapsable: false,
                     children: [
-                        'transaction-design'
+                        'transaction-design',
                     ]
                 },
 

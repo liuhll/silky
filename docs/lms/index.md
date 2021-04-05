@@ -2,7 +2,7 @@
 
 LMS框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速的使用微服务进行开发。
 
-LMS通过.net框架的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)托管应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息的可靠性。
+LMS通过.net框架的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)托管应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
 
 LSM通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)来托管对外提供访问入口的服务主机，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
 
@@ -43,7 +43,7 @@ LMS在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 - 服务解析与注册
 - 负责LMS主机的初始化过程
 
-## 路由与参数
+### 路由与参数
 - 支持restful风格的API
 
 ### RPC通信
