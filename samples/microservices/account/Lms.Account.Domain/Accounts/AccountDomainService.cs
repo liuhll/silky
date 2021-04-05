@@ -1,9 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
+using Lms.Account.Domain.Shared.Accounts;
 using Lms.AutoMapper;
 using Lms.Caching;
 using Lms.Core.Exceptions;
+using Lms.Core.Extensions;
+using Lms.Rpc.Transport;
+using Lms.Transaction.Tcc;
 using TanvirArjel.EFCore.GenericRepository;
 
 namespace Lms.Account.Domain.Accounts
@@ -94,13 +98,53 @@ namespace Lms.Account.Domain.Accounts
             await _repository.DeleteAsync(account);
         }
 
-        public async Task DeductBalance(DeductBalanceInput input)
+        public async Task<long?> DeductBalance(DeductBalanceInput input, TccMethodType tccMethodType)
         {
             var account = await GetAccountById(input.AccountId);
-            account.Balance -= input.OrderBalance;
+            var trans = await _repository.BeginTransactionAsync();
+            BalanceRecord balanceRecord = null;
+            switch (tccMethodType)
+            {
+                case TccMethodType.Try:
+                    account.Balance -= input.OrderBalance;
+                    account.LockBalance += input.OrderBalance;
+                    balanceRecord = new BalanceRecord()
+                    {
+                        OrderBalance = input.OrderBalance,
+                        OrderId = input.OrderId,
+                        PayStatus = PayStatus.NoPay
+                    };
+                    await _repository.InsertAsync(balanceRecord);
+                    RpcContext.GetContext().SetAttachment("balanceRecordId",balanceRecord.Id);
+                    break;
+                case TccMethodType.Confirm:
+                    account.LockBalance -= input.OrderBalance;
+                    var balanceRecordId1 = RpcContext.GetContext().GetAttachment("orderBalanceId")?.To<long>();
+                    if (balanceRecordId1.HasValue)
+                    {
+                        balanceRecord = await _repository.GetByIdAsync<BalanceRecord>(balanceRecordId1.Value);
+                        balanceRecord.PayStatus = PayStatus.Payed;
+                        await _repository.UpdateAsync(balanceRecord);
+                    }
+                    break;
+                case TccMethodType.Cancel:
+                    account.Balance += input.OrderBalance;
+                    account.LockBalance -= input.OrderBalance;
+                    var balanceRecordId2 = RpcContext.GetContext().GetAttachment("orderBalanceId")?.To<long>();
+                    if (balanceRecordId2.HasValue)
+                    {
+                        balanceRecord = await _repository.GetByIdAsync<BalanceRecord>(balanceRecordId2.Value);
+                        balanceRecord.PayStatus = PayStatus.Cancel;
+                        await _repository.UpdateAsync(balanceRecord);
+                    }
+                    break;
+            }
+
+           
             await _repository.UpdateAsync(account);
+            await trans.CommitAsync();
             await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
-            
+            return balanceRecord?.Id;
         }
     }
 }

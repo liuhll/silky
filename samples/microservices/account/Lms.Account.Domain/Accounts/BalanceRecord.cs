@@ -1,14 +1,15 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Lms.Account.Domain.Shared.Accounts;
 using Lms.Rpc.Runtime.Session;
 
 namespace Lms.Account.Domain.Accounts
 {
-    public class Account
+    public class BalanceRecord
     {
         private readonly ISession _session;
-        public Account()
+        public BalanceRecord()
         {
             _session = NullSession.Instance;
             CreateTime = DateTime.Now;
@@ -18,21 +19,12 @@ namespace Lms.Account.Domain.Accounts
         [Key]
         public long Id { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; }
-        
-        [MaxLength(500)]
-        public string Address { get; set; }
-
-        [MaxLength(100)]
-        public string Email { get; set; }
-        
-        [Column(TypeName = "decimal(10, 2)")]
-        public decimal Balance { get; set; }
+        public long OrderId { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
-        public decimal LockBalance { get; set; }
+        public decimal OrderBalance { get; set; }
+
+        public PayStatus PayStatus { get; set; }
 
         public DateTime CreateTime { get; set; }
         

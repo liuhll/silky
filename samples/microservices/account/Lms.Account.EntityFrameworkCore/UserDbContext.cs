@@ -14,6 +14,7 @@ namespace Lms.Account.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Domain.Accounts.Account>();
+            modelBuilder.Entity<Domain.Accounts.BalanceRecord>();
         }
     }
 }

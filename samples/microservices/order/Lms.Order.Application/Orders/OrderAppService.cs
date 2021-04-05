@@ -38,7 +38,7 @@ namespace Lms.Order.Application.Orders
                 Quantity = input.Quantity,
                 ProductId = input.ProductId
             });
-            
+
             // 创建订单
             var order = input.MapTo<Domain.Orders.Order>();
             order.Amount = product.UnitPrice * input.Quantity;
@@ -48,7 +48,12 @@ namespace Lms.Order.Application.Orders
             //扣减账户余额
             var deductBalanceInput = new DeductBalanceInput()
                 {OrderId = order.Id, AccountId = input.AccountId, OrderBalance = order.Amount};
-            await _accountAppService.DeductBalance(deductBalanceInput);
+            var orderBalanceId = await _accountAppService.DeductBalance(deductBalanceInput);
+            if (orderBalanceId.HasValue)
+            {
+                RpcContext.GetContext().SetAttachment("orderBalanceId", orderBalanceId.Value);
+            }
+
             return order.MapTo<GetOrderOutput>();
         }
 

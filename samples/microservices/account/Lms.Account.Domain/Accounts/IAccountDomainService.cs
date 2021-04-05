@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
 using Lms.Core.DependencyInjection;
+using Lms.Transaction.Tcc;
 
 namespace Lms.Account.Domain.Accounts
 {
@@ -11,6 +12,6 @@ namespace Lms.Account.Domain.Accounts
         Task<Account> GetAccountById(long id);
         Task<Account> Update(UpdateAccountInput input);
         Task Delete(long id);
-        Task DeductBalance(DeductBalanceInput input);
+        Task<long?> DeductBalance(DeductBalanceInput input, TccMethodType tccMethodType);
     }
 }

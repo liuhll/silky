@@ -64,6 +64,6 @@ namespace Lms.Account.Application.Contracts.Accounts
         [Governance(ProhibitExtranet = true)]
         [RemoveCachingIntercept("GetAccountOutput","Account:Id:{0}")]
         [Transaction]
-        Task DeductBalance(DeductBalanceInput input);
+        Task<long?> DeductBalance(DeductBalanceInput input);
     }
 }

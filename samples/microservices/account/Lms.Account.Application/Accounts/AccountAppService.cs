@@ -47,25 +47,25 @@ namespace Lms.Account.Application.Accounts
             return _accountDomainService.Delete(id);
         }
 
-        [TccTransaction(ConfirmMethod = "DeductBalanceConfirm",CancelMethod = "DeductBalanceCancel")]
-        public async Task DeductBalance(DeductBalanceInput input)
+        [TccTransaction(ConfirmMethod = "DeductBalanceConfirm", CancelMethod = "DeductBalanceCancel")]
+        public async Task<long?> DeductBalance(DeductBalanceInput input)
         {
             var account = await _accountDomainService.GetAccountById(input.AccountId);
             if (input.OrderBalance > account.Balance)
             {
                 throw new BusinessException("账号余额不足");
             }
-           
+            return await _accountDomainService.DeductBalance(input, TccMethodType.Try);
         }
-        
+
         public Task DeductBalanceConfirm(DeductBalanceInput input)
         {
-            return _accountDomainService.DeductBalance(input);
+            return _accountDomainService.DeductBalance(input, TccMethodType.Confirm);
         }
-        
+
         public Task DeductBalanceCancel(DeductBalanceInput input)
         {
-            return Task.CompletedTask;
+            return _accountDomainService.DeductBalance(input, TccMethodType.Cancel);
         }
     }
 }
