@@ -5,6 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\account\Lms.Account.Application.Contracts\Lms.Account.Application.Contracts.csproj" />
+      <ProjectReference Include="..\..\stock\Lms.Stock.Application.Contracts\Lms.Stock.Application.Contracts.csproj" />
       <ProjectReference Include="..\Lms.Order.Application.Contracts\Lms.Order.Application.Contracts.csproj" />
       <ProjectReference Include="..\Lms.Order.Domain.Shared\Lms.Order.Domain.Shared.csproj" />
     </ItemGroup>
