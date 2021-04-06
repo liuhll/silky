@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  lms.sample.account:
+    image: lmsframework/sample.account:${TAG:-latest}
+    build:
+      context: ../..
+      dockerfile: microservices/account/Lms.AccountHost/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+    networks: 
+      - lms_service_net
+    
+  lms.sample.order:
+    image: lmsframework/sample.order:${TAG:-latest}
+    build:
+      context: ../..
+      dockerfile: microservices/order/Lms.OrderHost/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+    networks: 
+      - lms_service_net
+  
+  lms.sample.stock:
+    image: lmsframework/sample.stock:${TAG:-latest}
+    build:
+      context: ../..
+      dockerfile: microservices/stock/Lms.StockHost/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+    networks: 
+      - lms_service_net
+
+networks:
+  lms_service_net: 
+    external:
+      name: lms_service_net
