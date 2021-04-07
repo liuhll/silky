@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Lms.Rpc.Transport.CachingIntercept;
 using Lms.Stock.Application.Contracts.Products.Dtos;
-using Lms.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Lms.Rpc.Runtime.Server;
+using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Lms.Rpc.Transport.CachingIntercept;
+using Silky.Lms.Transaction;
 
 namespace Lms.Stock.Application.Contracts.Products
 {

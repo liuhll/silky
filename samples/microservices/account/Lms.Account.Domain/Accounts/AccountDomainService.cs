@@ -2,12 +2,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
 using Lms.Account.Domain.Shared.Accounts;
-using Lms.AutoMapper;
-using Lms.Caching;
-using Lms.Core.Exceptions;
-using Lms.Core.Extensions;
-using Lms.Rpc.Transport;
-using Lms.Transaction.Tcc;
+using Silky.Lms.AutoMapper;
+using Silky.Lms.Caching;
+using Silky.Lms.Core.Exceptions;
+using Silky.Lms.Core.Extensions;
+using Silky.Lms.Rpc.Transport;
+using Silky.Lms.Transaction.Tcc;
 using TanvirArjel.EFCore.GenericRepository;
 
 namespace Lms.Account.Domain.Accounts

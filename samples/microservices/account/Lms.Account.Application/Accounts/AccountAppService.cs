@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 using Lms.Account.Application.Contracts.Accounts;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
 using Lms.Account.Domain.Accounts;
-using Lms.AutoMapper;
-using Lms.Core.Exceptions;
-using Lms.Transaction.Tcc;
+using Silky.Lms.AutoMapper;
+using Silky.Lms.Core.Exceptions;
+using Silky.Lms.Transaction.Tcc;
 
 namespace Lms.Account.Application.Accounts
 {

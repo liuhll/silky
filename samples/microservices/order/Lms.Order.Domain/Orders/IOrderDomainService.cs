@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Lms.Core.DependencyInjection;
 using Lms.Order.Application.Contracts.Orders.Dtos;
+using Silky.Lms.Core.DependencyInjection;
 
 namespace Lms.Order.Domain.Orders
 {

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Lms.Order.Application.Contracts.Orders.Dtos;
-using Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Lms.Transaction;
+using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Lms.Transaction;
 
 namespace Lms.Order.Application.Contracts.Orders
 {

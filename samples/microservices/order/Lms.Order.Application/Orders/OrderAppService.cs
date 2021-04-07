@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
-using Lms.AutoMapper;
-using Lms.Core.Extensions;
 using Lms.Order.Application.Contracts.Orders;
 using Lms.Order.Application.Contracts.Orders.Dtos;
 using Lms.Order.Domain.Orders;
 using Lms.Order.Domain.Shared.Orders;
-using Lms.Rpc.Transport;
-using Lms.Transaction.Tcc;
+using Silky.Lms.AutoMapper;
+using Silky.Lms.Core.Extensions;
+using Silky.Lms.Rpc.Transport;
+using Silky.Lms.Transaction.Tcc;
 
 namespace Lms.Order.Application.Orders
 {

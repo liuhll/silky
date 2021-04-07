@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Lms.Core.DependencyInjection;
 using Lms.Stock.Application.Contracts.Products.Dtos;
+using Silky.Lms.Core.DependencyInjection;
 
 namespace Lms.Stock.Domain.Products
 {

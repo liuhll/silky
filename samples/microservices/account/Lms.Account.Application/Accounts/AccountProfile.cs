@@ -1,7 +1,7 @@
 using System;
 using AutoMapper;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
-using Lms.Rpc.Runtime.Session;
+using Silky.Lms.Rpc.Runtime.Session;
 
 namespace Lms.Account.Application.Accounts
 {

@@ -1,4 +1,4 @@
-using Lms.Rpc.Transport.CachingIntercept;
+using Silky.Lms.Rpc.Transport.CachingIntercept;
 
 namespace Lms.Account.Application.Contracts.Accounts.Dtos
 {

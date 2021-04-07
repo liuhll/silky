@@ -5,8 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.Rpc" Version="$(VersionPrefix)" />
-      <PackageReference Include="Lms.Transaction.Tcc" Version="$(VersionPrefix)" />
+      <PackageReference Include="Silky.Lms.Rpc" Version="$(LmsVersion)" />
+      <PackageReference Include="Silky.Lms.Transaction.Tcc" Version="$(LmsVersion)" />
     </ItemGroup>
 
     <ItemGroup>

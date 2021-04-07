@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.NormHost" Version="$(VersionPrefix)" />
+      <PackageReference Include="Silky.Lms.NormHost" Version="$(LmsVersion)" />
     </ItemGroup>
 
     <ItemGroup>

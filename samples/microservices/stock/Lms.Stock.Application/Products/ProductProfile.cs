@@ -1,8 +1,8 @@
 using System;
 using AutoMapper;
-using Lms.Rpc.Runtime.Session;
 using Lms.Stock.Application.Contracts.Products.Dtos;
 using Lms.Stock.Domain.Products;
+using Silky.Lms.Rpc.Runtime.Session;
 
 namespace Lms.Stock.Application.Products
 {

@@ -9,8 +9,8 @@
       <ProjectReference Include="..\Lms.Stock.Domain.Shared\Lms.Stock.Domain.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Lms.AutoMapper" Version="$(VersionPrefix)" />
-        <PackageReference Include="Lms.Caching" Version="$(VersionPrefix)" />
+        <PackageReference Include="Silky.Lms.AutoMapper" Version="$(LmsVersion)" />
+        <PackageReference Include="Silky.Lms.Caching" Version="$(LmsVersion)" />
         <PackageReference Include="TanvirArjel.EFCore.GenericRepository" Version="5.3.0" />
     </ItemGroup>
 

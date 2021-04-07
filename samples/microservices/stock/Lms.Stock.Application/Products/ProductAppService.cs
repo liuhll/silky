@@ -1,11 +1,10 @@
 using System.Threading.Tasks;
-using Lms.AutoMapper;
-using Lms.Core.Exceptions;
-using Lms.Rpc.Transport;
 using Lms.Stock.Application.Contracts.Products;
 using Lms.Stock.Application.Contracts.Products.Dtos;
 using Lms.Stock.Domain.Products;
-using Lms.Transaction.Tcc;
+using Silky.Lms.AutoMapper;
+using Silky.Lms.Core.Exceptions;
+using Silky.Lms.Transaction.Tcc;
 
 namespace Lms.Stock.Application.Products
 {

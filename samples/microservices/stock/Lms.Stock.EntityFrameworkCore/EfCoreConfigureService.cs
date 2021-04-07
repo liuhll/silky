@@ -1,7 +1,7 @@
-using Lms.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Lms.Core;
 using TanvirArjel.EFCore.GenericRepository;
 
 namespace Lms.Stock.EntityFrameworkCore

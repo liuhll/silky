@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.AutoMapper" Version="$(VersionPrefix)"/>
+      <PackageReference Include="Silky.Lms.AutoMapper" Version="$(LmsVersion)"/>
     </ItemGroup>
 
 </Project>

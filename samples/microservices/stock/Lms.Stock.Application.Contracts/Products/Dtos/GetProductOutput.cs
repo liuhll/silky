@@ -1,4 +1,5 @@
-using Lms.Caching;
+
+using Silky.Lms.Caching;
 
 namespace Lms.Stock.Application.Contracts.Products.Dtos
 {

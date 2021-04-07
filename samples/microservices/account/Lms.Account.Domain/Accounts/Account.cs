@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Lms.Rpc.Runtime.Session;
+using Silky.Lms.Rpc.Runtime.Session;
 
 namespace Lms.Account.Domain.Accounts
 {

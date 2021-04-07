@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Lms.AutoMapper;
-using Lms.Core.Exceptions;
 using Lms.Stock.Application.Contracts.Products.Dtos;
+using Silky.Lms.AutoMapper;
+using Silky.Lms.Core.Exceptions;
 using TanvirArjel.EFCore.GenericRepository;
 
 namespace Lms.Stock.Domain.Products

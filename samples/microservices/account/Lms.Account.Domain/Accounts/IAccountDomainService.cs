@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Lms.Account.Application.Contracts.Accounts.Dtos;
-using Lms.Core.DependencyInjection;
-using Lms.Transaction.Tcc;
+using Silky.Lms.Core.DependencyInjection;
+using Silky.Lms.Transaction.Tcc;
 
 namespace Lms.Account.Domain.Accounts
 {

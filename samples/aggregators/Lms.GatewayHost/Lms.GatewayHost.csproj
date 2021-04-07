@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\..\sample.common.props" />
     <PropertyGroup>
@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lms.WebHost" Version="$(VersionPrefix)"/>
+      <PackageReference Include="Silky.Lms.WebHost" Version="$(LmsVersion)"/>
     </ItemGroup>
 
     <ItemGroup>

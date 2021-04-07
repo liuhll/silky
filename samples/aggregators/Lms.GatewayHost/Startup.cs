@@ -1,14 +1,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using Lms.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Silky.Lms.Core;
 
 namespace Lms.GatewayHost
 {
