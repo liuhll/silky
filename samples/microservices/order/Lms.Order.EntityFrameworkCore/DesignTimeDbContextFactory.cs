@@ -21,7 +21,7 @@ namespace Lms.Order.EntityFrameworkCore
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Lms.OrderHost/"))
-                .AddYamlFile("appsettings.yml", optional: false);
+                .AddYamlFile("appsettings.Development.yml", optional: false);
 
             return builder.Build();
         }

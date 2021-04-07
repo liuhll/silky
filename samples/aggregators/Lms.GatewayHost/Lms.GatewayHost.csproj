@@ -7,10 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Silky.Lms.WebHost" Version="$(LmsVersion)"/>
+      <PackageReference Include="Silky.Lms.WebHost" Version="$(LmsVersion)" />
     </ItemGroup>
 
     <ItemGroup>
+        <None Update="appsettings.ContainerDev.yml">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="appsettings.yml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

@@ -7,7 +7,7 @@ services:
       context: ../..
       dockerfile: microservices/account/Lms.AccountHost/Dockerfile
     environment:
-      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
       - lms_service_net
     
@@ -17,7 +17,7 @@ services:
       context: ../..
       dockerfile: microservices/order/Lms.OrderHost/Dockerfile
     environment:
-      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
       - lms_service_net
   
@@ -27,7 +27,20 @@ services:
       context: ../..
       dockerfile: microservices/stock/Lms.StockHost/Dockerfile
     environment:
-      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+    networks: 
+      - lms_service_net
+
+  lms.sample.gateway:
+    image: lmsframework/sample.gateway:${TAG:-latest}
+    build:
+      context: ../..
+      dockerfile: aggregators/Lms.GatewayHost/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+      ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+    ports:
+      - 80:80
     networks: 
       - lms_service_net
 

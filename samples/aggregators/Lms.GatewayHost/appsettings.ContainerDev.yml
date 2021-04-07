@@ -1,0 +1,13 @@
+rpc:
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+registrycenter:
+  connectionStrings: lms.zoo1:2181,lms.zoo2:2181,lms.zoo3:2181;lms.zoo4:2181,lms.zoo5:2181,lms.zoo6:2181
+  registryCenterType: Zookeeper
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: lms.redis1:6379,defaultDatabase=0
+lock:
+  lockRedisConnection: lms.redis1:6379,defaultDatabase=0
+gateway:
+  wrapResult: true

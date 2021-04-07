@@ -4,5 +4,3 @@ Logging:
         Microsoft: "Warning"
         Microsoft.Hosting.Lifetime: "Information"
 
-ConnectionStrings:
-    Default: server=127.0.0.1;port=3306;database=account;uid=root;pwd=qwe!P4ss;
