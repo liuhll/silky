@@ -48,8 +48,8 @@ if($push) {
         Write-Warning -Message "未设置nuget仓库的APIKEY"
 		exit 1
 	}
-	[xml]$propsXml = Get-Content (Join-Path $rootFolder "Directory.Build.props")
-    $version = $propsXml.Project.PropertyGroup.VersionPrefix
+	[xml]$propsXml = Get-Content (Join-Path $rootFolder "common.props")
+    $version = $propsXml.Project.PropertyGroup.Version
 	foreach($project in $projects) {
       $projectName = ($project -Split "/" )[-1]
       & dotnet nuget push ($projectName + "." + $version + ".nupkg") -s $repo -k $apikey --skip-duplicate
