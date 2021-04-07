@@ -25,27 +25,11 @@
     <!-- Mongo2Go https://www.nuget.org/packages/Mongo2Go -->
     <Mongo2GoPackageVersion>2.2.14</Mongo2GoPackageVersion>
 	
-	  <LangVersion>latest</LangVersion>
-    
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+	<LangVersion>latest</LangVersion>
+   <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    
-    <License>MIT</License>
-    
-    <LicenseUrl>https://raw.githubusercontent.com/liuhll/lms/main/LICENSE</LicenseUrl>
-    
-    <VersionPrefix>0.0.1-bate.15</VersionPrefix>
-
-    <PackageIconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/img/logo.png</PackageIconUrl>
-	
-		<RepositoryUrl>https://github.com/liuhll/lms</RepositoryUrl>
-
-    <PackageTags>lms;micro-service;rpc;distributed-transactions;tcc-transaction</PackageTags>
-		
-    <RepositoryType>Github</RepositoryType>
-
   </PropertyGroup>
 </Project>

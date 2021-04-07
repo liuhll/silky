@@ -6,8 +6,8 @@
         <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
-        <ProjectReference Include="..\..\src\Lms.Transaction\Lms.Transaction.csproj" />
-        <ProjectReference Include="..\..\src\Lms.WebSocket\Lms.WebSocket.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Lms.Transaction\Silky.Lms.Transaction.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Lms.WebSocket\Silky.Lms.WebSocket.csproj" />
     </ItemGroup>
 </Project>

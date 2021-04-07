@@ -1,10 +1,10 @@
-using Lms.Rpc.Runtime;
-using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Tests.AppService;
-using Lms.TestBase.Testing;
+using Silky.Lms.Rpc.Runtime;
+using Silky.Lms.Rpc.Runtime.Server;
+using Silky.Lms.Rpc.Tests.AppService;
+using Silky.Lms.TestBase.Testing;
 using Xunit;
 
-namespace Lms.Rpc.Tests.Runtime
+namespace Silky.Lms.Rpc.Tests.Runtime
 {
     public class DefaultServiceIdGenerator_Test : LmsIntegratedTest<LmsRpcTestModule>
     {

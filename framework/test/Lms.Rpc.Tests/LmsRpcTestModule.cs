@@ -1,7 +1,7 @@
 ﻿using System;
-using Lms.Core.Modularity;
+using Silky.Lms.Core.Modularity;
 
-namespace Lms.Rpc.Tests
+namespace Silky.Lms.Rpc.Tests
 {
     [DependsOn(typeof(RpcModule))]
     public class LmsRpcTestModule : LmsModule

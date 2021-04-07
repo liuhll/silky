@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props"/>
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>Proxy package for RPC communication in LMS framework</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Lms.Caching\Silky.Lms.Caching.csproj" />
+      <ProjectReference Include="..\Silky.Lms.Castle\Silky.Lms.Castle.csproj" />
+      <ProjectReference Include="..\Silky.Lms.Validation\Silky.Lms.Validation.csproj" />
+      <ProjectReference Include="..\Silky.Lms.Core\Silky.Lms.Core.csproj" />
+      <ProjectReference Include="..\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
+    </ItemGroup>
+
+</Project>

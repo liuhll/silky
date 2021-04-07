@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props"/>
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>The package contains the component package used to build the LMS micro service websocket host</Description>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Lms.NormHost\Silky.Lms.NormHost.csproj" />
+      <ProjectReference Include="..\Silky.Lms.WebSocket\Silky.Lms.WebSocket.csproj" />
+    </ItemGroup>
+</Project>

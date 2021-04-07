@@ -1,4 +1,4 @@
-namespace Lms.Rpc.Tests.AppService.Dtos
+namespace Silky.Lms.Rpc.Tests.AppService.Dtos
 {
     public class TestInput
     {

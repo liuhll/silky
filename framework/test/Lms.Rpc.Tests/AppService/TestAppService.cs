@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using Lms.Rpc.Tests.AppService.Dtos;
+using Silky.Lms.Rpc.Tests.AppService.Dtos;
 
-namespace Lms.Rpc.Tests.AppService
+namespace Silky.Lms.Rpc.Tests.AppService
 {
     public class TestAppService : ITestAppService
     {

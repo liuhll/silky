@@ -1,10 +1,10 @@
-using Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Lms.TestBase.Testing;
+using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Lms.TestBase.Testing;
 using Xunit;
 
-namespace Lms.Rpc.Tests.Runtime.Server.ServiceDiscovery
+namespace Silky.Lms.Rpc.Tests.Runtime.Server.ServiceDiscovery
 {
-    public class DefaultServiceEntryGenerator_Test: LmsIntegratedTest<LmsRpcTestModule>
+    public class DefaultServiceEntryGenerator_Test : LmsIntegratedTest<LmsRpcTestModule>
     {
         private readonly IServiceEntryGenerator _serviceEntryGenerator;
 
@@ -16,7 +16,7 @@ namespace Lms.Rpc.Tests.Runtime.Server.ServiceDiscovery
         [Fact]
         public void Shuold_CreateServiceEntry()
         {
-            
+
         }
     }
 }

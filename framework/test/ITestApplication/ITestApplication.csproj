@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Lms.FluentValidation\Lms.FluentValidation.csproj" />
-      <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
-      <ProjectReference Include="..\..\src\Lms.Transaction\Lms.Transaction.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Lms.FluentValidation\Silky.Lms.FluentValidation.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Lms.Transaction\Silky.Lms.Transaction.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,23 +1,21 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 ARG rpc_port=100
+ARG ws_port=96
 ENV TZ=Asia/Shanghai 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone 
-EXPOSE ${rpc_port}
+EXPOSE ${rpc_port} ${ws_port}
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
-COPY . .
-RUN dotnet restore ${sln_name} && \
-    dotnet build --no-restore -c Release ${sln_name}
+COPY microservices/account ./microservices/account
+RUN dotnet restore /src/microservices/account/Lms.AccountHost/Lms.AccountHost.csproj && \
+    dotnet build --no-restore -c Release /src/microservices/account/Lms.AccountHost/Lms.AccountHost.csproj
 
 FROM build AS publish
-ARG host_workdir
-WORKDIR ${host_workdir}
+WORKDIR /src/microservices/account/Lms.AccountHost
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM base AS final
-ARG host_name
-ENV host_name=${host_name}
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "Lms.AccountHost.dll"]

@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
-using Lms.Core.Exceptions;
-using Lms.Rpc.Runtime.Server;
-using Lms.Transaction.Tcc;
+using Silky.Lms.Core.Exceptions;
+using Silky.Lms.Rpc.Runtime.Server;
+using Silky.Lms.Transaction.Tcc;
 
 namespace NormHostDemo.AppService
 {

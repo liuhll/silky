@@ -1,9 +1,9 @@
-using Lms.Rpc.Runtime.Server;
-using Lms.TestBase.Testing;
+using Silky.Lms.Rpc.Runtime.Server;
+using Silky.Lms.TestBase.Testing;
 using Shouldly;
 using Xunit;
 
-namespace Lms.Rpc.Tests.Runtime.Server
+namespace Silky.Lms.Rpc.Tests.Runtime.Server
 {
     public class ServiceEntryManager_Tests : LmsIntegratedTest<LmsRpcTestModule>
     {

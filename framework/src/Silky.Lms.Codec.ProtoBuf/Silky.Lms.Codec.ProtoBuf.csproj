@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props"/>
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>Using protobuf as the component of LMS framework RPC codec</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="protobuf-net" Version="3.0.73" />
+        <PackageReference Include="protobuf-net.Core" Version="3.0.73" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
+    </ItemGroup>
+
+</Project>

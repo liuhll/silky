@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Lms.NormHost\Lms.NormHost.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Lms.NormHost\Silky.Lms.NormHost.csproj" />
       <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>

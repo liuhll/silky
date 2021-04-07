@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
-using Lms.Rpc.Runtime.Server;
+using Silky.Lms.Rpc.Runtime.Server;
 
 namespace NormHostDemo.AppService
 {
-    [ServiceKey("v2",1)]
+    [ServiceKey("v2", 1)]
     public class TestV2AppService : ITestAppService
     {
         public async Task<TestOut> Create(TestInput input)

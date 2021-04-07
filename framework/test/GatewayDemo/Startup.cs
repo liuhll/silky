@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Lms.Core;
-using Lms.Rpc.Configuration;
+using Silky.Lms.Core;
+using Silky.Lms.Rpc.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +27,7 @@ namespace GatewayDemo
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lms Gateway Demo", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Lms Gateway Demo", Version = "v1" });
                 c.MultipleServiceKey();
                 var applicationAssemblies = EngineContext.Current.TypeFinder.GetAssemblies()
                     .Where(p => p.FullName.Contains("Application"));
@@ -40,7 +40,7 @@ namespace GatewayDemo
                         c.IncludeXmlComments(xmlPath);
                     }
                 }
-              
+
             });
         }
 

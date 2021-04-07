@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Lms.Rpc\Lms.Rpc.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
       <ProjectReference Include="..\LmsTestBase\LmsTestBase.csproj" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkPackageVersion)" />
     </ItemGroup>

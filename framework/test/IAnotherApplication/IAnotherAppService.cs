@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using Lms.Rpc.Runtime.Server;
-using Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Lms.Transaction;
+using Silky.Lms.Rpc.Runtime.Server;
+using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Lms.Transaction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IAnotherApplication

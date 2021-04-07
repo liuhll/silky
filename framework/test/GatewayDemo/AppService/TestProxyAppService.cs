@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
-using Lms.Rpc.Runtime.Server;
+using Silky.Lms.Rpc.Runtime.Server;
 
 namespace GatewayDemo.AppService
 {

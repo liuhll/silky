@@ -12,6 +12,6 @@
         <PackageReference Include="xunit.runner.visualstudio" Version="$(xUnitRunnerVisualStudioPackageVersion)" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Lms.TestBase\Lms.TestBase.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Lms.TestBase\Silky.Lms.TestBase.csproj" />
     </ItemGroup>
 </Project>

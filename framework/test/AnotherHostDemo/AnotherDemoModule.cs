@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Lms.Core.Modularity;
-using Lms.WebSocket;
-using Lms.WsHost;
+using Silky.Lms.Core.Modularity;
+using Silky.Lms.WebSocket;
+using Silky.Lms.WsHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

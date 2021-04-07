@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
-using Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GatewayDemo.AppService
@@ -11,7 +11,7 @@ namespace GatewayDemo.AppService
         Task<TestOut> CreateProxy(TestInput testInput);
 
         Task<TestOut> GetProxy(string name);
-        
+
         Task<string> DeleteProxy(string name);
 
         [HttpPatch]

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props"/>
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>Encapsulating the basic package of LMS distributed transaction</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
+    </ItemGroup>
+
+</Project>

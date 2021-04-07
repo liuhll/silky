@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using IAnotherApplication;
-using Lms.WebSocket;
+using Silky.Lms.WebSocket;
 
 namespace AnotherHostDemo.AppService
 {

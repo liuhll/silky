@@ -6,8 +6,8 @@
          <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Lms.WebHost\Lms.WebHost.csproj" />
-        <ProjectReference Include="..\..\src\Lms.WebSocketServer\Lms.WebSocketServer.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Lms.WebHost\Silky.Lms.WebHost.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Lms.WebSocketServer\Silky.Lms.WebSocketServer.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>

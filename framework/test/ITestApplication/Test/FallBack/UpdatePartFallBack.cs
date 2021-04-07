@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lms.Rpc.Runtime.Client;
+using Silky.Lms.Rpc.Runtime.Client;
 
 namespace ITestApplication.Test.FallBack
 {
