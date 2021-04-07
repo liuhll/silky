@@ -9,7 +9,7 @@
     
     <Version>1.0.0</Version>
 	
-    <PackageIconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/img/logo.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
 	
 	<RepositoryUrl>https://github.com/liuhll/lms</RepositoryUrl>
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="200" src="./docs/.vuepress/public/assets/img/logo.word.svg">
+  <img height="200" src="./docs/.vuepress/public/assets/logo/logo.word.svg">
 </p>
 
 # lms 微服务框架
