@@ -1,7 +1,7 @@
 ---
 home: true
 heroText: Lms框架
-heroImage: /assets/img/logo.word.svg
+heroImage: /assets/logo/logo.word.svg
 tagline:  基于.net平台的微服务开发框架
 actionText: 快速上手 →
 actionLink: /lms/index
