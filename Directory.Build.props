@@ -30,6 +30,5 @@
     
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 </Project>
