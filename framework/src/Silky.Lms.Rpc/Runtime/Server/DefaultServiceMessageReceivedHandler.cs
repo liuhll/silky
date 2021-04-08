@@ -23,11 +23,16 @@ namespace Silky.Lms.Rpc.Runtime.Server
             RpcContext.GetContext()
                 .SetAttachments(message.Attachments);
 
-            var serviceEntry =
-                _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceId);
+          
             RemoteResultMessage remoteResultMessage;
             try
             {
+                var serviceEntry =
+                    _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceId);
+                if (serviceEntry == null)
+                {
+                    throw new LmsException($"通过服务id{message.ServiceId}获取本地服务条目失败", StatusCode.NotFindLocalServiceEntry);
+                }
                 var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
                 if (!tokenValidator.Validate())
                 {

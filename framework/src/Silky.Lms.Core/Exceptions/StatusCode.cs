@@ -17,6 +17,8 @@ namespace Silky.Lms.Core.Exceptions
         [Description("非平台异常")] UnPlatformError = 505,
 
         [Description("通信异常")] CommunicatonError = 506,
+        
+        [Description("未找到本地服务条目")] NotFindLocalServiceEntry = 507,
 
         [Description("业务异常")] [IsBusinessException]
         BusinessError = 1000,
