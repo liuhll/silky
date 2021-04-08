@@ -2,6 +2,6 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-	<LmsVersion>1.0.0</LmsVersion>
+	<LmsVersion>1.0.1</LmsVersion>
   </PropertyGroup>
 </Project>
