@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lms.Account.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20210405110823_CreateBalanceRecordAndUpdateAccount")]
-    partial class CreateBalanceRecordAndUpdateAccount
+    [Migration("20210408004827_InitCreate")]
+    partial class InitCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
