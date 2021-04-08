@@ -17,7 +17,7 @@ namespace Silky.Lms.Rpc.Configuration
         /// <summary>
         /// 执行超时时间
         /// </summary>
-        public int ExecutionTimeout { get; set; } = Timeout.Infinite;
+        public int ExecutionTimeout { get; set; } = 3000;
 
         /// <summary>
         /// 是否开启缓存拦截
