@@ -36,6 +36,12 @@ namespace Lms.Stock.Domain.Products
             return product;
         }
 
+        public async Task<Product> Update(Product product)
+        {
+            await _repository.UpdateAsync(product);
+            return product;
+        }
+
         public Task<Product> GetById(long id)
         {
             var product = _repository.GetQueryable<Product>().FirstOrDefault(p => p.Id == id);
@@ -53,12 +59,20 @@ namespace Lms.Stock.Domain.Products
             await _repository.DeleteAsync(account);
         }
 
-        public async Task<Product> DeductStock(DeductStockInput input)
+        public async Task<Product> DeductStockConfirm(DeductStockInput input)
         {
             var product = await GetById(input.ProductId);
-            product.Stock -= input.Quantity;
+            product.LockStock -= input.Quantity;
             await _repository.UpdateAsync(product);
             return product;
+        }
+
+        public async Task DeductStockCancel(DeductStockInput input)
+        {
+            var product = await GetById(input.ProductId);
+            product.LockStock -= input.Quantity;
+            product.Stock += input.Quantity;
+            await _repository.UpdateAsync(product);
         }
     }
 }

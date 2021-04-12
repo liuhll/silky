@@ -50,19 +50,23 @@ namespace Lms.Stock.Application.Products
                 throw new BusinessException("订单数量超过库存数量,无法完成订单");
             }
 
+            product.LockStock += input.Quantity;
+            product.Stock -= input.Quantity;
+            product = await _productDomainService.Update(product);
             return product.MapTo<GetProductOutput>();
-            // todo 真实业务场景中可以考虑先锁定资源,再confim阶段确认库存或是cancel恢复库存
+          
         }
 
         public async Task<GetProductOutput> DeductStockConfirm(DeductStockInput input)
         {
-            var product = await _productDomainService.DeductStock(input);
+            var product = await _productDomainService.DeductStockConfirm(input);
             return product.MapTo<GetProductOutput>();
         }
 
         public Task DeductStockCancel(DeductStockInput input)
         {
-            return Task.CompletedTask;
+             return _productDomainService.DeductStockCancel(input);
+           
         }
     }
 }

@@ -8,9 +8,12 @@ namespace Lms.Stock.Domain.Products
     {
         Task<Product> Create(Product product);
         Task<Product> Update(UpdateProductInput input);
+        Task<Product> Update(Product product);
+        
 
         Task<Product> GetById(long id);
         Task Delete(long id);
-        Task<Product> DeductStock(DeductStockInput input);
+        Task<Product> DeductStockConfirm(DeductStockInput input);
+        Task DeductStockCancel(DeductStockInput input);
     }
 }

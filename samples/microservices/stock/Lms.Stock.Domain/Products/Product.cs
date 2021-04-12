@@ -29,6 +29,8 @@ namespace Lms.Stock.Domain.Products
         [Required]
         public int Stock { get; set; } = 0;
 
+        public int LockStock { get; set; }
+
         public DateTime CreateTime { get; set; }
         
         public long? CreateBy { get; set; }
