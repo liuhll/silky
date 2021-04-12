@@ -1,4 +1,4 @@
-# 通过lms.samples快速熟悉lms微服务框架的使用
+# 通过lms.samples熟悉lms微服务框架的使用
 
 经过一段时间的开发与测试,终于发布了Lms框架的第一个正式版本(1.0.0版本),并给出了lms框架的样例项目**lms.samples**。本文通过对**lms.samples**的介绍，简述如何通过lms框架快速的构建一个微服务的业务框架，并进行应用开发。
 
@@ -587,7 +587,7 @@ order模块和stock模块与account模块一致,在服务运行前都需要通�
 
 ### 测试和调式
 
-服务启动成功后,您可以通过写入`/api/account-post`接口和`/api/product-post`新增账号和产品,然后通过`/api/order-post`接口进行测试和调式。
+服务启动成功后,您可以通过`/api/account-post`接口和`/api/product-post`接口新增账号和产品,然后通过`/api/order-post`接口进行测试和调式。
 
 ## 开源地址
 

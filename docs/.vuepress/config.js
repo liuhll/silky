@@ -34,7 +34,7 @@ module.exports = {
                         'dev-docs/host',
                         'dev-docs/modularity',
                         'dev-docs/routing',
-                        'dev-docs/service-registry',                        
+                        'dev-docs/service-registry',
                         'dev-docs/rpc',
                         'dev-docs/service-governance',
                         'dev-docs/caching',
@@ -44,7 +44,7 @@ module.exports = {
                         'dev-docs/object-mapping',
                         'dev-docs/samples',
                         'dev-docs/noun-explanation',
-                        
+
                     ]
                 },
             ],
@@ -54,7 +54,8 @@ module.exports = {
                     collapsable: false,
                     children: [
                         'transaction-design',
-                        'lms-sample'
+                        'lms-sample',
+                        'lms-sample-order'
                     ]
                 },
 
