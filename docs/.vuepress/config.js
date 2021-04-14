@@ -4,6 +4,17 @@ module.exports = {
     port: 8081,
     themeConfig: {
         logo: '/assets/logo/logo.png',
+        repo: 'liuhll/lms',
+        repoLabel: '查看源码',
+        docsRepo: 'liuhll/lms',
+        docsBranch: 'main',
+        docsDir: 'docs',
+        editLinks: true,
+        editLinkText: '编辑当前页',
+        edit: {
+            docsDir: 'src',
+        },
+        lastUpdated: '最后更新时间',
         nav: [
             { text: '首页', link: '/' },
             { text: '文档', link: '/lms/' },
