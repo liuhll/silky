@@ -71,5 +71,5 @@ LMS在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 - 使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁
 
 ## 开源地址
-- github: https://github.com/liuhll/lms
-- gitee: https://gitee.com/liuhll2/lms
+- github: [https://github.com/liuhll/lms](https://github.com/liuhll/lms)
+- gitee: [https://gitee.com/liuhll2/lms](https://gitee.com/liuhll2/lms)
