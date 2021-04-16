@@ -4,8 +4,6 @@ module.exports = {
     port: 8081,
     themeConfig: {
         logo: '/assets/logo/logo.png',
-        repo: 'liuhll/lms',
-        repoLabel: '查看源码',
         docsRepo: 'liuhll/lms',
         docsBranch: 'main',
         docsDir: 'docs',
