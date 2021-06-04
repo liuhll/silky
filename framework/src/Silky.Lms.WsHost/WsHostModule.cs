@@ -6,7 +6,7 @@ namespace Silky.Lms.WsHost
 {
     [DependsOn(typeof(NormHostModule),
         typeof(WebSocketModule))]
-    public class WsHostModule : LmsModule
+    public class WsHostModule : StartUpModule
     {
     }
 }

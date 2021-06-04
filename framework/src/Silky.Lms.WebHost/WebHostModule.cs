@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.Hosting
        typeof(MessagePackModule),
        typeof(TransactionTccModule)
    )]
-    public class WebHostModule : LmsModule
+    public class WebHostModule : StartUpModule
     {
 
     }

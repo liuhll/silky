@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.Hosting
 {
     public static class HostBuilderExtensions
     {
-        public static IHostBuilder RegisterLmsServices<T>(this IHostBuilder builder) where T : ILmsModule
+        public static IHostBuilder RegisterLmsServices<T>(this IHostBuilder builder) where T : StartUpModule
         {
             IEngine engine = null;
             IServiceCollection services = null;

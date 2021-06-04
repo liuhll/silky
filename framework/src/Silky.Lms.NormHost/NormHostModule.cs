@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(TransactionTccModule),
         typeof(AutoMapperModule)
     )]
-    public class NormHostModule : LmsModule
+    public class NormHostModule : StartUpModule
     {
     }
 }
