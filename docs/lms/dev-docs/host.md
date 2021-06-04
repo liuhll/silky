@@ -198,9 +198,9 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 如果您想自己指定依赖的模块(例如:您扩展了一个lms模块项目,希望依赖它),或是在应用启动或是停止时,指定相关的操作,那么您可能就需要自定义启动模块。
 
-自定义启动模块,可以继承`LmsModule`或是相应的业务微服务的启动模块(例如:`NormHostModule`)。
+自定义启动模块,可以继承`StartUpModule`或是相应的业务微服务的启动模块(例如:`NormHostModule`)。
 
-如果您继承的是`LmsModule`，那么您必须要显式的指定需要依赖的lms模块。如果您继承的模块基类已经指定了模块的依赖关系(例如:继承`NormHostModule`)，那么基类的模块依赖关系也会被继承。
+如果您继承的是`StartUpModule`，那么您必须要显式的指定需要依赖的lms模块。如果您继承的模块基类已经指定了模块的依赖关系(例如:继承`NormHostModule`)，那么基类的模块依赖关系也会被继承。
 
 在启动模块中,您可以通过重写`Initialize`方法实现应用启动时的初始化方法,或是重写`Shutdown`实现应用停止时的方法，也可以通过重写`RegisterServices`通过`ContainerBuilder`注册服务的生命周期。
 
@@ -214,7 +214,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         typeof(TransactionTccModule),
         typeof(AutoMapperModule)
   )]
-  public class DemoStartUpHostModule : LmsModule
+  public class DemoStartUpHostModule : StartUpModule
   {
        public async override Task Initialize(ApplicationContext applicationContext)
         {
