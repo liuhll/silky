@@ -42,7 +42,7 @@ module.exports = {
                         'dev-docs/quick-start',
                         'dev-docs/host',
                         'dev-docs/modularity',
-                        'dev-docs/routing',
+                        'dev-docs/appservice-and-serviceentry',
                         'dev-docs/service-registry',
                         'dev-docs/rpc',
                         'dev-docs/service-governance',
