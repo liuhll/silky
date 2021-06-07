@@ -128,7 +128,7 @@ protected override void RegisterServices(ContainerBuilder builder)
 
 ## 应用初始化方法和停止方法
 
-开发者可以通过重新自定义模块的`Initialize`方法在微服务应用启动时该模块指定的代码,通过重写`Shutdown`方法在应用停止时执行该模块指定的代码。
+开发者可以通过重新自定义模块的`Initialize`方法在微服务应用启动时执行该模块指定的代码,通过重写`Shutdown`方法在应用停止时执行该模块指定的代码。
 
 ```csharp
 public virtual Task Initialize([NotNull]ApplicationContext applicationContext)

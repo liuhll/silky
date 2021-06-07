@@ -26,7 +26,7 @@ public interface ITestAppService
 
 | 属性名称 | 说明   |  缺省值  | 
 |:---------|:----- |:--------| 
-| template | 在对服务应用接口标识为服务路由时,可以通过`[ServiceRoute="template")`指定应用服务接口的路由模板。| api/{appservice} | 
+| template | 在对服务应用接口标识为服务路由时,可以通过`[ServiceRoute(template: "test/{appservice=templateName}")]`指定应用服务接口的路由模板。| api/{appservice} | 
 | multipleServiceKey | 网关生成的webapi请求头是否支持`serviceKey`请求头 | false | 
 
 ## 服务条目
@@ -42,7 +42,7 @@ public interface ITestAppService
 
 1. 禁止集群外部访问的服务条目(`[Governance(ProhibitExtranet = true)]`)不会生成webapi;
 
-2. 可以通过`[ServiceRoute="template")]`为应用接口指定统一的路由模板;
+2. 可以通过` [ServiceRoute(template: "test/{appservice=templateName}")]`为应用接口指定统一的路由模板;
 
 3. 如果服务条目方法没有被http谓词特性标识,那么生成的webapi的http请求动词会根据服务条目的方法名称生成,如果没有匹配到相应的服务条目方法,则会根据服务条目的方法参数；
 
