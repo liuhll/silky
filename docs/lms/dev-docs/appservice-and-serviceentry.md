@@ -89,40 +89,42 @@ public interface ITestAppService
 ### 服务条目的例子
 
 ```csharp
-    [ServiceRoute(multipleServiceKey: true)]
+    [ServiceRoute]
     public interface ITestAppService
     {
-        /// <summary>
-        ///  新增接口测试
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        ///  新增接口测试([post]/api/test)
         [GetCachingIntercept("name:{0}")]
         Task<TestOut> Create(TestInput input);
 
+        ///  更新接口测试([put]/api/test)
         Task<string> Update(TestInput input);
 
+        /// 删除接口测试([delete]/api/test)
         [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
         [Transaction]
         Task<string> Delete([CacheKey(0)] string name);
 
+        /// 查询接口测试([get]/api/test/search)
         [HttpGet]
         Task<string> Search([FromQuery] TestInput query);
 
+        /// 以表单格式提交数据([post]/api/test/form)
         [HttpPost]
         string Form([FromForm] TestInput query);
 
+        /// 通过name获取单条数据([get]/api/test/{name:string},以path参数传参,并约束参数类型为string)
         [HttpGet("{name:string}")]
         [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
         [GetCachingIntercept("name:{0}")]
         Task<TestOut> Get([HashKey] [CacheKey(0)] string name);
 
+        /// 通过id获取单条数据([get]/api/test/{id:long},以path参数传参,并约束参数类型为long)
         [HttpGet("{id:long}")]
         [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
         [GetCachingIntercept("id:{0}")]
         Task<TestOut> GetById([HashKey] [CacheKey(0)] long id);
 
-        //[HttpPatch("patch")]
+        ///更新部分数据，使用patch请求 ([patch]/api/test)
         [HttpPatch]
         [Governance(FallBackType = typeof(UpdatePartFallBack))]
         Task<string> UpdatePart(TestInput input);
@@ -132,3 +134,81 @@ public interface ITestAppService
 
 ## 应用接口的实现
 
+一般地,开发者应当将应用服务接口和应用服务接口的实现分开定义在不同的程序集。应用接口程序集可以被打包成Nuget包或是以项目的形式被其他微服务应用引用，这样其他微服务就可以通过rpc代理的方式与该微服务应用进行通信。更多RPC通信方面的文档[请参考](rpc)。
+
+一个应用接口可以有一个或多个实现类。只有应用接口在当前微服务应用中存在实现类,该微服务应用接口对应的服务条目才会生成相应的服务路由，并将服务路由信息注册到服务注册中心,同时其他微服务应用的实例会订阅到微服务集群的路由信息。
+
+如果服务应用接口存在多个实现类,那么服务应用接口的路由特性应的`multipleServiceKey`的参数值应当被设置为`true`(`[ServiceRoute(multipleServiceKey: true)]`)。这样,在网关应用引用该微服务的应用接口程序集生成的swagger文档才会有`serviceKey`请求头。
+
+应用接口如果存在多个实现类的情况下,那么应用接口的实现类,需要通过`ServiceKeyAttribute`特性进行标识。`ServiceKeyAttribute`存在两个参数(属性)。
+
+
+| 属性名称 | 说明   |  备注 |
+|:---------|:-----|:-----| 
+| name | 服务实现类的名称 | 通过webapi请求时,通过请求头`serviceKey`进行设置;rpc通信中,可以通过`ICurrentServiceKey`的实例调整要请求的应用接口实现。 |
+| weight | 权重 | 如果通信过程中,未指定`serviceKey`,那么,会请求权重最高的应用接口的实现类 |
+
+实例:
+
+```csharp
+
+/// 应用服务接口(如:可定义在ITestApplication.csproj项目)
+[ServiceRoute(multipleServiceKey: true)]
+public interface ITestAppService
+{
+    Task<string> Create(TestInput input);
+   // 其他服务条目方法略
+}
+
+
+//------------------------------------//
+/// 应用服务实例类1 (如:可定义在TestApplication.csproj项目)
+[ServiceKey("v1", 3)]
+public class TestAppService : ITestAppService
+{
+  public Task<string> Create(TestInput input)
+  {
+      return Task.FromResult("create v1")
+  }
+  // 其他接口实现方法略
+}
+
+//------------------------------------//
+/// 应用服务实例类2  (如:可定义在TestApplication.csproj项目)
+[ServiceKey("v2", 1)]
+public class TestV2AppService : ITestAppService
+{
+  public Task<string> Create(TestInput input)
+  {
+      return Task.FromResult("create v2")
+  }
+   // 其他接口实现方法略
+}
+
+```
+
+生成的swagger文档如下:
+
+![appservice-and-serviceentry1.jpg](/assets/imgs/appservice-and-serviceentry1.jpg)
+
+
+在rpc通信过程中,可以通过`ICurrentServiceKey`的实例设置要请求的应用接口的`serviceKey`。
+
+```csharp
+
+private readonly ICurrentServiceKey _currentServiceKey;
+
+public TestProxyAppService(ITestAppService testAppService,
+    ICurrentServiceKey currentServiceKey)
+{
+    _testAppService = testAppService;
+    _currentServiceKey = currentServiceKey;
+}
+
+public async Task<TestOut> CreateProxy(TestInput testInput)
+{
+    _currentServiceKey.Change("v2"); //在rpc代理请求之前设置`serviceKey`;
+    return await _testAppService.Create(testInput);
+}
+
+```
