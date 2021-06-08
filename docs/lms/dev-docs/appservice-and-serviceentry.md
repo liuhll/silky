@@ -205,7 +205,7 @@ public TestProxyAppService(ITestAppService testAppService,
     _currentServiceKey = currentServiceKey;
 }
 
-public async Task<TestOut> CreateProxy(TestInput testInput)
+public async Task<string> CreateProxy(TestInput testInput)
 {
     _currentServiceKey.Change("v2"); //在rpc代理请求之前设置`serviceKey`;
     return await _testAppService.Create(testInput);
