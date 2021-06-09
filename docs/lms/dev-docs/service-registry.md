@@ -32,9 +32,93 @@ lang: zh-cn
 
 ```json
 {
-    
+    "serviceDescriptor":{
+        "id":"IAnotherApplication_IAnotherAppService_DeleteTwo_name",
+        "serviceProtocol":0,
+        "metadatas":{
+
+        }
+    },
+    "addressDescriptors":[
+        {
+            "address":"172.19.16.1",
+            "port":2202,
+            "serviceProtocol":0
+        }
+    ],
+    "timeStamp":1623254897
 }
 ```
 
+服务路由主要由三部分组成，分别为：**服务描述符(serviceDescriptor)**、**地址描述符(addressDescriptors)**、**时间戳(timeStamp)**。
+
+### 服务描述符(serviceDescriptor)
+
+每一个服务条目对应生成一条**服务路由**,服务路由通过服务描述符标识其唯一性。服务描述符由如下三部分组成:
+
+| 字段 | 说明 | 备注 |
+|:-----|:-----|:-----|
+| id | 服务路由(描述符)Id | 具有唯一性; 生成规则:通过服务条目对应的方法的完全限定名 + 参数名 |
+| serviceProtocol | 服务通信协议 | rpc通信框架中,采用的通信协议  |
+| metadatas | 其他元数据 | 可以为服务路由写入(k,v)格式的元数据  |
+
+::: warning 注意
+
+1. 在一个微服务集群中,服务路由具有唯一性。也就是说,不允许在同一个微服务集群中, 不同微服务应用中不允许出现两个一模一样的方法(应用服务接口的完全限定名和方法名、参数名一致);
+
+::: 
+
+### 地址描述符(addressDescriptors)
+
+**地址描述符**是一个数组,用于存放该服务路由(服务条目)存在的微服务应用实例的IP地址信息。
+
+| 字段 | 说明 | 备注 |
+|:-----|:-----|:-----|
+| address | ip地址 | 微服务应用实例的IP地址 |
+| port | rpc通信端口号 | 微服务应用通信中指定的rpc端口号  |
+| serviceProtocol | 服务通信协议 | rpc通信框架中,采用的通信协议  |
+
+::: warning 注意
+
+1. 只有被实现的应用服务接口才会生成服务路由。
+
+2. 在微服务应用向服务注册中心注册路由时，首先会从服务注册中心获取最新的路由信息,在内存中更新该服务路由的服务路由地址(**将该微服务应用的地址更新到地址描述符中**),并将更新后的服务路由地址注册到服务注册中心,其他微服务应用根据从服务注册中心订阅到更新后的服务路由信息后,会将服务路由信息更新到微服务的内存中缓存起来。
+
+3. 为防止同一个微服务应用同时伸缩服务实例,在微服务应用获取或是注册服务路由的过程中会加分布式锁。
+
+::: 
+
+### 时间戳
+
+`timeStamp`是指向服务注册中心更新服务路由的最后时间。
+
+
 ## 使用zookeeper作为服务注册中心
 
+当前,lms支持使用zookeeper作为服务注册中心。
+
+lms支持为微服务集群配置多个服务注册中心，您只需要在配置服务注册中心的链接字符串`registrycenter.connectionStrings`中,使用分号`;`就可以指定微服务框架的多个服务注册中心。
+
+为方便以后扩展其他服务作为服务注册中心，您需要在为微服务应用指定配置时,显式的指定微服务注册中心类型为(`registrycenter.registryCenterType`):Zookeeper
+
+为微服务配置服务注册中心如下所示:
+
+```yml
+
+registrycenter: // 服务注册中心配置节点
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186 // 服务配置中心链接
+  registryCenterType: Zookeeper // 注册中心类型
+  connectionTimeout: 1000 // 链接超时时间(单位:ms)
+  sessionTimeout: 2000 // 会话超时时间(单位:ms)
+  operatingTimeout: 4000 // 操作超时时间(单位:ms)
+  routePath: /services/serviceroutes
+
+```
+
+除此之外,使用zookeeper作为服务注册中心,还必须要依赖`ZookeeperModule`模块。
+
+::: warning 注意
+
+1. 默认启动服务模块(`NormHostModule`、`WebHostModule`、`WsHostModule`)均已经依赖`ZookeeperModule`模块。
+
+::: 
