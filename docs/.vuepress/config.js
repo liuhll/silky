@@ -15,7 +15,37 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
             `
-        ]
+        ],
+        ["meta", { name: "baidu-site-verification", content: "code-q0r0KSL5ZB" }],
+        [
+            "script",
+            {
+                src: "/assets/js/autopush-baidu.js"
+            }
+        ],
+        [
+            "meta",
+            {
+                name: "360-site-verification",
+                content: "865fffbead89371a9a7cd196f721e64c"
+            }
+        ],
+        [
+            "script",
+            {
+                src: "/assets/js/autopush-360.js"
+            }
+        ],
+        [
+            "script",
+            {},
+            `
+(function(){
+var src = "https://s.ssl.qhres2.com/ssl/ab77b6ea7f3fbf79.js";
+document.write('<script src="' + src + '" id="sozz"><\/script>');
+})();
+            `
+        ],
 
     ],
     themeConfig: {
