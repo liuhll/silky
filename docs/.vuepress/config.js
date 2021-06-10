@@ -2,6 +2,22 @@ module.exports = {
     title: 'Lms微服务框架在线文档',
     description: 'Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。',
     port: 8081,
+    head: [
+        [
+            "script",
+            {},
+            `
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?935dc174ecf32301b55bc431ff5f5b1a";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+            `
+        ]
+
+    ],
     themeConfig: {
         logo: '/assets/logo/logo.png',
         docsRepo: 'liuhll/lms',
