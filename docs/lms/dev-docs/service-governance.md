@@ -3,7 +3,7 @@ title: 服务治理
 lang: zh-cn
 ---
 
-## 服务治理的概念
+## 概念
 
 服务治理是主要针对分布式服务框架，微服务，处理服务调用之间的关系，服务发布和发现（谁是提供者，谁是消费者，要注册到哪里），出了故障谁调用谁，服务的参数都有哪些约束,如何保证服务的质量？如何服务降级和熔断？怎么让服务受到监控，提高机器的利用率?
 
@@ -40,13 +40,55 @@ lms框架的服务治理主要以**服务条目**为基本单位，框架为每�
 | FuseTimes | 服务提供者允许的熔断次数  | 3 | 服务实例连续n次发生熔断端,服务实例将被标识为不健康 |
 | FailoverCount | 故障转移次数  | 0 | rpc通信异常情况下,允许的重新路由服务实例的次数,0表示有几个服务实例就转移几次 |
 | ProhibitExtranet | 是否禁止外网访问  | false | 该属性只允许通过`GovernanceAttribute`特性进行设置 |
-
-
+| FallBackType | 失败回调指定的类型  | null | 类型为`Type`,如果指定了失败回调类型,那么在服务执行失败,则会执行该类型的`Invoke`方法,该类型,必须要继承`IFallbackInvoker`该接口 |
 
 
 ### 统一配置
 
-开发者可以通过配置文件的`Governance`节点统一对微服务的治理进行配置。
+开发者可以通过配置文件的`Governance`节点对微服务的治理进行统一配置。如果在配置文件中不对服务治理进行配置,那么，在rpc通信过程中,服务治理的属性值使用缺省值。
 
+对服务治理的配置如下述所示:
+
+```yaml
+governance:
+  addressSelectorMode: Random
+  executionTimeout: 3000
+  maxConcurrent: 500
+```
 
 ### 通过`GovernanceAttribute`特性
+
+开发者可以通过`GovernanceAttribute`特性对应用服务接口方法进行标识，通过`GovernanceAttribute`特性的属性对该服务条目的治理方式进行调整。
+
+例如:
+
+```csharp
+
+[Governance(FallBackType = typeof(UpdatePartFallBack),ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
+Task<string> UpdatePart(TestInput input);
+
+```
+
+### 失败回调
+
+应用服务接口方法可以通过`GovernanceAttribute`特性的`FallBackType`属性指定失败回调类型。指定的失败回调类型必须是一个非抽象的类,且必须继承自`IFallbackInvoker<ReturnType>`。
+
+例如:上述应用程序接口方法指定的失败回调类型`UpdatePartFallBack`定义如下所示:
+
+```csharp
+public class UpdatePartFallBack : IFallbackInvoker<string> 
+//泛形类型与应用程序接口的返回值类型保持一致
+{
+    public async Task<string> Invoke(IDictionary<string, object> parameters)
+    {
+        return "UpdatePartFallBack";
+    }
+}
+
+```
+
+:::warning
+
+应用服务接口方法的治理属性的优先级为: `GovernanceAttribute`特性 > 配置 > 缺省值
+
+:::
