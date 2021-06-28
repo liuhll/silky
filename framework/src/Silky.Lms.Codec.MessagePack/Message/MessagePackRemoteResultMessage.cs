@@ -12,6 +12,7 @@ namespace Silky.Lms.Codec.Message
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result;
+            ValidateErrors = remoteResultMessage.ValidateErrors;
         }
 
         public MessagePackRemoteResultMessage()
@@ -23,6 +24,8 @@ namespace Silky.Lms.Codec.Message
         [Key(2)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
         [Key(3)] public object Result { get; set; }
+        
+        [Key(4)] public ValidError[] ValidateErrors { get; set; }
 
         public RemoteResultMessage GetMessage()
         {
@@ -30,7 +33,8 @@ namespace Silky.Lms.Codec.Message
             {
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
-                Result = Result
+                Result = Result,
+                ValidateErrors = ValidateErrors
             };
         }
     }

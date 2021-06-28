@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Silky.Lms.Core;
 using Silky.Lms.Core.Exceptions;
@@ -22,8 +23,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
         {
             RpcContext.GetContext()
                 .SetAttachments(message.Attachments);
-
-          
+            
             RemoteResultMessage remoteResultMessage;
             try
             {
@@ -55,7 +55,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
                 {
                     ExceptionMessage = e.GetExceptionMessage(),
                     StatusCode = e.GetExceptionStatusCode(),
-                    ValidateErrors = e.GetValidateErrors()
+                    ValidateErrors = e.GetValidateErrors().ToArray()
                 };
             }
 

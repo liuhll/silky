@@ -1,3 +1,4 @@
+using System.Linq;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Rpc.Messages;
 using ProtoBuf;
@@ -12,6 +13,7 @@ namespace Silky.Lms.Codec.Message
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result == null ? null : new DynamicItem(remoteResultMessage.Result);
+            ValidateErrors = remoteResultMessage.ValidateErrors?.Select(i => new DynamicItem(i)).ToArray();
         }
 
         public ProtoBufRemoteResultMessage()
@@ -23,6 +25,8 @@ namespace Silky.Lms.Codec.Message
         [ProtoMember(2)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
         [ProtoMember(3)] public DynamicItem Result { get; set; }
+        
+        [ProtoMember(4)] public DynamicItem[] ValidateErrors { get; set; }
 
         public RemoteResultMessage GetMessage()
         {
@@ -30,7 +34,8 @@ namespace Silky.Lms.Codec.Message
             {
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
-                Result = Result?.Get()
+                Result = Result?.Get(),
+                ValidateErrors = ValidateErrors.Select(p=> (ValidError)p.Get()).ToArray()
             };
         }
     }

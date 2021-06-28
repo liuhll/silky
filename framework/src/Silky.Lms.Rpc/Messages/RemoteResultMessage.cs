@@ -9,7 +9,7 @@ namespace Silky.Lms.Rpc.Messages
 
         public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
-        public IEnumerable<ValidError> ValidateErrors { get; set; }
+        public ValidError[] ValidateErrors { get; set; }
 
         public object Result { get; set; }
     }

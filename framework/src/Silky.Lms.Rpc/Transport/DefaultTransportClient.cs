@@ -41,11 +41,13 @@ namespace Silky.Lms.Rpc.Transport
                 if (content.StatusCode == StatusCode.ValidateError)
                 {
                     var validateException = new ValidationException(content.ExceptionMessage);
-                    foreach (var validateError in content.ValidateErrors)
+                    if (content.ValidateErrors != null)
                     {
-                        validateException.WithValidationError(validateError.ErrorMessage, validateError.MemberNames);
+                        foreach (var validateError in content.ValidateErrors)
+                        {
+                            validateException.WithValidationError(validateError.ErrorMessage, validateError.MemberNames);
+                        }
                     }
-
                     task.TrySetException(validateException);
                 }
                 else
