@@ -1,4 +1,7 @@
-# lms框架分布式事务使用简介
+---
+title: lms框架分布式事务使用简介
+lang: zh-cn
+---
 
 lms框架的分布式事务解决方案采用的TCC事务模型。在开发过程中参考和借鉴了[hmily](https://github.com/dromara/hmily)。使用AOP的编程思想,在rpc通信过程中通过拦截器的方式对全局事务或是分支事务进行管理和协调。
 

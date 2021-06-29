@@ -1,4 +1,8 @@
-# 通过lms.samples熟悉lms微服务框架的使用
+---
+title: 通过lms.samples熟悉lms微服务框架的使用
+lang: zh-cn
+---
+
 
 经过一段时间的开发与测试,终于发布了Lms框架的第一个正式版本(1.0.0版本),并给出了lms框架的样例项目**lms.samples**。本文通过对**lms.samples**的介绍，简述如何通过lms框架快速的构建一个微服务的业务框架，并进行应用开发。
 
