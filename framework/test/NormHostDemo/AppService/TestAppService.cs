@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Silky.Lms.Caching;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Rpc.Runtime.Server;
 using Silky.Lms.Transaction.Tcc;
@@ -13,10 +14,12 @@ namespace NormHostDemo.AppService
     {
 
         private readonly IAnotherAppService _anotherAppService;
-
-        public TestAppService(IAnotherAppService anotherAppService)
+        private readonly IDistributedCache<TestOut> _distributedCache;
+        public TestAppService(IAnotherAppService anotherAppService, 
+            IDistributedCache<TestOut> distributedCache)
         {
             _anotherAppService = anotherAppService;
+            _distributedCache = distributedCache;
         }
 
         public async Task<TestOut> Create(TestInput input)
