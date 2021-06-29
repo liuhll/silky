@@ -95,8 +95,10 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                         'dev-docs/caching',
                         'dev-docs/distributed-transactions',
                         'dev-docs/aggregation-and-gateway',
-                        'dev-docs/microservice-architecture',
                         'dev-docs/object-mapping',
+                        'dev-docs/dependency-injection',
+                        'dev-docs/ws',
+                        'dev-docs/microservice-architecture',
                         'dev-docs/samples',
                         'dev-docs/noun-explanation',
 
