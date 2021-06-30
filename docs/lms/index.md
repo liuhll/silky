@@ -5,7 +5,7 @@ lang: zh-cn
 
 ## 背景介绍
 
-LMS框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速的使用微服务进行开发。
+LMS框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速构建一个微服务开发框架。
 
 LMS通过.net框架的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)托管应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
 
