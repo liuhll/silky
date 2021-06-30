@@ -1,16 +1,25 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using IAnotherApplication;
+using Silky.Lms.Core.Exceptions;
 using Silky.Lms.WebSocket;
 
 namespace AnotherHostDemo.AppService
 {
     public class WsTestAppService : WsAppServiceBase, IWsTestAppService
     {
-        public async Task Echo(string msg)
+        public async Task Echo(string businessId, string msg)
         {
-            foreach (var session in SessionManager.Sessions)
+            if (BusinessSessionIds.TryGetValue(businessId, out var sessionIds))
             {
-                SessionManager.SendTo(msg, session.ID);
+                foreach (var sessionId in sessionIds)
+                {
+                    SessionManager.SendTo($"message:{msg},sessionId:{sessionId}", sessionId);
+                }
+            }
+            else
+            {
+                throw new BusinessException($"不存在businessId为{businessId}的会话");
             }
         }
     }

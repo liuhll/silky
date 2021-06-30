@@ -6,6 +6,6 @@ namespace IAnotherApplication
     [ServiceRoute]
     public interface IWsTestAppService
     {
-        Task Echo(string msg);
+        Task Echo(string businessId,string msg);
     }
 }
