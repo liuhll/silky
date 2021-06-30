@@ -15,6 +15,8 @@ lms框架存在**两种类型**的模块:
 
 例如:
 
+普通类型模块类
+
 ```csharp
 
 // 普通类型模块类
@@ -22,6 +24,11 @@ public class CustomHostModule : LmsModule
 {
 }
 
+```
+
+启动模块类
+
+```csharp
 // 启动模块类，只有该类型的模块才可以被允许在构建服务中被指定为启动模块
 [DependsOn(typeof(ZookeeperModule),
         typeof(DotNettyTcpModule),
