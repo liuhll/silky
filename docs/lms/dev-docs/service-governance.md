@@ -32,7 +32,7 @@ lms框架的服务治理主要以**服务条目**为基本单位，框架为每�
 | 属性 | 说明 | 缺省值 |  备注 |
 |:-----|:-----|:-----|:------|
 | AddressSelectorMode | 负载均衡策略 | Polling(轮询) | 负载均衡算法支持：Polling(轮询)、Random(随机)、HashAlgorithm(哈希一致性，根据rpc参数的第一个参数值) |
-| ExecutionTimeout | 执行超时时间 | -1(ms) | 单位为(ms),超时市发生熔断，-1表示在rpc通信过程中不会超时 |
+| ExecutionTimeout | 执行超时时间 | 3000(ms) | 单位为(ms),超时时发生熔断，-1表示在rpc通信过程中不会超时 |
 | CacheEnabled | 是否启用缓存拦截 | true | rpc通信中是否启用缓存拦截 |
 | MaxConcurrent | 允许的最大并发量 | 100 |  |
 | FuseProtection | 是否开启熔断保护  | true |  |
