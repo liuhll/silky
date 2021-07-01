@@ -140,13 +140,13 @@ protected override void RegisterServices(ContainerBuilder builder)
 ```csharp
 public virtual Task Initialize([NotNull]ApplicationContext applicationContext)
 {
-    // 微服务应用执行时,指定该端代码
+    // 微服务应用启动时,执行该段代码
     return Task.CompletedTask;
 }
 
 public virtual Task Shutdown([NotNull]ApplicationContext applicationContext)
 {
-    // 微服务应用停止时,指定该端代码
+    // 微服务应用停止时,执行该段代码
     return Task.CompletedTask;
 }
 ```
