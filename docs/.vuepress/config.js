@@ -2,6 +2,13 @@ module.exports = {
     title: 'Lms微服务框架在线文档',
     description: 'Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。',
     port: 8081,
+    plugins: [['social-share', {
+        networks: ['qq', 'weibo', 'douban', 'wechat', 'email', 'twitter', 'facebook', 'reddit', 'telegram'],
+        email: '1029765111@qq.com',
+        fallbackImage: 'https://gitee.com/liuhll2/lms/raw/main/docs/.vuepress/public/assets/logo/logo.word.svg',
+        autoQuote: true,
+        isPlain: true,
+    }]],
     head: [
         [
             "script",
