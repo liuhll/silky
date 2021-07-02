@@ -114,7 +114,7 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
             ],
             '/blog/': [
                 {
-                    title: 'lms框架博文',
+                    title: '博文',
                     collapsable: false,
                     children: [
                         'transaction-design',
