@@ -5,18 +5,18 @@ lang: zh-cn
 
 ## 背景介绍
 
-LMS框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速构建一个微服务开发框架。
+lms框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速构建一个微服务开发框架。
 
-LMS通过.net框架的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)托管应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
+lms通过.net框架的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)托管应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
 
-LMS通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)来托管对外提供访问入口的服务主机，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
+lms通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)来托管对外提供访问入口的服务主机，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
 
-LMS在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
+lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
 
 在开发与设计过程中借鉴和吸收了各个优秀的开源产品的设计与思想。在此，作者表示对各个先辈的致敬与感谢。
 
-为方便开发者学习与表达对前辈的谢意,如下对LMS各个模块的设计思想来源做出说明:
+为方便开发者学习与表达对前辈的谢意,如下对lms各个模块的设计思想来源做出说明:
 
 **服务引擎与IOC容器**: 该模块主要借鉴了[nopCommerce](https://github.com/nopSolutions/nopCommerce/)
 
@@ -45,21 +45,33 @@ LMS在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 ## 框架特性
 
 ### 服务引擎
-- 服务解析与注册
-- 负责LMS主机的初始化过程
+- 负责lms主机的初始化过程
+- 服务注册与解析
+- 负责模块解析与注册
 
 ### 路由与参数
-- 支持restful风格的API
+- 路由的解析与通过注册中心的维护分布式应用集群路由表
+- 通过网关生成restful风格的WebAPI对外部提供http服务
+- 通过特性实现输入参数的校验
 
 ### RPC通信
-- 使用[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)作为通信组件
+- 使用[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)作为底层通信组件
 - 使用[Zookeeper](https://zookeeper.apache.org)作为服务注册中心
 - 使用[Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/)生成动态代理
 - 支持缓存拦截
-- 支持轮询、随机路由、哈希一致性等负载均衡路由方式
 - 支持JSON、MessagePack、ProtoBuf编解码方式
-- 使用Policy实现服务熔断与重试
+
+### 服务治理
+- 支持轮询、随机路由、哈希一致性等负载均衡路由方式
 - 支持失败回调
+- 使用Policy实现服务熔断与重试
+- 支持服务故障转移
+- 支持移除不健康的服务
+- 通过配置支持禁止服务被外部访问
+
+:::tip
+服务治理模块后续持续更新
+:::
 
 ### 模块化管理
 - 模块的依赖设置
