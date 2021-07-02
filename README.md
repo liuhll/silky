@@ -9,7 +9,7 @@
 [![MyGet (nightly builds)](https://img.shields.io/myget/lms-framework/vpre/Silky.Lms.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/lms-framework)
 [![NuGet Download](https://img.shields.io/nuget/dt/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
 
-## 背景介绍
+## 项目介绍
 
 lms框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速构建一个微服务开发框架。
 
@@ -22,9 +22,11 @@ lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
 在开发与设计过程中借鉴和吸收了各个优秀的开源产品的设计与思想。在此，作者表示对各个先辈的致敬与感谢。
 
-## 开发者文档
+## 入门
 
-- 文档地址: http://docs.lms-fk.com
+- 通过[开发者文档](http://docs.lms-fk.com/lms/)学习lms框架。
+- 通过[lms.samples项目](http://docs.lms-fk.com/lms/dev-docs/quick-start.html)熟悉如何使用lms框架构建一个微服务应用。
+- 通过[配置](http://docs.lms-fk.com/config/)文档熟悉lms框架的相关配置属性。
 
 ## 框架特性
 
