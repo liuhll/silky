@@ -2,72 +2,78 @@
   <img height="200" src="./docs/.vuepress/public/assets/logo/logo.word.svg">
 </p>
 
-# lms 微服务框架
+# lms microservice framework
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitee.com/dotnetchina/lms/raw/main/LICENSE)
 [![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
 [![NuGet](https://img.shields.io/nuget/v/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
 [![MyGet (nightly builds)](https://img.shields.io/myget/lms-framework/vpre/Silky.Lms.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/lms-framework)
 [![NuGet Download](https://img.shields.io/nuget/dt/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
 
-## 项目介绍
 
-lms框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速构建一个微服务开发框架。
+<div align="center">
 
-lms通过.net框架的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)托管应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
+**English | [简体中文](./README.zh-CN.md)**
 
-lms通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)来托管对外提供访问入口的服务主机(网关)，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
+</div>
 
-lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
+## Project Introduction
+
+The lms framework is designed to help developers quickly build a microservice development framework through simple code and configuration under the .net platform.
+
+Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
+
+Through the [web host] of .net (https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
+
+In the communication process, LMS uses cache-based interception to realize TCC distributed transaction.
 
 
-在开发与设计过程中借鉴和吸收了各个优秀的开源产品的设计与思想。在此，作者表示对各个先辈的致敬与感谢。
+In the development and design process, the design and ideas of various excellent open source products have been borrowed and absorbed. Here, the author expresses his tribute and gratitude to the ancestors.
 
-## 入门
+## getting Started
 
-- 通过[开发者文档](http://docs.lms-fk.com/lms/)学习lms框架。
-- 通过[lms.samples项目](http://docs.lms-fk.com/lms/dev-docs/quick-start.html)熟悉如何使用lms框架构建一个微服务应用。
-- 通过[配置](http://docs.lms-fk.com/config/)文档熟悉lms框架的相关配置属性。
+- Learn the lms framework through [Developer Documentation](http://docs.lms-fk.com/lms/).
+- Use [lms.samples project](http://docs.lms-fk.com/lms/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the lms framework.
+-Familiarize yourself with the configuration properties of the lms framework through the [Configuration](http://docs.lms-fk.com/config/) document.
 
-## 框架特性
+## Framework Features
 
-### 服务引擎
-- 负责lms主机的初始化过程
-- 服务注册与解析
-- 负责模块解析与注册
+### Service Engine
+- Responsible for the initialization process of the lms host
+- Service registration and analysis
+- Responsible for module analysis and registration
 
-### 路由与参数
-- 路由的解析与通过注册中心的维护分布式应用集群路由表
-- 通过网关生成restful风格的WebAPI对外部提供http服务
-- 通过特性实现输入参数的校验
+### Routing and parameters
+- Routing analysis and maintenance of the distributed application cluster routing table through the registry
+- Generate restful style WebAPI through the gateway to provide http services to the outside
+- Realize the verification of input parameters through characteristics
 
-### RPC通信
-- 使用[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)作为底层通信组件
-- 使用[Zookeeper](https://zookeeper.apache.org)作为服务注册中心
-- 使用[Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/)生成动态代理
-- 支持缓存拦截
-- 支持JSON、MessagePack、ProtoBuf编解码方式
+### RPC communication
+- Use [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty) as the underlying communication component
+- Use [Zookeeper](https://zookeeper.apache.org) as the service registry
+- Use [Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/) to generate dynamic proxy
+- Support cache interception
+- Support JSON, MessagePack, ProtoBuf encoding and decoding methods
 
-### 服务治理
-- 支持轮询、随机路由、哈希一致性等负载均衡路由方式
-- 支持失败回调
-- 使用Policy实现服务熔断与重试
-- 支持服务故障转移
-- 支持移除不健康的服务
-- 通过配置支持禁止服务被外部访问
+### Service governance
+- Support load balancing routing methods such as polling, random routing, hash consistency, etc.
+- Support failure callback
+-Use Policy to realize service fusing and retry
+- Support service failover
+- Support removing unhealthy services
+- Disable external access to services through configuration support
 
-> 服务治理模块后续持续更新
+> The service governance module will continue to be updated
 
-### 模块化管理
-- 模块的依赖设置
-- 通过模块注册服务
-- 通过模块预初始化方法或释放资源
+### Modular Management
+- Module dependency settings
+- Register service through the module
+- Pass module pre-initialization method or release resources
 
-### 支持分布式事务
-- 通过TCC方式实现分布式事务
+### Support distributed transactions
+- Realize distributed transactions through TCC
 
-### 支持websocket通信
-- 通过[websocket-sharp](https://github.com/sta/websocket-sharp)实现websocket通信
+### Support websocket communication
+- Realize websocket communication through [websocket-sharp](https://github.com/sta/websocket-sharp)
 
-### 分布式锁
-- 使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁
-
+### Distributed lock
+- Use [RedLock.net](https://github.com/samcook/RedLock.net) to implement distributed locks
