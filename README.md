@@ -22,7 +22,7 @@ The lms framework is designed to help developers quickly build a microservice de
 
 Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
 
-Through the [web host] of .net (https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
+Through the [web host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) of .net  build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
 
 In the communication process, LMS uses cache-based interception to realize TCC distributed transaction.
 
@@ -33,17 +33,17 @@ In the development and design process, the design and ideas of various excellent
 
 - Learn the lms framework through [Developer Documentation](http://docs.lms-fk.com/lms/).
 - Use [lms.samples project](http://docs.lms-fk.com/lms/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the lms framework.
--Familiarize yourself with the configuration properties of the lms framework through the [Configuration](http://docs.lms-fk.com/config/) document.
+- Familiarize yourself with the configuration properties of the lms framework through the [Configuration](http://docs.lms-fk.com/config/) document.
 
 ## Framework Features
 
 ### Service Engine
 - Responsible for the initialization process of the lms host
-- Service registration and analysis
-- Responsible for module analysis and registration
+- Service registration and resolve
+- Responsible for module resolve and registration
 
 ### Routing and parameters
-- Routing analysis and maintenance of the distributed application cluster routing table through the registry
+- Routing resolve and maintenance of the distributed application cluster routing table through the registry
 - Generate restful style WebAPI through the gateway to provide http services to the outside
 - Realize the verification of input parameters through characteristics
 
