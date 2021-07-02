@@ -29,7 +29,7 @@ In the communication process, LMS uses cache-based interception to realize TCC d
 
 In the development and design process, the design and ideas of various excellent open source products have been borrowed and absorbed. Here, the author expresses his tribute and gratitude to the ancestors.
 
-## getting Started
+## Getting Started
 
 - Learn the lms framework through [Developer Documentation](http://docs.lms-fk.com/lms/).
 - Use [lms.samples project](http://docs.lms-fk.com/lms/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the lms framework.
