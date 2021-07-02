@@ -82,7 +82,6 @@ GlobalCacheEntryOptions子节点有如下配置:
 | DefaultExpiry | 默认锁操作超时时间 | 120 | 单位(s)  |
 | Wait | 等待分布式锁时间 | 30 | 单位(s) |
 | Retry | 重试次数 | 1 |  |
-| DefaultResource | 默认的分布式锁资源名称 |  | 如果使用默认的分布式锁,请提供该配置  |
 
 ## 网关(Gateway)
 

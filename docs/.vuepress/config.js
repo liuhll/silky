@@ -100,6 +100,7 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                         'dev-docs/rpc',
                         'dev-docs/service-governance',
                         'dev-docs/caching',
+                        'dev-docs/lock',
                         'dev-docs/distributed-transactions',
                         'dev-docs/object-mapping',
                         'dev-docs/dependency-injection',
