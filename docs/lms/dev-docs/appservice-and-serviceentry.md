@@ -12,7 +12,6 @@ lang: zh-cn
 例如:
 
 ```csharp
-
 [ServiceRoute]
 public interface ITestAppService
 {
@@ -151,7 +150,6 @@ public interface ITestAppService
 实例:
 
 ```csharp
-
 /// 应用服务接口(如:可定义在ITestApplication.csproj项目)
 [ServiceRoute(multipleServiceKey: true)]
 public interface ITestAppService
@@ -195,7 +193,6 @@ public class TestV2AppService : ITestAppService
 在rpc通信过程中,可以通过`ICurrentServiceKey`的实例设置要请求的应用接口的`serviceKey`。
 
 ```csharp
-
 private readonly ICurrentServiceKey _currentServiceKey;
 
 public TestProxyAppService(ITestAppService testAppService,

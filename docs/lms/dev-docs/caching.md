@@ -18,7 +18,6 @@ lang: zh-cn
 设置缓存特性方式如下所示:
 
 ```csharp
-
 // 在应用服务接口方法中通过`GetCachingIntercept`设置缓存拦截
 [GetCachingIntercept("name:{0}")]
 Task<TestOut> Create(TestInput input);
@@ -57,7 +56,6 @@ public class TestInput
 与被`GetCachingInterceptAttribute`特性标注的应用服务接口不同的是,在rpc通信过程中,被`UpdateCachingInterceptAttribute`特性标识的方法都会得到执行,只是将服务提供者返回的结果更新到缓存服务中。被更新的缓存数据与生成的缓存的`key`以及返回结果类型(`ReturnType`)有关。
 
 ```csharp
-
 // 在应用服务接口方法中通过`GetCachingIntercept`设置缓存拦截
 [UpdateCachingIntercept("name:{0}")]
 Task<TestOut> Update(UpdateTestInput input);
@@ -101,7 +99,6 @@ lms框架提供分布式缓存接口`IDistributedCache<T>`,通过分布式缓存
 分布式缓存接口可以通过构造器注入,在使用分布式缓存接口是,必须要指定泛型参数`T`。
 
 ```csharp
-
 public class TestAppService : ITestAppService
 {
 

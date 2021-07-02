@@ -148,7 +148,6 @@ namespace Lms.Sample.Gateway
 **4. 在`Startup`中配置swagger文档以及设置使用lms请求管道**
 
 ```csharp
-
 // 服务配置;注册Swagger文档服务
 public void ConfigureServices(IServiceCollection services)
 {

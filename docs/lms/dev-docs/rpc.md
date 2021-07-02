@@ -52,7 +52,6 @@ LMS框架使用rpc协议实现服务之间的通信。我们知道,要实现一�
 3. 开发者可以通过构造注入的方式使用应用服务接口，服务调用者就可以通过服务调用者的应用接口生成的动态代理与服务提供者进行通信。
 
 ```csharp
-
 public class TestProxyAppService : ITestProxyAppService
 {
     private readonly ITestAppService _testAppServiceProxy; // 应用提供者的应用接口，通过其生成服务调用者的本地动态代理

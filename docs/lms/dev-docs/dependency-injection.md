@@ -97,7 +97,6 @@ lang: zh-cn
    在应用其他微服务应用的应用接口层(包)后,应用服务接口是通过构造注入的方式获取动态代理对象。
    
    ```csharp
-   
     public class AccountAppService : IAccountAppService
     {
         private readonly IAccountDomainService _accountDomainService;
@@ -151,7 +150,5 @@ lang: zh-cn
    例如:
    
    ```csharp
-
     var accountDomainService = EngineContext.Current.Resolve<IAccountDomainService>();
-  
     ```

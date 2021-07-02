@@ -34,7 +34,6 @@ lock:
 2. 通过构造器注入`ILockerProvider`的实例
 
 ```csharp
-
 protected readonly ILockerProvider _lockerProvider;
 protected ServiceRouteManagerBase(ILockerProvider lockerProvider)           
 {

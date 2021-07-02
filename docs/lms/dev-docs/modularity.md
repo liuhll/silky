@@ -18,7 +18,6 @@ lms框架存在**两种类型**的模块:
 普通类型模块类
 
 ```csharp
-
 // 普通类型模块类
 public class CustomHostModule : LmsModule
 {
@@ -96,7 +95,6 @@ private static IHostBuilder CreateHostBuilder(string[] args)
 例如:
 
 ```csharp
-
 [DependsOn(typeof(ZookeeperModule),
         typeof(DotNettyTcpModule),
         typeof(MessagePackModule),

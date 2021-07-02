@@ -63,7 +63,6 @@ governance:
 例如:
 
 ```csharp
-
 [Governance(FallBackType = typeof(UpdatePartFallBack),ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
 Task<string> UpdatePart(TestInput input);
 

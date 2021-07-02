@@ -138,7 +138,6 @@ private static IHostBuilder CreateHostBuilder(string[] args)
 注册lms服务,并指定`WebHostModule`作为启动模块,并设置`Startup`类。
 
 ```csharp
-
 public static IHostBuilder CreateHostBuilder(string[] args) =>
   Host.CreateDefaultBuilder(args)
       .RegisterLmsServices<WebHostModule>()
@@ -149,7 +148,6 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
 #### 4. 在Startup类中设置swagger文档和启用lms请求管道
 
 ```csharp
-
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddSwaggerGen(c =>
