@@ -11,7 +11,5 @@ namespace Silky.Lms.Lock.Provider
         Task<IRedLock> CreateLockAsync(string resource, TimeSpan expiry, TimeSpan wait, TimeSpan retry);
 
         Task<IRedLock> CreateLockAsync(string resource);
-
-        Task<IRedLock> CreateLockAsync();
     }
 }

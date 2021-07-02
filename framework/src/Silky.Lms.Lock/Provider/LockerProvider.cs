@@ -42,11 +42,6 @@ namespace Silky.Lms.Lock.Provider
             return CreateLockAsync(resource, _lockOptions.DefaultExpiryTimeSpan, _lockOptions.WaitTimeSpan, _lockOptions.RetryTimeSpan);
         }
 
-        public Task<IRedLock> CreateLockAsync()
-        {                    
-            return CreateLockAsync(_lockOptions.DefaultResource);
-        }
-
         void IDisposable.Dispose()
         {
             _redLockFactory?.Dispose();
