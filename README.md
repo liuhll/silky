@@ -4,291 +4,68 @@
 
 # lms 微服务框架
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitee.com/dotnetchina/lms/raw/main/LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/liuhll/lms/total?label=downloads&logo=github&style=flat-square)](https://img.shields.io/github/downloads/liuhll/lms/total?label=downloads&logo=github&style=flat-square)
 [![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
+[![NuGet](https://img.shields.io/nuget/v/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
+[![MyGet (nightly builds)](https://img.shields.io/myget/lms-framework/vpre/Silky.Lms.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/lms-framework)
+[![NuGet Download](https://img.shields.io/nuget/dt/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
 
+## 背景介绍
 
-Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。lms内部通过[dotnetty](https://github.com/Azure/DotNetty)实现高性能的rpc通信,使用zookeeper作为服务注册中心。RPC通信支持随机轮询、哈希一致性、随机路由等负载均衡算法。
+lms框架旨在帮助开发者在.net平台下,通过简单的配置和代码即可快速构建一个微服务开发框架。
 
-您还可以很方便的与[CAP](https://github.com/dotnetcore/CAP)或是[MassTransit](https://github.com/MassTransit/MassTransit)集成,使用事件总线进行内部通信。
+lms通过.net框架的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)托管应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
 
-你可以在这里 [Lms docs](#) 看到更多详细资料。
+lms通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)来托管对外提供访问入口的服务主机(网关)，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
 
-## Getting Started
+lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
-### LMS框架集成与服务托管
 
-#### 使用通用主机注册和托管LMS服务
+在开发与设计过程中借鉴和吸收了各个优秀的开源产品的设计与思想。在此，作者表示对各个先辈的致敬与感谢。
 
-使用LMS框架非常简单,您只需要使用.net提供的[通用主机](https://docs.microsoft.com/zh-cn/dotnet/core/extensions/generic-host)注册LMS框架,同时指定启动的模块,在启动的模块中,通过`DependsOn`特性依赖必要的组件。
+## 开发者文档
 
-通用主机注册LMS框架主要用于一般情况下对服务的托管,配置的`token`保证的集群通信的安全性,避免用户直接通过RPC端口访问集群内部，
+- 文档地址: http://docs.lms-fk.com
 
-(1) 只有请求来源于网关,才被认为是合法的请求。集群外部无法通过rpc端口与主机直接通信。
+## 框架特性
 
-(2) 服务内部通信过程中,同一个集群只有配置的token一致, 通信才会被被认为是合法的。 
+### 服务引擎
+- 负责lms主机的初始化过程
+- 服务注册与解析
+- 负责模块解析与注册
 
-1. 注册LMS服务
+### 路由与参数
+- 路由的解析与通过注册中心的维护分布式应用集群路由表
+- 通过网关生成restful风格的WebAPI对外部提供http服务
+- 通过特性实现输入参数的校验
 
-```csharp
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            await CreateHostBuilder(args).Build().RunAsync();
-        }
+### RPC通信
+- 使用[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)作为底层通信组件
+- 使用[Zookeeper](https://zookeeper.apache.org)作为服务注册中心
+- 使用[Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/)生成动态代理
+- 支持缓存拦截
+- 支持JSON、MessagePack、ProtoBuf编解码方式
 
-        private static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<NormHostModule>() //注册lms服务，并指定启动的模块
-                ;
+### 服务治理
+- 支持轮询、随机路由、哈希一致性等负载均衡路由方式
+- 支持失败回调
+- 使用Policy实现服务熔断与重试
+- 支持服务故障转移
+- 支持移除不健康的服务
+- 通过配置支持禁止服务被外部访问
 
-        }
-    }
-```
+> 服务治理模块后续持续更新
 
-2. 启动模块
+### 模块化管理
+- 模块的依赖设置
+- 通过模块注册服务
+- 通过模块预初始化方法或释放资源
 
-您也可以指定自定义的启动模块,在主机启动或是停止时执行相应的方法。
+### 支持分布式事务
+- 通过TCC方式实现分布式事务
 
-启动模块需要继承`LmsModule`基类或是`NormHostModule`，通过`DependsOn`特性指定依赖的模块组件，一般的,您需要在启动类中直接或间接依赖服务注册中心组件(`ZookeeperModule`)、和通信框架组件(`DotNettyTcpModule`)、Rpc通信代理组件(`RpcProxyModule`),也可以指定编解码组件(`MessagePackModule`或是`ProtoBufferModule`),如果未指定编解码组件,则默认使用json作为rpc内部的通信编解码格式。同一个集群内部，必须要保证使用的编解码一致。
+### 支持websocket通信
+- 通过[websocket-sharp](https://github.com/sta/websocket-sharp)实现websocket通信
 
-如果指定的启动类是`NormHostModule`或是继承自`NormHostModule`,则服务在启动是自动会依赖`ZookeeperModule`、`DotNettyTcpModule`、`MessagePackModule`、`RpcProxyModule`、`TransactionTccModule`、`AutoMapperModule`。
+### 分布式锁
+- 使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁
 
-在启动模块中,您也可以通过重写`RegisterServices`来注册需要注入ioc的类，通过重写`Initialize`方法在应用启动时执行初始化方法,重写`Shutdown`方法在应用结束时执行释放资源的方法。
-
-```csharp
-    public class AnotherDemoModule : NormHostModule
-    {
-        public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
-        
-        protected override void RegisterServices(ContainerBuilder builder)
-        {
-            // 向ioc容器注册服务
-        }
-
-        public async override Task Initialize(ApplicationContext applicationContext)
-        {
-            Logger.LogInformation("服务启动时执行方法");
-        }
-
-        public async override Task Shutdown(ApplicationContext applicationContext)
-        {
-            Logger.LogInformation("服务停止时执行的方法");
-        }
-    }
-
-```
-
-3. 配置
-
-您可以使用`json`或是`yml`格式对服务进行配置。如下所示,列举了lms服务必要的最少配置。
-
-```yml
-rpc:
-  host: 0.0.0.0
-  rpcPort: 2201
-  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
-registrycenter:
-  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
-  registryCenterType: Zookeeper
-distributedCache:
-  redis:
-    isEnabled: true
-    configuration: 127.0.0.1:6379,defaultDatabase=0
-lock:
-  lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
-```
-
-4. 完成主机构建后,您可以引用各个微服务模块的应用接口,或是托管服务自身的应用服务。集群内部使用dotntty实现的RPC框架进行通信。
-
-#### 使用Web主机注册和托管LMS服务
-
-您可以使用.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host)来注册和托管lms应用,通过这种形式构建的服务主机,可以通过引用各个微服务模块的应用接口,通过web主机指定的http端口对外提供访问。web主机可以通过应用接口生成的代理与微服务集群内部各个服务主机进行通信。
-
-通过web主机注册LMS服务条目时,一般不需要实现应用接口(即，不需要托管应用服务),只需要引用各个微服务模块的应用接口,通过HTTP端口提供一个与集群外部通信的方式。
-
-1. 注册LMS服务
-
-```csharp
-    public class Program
-    {
-        public async static Task Main(string[] args)
-        {
-            await CreateHostBuilder(args).Build().RunAsync();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .RegisterLmsServices<WebHostModule>()
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-    }
-```
-
-2. 启动模块
-
-您可以使用系统默认`WebHostModule`启动模块，或是自定义启动模块。与使用通用主机注册LMS服务一致，您可以在自定义的启动模块重写`Initialize`方法和`Shutdown`方法。
-
-
-3. StartUp类
-
-在[StartUp类](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/startup)中,您可以通过`ConfigureServices`配置服务的注入,以及在`Configure`方法中配置Http请求中间件。例如: 您可以在StartUp类中配置mvc路由、SwaggerAPI文档等。
-
-需要注意的是必须在`Configure`中必须要配置`app.ConfigureLmsRequestPipeline()`,只有这样Http请求才可以通过lms框架预先设置的中间件。
-
-```csharp
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lms Gateway", Version = "v1"});
-                c.MultipleServiceKey();
-            });
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lms Gateway Demo v1"));
-            }
-            app.ConfigureLmsRequestPipeline();
-        }
-    }
-```
-
-### 应用接口与服务条目
-
-在一个微服务模块中,您可以通过定义应用接口来提供相应的服务条目,应用接口只需要通过`ServiceRoute`特性进行描述。每个应用接口定义的方法都会生成一个服务条目,应用接口就相当于MVC的Controller,服务条目相当于Action。
-
-一般的,我们会将应用接口单独定义在一个独立的程序集，应用接口的实现定义在另外一个单独的程序集。应用接口程序集可以被其他微服务模块引用,在其他微服务模块中可以通过引用的应用接口生成代理,通过应用接口代理可以方便与服务提供者进行rpc通信。
-
-```csharp
-    [ServiceRoute]
-    public interface ITestAppService
-    {
-       // 应用接口
-       // 每个方法都会生成一个服务条目
-        [HttpGet("{name:string}")]
-        [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
-        [GetCachingIntercept("ITestAppService.TestOut", "name:{0}")]
-        Task<TestOut> Get([HashKey][CacheKey(0)] string name);
-    }
-
-```
-
-更多应用接口的说明和配置请[参考](#)。
-
-### 配置
-
-Lms支持通过`json`或是`yml`格式的对框架进行配置。一般的,您可以通过`appsettings.json`或是`appsettings.yml`文件对系统进行配置，并且您可以通过`appsettings.{Environment}.yml`或是`appsettings.{Environment}.json`指定在不同的运行环境中加载相应的环境变量。有关详细信息，请参阅[在 ASP.NET Core 中使用多个环境](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/environments)。
-
-#### RPC通信参数配置
-
-| 配置项 | 名称 | 缺省值 | 备注 |
-|:------|:------|:------|:------|
-| Host | 主机地址 | 0.0.0.0 | 缺省配置则自动获取当前服务器的IP为rpc服务IP |
-| RpcPort | Rpc通信端口 | 2200 | 指定的rpc通信端口号 |
-| MqttPort | mqtt协议通信端口 | 2300 | 当前暂未实现mqtt通信协议 |
-| UseLibuv | 使用libuv  | 2300 | dotnetty通信是否使用libuv网络库,缺省值为`true` |
-| IsSsl | 使用Ssl加密  | false |  |
-| SslCertificateName | Ssl证书名称  |  | Ssl证书的相对路径全名称 |
-| SslCertificatePassword | Ssl证书密码  |  |  |
-| SoBacklog | dotnetty SoBacklog  | 8192 | 过大或过小会影响性能 |
-| RemoveUnhealthServer | 移除不健康服务 | true | 是否从服务注册中心移除不健康的服务提供者 |
-
-
-#### 服务注册中心配置
-
-| 配置项 | 名称 | 缺省值 | 备注 |
-|:------|:------|:------|:------|
-| RegistryCenterType | 服务注册中心类型 | RegistryCenterType.Zookeepe | 当前仅实现了zookeeper作为服务注册中心 |
-| ConnectionTimeout | 连接超时 | 20 | 单位(秒)  |
-| SessionTimeout | session会话超时 | 30 | 单位(秒)  |
-| OperatingTimeout | 操作超时 | 60 | 单位(秒)  |
-| ConnectionStrings | 服务注册中心地址 |  | 支持多服务注册中心,通一个集群的地址使用逗号(,)分割，多个服务注册中心使用(;)进行分割。例如:`zookeeper1:2181,zookeeper1:2182,zookeeper1:2183;zookeeper2:2181,zookeeper2:2182,zookeeper2:2183` |
-| RoutePath | 服务条目的路由地址 | /services/serviceroutes | 当服务启动时会自动注册路由信息到服务注册中心 |
-| MqttPtah | Mqtt协议的服务条目的路由地址 | /services/serviceroutes | 暂未实现 |
-| HealthCheckInterval |  | | 暂未实现心跳检查 |
-
-
-#### 服务治理相关配置
-
-可以通过`Governance`配置节点统一的rpc通信过程进行配置,但是该配置的可以被服务条目的`GovernanceAttribute`特性进行改写。
-
-| 配置项 | 名称 | 缺省值 | 备注 |
-|:------|:------|:------|:------|
-| ShuntStrategy | 负载分流策略 | | rpc通信过程中的服务路由的地址选择器 |
-| ExecutionTimeout | 执行超时时间 | -1 | 单位(ms),0或-1表示不会超时,建议值:1000 |
-| MaxConcurrent | 允许的最大并发量 | 100 | 超过最大的并发量则会路由到其他的服务提供者实例,如果不存在则会发生熔断保护 |
-| FuseSleepDuration | 熔断休眠时间 | 60 | 单位(s)，熔断期间不会被路由到服务提供者实例 |
-| FuseProtection | 是否开启熔断保护 | true | 服务提供者无法到达时,开启熔断保护则不会立即将该服务提供者的实例标识为不健康,但是在熔断休眠时间内该实例不会被路由 |
-| FuseTimes |  | | 熔断几次之后标识服务提供者实例不健康 |
-| FailoverCount | 故障转移次数  | | 服务提供者不可达时,允许的重新路由的次数,缺省值为0,则服务提供者实例有几个,则会重试几次 |
-
-更对关于服务通信的治理请查看[服务治理](#)节点相关文档。
-
-### 缓存拦截
-
-在rpc通信过程中,您可以使用缓存拦截。通过使用缓存拦截,可以大大提升系统的性能。在一个应用接口方法配置了缓存拦截,那么在方法执行前,如果存在缓存,则会从缓存中取出数据。
-
-您可以在服务条目的方法上通过如下特性对缓存拦截进行配置。
-
-1. `GetCachingInterceptAttribute` 优先从缓存中读取缓存数据,如果缓存中不存在,才执行本地或是远程方法。
-
-2. `UpdateCachingInterceptAttribute` 执行本地或远程方法并更新缓存数据。
-
-3. `RemoveCachingInterceptAttribute` 执行本地或远程方法,并删除相应的缓存数据。
-
-更对缓存拦截的使用和配置请查看[缓存拦截文档](#)。
-
-### 分布式事务
-
-LMS支持通过TCC的方式实现分布式事务。在应用接口中通过`Transaction`特性标识这是一个分布式事务方法。并在其实现的方法`TccTransaction`来指定`ConfirmMethod`和`DeleteTwoCancel`。
-
-您并不需要将`ConfirmMethod`和`CancelMethod`在应用接口中暴露出来。但是必须保证`ConfirmMethod`和`CancelMethod`与`Try`方法有着一致的输入参数。
-
-所有的分支事务的`Try`方法(即事务参与者的状态都为:`Trying`)都执行成功，那么所有的参与事务的分支就会执行`ConfirmMethod`。如果存在分支执行Try方法存在失败,那么分支事务状态为`Trying`的将得到回滚(通过方法`DeleteCancel`进行)，未成功执行`Try`方法(状态为`PreTry`)的分支事务则不会执行`DeleteCancel`。
-
-例如:
-
-```csharp
-// 应用接口特性
-[Transaction]
-Task<string> Delete(string name);
-
-//=================================================================================//
-
-// 应用接口的实现方法,Try方法
-[TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
-public async Task<string> Delete(string name)
-{
-    await _anotherAppService.DeleteOne(name); // Rpc调用，分支事务
-    await _anotherAppService.DeleteTwo(name); // Rpc调用，分支事务
-    return name + " v1";
-}
-
-// Confirm方法
-public async Task<string> DeleteConfirm(string name)
-{
-    return name + " DeleteConfirm v1";
-
-// Cancel方法
-public async Task<string> DeleteCancel(string name)
-{
-    return name + "DeleteConcel v1";
-}
-
-```
