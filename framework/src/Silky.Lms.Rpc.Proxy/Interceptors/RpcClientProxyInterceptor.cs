@@ -28,8 +28,8 @@ namespace Silky.Lms.Rpc.Proxy.Interceptors
 
         public async override Task InterceptAsync(ILmsMethodInvocation invocation)
         {
-            var servcieId = _serviceIdGenerator.GenerateServiceId(invocation.Method);
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(servcieId);
+            var serviceId = _serviceIdGenerator.GenerateServiceId(invocation.Method);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceId);
             try
             {
                 invocation.ReturnValue =
