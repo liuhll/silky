@@ -126,7 +126,6 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
             ],
             '/config/': [
                 {
-                    title: 'lms框架配置',
                     collapsable: false,
                     children: [
                         ''
