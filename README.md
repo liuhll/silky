@@ -22,7 +22,7 @@ The lms framework is designed to help developers quickly build a microservice de
 
 Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
 
-Through the [web host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) of .net  build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
+Through the [Web Host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) of .net  build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
 
 In the communication process, LMS uses cache-based interception to realize TCC distributed transaction.
 
@@ -42,19 +42,19 @@ In the development and design process, the design and ideas of various excellent
 - Service registration and resolve
 - Responsible for module resolve and registration
 
-### Routing and parameters
+### Routing And Parameters
 - Routing resolve and maintenance of the distributed application cluster routing table through the registry
 - Generate restful style WebAPI through the gateway to provide http services to the outside
 - Realize the verification of input parameters through characteristics
 
-### RPC communication
+### RPC Communication
 - Use [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty) as the underlying communication component
 - Use [Zookeeper](https://zookeeper.apache.org) as the service registry
 - Use [Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/) to generate dynamic proxy
 - Support cache interception
 - Support JSON, MessagePack, ProtoBuf encoding and decoding methods
 
-### Service governance
+### Service Governance
 - Support load balancing routing methods such as polling, random routing, hash consistency, etc.
 - Support failure callback
 -Use Policy to realize service fusing and retry
@@ -69,11 +69,11 @@ In the development and design process, the design and ideas of various excellent
 - Register service through the module
 - Pass module pre-initialization method or release resources
 
-### Support distributed transactions
+### Support Distributed Transactions
 - Realize distributed transactions through TCC
 
-### Support websocket communication
+### Support Websocket Communication
 - Realize websocket communication through [websocket-sharp](https://github.com/sta/websocket-sharp)
 
-### Distributed lock
+### Distributed Lock
 - Use [RedLock.net](https://github.com/samcook/RedLock.net) to implement distributed locks
