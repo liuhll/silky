@@ -81,3 +81,5 @@ In the development and design process, the design and ideas of various excellent
 ## Contribute
 - One of the easiest ways to contribute is to participate in discussions and discuss issues. You can also contribute by submitting Pull Request code changes.
 - You can also join the QQ group (934306776) to participate in the discussion of the lms framework.
+
+    ![qq-group.jpg](./docs/.vuepress/assets/public/../../public/assets/imgs/qq-group.jpg)
