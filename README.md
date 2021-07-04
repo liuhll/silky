@@ -3,7 +3,7 @@
 </p>
 
 # lms microservice framework
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitee.com/dotnetchina/lms/raw/main/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
 [![NuGet](https://img.shields.io/nuget/v/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
 [![MyGet (nightly builds)](https://img.shields.io/myget/lms-framework/vpre/Silky.Lms.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/lms-framework)
@@ -20,9 +20,9 @@
 
 The lms framework is designed to help developers quickly build a microservice development framework through simple code and configuration under the .net platform.
 
-Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
+Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
 
-Through the [Web Host](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) of .net  build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
+Through the [Web Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) of .net  build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
 
 In the communication process, LMS uses cache-based interception to realize TCC distributed transaction.
 

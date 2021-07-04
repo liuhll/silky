@@ -3,7 +3,7 @@
 </p>
 
 # lms 微服务框架
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitee.com/dotnetchina/lms/raw/main/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
 [![NuGet](https://img.shields.io/nuget/v/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
 [![MyGet (nightly builds)](https://img.shields.io/myget/lms-framework/vpre/Silky.Lms.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/lms-framework)
