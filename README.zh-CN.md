@@ -78,3 +78,6 @@ lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 ### 分布式锁
 - 使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁
 
+## 贡献
+- 贡献的最简单的方法之一就是是参与讨论和讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
+- 您也可以加入QQ群(934306776)参与lms框架的学习讨论。 

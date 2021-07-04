@@ -77,3 +77,7 @@ In the development and design process, the design and ideas of various excellent
 
 ### Distributed Lock
 - Use [RedLock.net](https://github.com/samcook/RedLock.net) to implement distributed locks
+
+## Contribute
+- One of the easiest ways to contribute is to participate in discussions and discuss issues. You can also contribute by submitting Pull Request code changes.
+- You can also join the QQ group (934306776) to participate in the discussion of the lms framework.
