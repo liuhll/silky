@@ -1,6 +1,6 @@
 module.exports = {
     title: 'Lms微服务框架在线文档',
-    description: 'Lms是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。',
+    description: 'Lms框架是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。',
     port: 8081,
     plugins: [['social-share', {
         networks: ['qq', 'weibo', 'douban', 'wechat', 'email', 'twitter', 'facebook', 'reddit', 'telegram'],
@@ -8,7 +8,50 @@ module.exports = {
         fallbackImage: 'https://gitee.com/liuhll2/lms/raw/main/docs/.vuepress/public/assets/logo/logo.word.svg',
         autoQuote: true,
         isPlain: true,
-    }]],
+    }], ['@vuepress/active-header-links', {
+        sidebarLinkSelector: '.sidebar-link',
+        headerAnchorSelector: '.header-anchor'
+    }],
+        '@vuepress/back-to-top',
+        '@vuepress/last-updated',
+        '@vuepress/nprogress',
+    [
+        '@vuepress/pwa', {
+            serviceWorker: true,
+            updatePopup: true
+        }
+    ],
+    ['@vuepress/search', {
+        searchMaxSuggestions: 10
+    }],
+    [
+        'seo', {
+            siteTitle: (_, $site) => $site.title,
+            title: $page => $page.title,
+            description: $page => $page.frontmatter.description,
+            author: (_, $site) => $site.themeConfig.author,
+            tags: $page => $page.frontmatter.tags,
+            twitterCard: _ => 'summary_large_image',
+            type: $page => ['articles', 'posts', 'blog', 'lms'].some(folder => $page.regularPath.startsWith('/' + folder)) ? 'article' : 'website',
+            url: (_, $site, path) => ($site.themeConfig.domain || '') + path,
+            image: ($page, $site) => $page.frontmatter.image && (($site.themeConfig.domain && !$page.frontmatter.image.startsWith('http') || '') + $page.frontmatter.image),
+            publishedAt: $page => $page.frontmatter.date && new Date($page.frontmatter.date),
+            modifiedAt: $page => $page.lastUpdated && new Date($page.lastUpdated),
+        }
+    ],
+    ['autometa', {
+        site: {
+            name: 'lms microservice framework',
+        },
+        canonical_base: 'http://docs.lms-fk.com',
+    }],
+    ['sitemap', {
+        hostname: 'http://docs.lms-fk.com',
+        // 排除无实际内容的页面
+        exclude: ["/404.html"]
+    }
+    ]
+    ],
     head: [
         [
             "script",
@@ -22,6 +65,20 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
             `
+        ],
+        [
+            "meta",
+            {
+                name: "keywords",
+                content: 'lms微服务,lms文档,lms微服务框架,lms docs,微服务架构,.net微服务框架,dotnetcore微服务'
+            }
+        ],
+        [
+            "meta",
+            {
+                name: "viewport",
+                content: 'width=device-width, initial-scale=1'
+            }
         ],
         ["meta", { name: "baidu-site-verification", content: "code-q0r0KSL5ZB" }],
         [
@@ -55,6 +112,11 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
         ],
 
     ],
+    markdown: {
+        lineNumbers: true,
+        externalLinks:
+            { target: '_blank', rel: 'noopener noreferrer' }
+    },
     themeConfig: {
         logo: '/assets/logo/logo.png',
         docsRepo: 'liuhll/lms',

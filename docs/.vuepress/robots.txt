@@ -1,0 +1,2 @@
+Sitemap: http://docs.lms-fk.com/sitemap.xml
+User-agent: *
