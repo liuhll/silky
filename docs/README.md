@@ -45,3 +45,8 @@ public class Program
     }
 }
 ```
+
+## 加入我们
+- QQ群： 934306776
+
+  ![qq-group.jpg](/assets/imgs/qq-group.jpg)
