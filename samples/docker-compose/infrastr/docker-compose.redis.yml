@@ -9,6 +9,6 @@ services:
     networks:
       - lms_service_net
 networks:
-  lms_test_service_net:
+  lms_service_net:
     external:
       name: lms_service_net

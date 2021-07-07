@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  lms.rabbitmq:
+    image: rabbitmq:management
+    restart: always
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - lms_service_net
+
+networks:
+  lms_service_net:
+    external:
+      name: lms_service_net
