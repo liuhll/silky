@@ -5,6 +5,11 @@
         <Description>ef core</Description>
     </PropertyGroup>
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.7" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Silky.Lms.Core\Silky.Lms.Core.csproj" />
     </ItemGroup>
 </Project>

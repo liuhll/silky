@@ -25,12 +25,7 @@ namespace Silky.Lms.EntityFrameworkCore.Contexts
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// This method will call the DbContext <see cref="SaveChangesAsync(bool, CancellationToken)"/> method directly of EF Core, which doesn't apply concepts of abp.
-        /// </summary>
-        Task<int> SaveChangesOnDbContextAsync(bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default);
-
+        
         DbSet<T> Set<T>()
             where T : class;
 
