@@ -11,4 +11,6 @@ distributedCache:
     configuration: 127.0.0.1:6379,defaultDatabase=0
 lock:
   lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
+connectionStrings:
+  demoDbContext: "server=127.0.0.1;port=3306;database=test;uid=root;pwd=qwe!P4ss;"
   

@@ -10,9 +10,9 @@ using Silky.Lms.Core.Extensions;
 using Silky.Lms.EntityFrameworkCore.Contexts.Attributes;
 using Silky.Lms.EntityFrameworkCore.Interceptors;
 
-namespace Silky.Lms.EntityFrameworkCore.Internal
+namespace Microsoft.EntityFrameworkCore
 {
-    internal static class DbProvider
+    public static class DbProvider
     {
         /// <summary>
         /// SqlServer 提供器程序集
@@ -63,6 +63,52 @@ namespace Silky.Lms.EntityFrameworkCore.Internal
         /// Dm 提供器程序集
         /// </summary>
         public const string Dm = "Microsoft.EntityFrameworkCore.Dm";
+        /// <summary>
+        /// 不支持存储过程的数据库
+        /// </summary>
+        internal static readonly string[] NotSupportStoredProcedureDatabases;
+
+        /// <summary>
+        /// 不支持函数的数据库
+        /// </summary>
+        internal static readonly string[] NotSupportFunctionDatabases;
+
+        /// <summary>
+        /// 不支持表值函数的数据库
+        /// </summary>
+        internal static readonly string[] NotSupportTableFunctionDatabases;
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        static DbProvider()
+        {
+            NotSupportStoredProcedureDatabases = new[]
+            {
+                Sqlite,
+                InMemoryDatabase
+            };
+
+            NotSupportFunctionDatabases = new[]
+            {
+                Sqlite,
+                InMemoryDatabase,
+                Firebird,
+                Dm,
+            };
+
+            NotSupportTableFunctionDatabases = new[]
+            {
+                Sqlite,
+                InMemoryDatabase,
+                MySql,
+                MySqlOfficial,
+                Firebird,
+                Dm
+            };
+
+            DbContextAppDbContextAttributes = new ConcurrentDictionary<Type, AppDbContextAttribute>();
+        }
         
         /// <summary>
         /// 获取数据库上下文连接字符串

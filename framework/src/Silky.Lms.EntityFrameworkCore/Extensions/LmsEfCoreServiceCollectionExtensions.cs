@@ -1,23 +1,26 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Silky.Lms.Core.DependencyInjection;
+using Silky.Lms.EntityFrameworkCore;
 using Silky.Lms.EntityFrameworkCore.ContextPools;
 using Silky.Lms.EntityFrameworkCore.Contexts;
 using Silky.Lms.EntityFrameworkCore.Contexts.Dynamic;
 using Silky.Lms.EntityFrameworkCore.Contexts.Enums;
 using Silky.Lms.EntityFrameworkCore.Extensions.DatabaseProvider;
-using Silky.Lms.EntityFrameworkCore.Internal;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class LmsEfCoreServiceCollectionExtensions
     {
-        public static IServiceCollection AddLmsDbContext<TDbContext>(
+        public static IServiceCollection AddDatabaseAccessor(
             this IServiceCollection services,
-            Action<IServiceCollection> configure = null)
-            where TDbContext : LmsDbContext<TDbContext>
+            Action<IServiceCollection> configure = null, string migrationAssemblyName = default)
         {
+            // 设置迁移类库名称
+            if (!string.IsNullOrWhiteSpace(migrationAssemblyName)) Db.MigrationAssemblyName = migrationAssemblyName;
+            
             configure?.Invoke(services);
+            
             // 解析数据库上下文
             services.AddTransient(provider =>
             {

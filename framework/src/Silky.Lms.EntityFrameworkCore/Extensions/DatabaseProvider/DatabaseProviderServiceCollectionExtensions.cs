@@ -11,14 +11,14 @@ using Silky.Lms.EntityFrameworkCore;
 using Silky.Lms.EntityFrameworkCore.Contexts.Dynamic;
 using Silky.Lms.EntityFrameworkCore.Contexts.Enums;
 using Silky.Lms.EntityFrameworkCore.Extensions.DatabaseProvider;
-using Silky.Lms.EntityFrameworkCore.Internal;
 using Silky.Lms.EntityFrameworkCore.Locators;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DatabaseProviderServiceCollectionExtensions
     {
-              /// <summary>
+
+        /// <summary>
         /// 添加默认数据库上下文
         /// </summary>
         /// <typeparam name="TDbContext">数据库上下文</typeparam>
@@ -126,6 +126,9 @@ namespace Microsoft.Extensions.DependencyInjection
         static DatabaseProviderServiceCollectionExtensions()
         {
             DatabaseProviderUseMethodCollection = new ConcurrentDictionary<string, (MethodInfo, object)>();
+            MigrationsAssemblyAction = options => options.GetType()
+                .GetMethod("MigrationsAssembly")
+                .Invoke(options, new[] { Db.MigrationAssemblyName });
         }
         
         /// <summary>

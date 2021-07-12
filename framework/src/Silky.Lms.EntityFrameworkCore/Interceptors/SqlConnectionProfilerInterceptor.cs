@@ -28,7 +28,7 @@ namespace Silky.Lms.EntityFrameworkCore.Interceptors
         public SqlConnectionProfilerInterceptor()
         {
             var appSettings = EngineContext.Current.GetOptions<AppSettingsOptions>();
-            IsPrintDbConnectionInfo = appSettings.PrintDbConnectionInfo.Value;
+            IsPrintDbConnectionInfo = appSettings.PrintDbConnectionInfo ?? false ;
         }
 
         /// <summary>

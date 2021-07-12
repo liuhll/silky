@@ -12,4 +12,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Silky.Lms.Core\Silky.Lms.Core.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Internal" />
+    </ItemGroup>
 </Project>

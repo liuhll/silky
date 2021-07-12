@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\Silky.Lms.EntityFrameworkCore\Silky.Lms.EntityFrameworkCore.csproj" />
       <ProjectReference Include="..\..\src\Silky.Lms.NormHost\Silky.Lms.NormHost.csproj" />
       <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
@@ -13,7 +14,12 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
     </ItemGroup>
 
     <ItemGroup>
