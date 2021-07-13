@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Silky.Lms.EntityFrameworkCore.UnitOfWork
+namespace Silky.Lms.Rpc.Runtime.Server.UnitOfWork
 {
     /// <summary>
     /// 工作单元配置特性

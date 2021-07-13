@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Silky.Lms.Core;
+using Silky.Lms.Rpc.Runtime.Server.Filters;
 
 namespace Silky.Lms.Rpc.Runtime.Server
 {
@@ -10,12 +11,45 @@ namespace Silky.Lms.Rpc.Runtime.Server
         {
             var instance = EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
             parameters = serviceEntry.ConvertParameters(parameters);
-            if (serviceEntry.IsAsyncMethod)
+
+            var filters = EngineContext.Current.ResolveAll<IServiceEntryFilter>().OrderBy(p => p.Order).ToArray();
+            var rpcActionExcutingContext = new ServiceEntryExecutingContext()
             {
-                return await serviceEntry.MethodExecutor.ExecuteAsync(instance, parameters.ToArray());
+                ServiceEntry = serviceEntry,
+                Parameters = parameters,
+                ServiceKey = serviceKey
+            };
+
+            foreach (var filter in filters)
+            {
+                filter.OnActionExecuting(rpcActionExcutingContext);
             }
 
-            return serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
+            object result;
+            if (serviceEntry.IsAsyncMethod)
+            {
+                result = await serviceEntry.MethodExecutor.ExecuteAsync(instance, parameters.ToArray());
+            }
+            else
+            {
+                result = serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
+            }
+
+            var rpcActionExecutedContext = new ServiceEntryExecutedContext()
+            {
+                Result = result
+            };
+            foreach (var filter in filters)
+            {
+                filter.OnActionExecuted(rpcActionExecutedContext);
+            }
+
+            if (rpcActionExecutedContext.Exception != null)
+            {
+                throw rpcActionExecutedContext.Exception;
+            }
+
+            return rpcActionExecutedContext.Result;
         }
     }
 }

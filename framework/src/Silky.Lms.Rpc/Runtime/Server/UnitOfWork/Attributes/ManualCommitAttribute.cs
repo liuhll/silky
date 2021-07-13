@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Silky.Lms.EntityFrameworkCore.UnitOfWork
+namespace Silky.Lms.Rpc.Runtime.Server.UnitOfWork
 {
     /// <summary>
     /// 手动提交 SaveChanges

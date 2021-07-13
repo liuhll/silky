@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Silky.Lms.Core.DynamicProxy;
+﻿using System;
 using Silky.Lms.EntityFrameworkCore.ContextPools;
+using Silky.Lms.Rpc.Runtime.Server.Filters;
 
 namespace Silky.Lms.EntityFrameworkCore.UnitOfWork
 {
-    public class EfCoreUnitOfWorkFilter
+    public class EfCoreUnitOfWorkFilter : IServiceEntryFilter
     {
         private readonly IDbContextPool _dbContextPool;
 
@@ -13,8 +13,18 @@ namespace Silky.Lms.EntityFrameworkCore.UnitOfWork
             _dbContextPool = dbContextPool;
         }
 
-        public async Task InterceptAsync(ILmsMethodInvocation invocation)
+        public int Order { get; } = Int32.MaxValue;
+
+        public void OnActionExecuting(ServiceEntryExecutingContext context)
         {
+            // var uow = context.ServiceEntry.CustomAttributes.OfType<UnitOfWorkAttribute>().FirstOrDefault();
+            // _dbContextPool.BeginTransaction(uow?.EnsureTransaction ?? false);
+        }
+
+        public void OnActionExecuted(ServiceEntryExecutedContext context)
+        {
+            //_dbContextPool.CommitTransaction();
+            _dbContextPool.SavePoolNow();
         }
     }
 }

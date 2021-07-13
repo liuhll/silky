@@ -6,6 +6,7 @@ using NormHostDemo.Tests;
 using Silky.Lms.Caching;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.EntityFrameworkCore.Repositories;
+using Silky.Lms.EntityFrameworkCore.UnitOfWork;
 using Silky.Lms.Rpc.Runtime.Server;
 using Silky.Lms.Transaction.Tcc;
 
@@ -26,7 +27,7 @@ namespace NormHostDemo.AppService
             _distributedCache = distributedCache;
             _testRepository = testRepository;
         }
-
+        
         public async Task<TestOut> Create(TestInput input)
         {
             var test = new Test()
@@ -35,7 +36,6 @@ namespace NormHostDemo.AppService
                 Address = input.Address
             };
             var result = await _testRepository.InsertAsync(test);
-            await _testRepository.SaveNowAsync();
             return new TestOut()
             {
                 Id = result.Entity.Id,
