@@ -1,12 +1,15 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silky.Lms.Core.DependencyInjection;
 using Silky.Lms.EntityFrameworkCore;
 using Silky.Lms.EntityFrameworkCore.ContextPools;
-using Silky.Lms.EntityFrameworkCore.Contexts;
 using Silky.Lms.EntityFrameworkCore.Contexts.Dynamic;
 using Silky.Lms.EntityFrameworkCore.Contexts.Enums;
 using Silky.Lms.EntityFrameworkCore.Extensions.DatabaseProvider;
+using Silky.Lms.EntityFrameworkCore.Repositories;
+using IDbContextPool = Silky.Lms.EntityFrameworkCore.ContextPools.IDbContextPool;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -20,6 +23,38 @@ namespace Microsoft.Extensions.DependencyInjection
             if (!string.IsNullOrWhiteSpace(migrationAssemblyName)) Db.MigrationAssemblyName = migrationAssemblyName;
             
             configure?.Invoke(services);
+            
+            // 注册数据库上下文池
+            services.TryAddScoped<IDbContextPool, DbContextPool>();
+
+            // 注册 Sql 仓储
+            services.TryAddScoped(typeof(ISqlRepository<>), typeof(SqlRepository<>));
+
+            // 注册 Sql 非泛型仓储
+            services.TryAddScoped<ISqlRepository, SqlRepository>();
+
+            // 注册多数据库上下文仓储
+            services.TryAddScoped(typeof(IRepository<,>), typeof(EFCoreRepository<,>));
+
+            // 注册泛型仓储
+            services.TryAddScoped(typeof(IRepository<>), typeof(EFCoreRepository<>));
+
+            // 注册主从库仓储
+            services.TryAddScoped(typeof(IMSRepository), typeof(MSRepository));
+            services.TryAddScoped(typeof(IMSRepository<>), typeof(MSRepository<>));
+            services.TryAddScoped(typeof(IMSRepository<,>), typeof(MSRepository<,>));
+            services.TryAddScoped(typeof(IMSRepository<,,>), typeof(MSRepository<,,>));
+            services.TryAddScoped(typeof(IMSRepository<,,,>), typeof(MSRepository<,,,>));
+            services.TryAddScoped(typeof(IMSRepository<,,,,>), typeof(MSRepository<,,,,>));
+            services.TryAddScoped(typeof(IMSRepository<,,,,,>), typeof(MSRepository<,,,,,>));
+            services.TryAddScoped(typeof(IMSRepository<,,,,,,>), typeof(MSRepository<,,,,,,>));
+            services.TryAddScoped(typeof(IMSRepository<,,,,,,,>), typeof(MSRepository<,,,,,,,>));
+
+            // 注册非泛型仓储
+            services.TryAddScoped<IRepository, EFCoreRepository>();
+
+            // 注册多数据库仓储
+            services.TryAddScoped(typeof(IDbRepository<>), typeof(DbRepository<>));
             
             // 解析数据库上下文
             services.AddTransient(provider =>
@@ -69,6 +104,20 @@ namespace Microsoft.Extensions.DependencyInjection
             dbContextPool?.AddToPool(dbContext);
 
             return dbContext;
+        }
+        
+        /// <summary>
+        /// 启动自定义租户类型
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="onTableTenantId">基于表的多租户Id名称</param>
+        /// <returns></returns>
+        public static IServiceCollection CustomizeMultiTenants(this IServiceCollection services, string onTableTenantId = default)
+        {
+            Db.CustomizeMultiTenants = true;
+            if (!string.IsNullOrWhiteSpace(onTableTenantId)) Db.OnTableTenantId = onTableTenantId;
+
+            return services;
         }
     }
 }

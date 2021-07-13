@@ -5,4 +5,8 @@
         <Description>ef core</Description>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Lms.Core\Silky.Lms.Core.csproj" />
+    </ItemGroup>
+
 </Project>

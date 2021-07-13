@@ -11,8 +11,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Lms.Core\Silky.Lms.Core.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Internal" />
+        <ProjectReference Include="..\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
     </ItemGroup>
 </Project>

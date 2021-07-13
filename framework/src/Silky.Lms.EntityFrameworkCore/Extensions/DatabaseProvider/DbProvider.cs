@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,6 +10,7 @@ using Silky.Lms.Core;
 using Silky.Lms.Core.Extensions;
 using Silky.Lms.EntityFrameworkCore.Contexts.Attributes;
 using Silky.Lms.EntityFrameworkCore.Interceptors;
+using Silky.Lms.EntityFrameworkCore.Values;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -182,6 +184,30 @@ namespace Microsoft.EntityFrameworkCore
                new SqlCommandProfilerInterceptor(),
                new DbContextSaveChangesInterceptor()
             };
+        }
+
+        /// <summary>
+        /// 不支持操作类型
+        /// </summary>
+        private const string NotSupportException = "The database provider does not support {0} operations.";
+
+        
+        /// <summary>
+        /// 检查是否支持函数
+        /// </summary>
+        /// <param name="providerName">数据库提供器名</param>
+        /// <param name="dbFunctionType">数据库函数类型</param>
+        internal static void CheckFunctionSupported(string providerName, DbFunctionType dbFunctionType)
+        {
+            if (NotSupportFunctionDatabases.Contains(providerName))
+            {
+                throw new NotSupportedException(string.Format(NotSupportException, "function"));
+            }
+
+            if (dbFunctionType == DbFunctionType.Table && NotSupportTableFunctionDatabases.Contains(providerName))
+            {
+                throw new NotSupportedException(string.Format(NotSupportException, "table function"));
+            }
         }
     }
 }

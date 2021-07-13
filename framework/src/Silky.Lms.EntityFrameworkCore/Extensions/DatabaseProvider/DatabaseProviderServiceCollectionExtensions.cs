@@ -11,7 +11,8 @@ using Silky.Lms.EntityFrameworkCore;
 using Silky.Lms.EntityFrameworkCore.Contexts.Dynamic;
 using Silky.Lms.EntityFrameworkCore.Contexts.Enums;
 using Silky.Lms.EntityFrameworkCore.Extensions.DatabaseProvider;
-using Silky.Lms.EntityFrameworkCore.Locators;
+using IDbContextLocator = Silky.Lms.EntityFrameworkCore.Locators.IDbContextLocator;
+using MasterDbContextLocator = Silky.Lms.EntityFrameworkCore.Locators.MasterDbContextLocator;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

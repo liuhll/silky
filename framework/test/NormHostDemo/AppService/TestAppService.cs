@@ -2,8 +2,10 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using NormHostDemo.Tests;
 using Silky.Lms.Caching;
 using Silky.Lms.Core.Exceptions;
+using Silky.Lms.EntityFrameworkCore.Repositories;
 using Silky.Lms.Rpc.Runtime.Server;
 using Silky.Lms.Transaction.Tcc;
 
@@ -15,19 +17,30 @@ namespace NormHostDemo.AppService
 
         private readonly IAnotherAppService _anotherAppService;
         private readonly IDistributedCache<TestOut> _distributedCache;
+        private readonly IRepository<Test> _testRepository;
         public TestAppService(IAnotherAppService anotherAppService, 
-            IDistributedCache<TestOut> distributedCache)
+            IDistributedCache<TestOut> distributedCache,
+            IRepository<Test> testRepository)
         {
             _anotherAppService = anotherAppService;
             _distributedCache = distributedCache;
+            _testRepository = testRepository;
         }
 
         public async Task<TestOut> Create(TestInput input)
         {
-            return new()
+            var test = new Test()
             {
-                Address = input.Address,
-                Name = input.Name + "v1",
+                Name = input.Name,
+                Address = input.Address
+            };
+            var result = await _testRepository.InsertAsync(test);
+            await _testRepository.SaveNowAsync();
+            return new TestOut()
+            {
+                Id = result.Entity.Id,
+                Name = result.Entity.Name,
+                Address = result.Entity.Address
             };
         }
 
