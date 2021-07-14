@@ -8,6 +8,7 @@ using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
 using Silky.Lms.Rpc.Transport.CachingIntercept;
 using Silky.Lms.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Lms.Rpc.Runtime.Server.UnitOfWork;
 
 namespace ITestApplication.Test
 {
@@ -20,6 +21,7 @@ namespace ITestApplication.Test
         /// <param name="input"></param>
         /// <returns></returns>
         [GetCachingIntercept("name:{0}")]
+        [UnitOfWork]
         Task<TestOut> Create(TestInput input);
 
         Task<string> Update(TestInput input);

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Silky.Lms.Core.DependencyInjection;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Core.Modularity;
@@ -19,10 +21,17 @@ namespace Silky.Lms.Core
     {
         private ITypeFinder _typeFinder;
 
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public IConfiguration Configuration { get; protected set; }
+        
+        public IHostEnvironment HostEnvironment { get; protected set; }
+
+        public void ConfigureServices(IServiceCollection services, IConfiguration configuration,
+            IHostEnvironment hostEnvironment)
         {
             _typeFinder = new LmsAppTypeFinder();
             ServiceProvider = services.BuildServiceProvider();
+            Configuration = configuration;
+            HostEnvironment = hostEnvironment;
             var startupConfigurations = _typeFinder.FindClassesOfType<IConfigureService>();
 
             //create and sort instances of startup configurations
@@ -34,6 +43,40 @@ namespace Silky.Lms.Core
             foreach (var instance in instances)
                 instance.ConfigureServices(services, configuration);
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+        }
+
+        /// <summary>
+        /// 获取选项
+        /// </summary>
+        /// <typeparam name="TOptions">强类型选项类</typeparam>
+        /// <returns>TOptions</returns>
+        public TOptions GetOptions<TOptions>()
+            where TOptions : class, new()
+        {
+            return Resolve<IOptions<TOptions>>()?.Value;
+        }
+
+        /// <summary>
+        /// 获取选项
+        /// </summary>
+        /// <typeparam name="TOptions">强类型选项类</typeparam>
+        /// <returns>TOptions</returns>
+        public TOptions GetOptionsMonitor<TOptions>()
+            where TOptions : class, new()
+        {
+            return Resolve<IOptionsMonitor<TOptions>>()?.CurrentValue;
+        }
+
+        /// <summary>
+        /// 获取选项
+        /// </summary>
+        /// <typeparam name="TOptions">强类型选项类</typeparam>
+        /// <returns>TOptions</returns>
+        public TOptions GetOptionsSnapshot<TOptions>()
+            where TOptions : class, new()
+        {
+            // 这里不能从根服务解析，因为是 Scoped 作用域
+            return Resolve<IOptionsSnapshot<TOptions>>()?.Value;
         }
 
         public ITypeFinder TypeFinder => _typeFinder;
