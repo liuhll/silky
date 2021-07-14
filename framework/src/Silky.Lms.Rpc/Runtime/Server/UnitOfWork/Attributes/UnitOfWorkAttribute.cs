@@ -30,6 +30,6 @@ namespace Silky.Lms.Rpc.Runtime.Server.UnitOfWork
         /// 确保事务可用
         /// <para>此方法为了解决静态类方式操作数据库的问题</para>
         /// </summary>
-        public bool EnsureTransaction { get; set; } = false;
+        public bool EnsureTransaction { get; set; } = true;
     }
 }

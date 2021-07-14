@@ -16,7 +16,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
 {
     public class DbContextPool : IDbContextPool
     {
-         /// <summary>
+        /// <summary>
         ///  MiniProfiler 分类名
         /// </summary>
         private const string MiniProfilerCategory = "Transaction";
@@ -172,7 +172,8 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
         /// <param name="acceptAllChangesOnSuccess"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<int> SavePoolNowAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public async Task<int> SavePoolNowAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
         {
             // 查找所有已改变的数据库上下文并保存更改
             var tasks = dbContexts
@@ -191,8 +192,9 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
         /// <returns></returns>
         public void BeginTransaction(bool ensureTransaction = false)
         {
-        // 判断 dbContextPool 中是否包含DbContext，如果是，则使用第一个数据库上下文开启事务，并应用于其他数据库上下文
-        EnsureTransaction: if (dbContexts.Any())
+            // 判断 dbContextPool 中是否包含DbContext，如果是，则使用第一个数据库上下文开启事务，并应用于其他数据库上下文
+            EnsureTransaction:
+            if (dbContexts.Any())
             {
                 // 如果共享事务不为空，则直接共享
                 if (DbContextTransaction != null) goto ShareTransaction;
@@ -209,11 +211,12 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                     DbContextTransaction = dbContexts.First().Value.Database.BeginTransaction();
                 }
 
-            // 共享事务
-            ShareTransaction: ShareTransaction(DbContextTransaction.GetDbTransaction());
+                // 共享事务
+                ShareTransaction:
+                ShareTransaction(DbContextTransaction.GetDbTransaction());
 
                 // 打印事务实际开启信息
-               // App.PrintToMiniProfiler(MiniProfilerCategory, "Began");
+                // App.PrintToMiniProfiler(MiniProfilerCategory, "Began");
             }
             else
             {
@@ -236,7 +239,8 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
         /// <param name="isManualSaveChanges"></param>
         /// <param name="exception"></param>
         /// <param name="withCloseAll">是否自动关闭所有连接</param>
-        public void CommitTransaction(bool isManualSaveChanges = true, Exception exception = default, bool withCloseAll = false)
+        public void CommitTransaction(bool isManualSaveChanges = true, Exception exception = default,
+            bool withCloseAll = false)
         {
             // 判断是否异常
             if (exception == null)
@@ -253,7 +257,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                     DbContextTransaction?.Commit();
 
                     // 打印事务提交消息
-                   // App.PrintToMiniProfiler(MiniProfilerCategory, "Completed", $"Transaction Completed! Has {hasChangesCount} DbContext Changes.");
+                    // App.PrintToMiniProfiler(MiniProfilerCategory, "Completed", $"Transaction Completed! Has {hasChangesCount} DbContext Changes.");
                 }
                 catch
                 {
@@ -267,26 +271,27 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 }
                 finally
                 {
-                    if (DbContextTransaction?.GetDbTransaction()?.Connection != null)
+                    if (DbContextTransaction?.GetDbTransaction() != null)
                     {
-                        DbContextTransaction = null;
                         DbContextTransaction?.Dispose();
+                        DbContextTransaction = null;
                     }
                 }
             }
             else
             {
                 // 回滚事务
-                if (DbContextTransaction?.GetDbTransaction()?.Connection != null) DbContextTransaction?.Rollback();
+                if (DbContextTransaction?.GetDbTransaction() != null) DbContextTransaction?.Rollback();
                 DbContextTransaction?.Dispose();
                 DbContextTransaction = null;
 
                 // 打印事务回滚消息
-              //  App.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
+                //  App.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
             }
 
-        // 关闭所有连接
-        CloseAll: if (withCloseAll) CloseAll();
+            // 关闭所有连接
+            CloseAll:
+            if (withCloseAll) CloseAll();
         }
 
         /// <summary>
@@ -303,7 +308,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 {
                     conn.Close();
                     // 打印数据库关闭信息
-                   // App.PrintToMiniProfiler("sql", $"Close", $"Connection Close()");
+                    // App.PrintToMiniProfiler("sql", $"Close", $"Connection Close()");
                 }
             }
         }
@@ -317,8 +322,8 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
         {
             // 跳过第一个数据库上下文并设置共享事务
             _ = dbContexts
-                   .Where(u => u.Value != null && u.Value.Database.CurrentTransaction == null)
-                   .Select(u => u.Value.Database.UseTransaction(transaction));
+                .Where(u => u.Value != null && u.Value.Database.CurrentTransaction == null)
+                .Select(u => u.Value.Database.UseTransaction(transaction));
         }
     }
 }
