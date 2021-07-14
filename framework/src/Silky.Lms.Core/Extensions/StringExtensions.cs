@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using JetBrains.Annotations;
 using Silky.Lms.Core.Extensions.Collections.Generic;
 
@@ -14,6 +15,11 @@ namespace Silky.Lms.Core.Extensions
             if (str.Equals(String.Empty) || str == null) return false;
             var re = new Regex(op, RegexOptions.IgnoreCase);
             return re.IsMatch(str);
+        }
+        
+        public static string ToTitleCase(this string str)
+        {
+            return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(str);
         }
         
         public static string EnsureEndsWith(this string str, char c, StringComparison comparisonType = StringComparison.Ordinal)

@@ -11,9 +11,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Silky.Lms.Core.Configuration;
 using Silky.Lms.Core.DependencyInjection;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Core.Modularity;
+using StackExchange.Profiling;
 
 namespace Silky.Lms.Core
 {
@@ -80,6 +82,27 @@ namespace Silky.Lms.Core
         }
 
         public ITypeFinder TypeFinder => _typeFinder;
+        
+        /// <summary>
+        /// 打印验证信息到 MiniProfiler
+        /// </summary>
+        /// <param name="category">分类</param>
+        /// <param name="state">状态</param>
+        /// <param name="message">消息</param>
+        /// <param name="isError">是否为警告消息</param>
+        public void PrintToMiniProfiler(string category, string state, string message = null, bool isError = false)
+        {
+            var appSettings = GetOptions<AppSettingsOptions>();
+            // 判断是否注入 MiniProfiler 组件
+            if (appSettings.InjectMiniProfiler != true) return;
+
+            // 打印消息
+            var customTiming = MiniProfiler.Current?.CustomTiming(category, string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);
+            if (customTiming == null) return;
+
+            // 判断是否是警告消息
+            if (isError) customTiming.Errored = true;
+        }
 
         public void ConfigureRequestPipeline(IApplicationBuilder application)
         {

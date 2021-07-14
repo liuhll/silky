@@ -17,8 +17,7 @@ namespace Silky.Lms.HttpServer.Middlewares
     {
         public static void UseLmsExceptionHandler(this IApplicationBuilder application)
         {
-            var webHostEnvironment = EngineContext.Current.Resolve<IWebHostEnvironment>();
-            var gatewayOptions = EngineContext.Current.Resolve<IOptions<GatewayOptions>>().Value;
+            var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
 
             var useDetailedExceptionPage = gatewayOptions.DisplayFullErrorStack;

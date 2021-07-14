@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
         <Description>Generate swagger API document for LMS framework</Description>
@@ -21,6 +21,7 @@
     <ItemGroup>
         <EmbeddedResource Include="SwaggerUI/index.html" />
         <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md" />
+        <EmbeddedResource Include="SwaggerUI\index-mini-profiler.html" />
     </ItemGroup>
 
     <Target Name="NpmInstall" BeforeTargets="Build">

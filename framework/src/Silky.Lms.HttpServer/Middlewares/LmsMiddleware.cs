@@ -35,6 +35,7 @@ namespace Silky.Lms.HttpServer.Middlewares
                 {
                     throw new FuseProtectionException($"Id为{serviceEntry.Id}的服务条目不允许外网访问");
                 }
+                EngineContext.Current.PrintToMiniProfiler("ServiceEntry","Find",$"通过{path}-{method}查找到服务条目");
                 await EngineContext.Current
                     .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceDescriptor.ServiceProtocol.ToString())
                     .Handle(context, serviceEntry);

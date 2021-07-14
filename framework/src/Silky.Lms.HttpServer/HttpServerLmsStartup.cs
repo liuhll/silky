@@ -10,14 +10,26 @@ namespace Silky.Lms.HttpServer
 {
     public class HttpServerLmsStartup : ILmsStartup
     {
+        private const string MiniProfilerRouteBasePath = "/index-mini-profiler";
+
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions<GatewayOptions>()
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
+            var injectMiniProfiler = configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
+            if (injectMiniProfiler)
+            {
+                services.AddMiniProfiler(options => { options.RouteBasePath = MiniProfilerRouteBasePath; });
+            }
         }
 
         public void Configure(IApplicationBuilder application)
         {
+            var injectMiniProfiler = EngineContext.Current.Configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
+            if (injectMiniProfiler)
+            {
+                application.UseMiniProfiler();
+            }
             application.UseLmsExceptionHandler();
             application.UseLms();
         }

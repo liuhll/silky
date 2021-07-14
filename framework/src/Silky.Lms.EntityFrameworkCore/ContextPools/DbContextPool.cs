@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
 using Silky.Lms.Core;
 using Silky.Lms.Core.Configuration;
 using Silky.Lms.EntityFrameworkCore.Extensions.DatabaseProvider;
@@ -40,19 +41,13 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
         /// 登记错误的数据库上下文
         /// </summary>
         private readonly ConcurrentDictionary<Guid, DbContext> failedDbContexts;
-
-        /// <summary>
-        /// 服务提供器
-        /// </summary>
-        private readonly IServiceProvider _serviceProvider;
-
+        
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="serviceProvider"></param>
         public DbContextPool(IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
             var appSettings = EngineContext.Current.GetOptions<AppSettingsOptions>();
             InjectMiniProfiler = appSettings.InjectMiniProfiler ?? false;
             IsPrintDbConnectionInfo = appSettings.PrintDbConnectionInfo ?? false;
@@ -107,7 +102,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                             currentTransaction.Rollback();
 
                             // 打印事务回滚消息
-                            // App.PrintToMiniProfiler("transaction", "Rollback", $"[Connection Id: {context.ContextId}] / [Database: {connection.Database}]{(IsPrintDbConnectionInfo ? $" / [Connection String: {connection.ConnectionString}]" : string.Empty)}", isError: true);
+                             EngineContext.Current.PrintToMiniProfiler("transaction", "Rollback", $"[Connection Id: {context.ContextId}] / [Database: {connection.Database}]{(IsPrintDbConnectionInfo ? $" / [Connection String: {connection.ConnectionString}]" : string.Empty)}", isError: true);
                         }
                     }
                 };
@@ -216,7 +211,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 ShareTransaction(DbContextTransaction.GetDbTransaction());
 
                 // 打印事务实际开启信息
-                // App.PrintToMiniProfiler(MiniProfilerCategory, "Began");
+                 EngineContext.Current.PrintToMiniProfiler(MiniProfilerCategory, "Began");
             }
             else
             {
@@ -257,7 +252,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                     DbContextTransaction?.Commit();
 
                     // 打印事务提交消息
-                    // App.PrintToMiniProfiler(MiniProfilerCategory, "Completed", $"Transaction Completed! Has {hasChangesCount} DbContext Changes.");
+                     EngineContext.Current.PrintToMiniProfiler(MiniProfilerCategory, "Completed", $"Transaction Completed! Has {hasChangesCount} DbContext Changes.");
                 }
                 catch
                 {
@@ -265,7 +260,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                     if (DbContextTransaction?.GetDbTransaction()?.Connection != null) DbContextTransaction?.Rollback();
 
                     // 打印事务回滚消息
-                    // App.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
+                    EngineContext.Current.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
 
                     throw;
                 }
@@ -286,7 +281,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 DbContextTransaction = null;
 
                 // 打印事务回滚消息
-                //  App.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
+                EngineContext.Current.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
             }
 
             // 关闭所有连接
@@ -308,7 +303,7 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 {
                     conn.Close();
                     // 打印数据库关闭信息
-                    // App.PrintToMiniProfiler("sql", $"Close", $"Connection Close()");
+                    EngineContext.Current.PrintToMiniProfiler("sql", $"Close", $"Connection Close()");
                 }
             }
         }
