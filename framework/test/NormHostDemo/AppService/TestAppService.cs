@@ -37,7 +37,7 @@ namespace NormHostDemo.AppService
             };
             var result = await _testRepository.InsertNowAsync(test);
            // throw new BusinessException("error");
-            return new TestOut()
+           return new TestOut()
             {
                 Id = result.Entity.Id,
                 Name = result.Entity.Name,
