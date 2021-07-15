@@ -13,6 +13,7 @@ using Silky.Lms.Core.Threading;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Silky.Lms.Caching.Configuration;
+using Silky.Lms.Core;
 
 namespace Silky.Lms.Caching
 {
@@ -50,10 +51,8 @@ namespace Silky.Lms.Caching
                 {
                     return value;
                 }
-
                 value = await factory();
-
-
+                
                 await SetAsync(key, value, optionsFactory?.Invoke(), hideErrors, token);
             }
 

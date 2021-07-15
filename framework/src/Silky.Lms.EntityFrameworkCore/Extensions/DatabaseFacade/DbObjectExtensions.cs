@@ -30,12 +30,7 @@ namespace Silky.Lms.EntityFrameworkCore.Extensions.DatabaseFacade
         /// 是否是开发环境
         /// </summary>
         private static readonly bool IsDevelopment;
-
-        /// <summary>
-        /// 是否打印数据库连接信息到 MiniProfiler 中
-        /// </summary>
-        private static readonly bool IsPrintDbConnectionInfo;
-
+        
         /// <summary>
         /// 是否记录 EFCore 执行 sql 命令打印日志
         /// </summary>
@@ -47,10 +42,8 @@ namespace Silky.Lms.EntityFrameworkCore.Extensions.DatabaseFacade
         static DbObjectExtensions()
         {
             IsDevelopment = EngineContext.Current.HostEnvironment.IsDevelopment();
-
             var appsettings = EngineContext.Current.GetOptions<AppSettingsOptions>();
-            IsPrintDbConnectionInfo = appsettings.PrintDbConnectionInfo.Value;
-            IsLogEntityFrameworkCoreSqlExecuteCommand = appsettings.LogEntityFrameworkCoreSqlExecuteCommand.Value;
+            IsLogEntityFrameworkCoreSqlExecuteCommand = appsettings.LogEntityFrameworkCoreSqlExecuteCommand ?? false;
         }
 
         /// <summary>
@@ -194,9 +187,6 @@ namespace Silky.Lms.EntityFrameworkCore.Extensions.DatabaseFacade
             if (dbConnection.State == ConnectionState.Closed)
             {
                 dbConnection.Open();
-
-                // 打印数据库连接信息到 MiniProfiler
-                PrintConnectionToMiniProfiler(databaseFacade, dbConnection, false);
             }
 
             // 记录 Sql 执行命令日志
@@ -217,9 +207,6 @@ namespace Silky.Lms.EntityFrameworkCore.Extensions.DatabaseFacade
             if (dbConnection.State == ConnectionState.Closed)
             {
                 await dbConnection.OpenAsync(cancellationToken);
-
-                // 打印数据库连接信息到 MiniProfiler
-                PrintConnectionToMiniProfiler(databaseFacade, dbConnection, true);
             }
 
             // 记录 Sql 执行命令日志
@@ -257,25 +244,7 @@ namespace Silky.Lms.EntityFrameworkCore.Extensions.DatabaseFacade
             SetDbParameters(providerName, ref dbCommand, dbParameters);
         }
 
-        /// <summary>
-        /// 打印数据库连接信息到 MiniProfiler
-        /// </summary>
-        /// <param name="databaseFacade">ADO.NET 数据库对象</param>
-        /// <param name="dbConnection">数据库连接对象</param>
-        /// <param name="isAsync"></param>
-        private static void PrintConnectionToMiniProfiler(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, DbConnection dbConnection, bool isAsync)
-        {
-            // 打印数据库连接信息
-           // App.PrintToMiniProfiler("sql", $"Open{(isAsync ? "Async" : string.Empty)}", $"Connection Open{(isAsync ? "Async" : string.Empty)}()");
-
-            if (IsDevelopment && IsPrintDbConnectionInfo)
-            {
-                var connectionId = databaseFacade.GetService<IRelationalConnection>()?.ConnectionId;
-                // 打印连接信息消息
-               // App.PrintToMiniProfiler(MiniProfilerCategory, "Information", $"[Connection Id: {connectionId}] / [Database: {dbConnection.Database}] / [Connection String: {dbConnection.ConnectionString}]");
-            }
-        }
-
+        
         /// <summary>
         /// 记录 Sql 执行命令日志
         /// </summary>

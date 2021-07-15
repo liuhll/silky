@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silky.Lms.Core.Exceptions;
 using Polly;
+using Silky.Lms.Core;
 using Silky.Lms.Rpc.Address.Selector;
 using Silky.Lms.Rpc.Messages;
 using Silky.Lms.Rpc.Runtime.Server;
@@ -29,6 +30,8 @@ namespace Silky.Lms.Rpc.Runtime.Client
             if (serviceEntry.GovernanceOptions.ShuntStrategy == AddressSelectorMode.HashAlgorithm)
             {
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
+                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                    $"hashKey为:{hashKey}");
             }
 
             IAsyncPolicy<object> executePolicy = Policy<object>

@@ -19,7 +19,20 @@ namespace Silky.Lms.HttpServer
             var injectMiniProfiler = configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
             if (injectMiniProfiler)
             {
-                services.AddMiniProfiler(options => { options.RouteBasePath = MiniProfilerRouteBasePath; });
+                services.AddMiniProfiler(options =>
+                {
+                    options.RouteBasePath = MiniProfilerRouteBasePath;
+                    // Optionally use something other than the "light" color scheme.
+                    options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+
+                    // Enabled sending the Server-Timing header on responses
+                    options.EnableServerTimingHeader = true;
+                    options.IgnoredPaths.Add("/lib");
+                    options.IgnoredPaths.Add("/css");
+                    options.IgnoredPaths.Add("/js");
+                    options.IgnoredPaths.Add("/swagger");
+                    
+                });
             }
         }
 
@@ -32,6 +45,7 @@ namespace Silky.Lms.HttpServer
             }
             application.UseLmsExceptionHandler();
             application.UseLms();
+            
         }
 
         public int Order { get; } = Int32.MinValue;

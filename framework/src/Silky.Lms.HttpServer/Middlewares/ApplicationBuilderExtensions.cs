@@ -5,10 +5,8 @@ using Silky.Lms.Core.Extensions;
 using Silky.Lms.Core.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using Silky.Lms.HttpServer.Configuration;
 
 namespace Silky.Lms.HttpServer.Middlewares
@@ -29,13 +27,20 @@ namespace Silky.Lms.HttpServer.Middlewares
             {
                 application.UseExceptionHandler(handler =>
                 {
+                    var injectMiniProfiler =
+                        EngineContext.Current.Configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
+                    if (injectMiniProfiler)
+                    {
+                        handler.UseMiniProfiler();
+                    }
+
                     handler.Run(context =>
                     {
                         var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
                         if (exception == null)
                             return Task.CompletedTask;
                         context.Response.ContentType = "application/json;charset=utf-8";
-
+                        EngineContext.Current.PrintToMiniProfiler("Error", "Exception", exception.Message, true);
                         if (gatewayOptions.WrapResult)
                         {
                             var responseResultDto = new ResponseResultDto()
@@ -45,8 +50,9 @@ namespace Silky.Lms.HttpServer.Middlewares
                             };
                             if (exception is IHasValidationErrors)
                             {
-                                responseResultDto.ValidErrors = ((IHasValidationErrors)exception).GetValidateErrors();
+                                responseResultDto.ValidErrors = ((IHasValidationErrors) exception).GetValidateErrors();
                             }
+
                             var responseResultData = serializer.Serialize(responseResultDto);
                             context.Response.ContentLength = responseResultData.GetBytes().Length;
                             context.Response.StatusCode = ResponseStatusCode.Success;
@@ -54,6 +60,7 @@ namespace Silky.Lms.HttpServer.Middlewares
                         }
                         else
                         {
+                            context.Response.ContentType = "text/plain";
                             context.Response.StatusCode = exception.IsBusinessException()
                                 ? ResponseStatusCode.BadCode
                                 : exception.IsUnauthorized()
@@ -67,10 +74,10 @@ namespace Silky.Lms.HttpServer.Middlewares
                                 context.Response.ContentLength = responseResultData.GetBytes().Length;
                                 return context.Response.WriteAsync(responseResultData);
                             }
+
                             context.Response.ContentLength = exception.Message.GetBytes().Length;
                             return context.Response.WriteAsync(exception.Message);
                         }
-
                     });
                 });
             }
