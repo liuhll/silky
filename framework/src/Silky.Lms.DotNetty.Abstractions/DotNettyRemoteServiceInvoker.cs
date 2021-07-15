@@ -113,6 +113,16 @@ namespace Silky.Lms.DotNetty
                 isInvakeSuccess = false;
                 throw;
             }
+            catch (Exception ex)
+            {
+                if (!ex.IsBusinessException() && !ex.IsUnauthorized())
+                {
+                    EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.RemoteInvoker.Name,
+                        MiniProfileConstant.RemoteInvoker.State.Fail,
+                        $"{ex.Message}", true);
+                }
+                throw;
+            }
             finally
             {
                 sp.Stop();

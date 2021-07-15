@@ -9,18 +9,20 @@ namespace Silky.Lms.Core
             public static class State
             {
                 public const string FindServiceEntry = "FindServiceEntry";
-                public const string FindServiceKey= "FindServiceKey";
+                public const string FindServiceKey = "FindServiceKey";
             }
         }
 
         public static class RemoteInvoker
         {
             public const string Name = "RemoteInvoker";
-            
+
             public static class State
             {
-            public const string Prepare = "Prepare";
-            public static string End = "End";
+                public const string Prepare = "Prepare";
+                public const string Success = "Success";
+                public const string Fail = "Fail";
+                public static string End = "End";
             }
         }
 
@@ -31,21 +33,21 @@ namespace Silky.Lms.Core
             public static class State
             {
                 public const string HashKey = "HashKey";
-                
+
                 public const string Start = "Start";
-                
+
                 public const string FindServiceRoute = "FindServiceRoute";
 
                 public const string SelectedAddress = "SelectedAddress";
-                
+
                 public const string Success = "Success";
-                
+
                 public const string Fail = "Fail";
-                
+
                 public const string MarkAddressFail = "MarkAddressFail";
-                
             }
         }
+
         public static class Caching
         {
             public const string Name = "Caching";
@@ -60,32 +62,30 @@ namespace Silky.Lms.Core
                 public static string GetCachingSuccess = "GetCachingSuccess";
                 public static string GetCachingFail = "GetCachingFail";
             }
-
         }
-        
+
         public static class ValidationInterceptor
         {
             public const string Name = "ValidationInterceptor";
-            
+
             public static class State
             {
                 public static string Begin = "Begin";
                 public const string Success = "Success";
-                
+
                 public const string Fail = "Fail";
             }
-
         }
-        
+
         public static class FallBackExecutor
         {
             public const string Name = "FallBackExecutor";
-            
+
             public static class State
             {
                 public static string Begin = "Begin";
                 public const string Success = "Success";
-                
+
                 public const string Fail = "Fail";
             }
         }
