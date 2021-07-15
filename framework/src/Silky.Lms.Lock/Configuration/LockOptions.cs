@@ -12,7 +12,7 @@ namespace Silky.Lms.Lock.Configuration
 
         public int Wait { get; set; } = 30;
 
-        public int Retry { get; set; } = 3;
+        public int Retry { get; set; } = 1;
 
         public TimeSpan DefaultExpiryTimeSpan => TimeSpan.FromSeconds(DefaultExpiry);
 

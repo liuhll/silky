@@ -22,8 +22,8 @@ namespace Silky.Lms.Lock
                     await callback();
                     break;
                 }
-                Thread.Sleep(lockOptions.RetryTimeSpan);
-                if (DateTime.Now - lockerTime > lockOptions.WaitTimeSpan) 
+                Thread.Sleep(lockOptions.Retry);
+                if (DateTime.Now - lockerTime > lockOptions.DefaultExpiryTimeSpan) 
                 {
                     throw new LmsException($"获取分布式锁资源{redLock.Resource}超时");
                 }
@@ -40,8 +40,8 @@ namespace Silky.Lms.Lock
                 {
                     return await callback();
                 }
-                Thread.Sleep(lockOptions.RetryTimeSpan);
-                if (DateTime.Now - lockerTime >lockOptions.WaitTimeSpan)
+                Thread.Sleep(lockOptions.Retry);
+                if (DateTime.Now - lockerTime > lockOptions.DefaultExpiryTimeSpan)
                 {
                     throw new LmsException($"获取分布式锁资源{redLock.Resource}超时");
                 }
