@@ -207,13 +207,7 @@ namespace Silky.Lms.RegistryCenter.Zookeeper.Routing
                 .Where(p => p.AddressDescriptors.Any(p =>
                     p.Address == NetUtil.GetHostAddress(_rpcOptions.Host)));
 
-            foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
-            {
-                serviceRouteDescriptor.AddressDescriptors =
-                    serviceRouteDescriptor.AddressDescriptors.Where(p =>
-                        p != p.ConvertToAddressModel().Descriptor);
-                await RegisterRouteWithLockAsync(serviceRouteDescriptor);
-            }
+            await RegisterRoutesWithLockAsync(serviceRouteDescriptors);
         }
     }
 }
