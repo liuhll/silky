@@ -91,6 +91,9 @@ namespace Silky.Lms.Core
         /// <param name="isError">是否为警告消息</param>
         public void PrintToMiniProfiler(string category, string state, string message = null, bool isError = false)
         {
+            var injectMiniProfiler = Configuration.GetValue<bool?>("gateway:injectMiniProfiler") ?? true;
+            if (!injectMiniProfiler) return;
+            
             // 打印消息
             var customTiming = MiniProfiler.Current?.CustomTiming(category, string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);
             if (customTiming == null) return;

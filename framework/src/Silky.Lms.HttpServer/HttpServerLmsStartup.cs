@@ -16,30 +16,26 @@ namespace Silky.Lms.HttpServer
         {
             services.AddOptions<GatewayOptions>()
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
-            var injectMiniProfiler = configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
-            if (injectMiniProfiler)
+            services.AddMiniProfiler(options =>
             {
-                services.AddMiniProfiler(options =>
-                {
-                    options.RouteBasePath = MiniProfilerRouteBasePath;
-                    // Optionally use something other than the "light" color scheme.
-                    options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
+                options.RouteBasePath = MiniProfilerRouteBasePath;
+                // Optionally use something other than the "light" color scheme.
+                options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
 
-                    // Enabled sending the Server-Timing header on responses
-                    options.EnableServerTimingHeader = true;
-                    options.IgnoredPaths.Add("/lib");
-                    options.IgnoredPaths.Add("/css");
-                    options.IgnoredPaths.Add("/js");
-                    options.IgnoredPaths.Add("/swagger");
+                // Enabled sending the Server-Timing header on responses
+                options.EnableServerTimingHeader = true;
+                options.IgnoredPaths.Add("/lib");
+                options.IgnoredPaths.Add("/css");
+                options.IgnoredPaths.Add("/js");
+                options.IgnoredPaths.Add("/swagger");
                     
-                });
-            }
+            });
         }
 
         public void Configure(IApplicationBuilder application)
         {
-            var injectMiniProfiler = EngineContext.Current.Configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
-            if (injectMiniProfiler)
+            var gatewayOption = EngineContext.Current.GetOptions<GatewayOptions>();
+            if (gatewayOption.InjectMiniProfiler)
             {
                 application.UseMiniProfiler();
             }

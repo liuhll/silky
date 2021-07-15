@@ -27,9 +27,8 @@ namespace Silky.Lms.HttpServer.Middlewares
             {
                 application.UseExceptionHandler(handler =>
                 {
-                    var injectMiniProfiler =
-                        EngineContext.Current.Configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
-                    if (injectMiniProfiler)
+                    var gatewayOption = EngineContext.Current.GetOptions<GatewayOptions>();
+                    if (gatewayOption.InjectMiniProfiler)
                     {
                         handler.UseMiniProfiler();
                     }
