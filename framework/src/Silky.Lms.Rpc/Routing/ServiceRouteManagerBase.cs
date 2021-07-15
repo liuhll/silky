@@ -40,10 +40,7 @@ namespace Silky.Lms.Rpc.Routing
             {
                 if (_rpcOptions.RemoveUnhealthServer)
                 {
-                    foreach (var descriptor in descriptors)
-                    {
-                        await RegisterRouteWithLockAsync(descriptor);
-                    }
+                    await RegisterRoutesWithLockAsync(descriptors);
                 }
             };
         }
@@ -85,6 +82,7 @@ namespace Silky.Lms.Rpc.Routing
         protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
             AddressDescriptor addressDescriptor)
         {
+            await EnterRoutes();
             var registrationCentreServiceRoutes = _serviceRouteCache.ServiceRouteDescriptors.Where(p =>
                 serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
             var centreServiceRoutes = registrationCentreServiceRoutes as ServiceRouteDescriptor[] ??
@@ -98,21 +96,35 @@ namespace Silky.Lms.Rpc.Routing
                 await CreateSubDirectory();
             }
 
-            foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
-            {
-                var centreServiceRoute = registrationCentreServiceRoutes.SingleOrDefault(p =>
-                    p.ServiceDescriptor.Equals(serviceRouteDescriptor.ServiceDescriptor));
-                if (centreServiceRoute != null)
-                {
-                    serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors
-                        .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
-                }
-
-                await RegisterRouteWithLockAsync(serviceRouteDescriptor);
-            }
+            await RegisterRoutesWithLockAsync(serviceRouteDescriptors);
         }
 
         protected abstract Task CreateSubDirectory();
+        
+        protected async Task RegisterRoutesWithLockAsync(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors)
+        {
+            using var locker = await _lockerProvider.CreateLockAsync("RegisterRoutes");
+            
+            await locker.Lock(async () =>
+            {
+                var registrationCentreServiceRoutes = _serviceRouteCache.ServiceRouteDescriptors.Where(p =>
+                    serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
+                foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
+                {
+                    var centreServiceRoute = registrationCentreServiceRoutes.SingleOrDefault(p =>
+                        p.ServiceDescriptor.Equals(serviceRouteDescriptor.ServiceDescriptor));
+                    if (centreServiceRoute != null)
+                    {
+                        serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors
+                            .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
+                    }
+
+                    await RegisterRouteAsync(serviceRouteDescriptor);
+                }
+
+            });
+        }
+
 
         protected async Task RegisterRouteWithLockAsync(ServiceRouteDescriptor serviceRouteDescriptor)
         {
@@ -129,21 +141,28 @@ namespace Silky.Lms.Rpc.Routing
                 _serviceRouteCache.ServiceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
             var newServiceDescriptorIds = serviceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
             var removeServiceDescriptorIds = oldServiceDescriptorIds.Except(newServiceDescriptorIds).ToArray();
-            foreach (var removeServiceDescriptorId in removeServiceDescriptorIds)
+            
+            using var locker = await _lockerProvider.CreateLockAsync("RemoveExceptRoute");
+            await locker.Lock(async () =>
             {
-                var removeRoute =
-                    _serviceRouteCache.ServiceRouteDescriptors.FirstOrDefault(p =>
-                        p.ServiceDescriptor.Id == removeServiceDescriptorId);
-                if (removeRoute != null && removeRoute.AddressDescriptors.Any())
+                foreach (var removeServiceDescriptorId in removeServiceDescriptorIds)
                 {
-                    if (removeRoute.AddressDescriptors.Any(p => p.Equals(addressDescriptor)))
+                    var removeRoute =
+                        _serviceRouteCache.ServiceRouteDescriptors.FirstOrDefault(p =>
+                            p.ServiceDescriptor.Id == removeServiceDescriptorId);
+                    if (removeRoute != null && removeRoute.AddressDescriptors.Any())
                     {
-                        removeRoute.AddressDescriptors =
-                            removeRoute.AddressDescriptors.Where(p => !p.Equals(addressDescriptor)).ToList();
-                        await RegisterRouteWithLockAsync(removeRoute);
+                        if (removeRoute.AddressDescriptors.Any(p => p.Equals(addressDescriptor)))
+                        {
+                            removeRoute.AddressDescriptors =
+                                removeRoute.AddressDescriptors.Where(p => !p.Equals(addressDescriptor)).ToList();
+                            await RegisterRouteAsync(removeRoute);
+                        }
                     }
                 }
-            }
+            });
+            
+           
         }
     }
 }

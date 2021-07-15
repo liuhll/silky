@@ -11,5 +11,13 @@
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <None Update="appsettings.Development.yml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings.yml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 
 </Project>

@@ -125,8 +125,23 @@ namespace Silky.Lms.Rpc.Runtime.Server
         {
             return async parameters =>
             {
-                var instance = EngineContext.Current.Resolve(fallBackType);
-                return fallbackMethodExcutor.ExecuteAsync(instance, parameters).GetAwaiter().GetResult();
+                try
+                {
+                    EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.FallBackExecutor.Name, MiniProfileConstant.FallBackExecutor.State.Begin,
+                        "开始执行失败回调方法");
+                    var instance = EngineContext.Current.Resolve(fallBackType);
+                    var result = fallbackMethodExcutor.ExecuteAsync(instance, parameters).GetAwaiter().GetResult();
+                    EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.FallBackExecutor.Name, MiniProfileConstant.FallBackExecutor.State.Success,
+                        "失败回调执行成功");
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.FallBackExecutor.Name, MiniProfileConstant.FallBackExecutor.State.Fail,
+                        $"失败回调执行失败,原因:{e.Message}",true);
+                    throw;
+                }
+               
             };
         }
 

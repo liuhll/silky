@@ -114,9 +114,8 @@ namespace Silky.Lms.Rpc
                 .As<IServiceExecutor>()
                 .InstancePerLifetimeScope()
                 .AddInterceptors(
-                    typeof(CachingInterceptor),
-                    typeof(RpcValidationInterceptor)
-                   
+                    typeof(RpcValidationInterceptor),
+                    typeof(CachingInterceptor)
                 )
                 ;
         }

@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Silky.Lms.HttpServer.Configuration;
+using Silky.Lms.Swagger.SwaggerUI;
 
 namespace GatewayDemo
 {
@@ -51,9 +53,25 @@ namespace GatewayDemo
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lms Gateway Demo v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lms Gateway Demo v1");
+                    InjectMiniProfilerPlugin(c);
+                });
             }
             app.ConfigureLmsRequestPipeline();
+           // app.UseEndpoints(endpoints=> endpoints.MapControllers());
+        }
+        
+        private static void InjectMiniProfilerPlugin(SwaggerUIOptions swaggerUIOptions)
+        {
+            // 启用 MiniProfiler 组件
+            var thisType =typeof(SwaggerUIOptions);
+            var thisAssembly = thisType.Assembly;
+
+            // 自定义 Swagger 首页
+            var customIndex = $"Silky.Lms.Swagger.SwaggerUI.index-mini-profiler.html";
+            swaggerUIOptions.IndexStream = () => thisAssembly.GetManifestResourceStream(customIndex);
         }
     }
 }

@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Lms.Core;
 using Silky.Lms.Core.Exceptions;
+using Silky.Lms.Core.Serialization;
 
 namespace Silky.Lms.DotNetty
 {
@@ -25,31 +26,42 @@ namespace Silky.Lms.DotNetty
         private readonly IRemoteServiceSupervisor _remoteServiceSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly IHealthCheck _healthCheck;
+        private readonly ISerializer _serializer;
         public ILogger<DotNettyRemoteServiceInvoker> Logger { get; set; }
 
         public DotNettyRemoteServiceInvoker(ServiceRouteCache serviceRouteCache,
             IRemoteServiceSupervisor remoteServiceSupervisor,
             ITransportClientFactory transportClientFactory,
-            IHealthCheck healthCheck)
+            IHealthCheck healthCheck,
+            ISerializer serializer)
         {
             _serviceRouteCache = serviceRouteCache;
             _remoteServiceSupervisor = remoteServiceSupervisor;
             _transportClientFactory = transportClientFactory;
             _healthCheck = healthCheck;
+            _serializer = serializer;
             Logger = NullLogger<DotNettyRemoteServiceInvoker>.Instance;
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
             GovernanceOptions governanceOptions, string hashKey = null)
         {
+            EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
+                $"通过Rpc框架进行远程调用");
             var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
             if (serviceRoute == null)
             {
+                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name,
+                    MiniProfileConstant.Rpc.State.FindServiceRoute,
+                    $"通过{remoteInvokeMessage.ServiceId}找不到服务路由", true);
                 throw new LmsException($"通过{remoteInvokeMessage.ServiceId}找不到服务路由", StatusCode.NotFindServiceRoute);
             }
 
             if (!serviceRoute.Addresses.Any(p => p.Enabled))
             {
+                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name,
+                    MiniProfileConstant.Rpc.State.FindServiceRoute,
+                    $"通过{remoteInvokeMessage.ServiceId}找不到可用的服务提供者", true);
                 throw new NotFindServiceRouteAddressException($"通过{remoteInvokeMessage.ServiceId}找不到可用的服务提供者");
             }
 
@@ -58,6 +70,10 @@ namespace Silky.Lms.DotNetty
             var selectedAddress =
                 addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceId, serviceRoute.Addresses,
                     hashKey));
+            EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name,
+                MiniProfileConstant.Rpc.State.SelectedAddress,
+                $"当前存在可用的服务提供者地址:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
+                $"选择的服务提供者地址为:{selectedAddress.ToString()}");
             bool isInvakeSuccess = true;
             var sp = Stopwatch.StartNew();
             try
@@ -79,21 +95,21 @@ namespace Silky.Lms.DotNetty
             catch (ConnectException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}链接异常,原因:{ex.Message}");
-                MarkAddressFail(governanceOptions, selectedAddress);
+                MarkAddressFail(governanceOptions, selectedAddress, ex);
                 isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (ChannelException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}通信异常,原因:{ex.Message}");
-                MarkAddressFail(governanceOptions, selectedAddress);
+                MarkAddressFail(governanceOptions, selectedAddress, ex);
                 isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (TimeoutException ex)
             {
                 Logger.LogError($"与服务提供者{selectedAddress}执行超时,原因:{ex.Message}");
-                MarkAddressFail(governanceOptions, selectedAddress, true);
+                MarkAddressFail(governanceOptions, selectedAddress, ex, true);
                 isInvakeSuccess = false;
                 throw;
             }
@@ -104,18 +120,27 @@ namespace Silky.Lms.DotNetty
                 {
                     _remoteServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
+                    EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name,
+                        MiniProfileConstant.Rpc.State.Success,
+                        $"rpc远程调用成功");
                 }
                 else
                 {
                     _remoteServiceSupervisor.ExceFail((remoteInvokeMessage.ServiceId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
+                    EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name,
+                        MiniProfileConstant.Rpc.State.Fail,
+                        $"rpc远程调用失败");
                 }
             }
         }
 
-        private void MarkAddressFail(GovernanceOptions governanceOptions, IAddressModel selectedAddress,
+        private void MarkAddressFail(GovernanceOptions governanceOptions, IAddressModel selectedAddress, Exception ex,
             bool isTimeoutEx = false)
         {
+            EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name,
+                MiniProfileConstant.Rpc.State.MarkAddressFail,
+                $"使用地址{selectedAddress}进行远程服务调用失败,原因:{ex.Message}", true);
             if (governanceOptions.FuseProtection)
             {
                 selectedAddress.MakeFusing(governanceOptions.FuseSleepDuration);

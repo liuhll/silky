@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Silky.Lms.Core;
-using Silky.Lms.Core.Configuration;
 using Silky.Lms.EntityFrameworkCore.Extensions.DatabaseProvider;
 
 namespace Silky.Lms.EntityFrameworkCore.ContextPools
@@ -22,16 +21,6 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
         private const string MiniProfilerCategory = "Transaction";
 
         /// <summary>
-        /// MiniProfiler 组件状态
-        /// </summary>
-        private readonly bool InjectMiniProfiler;
-
-        /// <summary>
-        /// 是否打印数据库连接信息
-        /// </summary>
-        private readonly bool IsPrintDbConnectionInfo;
-
-        /// <summary>
         /// 线程安全的数据库上下文集合
         /// </summary>
         private readonly ConcurrentDictionary<Guid, DbContext> dbContexts;
@@ -40,23 +29,13 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
         /// 登记错误的数据库上下文
         /// </summary>
         private readonly ConcurrentDictionary<Guid, DbContext> failedDbContexts;
-
-        /// <summary>
-        /// 服务提供器
-        /// </summary>
-        private readonly IServiceProvider _serviceProvider;
-
+        
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="serviceProvider"></param>
-        public DbContextPool(IServiceProvider serviceProvider)
+        public DbContextPool()
         {
-            _serviceProvider = serviceProvider;
-            var appSettings = EngineContext.Current.GetOptions<AppSettingsOptions>();
-            InjectMiniProfiler = appSettings.InjectMiniProfiler ?? false;
-            IsPrintDbConnectionInfo = appSettings.PrintDbConnectionInfo ?? false;
-
             dbContexts = new ConcurrentDictionary<Guid, DbContext>();
             failedDbContexts = new ConcurrentDictionary<Guid, DbContext>();
         }
@@ -106,8 +85,6 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                             // 回滚事务
                             currentTransaction.Rollback();
 
-                            // 打印事务回滚消息
-                            // App.PrintToMiniProfiler("transaction", "Rollback", $"[Connection Id: {context.ContextId}] / [Database: {connection.Database}]{(IsPrintDbConnectionInfo ? $" / [Connection String: {connection.ConnectionString}]" : string.Empty)}", isError: true);
                         }
                     }
                 };
@@ -214,9 +191,6 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 // 共享事务
                 ShareTransaction:
                 ShareTransaction(DbContextTransaction.GetDbTransaction());
-
-                // 打印事务实际开启信息
-                // App.PrintToMiniProfiler(MiniProfilerCategory, "Began");
             }
             else
             {
@@ -255,18 +229,12 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
 
                     // 提交共享事务
                     DbContextTransaction?.Commit();
-
-                    // 打印事务提交消息
-                    // App.PrintToMiniProfiler(MiniProfilerCategory, "Completed", $"Transaction Completed! Has {hasChangesCount} DbContext Changes.");
                 }
                 catch
                 {
                     // 回滚事务
                     if (DbContextTransaction?.GetDbTransaction()?.Connection != null) DbContextTransaction?.Rollback();
-
-                    // 打印事务回滚消息
-                    // App.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
-
+                    
                     throw;
                 }
                 finally
@@ -284,9 +252,6 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 if (DbContextTransaction?.GetDbTransaction() != null) DbContextTransaction?.Rollback();
                 DbContextTransaction?.Dispose();
                 DbContextTransaction = null;
-
-                // 打印事务回滚消息
-                //  App.PrintToMiniProfiler(MiniProfilerCategory, "Rollback", isError: true);
             }
 
             // 关闭所有连接
@@ -307,8 +272,6 @@ namespace Silky.Lms.EntityFrameworkCore.ContextPools
                 if (conn.State == ConnectionState.Open)
                 {
                     conn.Close();
-                    // 打印数据库关闭信息
-                    // App.PrintToMiniProfiler("sql", $"Close", $"Connection Close()");
                 }
             }
         }

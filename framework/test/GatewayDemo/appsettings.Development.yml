@@ -13,3 +13,5 @@ lock:
 allowedHosts: "*"
 gateway:
   wrapResult: true
+appSettings:
+  injectMiniProfiler: true

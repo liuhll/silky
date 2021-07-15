@@ -14,6 +14,9 @@ namespace GatewayDemo.AppService
 
         Task<string> DeleteProxy(string name);
 
+        [HttpGet]
+        Task<string> MiniProfilerText();
+
         [HttpPatch]
         Task<string> UpdatePart(TestInput input);
     }
