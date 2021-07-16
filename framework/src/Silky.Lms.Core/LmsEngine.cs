@@ -93,7 +93,6 @@ namespace Silky.Lms.Core
         {
             var injectMiniProfiler = Configuration.GetValue<bool?>("gateway:injectMiniProfiler") ?? true;
             if (!injectMiniProfiler) return;
-            
             // 打印消息
             var customTiming = MiniProfiler.Current?.CustomTiming(category, string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);
             if (customTiming == null) return;

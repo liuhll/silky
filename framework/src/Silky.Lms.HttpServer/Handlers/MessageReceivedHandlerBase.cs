@@ -11,6 +11,7 @@ using Silky.Lms.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Silky.Lms.HttpServer.Configuration;
+using StackExchange.Profiling;
 
 namespace Silky.Lms.HttpServer.Handlers
 {
@@ -49,21 +50,19 @@ namespace Silky.Lms.HttpServer.Handlers
             {
                 serviceKey = context.Request.Headers["serviceKey"].ToString();
                 RpcContext.GetContext().SetAttachment("serviceKey", serviceKey);
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceKey,
+                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name,
+                    MiniProfileConstant.Route.State.FindServiceKey,
                     $"serviceKey:{serviceKey}");
             }
             else
             {
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceKey,
+                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name,
+                    MiniProfileConstant.Route.State.FindServiceKey,
                     "没有设置serviceKey");
             }
 
             RpcContext.GetContext().SetAttachment("rpcToken", _rpcOptions.Token);
-            EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.RemoteInvoker.Name, MiniProfileConstant.RemoteInvoker.State.Prepare,
-                $"准备执行远程服务调用,负载均衡策略为:{serviceEntry.GovernanceOptions.ShuntStrategy}");
             var excuteResult = await _serviceExecutor.Execute(serviceEntry, rpcParameters, serviceKey);
-            EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.RemoteInvoker.Name, MiniProfileConstant.RemoteInvoker.State.End,
-                $"完成远程服务调用");
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = ResponseStatusCode.Success;
             if (_gatewayOptions.WrapResult)
@@ -91,7 +90,6 @@ namespace Silky.Lms.HttpServer.Handlers
                     await context.Response.WriteAsync(string.Empty);
                 }
             }
-
         }
     }
 }
