@@ -30,7 +30,7 @@ namespace Silky.Lms.EntityFrameworkCore.Contexts
         }
     }
     
-    public abstract class LmsDbContext<TDbContext, TDbContextLocator> : DbContext, IEfCoreDbContext
+    public abstract class LmsDbContext<TDbContext, TDbContextLocator> : DbContext
         where TDbContext : DbContext
         where TDbContextLocator : class, IDbContextLocator
     {
