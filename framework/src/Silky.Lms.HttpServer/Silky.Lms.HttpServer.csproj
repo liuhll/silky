@@ -8,6 +8,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Silky.Lms.Rpc.Proxy\Silky.Lms.Rpc.Proxy.csproj" />
       <ProjectReference Include="..\Silky.Lms.Rpc\Silky.Lms.Rpc.csproj" />
+      <ProjectReference Include="..\Silky.Lms.Swagger\Silky.Lms.Swagger.csproj" />
     </ItemGroup>
     
 </Project>

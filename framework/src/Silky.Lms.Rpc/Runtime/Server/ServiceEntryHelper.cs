@@ -27,7 +27,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
             return types;
         }
 
-        internal static IEnumerable<(Type, bool)> FindAllServiceEntryTypes(ITypeFinder typeFinder)
+        public static IEnumerable<(Type, bool)> FindAllServiceEntryTypes(ITypeFinder typeFinder)
         {
             var entryTypes = new List<(Type, bool)>();
             var exportedTypes = typeFinder.GetAssemblies()
@@ -55,7 +55,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
                 .Select(p => p.Item1);
             return proxyTypes;
         }
-
+        
         public static IEnumerable<(Type, bool)> FindWsServiceTypeInfos(ITypeFinder typeFinder)
         {
             var entryTypes = new List<(Type, bool)>();

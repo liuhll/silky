@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
 using ITestApplication.Test.FallBack;
@@ -24,6 +25,7 @@ namespace ITestApplication.Test
         [UnitOfWork]
         Task<TestOut> Create(TestInput input);
 
+        [Obsolete]
         Task<string> Update(TestInput input);
 
         [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
