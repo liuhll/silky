@@ -74,9 +74,125 @@
         return new Fn();
     }
 
+    // get uri all query variables
+    function getQueryVariables(uri) {
+        var searchArgs = window.location.search;
+        if (uri) {
+            var s = uri.indexOf('?');
+            searchArgs = s > -1 ? uri.substring(s) : '';
+        }
+        var query = searchArgs.substring(1);
+        var vars = query.split('&');
+        var varObj = {};
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            varObj[pair[0]] = pair[1];
+        }
+        return varObj;
+    }
+
+    // get uri query variable
+    function getQueryVariable(variable, uri) {
+        var vars = getQueryVariables(uri);
+        for (var key in vars) {
+            if (key === variable) return vars[key];
+        }
+        return (false);
+    }
+
+    // if value is null or undefined than execute delete operate, else execute update
+    function updateQueryVariable(uri, key, value) {
+        var re = new RegExp('([?&])' + key + '=.*?(&|$)', 'i');
+        var separator = uri.indexOf('?') !== -1 ? '&' : '?';
+        if (uri.match(re)) {
+            return uri.replace(re, !value ? '' : ('$1' + key + '=' + value + '$2'));
+        }
+        else {
+            return !value ? '' : (uri + separator + key + '=' + value);
+        }
+    }
+
+    // get uri template
+    function getUrlTemplate(uri) {
+        var reg = /\{(.+?)\}/g;
+        return uri.match(reg);
+    }
+
+    // hide empty tags
+    var HideEmptyTagsPlugin = function HideEmptyTagsPlugin() {
+        return {
+            statePlugins: {
+                spec: {
+                    wrapSelectors: {
+                        taggedOperations: function taggedOperations(ori) {
+                            return function () {
+                                return ori.apply(void 0, arguments).filter(function (tagMeta) {
+                                    return tagMeta.get("operations") && tagMeta.get("operations").size > 0;
+                                });
+                            };
+                        }
+                    }
+                }
+            }
+        };
+    };
+
+    var tokenKey = "access-token";
+    var cultureKey = "culture";
+
+    // default response interceptor
+    function defaultResponseInterceptor(response) {
+        // handle jwt token
+        var accessToken = response.headers[tokenKey];
+        if (accessToken && accessToken != "invalid_token") {
+            window.localStorage.setItem(tokenKey, accessToken);
+            ui.preauthorizeApiKey("Bearer", accessToken);
+        }
+        else if (accessToken == "invalid_token") {
+            window.localStorage.removeItem(tokenKey);
+        }
+
+        return response;
+    }
+
+    // default request interceptor
+    function defaultRequestInterceptor(request) {
+        var url = request.url;
+
+        // handle template
+        var temps = getUrlTemplate(url);
+        if (temps && temps.length > 0) {
+            for (var i = 0; i < temps.length; i++) {
+                var temp = temps[i];
+                var key = temp.substring(1, temp.length - 1);
+                var queryKey = getQueryVariable(key, url);
+                if (queryKey) {
+                    url = updateQueryVariable(url.replace(temp, queryKey), key);
+                }
+                else url = url.replace(temp, '');
+            }
+            request.url = url;
+        }
+
+        // handle culture lang
+        var culture = getQueryVariable(cultureKey);
+        if (culture && culture.length > 0) {
+            request.url = updateQueryVariable(url, cultureKey, culture);
+        }
+
+        return request;
+    }
+
     window.onload = function () {
         var configObject = JSON.parse('%(ConfigObject)');
         var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
+
+        configObject.onComplete = function () {
+            var accessToken = window.localStorage.getItem(tokenKey);
+            if (accessToken) {
+                ui.preauthorizeApiKey("Bearer", accessToken);
+            }
+        };
 
         // Workaround for https://github.com/swagger-api/swagger-ui/issues/5945
         configObject.urls.forEach(function (item) {
@@ -94,7 +210,7 @@
 
         // Apply mandatory parameters
         configObject.dom_id = "#swagger-ui";
-        configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
+        configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset, HideEmptyTagsPlugin];
         configObject.layout = "StandaloneLayout";
 
         // Parse and add interceptor functions
@@ -117,4 +233,3 @@
 </script>
 </body>
 </html>
-

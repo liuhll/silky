@@ -28,7 +28,7 @@ namespace Silky.Lms.HttpServer.Middlewares
             {
                 application.UseExceptionHandler(handler =>
                 {
-                    var gatewayOption = EngineContext.Current.GetOptions<GatewayOptions>();
+                    var gatewayOption = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
                     if (gatewayOption.InjectMiniProfiler)
                     {
                         handler.UseMiniProfiler();

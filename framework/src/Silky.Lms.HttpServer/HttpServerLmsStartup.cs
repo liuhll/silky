@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Lms.HttpServer.Configuration;
+using Silky.Lms.HttpServer.SwaggerDocument;
 
 namespace Silky.Lms.HttpServer
 {
@@ -16,6 +17,9 @@ namespace Silky.Lms.HttpServer
         {
             services.AddOptions<GatewayOptions>()
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
+            services.AddOptions<SwaggerDocumentOptions>()
+                .Bind(configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
+
             services.AddMiniProfiler(options =>
             {
                 options.RouteBasePath = MiniProfilerRouteBasePath;
@@ -28,20 +32,28 @@ namespace Silky.Lms.HttpServer
                 options.IgnoredPaths.Add("/css");
                 options.IgnoredPaths.Add("/js");
                 options.IgnoredPaths.Add("/swagger");
-                    
             });
+            services.AddSwaggerDocuments(configuration);
         }
 
         public void Configure(IApplicationBuilder application)
         {
             var gatewayOption = EngineContext.Current.GetOptions<GatewayOptions>();
-            if (gatewayOption.InjectMiniProfiler)
+
+            var swaggerDocumentOptions = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
+
+            if (gatewayOption.EnableSwaggerDoc)
+            {
+                application.UseSwaggerDocuments(swaggerDocumentOptions);
+            }
+
+            if (swaggerDocumentOptions.InjectMiniProfiler)
             {
                 application.UseMiniProfiler();
             }
+
             application.UseLmsExceptionHandler();
             application.UseLms();
-            
         }
 
         public int Order { get; } = Int32.MinValue;

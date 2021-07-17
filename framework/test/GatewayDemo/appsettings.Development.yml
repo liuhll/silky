@@ -11,6 +11,11 @@ distributedCache:
 lock:
   lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
 allowedHosts: "*"
+swaggerDocument:
+  organizationMode: Group
+  injectMiniProfiler: true
+  termsOfService: https://www.github.com/liuhll/lms
 gateway:
   wrapResult: true
+  enableSwaggerDoc: true
 #  injectMiniProfiler: true

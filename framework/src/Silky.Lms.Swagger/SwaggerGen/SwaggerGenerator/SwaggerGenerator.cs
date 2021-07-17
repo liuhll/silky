@@ -37,7 +37,10 @@ namespace Silky.Lms.Swagger.SwaggerGen.SwaggerGenerator
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
 
             var schemaRepository = new SchemaRepository(documentName);
-            var entries = _serviceEntryManager.GetAllEntries();
+            var entries = _serviceEntryManager.GetAllEntries()
+                .Where(serviceEntry => !(_options.IgnoreObsoleteActions &&
+                                         serviceEntry.CustomAttributes.OfType<ObsoleteAttribute>().Any()))
+                .Where(serviceEntry => _options.DocInclusionPredicate(documentName, serviceEntry)).ToList();
             var swaggerDoc = new OpenApiDocument
             {
                 Info = info,

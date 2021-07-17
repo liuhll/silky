@@ -37,7 +37,7 @@ namespace Silky.Lms.Rpc.Interceptors
                 );
                 _miniProfiler.Print(MiniProfileConstant.ValidationInterceptor.Name,
                     MiniProfileConstant.ValidationInterceptor.State.Success,
-                    $"Success");
+                    $"输入参数校验成功");
             }
             catch (Exception e)
             {
