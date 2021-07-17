@@ -2,6 +2,7 @@ using Silky.Lms.Core.Serialization;
 using Silky.Lms.Rpc.Configuration;
 using Silky.Lms.Rpc.Runtime;
 using Microsoft.Extensions.Options;
+using Silky.Lms.Core;
 using Silky.Lms.HttpServer.Configuration;
 
 namespace Silky.Lms.HttpServer.Handlers
@@ -12,12 +13,14 @@ namespace Silky.Lms.HttpServer.Handlers
             ISerializer serializer,
             IOptions<RpcOptions> rpcOptions,
             IOptions<GatewayOptions> gatewayOptions,
-            IServiceExecutor serviceExecutor)
+            IServiceExecutor serviceExecutor,
+            IMiniProfiler miniProfiler)
             : base(parameterParser,
                 serializer,
                 rpcOptions,
                 gatewayOptions,
-                serviceExecutor)
+                serviceExecutor,
+                miniProfiler)
         {
         }
     }

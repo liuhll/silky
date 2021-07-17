@@ -15,12 +15,14 @@ namespace Silky.Lms.HttpServer.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-
+        private readonly IMiniProfiler _miniProfiler;
         public LmsMiddleware(RequestDelegate next,
-            IServiceEntryLocator serviceEntryLocator)
+            IServiceEntryLocator serviceEntryLocator,
+            IMiniProfiler miniProfiler)
         {
             _next = next;
             _serviceEntryLocator = serviceEntryLocator;
+            _miniProfiler = miniProfiler;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -35,7 +37,7 @@ namespace Silky.Lms.HttpServer.Middlewares
                 {
                     throw new FuseProtectionException($"Id为{serviceEntry.Id}的服务条目不允许外网访问");
                 }
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
+                _miniProfiler.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
                     $"通过{path}-{method}查找到服务条目{serviceEntry.Id}");
                 await EngineContext.Current
                     .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceDescriptor.ServiceProtocol.ToString())
@@ -43,7 +45,7 @@ namespace Silky.Lms.HttpServer.Middlewares
             }
             else
             {
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry, $"通过{path}-{method}没有查找到服务条目",
+                _miniProfiler.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry, $"通过{path}-{method}没有查找到服务条目",
                     true);
                 await _next(context);
             }

@@ -11,7 +11,6 @@ using Silky.Lms.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Silky.Lms.HttpServer.Configuration;
-using StackExchange.Profiling;
 
 namespace Silky.Lms.HttpServer.Handlers
 {
@@ -22,17 +21,20 @@ namespace Silky.Lms.HttpServer.Handlers
         protected readonly RpcOptions _rpcOptions;
         protected readonly IServiceExecutor _serviceExecutor;
         protected readonly GatewayOptions _gatewayOptions;
+        protected readonly IMiniProfiler _miniProfiler;
 
         protected MessageReceivedHandlerBase(
             IParameterParser parameterParser,
             ISerializer serializer,
             IOptions<RpcOptions> rpcOptions,
             IOptions<GatewayOptions> gatewayOptions,
-            IServiceExecutor serviceExecutor)
+            IServiceExecutor serviceExecutor,
+            IMiniProfiler miniProfiler)
         {
             _parameterParser = parameterParser;
             _serializer = serializer;
             _serviceExecutor = serviceExecutor;
+            _miniProfiler = miniProfiler;
             _rpcOptions = rpcOptions.Value;
             _gatewayOptions = gatewayOptions.Value;
         }
@@ -50,13 +52,13 @@ namespace Silky.Lms.HttpServer.Handlers
             {
                 serviceKey = context.Request.Headers["serviceKey"].ToString();
                 RpcContext.GetContext().SetAttachment("serviceKey", serviceKey);
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name,
+                _miniProfiler.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
                     $"serviceKey:{serviceKey}");
             }
             else
             {
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Route.Name,
+                _miniProfiler.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
                     "没有设置serviceKey");
             }

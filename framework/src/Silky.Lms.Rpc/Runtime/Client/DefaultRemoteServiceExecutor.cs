@@ -14,10 +14,12 @@ namespace Silky.Lms.Rpc.Runtime.Client
     public class DefaultRemoteServiceExecutor : IRemoteServiceExecutor
     {
         private readonly IRemoteServiceInvoker _remoteServiceInvoker;
-
-        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker)
+        private readonly IMiniProfiler _miniProfiler;
+        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker,
+            IMiniProfiler miniProfiler)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
+            _miniProfiler = miniProfiler;
         }
         
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
@@ -31,7 +33,7 @@ namespace Silky.Lms.Rpc.Runtime.Client
             if (serviceEntry.GovernanceOptions.ShuntStrategy == AddressSelectorMode.HashAlgorithm)
             {
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                _miniProfiler.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"hashKey为:{hashKey}");
             }
 

@@ -30,7 +30,7 @@ namespace Silky.Lms.Core
         TOptions GetOptionsSnapshot<TOptions>()
             where TOptions : class, new();
         
-        void PrintToMiniProfiler(string category, string state, string message = null, bool isError = false);
+        
         
         void ConfigureRequestPipeline(IApplicationBuilder application);
 

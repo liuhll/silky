@@ -12,10 +12,12 @@ namespace Silky.Lms.Rpc.Interceptors
     public class CachingInterceptor : LmsInterceptor, ITransientDependency
     {
         private readonly IDistributedInterceptCache _distributedCache;
-
-        public CachingInterceptor(IDistributedInterceptCache distributedCache)
+        private readonly IMiniProfiler _miniProfiler;
+        public CachingInterceptor(IDistributedInterceptCache distributedCache, 
+            IMiniProfiler miniProfiler)
         {
             _distributedCache = distributedCache;
+            _miniProfiler = miniProfiler;
         }
 
         public override async Task InterceptAsync(ILmsMethodInvocation invocation)
@@ -34,7 +36,7 @@ namespace Silky.Lms.Rpc.Interceptors
 
             if (serviceEntry.GovernanceOptions.CacheEnabled)
             {
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                     MiniProfileConstant.Caching.State.CacheEnabled,
                     $"缓存拦截可用");
 
@@ -48,7 +50,7 @@ namespace Silky.Lms.Rpc.Interceptors
                             serviceEntry.GetCachingInterceptKey(parameters, removeCachingInterceptProvider);
                         await _distributedCache.RemoveAsync(removeCacheKey, removeCachingInterceptProvider.CacheName,
                             true);
-                        EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                        _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.RemoveCaching + index,
                             $"移除key为{removeCacheKey}的缓存");
                         index++;
@@ -59,7 +61,7 @@ namespace Silky.Lms.Rpc.Interceptors
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
-                        EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                        _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
                             $"分布式事务缓存拦截无效");
                         await invocation.ProceedAsync();
@@ -68,7 +70,7 @@ namespace Silky.Lms.Rpc.Interceptors
                     {
                         var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
                             serviceEntry.GetCachingInterceptProvider);
-                        EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                        _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
                             $"准备从缓存服务中获取数据:[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{getCacheKey}]");
                         invocation.ReturnValue = await GetResultFirstFromCache(
@@ -81,7 +83,7 @@ namespace Silky.Lms.Rpc.Interceptors
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
-                        EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                        _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.UpdateCaching,
                             $"分布式事务缓存拦截无效");
                         await invocation.ProceedAsync();
@@ -90,7 +92,7 @@ namespace Silky.Lms.Rpc.Interceptors
                     {
                         var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
                             serviceEntry.UpdateCachingInterceptProvider);
-                        EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                        _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.UpdateCaching,
                             $"更新缓存数据的cacheKey为[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{updateCacheKey}]");
                         await _distributedCache.RemoveAsync(updateCacheKey, serviceEntry.GetCacheName(),
@@ -103,7 +105,7 @@ namespace Silky.Lms.Rpc.Interceptors
                 }
                 else
                 {
-                    EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                    _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                         MiniProfileConstant.Caching.State.NotSet,
                         $"没有设置缓存拦截");
                     await invocation.ProceedAsync();
@@ -111,7 +113,7 @@ namespace Silky.Lms.Rpc.Interceptors
             }
             else
             {
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.Caching.Name,
+                _miniProfiler.Print(MiniProfileConstant.Caching.Name,
                     MiniProfileConstant.Caching.State.CacheEnabled,
                     $"缓存拦截不可用");
                 await invocation.ProceedAsync();

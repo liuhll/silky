@@ -9,14 +9,18 @@ namespace Silky.Lms.Rpc.Interceptors
 {
     public class RpcValidationInterceptor : ValidationInterceptor
     {
-        public RpcValidationInterceptor(IMethodInvocationValidator methodInvocationValidator)
+        private readonly IMiniProfiler _miniProfiler;
+
+        public RpcValidationInterceptor(IMethodInvocationValidator methodInvocationValidator,
+            IMiniProfiler miniProfiler)
             : base(methodInvocationValidator)
         {
+            _miniProfiler = miniProfiler;
         }
 
         protected override void Validate(ILmsMethodInvocation invocation)
         {
-            EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.ValidationInterceptor.Name,
+            _miniProfiler.Print(MiniProfileConstant.ValidationInterceptor.Name,
                 MiniProfileConstant.ValidationInterceptor.State.Begin,
                 $"开始校验输入参数");
             try
@@ -31,13 +35,13 @@ namespace Silky.Lms.Rpc.Interceptors
                         parameters
                     )
                 );
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.ValidationInterceptor.Name,
+                _miniProfiler.Print(MiniProfileConstant.ValidationInterceptor.Name,
                     MiniProfileConstant.ValidationInterceptor.State.Success,
                     $"Success");
             }
             catch (Exception e)
             {
-                EngineContext.Current.PrintToMiniProfiler(MiniProfileConstant.ValidationInterceptor.Name,
+                _miniProfiler.Print(MiniProfileConstant.ValidationInterceptor.Name,
                     MiniProfileConstant.ValidationInterceptor.State.Fail,
                     $"输入参数校验失败", true);
                 throw;

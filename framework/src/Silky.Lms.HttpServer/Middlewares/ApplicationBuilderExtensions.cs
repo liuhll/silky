@@ -17,6 +17,7 @@ namespace Silky.Lms.HttpServer.Middlewares
         {
             var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
+            var miniProfiler = EngineContext.Current.Resolve<IMiniProfiler>();
 
             var useDetailedExceptionPage = gatewayOptions.DisplayFullErrorStack;
             if (useDetailedExceptionPage)
@@ -39,7 +40,7 @@ namespace Silky.Lms.HttpServer.Middlewares
                         if (exception == null)
                             return Task.CompletedTask;
                         context.Response.ContentType = "application/json;charset=utf-8";
-                        EngineContext.Current.PrintToMiniProfiler("Error", "Exception", exception.Message, true);
+                        miniProfiler.Print("Error", "Exception", exception.Message, true);
                         if (gatewayOptions.WrapResult)
                         {
                             var responseResultDto = new ResponseResultDto()
