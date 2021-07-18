@@ -9,7 +9,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
 
         public void Change(string seviceKey)
         {
-            RpcContext.GetContext().SetAttachment("serviceKey", seviceKey);
+            RpcContext.GetContext().SetAttachment(AttachmentKeys.ServiceKey, seviceKey);
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Silky.Lms.HttpServer.Configuration;
+using Silky.Lms.Rpc.SkyApm.Diagnostics;
 using Silky.Lms.Swagger.SwaggerUI;
 
 namespace GatewayDemo
@@ -27,6 +28,10 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSkyAPM(extensions =>
+            {
+                extensions.AddRpc();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

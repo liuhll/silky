@@ -6,6 +6,7 @@
          <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Silky.Lms.Rpc.SkyApm.Diagnostics\Silky.Lms.Rpc.SkyApm.Diagnostics.csproj" />
         <ProjectReference Include="..\..\src\Silky.Lms.WebHost\Silky.Lms.WebHost.csproj" />
         <ProjectReference Include="..\..\src\Silky.Lms.WebSocketServer\Silky.Lms.WebSocketServer.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
@@ -18,6 +19,13 @@
       <None Update="appsettings.yml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Include="skyapm.json" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="logs" />
     </ItemGroup>
 
 </Project>

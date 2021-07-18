@@ -7,13 +7,13 @@ namespace Silky.Lms.Transaction
         public static TransactionContext GetTransactionContext(this RpcContext rpcContext)
         {
             var transactionContext =
-                rpcContext.GetAttachment("transactionContext") as TransactionContext;
+                rpcContext.GetAttachment(AttachmentKeys.TransactionContext) as TransactionContext;
             return transactionContext;
         }
 
         public static void SetTransactionContext(this RpcContext rpcContext, TransactionContext transactionContext)
         {
-            rpcContext.SetAttachment("transactionContext", transactionContext);
+            rpcContext.SetAttachment(AttachmentKeys.TransactionContext, transactionContext);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using SkyApm.Agent.GeneralHost;
 
 namespace NormHostDemo
 {

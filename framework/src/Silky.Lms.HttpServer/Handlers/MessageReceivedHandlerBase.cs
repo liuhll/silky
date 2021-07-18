@@ -45,14 +45,15 @@ namespace Silky.Lms.HttpServer.Handlers
             Check.NotNull(context, nameof(context));
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             var requestParameters = await _parameterParser.Parser(context.Request, serviceEntry);
-            RpcContext.GetContext().SetAttachment("requestHeader", requestParameters[ParameterFrom.Header]);
+            RpcContext.GetContext()
+                .SetAttachment(AttachmentKeys.RequestHeader, requestParameters[ParameterFrom.Header]);
             var rpcParameters = serviceEntry.ResolveParameters(requestParameters);
             string serviceKey = null;
 
             if (context.Request.Headers.ContainsKey("serviceKey"))
             {
                 serviceKey = context.Request.Headers["serviceKey"].ToString();
-                RpcContext.GetContext().SetAttachment("serviceKey", serviceKey);
+                RpcContext.GetContext().SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
                 _miniProfiler.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
                     $"serviceKey:{serviceKey}");
@@ -64,7 +65,7 @@ namespace Silky.Lms.HttpServer.Handlers
                     "没有设置serviceKey");
             }
 
-            RpcContext.GetContext().SetAttachment("rpcToken", _rpcOptions.Token);
+            RpcContext.GetContext().SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);
             var excuteResult = await _serviceExecutor.Execute(serviceEntry, rpcParameters, serviceKey);
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = ResponseStatusCode.Success;

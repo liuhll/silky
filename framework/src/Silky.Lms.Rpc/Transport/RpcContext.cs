@@ -32,7 +32,7 @@ namespace Silky.Lms.Rpc.Transport
 
         public void SetAttachment(string key, object value)
         {
-            if ("requestHeader".Equals(key))
+            if (AttachmentKeys.RequestHeader.Equals(key))
             {
                 var convertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
                 value = convertibleService.Convert(value, typeof(IDictionary<string, object>));

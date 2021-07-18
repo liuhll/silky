@@ -2,23 +2,17 @@
 using Microsoft.Extensions.DependencyInjection;
 using NormHostDemo.Contexts;
 using Silky.Lms.Core;
+using Silky.Lms.Rpc.SkyApm.Diagnostics;
 
 namespace NormHostDemo
 {
     public class NormHostConfigureService : IConfigureService
     {
-        private const string MiniProfilerRouteBasePath = "/index-mini-profiler";
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDatabaseAccessor(options =>
-            {
-                options.AddDbPool<DemoDbContext>();
-            },"NormHostDemo");
-            var injectMiniProfiler = configuration.GetValue<bool?>("appSettings:injectMiniProfiler") ?? false;
-            if (injectMiniProfiler)
-            {
-                services.AddMiniProfiler(options => { options.RouteBasePath = MiniProfilerRouteBasePath; });
-            }
+            services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
+
+            services.AddSkyAPM(extensions => { extensions.AddRpc(); });
         }
 
         public int Order { get; } = 10;
