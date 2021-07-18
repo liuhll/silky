@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Silky.Lms.Core;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Core.Extensions;
@@ -7,6 +6,7 @@ using Silky.Lms.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Lms.HttpServer.Handlers;
+using Silky.Lms.Rpc;
 using StackExchange.Profiling;
 
 namespace Silky.Lms.HttpServer.Middlewares

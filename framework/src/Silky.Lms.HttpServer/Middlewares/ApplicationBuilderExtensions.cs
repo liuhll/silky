@@ -6,8 +6,8 @@ using Silky.Lms.Core.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Silky.Lms.HttpServer.Configuration;
+using Silky.Lms.Rpc;
 
 namespace Silky.Lms.HttpServer.Middlewares
 {

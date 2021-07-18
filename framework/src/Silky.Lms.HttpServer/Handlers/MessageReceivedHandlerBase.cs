@@ -11,6 +11,7 @@ using Silky.Lms.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Silky.Lms.HttpServer.Configuration;
+using Silky.Lms.Rpc;
 
 namespace Silky.Lms.HttpServer.Handlers
 {

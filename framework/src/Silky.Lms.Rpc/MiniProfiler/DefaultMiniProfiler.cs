@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Configuration;
+using Silky.Lms.Core;
 using Silky.Lms.Core.Extensions;
 using StackExchange.Profiling;
 
-namespace Silky.Lms.Core
+namespace Silky.Lms.Rpc
 {
     public class DefaultMiniProfiler : IMiniProfiler
     {
@@ -18,7 +19,7 @@ namespace Silky.Lms.Core
             var injectMiniProfiler = EngineContext.Current.Configuration.GetValue<bool?>("gateway:injectMiniProfiler") ?? true;
             if (!injectMiniProfiler) return;
             // 打印消息
-            var customTiming = MiniProfiler.Current?.CustomTiming(category,
+            var customTiming = StackExchange.Profiling.MiniProfiler.Current?.CustomTiming(category,
                 string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);
             if (customTiming == null) return;
             // 判断是否是警告消息

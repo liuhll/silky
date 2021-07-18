@@ -14,7 +14,6 @@ using Microsoft.Extensions.Options;
 using Silky.Lms.Core.DependencyInjection;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Core.Modularity;
-using StackExchange.Profiling;
 
 namespace Silky.Lms.Core
 {

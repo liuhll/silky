@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Lms.Core;
 using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Core.Serialization;
-using StackExchange.Profiling;
+using Silky.Lms.Rpc;
 
 namespace Silky.Lms.DotNetty
 {
