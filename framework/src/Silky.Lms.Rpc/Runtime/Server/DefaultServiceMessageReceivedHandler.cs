@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silky.Lms.Core;
 using Silky.Lms.Core.Exceptions;
+using Silky.Lms.Rpc.Diagnostics;
 using Silky.Lms.Rpc.Messages;
 using Silky.Lms.Rpc.Security;
 using Silky.Lms.Rpc.Transport;
@@ -14,6 +15,9 @@ namespace Silky.Lms.Rpc.Runtime.Server
     {
         private readonly IServiceEntryLocator _serviceEntryLocator;
 
+        protected static readonly DiagnosticListener s_diagnosticListener =
+            new(RpcDiagnosticListenerNames.DiagnosticServerListenerName);
+
         public DefaultServiceMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator)
         {
             _serviceEntryLocator = serviceEntryLocator;
@@ -23,7 +27,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
         {
             RpcContext.GetContext()
                 .SetAttachments(message.Attachments);
-            
+            var tracingTimestamp = TracingBefore(message, messageId);
             RemoteResultMessage remoteResultMessage;
             try
             {
@@ -33,6 +37,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
                 {
                     throw new LmsException($"通过服务id{message.ServiceId}获取本地服务条目失败", StatusCode.NotFindLocalServiceEntry);
                 }
+
                 var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
                 if (!tokenValidator.Validate())
                 {
@@ -48,6 +53,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
                     Result = result,
                     StatusCode = StatusCode.Success
                 };
+                TracingAfter(tracingTimestamp, messageId, message.ServiceId, remoteResultMessage.Result);
             }
             catch (Exception e)
             {
@@ -57,10 +63,72 @@ namespace Silky.Lms.Rpc.Runtime.Server
                     StatusCode = e.GetExceptionStatusCode(),
                     ValidateErrors = e.GetValidateErrors().ToArray()
                 };
+                TracingError(tracingTimestamp, messageId, message.ServiceId, e.GetExceptionStatusCode(), e);
             }
 
             var resultTransportMessage = new TransportMessage(remoteResultMessage, messageId);
             await sender.SendAndFlushAsync(resultTransportMessage);
+        }
+
+        private long? TracingBefore(RemoteInvokeMessage message, string messageId)
+        {
+            if (s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.BeginRpcServerHandler))
+            {
+                var remoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString();
+                var eventData = new RpcInvokeEventData()
+                {
+                    MessageId = messageId,
+                    OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    ServiceId = message.ServiceId,
+                    Message = message,
+                    RemoteAddress = remoteAddress
+                };
+
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcServerHandler, eventData);
+
+                return eventData.OperationTimestamp;
+            }
+
+            return null;
+        }
+
+        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceId, object result)
+        {
+            if (tracingTimestamp != null &&
+                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcServerHandler))
+            {
+                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var eventData = new RpcResultEventData()
+                {
+                    MessageId = messageId,
+                    Operation = serviceId,
+                    Result = result,
+                    ElapsedTimeMs = now - tracingTimestamp.Value,
+                    RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
+                };
+
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.EndRpcServerHandler, eventData);
+            }
+        }
+
+        private void TracingError(long? tracingTimestamp, string messageId, string serviceId, StatusCode statusCode,
+            Exception ex)
+        {
+            if (tracingTimestamp != null &&
+                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcServerHandler))
+            {
+                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var eventData = new RpcExcetionEventData()
+                {
+                    MessageId = messageId,
+                    Operation = serviceId,
+                    StatusCode = statusCode,
+                    ElapsedTimeMs = now - tracingTimestamp.Value,
+                    RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
+                    Exception = ex
+                };
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcServerHandler, eventData);
+            }
         }
     }
 }

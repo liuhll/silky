@@ -8,7 +8,7 @@ namespace Silky.Lms.Rpc.Diagnostics
 
         public long? OperationTimestamp { get; set; }
 
-        public string Operation { get; set; }
+        public string ServiceId { get; set; }
 
         public RemoteInvokeMessage Message { get; set; }
 

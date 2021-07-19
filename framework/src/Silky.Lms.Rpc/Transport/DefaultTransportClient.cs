@@ -21,7 +21,8 @@ namespace Silky.Lms.Rpc.Transport
         private readonly IMessageListener _messageListener;
 
         protected static readonly DiagnosticListener s_diagnosticListener =
-            new DiagnosticListener(RpcDiagnosticListenerNames.DiagnosticListenerName);
+            new(RpcDiagnosticListenerNames.DiagnosticClientListenerName);
+
 
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
@@ -112,18 +113,18 @@ namespace Silky.Lms.Rpc.Transport
 
         private long? TracingBefore(RemoteInvokeMessage message, string messageId)
         {
-            if (s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.BeforeRpcInvoker))
+            if (s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.BeginRpcRequest))
             {
                 var eventData = new RpcInvokeEventData()
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    Operation = message.ServiceId,
+                    ServiceId = message.ServiceId,
                     Message = message,
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
                 };
 
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeforeRpcInvoker, eventData);
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcRequest, eventData);
 
                 return eventData.OperationTimestamp;
             }
@@ -134,7 +135,7 @@ namespace Silky.Lms.Rpc.Transport
         private void TracingAfter(long? tracingTimestamp, string messageId, string serviceId, object result)
         {
             if (tracingTimestamp != null &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.AfterRpcInvoker))
+                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcRequest))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 var eventData = new RpcResultEventData()
@@ -146,7 +147,7 @@ namespace Silky.Lms.Rpc.Transport
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
                 };
 
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.AfterRpcInvoker, eventData);
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.EndRpcRequest, eventData);
             }
         }
 
@@ -154,7 +155,7 @@ namespace Silky.Lms.Rpc.Transport
             Exception ex)
         {
             if (tracingTimestamp != null &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcInvoker))
+                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcRequest))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 var eventData = new RpcExcetionEventData()
@@ -166,7 +167,7 @@ namespace Silky.Lms.Rpc.Transport
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
                     Exception = ex
                 };
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcInvoker, eventData);
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);
             }
         }
     }

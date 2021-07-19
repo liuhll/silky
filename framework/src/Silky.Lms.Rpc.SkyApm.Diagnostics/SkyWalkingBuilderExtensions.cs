@@ -14,8 +14,8 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
                 throw new ArgumentNullException(nameof(extensions));
             }
 
-            extensions.Services.AddSingleton<ITracingDiagnosticProcessor, RpcTracingDiagnosticProcessor>();
-            
+            extensions.Services.AddSingleton<ITracingDiagnosticProcessor, RpcClientTracingDiagnosticProcessor>();
+            extensions.Services.AddSingleton<ITracingDiagnosticProcessor, RpcServerTracingDiagnosticProcessor>();
             return extensions;
         }
     }

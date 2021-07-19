@@ -85,7 +85,7 @@ namespace Silky.Lms.DotNetty
                 _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
-                RpcContext.GetContext().SetAttachment(AttachmentKeys.RemoteAddress, selectedAddress.ToString());
+                RpcContext.GetContext().SetAttachment(AttachmentKeys.RemoteAddress, selectedAddress.IPEndPoint.ToString());
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }
             catch (IOException ex)

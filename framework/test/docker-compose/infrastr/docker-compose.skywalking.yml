@@ -35,7 +35,7 @@ services:
       retries: 3
       start_period: 40s
   ui:
-    image: apache/skywalking-ui
+    image: apache/skywalking-ui:${TAG_UI}
     container_name: ui
     depends_on:
       - oap

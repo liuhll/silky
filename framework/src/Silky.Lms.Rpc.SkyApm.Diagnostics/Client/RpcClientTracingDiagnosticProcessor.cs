@@ -12,18 +12,15 @@ using SkyApm.Tracing.Segments;
 
 namespace Silky.Lms.Rpc.SkyApm.Diagnostics
 {
-    public class RpcTracingDiagnosticProcessor : ITracingDiagnosticProcessor
+    public class RpcClientTracingDiagnosticProcessor : ITracingDiagnosticProcessor
     {
-        public string ListenerName { get; } = RpcDiagnosticListenerNames.DiagnosticListenerName;
-
-        private readonly ConcurrentDictionary<string, SegmentContext> _contexts = new();
-
+        public string ListenerName { get; } = RpcDiagnosticListenerNames.DiagnosticClientListenerName;
         private readonly ITracingContext _tracingContext;
         private readonly IExitSegmentContextAccessor _exitSegmentContextAccessor;
         private readonly TracingConfig _tracingConfig;
         private readonly ISerializer _serializer;
 
-        public RpcTracingDiagnosticProcessor(ITracingContext tracingContext,
+        public RpcClientTracingDiagnosticProcessor(ITracingContext tracingContext,
             IExitSegmentContextAccessor exitSegmentContextAccessor,
             IConfigAccessor configAccessor,
             ISerializer serializer)
@@ -32,29 +29,27 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
             _exitSegmentContextAccessor = exitSegmentContextAccessor;
             _tracingConfig = configAccessor.Get<TracingConfig>();
             _serializer = serializer;
-           
         }
 
-        [DiagnosticName(RpcDiagnosticListenerNames.BeforeRpcInvoker)]
-        public void RpcRequest([Object] RpcInvokeEventData eventData)
+        [DiagnosticName(RpcDiagnosticListenerNames.BeginRpcRequest)]
+        public void BeginRequest([Object] RpcInvokeEventData eventData)
         {
-            var host = NetUtil.GetRpcAddressModel().IPEndPoint.Address.MapToIPv4().ToString();
-            var context = _tracingContext.CreateExitSegmentContext(eventData.Operation, host,
+            var host = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
+            var context = _tracingContext.CreateExitSegmentContext($"{host}{eventData.ServiceId}", host,
                 new RpcCarrierHeaderCollection(eventData.Message));
-            
+
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
-            context.Span.Component = "LmsRpc";
-            context.Span.AddLog(LogEvent.Event("Rpc Invoke Start"));
-            context.Span.AddLog(LogEvent.Message("Rpc Start"));
+            context.Span.Component = Components.LmsRpc;
+            context.Span.AddLog(LogEvent.Event("Rpc Client BeginRequest"), LogEvent.Message($"Request starting {eventData.ServiceId}"));
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
-            context.Span.Peer = new StringOrIntValue(eventData.RemoteAddress);
-            context.Span.AddTag(Tags.RPC_METHOD, eventData.Operation.ToString());
+            context.Span.Peer = new StringOrIntValue(host);
+            context.Span.AddTag(Tags.RPC_SERVICEID, eventData.ServiceId.ToString());
             context.Span.AddTag(Tags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
             context.Span.AddTag(Tags.RPC_LOCAL_ADDRESS, host);
         }
 
-        [DiagnosticName(RpcDiagnosticListenerNames.AfterRpcInvoker)]
-        public void RpcResponse([Object] RpcResultEventData eventData)
+        [DiagnosticName(RpcDiagnosticListenerNames.EndRpcRequest)]
+        public void EndRequest([Object] RpcResultEventData eventData)
         {
             var context = _exitSegmentContextAccessor.Context;
             if (context == null) return;
@@ -67,9 +62,11 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
             _tracingContext.Release(context);
         }
 
-        [DiagnosticName(RpcDiagnosticListenerNames.ErrorRpcInvoker)]
+        [DiagnosticName(RpcDiagnosticListenerNames.ErrorRpcRequest)]
         public void RpcError([Object] RpcExcetionEventData eventData)
         {
         }
+        
+
     }
 }
