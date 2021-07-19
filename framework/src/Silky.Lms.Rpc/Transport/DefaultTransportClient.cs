@@ -14,8 +14,7 @@ namespace Silky.Lms.Rpc.Transport
 {
     public class DefaultTransportClient : ITransportClient
     {
-        private ConcurrentDictionary<string, (TaskCompletionSource<TransportMessage>, string, long?)>
-            m_resultDictionary = new();
+        private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
 
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;
@@ -38,17 +37,13 @@ namespace Silky.Lms.Rpc.Transport
         private async Task MessageListenerOnReceived(IMessageSender sender, TransportMessage message)
         {
             TaskCompletionSource<TransportMessage> task;
-            if (!m_resultDictionary.TryGetValue(message.Id, out var registerResultCallback))
+            if (!m_resultDictionary.TryGetValue(message.Id, out task))
                 return;
             Debug.Assert(message.IsResultMessage(), "服务消费者接受到的消息类型不正确");
-            task = registerResultCallback.Item1;
-            var serviceId = registerResultCallback.Item2;
-            var tracingTimestamp = registerResultCallback.Item3;
 
             var content = message.GetContent<RemoteResultMessage>();
             if (content.StatusCode != StatusCode.Success)
             {
-                Exception exception;
                 if (content.StatusCode == StatusCode.ValidateError)
                 {
                     var validateException = new ValidationException(content.ExceptionMessage);
@@ -62,11 +57,10 @@ namespace Silky.Lms.Rpc.Transport
                     }
 
                     task.TrySetException(validateException);
-                    exception = validateException;
                 }
                 else
                 {
-                    exception = new LmsException(content.ExceptionMessage, content.StatusCode);
+                    var exception = new LmsException(content.ExceptionMessage, content.StatusCode);
                     task.TrySetException(exception);
                 }
             }
@@ -91,8 +85,8 @@ namespace Silky.Lms.Rpc.Transport
             long? tracingTimestamp, int timeout = Timeout.Infinite)
         {
             var tcs = new TaskCompletionSource<TransportMessage>();
-            var registerResultCallback = (tcs, serviceId, tracingTimestamp);
-            m_resultDictionary.TryAdd(id, registerResultCallback);
+
+            m_resultDictionary.TryAdd(id, tcs);
             try
             {
                 var resultMessage = await tcs.WaitAsync(timeout);
@@ -107,7 +101,7 @@ namespace Silky.Lms.Rpc.Transport
             }
             finally
             {
-                m_resultDictionary.TryRemove(id, out registerResultCallback);
+                m_resultDictionary.TryRemove(id, out tcs);
             }
         }
 
