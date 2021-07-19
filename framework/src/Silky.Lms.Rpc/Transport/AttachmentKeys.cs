@@ -12,6 +12,8 @@ namespace Silky.Lms.Rpc.Transport
 
         public const string TransactionContext = "transactionContext";
 
-        
+        public const string Path = "path";
+
+        public const string HttpMethod = "httpmethod";
     }
 }

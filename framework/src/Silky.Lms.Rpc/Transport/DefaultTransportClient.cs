@@ -113,7 +113,7 @@ namespace Silky.Lms.Rpc.Transport
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    ServiceId = message.ServiceId,
+                    Operation = message.ServiceId,
                     Message = message,
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
                 };

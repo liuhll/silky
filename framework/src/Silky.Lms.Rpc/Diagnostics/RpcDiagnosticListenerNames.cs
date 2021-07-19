@@ -4,9 +4,9 @@ namespace Silky.Lms.Rpc.Diagnostics
     {
         private const string RpcPrefix = "Silky.Lms.Rpc.";
         
-        public const string DiagnosticClientListenerName = "DiagnosticClientListenerName";
+        public const string DiagnosticClientListenerName = "DiagnosticClientListener";
         
-        public const string DiagnosticServerListenerName = "DiagnosticServerListenerName";
+        public const string DiagnosticServerListenerName = "DiagnosticServerListener";
 
         public const string BeginRpcRequest = RpcPrefix + "WriteBeginRpcRequest";
         public const string EndRpcRequest = RpcPrefix + "WriteEndRpcRequest";

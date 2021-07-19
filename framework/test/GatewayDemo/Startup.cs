@@ -1,16 +1,9 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using Silky.Lms.Core;
-using Silky.Lms.Rpc.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Silky.Lms.HttpServer.Configuration;
+using Silky.Lms.Http.SkyApm.Diagnostics;
 using Silky.Lms.Rpc.SkyApm.Diagnostics;
 using Silky.Lms.Swagger.SwaggerUI;
 
@@ -30,7 +23,9 @@ namespace GatewayDemo
         {
             services.AddSkyAPM(extensions =>
             {
-                extensions.AddRpc();
+                extensions
+                    .AddSilkyHttpServer()
+                    .AddSilkyRpc();
             });
         }
 
@@ -41,14 +36,15 @@ namespace GatewayDemo
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.ConfigureLmsRequestPipeline();
-           // app.UseEndpoints(endpoints=> endpoints.MapControllers());
+            // app.UseEndpoints(endpoints=> endpoints.MapControllers());
         }
-        
+
         private static void InjectMiniProfilerPlugin(SwaggerUIOptions swaggerUIOptions)
         {
             // 启用 MiniProfiler 组件
-            var thisType =typeof(SwaggerUIOptions);
+            var thisType = typeof(SwaggerUIOptions);
             var thisAssembly = thisType.Assembly;
 
             // 自定义 Swagger 首页

@@ -5,10 +5,10 @@ namespace Silky.Lms.Rpc.Diagnostics
     public class RpcInvokeEventData
     {
         public string MessageId { get; set; }
-
         public long? OperationTimestamp { get; set; }
+        public string Operation { get; set; }
 
-        public string ServiceId { get; set; }
+        public string Method { get; set; }
 
         public RemoteInvokeMessage Message { get; set; }
 

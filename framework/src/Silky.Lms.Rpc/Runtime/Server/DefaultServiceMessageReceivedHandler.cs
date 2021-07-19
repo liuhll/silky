@@ -79,7 +79,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    ServiceId = message.ServiceId,
+                    Operation = message.ServiceId,
                     Message = message,
                     RemoteAddress = remoteAddress
                 };

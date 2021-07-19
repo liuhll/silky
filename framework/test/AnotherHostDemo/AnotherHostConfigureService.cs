@@ -1,17 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NormHostDemo.Contexts;
 using Silky.Lms.Core;
 using Silky.Lms.Rpc.SkyApm.Diagnostics;
 
-namespace NormHostDemo
+namespace AnotherHostDemo
 {
-    public class NormHostConfigureService : IConfigureService
+    public class AnotherHostConfigureService : IConfigureService
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
-
             services.AddSkyAPM(extensions => { extensions.AddSilkyRpc(); });
         }
 

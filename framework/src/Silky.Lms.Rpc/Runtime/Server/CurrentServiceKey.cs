@@ -5,7 +5,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
 {
     public class CurrentServiceKey : ICurrentServiceKey, IScopedDependency
     {
-        public string ServiceKey => RpcContext.GetContext().GetAttachment("serviceKey")?.ToString();
+        public string ServiceKey => RpcContext.GetContext().GetAttachment(AttachmentKeys.ServiceKey)?.ToString();
 
         public void Change(string seviceKey)
         {

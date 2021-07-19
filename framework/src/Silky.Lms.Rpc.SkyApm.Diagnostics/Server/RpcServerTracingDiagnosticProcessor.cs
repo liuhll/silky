@@ -38,15 +38,15 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         public void BeginRpcServerHandle([Object] RpcInvokeEventData eventData)
         {
             var carrierHeader = new RpcCarrierHeaderCollection(eventData.Message);
-            var context = _tracingContext.CreateEntrySegmentContext(eventData.ServiceId, carrierHeader);
+            var context = _tracingContext.CreateEntrySegmentContext(eventData.Operation, carrierHeader);
 
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
             context.Span.Component = Components.LmsRpc;
             context.Span.Peer = new StringOrIntValue(eventData.RemoteAddress);
             context.Span.AddLog(LogEvent.Event("Rpc Server Handle Begin"),
-                LogEvent.Message($"Request starting {eventData.ServiceId}"));
+                LogEvent.Message($"Request starting {eventData.Operation}"));
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
-            context.Span.AddTag(Tags.RPC_SERVICEID, eventData.ServiceId.ToString());
+            context.Span.AddTag(Tags.RPC_SERVICEID, eventData.Operation.ToString());
             context.Span.AddTag(Tags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
 
             //   _contexts[eventData.MessageId + eventData.ServiceId] = context;
