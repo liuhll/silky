@@ -15,5 +15,7 @@ namespace Silky.Lms.Rpc.Transport
         public const string Path = "path";
 
         public const string HttpMethod = "httpmethod";
+
+        public const string IsGatewayHost = "isGatewayHost";
     }
 }

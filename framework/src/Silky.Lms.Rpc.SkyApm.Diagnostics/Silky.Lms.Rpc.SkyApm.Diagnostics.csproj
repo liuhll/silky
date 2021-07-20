@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
         <Description>Rpc SkyApm Diagnostics</Description>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="SkyAPM.Abstractions" Version="1.3.0" />
       <PackageReference Include="SkyAPM.Core" Version="1.3.0" />
       <PackageReference Include="SkyAPM.Utilities.DependencyInjection" Version="1.3.0" />
     </ItemGroup>

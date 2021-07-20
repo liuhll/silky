@@ -47,6 +47,8 @@ namespace Silky.Lms.HttpServer.Handlers
             var requestParameters = await _parameterParser.Parser(context.Request, serviceEntry);
             RpcContext.GetContext()
                 .SetAttachment(AttachmentKeys.RequestHeader, requestParameters[ParameterFrom.Header]);
+            RpcContext.GetContext()
+                .SetAttachment(AttachmentKeys.IsGatewayHost, true);
             var rpcParameters = serviceEntry.ResolveParameters(requestParameters);
             string serviceKey = null;
 
@@ -94,8 +96,6 @@ namespace Silky.Lms.HttpServer.Handlers
                     await context.Response.WriteAsync(string.Empty);
                 }
             }
-            
         }
-        
     }
 }

@@ -113,9 +113,12 @@ namespace Silky.Lms.Rpc.Transport
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    Operation = message.ServiceId,
+                    Operation = RpcContext.GetContext().IsGateway()
+                        ? $"{RpcContext.GetContext().GetAttachment(AttachmentKeys.Path)}-{RpcContext.GetContext().GetAttachment(AttachmentKeys.HttpMethod)}"
+                        : message.ServiceId,
                     Message = message,
-                    RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
+                    RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
+                    IsGateWay = RpcContext.GetContext().IsGateway()
                 };
 
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcRequest, eventData);
@@ -135,7 +138,7 @@ namespace Silky.Lms.Rpc.Transport
                 var eventData = new RpcResultEventData()
                 {
                     MessageId = messageId,
-                    Operation = serviceId,
+                    ServiceId = serviceId,
                     Result = result,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
@@ -155,7 +158,7 @@ namespace Silky.Lms.Rpc.Transport
                 var eventData = new RpcExcetionEventData()
                 {
                     MessageId = messageId,
-                    Operation = serviceId,
+                    ServiceId = serviceId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),

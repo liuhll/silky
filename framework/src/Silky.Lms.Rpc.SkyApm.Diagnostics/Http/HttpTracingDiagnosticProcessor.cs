@@ -7,7 +7,11 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
-using Silky.Lms.Http.SkyApm.Diagnostics.Extensions;
+using Silky.Lms.Http.SkyApm.Diagnostics;
+using Silky.Lms.Rpc.SkyApm.Diagnostics.Collections;
+using Silky.Lms.Rpc.SkyApm.Diagnostics.Http.Extensions;
+using Silky.Lms.Rpc.Transport;
+using Silky.Lms.Rpc.Utils;
 using SkyApm;
 using SkyApm.Common;
 using SkyApm.Config;
@@ -15,23 +19,23 @@ using SkyApm.Diagnostics;
 using SkyApm.Tracing;
 using SkyApm.Tracing.Segments;
 
-namespace Silky.Lms.Http.SkyApm.Diagnostics
+namespace Silky.Lms.Rpc.SkyApm.Diagnostics
 {
     public class HttpTracingDiagnosticProcessor : ITracingDiagnosticProcessor
     {
         public string ListenerName { get; } = "Microsoft.AspNetCore";
 
         private readonly ITracingContext _tracingContext;
-        private readonly IEntrySegmentContextAccessor _segmentContextAccessor;
+        private readonly IExitSegmentContextAccessor _exitSegmentContextAccessor;
         private readonly HostingDiagnosticConfig _config;
         private readonly TracingConfig _tracingConfig;
 
-        public HttpTracingDiagnosticProcessor(IEntrySegmentContextAccessor segmentContextAccessor,
+        public HttpTracingDiagnosticProcessor(IExitSegmentContextAccessor exitSegmentContextAccessor,
             ITracingContext tracingContext,
             IConfigAccessor configAccessor)
         {
             _tracingContext = tracingContext;
-            _segmentContextAccessor = segmentContextAccessor;
+            _exitSegmentContextAccessor = exitSegmentContextAccessor;
             _config = configAccessor.Get<HostingDiagnosticConfig>();
             _tracingConfig = configAccessor.Get<TracingConfig>();
         }
@@ -40,15 +44,19 @@ namespace Silky.Lms.Http.SkyApm.Diagnostics
         public void BeginRequest([Property] HttpContext HttpContext)
         {
             var path = HttpContext.Request.Path.ToString();
-            if (path.Contains(".js")|| path.Contains(".css") || path.Contains(".html"))
+            if (path.Contains(".js") || path.Contains(".css") || path.Contains(".html"))
             {
                 return;
             }
-            var context = _tracingContext.CreateEntrySegmentContext(HttpContext.Request.Path,
-                new HttpCarrierHeaderCollection(HttpContext.Request));
-            context.Span.SpanLayer = SpanLayer.HTTP;
-            context.Span.Component = Components.LmsHttp;
-            context.Span.Peer = new StringOrIntValue(HttpContext.Connection.RemoteIpAddress.ToString());
+
+            var host = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
+            var context = _tracingContext.CreateExitSegmentContext(
+                $"{HttpContext.Request.Path}-{HttpContext.Request.Path}", host,
+                new SilkyCarrierHeaderCollection(RpcContext.GetContext()));
+
+            context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
+            context.Span.Component = Components.LmsRpc;
+            context.Span.Peer = host;
             context.Span.AddTag(Tags.URL, HttpContext.Request.GetDisplayUrl());
             context.Span.AddTag(Tags.PATH, HttpContext.Request.Path);
             context.Span.AddTag(Tags.HTTP_METHOD, HttpContext.Request.Method);
@@ -57,28 +65,28 @@ namespace Silky.Lms.Http.SkyApm.Diagnostics
             {
                 var cookies = CollectCookies(HttpContext, _config.CollectCookies);
                 if (!string.IsNullOrEmpty(cookies))
-                    context.Span.AddTag(Tags.HTTP_COOKIES, cookies);
+                    context.Span.AddTag(global::SkyApm.Common.Tags.HTTP_COOKIES, cookies);
             }
 
             if (_config.CollectHeaders?.Count > 0)
             {
                 var headers = CollectHeaders(HttpContext, _config.CollectHeaders);
                 if (!string.IsNullOrEmpty(headers))
-                    context.Span.AddTag(Tags.HTTP_HEADERS, headers);
+                    context.Span.AddTag(global::SkyApm.Common.Tags.HTTP_HEADERS, headers);
             }
 
             if (_config.CollectBodyContentTypes?.Count > 0)
             {
                 var body = CollectBody(HttpContext, _config.CollectBodyLengthThreshold);
                 if (!string.IsNullOrEmpty(body))
-                    context.Span.AddTag(Tags.HTTP_REQUEST_BODY, body);
+                    context.Span.AddTag(global::SkyApm.Common.Tags.HTTP_REQUEST_BODY, body);
             }
         }
 
         [DiagnosticName("Microsoft.AspNetCore.Hosting.HttpRequestIn.Stop")]
         public void EndRequest([Property] HttpContext HttpContext)
         {
-            var context = _segmentContextAccessor.Context;
+            var context = _exitSegmentContextAccessor.Context;
             if (context == null)
             {
                 return;
@@ -89,19 +97,20 @@ namespace Silky.Lms.Http.SkyApm.Diagnostics
             {
                 context.Span.ErrorOccurred();
             }
+
             _tracingContext.Release(context);
         }
 
         [DiagnosticName("Microsoft.AspNetCore.Diagnostics.UnhandledException")]
         public void DiagnosticUnhandledException([Property] HttpContext httpContext, [Property] Exception exception)
         {
-            _segmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
+            _exitSegmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
         }
 
         [DiagnosticName("Microsoft.AspNetCore.Hosting.UnhandledException")]
         public void HostingUnhandledException([Property] HttpContext httpContext, [Property] Exception exception)
         {
-            _segmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
+            _exitSegmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
         }
 
         private string CollectCookies(HttpContext httpContext, IEnumerable<string> keys)

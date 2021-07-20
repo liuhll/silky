@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NormHostDemo.Contexts;
 using Silky.Lms.Core;
 using Silky.Lms.Rpc.SkyApm.Diagnostics;
+using SkyApm.Diagnostics.EntityFrameworkCore;
 
 namespace NormHostDemo
 {
@@ -12,7 +13,10 @@ namespace NormHostDemo
         {
             services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
 
-            services.AddSkyAPM(extensions => { extensions.AddSilkyRpc(); });
+            services.AddSkyAPM(extensions => { extensions.AddSilkyRpc().AddEntityFrameworkCore(option =>
+            {
+                option.AddPomeloMysql();
+            }); });
         }
 
         public int Order { get; } = 10;

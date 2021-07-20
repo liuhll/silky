@@ -24,7 +24,6 @@ namespace GatewayDemo
             services.AddSkyAPM(extensions =>
             {
                 extensions
-                    .AddSilkyHttpServer()
                     .AddSilkyRpc();
             });
         }

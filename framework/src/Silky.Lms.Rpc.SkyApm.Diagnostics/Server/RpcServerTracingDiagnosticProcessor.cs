@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
-using Silky.Lms.Core.Serialization;
+﻿using Silky.Lms.Core.Serialization;
 using Silky.Lms.Rpc.Diagnostics;
-using Silky.Lms.Rpc.Utils;
+using Silky.Lms.Rpc.SkyApm.Diagnostics.Collections;
+using Silky.Lms.Rpc.Transport;
 using SkyApm;
 using SkyApm.Common;
 using SkyApm.Config;
@@ -20,7 +20,6 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         private readonly TracingConfig _tracingConfig;
 
         private readonly ISerializer _serializer;
-        // private readonly ConcurrentDictionary<string, SegmentContext> _contexts = new();
 
         public RpcServerTracingDiagnosticProcessor(ITracingContext tracingContext,
             IEntrySegmentContextAccessor entrySegmentContextAccessor,
@@ -37,19 +36,18 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         [DiagnosticName(RpcDiagnosticListenerNames.BeginRpcServerHandler)]
         public void BeginRpcServerHandle([Object] RpcInvokeEventData eventData)
         {
-            var carrierHeader = new RpcCarrierHeaderCollection(eventData.Message);
+            var carrierHeader = new SilkyCarrierHeaderCollection(RpcContext.GetContext());
             var context = _tracingContext.CreateEntrySegmentContext(eventData.Operation, carrierHeader);
 
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
             context.Span.Component = Components.LmsRpc;
-            context.Span.Peer = new StringOrIntValue(eventData.RemoteAddress);
+            context.Span.Peer = eventData.RemoteAddress;
+
             context.Span.AddLog(LogEvent.Event("Rpc Server Handle Begin"),
                 LogEvent.Message($"Request starting {eventData.Operation}"));
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
-            context.Span.AddTag(Tags.RPC_SERVICEID, eventData.Operation.ToString());
-            context.Span.AddTag(Tags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
-
-            //   _contexts[eventData.MessageId + eventData.ServiceId] = context;
+            context.Span.AddTag(SilkyTags.RPC_SERVICEID, eventData.Operation.ToString());
+            context.Span.AddTag(SilkyTags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.EndRpcServerHandler)]
@@ -62,8 +60,14 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.ErrorRpcServerHandler)]
-        public void ErrorRpcServerHandle([Object] RpcResultEventData eventData)
+        public void ErrorRpcServerHandle([Object] RpcExcetionEventData eventData)
         {
+            var context = _entrySegmentContextAccessor.Context;
+            if (context != null)
+            {
+                context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
+                _tracingContext.Release(context);
+            }
         }
     }
 }
