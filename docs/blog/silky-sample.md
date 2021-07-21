@@ -1,15 +1,15 @@
 ---
-title: 通过lms.samples熟悉lms微服务框架的使用
+title: 通过silky.samples熟悉silky微服务框架的使用
 lang: zh-cn
 ---
 
 
-经过一段时间的开发与测试,终于发布了Lms框架的第一个正式版本(1.0.0版本),并给出了lms框架的样例项目**lms.samples**。本文通过对**lms.samples**的介绍，简述如何通过lms框架快速的构建一个微服务的业务框架，并进行应用开发。
+经过一段时间的开发与测试,终于发布了Silky框架的第一个正式版本(1.0.0版本),并给出了silky框架的样例项目**silky.samples**。本文通过对**silky.samples**的介绍，简述如何通过silky框架快速的构建一个微服务的业务框架，并进行应用开发。
 
 
-## lms.samples项目基本介绍
+## silky.samples项目基本介绍
 
-lms.sample项目由三个独立的微服务应用模块组成:account、stock、order和一个网关项目gateway构成。
+silky.sample项目由三个独立的微服务应用模块组成:account、stock、order和一个网关项目gateway构成。
 
 ### 业务应用模块
 
@@ -25,20 +25,20 @@ lms.sample项目由三个独立的微服务应用模块组成:account、stock、
 
 5. **领域共享层(Domain.Shared):** 该层用于定义与领域对象相关的模型、实体等相关类型。不包含任何业务实现，可以被其他微服务引用。
 
-6. **数据访问(DataAccess)层:** 该层一般用于封装数据访问相关的对象。例如：仓库对象、 `SqlHelper`、或是ORM相关的类型等。在lms.samples中,通过efcore实现数据的读写操作。
+6. **数据访问(DataAccess)层:** 该层一般用于封装数据访问相关的对象。例如：仓库对象、 `SqlHelper`、或是ORM相关的类型等。在silky.samples中,通过efcore实现数据的读写操作。
 
 ![project-arch.jpg](/assets/imgs/project-arch.jpg)
 
 ### 服务聚合与网关
 
-lms框架不允许服务外部与微服务主机直接通信,应用请求必须通过http请求到达网关,网关通过lms提供的中间件解析到服务条目,并通过rpc与集群内部的微服务进行通信。所以，如果服务需要与集群外部进行通信,那么,开发者定义的网关必须要引用各个微服务模块的应用接口层；以及必须要使用lms相关的中间件。
+silky框架不允许服务外部与微服务主机直接通信,应用请求必须通过http请求到达网关,网关通过silky提供的中间件解析到服务条目,并通过rpc与集群内部的微服务进行通信。所以，如果服务需要与集群外部进行通信,那么,开发者定义的网关必须要引用各个微服务模块的应用接口层；以及必须要使用silky相关的中间件。
 
 
 ## 开发环境
 
 1. .net版本: 5.0.101
 
-2. lms版本: 1.0.0
+2. silky版本: 1.0.0
 
 3. IDE: (1) visual studio 最新版 (2) Rider(推荐)
 
@@ -46,19 +46,19 @@ lms框架不允许服务外部与微服务主机直接通信,应用请求必须�
 
 ### 主机的创建步骤
 
-通过lms框架创建一个业务模块非常方便,只需要通过如下4个步骤,就可以轻松的创建一个lms应用业务模块。
+通过silky框架创建一个业务模块非常方便,只需要通过如下4个步骤,就可以轻松的创建一个silky应用业务模块。
 
 1. 创建项目
 
-创建控制台应用(Console Application)项目,并且引用`Silky.Lms.NormHost`包。
+创建控制台应用(Console Application)项目,并且引用`Silky.NormHost`包。
 
 ```
-dotnet add package Silky.Lms.NormHost --version 1.0.0
+dotnet add package Silky.NormHost --version 1.0.0
 ```
 
 2. 应用程序入口与主机构建
 
-在`main`方法中,通用.net的主机`Host`构建并注册lms微服务。在注册lms微服务时,需要指定lms启动的依赖模块。
+在`main`方法中,通用.net的主机`Host`构建并注册silky微服务。在注册silky微服务时,需要指定silky启动的依赖模块。
 
 一般地,如果开发者不需要额外依赖其他模块,也无需在应用启动或停止时执行方法，那么您可以直接指定`NormHostModule`模块。
 
@@ -73,7 +73,7 @@ dotnet add package Silky.Lms.NormHost --version 1.0.0
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<NormHostModule>()
+                    .RegisterSilkyServices<NormHostModule>()
                 ;
         }
     }
@@ -81,7 +81,7 @@ dotnet add package Silky.Lms.NormHost --version 1.0.0
 
 3. 配置文件
 
-lms框架支持`yml`或是`json`格式作为配置文件。通过`appsettings.yml`对lms框架进行统一配置,通过`appsettings.${Environment}.yml`对不同环境变量下的配置项进行设置。
+silky框架支持`yml`或是`json`格式作为配置文件。通过`appsettings.yml`对silky框架进行统一配置,通过`appsettings.${Environment}.yml`对不同环境变量下的配置项进行设置。
 
 开发者如果直接通过项目的方式启动应用,那么可以通过`Properties/launchSettings.json`的`environmentVariables.DOTNET_ENVIRONMENT`环境变量。如果通过`docker-compose`的方式启动应用,那么可以通过`.env`设置`DOTNET_ENVIRONMENT`环境变量。
 
@@ -102,7 +102,7 @@ lms框架支持`yml`或是`json`格式作为配置文件。通过`appsettings.ym
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Silky.Lms.NormHost" Version="$(LmsVersion)" />
+      <PackageReference Include="Silky.NormHost" Version="$(SilkyVersion)" />
     </ItemGroup>
 
     <ItemGroup>
@@ -118,8 +118,8 @@ lms框架支持`yml`或是`json`格式作为配置文件。通过`appsettings.ym
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Lms.Account.Application\Lms.Account.Application.csproj" />
-      <ProjectReference Include="..\Lms.Account.EntityFrameworkCore\Lms.Account.EntityFrameworkCore.csproj" />
+      <ProjectReference Include="..\Silky.Account.Application\Silky.Account.Application.csproj" />
+      <ProjectReference Include="..\Silky.Account.EntityFrameworkCore\Silky.Account.EntityFrameworkCore.csproj" />
     </ItemGroup>
 </Project>
 
@@ -133,7 +133,7 @@ lms框架支持`yml`或是`json`格式作为配置文件。通过`appsettings.ym
 
 如果直接通过项目的方式启动和调试应用的话,那么,必须要配置rpc节点下的port,每个微服务模块的主机应用有自己的端口号。
 
-lms框架的必要配置如下所示:
+silky框架的必要配置如下所示:
 
 ```yaml
 rpc:
@@ -157,21 +157,21 @@ connectionStrings:
 
 ### 应用接口定义
 
-一般地,在应用接口层开发者需要安装`Silky.Lms.Rpc`包。如果该微服务模块还涉及到分布式事务,那么还需要安装`Silky.Lms.Transaction.Tcc`,当然，您也可以选择在应用接口层安装`Silky.Lms.Transaction`包,在应用服务层安装`Silky.Lms.Transaction.Tcc`包。
+一般地,在应用接口层开发者需要安装`Silky.Rpc`包。如果该微服务模块还涉及到分布式事务,那么还需要安装`Silky.Transaction.Tcc`,当然，您也可以选择在应用接口层安装`Silky.Transaction`包,在应用服务层安装`Silky.Transaction.Tcc`包。
 
 1. 开发者只需要在应用接口通过`ServiceRouteAttribute`特性对应用接口进行直接即可。
 
-2. Lms约定应用接口应当以`IXxxAppService`命名，这样,服务条目生成的路由则会以`api/xxx`形式生成。当然这并不是强制的。
+2. Silky约定应用接口应当以`IXxxAppService`命名，这样,服务条目生成的路由则会以`api/xxx`形式生成。当然这并不是强制的。
 
 3. 每个应用接口的方法都对应着一个服务条目,服务条目的Id为: 方法的完全限定名 + 参数名
 
-4. 您可以在应用接口层对方法的缓存、路由、服务治理、分布式事务进行相关配置。该部分内容请参考[官方文档](http://docs.lms-fk.com/)
+4. 您可以在应用接口层对方法的缓存、路由、服务治理、分布式事务进行相关配置。该部分内容请参考[官方文档](http://docs.silky-fk.com/)
 
 5. 网关或是其他模块的微服务项目需要引用服务应用接口项目或是通过nuget的方式安装服务应用接口生成的包。
 
 6. `[Governance(ProhibitExtranet = true)]`可以标识一个方法禁止与集群外部进行通信,通过网关也不会生成swagger文档。
  
-7. 应用接口方法生成的WebApi支持restful API风格。Lms支持通过方法的约定命名生成对应http方法请求的WebApi。您当然开发者也可以通过`HttpMethodAttribute`特性对某个方法进行注解。
+7. 应用接口方法生成的WebApi支持restful API风格。Silky支持通过方法的约定命名生成对应http方法请求的WebApi。您当然开发者也可以通过`HttpMethodAttribute`特性对某个方法进行注解。
 
 ### 一个典型的应用接口的定义
 
@@ -324,7 +324,7 @@ public class AccountAppService : IAccountAppService
 
 4. 领域服务必须要直接或间接继承`ITransientDependency`接口,这样,该领域服务才会被注入到ioc容器。
 
-6. lms.samples 项目使用[TanvirArjel.EFCore.GenericRepository](https://github.com/TanvirArjel/EFCore.GenericRepository)包实现数据的读写操作。
+6. silky.samples 项目使用[TanvirArjel.EFCore.GenericRepository](https://github.com/TanvirArjel/EFCore.GenericRepository)包实现数据的读写操作。
 
 一个典型的领域服务的实现如下所示:
 
@@ -468,9 +468,9 @@ public class AccountAppService : IAccountAppService
 
 ## 数据访问(EntityFrameworkCore)--通过efcore实现数据读写
 
-1. lms.samples项目使用orm框架efcore进行数据读写。
+1. silky.samples项目使用orm框架efcore进行数据读写。
 
-2. lms提供了`IConfigureService`,通过继承该接口即可使用`IServiceCollection`的实例指定数据上下文对象和注册仓库服务。
+2. silky提供了`IConfigureService`,通过继承该接口即可使用`IServiceCollection`的实例指定数据上下文对象和注册仓库服务。
 
 ```csharp
   public class EfCoreConfigureService : IConfigureService
@@ -496,14 +496,14 @@ public class AccountAppService : IAccountAppService
 
 ### 获取源码
 
-1. 使用git 克隆lms项目源代码,lms.samples存放在`samples`目录下
+1. 使用git 克隆silky项目源代码,silky.samples存放在`samples`目录下
 
 ```cmd
 # github
-git clone https://github.com/liuhll/lms.git
+git clone https://github.com/liuhll/silky.git
 
 # gitee
-git clone https://gitee.com/liuhll2/lms.git
+git clone https://gitee.com/liuhll2/silky.git
 ```
 
 ### 必要的前提
@@ -547,7 +547,7 @@ order模块和stock模块与account模块一致,在服务运行前都需要通�
 
 #### 使用visual studio作为开发工具
 
-进入到samples目录下,使用visual studio打开`lms.samples.sln`解决方案,将项目设置为多启动项目,并将网关和各个模块的微服务主机设置为启动项目，如下图:
+进入到samples目录下,使用visual studio打开`silky.samples.sln`解决方案,将项目设置为多启动项目,并将网关和各个模块的微服务主机设置为启动项目，如下图:
 
 ![visual-studio-debug-1](/assets/imgs/visual-studio-debug-1.png)
 
@@ -555,7 +555,7 @@ order模块和stock模块与account模块一致,在服务运行前都需要通�
 
 #### 使用rider作为开发工具
 
-1. 进入到samples目录下,使用rider打开`lms.samples.sln`解决方案,打开各个微服务模块下的`Properties/launchSettings.json`,点击图中绿色的箭头即可启动项目。
+1. 进入到samples目录下,使用rider打开`silky.samples.sln`解决方案,打开各个微服务模块下的`Properties/launchSettings.json`,点击图中绿色的箭头即可启动项目。
 
 ![rider-debug.png](/assets/imgs/rider-debug.png)
 
@@ -573,7 +573,7 @@ order模块和stock模块与account模块一致,在服务运行前都需要通�
 
 ### 以docker-compose的方式启动和调试
 
-1. 进入到samples目录下,使用visual studio打开`lms.samples.dockercompose.sln`解决方案,将**docker-compose**设置为启动项目，即可启动和调式。
+1. 进入到samples目录下,使用visual studio打开`silky.samples.dockercompose.sln`解决方案,将**docker-compose**设置为启动项目，即可启动和调式。
 
 2. 应用启动成功后,打开: [http://127.0.0.1/swagger](http://127.0.0.1/swagger),即可看到swagger api文档
 
@@ -595,6 +595,6 @@ order模块和stock模块与account模块一致,在服务运行前都需要通�
 
 ## 开源地址
 
-github: [https://github.com/liuhll/lms](https://github.com/liuhll/lms)
+github: [https://github.com/liuhll/silky](https://github.com/liuhll/silky)
 
-gitee: [https://gitee.com/liuhll2/lms](https://gitee.com/liuhll2/lms)
+gitee: [https://gitee.com/liuhll2/silky](https://gitee.com/liuhll2/silky)

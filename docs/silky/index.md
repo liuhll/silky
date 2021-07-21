@@ -1,22 +1,22 @@
 ---
-title: lms框架介绍
+title: silky框架介绍
 lang: zh-cn
 ---
 
 ## 背景介绍
 
-lms框架旨在帮助开发者在.net平台下,通过简单代码和配置快速构建一个微服务开发框架。
+silky框架旨在帮助开发者在.net平台下,通过简单代码和配置快速构建一个微服务开发框架。
 
 通过.net框架的[通用主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)构建普通业务微服务应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
 
 通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)构建对外提供访问入口的服务主机(网关)，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
 
-lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
+silky在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
 
 在开发与设计过程中借鉴和吸收了各个优秀的开源产品的设计与思想。在此，作者表示对各个先辈的致敬与感谢。
 
-为方便开发者学习与表达对前辈的谢意,如下对lms各个模块的设计思想来源做出说明:
+为方便开发者学习与表达对前辈的谢意,如下对silky各个模块的设计思想来源做出说明:
 
 **服务引擎与IOC容器**: 该模块主要借鉴了[nopCommerce](https://github.com/nopSolutions/nopCommerce/)
 
@@ -45,7 +45,7 @@ lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 ## 框架特性
 
 ### 服务引擎
-- 负责lms主机的初始化过程
+- 负责silky主机的初始化过程
 - 服务注册与解析
 - 负责模块解析与注册
 
@@ -88,11 +88,11 @@ lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 - 使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁
 
 ## 开源地址
-- github: [https://github.com/liuhll/lms](https://github.com/liuhll/lms)
-- gitee: [https://gitee.com/liuhll2/lms](https://gitee.com/liuhll2/lms)
+- github: [https://github.com/liuhll/silky](https://github.com/liuhll/silky)
+- gitee: [https://gitee.com/liuhll2/silky](https://gitee.com/liuhll2/silky)
 
 ## 贡献
 - 贡献的最简单的方法之一就是是参与讨论和讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
-- 您也可以加入QQ群(934306776)参与lms框架的学习讨论。 
+- 您也可以加入QQ群(934306776)参与silky框架的学习讨论。 
 
   ![qq-group.jpg](/assets/imgs/qq-group.jpg)

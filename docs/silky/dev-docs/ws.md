@@ -5,7 +5,7 @@ lang: zh-cn
 
 ## 简介
 
-lms框架通过[WebSocketSharp](https://github.com/sta/websocket-sharp)支持与微服务应用建立websocket会话。lms框架网关实现了支持websocket通信的代理中间件，可以通过网关地址与websocket服务建立会话。在与websocket服务建立会话时,需要指定通过请求头或是`qString`设置一个`bussinessId`参数,通过该参数与建立会话的`SessionId`进行关联,这样,在与其他服务进行rpc通信过程中,就可以通过`bussinessId`找到与前端建里会话的`sessionId`。如果找到`sessionId`说明与前端建立了websocket会话,服务端就可以将消息推送到客户端。
+silky框架通过[WebSocketSharp](https://github.com/sta/websocket-sharp)支持与微服务应用建立websocket会话。silky框架网关实现了支持websocket通信的代理中间件，可以通过网关地址与websocket服务建立会话。在与websocket服务建立会话时,需要指定通过请求头或是`qString`设置一个`bussinessId`参数,通过该参数与建立会话的`SessionId`进行关联,这样,在与其他服务进行rpc通信过程中,就可以通过`bussinessId`找到与前端建里会话的`sessionId`。如果找到`sessionId`说明与前端建立了websocket会话,服务端就可以将消息推送到客户端。
 
 ## 建立支持websocket通信的主机
 
@@ -22,7 +22,7 @@ lms框架通过[WebSocketSharp](https://github.com/sta/websocket-sharp)支持与
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<WsHostModule>()
+                    .RegisterSilkyServices<WsHostModule>()
                 ;
         }
     }

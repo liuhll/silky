@@ -6,7 +6,7 @@ lang: zh-cn
 ## 解决方案结构
 
 - **推荐** 为每个微服务应用模块创建一个单独的解决方案。
-- **推荐** 将解决方案命名为*CompanyName.MicroServiceName*(对于Lms核心模块来说,它的命名方式是*Silky.Lms.ModuleName*)。
+- **推荐** 将解决方案命名为*CompanyName.MicroServiceName*(对于Silky核心模块来说,它的命名方式是*Silky.ModuleName*)。
 - **推荐** 一个每个微服务应用做为分层项目开发,因为它有几个包(项目)是相互关联的。
 
 ## 层(layers) & 包(packages)
@@ -15,7 +15,7 @@ lang: zh-cn
 
 下图展示了一个普通微服务应用模块的包以及他们之间的依赖关系:
 
-![lms-project.png](/assets/imgs/lms-project.png)
+![silky-project.png](/assets/imgs/silky-project.png)
 
 最终的目的是让应用程序以灵活的方式进行开发和被其他微服务应用模块引用。实例应用程序。
 
@@ -52,7 +52,7 @@ lang: zh-cn
 
 下图展示了网关应用的依赖关系：
 
-![lms-gateway-project.png](/assets/imgs/lms-gateway-project.png)
+![silky-gateway-project.png](/assets/imgs/silky-gateway-project.png)
 
 #### Host层
 - **推荐** 创建命名为**CompanyName.MicroServiceNameGatewayHost**的 **Host** 包。用于托管网关应用本身。

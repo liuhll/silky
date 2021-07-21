@@ -1,2 +1,2 @@
-Sitemap: http://docs.lms-fk.com/sitemap.xml
+Sitemap: http://docs.silky-fk.com/sitemap.xml
 User-agent: *

@@ -8,8 +8,8 @@ lang: zh-cn
 
 一般地,开发者如果想要在一个自定义的程序集(包)中注册相关的服务，或者在应用初始化或停止时执行一段自定义的代码，那么您可能需要将该程序集(包)定义为一个模块。
 
-lms框架存在**两种类型**的模块:
-1. 开发者通过继承`LmsModule`就可以定义一个普通模块类;
+silky框架存在**两种类型**的模块:
+1. 开发者通过继承`SilkyModule`就可以定义一个普通模块类;
 2. 也可以通过继承`StartUpModule`定义一个服务注册启动模块类。
 
 
@@ -19,7 +19,7 @@ lms框架存在**两种类型**的模块:
 
 ```csharp
 // 普通类型模块类
-public class CustomHostModule : LmsModule
+public class CustomHostModule : SilkyModule
 {
 }
 
@@ -50,7 +50,7 @@ public class NormHostModule : StartUpModule
 
 ## 模块的依赖关系
 
-lms框架的模块通过`DependsOn`特性指定模块的依赖关系,lms框架支持通过直接或是间接的依赖模块。例如: `NormHostModule`模块依赖了`DotNettyTcpModule`模块,`DotNettyTcpModule`模块依赖了`RpcModule`模块,微服务注册时指定`NormHostModule`为启动模块。那么根据模块依赖关系,`RpcModule`模块会被应用加载,并先于`DotNettyTcpModule`和`NormHostModule`执行服务注册方法和初始化方法。
+silky框架的模块通过`DependsOn`特性指定模块的依赖关系,silky框架支持通过直接或是间接的依赖模块。例如: `NormHostModule`模块依赖了`DotNettyTcpModule`模块,`DotNettyTcpModule`模块依赖了`RpcModule`模块,微服务注册时指定`NormHostModule`为启动模块。那么根据模块依赖关系,`RpcModule`模块会被应用加载,并先于`DotNettyTcpModule`和`NormHostModule`执行服务注册方法和初始化方法。
 
 开发者只需要通过`DependsOn`特性在类直接就可以指定该模块依赖的模块,在应用启动过程中,会根据模块的依赖关系进行排序。并完成服务注册方法和指定的初始化方法。
 
@@ -80,17 +80,17 @@ lms框架的模块通过`DependsOn`特性指定模块的依赖关系,lms框架�
 private static IHostBuilder CreateHostBuilder(string[] args)
 {
     return Host.CreateDefaultBuilder(args)
-            .RegisterLmsServices<NormHostModule>() //指定启动的模块，lms框架约束了该模块类型必须为启动模块类(StartUpModule)
+            .RegisterSilkyServices<NormHostModule>() //指定启动的模块，silky框架约束了该模块类型必须为启动模块类(StartUpModule)
         ;
 }
 
 ```
 
-一般地,开发者可以根据微服务类型选择注册lms框架默认的模块,lms框架提供如下三个服务启动模块(`NormHostModule`、`WebHostModule`、`WsHostModule`),lms框架给定的默认启动模块会帮用户指定该类型的微服务应用需要依赖哪些模块。
+一般地,开发者可以根据微服务类型选择注册silky框架默认的模块,silky框架提供如下三个服务启动模块(`NormHostModule`、`WebHostModule`、`WsHostModule`),silky框架给定的默认启动模块会帮用户指定该类型的微服务应用需要依赖哪些模块。
 
 开发者如果需要自定义模块,那么，相应的,开发者需要在模块依赖关系中声明依赖该模块。所以,一般地,如果您需要自定义模块,那么相应的,您可能需要自定义服务注册启动模块。
 
-您可以通过继承`StartUpModule`或是继承该lms框架提供的默认启动服务模块(`NormHostModule`、`WebHostModule`、`WsHostModule`),定义您的启动模块,并在您定义的启动模块中依赖您的自定义模块。
+您可以通过继承`StartUpModule`或是继承该silky框架提供的默认启动服务模块(`NormHostModule`、`WebHostModule`、`WsHostModule`),定义您的启动模块,并在您定义的启动模块中依赖您的自定义模块。
 
 例如:
 

@@ -18,7 +18,7 @@ lang: zh-cn
    例如:
   
    ```csharp
-     public class MessagePackModule : LmsModule
+     public class MessagePackModule : SilkyModule
      {
          protected override void RegisterServices(ContainerBuilder builder)
          {
@@ -28,13 +28,13 @@ lang: zh-cn
      }  
    ```
 
-2. 通过继承`IConfigureService`或是`ILmsStartup`,通过`Configure()`方法的`IServiceCollection`注册服务
+2. 通过继承`IConfigureService`或是`ISilkyStartup`,通过`Configure()`方法的`IServiceCollection`注册服务
   
-   通过继承`IConfigureService`或是`ILmsStartup`实现服务注册的方式,本质是向.net自带的ioc容器`IServiceCollection`注册服务,在应用启动后,.net自带的ioc容器与autofac的ioc容器会同步更新服务注册信息和服务依赖关系。
+   通过继承`IConfigureService`或是`ISilkyStartup`实现服务注册的方式,本质是向.net自带的ioc容器`IServiceCollection`注册服务,在应用启动后,.net自带的ioc容器与autofac的ioc容器会同步更新服务注册信息和服务依赖关系。
    
    一般地,除非与第三方包(框架)整合,例如开发者需要使用[CAP框架](https://github.com/dotnetcore/CAP)或是[MediatR](https://github.com/jbogard/MediatR)实现消息通信,第三方包通过`IServiceCollection`注册相关服务的情况下,开发者可以通过该方式引入第三方的包(框架)的服务注册。
    
-   在应用启动时,lms框架会自动扫描继承了`IConfigureService`接口的类型,并通过`Order`属性对所有的实现类进行排序,依次执行`ConfigureServices()`方法,像ioc容器注册相关服务。
+   在应用启动时,silky框架会自动扫描继承了`IConfigureService`接口的类型,并通过`Order`属性对所有的实现类进行排序,依次执行`ConfigureServices()`方法,像ioc容器注册相关服务。
    
    例如,如下代码:
   
@@ -78,7 +78,7 @@ lang: zh-cn
 
 3. 通过继承依赖注入标识接口实现服务的注册(**推荐**)
 
-   lms框架提供了三个依赖注册的相关标识接口：`ISingletonDependency`(单例模式)、`IScopedDependency`(区域模式)、`ITransientDependency`(瞬态模式)。在微服务应用启动时,会扫描继承了这些标识接口的类(服务),并将其自身和继承的接口注册到Ioc容器中。
+   silky框架提供了三个依赖注册的相关标识接口：`ISingletonDependency`(单例模式)、`IScopedDependency`(区域模式)、`ITransientDependency`(瞬态模式)。在微服务应用启动时,会扫描继承了这些标识接口的类(服务),并将其自身和继承的接口注册到Ioc容器中。
    
    开发者一般情况下,如果需要将自定义的一个类注册到ioc容器时,可以选择继承相应的标识接口。例如:自定义的领域服务、仓库等。
    
@@ -145,7 +145,7 @@ lang: zh-cn
 
 3. 通过服务引擎`IEngine`解析服务实例
    
-   lms框架自带的服务引擎提供服务解析方法,可以通过服务引擎解析获取服务实例对象。
+   silky框架自带的服务引擎提供服务解析方法,可以通过服务引擎解析获取服务实例对象。
    
    例如:
    

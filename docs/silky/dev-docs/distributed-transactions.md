@@ -62,9 +62,9 @@ BASE理论面向的是大型高可用可扩展的分布式系统，和传统的�
 
 3. TCC（两阶段型、补偿型）
 
-## Lms框架分布式事务的实现方式
+## Silky框架分布式事务的实现方式
 
-lms框架的分布式事务解决方案采用的TCC事务模型实现了分布式事务的最终一致性。在开发过程中参考和借鉴了[hmily](https://github.com/dromara/hmily)。使用AOP的编程思想,在rpc通信过程中通过拦截器的方式对全局事务或是分支事务进行管理和协调。
+silky框架的分布式事务解决方案采用的TCC事务模型实现了分布式事务的最终一致性。在开发过程中参考和借鉴了[hmily](https://github.com/dromara/hmily)。使用AOP的编程思想,在rpc通信过程中通过拦截器的方式对全局事务或是分支事务进行管理和协调。
 
 ## 如何使用
 
@@ -102,7 +102,7 @@ public async Task<string> DeleteCancel(string name)
 
 ```
 
-关于分布式事务的更详细用法,开发者可以参考[lms框架分布式事务使用简介](/blog/lms-sample-order.md)。
+关于分布式事务的更详细用法,开发者可以参考[silky框架分布式事务使用简介](/blog/silky-sample-order.md)。
 
 ::: warning
 

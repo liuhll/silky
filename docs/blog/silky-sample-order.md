@@ -1,16 +1,16 @@
 ---
-title: lms框架分布式事务使用简介
+title: silky框架分布式事务使用简介
 lang: zh-cn
 ---
 
-lms框架的分布式事务解决方案采用的TCC事务模型。在开发过程中参考和借鉴了[hmily](https://github.com/dromara/hmily)。使用AOP的编程思想,在rpc通信过程中通过拦截器的方式对全局事务或是分支事务进行管理和协调。
+silky框架的分布式事务解决方案采用的TCC事务模型。在开发过程中参考和借鉴了[hmily](https://github.com/dromara/hmily)。使用AOP的编程思想,在rpc通信过程中通过拦截器的方式对全局事务或是分支事务进行管理和协调。
 
-本文通过lms.samples 订单接口给大家介绍lms框架分布式事务的基本使用。
+本文通过silky.samples 订单接口给大家介绍silky框架分布式事务的基本使用。
 
 
-## lms分布式事务的使用
+## silky分布式事务的使用
 
-在lms框架中,在应用服务接口通过`[Transaction]`特性标识该接口是一个分布式事务接口(应用接口层需要安装包`Silky.Lms.Transaction`)。应用服务接口的实现必须需要通过`   [TccTransaction(ConfirmMethod = "ConfirmMethod", CancelMethod = "CancelMethod")]`特性指定Confirm阶段和Cancel阶段的方法(需要再应用层安装包`Silky.Lms.Transaction.Tcc`)。
+在silky框架中,在应用服务接口通过`[Transaction]`特性标识该接口是一个分布式事务接口(应用接口层需要安装包`Silky.Transaction`)。应用服务接口的实现必须需要通过`   [TccTransaction(ConfirmMethod = "ConfirmMethod", CancelMethod = "CancelMethod")]`特性指定Confirm阶段和Cancel阶段的方法(需要再应用层安装包`Silky.Transaction.Tcc`)。
 
 ::: warning 注意
 
@@ -25,7 +25,7 @@ lms框架的分布式事务解决方案采用的TCC事务模型。在开发过�
 
 1. 全局事务
 
-在Lms框架中,第一个执行的事务被认为是全局事务(事务角色为`TransactionRole.Start`)。换句话说,在一个业务处理过程中,执行的第一个被标识为`TccTransaction`(应用接口需要被标识为`Transaction`)的方法为全局事务。
+在Silky框架中,第一个执行的事务被认为是全局事务(事务角色为`TransactionRole.Start`)。换句话说,在一个业务处理过程中,执行的第一个被标识为`TccTransaction`(应用接口需要被标识为`Transaction`)的方法为全局事务。
 
 当然,全局事务也作为事务的一特殊的事务参与者,在全局事务开始后,作为事务参与者注册到事务上下文中。
 
@@ -51,13 +51,13 @@ lms框架的分布式事务解决方案采用的TCC事务模型。在开发过�
 
 :::
 
-## 分布式事务案例-- lms.samples订单接口
+## 分布式事务案例-- silky.samples订单接口
 
-下面,我们通过lms.samples的订单接口来熟悉通过lms框架如何实现分布式事务。
+下面,我们通过silky.samples的订单接口来熟悉通过silky框架如何实现分布式事务。
 
-### lms.samples 订单接口的业务流程介绍
+### silky.samples 订单接口的业务流程介绍
 
-在上一篇博文[通过lms.samples熟悉lms微服务框架的使用](https://www.cnblogs.com/bea084100123/p/14631609.html)，给大家介绍了lms.samples样例项目的基本情况。本文通过大家熟悉的一个订单接口,熟悉lms的分布式事务是如何使用。
+在上一篇博文[通过silky.samples熟悉silky微服务框架的使用](https://www.cnblogs.com/bea084100123/p/14631609.html)，给大家介绍了silky.samples样例项目的基本情况。本文通过大家熟悉的一个订单接口,熟悉silky的分布式事务是如何使用。
 
 下面，给大家梳理一下订单接口的业务流程。
 
@@ -89,7 +89,7 @@ lms框架的分布式事务解决方案采用的TCC事务模型。在开发过�
 
 ### 全局事务--订单接口
 
-通过[lms分布式事务的使用](#lms分布式事务的使用)节点的介绍,我们知道在服务之间的rpc通信调用中,执行的第一个被标识为`Transaction`的应用方法即为全局事务(即:事务的开始)。
+通过[silky分布式事务的使用](#silky分布式事务的使用)节点的介绍,我们知道在服务之间的rpc通信调用中,执行的第一个被标识为`Transaction`的应用方法即为全局事务(即:事务的开始)。
 
 首先， 我们需要在订单应用接口中通过`[Transaction]`来标识这是一个分布式事务的应用接口。
 

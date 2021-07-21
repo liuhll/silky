@@ -16,11 +16,11 @@ lang: zh-cn
 5. 具备锁失效机制，防止死锁；
 6. 具备非阻塞锁特性，即没有获取到锁将直接返回获取锁失败。
 
-## lms框架的分布式锁
+## silky框架的分布式锁
 
-lms框架使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁,RedLock.net使用redis服务实现的分布式锁。
+silky框架使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁,RedLock.net使用redis服务实现的分布式锁。
 
-lms框架在服务条目注册的过程中,使用到了分布式锁,避免由于多个服务实例同时注册统一服务条目,导致服务地址未被更新的问题。由于在框架层面使用了分布式锁,所以,在普通业务应用服务中,开发者必须要对分布式锁使用到的`redis`服务进行配置。
+silky框架在服务条目注册的过程中,使用到了分布式锁,避免由于多个服务实例同时注册统一服务条目,导致服务地址未被更新的问题。由于在框架层面使用了分布式锁,所以,在普通业务应用服务中,开发者必须要对分布式锁使用到的`redis`服务进行配置。
 
 ## 使用
 
@@ -28,7 +28,7 @@ lms框架在服务条目注册的过程中,使用到了分布式锁,避免由于
 
 ```yml
 lock:
-  lockRedisConnection: lms.redis1:6379,defaultDatabase=1
+  lockRedisConnection: silky.redis1:6379,defaultDatabase=1
 ```
 
 2. 通过构造器注入`ILockerProvider`的实例

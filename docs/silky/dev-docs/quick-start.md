@@ -23,14 +23,14 @@ lang: zh-cn
 
 ![quick-start1.png](/assets/imgs/quick-start1.png)
 
-**2. 使用nuget安装`Silky.Lms.NormHost`包**
+**2. 使用nuget安装`Silky.NormHost`包**
 
 ![quick-start2.png](/assets/imgs/quick-start2.png)
 
-**3. 在`Main`方法中构建泛型主机并注册Lms服务,指定启动模块**
+**3. 在`Main`方法中构建泛型主机并注册Silky服务,指定启动模块**
 
 ```csharp
-namespace Lms.SampleHost
+namespace Silky.SampleHost
 {
     using Microsoft.Extensions.Hosting;
     using System.Threading.Tasks;
@@ -44,7 +44,7 @@ namespace Lms.SampleHost
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<NormHostModule>()
+                    .RegisterSilkyServices<NormHostModule>()
                 ;
         }
     }
@@ -53,7 +53,7 @@ namespace Lms.SampleHost
 
 **4. 新增配置文件**
 
-lms支持通过`json`或是`yml`格式进行配置。您可以通过`appsettings.yml`为公共配置项指定配置信息,也可以通过新增`appsettings.${ENVIRONMENT}.yml`文件为指定的环境配置信息。
+silky支持通过`json`或是`yml`格式进行配置。您可以通过`appsettings.yml`为公共配置项指定配置信息,也可以通过新增`appsettings.${ENVIRONMENT}.yml`文件为指定的环境配置信息。
 
 一般地,您必须要指定rpc通信的`token`,服务注册中心地址,分布式锁服务地址,数据库连接等配置项。如果您使用redis作为缓存服务,那么您还需要将`distributedCache.redis.isEnabled`配置项设置为`true`,并给出redis服务缓存的地址。
 
@@ -99,11 +99,11 @@ connectionStrings:
 
 ![quick-start5.png](/assets/imgs/quick-start5.png)
 
-一般地,我们需要在应用接口层对[服务路由](#)、[缓存拦截](#)、[服务条目治理](#)、[分布式事务](#)等进行特性配置，所以还还需要引用:`Silky.Lms.Rpc`和`Silky.Lms.Transaction`包。
+一般地,我们需要在应用接口层对[服务路由](#)、[缓存拦截](#)、[服务条目治理](#)、[分布式事务](#)等进行特性配置，所以还还需要引用:`Silky.Rpc`和`Silky.Transaction`包。
 
 ![quick-start6.png](/assets/imgs/quick-start6.png)
 
-应用层如果使用分布式事务的话,那么还需要对`Silky.Lms.Transaction.Tcc`包引用。
+应用层如果使用分布式事务的话,那么还需要对`Silky.Transaction.Tcc`包引用。
 
 ![quick-start6.1.png](/assets/imgs/quick-start6.1.png)
 
@@ -116,14 +116,14 @@ connectionStrings:
 
 ![quick-start7.png](/assets/imgs/quick-start7.png)
 
-**2. 使用nuget安装`Silky.Lms.WebHost`包**
+**2. 使用nuget安装`Silky.WebHost`包**
 
 ![quick-start8.png](/assets/imgs/quick-start8.png)
 
-**3. 在`Main`方法中构建Web主机并注册Lms服务,指定启动模块和`Startup`**
+**3. 在`Main`方法中构建Web主机并注册Silky服务,指定启动模块和`Startup`**
 
 ```csharp
-namespace Lms.Sample.Gateway
+namespace Silky.Sample.Gateway
 {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
@@ -136,7 +136,7 @@ namespace Lms.Sample.Gateway
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .RegisterLmsServices<WebHostModule>()
+                .RegisterSilkyServices<WebHostModule>()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
@@ -145,7 +145,7 @@ namespace Lms.Sample.Gateway
 }
 ```
 
-**4. 在`Startup`中配置swagger文档以及设置使用lms请求管道**
+**4. 在`Startup`中配置swagger文档以及设置使用silky请求管道**
 
 ```csharp
 // 服务配置;注册Swagger文档服务
@@ -153,7 +153,7 @@ public void ConfigureServices(IServiceCollection services)
 {
     services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Lms Gateway", Version = "v1" });
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Silky Gateway", Version = "v1" });
         c.MultipleServiceKey();
         var applicationAssemblies = EngineContext.Current.TypeFinder.GetAssemblies()
             .Where(p => p.FullName.Contains("Application") || p.FullName.Contains("Domain"));
@@ -169,16 +169,16 @@ public void ConfigureServices(IServiceCollection services)
     });
 }
 
-//中间件配置;配置swagger文档中间件、以及配置启用lms请求管道
+//中间件配置;配置swagger文档中间件、以及配置启用silky请求管道
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     if (env.IsDevelopment() || env.EnvironmentName == "ContainerDev")
     {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lms Gateway Demo v1"));
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Silky Gateway Demo v1"));
     }
-    app.ConfigureLmsRequestPipeline(); // 会自动使用配置了的lms中间件
+    app.ConfigureSilkyRequestPipeline(); // 会自动使用配置了的silky中间件
 }
 
 ```
