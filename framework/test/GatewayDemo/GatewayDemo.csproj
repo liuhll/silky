@@ -6,10 +6,9 @@
          <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silky.Lms.Http.SkyApm.Diagnostics\Silky.Lms.Http.SkyApm.Diagnostics.csproj" />
-        <ProjectReference Include="..\..\src\Silky.Lms.Rpc.SkyApm.Diagnostics\Silky.Lms.Rpc.SkyApm.Diagnostics.csproj" />
-        <ProjectReference Include="..\..\src\Silky.Lms.WebHost\Silky.Lms.WebHost.csproj" />
-        <ProjectReference Include="..\..\src\Silky.Lms.WebSocketServer\Silky.Lms.WebSocketServer.csproj" />
+        <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
+        <ProjectReference Include="..\..\src\Silky.WebHost\Silky.WebHost.csproj" />
+        <ProjectReference Include="..\..\src\Silky.WebSocketServer\Silky.WebSocketServer.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>

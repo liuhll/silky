@@ -14,7 +14,7 @@ namespace NormHostDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<NormHostModule>()
+                    .RegisterSilkyServices<NormHostModule>()
                 ;
         }
     }

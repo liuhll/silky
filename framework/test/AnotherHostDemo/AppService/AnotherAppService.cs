@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
-using Silky.Lms.Transaction.Tcc;
+using Silky.Transaction.Tcc;
 
 namespace AnotherHostDemo.AppService
 {

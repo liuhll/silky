@@ -13,7 +13,7 @@ namespace GatewayDemo
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .RegisterLmsServices<WebHostModule>()
+                .RegisterSilkyServices<WebHostModule>()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

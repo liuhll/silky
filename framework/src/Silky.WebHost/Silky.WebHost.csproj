@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>The package contains the component package for building Silky microservice web host</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj" />
+        <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj" />
+        <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />
+        <ProjectReference Include="..\Silky.Caching\Silky.Caching.csproj" />
+        <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
+        <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.DotNetty.Abstractions\Silky.DotNetty.Abstractions.csproj" />
+        <ProjectReference Include="..\Silky.DotNetty.Protocol.Tcp\Silky.DotNetty.Protocol.Tcp.csproj" />
+        <ProjectReference Include="..\Silky.HttpServer\Silky.HttpServer.csproj" />
+        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
+        <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
+        <ProjectReference Include="..\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj" />
+        <ProjectReference Include="..\Silky.WebSocketServer\Silky.WebSocketServer.csproj" />
+    </ItemGroup>
+</Project>

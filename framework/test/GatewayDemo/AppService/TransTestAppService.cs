@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
-using Silky.Lms.Transaction.Tcc;
+using Silky.Transaction.Tcc;
 
 namespace GatewayDemo.AppService
 {

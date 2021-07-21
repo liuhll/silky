@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
-using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GatewayDemo.AppService

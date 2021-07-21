@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NormHostDemo.Contexts;
-using Silky.Lms.Core;
-using Silky.Lms.Rpc.SkyApm.Diagnostics;
+using Silky.Core;
+using Silky.Rpc.SkyApm.Diagnostics;
 using SkyApm.Diagnostics.EntityFrameworkCore;
 
 namespace NormHostDemo

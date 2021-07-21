@@ -2,14 +2,14 @@ using System;
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
 using ITestApplication.Test.FallBack;
-using Silky.Lms.Rpc.Address.Selector;
-using Silky.Lms.Rpc.Runtime.Server;
-using Silky.Lms.Rpc.Runtime.Server.Parameter;
-using Silky.Lms.Rpc.Runtime.Server.ServiceDiscovery;
-using Silky.Lms.Rpc.Transport.CachingIntercept;
-using Silky.Lms.Transaction;
+using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Runtime.Server.Parameter;
+using Silky.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Transport.CachingIntercept;
+using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using Silky.Lms.Rpc.Runtime.Server.UnitOfWork;
+using Silky.Rpc.Runtime.Server.UnitOfWork;
 
 namespace ITestApplication.Test
 {
