@@ -6,13 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Lms.HttpServer.Configuration;
 using Silky.Lms.HttpServer.SwaggerDocument;
+using Silky.Lms.Rpc;
 
 namespace Silky.Lms.HttpServer
 {
     public class HttpServerLmsStartup : ILmsStartup
     {
-        private const string MiniProfilerRouteBasePath = "/index-mini-profiler";
-
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions<GatewayOptions>()
@@ -22,7 +21,7 @@ namespace Silky.Lms.HttpServer
 
             services.AddMiniProfiler(options =>
             {
-                options.RouteBasePath = MiniProfilerRouteBasePath;
+                options.RouteBasePath = MiniProfilerConstants.MiniProfilerRouteBasePath;
                 // Optionally use something other than the "light" color scheme.
                 options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
 

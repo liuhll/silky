@@ -18,6 +18,7 @@ using SkyApm.Config;
 using SkyApm.Diagnostics;
 using SkyApm.Tracing;
 using SkyApm.Tracing.Segments;
+using StackExchange.Profiling.Internal;
 
 namespace Silky.Lms.Rpc.SkyApm.Diagnostics
 {
@@ -44,7 +45,7 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         public void BeginRequest([Property] HttpContext HttpContext)
         {
             var path = HttpContext.Request.Path.ToString();
-            if (path.Contains(".js") || path.Contains(".css") || path.Contains(".html"))
+            if (path.Contains(".js") || path.Contains(".css") || path.Contains(".html") || path.Contains(MiniProfilerConstants.MiniProfilerRouteBasePath))
             {
                 return;
             }
@@ -54,12 +55,14 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
                 new SilkyCarrierHeaderCollection(RpcContext.GetContext()));
 
             context.Span.SpanLayer = SpanLayer.HTTP;
-            context.Span.Component = Components.LmsRpc;
+            context.Span.Component = Components.SilkyHttp;
             context.Span.Peer = new StringOrIntValue(HttpContext.Connection.RemoteIpAddress.ToString());;
             context.Span.AddTag(Tags.URL, HttpContext.Request.GetDisplayUrl());
             context.Span.AddTag(Tags.PATH, HttpContext.Request.Path);
             context.Span.AddTag(Tags.HTTP_METHOD, HttpContext.Request.Method);
-
+            context.Span.AddLog(
+                LogEvent.Event("Http Request Begin"),
+                LogEvent.Message($"Request Starting {HttpContext.Request.Path} {HttpContext.Request.Method}"));
             if (_config.CollectCookies?.Count > 0)
             {
                 var cookies = CollectCookies(HttpContext, _config.CollectCookies);
@@ -96,7 +99,9 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
             {
                 context.Span.ErrorOccurred();
             }
-
+            context.Span.AddLog(
+                LogEvent.Event("Http Request End"),
+                LogEvent.Message($"Http Request End"));
             _tracingContext.Release(context);
         }
 

@@ -91,7 +91,7 @@ namespace Silky.Lms.Rpc.Transport
             {
                 var resultMessage = await tcs.WaitAsync(timeout);
                 var remoteResultMessage = resultMessage.GetContent<RemoteResultMessage>();
-                TracingAfter(tracingTimestamp, id, serviceId, remoteResultMessage.Result);
+                TracingAfter(tracingTimestamp, id, serviceId, remoteResultMessage);
                 return remoteResultMessage;
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace Silky.Lms.Rpc.Transport
             return null;
         }
 
-        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceId, object result)
+        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceId, RemoteResultMessage remoteResultMessage)
         {
             if (tracingTimestamp != null &&
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcRequest))
@@ -137,7 +137,8 @@ namespace Silky.Lms.Rpc.Transport
                 {
                     MessageId = messageId,
                     ServiceId = serviceId,
-                    Result = result,
+                    Result = remoteResultMessage.Result,
+                    StatusCode = remoteResultMessage.StatusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
                 };
