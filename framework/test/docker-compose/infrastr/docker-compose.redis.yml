@@ -1,14 +1,14 @@
 version: "3.7"
 
 services:
-  lms.redis1:
+  silky.redis1:
     image: redis:latest
     restart: always
     ports:
       - "6379:6379"
     networks:
-      - lms_service_net
+      - silky_service_net
 networks:
-  lms_test_service_net:
+  silky_test_service_net:
     external:
-      name: lms_service_net
+      name: silky_service_net

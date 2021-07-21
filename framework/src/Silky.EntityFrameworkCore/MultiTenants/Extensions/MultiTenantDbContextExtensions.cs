@@ -18,10 +18,10 @@ namespace Silky.EntityFrameworkCore.MultiTenants.Extensions
         public static void RefreshTenantCache(this DbContext dbContext)
         {
 
-            var lmsSession = NullSession.Instance;
+            var silkySession = NullSession.Instance;
 
             // 缓存的 Key
-            var tenantCachedKey = $"MULTI_TENANT:{lmsSession.TenantId}";
+            var tenantCachedKey = $"MULTI_TENANT:{silkySession.TenantId}";
 
             // 从内存缓存中移除多租户信息
             var distributedCache = EngineContext.Current.Resolve<IDistributedCache>();

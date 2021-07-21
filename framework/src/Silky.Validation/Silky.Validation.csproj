@@ -2,7 +2,7 @@
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-        <Description>A package used by the lms framework to verify input parameters</Description>
+        <Description>A package used by the silky framework to verify input parameters</Description>
     </PropertyGroup>
 
     <ItemGroup>

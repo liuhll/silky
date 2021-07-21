@@ -14,7 +14,7 @@ allowedHosts: "*"
 swaggerDocument:
   organizationMode: Group
   injectMiniProfiler: true
-  termsOfService: https://www.github.com/liuhll/lms
+  termsOfService: https://www.github.com/liuhll/silky
 gateway:
   wrapResult: true
   enableSwaggerDoc: true

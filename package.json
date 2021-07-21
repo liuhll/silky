@@ -1,7 +1,7 @@
 {
-  "name": "lms-docs",
+  "name": "silky-docs",
   "version": "1.0.0",
-  "description": "lms 微服务在线文档",
+  "description": "silky 微服务在线文档",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -12,20 +12,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/liuhll/lms.git"
+    "url": "git+https://github.com/liuhll/silky.git"
   },
   "keywords": [
-    "lms",
-    "rpc",
-    "lms docs",
+    "silky",
+    "silky",
+    "silky docs",
     "micro-service"
   ],
   "author": "liuhll",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/liuhll/lms/issues"
+    "url": "https://github.com/liuhll/silky/issues"
   },
-  "homepage": "https://github.com/liuhll/lms#readme",
+  "homepage": "https://github.com/liuhll/silky#readme",
   "devDependencies": {
     "@vuepress/plugin-active-header-links": "^1.8.2",
     "@vuepress/plugin-back-to-top": "^1.8.2",
