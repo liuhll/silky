@@ -26,7 +26,7 @@
     <Mongo2GoPackageVersion>2.2.14</Mongo2GoPackageVersion>
 	
 	<LangVersion>latest</LangVersion>
-   <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     
