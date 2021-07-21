@@ -45,7 +45,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         public void BeginRequest([Property] HttpContext HttpContext)
         {
             var path = HttpContext.Request.Path.ToString();
-            if (path.Contains(".js") || path.Contains(".css") || path.Contains(".html") || path.Contains(MiniProfilerConstants.MiniProfilerRouteBasePath))
+            if (!HttpContext.Request.IsWebApi() || path.Contains(MiniProfilerConstants.MiniProfilerRouteBasePath))
             {
                 return;
             }
@@ -59,6 +59,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             context.Span.Peer = new StringOrIntValue(HttpContext.Connection.RemoteIpAddress.ToString());;
             context.Span.AddTag(Tags.URL, HttpContext.Request.GetDisplayUrl());
             context.Span.AddTag(Tags.PATH, HttpContext.Request.Path);
+            
             context.Span.AddTag(Tags.HTTP_METHOD, HttpContext.Request.Method);
             context.Span.AddLog(
                 LogEvent.Event("Http Request Begin"),
