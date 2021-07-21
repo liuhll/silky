@@ -1,13 +1,13 @@
 <p align="center">
-  <img height="200" src="./docs/.vuepress/public/assets/logo/logo.word.svg">
+  <img height="200" src="./docs/.vuepress/public/assets/logo/logo.svg">
 </p>
 
-# lms 微服务框架
+# Silky 微服务框架
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
-[![NuGet](https://img.shields.io/nuget/v/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
-[![MyGet (nightly builds)](https://img.shields.io/myget/lms-framework/vpre/Silky.Lms.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/lms-framework)
-[![NuGet Download](https://img.shields.io/nuget/dt/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
+[![Commit](https://img.shields.io/github/last-commit/liuhll/Silky)](https://img.shields.io/github/last-commit/liuhll/Silky)
+[![NuGet](https://img.shields.io/nuget/v/Silky.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Core)
+[![MyGet (nightly builds)](https://img.shields.io/myget/Silky-framework/vpre/Silky.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/Silky-framework)
+[![NuGet Download](https://img.shields.io/nuget/dt/Silky.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Core)
 
 
 <div align="center">
@@ -18,27 +18,27 @@
 
 ## 项目介绍
 
-lms框架旨在帮助开发者在.net平台下,通过简单代码和配置快速构建一个微服务开发框架。
+Silky框架旨在帮助开发者在.net平台下,通过简单代码和配置快速构建一个微服务开发框架。
 
 通过.net框架的[通用主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)构建普通业务微服务应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
 
 通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)构建对外提供访问入口的服务主机(网关)，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
 
-lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
+Silky在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
 
 在开发与设计过程中借鉴和吸收了各个优秀的开源产品的设计与思想。在此，作者表示对各个先辈的致敬与感谢。
 
 ## 入门
 
-- 通过[开发者文档](http://docs.lms-fk.com/lms/)学习lms框架。
-- 通过[lms.samples项目](http://docs.lms-fk.com/lms/dev-docs/quick-start.html)熟悉如何使用lms框架构建一个微服务应用。
-- 通过[配置](http://docs.lms-fk.com/config/)文档熟悉lms框架的相关配置属性。
+- 通过[开发者文档](http://docs.Silky-fk.com/Silky/)学习Silky框架。
+- 通过[Silky.samples项目](http://docs.Silky-fk.com/Silky/dev-docs/quick-start.html)熟悉如何使用Silky框架构建一个微服务应用。
+- 通过[配置](http://docs.Silky-fk.com/config/)文档熟悉Silky框架的相关配置属性。
 
 ## 框架特性
 
 ### 服务引擎
-- 负责lms主机的初始化过程
+- 负责Silky主机的初始化过程
 - 服务注册与解析
 - 负责模块解析与注册
 
@@ -80,6 +80,6 @@ lms在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
 ## 贡献
 - 贡献的最简单的方法之一就是是参与讨论和讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
-- 您也可以加入QQ群(934306776)参与lms框架的学习讨论。
+- 您也可以加入QQ群(934306776)参与Silky框架的学习讨论。
  
   ![qq-group.jpg](./docs/.vuepress/assets/public/../../public/assets/imgs/qq-group.jpg)
