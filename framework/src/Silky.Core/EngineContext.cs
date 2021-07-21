@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Silky.Core.Modularity;
 
 namespace Silky.Core
 {

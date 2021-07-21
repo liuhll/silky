@@ -12,9 +12,8 @@ using Moq;
 namespace Silky.TestBase.Testing
 {
     public abstract class SilkyIntegratedTest<TStartupModule> : SilkyTestBaseWithServiceProvider, IDisposable
-        where TStartupModule : ISilkyModule
+        where TStartupModule : StartUpModule
     {
-
         protected IServiceScope TestServiceScope { get; }
 
         protected IConfiguration Configuration { get; }
@@ -26,23 +25,23 @@ namespace Silky.TestBase.Testing
         {
             var services = CreateServiceCollection();
             BeforeAddApplication(services);
-            
+
             Configuration = CreateConfigurationBuilder().Build();
             var hostEnvironment = CreateHostEnvironment();
             services.AddSingleton(Configuration);
-            
-            Engine = services.ConfigureSilkyServices(Configuration,hostEnvironment);
+
+            Engine = services.ConfigureSilkyServices<TStartupModule>(Configuration, hostEnvironment);
 
             AfterAddApplication(services);
 
             var containerBuilder = new ContainerBuilder();
-            
-            containerBuilder.Populate(services);
-            
-            Engine.RegisterDependencies(containerBuilder);
-            Engine.RegisterModules<TStartupModule>(services,containerBuilder);
 
-            var container = containerBuilder.Build(); 
+            containerBuilder.Populate(services);
+
+            Engine.RegisterDependencies(containerBuilder);
+            Engine.RegisterModules(services, containerBuilder);
+
+            var container = containerBuilder.Build();
             ServiceProvider = new AutofacServiceProvider(container);
             Engine.ServiceProvider = ServiceProvider;
             TestServiceScope = ServiceProvider.CreateScope();
@@ -73,15 +72,13 @@ namespace Silky.TestBase.Testing
 
         protected virtual void BeforeAddApplication(IServiceCollection services)
         {
-            
         }
-        
+
 
         protected virtual void AfterAddApplication(IServiceCollection services)
         {
-
         }
-        
+
 
         public void Dispose()
         {

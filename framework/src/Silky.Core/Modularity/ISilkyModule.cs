@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Silky.Core.Modularity
 {
@@ -7,5 +9,6 @@ namespace Silky.Core.Modularity
         string Name { get; }
         Task Initialize(ApplicationContext applicationContext);
         Task Shutdown(ApplicationContext applicationContext);
+        void ConfigureServices(IServiceCollection services, IConfiguration configuration);
     }
 }

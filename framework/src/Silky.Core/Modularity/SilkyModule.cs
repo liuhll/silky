@@ -3,6 +3,8 @@ using Autofac;
 using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Extensions;
 
 namespace Silky.Core.Modularity
@@ -14,13 +16,13 @@ namespace Silky.Core.Modularity
             Name = GetType().Name.RemovePostFix(StringComparison.OrdinalIgnoreCase, "Module");
         }
 
-        protected override void Load([NotNull]ContainerBuilder builder)
+        protected override void Load([NotNull] ContainerBuilder builder)
         {
             base.Load(builder);
             RegisterServices(builder);
         }
 
-        protected virtual void RegisterServices([NotNull]ContainerBuilder builder)
+        protected virtual void RegisterServices([NotNull] ContainerBuilder builder)
         {
         }
 
@@ -49,14 +51,18 @@ namespace Silky.Core.Modularity
 
         public virtual string Name { get; }
 
-        public virtual Task Initialize([NotNull]ApplicationContext applicationContext)
+        public virtual Task Initialize([NotNull] ApplicationContext applicationContext)
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task Shutdown([NotNull]ApplicationContext applicationContext)
+        public virtual Task Shutdown([NotNull] ApplicationContext applicationContext)
         {
             return Task.CompletedTask;
+        }
+
+        public virtual void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
         }
 
         public override string ToString()

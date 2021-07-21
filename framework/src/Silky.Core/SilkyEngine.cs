@@ -22,7 +22,7 @@ namespace Silky.Core
         private ITypeFinder _typeFinder;
 
         public IConfiguration Configuration { get; protected set; }
-        
+
         public IHostEnvironment HostEnvironment { get; protected set; }
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration,
@@ -43,6 +43,12 @@ namespace Silky.Core
             foreach (var instance in instances)
                 instance.ConfigureServices(services, configuration);
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            
+            // configure modules 
+            foreach (var module in Modules)
+            {
+                module.Instance.ConfigureServices(services, configuration);
+            }
         }
 
         /// <summary>
@@ -80,7 +86,7 @@ namespace Silky.Core
         }
 
         public ITypeFinder TypeFinder => _typeFinder;
-        
+
 
         public void ConfigureRequestPipeline(IApplicationBuilder application)
         {
@@ -185,7 +191,8 @@ namespace Silky.Core
                 }
             }
 
-            throw new SilkyException("No constructor was found that had all the dependencies satisfied.", innerException);
+            throw new SilkyException("No constructor was found that had all the dependencies satisfied.",
+                innerException);
         }
 
         protected IServiceProvider GetServiceProvider()
@@ -225,11 +232,8 @@ namespace Silky.Core
             return assembly;
         }
 
-        public void RegisterModules<T>(IServiceCollection services, ContainerBuilder containerBuilder)
-            where T : ISilkyModule
+        public void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder)
         {
-            var moduleLoader = services.GetSingletonInstance<IModuleLoader>();
-            Modules = moduleLoader.LoadModules(services, typeof(T));
             containerBuilder.RegisterInstance(this).As<IModuleContainer>().SingleInstance();
             var assemblyNames = ((AppDomainTypeFinder) _typeFinder).AssemblyNames;
             foreach (var module in Modules)
@@ -241,6 +245,11 @@ namespace Silky.Core
 
                 containerBuilder.RegisterModule((SilkyModule) module.Instance);
             }
+        }
+
+        public void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule
+        {
+            Modules = moduleLoader.LoadModules(services, typeof(T));
         }
 
         public virtual IServiceProvider ServiceProvider { get; set; }

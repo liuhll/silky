@@ -10,14 +10,15 @@ namespace Silky.Core
 {
     public static class ServiceCollectionExtensions
     {
-        public static IEngine ConfigureSilkyServices(this IServiceCollection services, IConfiguration configuration,
-            IHostEnvironment hostEnvironment)
+        public static IEngine ConfigureSilkyServices<T>(this IServiceCollection services, IConfiguration configuration,
+            IHostEnvironment hostEnvironment) where T : StartUpModule
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             CommonHelper.DefaultFileProvider = new SilkyFileProvider(hostEnvironment);
             var engine = EngineContext.Create();
-            var moduleLoder = new ModuleLoader();
-            services.TryAddSingleton<IModuleLoader>(moduleLoder);
+            var moduleLoader = new ModuleLoader();
+            engine.LoadModules<T>(services, moduleLoader);
+            services.TryAddSingleton<IModuleLoader>(moduleLoader);
             services.AddOptions<AppSettingsOptions>()
                 .Bind(configuration.GetSection(AppSettingsOptions.AppSettings));
             engine.ConfigureServices(services, configuration, hostEnvironment);

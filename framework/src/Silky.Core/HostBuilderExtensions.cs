@@ -16,26 +16,28 @@ namespace Microsoft.Extensions.Hosting
             IServiceCollection services = null;
             builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureServices((hostBuilder,config) =>
+                .ConfigureServices((hostBuilder, config) =>
                 {
-                   (engine) = config.ConfigureSilkyServices(hostBuilder.Configuration, hostBuilder.HostingEnvironment);
-                   services = config;
-
+                    (engine) = config.ConfigureSilkyServices<T>(hostBuilder.Configuration,
+                        hostBuilder.HostingEnvironment);
+                    services = config;
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
-                    engine.RegisterModules<T>(services,builder);
+                    engine.RegisterModules(services, builder);
                     engine.RegisterDependencies(builder);
                 })
-                .ConfigureAppConfiguration((hosting,config) =>
+                .ConfigureAppConfiguration((hosting, config) =>
                 {
                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true);
 
                     // Adds YAML settings later
-                    config.AddYamlFile("appsettings.yml", optional: true) 
+                    config.AddYamlFile("appsettings.yml", optional: true)
                         .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
-                        
+                    
+                    config.AddYamlFile("appsettings.yaml", optional: true)
+                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true);
                 })
                 // .ConfigureLogging(logging =>
                 // {
@@ -44,6 +46,5 @@ namespace Microsoft.Extensions.Hosting
                 ;
             return builder;
         }
-        
     }
 }

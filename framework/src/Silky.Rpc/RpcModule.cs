@@ -9,6 +9,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 using Silky.Lock;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Caching;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Interceptors;
@@ -22,7 +23,7 @@ using Silky.Rpc.Transport.Codec;
 
 namespace Silky.Rpc
 {
-    [DependsOn(typeof(LockModule))]
+    [DependsOn(typeof(LockModule), typeof(CachingModule))]
     public class RpcModule : SilkyModule
     {
         protected override void RegisterServices(ContainerBuilder builder)

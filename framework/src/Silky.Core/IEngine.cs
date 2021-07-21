@@ -29,9 +29,8 @@ namespace Silky.Core
 
         TOptions GetOptionsSnapshot<TOptions>()
             where TOptions : class, new();
-        
-        
-        
+
+
         void ConfigureRequestPipeline(IApplicationBuilder application);
 
         T Resolve<T>() where T : class;
@@ -53,6 +52,8 @@ namespace Silky.Core
 
         void RegisterDependencies(ContainerBuilder builder);
 
-        void RegisterModules<T>(IServiceCollection services, ContainerBuilder containerBuilder) where T : ISilkyModule;
+        void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
+
+        void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule;
     }
 }
