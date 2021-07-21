@@ -31,9 +31,9 @@ Silky在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
 ## 入门
 
-- 通过[开发者文档](http://docs.Silky-fk.com/Silky/)学习Silky框架。
-- 通过[Silky.samples项目](http://docs.Silky-fk.com/Silky/dev-docs/quick-start.html)熟悉如何使用Silky框架构建一个微服务应用。
-- 通过[配置](http://docs.Silky-fk.com/config/)文档熟悉Silky框架的相关配置属性。
+- 通过[开发者文档](http://docs.lms-fk.com/silky/)学习Silky框架。
+- 通过[silky.samples项目](http://docs.lms-fk.com/silky/dev-docs/quick-start.html)熟悉如何使用Silky框架构建一个微服务应用。
+- 通过[配置](http://docs.lms-fk.com/config/)文档熟悉Silky框架的相关配置属性。
 
 ## 框架特性
 

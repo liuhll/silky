@@ -2,7 +2,7 @@
   <img height="200" src="./docs/.vuepress/public/assets/logo/logo.svg">
 </p>
 
-# Silky microservice framework
+# Silky Microservice Framework
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Commit](https://img.shields.io/github/last-commit/liuhll/silky)](https://img.shields.io/github/last-commit/liuhll/silky)
 [![NuGet](https://img.shields.io/nuget/v/silky.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Core)
@@ -31,9 +31,9 @@ In the development and design process, the design and ideas of various excellent
 
 ## Getting Started
 
-- Learn the Silky framework through [Developer Documentation](http://docs.Silky-fk.com/Silky/).
-- Use [Silky.samples project](http://docs.Silky-fk.com/Silky/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the Silky framework.
-- Familiarize yourself with the configuration properties of the Silky framework through the [Configuration](http://docs.silky-fk.com/config/) document.
+- Learn the Silky framework through [Developer Documentation](http://docs.lms-fk.com/silky/).
+- Use [silky.samples project](http://docs.lms-fk.com/silky/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the Silky framework.
+- Familiarize yourself with the configuration properties of the Silky framework through the [Configuration](http://docs.lms-fk.com/config/) document.
 
 ## Framework Features
 
