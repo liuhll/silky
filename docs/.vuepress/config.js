@@ -1,11 +1,11 @@
 module.exports = {
-    title: 'Lms微服务框架在线文档',
-    description: 'Lms框架是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。',
+    title: 'Silky微服务框架在线文档',
+    description: 'Silky框架是一个旨在通过.net平台快速构建微服务开发的框架。具有稳定、安全、高性能、易扩展、使用方便的特点。',
     port: 8081,
     plugins: [['social-share', {
         networks: ['qq', 'weibo', 'douban', 'wechat', 'email', 'twitter', 'facebook', 'reddit', 'telegram'],
         email: '1029765111@qq.com',
-        fallbackImage: 'https://gitee.com/liuhll2/lms/raw/main/docs/.vuepress/public/assets/logo/logo.word.svg',
+        fallbackImage: 'https://gitee.com/liuhll2/silky/raw/main/docs/.vuepress/public/assets/logo/logo.svg',
         autoQuote: true,
         isPlain: true,
     }], ['@vuepress/active-header-links', {
@@ -32,7 +32,7 @@ module.exports = {
             author: (_, $site) => $site.themeConfig.author,
             tags: $page => $page.frontmatter.tags,
             twitterCard: _ => 'summary_large_image',
-            type: $page => ['articles', 'posts', 'blog', 'lms'].some(folder => $page.regularPath.startsWith('/' + folder)) ? 'article' : 'website',
+            type: $page => ['articles', 'posts', 'blog', 'silky'].some(folder => $page.regularPath.startsWith('/' + folder)) ? 'article' : 'website',
             url: (_, $site, path) => ($site.themeConfig.domain || '') + path,
             image: ($page, $site) => $page.frontmatter.image && (($site.themeConfig.domain && !$page.frontmatter.image.startsWith('http') || '') + $page.frontmatter.image),
             publishedAt: $page => $page.frontmatter.date && new Date($page.frontmatter.date),
@@ -41,12 +41,12 @@ module.exports = {
     ],
     ['autometa', {
         site: {
-            name: 'lms microservice framework',
+            name: 'silky microservice framework',
         },
-        canonical_base: 'http://docs.lms-fk.com',
+        canonical_base: 'http://docs.silky-fk.com',
     }],
     ['sitemap', {
-        hostname: 'http://docs.lms-fk.com',
+        hostname: 'http://docs.silky-fk.com',
         // 排除无实际内容的页面
         exclude: ["/404.html"]
     }
@@ -70,7 +70,7 @@ var _hmt = _hmt || [];
             "meta",
             {
                 name: "keywords",
-                content: 'lms微服务,lms文档,lms微服务框架,lms docs,微服务架构,.net微服务框架,dotnetcore微服务'
+                content: 'silky微服务,silky文档,silky微服务框架,silky docs,微服务架构,.net微服务框架,dotnetcore微服务'
             }
         ],
         [
@@ -119,7 +119,7 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
     },
     themeConfig: {
         logo: '/assets/logo/logo.png',
-        docsRepo: 'liuhll/lms',
+        docsRepo: 'liuhll/silky',
         docsBranch: 'main',
         docsDir: 'docs',
         editLinks: true,
@@ -130,18 +130,18 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
         lastUpdated: '最后更新时间',
         nav: [
             { text: '首页', link: '/' },
-            { text: '文档', link: '/lms/' },
+            { text: '文档', link: '/silky/' },
             { text: '配置', link: '/config/' },
             { text: '博文', link: '/blog/' },
             {
-                text: 'github', link: 'https://github.com/liuhll/lms'
+                text: 'github', link: 'https://github.com/liuhll/silky'
             },
             {
-                text: 'gitee', link: 'https://gitee.com/liuhll2/lms'
+                text: 'gitee', link: 'https://gitee.com/liuhll2/silky'
             },
         ],
         sidebar: {
-            '/lms/': [
+            '/silky/': [
                 {
                     title: '简介',
                     collapsable: false,
@@ -181,8 +181,8 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                     collapsable: false,
                     children: [
                         'transaction-design',
-                        'lms-sample',
-                        'lms-sample-order'
+                        'silky-sample',
+                        'silky-sample-order'
                     ]
                 },
 

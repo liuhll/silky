@@ -5,15 +5,15 @@
 	
     <License>MIT</License>
     
-    <LicenseUrl>https://raw.githubusercontent.com/liuhll/lms/main/LICENSE</LicenseUrl>
+    <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
     
-    <Version>1.0.2</Version>
+    <Version>1.0.0-preview20210721</Version>
 	
-    <PackageIconUrl>https://raw.githubusercontent.com/liuhll/lms/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
 	
-	<RepositoryUrl>https://github.com/liuhll/lms</RepositoryUrl>
+	<RepositoryUrl>https://github.com/liuhll/silky</RepositoryUrl>
 
-    <PackageTags>lms;micro-service;rpc;distributed-transactions;tcc-transaction</PackageTags>
+    <PackageTags>silky;micro-service;rpc;distributed-transactions;tcc-transaction</PackageTags>
 		
     <RepositoryType>Github</RepositoryType>
 

@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using Microsoft.AspNetCore.Http;
-using Silky.Lms.Rpc.Runtime.Server;
+using Silky.Rpc.Runtime.Server;
 using StackExchange.Profiling;
 
 namespace GatewayDemo.AppService

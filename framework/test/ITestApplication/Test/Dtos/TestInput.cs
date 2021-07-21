@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Silky.Lms.Rpc.Runtime.Server.Parameter;
-using Silky.Lms.Rpc.Transport.CachingIntercept;
+using Silky.Rpc.Runtime.Server.Parameter;
+using Silky.Rpc.Transport.CachingIntercept;
 
 namespace ITestApplication.Test.Dtos
 {

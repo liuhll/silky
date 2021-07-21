@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Silky.Lms.Http.SkyApm.Diagnostics;
-using Silky.Lms.Rpc.SkyApm.Diagnostics;
-using Silky.Lms.Swagger.SwaggerUI;
+using Silky.Rpc.SkyApm.Diagnostics;
+using Silky.Swagger.SwaggerUI;
 
 namespace GatewayDemo
 {
@@ -36,7 +35,7 @@ namespace GatewayDemo
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ConfigureLmsRequestPipeline();
+            app.ConfigureSilkyRequestPipeline();
             // app.UseEndpoints(endpoints=> endpoints.MapControllers());
         }
 
@@ -47,7 +46,7 @@ namespace GatewayDemo
             var thisAssembly = thisType.Assembly;
 
             // 自定义 Swagger 首页
-            var customIndex = $"Silky.Lms.Swagger.SwaggerUI.index-mini-profiler.html";
+            var customIndex = $"Silky.Swagger.SwaggerUI.index-mini-profiler.html";
             swaggerUIOptions.IndexStream = () => thisAssembly.GetManifestResourceStream(customIndex);
         }
     }

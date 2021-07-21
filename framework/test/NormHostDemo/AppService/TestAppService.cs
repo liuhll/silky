@@ -3,12 +3,12 @@ using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using NormHostDemo.Tests;
-using Silky.Lms.Caching;
-using Silky.Lms.Core.Exceptions;
-using Silky.Lms.EntityFrameworkCore.Repositories;
-using Silky.Lms.EntityFrameworkCore.UnitOfWork;
-using Silky.Lms.Rpc.Runtime.Server;
-using Silky.Lms.Transaction.Tcc;
+using Silky.Caching;
+using Silky.Core.Exceptions;
+using Silky.EntityFrameworkCore.Repositories;
+using Silky.EntityFrameworkCore.UnitOfWork;
+using Silky.Rpc.Runtime.Server;
+using Silky.Transaction.Tcc;
 
 namespace NormHostDemo.AppService
 {

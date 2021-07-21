@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <Description>Providing RPC communication service for Silky framework</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Silky.Caching\Silky.Caching.csproj" />
+        <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
+        <ProjectReference Include="..\Silky.Validation\Silky.Validation.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Polly" Version="7.2.1" />
+        <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
+    </ItemGroup>
+
+</Project>

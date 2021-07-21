@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Silky.Lms.EntityFrameworkCore.Entities;
+using Silky.EntityFrameworkCore.Entities;
 
 namespace NormHostDemo.Tests
 {

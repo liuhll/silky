@@ -1,14 +1,14 @@
 <p align="center">
-  <img height="200" src="./docs/.vuepress/public/assets/logo/logo.word.svg">
+  <img height="200" src="./docs/.vuepress/public/assets/logo/logo.svg">
 </p>
 
-# lms microservice framework
+# Silky microservice framework
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Commit](https://img.shields.io/github/last-commit/liuhll/lms)](https://img.shields.io/github/last-commit/liuhll/lms)
-[![NuGet](https://img.shields.io/nuget/v/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
-[![MyGet (nightly builds)](https://img.shields.io/myget/lms-framework/vpre/Silky.Lms.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/lms-framework)
-[![NuGet Download](https://img.shields.io/nuget/dt/Silky.Lms.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Lms.Core)
-
+[![Commit](https://img.shields.io/github/last-commit/liuhll/silky)](https://img.shields.io/github/last-commit/liuhll/silky)
+[![NuGet](https://img.shields.io/nuget/v/silky.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Core)
+[![MyGet (nightly builds)](https://img.shields.io/myget/silky-framework/vpre/Silky.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/silky-framework)
+[![NuGet Download](https://img.shields.io/nuget/dt/Silky.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Core)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fliuhll%2Fsilky&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 <div align="center">
 
@@ -18,27 +18,27 @@
 
 ## Project Introduction
 
-The lms framework is designed to help developers quickly build a microservice development framework through simple code and configuration under the .net platform.
+The Silky framework is designed to help developers quickly build a microservice development framework through simple code and configuration under the .net platform.
 
 Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
 
 Through the [Web Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) of .net  build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
 
-In the communication process, LMS uses cache-based interception to realize TCC distributed transaction.
+In the communication process, Silky uses cache-based interception to realize TCC distributed transaction.
 
 
 In the development and design process, the design and ideas of various excellent open source products have been borrowed and absorbed. Here, the author expresses his tribute and gratitude to the ancestors.
 
 ## Getting Started
 
-- Learn the lms framework through [Developer Documentation](http://docs.lms-fk.com/lms/).
-- Use [lms.samples project](http://docs.lms-fk.com/lms/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the lms framework.
-- Familiarize yourself with the configuration properties of the lms framework through the [Configuration](http://docs.lms-fk.com/config/) document.
+- Learn the Silky framework through [Developer Documentation](http://docs.Silky-fk.com/Silky/).
+- Use [Silky.samples project](http://docs.Silky-fk.com/Silky/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the Silky framework.
+- Familiarize yourself with the configuration properties of the Silky framework through the [Configuration](http://docs.silky-fk.com/config/) document.
 
 ## Framework Features
 
 ### Service Engine
-- Responsible for the initialization process of the lms host
+- Responsible for the initialization process of the Silky host
 - Service registration and resolve
 - Responsible for module resolve and registration
 
@@ -80,6 +80,6 @@ In the development and design process, the design and ideas of various excellent
 
 ## Contribute
 - One of the easiest ways to contribute is to participate in discussions and discuss issues. You can also contribute by submitting Pull Request code changes.
-- You can also join the QQ group (934306776) to participate in the discussion of the lms framework.
+- You can also join the QQ group (934306776) to participate in the discussion of the Silky framework.
 
     ![qq-group.jpg](./docs/.vuepress/assets/public/../../public/assets/imgs/qq-group.jpg)

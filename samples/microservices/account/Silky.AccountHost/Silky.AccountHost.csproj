@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\sample.common.props" />
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DotNetCore.CAP.MySql" Version="5.1.0" />
+        <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="5.1.0" />
+      <PackageReference Include="Silky.NormHost" Version="$(SilkyVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.yml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings.Production.yml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings.Development.yml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Account.Application\Silky.Account.Application.csproj" />
+      <ProjectReference Include="..\Silky.Account.EntityFrameworkCore\Silky.Account.EntityFrameworkCore.csproj" />
+    </ItemGroup>
+</Project>

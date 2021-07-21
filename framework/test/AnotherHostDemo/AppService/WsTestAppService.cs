@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using IAnotherApplication;
-using Silky.Lms.Core.Exceptions;
-using Silky.Lms.WebSocket;
+using Silky.Core.Exceptions;
+using Silky.WebSocket;
 
 namespace AnotherHostDemo.AppService
 {

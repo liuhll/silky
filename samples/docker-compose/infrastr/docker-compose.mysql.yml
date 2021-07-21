@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  lms.mysql:
+  silky.mysql:
     image: mysql:8.0.15
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -15,8 +15,8 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - lms_service_net
+      - silky_service_net
 networks:
-  lms_service_net:
+  silky_service_net:
     external:
-      name: lms_service_net
+      name: silky_service_net

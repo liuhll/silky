@@ -1,7 +1,7 @@
 version: '3.7'
 services:
-  lms-docs:
-    image: lmsdocs/lms-docs:${TAG:-latest}
+  silky-docs:
+    image: silkydocs/silky-docs:${TAG:-latest}
     build:
       context: ..
       dockerfile: Dockerfile.docs

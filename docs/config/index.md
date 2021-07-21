@@ -5,7 +5,7 @@ lang: zh-cn
 
 ## 介绍
 
-lms框架支持通过`json`或是`yml`格式的配置文件,开发者可以根据需要对下面配置节点进行调整。例如:通过`appsettings.yml`对微服务应用进行统一配置,通过`appsettings.${Environment}.yml`对不同环境变量下的配置项进行设置。
+silky框架支持通过`json`或是`yml`格式的配置文件,开发者可以根据需要对下面配置节点进行调整。例如:通过`appsettings.yml`对微服务应用进行统一配置,通过`appsettings.${Environment}.yml`对不同环境变量下的配置项进行设置。
 
 ## RPC通信(Rpc)
 

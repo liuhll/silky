@@ -13,7 +13,7 @@ namespace AnotherHostDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterLmsServices<AnotherDemoModule>()
+                    .RegisterSilkyServices<AnotherDemoModule>()
                 ;
         }
     }

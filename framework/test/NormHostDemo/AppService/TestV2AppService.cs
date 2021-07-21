@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
-using Silky.Lms.Rpc.Runtime.Server;
+using Silky.Rpc.Runtime.Server;
 
 namespace NormHostDemo.AppService
 {
