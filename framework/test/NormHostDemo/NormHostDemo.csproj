@@ -8,6 +8,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Silky.Lms.EntityFrameworkCore\Silky.Lms.EntityFrameworkCore.csproj" />
       <ProjectReference Include="..\..\src\Silky.Lms.NormHost\Silky.Lms.NormHost.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Lms.Rpc.SkyApm.Diagnostics\Silky.Lms.Rpc.SkyApm.Diagnostics.csproj" />
       <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
@@ -20,6 +21,8 @@
       </PackageReference>
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
       <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
+      <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0" />
+      <PackageReference Include="SkyAPM.Diagnostics.EntityFrameworkCore" Version="1.3.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -29,6 +32,13 @@
       <None Update="appsettings.yml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="skyapm.json" />
+      <Content Include="skyapm.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

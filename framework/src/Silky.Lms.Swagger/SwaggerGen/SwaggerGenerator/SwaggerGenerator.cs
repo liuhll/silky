@@ -140,7 +140,7 @@ namespace Silky.Lms.Swagger.SwaggerGen.SwaggerGenerator
             {
                 throw new SwaggerGeneratorException(
                     message:
-                    $"Failed to generate Operation for action - {apiDescription.ServiceDescriptor.Id}. See inner exception",
+                    $"Failed to generate ServiceId for action - {apiDescription.ServiceDescriptor.Id}. See inner exception",
                     innerException: ex);
             }
         }

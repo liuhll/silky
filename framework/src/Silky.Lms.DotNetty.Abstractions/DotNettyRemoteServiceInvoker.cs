@@ -85,8 +85,7 @@ namespace Silky.Lms.DotNetty
                 _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
-                //RpcContext.GetContext().SetAttachment("localAddress", NetUtil.GetRpcAddressModel().ToString());
-                RpcContext.GetContext().SetAttachment("remoteAddress", selectedAddress.ToString());
+                RpcContext.GetContext().SetAttachment(AttachmentKeys.RemoteAddress, selectedAddress.IPEndPoint.ToString());
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }
             catch (IOException ex)
@@ -125,6 +124,7 @@ namespace Silky.Lms.DotNetty
                         MiniProfileConstant.RemoteInvoker.State.Fail,
                         $"{ex.Message}", true);
                 }
+
                 throw;
             }
             finally

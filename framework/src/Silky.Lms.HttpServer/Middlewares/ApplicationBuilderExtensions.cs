@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Silky.Lms.Core;
 using Silky.Lms.Core.Exceptions;
@@ -41,6 +43,7 @@ namespace Silky.Lms.HttpServer.Middlewares
                             return Task.CompletedTask;
                         context.Response.ContentType = "application/json;charset=utf-8";
                         miniProfiler.Print("Error", "Exception", exception.Message, true);
+
                         if (gatewayOptions.WrapResult)
                         {
                             var responseResultDto = new ResponseResultDto()

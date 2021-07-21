@@ -4,10 +4,11 @@ using Silky.Lms.Core.Exceptions;
 using Silky.Lms.Core.Extensions;
 using Silky.Lms.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Lms.HttpServer.Handlers;
 using Silky.Lms.Rpc;
+using Silky.Lms.Rpc.Transport;
 using StackExchange.Profiling;
+using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace Silky.Lms.HttpServer.Middlewares
 {
@@ -16,6 +17,7 @@ namespace Silky.Lms.HttpServer.Middlewares
         private readonly RequestDelegate _next;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IMiniProfiler _miniProfiler;
+
         public LmsMiddleware(RequestDelegate next,
             IServiceEntryLocator serviceEntryLocator,
             IMiniProfiler miniProfiler)
@@ -37,19 +39,24 @@ namespace Silky.Lms.HttpServer.Middlewares
                 {
                     throw new FuseProtectionException($"Id为{serviceEntry.Id}的服务条目不允许外网访问");
                 }
+
+              
                 _miniProfiler.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
                     $"通过{path}-{method}查找到服务条目{serviceEntry.Id}");
+                RpcContext.GetContext().SetAttachment(AttachmentKeys.Path, path.ToString());
+                RpcContext.GetContext().SetAttachment(AttachmentKeys.HttpMethod, method.ToString());
                 await EngineContext.Current
                     .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceDescriptor.ServiceProtocol.ToString())
                     .Handle(context, serviceEntry);
             }
             else
             {
-                _miniProfiler.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry, $"通过{path}-{method}没有查找到服务条目",
+                _miniProfiler.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
+                    $"通过{path}-{method}没有查找到服务条目",
                     true);
                 await _next(context);
             }
-           
         }
+        
     }
 }
