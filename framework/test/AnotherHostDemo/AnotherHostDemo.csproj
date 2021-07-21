@@ -5,6 +5,7 @@
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
         <ProjectReference Include="..\..\src\Silky.WebSocket\Silky.WebSocket.csproj" />
         <ProjectReference Include="..\..\src\Silky.Agent.WebSocketHost\Silky.Agent.WebSocketHost.csproj" />

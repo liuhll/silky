@@ -5,9 +5,11 @@ using Silky.Agent.WebSocketHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Codec;
 
 namespace AnotherHostDemo
 {
+    [DependsOn(typeof(MessagePackModule))]
     public class AnotherDemoModule : WebSocketHostModule
     {
         public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;

@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
       <ProjectReference Include="..\..\src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
       <ProjectReference Include="..\..\src\Silky.Agent.GeneralHost\Silky.Agent.GeneralHost.csproj" />
       <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
