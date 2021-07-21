@@ -24,3 +24,5 @@ src/Silky.WebSocketServer
 src/Silky.WsHost
 src/Silky.FluentValidation
 src/Silky.Validation
+src/Silky.EntityFrameworkCore
+src/Silky.SkyApm.Diagnostics
