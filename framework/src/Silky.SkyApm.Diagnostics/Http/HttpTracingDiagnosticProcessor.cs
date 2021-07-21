@@ -45,10 +45,11 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         public void BeginRequest([Property] HttpContext HttpContext)
         {
             var path = HttpContext.Request.Path.ToString();
-            if (!HttpContext.Request.IsWebApi() || path.Contains(MiniProfilerConstants.MiniProfilerRouteBasePath))
+            if (!PathUtils.IsWebApiPath(path))
             {
                 return;
             }
+
             //var host = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
             var context = _tracingContext.CreateEntrySegmentContext(
                 $"{HttpContext.Request.Path}-{HttpContext.Request.Method}",
@@ -56,10 +57,11 @@ namespace Silky.Rpc.SkyApm.Diagnostics
 
             context.Span.SpanLayer = SpanLayer.HTTP;
             context.Span.Component = Components.SilkyHttp;
-            context.Span.Peer = new StringOrIntValue(HttpContext.Connection.RemoteIpAddress.ToString());;
+            context.Span.Peer = new StringOrIntValue(HttpContext.Connection.RemoteIpAddress.ToString());
+            ;
             context.Span.AddTag(Tags.URL, HttpContext.Request.GetDisplayUrl());
             context.Span.AddTag(Tags.PATH, HttpContext.Request.Path);
-            
+
             context.Span.AddTag(Tags.HTTP_METHOD, HttpContext.Request.Method);
             context.Span.AddLog(
                 LogEvent.Event("Http Request Begin"),
@@ -100,6 +102,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             {
                 context.Span.ErrorOccurred();
             }
+
             context.Span.AddLog(
                 LogEvent.Event("Http Request End"),
                 LogEvent.Message($"Http Request End"));

@@ -48,9 +48,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherHostDemo", "test\Ano
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Caching.StackExchangeRedis", "src\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj", "{239843BB-C84C-4AF0-BAA0-01323991EA21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.NormHost", "src\Silky.NormHost\Silky.NormHost.csproj", "{ABAE7444-271F-489D-884D-3FB8E84B2973}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Agent.GeneralHost", "src\Silky.Agent.GeneralHost\Silky.Agent.GeneralHost.csproj", "{ABAE7444-271F-489D-884D-3FB8E84B2973}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.WebHost", "src\Silky.WebHost\Silky.WebHost.csproj", "{D1E4CCCB-6590-4D5F-B040-94409DCAD6C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Agent.WebHost", "src\Silky.Agent.WebHost\Silky.Agent.WebHost.csproj", "{D1E4CCCB-6590-4D5F-B040-94409DCAD6C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction", "src\Silky.Transaction\Silky.Transaction.csproj", "{ADB99941-DCF4-454E-A8DD-72DCE3B794DF}"
 EndProject
@@ -58,7 +58,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.WebSocketServer", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.WebSocket", "src\Silky.WebSocket\Silky.WebSocket.csproj", "{CEB2FCF0-EC12-4088-A7D9-273A7020A0B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.WsHost", "src\Silky.WsHost\Silky.WsHost.csproj", "{B9E174CD-5E6C-4493-B813-68CF766D4A11}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Agent.WebSocketHost", "src\Silky.Agent.WebSocketHost\Silky.Agent.WebSocketHost.csproj", "{B9E174CD-5E6C-4493-B813-68CF766D4A11}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Validation", "src\Silky.Validation\Silky.Validation.csproj", "{EC8416FD-70D8-4BE4-9DCD-024CBB59401A}"
 EndProject

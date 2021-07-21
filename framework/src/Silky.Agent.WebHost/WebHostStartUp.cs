@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Silky.WebHost
+namespace Silky.Agent.WebHost
 {
     public class WebHostStartUp : ISilkyStartup
     {

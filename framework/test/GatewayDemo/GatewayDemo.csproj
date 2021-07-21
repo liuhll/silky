@@ -7,7 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
-        <ProjectReference Include="..\..\src\Silky.WebHost\Silky.WebHost.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Agent.WebHost\Silky.Agent.WebHost.csproj" />
         <ProjectReference Include="..\..\src\Silky.WebSocketServer\Silky.WebSocketServer.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />

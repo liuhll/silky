@@ -10,7 +10,6 @@
         <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />
         <ProjectReference Include="..\Silky.Caching\Silky.Caching.csproj" />
         <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
-        <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
         <ProjectReference Include="..\Silky.DotNetty.Abstractions\Silky.DotNetty.Abstractions.csproj" />
         <ProjectReference Include="..\Silky.DotNetty.Protocol.Tcp\Silky.DotNetty.Protocol.Tcp.csproj" />

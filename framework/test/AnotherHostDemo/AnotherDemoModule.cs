@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Silky.Core.Modularity;
 using Silky.WebSocket;
-using Silky.WsHost;
+using Silky.Agent.WebSocketHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AnotherHostDemo
 {
-    public class AnotherDemoModule : WsHostModule
+    public class AnotherDemoModule : WebSocketHostModule
     {
         public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
 

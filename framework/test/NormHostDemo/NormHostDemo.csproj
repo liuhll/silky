@@ -7,7 +7,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
-      <ProjectReference Include="..\..\src\Silky.NormHost\Silky.NormHost.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Agent.GeneralHost\Silky.Agent.GeneralHost.csproj" />
       <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
       <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />

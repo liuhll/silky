@@ -1,5 +1,4 @@
-﻿using Silky.Codec;
-using Silky.Core.Modularity;
+﻿using Silky.Core.Modularity;
 using Silky.DotNetty;
 using Silky.HttpServer;
 using Silky.RegistryCenter.Zookeeper;
@@ -12,10 +11,9 @@ namespace Microsoft.Extensions.Hosting
        typeof(ZookeeperModule),
        typeof(HttpServerModule),
        typeof(DotNettyModule),
-       typeof(MessagePackModule),
        typeof(TransactionTccModule)
    )]
-    public class WebHostModule : StartUpModule
+    public abstract class WebHostModule : StartUpModule
     {
 
     }
