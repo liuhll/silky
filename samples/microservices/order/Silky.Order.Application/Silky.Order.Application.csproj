@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\sample.common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\account\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj" />
+      <ProjectReference Include="..\..\stock\Silky.Stock.Application.Contracts\Silky.Stock.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Silky.Order.Application.Contracts\Silky.Order.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Silky.Order.Domain\Silky.Order.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

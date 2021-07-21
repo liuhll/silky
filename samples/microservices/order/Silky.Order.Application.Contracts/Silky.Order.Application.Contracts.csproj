@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\sample.common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Silky.Rpc" Version="$(SilkyVersion)" />
+      <PackageReference Include="Silky.Transaction.Tcc" Version="$(SilkyVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Order.Domain.Shared\Silky.Order.Domain.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

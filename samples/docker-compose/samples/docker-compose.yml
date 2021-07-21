@@ -1,50 +1,50 @@
 version: '3.7'
 
 services:
-  lms.sample.account:
-    image: lmsframework/sample.account:${TAG:-latest}
+  silky.sample.account:
+    image: silkyframework/sample.account:${TAG:-latest}
     build:
       context: ../..
-      dockerfile: microservices/account/Lms.AccountHost/Dockerfile
+      dockerfile: microservices/account/Silky.AccountHost/Dockerfile
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
-      - lms_service_net
+      - silky_service_net
     
-  lms.sample.order:
-    image: lmsframework/sample.order:${TAG:-latest}
+  silky.sample.order:
+    image: silkyframework/sample.order:${TAG:-latest}
     build:
       context: ../..
-      dockerfile: microservices/order/Lms.OrderHost/Dockerfile
+      dockerfile: microservices/order/Silky.OrderHost/Dockerfile
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
-      - lms_service_net
+      - silky_service_net
   
-  lms.sample.stock:
-    image: lmsframework/sample.stock:${TAG:-latest}
+  silky.sample.stock:
+    image: silkyframework/sample.stock:${TAG:-latest}
     build:
       context: ../..
-      dockerfile: microservices/stock/Lms.StockHost/Dockerfile
+      dockerfile: microservices/stock/Silky.StockHost/Dockerfile
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
-      - lms_service_net
+      - silky_service_net
 
-  lms.sample.gateway:
-    image: lmsframework/sample.gateway:${TAG:-latest}
+  silky.sample.gateway:
+    image: silkyframework/sample.gateway:${TAG:-latest}
     build:
       context: ../..
-      dockerfile: aggregators/Lms.GatewayHost/Dockerfile
+      dockerfile: aggregators/Silky.GatewayHost/Dockerfile
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
       ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     ports:
       - 80:80
     networks: 
-      - lms_service_net
+      - silky_service_net
 
 networks:
-  lms_service_net: 
+  silky_service_net: 
     external:
-      name: lms_service_net
+      name: silky_service_net
