@@ -26,16 +26,16 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         public string ListenerName { get; } = "Microsoft.AspNetCore";
 
         private readonly ITracingContext _tracingContext;
-        private readonly IExitSegmentContextAccessor _exitSegmentContextAccessor;
+        private readonly IEntrySegmentContextAccessor _entrySegmentContextAccessor;
         private readonly HostingDiagnosticConfig _config;
         private readonly TracingConfig _tracingConfig;
 
-        public HttpTracingDiagnosticProcessor(IExitSegmentContextAccessor exitSegmentContextAccessor,
+        public HttpTracingDiagnosticProcessor(IEntrySegmentContextAccessor entrySegmentContextAccessor,
             ITracingContext tracingContext,
             IConfigAccessor configAccessor)
         {
             _tracingContext = tracingContext;
-            _exitSegmentContextAccessor = exitSegmentContextAccessor;
+            _entrySegmentContextAccessor = entrySegmentContextAccessor;
             _config = configAccessor.Get<HostingDiagnosticConfig>();
             _tracingConfig = configAccessor.Get<TracingConfig>();
         }
@@ -48,15 +48,14 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
             {
                 return;
             }
-
-            var host = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
-            var context = _tracingContext.CreateExitSegmentContext(
-                $"{HttpContext.Request.Path}-{HttpContext.Request.Path}", host,
+            //var host = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
+            var context = _tracingContext.CreateEntrySegmentContext(
+                $"{HttpContext.Request.Path}-{HttpContext.Request.Method}",
                 new SilkyCarrierHeaderCollection(RpcContext.GetContext()));
 
-            context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
+            context.Span.SpanLayer = SpanLayer.HTTP;
             context.Span.Component = Components.LmsRpc;
-            context.Span.Peer = host;
+            context.Span.Peer = new StringOrIntValue(HttpContext.Connection.RemoteIpAddress.ToString());;
             context.Span.AddTag(Tags.URL, HttpContext.Request.GetDisplayUrl());
             context.Span.AddTag(Tags.PATH, HttpContext.Request.Path);
             context.Span.AddTag(Tags.HTTP_METHOD, HttpContext.Request.Method);
@@ -86,7 +85,7 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         [DiagnosticName("Microsoft.AspNetCore.Hosting.HttpRequestIn.Stop")]
         public void EndRequest([Property] HttpContext HttpContext)
         {
-            var context = _exitSegmentContextAccessor.Context;
+            var context = _entrySegmentContextAccessor.Context;
             if (context == null)
             {
                 return;
@@ -104,13 +103,13 @@ namespace Silky.Lms.Rpc.SkyApm.Diagnostics
         [DiagnosticName("Microsoft.AspNetCore.Diagnostics.UnhandledException")]
         public void DiagnosticUnhandledException([Property] HttpContext httpContext, [Property] Exception exception)
         {
-            _exitSegmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
+            _entrySegmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
         }
 
         [DiagnosticName("Microsoft.AspNetCore.Hosting.UnhandledException")]
         public void HostingUnhandledException([Property] HttpContext httpContext, [Property] Exception exception)
         {
-            _exitSegmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
+            _entrySegmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
         }
 
         private string CollectCookies(HttpContext httpContext, IEnumerable<string> keys)

@@ -113,9 +113,7 @@ namespace Silky.Lms.Rpc.Transport
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    Operation = RpcContext.GetContext().IsGateway()
-                        ? $"{RpcContext.GetContext().GetAttachment(AttachmentKeys.Path)}-{RpcContext.GetContext().GetAttachment(AttachmentKeys.HttpMethod)}"
-                        : message.ServiceId,
+                    ServiceId = message.ServiceId,
                     Message = message,
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
                     IsGateWay = RpcContext.GetContext().IsGateway()

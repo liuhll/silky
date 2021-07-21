@@ -81,7 +81,7 @@ namespace Silky.Lms.Rpc.Runtime.Server
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    Operation = message.ServiceId,
+                    ServiceId = message.ServiceId,
                     Message = message,
                     RemoteAddress = remoteAddress,
                     IsGateWay = RpcContext.GetContext().IsGateway()

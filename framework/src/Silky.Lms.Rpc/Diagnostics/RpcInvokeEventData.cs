@@ -6,7 +6,7 @@ namespace Silky.Lms.Rpc.Diagnostics
     {
         public string MessageId { get; set; }
         public long? OperationTimestamp { get; set; }
-        public string Operation { get; set; }
+        public string ServiceId { get; set; }
         public bool IsGateWay { get; set; }
 
         public RemoteInvokeMessage Message { get; set; }
