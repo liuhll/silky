@@ -1,9 +1,12 @@
-﻿using Silky.Core.Modularity;
+﻿using Silky.Caching.StackExchangeRedis;
+using Silky.Core.Modularity;
 using Silky.DotNetty;
+using Silky.FluentValidation;
 using Silky.HttpServer;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.Proxy;
 using Silky.Transaction.Tcc;
+using Silky.Validation;
 
 namespace Microsoft.Extensions.Hosting
 {
@@ -11,7 +14,10 @@ namespace Microsoft.Extensions.Hosting
        typeof(ZookeeperModule),
        typeof(HttpServerModule),
        typeof(DotNettyModule),
-       typeof(TransactionTccModule)
+       typeof(TransactionTccModule),
+       typeof(ValidationModule),
+       typeof(FluentValidationModule),
+       typeof(RedisCachingModule)
    )]
     public abstract class WebHostModule : StartUpModule
     {

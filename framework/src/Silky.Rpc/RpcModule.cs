@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silky.Caching;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Interceptors;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Routing;
@@ -20,12 +21,25 @@ using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
+using Microsoft.Extensions.Configuration;
 
 namespace Silky.Rpc
 {
     [DependsOn(typeof(LockModule), typeof(CachingModule))]
     public class RpcModule : SilkyModule
     {
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions<RpcOptions>()
+                .Bind(configuration.GetSection(RpcOptions.Rpc));
+            services.AddOptions<RegistryCenterOptions>()
+                .Bind(configuration.GetSection(RegistryCenterOptions.RegistryCenter));
+            services.AddOptions<GovernanceOptions>()
+                .Bind(configuration.GetSection(GovernanceOptions.Governance));
+            services.AddOptions<WebSocketOptions>()
+                .Bind(configuration.GetSection(WebSocketOptions.WebSocket));
+        }
+        
         protected override void RegisterServices(ContainerBuilder builder)
         {
             var localEntryTypes = ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder)

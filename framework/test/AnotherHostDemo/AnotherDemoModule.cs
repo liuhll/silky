@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Silky.Core.Modularity;
-using Silky.WebSocket;
-using Silky.Agent.WebSocketHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

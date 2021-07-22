@@ -1,15 +1,16 @@
-﻿using Silky.Core;
-using Silky.Core.Extensions;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Silky.Core.Extensions;
+using Silky.Core.Modularity;
 
 namespace Silky.Caching.StackExchangeRedis
 {
-    public class RedisCachingConfigureService : IConfigureService
+    [DependsOn(typeof(CachingModule))]
+    public class RedisCachingModule : SilkyModule
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             var redisEnabled = configuration["DistributedCache:Redis:IsEnabled"];
             
@@ -27,7 +28,5 @@ namespace Silky.Caching.StackExchangeRedis
                 services.Replace(ServiceDescriptor.Singleton<IDistributedCache, SilkyRedisCache>());
             }
         }
-
-        public int Order { get; } = 3;
     }
 }

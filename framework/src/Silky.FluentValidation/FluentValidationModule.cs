@@ -1,16 +1,18 @@
 ﻿using System;
 using FluentValidation;
-using Silky.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.Modularity;
+using Silky.Validation;
 
 namespace Silky.FluentValidation
 {
-    public class FluentValidationConfigureService : IConfigureService
+    [DependsOn(typeof(ValidationModule))]
+    public class FluentValidationModule : SilkyModule
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<SilkyValidationOptions>(options =>
             {
@@ -49,7 +51,5 @@ namespace Silky.FluentValidation
 
             return GetFirstGenericArgumentOrNull(type.BaseType, depth + 1);
         }
-
-        public int Order { get; } = 998;
     }
 }
