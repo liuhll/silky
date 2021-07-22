@@ -17,6 +17,7 @@ using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server.Descriptor;
 using Silky.Rpc.Runtime.Server.Parameter;
+using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.CachingIntercept;
 
 namespace Silky.Rpc.Runtime.Server
@@ -200,6 +201,9 @@ namespace Silky.Rpc.Runtime.Server
         private Func<string, object[], Task<object>> CreateExecutor() =>
             (key, parameters) =>
             {
+                RpcContext.GetContext().SetAttachment(AttachmentKeys.ServiceMethodName,
+                    $"{MethodInfo.DeclaringType?.FullName}.{MethodInfo.Name}");
+
                 if (IsLocal)
                 {
                     var localServiceExecutor = EngineContext.Current.Resolve<ILocalExecutor>();

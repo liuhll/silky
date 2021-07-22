@@ -17,5 +17,7 @@ namespace Silky.Rpc.Transport
         public const string HttpMethod = "httpmethod";
 
         public const string IsGatewayHost = "isGatewayHost";
+        
+        public const string ServiceMethodName = "serviceMethodName";
     }
 }

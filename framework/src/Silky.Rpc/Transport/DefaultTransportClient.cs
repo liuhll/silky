@@ -116,7 +116,8 @@ namespace Silky.Rpc.Transport
                     ServiceId = message.ServiceId,
                     Message = message,
                     RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
-                    IsGateWay = RpcContext.GetContext().IsGateway()
+                    IsGateWay = RpcContext.GetContext().IsGateway(),
+                    ServiceMethodName = RpcContext.GetContext().GetAttachment(AttachmentKeys.ServiceMethodName).ToString()
                 };
 
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcRequest, eventData);

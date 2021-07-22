@@ -12,5 +12,6 @@ namespace Silky.Rpc.Diagnostics
         public RemoteInvokeMessage Message { get; set; }
 
         public string RemoteAddress { get; set; }
+        public string ServiceMethodName { get; set; }
     }
 }

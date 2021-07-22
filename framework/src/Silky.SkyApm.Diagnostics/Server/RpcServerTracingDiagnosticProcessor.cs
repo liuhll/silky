@@ -52,6 +52,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                                  $"--> MessageId:{eventData.MessageId}."));
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
             context.Span.AddTag(SilkyTags.RPC_SERVICEID, eventData.ServiceId.ToString());
+            context.Span.AddTag(SilkyTags.RPC_SERVIC_METHODENAME, eventData.ServiceMethodName);
             context.Span.AddTag(SilkyTags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
             context.Span.AddTag(SilkyTags.RPC_ATTACHMENTS, _serializer.Serialize(eventData.Message.Attachments));
         }

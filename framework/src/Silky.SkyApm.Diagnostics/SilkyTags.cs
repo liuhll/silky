@@ -16,6 +16,8 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         
         public static readonly string RPC_RESULT = "Rpc.Result";
         
+        public static readonly string RPC_SERVIC_METHODENAME = "Rpc.ServiceMethodName";
+        
         public static readonly string ISGATEWAY = "IsGateway";
     }
 }
