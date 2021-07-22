@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Silky.Core;
 using Silky.Core.ClayObject;
 using Silky.Core.Convertible;
+using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Transport
@@ -41,13 +42,11 @@ namespace Silky.Rpc.Transport
 
             if (value.GetType().GetObjectDataType() == ObjectDataType.Complex
                 && !(value is IDictionary<string, object>)
-                && value.GetType().FullName != "Silky.Transaction.TransactionContext"
-                && !(value is JObject) 
+                && !(value is JObject)
                 && !(value is JArray)
             )
             {
-                //throw new SilkyException("rpcContext attachments 不允许设置复杂类型参数");
-                contextAttachments.AddOrUpdate(key, value, (k, v) => Clay.Object(value));
+                throw new SilkyException("rpcContext attachments 不允许设置复杂类型参数");
             }
 
             contextAttachments.AddOrUpdate(key, value, (k, v) => value);

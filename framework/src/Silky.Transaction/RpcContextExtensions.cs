@@ -1,4 +1,8 @@
-﻿using Silky.Rpc.Transport;
+﻿using Silky.Core;
+using Silky.Core.Convertible;
+using Silky.Core.Extensions;
+using Silky.Core.Serialization;
+using Silky.Rpc.Transport;
 
 namespace Silky.Transaction
 {
@@ -6,14 +10,23 @@ namespace Silky.Transaction
     {
         public static TransactionContext GetTransactionContext(this RpcContext rpcContext)
         {
-            var transactionContext =
-                rpcContext.GetAttachment(AttachmentKeys.TransactionContext) as TransactionContext;
+            var transactionContextAttachment = rpcContext.GetAttachment(AttachmentKeys.TransactionContext);
+
+            if (transactionContextAttachment == null)
+            {
+                return null;
+            }
+
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            var transactionContext = serializer.Deserialize<TransactionContext>(transactionContextAttachment.ToString());
             return transactionContext;
         }
 
         public static void SetTransactionContext(this RpcContext rpcContext, TransactionContext transactionContext)
         {
-            rpcContext.SetAttachment(AttachmentKeys.TransactionContext, transactionContext);
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+
+            rpcContext.SetAttachment(AttachmentKeys.TransactionContext, serializer.Serialize(transactionContext));
         }
     }
 }

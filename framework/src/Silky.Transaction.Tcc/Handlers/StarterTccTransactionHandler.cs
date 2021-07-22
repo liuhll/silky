@@ -17,7 +17,6 @@ namespace Silky.Transaction.Tcc.Handlers
             {
                 await invocation.ProceedAsync();
                 transaction.Status = ActionStage.Trying;
-                executor.UpdateStartStatus(transaction);
                 await executor.GlobalConfirm(transaction);
             }
             catch (Exception e)

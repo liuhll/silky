@@ -33,12 +33,12 @@ namespace Silky.Transaction
                 if (transactionHandler != null)
                 {
                     await transactionHandler.Handler(transactionContext, invocation);
+                   
                 }
                 else
                 {
                     await invocation.ProceedAsync();
                 }
-
             }
             else
             {

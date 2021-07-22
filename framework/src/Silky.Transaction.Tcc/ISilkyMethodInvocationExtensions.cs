@@ -2,12 +2,14 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Transport;
 
 namespace Silky.Transaction.Tcc
 {
     public static class SilkyMethodInvocationExtensions
     {
-        public static async Task ExcuteTccMethod(this ISilkyMethodInvocation invocation, TccMethodType tccMethodType)
+        public static async Task ExcuteTccMethod(this ISilkyMethodInvocation invocation, TccMethodType tccMethodType,
+            TransactionContext context)
         {
             var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
             Debug.Assert(serviceEntry != null);
@@ -27,6 +29,8 @@ namespace Silky.Transaction.Tcc
             }
             else
             {
+                context.TransactionRole = TransactionRole.Consumer;
+                RpcContext.GetContext().SetTransactionContext(context);
                 await invocation.ProceedAsync();
             }
             

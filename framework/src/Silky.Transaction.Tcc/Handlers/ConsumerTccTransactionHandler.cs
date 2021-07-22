@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
+using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Handler;
+using Silky.Transaction.Participant;
+using Silky.Transaction.Tcc.Exceptions;
 using Silky.Transaction.Tcc.Executor;
 
 namespace Silky.Transaction.Tcc.Handlers
@@ -20,20 +24,46 @@ namespace Silky.Transaction.Tcc.Handlers
 
             if (serviceEntry.IsLocal)
             {
-                context.Action = ActionStage.PreTry;
-                await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Try);
-                context.Action = ActionStage.Trying;
-                invocation.ReturnValue = await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Confirm);
-                context.Action = ActionStage.Confirming;
+                switch (context.Action)
+                {
+                    case ActionStage.PreTry:
+                        executor.PreTryParticipant(context, invocation);
+                        try
+                        {
+                            await invocation.ProceedAsync();
+                            context.Action = ActionStage.Trying;
+                            var currentTransaction = SilkyTransactionHolder.Instance.CurrentTransaction;
+                            currentTransaction.Status = context.Action;
+                            await executor.GlobalConfirm(currentTransaction);
+                        }
+                        catch (Exception e)
+                        {
+                            var currentTransaction = SilkyTransactionHolder.Instance.CurrentTransaction;
+                            await executor.GlobalCancel(currentTransaction);
+                            throw;
+                        }
+
+                        break;
+                    case ActionStage.Confirming:
+                        await invocation.ExcuteTccMethod(TccMethodType.Confirm, context);
+                        break;
+                    case ActionStage.Canceling:
+                        await invocation.ExcuteTccMethod(TccMethodType.Cancel, context);
+                        break;
+                    default:
+                        throw new TccTransactionException("事务参与者状态不正确");
+                }
             }
             else
             {
-                if (context.Action != ActionStage.PreTry)
+                var participant = executor.PreTryParticipant(context, invocation);
+                if (participant != null)
                 {
-                    context.TransactionRole = TransactionRole.Participant;
+                    // context.ParticipantRefId = context.ParticipantId;
+                    context.TransactionRole = TransactionRole.Consumer; //participant.Role;
+                    RpcContext.GetContext().SetTransactionContext(context);
                 }
 
-                var participant = executor.PreTryParticipant(context, invocation);
                 try
                 {
                     await invocation.ProceedAsync();
@@ -44,26 +74,9 @@ namespace Silky.Transaction.Tcc.Handlers
                 }
                 catch (Exception e)
                 {
-                    var currentTrans = SilkyTransactionHolder.Instance.CurrentTransaction;
-                    foreach (var participantItem in currentTrans.Participants)
+                    if (participant != null)
                     {
-                        if (participantItem.Role == TransactionRole.Participant &&
-                            participantItem.Status == ActionStage.Trying)
-                        {
-                            context.Action = ActionStage.Canceling;
-                            context.TransactionRole = TransactionRole.Participant;
-                            context.ParticipantId = participantItem.ParticipantId;
-                            context.ParticipantRefId = participantItem.ParticipantRefId;
-                            RpcContext.GetContext().SetTransactionContext(context);
-                            await participantItem.Invocation.ProceedAsync();
-                        }
-                        
-                        if (participantItem.Role == TransactionRole.Consumer &&
-                            participantItem.Status == ActionStage.Trying)
-                        {
-                            invocation.ReturnValue = await executor.ConsumerParticipantExecute(context, invocation, TccMethodType.Cancel);
-                            context.Action = ActionStage.Canceling;
-                        }
+                        participant.Status = ActionStage.Error;
                     }
 
                     throw;

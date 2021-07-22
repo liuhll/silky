@@ -9,34 +9,45 @@ namespace Silky.Transaction.Tcc
         public static async Task ParticipantConfirm(this IParticipant participant)
         {
             var invocation = participant.Invocation;
-            if (participant.ParticipantType == ParticipantType.Local
-                && (participant.Role == TransactionRole.Start || participant.Role == TransactionRole.Consumer))
+            var context = RpcContext.GetContext().GetTransactionContext();
+
+            // 只有内部调用的才需要提交
+            if (participant.ParticipantType == ParticipantType.Inline)
             {
-                await invocation.ExcuteTccMethod(TccMethodType.Confirm);
+                context.Action = ActionStage.Confirming;
+                context.TransactionRole = TransactionRole.Consumer;
+                RpcContext.GetContext().SetTransactionContext(context);
+                await invocation.ProceedAsync();
             }
             else
             {
-                var context = RpcContext.GetContext().GetTransactionContext();
-                context.TransactionRole = TransactionRole.Participant;
-                context.Action = ActionStage.Confirming;
-                await invocation.ProceedAsync();
+                if (participant.Role == TransactionRole.Start)
+                {
+                    await invocation.ExcuteTccMethod(TccMethodType.Confirm, context);
+                }
             }
         }
 
         public static async Task ParticipantCancel(this IParticipant participant)
         {
             var invocation = participant.Invocation;
-            if (participant.ParticipantType == ParticipantType.Local
-                && (participant.Role == TransactionRole.Start || participant.Role == TransactionRole.Consumer))
+            var context = RpcContext.GetContext().GetTransactionContext();
+            if (participant.ParticipantType == ParticipantType.Inline)
             {
-                await invocation.ExcuteTccMethod(TccMethodType.Cancel);
+                if (participant.Status == ActionStage.Trying)
+                {
+                    context.Action = ActionStage.Canceling;
+                    context.TransactionRole = TransactionRole.Consumer;
+                    RpcContext.GetContext().SetTransactionContext(context);
+                    await invocation.ProceedAsync();
+                }
             }
             else
             {
-                var context = RpcContext.GetContext().GetTransactionContext();
-                context.TransactionRole = TransactionRole.Participant;
-                context.Action = ActionStage.Canceling;
-                await invocation.ProceedAsync();
+                if (participant.Role == TransactionRole.Start && participant.Status == ActionStage.Trying)
+                {
+                    await invocation.ExcuteTccMethod(TccMethodType.Cancel, context);
+                }
             }
         }
     }

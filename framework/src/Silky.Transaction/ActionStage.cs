@@ -2,12 +2,18 @@
 {
     public enum ActionStage
     {
-        PreTry = 0,
-        
-        Trying,
-        
+        PreTry = 0, // 准备开始执行方法
+
+        Trying, // Try方法执行完成
+
         Confirming,
         
-        Canceling,
+        Confirmed, //Confirm执行完成
+
+        Canceling, //准备开始执行Cancel
+
+        Canceled, // Canceled执行完成
+        
+        Error, //出现异常
     }
 }

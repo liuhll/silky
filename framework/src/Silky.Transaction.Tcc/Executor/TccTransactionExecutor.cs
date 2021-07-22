@@ -27,6 +27,10 @@ namespace Silky.Transaction.Tcc.Executor
         public ITransaction PreTry(ISilkyMethodInvocation invocation)
         {
             Logger.LogDebug("tcc transaction starter");
+            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+            Debug.Assert(serviceEntry != null);
+            Debug.Assert(serviceEntry.IsLocal);
+
             var transaction = CreateTransaction();
             var participant = BuildParticipant(invocation,
                 null,
@@ -38,7 +42,7 @@ namespace Silky.Transaction.Tcc.Executor
             SilkyTransactionHolder.Instance.Set(transaction);
             var context = new TransactionContext
             {
-                Action = ActionStage.Trying,
+                Action = ActionStage.PreTry,
                 TransId = transaction.TransId,
                 TransactionRole = TransactionRole.Start,
                 TransType = TransactionType.Tcc
@@ -55,12 +59,14 @@ namespace Silky.Transaction.Tcc.Executor
             if (serviceEntry.IsTransactionServiceEntry())
             {
                 var participantType = serviceEntry.IsLocal ? ParticipantType.Local : ParticipantType.Inline;
-                IParticipant participant = BuildParticipant(invocation,
+                var participantRole = serviceEntry.IsLocal ? TransactionRole.Consumer : TransactionRole.Participant;
+                var participant = BuildParticipant(invocation,
                     null,
                     context.ParticipantId,
-                    TransactionRole.Participant,
+                    participantRole,
                     participantType,
                     context.TransId);
+                participant.Status = ActionStage.PreTry;
                 if (SilkyTransactionHolder.Instance.CurrentTransaction != null)
                 {
                     SilkyTransactionHolder.Instance.CurrentTransaction.RegisterParticipant(participant);
@@ -70,7 +76,6 @@ namespace Silky.Transaction.Tcc.Executor
                     var transaction = CreateTransaction(context.TransId);
                     participant.Role = TransactionRole.Consumer;
                     transaction.RegisterParticipant(participant);
-                    context.TransactionRole = TransactionRole.Consumer;
                     SilkyTransactionHolder.Instance.Set(transaction);
                 }
 
@@ -80,36 +85,31 @@ namespace Silky.Transaction.Tcc.Executor
             return null;
         }
 
-        public void UpdateStartStatus(ITransaction transaction)
-        {
-            foreach (var participant in transaction.Participants)
-            {
-                participant.Status = transaction.Status;
-            }
-        }
-
         public async Task GlobalConfirm(ITransaction transaction)
         {
             foreach (var participant in transaction.Participants)
             {
                 await participant.ParticipantConfirm();
-                participant.Status = ActionStage.Confirming;
             }
 
-            transaction.Status = ActionStage.Confirming;
+            if (SilkyTransactionHolder.Instance.CurrentTransaction != null)
+            {
+                SilkyTransactionHolder.Instance.CurrentTransaction.Status = ActionStage.Canceled;
+            }
         }
 
         public async Task GlobalCancel(ITransaction transaction)
         {
             foreach (var participant in transaction.Participants)
             {
-                if (participant.Status == ActionStage.Trying || participant.Role == TransactionRole.Start)
-                {
-                    await participant.ParticipantCancel();
-                    participant.Status = ActionStage.Canceling;
-                }
+                await participant.ParticipantCancel();
 
-                transaction.Status = ActionStage.Canceling;
+                transaction.Status = ActionStage.Canceled;
+            }
+
+            if (SilkyTransactionHolder.Instance.CurrentTransaction != null)
+            {
+                SilkyTransactionHolder.Instance.CurrentTransaction.Status = ActionStage.Canceled;
             }
         }
 
@@ -162,24 +162,27 @@ namespace Silky.Transaction.Tcc.Executor
         }
 
 
-        public async Task<object> ConsumerParticipantExecute(TransactionContext context,
-            ISilkyMethodInvocation invocation, TccMethodType tccMethodType)
-        {
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            Debug.Assert(serviceEntry != null);
-            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-            var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
-            PreTryParticipant(context, invocation);
-            var excutorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
-
-            if (excutorInfo.Item2)
-            {
-                return await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, parameters);
-            }
-            else
-            {
-                return excutorInfo.Item1.Execute(excutorInfo.Item3, parameters);
-            }
-        }
+        // public async Task<object> ConsumerParticipantExecute(TransactionContext context,
+        //     ISilkyMethodInvocation invocation, TccMethodType tccMethodType)
+        // {
+        //     var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+        //     Debug.Assert(serviceEntry != null);
+        //     Debug.Assert(serviceEntry.IsLocal);
+        //
+        //     var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
+        //     var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
+        //     if (tccMethodType == TccMethodType.Try)
+        //     {
+        //         PreTryParticipant(context, invocation);
+        //     }
+        //
+        //     var executorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
+        //
+        //     if (executorInfo.Item2)
+        //     {
+        //         return await executorInfo.Item1.ExecuteAsync(executorInfo.Item3, parameters);
+        //     }
+        //     return executorInfo.Item1.Execute(executorInfo.Item3, parameters);
+        // }
     }
 }

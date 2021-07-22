@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Handler;
@@ -7,18 +7,6 @@ namespace Silky.Transaction.Tcc.Handlers
 {
     public class TccTransactionHandlerFactory : AbstractTransactionHandlerFactory, ITransientDependency
     {
-        private static IDictionary<TransactionRole, ITransactionHandler> _handlersMap =
-            new Dictionary<TransactionRole, ITransactionHandler>();
-
-        static TccTransactionHandlerFactory()
-        {
-            _handlersMap.Add(TransactionRole.Start, new StarterTccTransactionHandler());
-            _handlersMap.Add(TransactionRole.Participant, new ParticipantTccTransactionHandler());
-            _handlersMap.Add(TransactionRole.Consumer, new ConsumerTccTransactionHandler());
-        }
-
-        protected override IDictionary<TransactionRole, ITransactionHandler> Handlers => _handlersMap;
-
         public override ITransactionHandler FactoryOf(TransactionContext context, ServiceEntry serviceEntry,
             string serviceKey)
         {
@@ -27,8 +15,9 @@ namespace Silky.Transaction.Tcc.Handlers
                 var tccTransactionProvider = serviceEntry.GetTccTransactionProvider(serviceKey);
                 if (tccTransactionProvider != null)
                 {
-                    return Handlers[TransactionRole.Start];
+                    return EngineContext.Current.ResolveNamed<ITransactionHandler>(TransactionRole.Start.ToString());
                 }
+
                 return null;
             }
 
@@ -36,11 +25,13 @@ namespace Silky.Transaction.Tcc.Handlers
             switch (context.TransactionRole)
             {
                 case TransactionRole.Participant:
-                case TransactionRole.Start:
-                    handler = Handlers[TransactionRole.Participant];
+                    handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(TransactionRole.Participant
+                        .ToString());
                     break;
-                default:
-                    handler = Handlers[TransactionRole.Consumer];
+                case TransactionRole.Start:
+                case TransactionRole.Consumer:
+                    handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(
+                        TransactionRole.Consumer.ToString());
                     break;
             }
 

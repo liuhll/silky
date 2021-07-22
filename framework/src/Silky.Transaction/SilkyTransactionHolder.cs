@@ -4,9 +4,9 @@ namespace Silky.Transaction
 {
     public class SilkyTransactionHolder
     {
-        private static SilkyTransactionHolder instance = new ();
+        private static readonly SilkyTransactionHolder instance = new ();
 
-        private static AsyncLocal<ITransaction> CURRENT = new();
+        private static readonly AsyncLocal<ITransaction> CURRENT = new();
 
         private SilkyTransactionHolder()
         {
