@@ -101,6 +101,6 @@ namespace Silky.Caching
     public interface IDistributedCache<TCacheItem> : IDistributedCache<TCacheItem, string>
         where TCacheItem : class
     {
-
+        Task<IReadOnlyCollection<string>> SearchKeys(string keyPattern);
     }
 }

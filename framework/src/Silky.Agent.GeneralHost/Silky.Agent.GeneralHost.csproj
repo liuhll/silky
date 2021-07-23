@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Silky.FluentValidation\Silky.FluentValidation.csproj" />
+      <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
       <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj" />
       <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj" />
       <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />

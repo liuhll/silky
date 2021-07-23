@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Silky.Core.Modularity;
 using Silky.Transaction.Handler;
+using Silky.Transaction.Repository.Spi;
 using Silky.Transaction.Tcc.Handlers;
 
 namespace Silky.Transaction.Tcc
@@ -11,18 +12,18 @@ namespace Silky.Transaction.Tcc
         protected override void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<StarterTccTransactionHandler>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .Named<ITransactionHandler>(TransactionRole.Start.ToString());
             
             builder.RegisterType<ConsumerTccTransactionHandler>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .Named<ITransactionHandler>(TransactionRole.Consumer.ToString());
             
             builder.RegisterType<ParticipantTccTransactionHandler>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .Named<ITransactionHandler>(TransactionRole.Participant.ToString());
             builder.RegisterType<LocalTccTransactionHandler>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .Named<ITransactionHandler>(TransactionRole.Local.ToString());
         }
     }

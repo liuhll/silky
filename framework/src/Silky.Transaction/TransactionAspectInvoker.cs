@@ -3,6 +3,7 @@ using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Handler;
+using Silky.Transaction.Repository.Spi;
 
 namespace Silky.Transaction
 {

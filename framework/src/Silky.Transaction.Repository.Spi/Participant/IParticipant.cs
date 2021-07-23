@@ -1,7 +1,8 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Silky.Core.DynamicProxy;
 
-namespace Silky.Transaction.Participant
+namespace Silky.Transaction.Repository.Spi.Participant
 {
     public interface IParticipant
     {
@@ -17,6 +18,7 @@ namespace Silky.Transaction.Participant
 
         int ReTry { get; set; }
 
+        [JsonIgnore]
         ISilkyMethodInvocation Invocation { get; set; }
 
         DateTime CreateTime { get; }

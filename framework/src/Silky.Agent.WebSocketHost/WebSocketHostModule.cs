@@ -1,4 +1,5 @@
-﻿using Silky.Core.Modularity;
+﻿using Silky.Caching.StackExchangeRedis;
+using Silky.Core.Modularity;
 using Silky.WebSocket;
 using Silky.DotNetty.Protocol.Tcp;
 using Silky.FluentValidation;
@@ -15,7 +16,8 @@ namespace Microsoft.Extensions.Hosting
         typeof(TransactionTccModule),
         typeof(WebSocketModule),
         typeof(ValidationModule),
-        typeof(FluentValidationModule)
+        typeof(FluentValidationModule),
+        typeof(RedisCachingModule)
         )]
     public abstract class WebSocketHostModule : StartUpModule
     {

@@ -66,6 +66,7 @@ namespace Silky.Caching.StackExchangeRedis
             NotPresent = type.GetField("NotPresent", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null)
                 .To<int>();
         }
+        
 
         public SilkyRedisCache(IOptions<RedisCacheOptions> optionsAccessor)
             : base(optionsAccessor)
@@ -142,10 +143,24 @@ namespace Silky.Caching.StackExchangeRedis
                 redis.call('del', unpack(keys, i, math.min(i+4999, #keys)))
                 end", values: new RedisValue[] { Instance + key });
         }
-        
-        
-        public void RefreshMany(
-            IEnumerable<string> keys)
+
+        public async Task<IReadOnlyCollection<string>> SearchKeys(string key, CancellationToken token = default)
+        {
+            await ConnectAsync(token);
+            var pattern = "keyword*";
+            var redisResult = await RedisDatabase.ScriptEvaluateAsync(LuaScript.Prepare(
+                //Redis的keys模糊查询：
+                " local res = redis.call(‘KEYS‘, @keypattern) " +
+                " return res "), new { @keypattern = pattern });
+            if (redisResult == null)
+            {
+                return new List<string>();
+            }
+            return (string[])redisResult;
+        }
+
+
+        public void RefreshMany(IEnumerable<string> keys)
         {
             keys = Check.NotNull(keys, nameof(keys));
 

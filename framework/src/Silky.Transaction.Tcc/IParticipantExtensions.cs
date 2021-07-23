@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Silky.Rpc.Transport;
-using Silky.Transaction.Participant;
+using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Repository.Spi.Participant;
 
 namespace Silky.Transaction.Tcc
 {

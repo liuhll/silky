@@ -1,10 +1,8 @@
 ﻿using Silky.Core;
-using Silky.Core.Convertible;
-using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Rpc.Transport;
 
-namespace Silky.Transaction
+namespace Silky.Transaction.Repository.Spi
 {
     public static class RpcContextExtensions
     {

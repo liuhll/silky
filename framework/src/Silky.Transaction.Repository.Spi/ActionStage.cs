@@ -1,4 +1,4 @@
-﻿namespace Silky.Transaction
+﻿namespace Silky.Transaction.Repository.Spi
 {
     public enum ActionStage
     {

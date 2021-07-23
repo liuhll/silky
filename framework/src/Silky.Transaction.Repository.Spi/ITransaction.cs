@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Silky.Transaction.Participant;
+using Newtonsoft.Json;
+using Silky.Transaction.Repository.Spi.Participant;
 
-namespace Silky.Transaction
+namespace Silky.Transaction.Repository.Spi
 {
     public interface ITransaction
     {
@@ -17,7 +18,8 @@ namespace Silky.Transaction
         DateTime UpdateTime { get; set; }
 
         int ReTry { get; set; }
-
+        
+        [JsonIgnore]
         IReadOnlyCollection<IParticipant> Participants { get; }
 
         void RegisterParticipant(IParticipant participant);

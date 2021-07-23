@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Newtonsoft.Json;
 using Silky.Rpc.Transport;
-using Silky.Transaction.Participant;
+using Silky.Transaction.Repository.Spi.Participant;
 
-namespace Silky.Transaction
+namespace Silky.Transaction.Repository.Spi
 {
     public class SilkyTransaction : ITransaction
     {
@@ -46,7 +47,7 @@ namespace Silky.Transaction
         public DateTime UpdateTime { get; set; }
 
         public int ReTry { get; set; }
-
+        
         public IReadOnlyCollection<IParticipant> Participants => m_participants.ToImmutableArray();
 
         public void RegisterParticipant(IParticipant participant)

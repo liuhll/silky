@@ -5,9 +5,11 @@ using Silky.Core.Extensions;
 using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
-using Silky.Transaction.Participant;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Transaction.Repository;
+using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Repository.Spi.Participant;
 
 namespace Silky.Transaction.Tcc.Executor
 {
@@ -33,6 +35,7 @@ namespace Silky.Transaction.Tcc.Executor
             var participantType = serviceEntry.IsLocal ? ParticipantType.Local : ParticipantType.Inline;
 
             var transaction = CreateTransaction();
+            TransRepositoryStore.SaveTransaction(transaction);
             var participant = BuildParticipant(invocation,
                 null,
                 null,
