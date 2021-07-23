@@ -123,7 +123,7 @@ namespace Silky.Rpc.Runtime.Server
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcServerHandler))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcExcetionEventData()
+                var eventData = new RpcExceptionEventData()
                 {
                     MessageId = messageId,
                     ServiceId = serviceId,

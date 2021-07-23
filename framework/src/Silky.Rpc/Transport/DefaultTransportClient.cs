@@ -155,7 +155,7 @@ namespace Silky.Rpc.Transport
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcRequest))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcExcetionEventData()
+                var eventData = new RpcExceptionEventData()
                 {
                     MessageId = messageId,
                     ServiceId = serviceId,

@@ -3,7 +3,7 @@ using Silky.Core.Exceptions;
 
 namespace Silky.Rpc.Diagnostics
 {
-    public class RpcExcetionEventData
+    public class RpcExceptionEventData
     {
         public string MessageId { get; set; }
         public string ServiceId { get; set; }
