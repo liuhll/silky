@@ -21,6 +21,9 @@ namespace Silky.Transaction.Tcc
             builder.RegisterType<ParticipantTccTransactionHandler>()
                 .InstancePerLifetimeScope()
                 .Named<ITransactionHandler>(TransactionRole.Participant.ToString());
+            builder.RegisterType<LocalTccTransactionHandler>()
+                .InstancePerLifetimeScope()
+                .Named<ITransactionHandler>(TransactionRole.Local.ToString());
         }
     }
 }

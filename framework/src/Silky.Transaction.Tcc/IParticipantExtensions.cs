@@ -15,7 +15,7 @@ namespace Silky.Transaction.Tcc
             if (participant.ParticipantType == ParticipantType.Inline)
             {
                 context.Action = ActionStage.Confirming;
-                context.TransactionRole = TransactionRole.Consumer;
+                context.TransactionRole = TransactionRole.Local;
                 RpcContext.GetContext().SetTransactionContext(context);
                 await invocation.ProceedAsync();
             }
@@ -37,7 +37,7 @@ namespace Silky.Transaction.Tcc
                 if (participant.Status == ActionStage.Trying)
                 {
                     context.Action = ActionStage.Canceling;
-                    context.TransactionRole = TransactionRole.Consumer;
+                    context.TransactionRole = TransactionRole.Local;
                     RpcContext.GetContext().SetTransactionContext(context);
                     await invocation.ProceedAsync();
                 }

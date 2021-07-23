@@ -29,14 +29,15 @@ namespace Silky.Transaction.Tcc.Executor
             Logger.LogDebug("tcc transaction starter");
             var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
             Debug.Assert(serviceEntry != null);
-            Debug.Assert(serviceEntry.IsLocal);
+            Debug.Assert(serviceEntry.IsLocal, "Not a local ServiceEntry");
+            var participantType = serviceEntry.IsLocal ? ParticipantType.Local : ParticipantType.Inline;
 
             var transaction = CreateTransaction();
             var participant = BuildParticipant(invocation,
                 null,
                 null,
                 TransactionRole.Start,
-                ParticipantType.Local,
+                participantType,
                 transaction.TransId);
             transaction.RegisterParticipant(participant);
             SilkyTransactionHolder.Instance.Set(transaction);
@@ -160,29 +161,5 @@ namespace Silky.Transaction.Tcc.Executor
             transaction.TransType = TransactionType.Tcc;
             return transaction;
         }
-
-
-        // public async Task<object> ConsumerParticipantExecute(TransactionContext context,
-        //     ISilkyMethodInvocation invocation, TccMethodType tccMethodType)
-        // {
-        //     var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-        //     Debug.Assert(serviceEntry != null);
-        //     Debug.Assert(serviceEntry.IsLocal);
-        //
-        //     var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-        //     var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
-        //     if (tccMethodType == TccMethodType.Try)
-        //     {
-        //         PreTryParticipant(context, invocation);
-        //     }
-        //
-        //     var executorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
-        //
-        //     if (executorInfo.Item2)
-        //     {
-        //         return await executorInfo.Item1.ExecuteAsync(executorInfo.Item3, parameters);
-        //     }
-        //     return executorInfo.Item1.Execute(executorInfo.Item3, parameters);
-        // }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
-using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Handler;
-using Silky.Transaction.Participant;
 using Silky.Transaction.Tcc.Exceptions;
 using Silky.Transaction.Tcc.Executor;
 
@@ -44,12 +41,7 @@ namespace Silky.Transaction.Tcc.Handlers
                         }
 
                         break;
-                    case ActionStage.Confirming:
-                        await invocation.ExcuteTccMethod(TccMethodType.Confirm, context);
-                        break;
-                    case ActionStage.Canceling:
-                        await invocation.ExcuteTccMethod(TccMethodType.Cancel, context);
-                        break;
+                  
                     default:
                         throw new TccTransactionException("事务参与者状态不正确");
                 }
@@ -59,8 +51,7 @@ namespace Silky.Transaction.Tcc.Handlers
                 var participant = executor.PreTryParticipant(context, invocation);
                 if (participant != null)
                 {
-                    // context.ParticipantRefId = context.ParticipantId;
-                    context.TransactionRole = TransactionRole.Consumer; //participant.Role;
+                    context.TransactionRole = TransactionRole.Consumer;
                     RpcContext.GetContext().SetTransactionContext(context);
                 }
 
