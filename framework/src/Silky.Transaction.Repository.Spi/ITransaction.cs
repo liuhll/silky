@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Silky.Transaction.Participant;
+using Newtonsoft.Json;
+using Silky.Transaction.Repository.Spi.Participant;
 
-namespace Silky.Transaction
+namespace Silky.Transaction.Repository.Spi
 {
     public interface ITransaction
     {
-        string TransId { get; }
+        string TransId { get; set; }
 
         ActionStage Status { get; set; }
 
@@ -18,12 +19,8 @@ namespace Silky.Transaction
 
         int ReTry { get; set; }
 
-        IReadOnlyCollection<IParticipant> Participants { get; }
+        [JsonIgnore] IReadOnlyCollection<IParticipant> Participants { get; }
 
         void RegisterParticipant(IParticipant participant);
-
-        void RemoveParticipant(IParticipant participant);
-
-        void RegisterParticipantList(IEnumerable<IParticipant> participants);
     }
 }

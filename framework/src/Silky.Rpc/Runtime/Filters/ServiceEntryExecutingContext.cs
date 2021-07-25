@@ -1,4 +1,6 @@
-namespace Silky.Rpc.Runtime.Server.Filters
+using Silky.Rpc.Runtime.Server;
+
+namespace Silky.Rpc.Runtime.Filters
 {
     public class ServiceEntryExecutingContext
     {

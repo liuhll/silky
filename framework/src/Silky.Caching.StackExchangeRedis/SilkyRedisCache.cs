@@ -67,6 +67,7 @@ namespace Silky.Caching.StackExchangeRedis
                 .To<int>();
         }
 
+
         public SilkyRedisCache(IOptions<RedisCacheOptions> optionsAccessor)
             : base(optionsAccessor)
         {
@@ -134,18 +135,32 @@ namespace Silky.Caching.StackExchangeRedis
         public async Task RemoveMatchKeyAsync(string key, bool? hideErrors, CancellationToken token)
         {
             Check.NotNull(key, nameof(key));
-            
+
             await ConnectAsync(token);
-            
+
             RedisDatabase.ScriptEvaluate(@" local keys = redis.call('keys', ARGV[1]) 
                 for i=1,#keys,5000 do 
                 redis.call('del', unpack(keys, i, math.min(i+4999, #keys)))
-                end", values: new RedisValue[] { Instance + key });
+                end", values: new RedisValue[] {Instance + key});
         }
-        
-        
-        public void RefreshMany(
-            IEnumerable<string> keys)
+
+        public async Task<IReadOnlyCollection<string>> SearchKeys(string pattern, CancellationToken token = default)
+        {
+            await ConnectAsync(token);
+            var redisResult = await RedisDatabase.ScriptEvaluateAsync(LuaScript.Prepare(
+                //Redis的keys模糊查询：
+                " local res = redis.call('KEYS', @keyPattern) " +
+                " return res "), new {@keyPattern = Instance + pattern});
+            if (redisResult == null)
+            {
+                return new List<string>();
+            }
+
+            return (string[]) redisResult;
+        }
+
+
+        public void RefreshMany(IEnumerable<string> keys)
         {
             keys = Check.NotNull(keys, nameof(keys));
 

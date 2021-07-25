@@ -2,6 +2,7 @@
 using Silky.Core.DependencyInjection;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Handler;
+using Silky.Transaction.Repository.Spi;
 
 namespace Silky.Transaction.Tcc.Handlers
 {
@@ -24,14 +25,18 @@ namespace Silky.Transaction.Tcc.Handlers
             ITransactionHandler handler = null;
             switch (context.TransactionRole)
             {
+                case TransactionRole.Start:
                 case TransactionRole.Participant:
                     handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(TransactionRole.Participant
                         .ToString());
-                    break;
-                case TransactionRole.Start:
+                    break; 
                 case TransactionRole.Consumer:
                     handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(
                         TransactionRole.Consumer.ToString());
+                    break;
+                case TransactionRole.Local:
+                    handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(
+                        TransactionRole.Local.ToString());
                     break;
             }
 

@@ -26,8 +26,12 @@ namespace Silky.Core.Exceptions
         [Description("验证异常")] [IsBusinessException]
         ValidateError = 1001,
         
-        [Description("Tcc分布式事务异常")] [IsBusinessException]
+        [Description("分布式事务异常")] [IsBusinessException]
         TransactionError = 511,
+        
+        [Description("Tcc分布式事务异常")] [IsBusinessException]
+        TccTransactionError = 512,
+        
 
         [Description("超过最大并发量")] OverflowMaxRequest = 507,
 

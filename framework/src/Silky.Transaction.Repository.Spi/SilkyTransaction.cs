@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Silky.Rpc.Transport;
-using Silky.Transaction.Participant;
+using Newtonsoft.Json;
+using Silky.Transaction.Repository.Spi.Participant;
 
-namespace Silky.Transaction
+namespace Silky.Transaction.Repository.Spi
 {
     public class SilkyTransaction : ITransaction
     {
         private IList<IParticipant> m_participants;
-
-        private SilkyTransaction()
+        
+        
+        public SilkyTransaction()
         {
             CreateTime = DateTime.Now;
             UpdateTime = DateTime.Now;
@@ -22,24 +23,10 @@ namespace Silky.Transaction
             TransId = transId;
         }
 
-        public string TransId { get; }
+        public string TransId { get; set; }
 
-        private ActionStage _status;
 
-        public ActionStage Status
-        {
-            get => _status;
-            set
-            {
-                var transContext = RpcContext.GetContext().GetTransactionContext();
-                if (transContext != null)
-                {
-                    transContext.Action = value;
-                }
-
-                _status = value;
-            }
-        }
+        public ActionStage Status { get; set; }
 
         public TransactionType TransType { get; set; }
         public DateTime CreateTime { get; }
@@ -47,13 +34,14 @@ namespace Silky.Transaction
 
         public int ReTry { get; set; }
 
-        public IReadOnlyCollection<IParticipant> Participants => m_participants.ToImmutableArray();
+        [JsonIgnore] public IReadOnlyCollection<IParticipant> Participants => m_participants.ToImmutableArray();
 
         public void RegisterParticipant(IParticipant participant)
         {
             if (participant != null)
             {
                 m_participants.Add(participant);
+                //await TransRepS
             }
         }
 

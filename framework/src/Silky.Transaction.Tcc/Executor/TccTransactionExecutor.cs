@@ -1,13 +1,18 @@
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Extensions;
 using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport;
-using Silky.Transaction.Participant;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Transaction.Cache;
+using Silky.Transaction.Repository;
+using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Repository.Spi.Participant;
 
 namespace Silky.Transaction.Tcc.Executor
 {
@@ -24,92 +29,73 @@ namespace Silky.Transaction.Tcc.Executor
         public static TccTransactionExecutor Executor => executor;
 
 
-        public ITransaction PreTry(ISilkyMethodInvocation invocation)
+        public async Task<(ITransaction, TransactionContext)> PreTry(ISilkyMethodInvocation invocation)
         {
             Logger.LogDebug("tcc transaction starter");
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            Debug.Assert(serviceEntry != null);
-            Debug.Assert(serviceEntry.IsLocal);
 
             var transaction = CreateTransaction();
             var participant = BuildParticipant(invocation,
                 null,
                 null,
                 TransactionRole.Start,
-                ParticipantType.Local,
                 transaction.TransId);
             transaction.RegisterParticipant(participant);
-            SilkyTransactionHolder.Instance.Set(transaction);
+            await TransRepositoryStore.SaveTransaction(transaction);
             var context = new TransactionContext
             {
-                Action = ActionStage.PreTry,
+                Action = ActionStage.Trying,
                 TransId = transaction.TransId,
                 TransactionRole = TransactionRole.Start,
                 TransType = TransactionType.Tcc
             };
-            RpcContext.GetContext().SetTransactionContext(context);
-            return transaction;
+
+
+            return (transaction, context);
         }
 
-        public IParticipant PreTryParticipant(TransactionContext context, ISilkyMethodInvocation invocation)
+        public async Task<(IParticipant, TransactionContext)> PreTryParticipant(TransactionContext context,
+            ISilkyMethodInvocation invocation)
         {
             Logger.LogDebug($"participant tcc transaction start..：{context}");
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            Debug.Assert(serviceEntry != null);
-            if (serviceEntry.IsTransactionServiceEntry())
-            {
-                var participantType = serviceEntry.IsLocal ? ParticipantType.Local : ParticipantType.Inline;
-                var participantRole = serviceEntry.IsLocal ? TransactionRole.Consumer : TransactionRole.Participant;
-                var participant = BuildParticipant(invocation,
-                    null,
-                    context.ParticipantId,
-                    participantRole,
-                    participantType,
-                    context.TransId);
-                participant.Status = ActionStage.PreTry;
-                if (SilkyTransactionHolder.Instance.CurrentTransaction != null)
-                {
-                    SilkyTransactionHolder.Instance.CurrentTransaction.RegisterParticipant(participant);
-                }
-                else
-                {
-                    var transaction = CreateTransaction(context.TransId);
-                    participant.Role = TransactionRole.Consumer;
-                    transaction.RegisterParticipant(participant);
-                    SilkyTransactionHolder.Instance.Set(transaction);
-                }
 
-                return participant;
-            }
-
-            return null;
+            var participant = BuildParticipant(invocation, context.ParticipantId, context.ParticipantRefId,
+                TransactionRole.Participant, context.TransId);
+            await SilkyTransactionHolder.Instance.CacheParticipant(participant);
+            await TransRepositoryStore.SaveParticipant(participant);
+            context.TransactionRole = TransactionRole.Participant;
+            //  SilkyTransactionContextHolder.Instance.Set(context);
+            return (participant, context);
         }
 
-        public async Task GlobalConfirm(ITransaction transaction)
+        public async Task GlobalConfirm(ITransaction currentTransaction)
         {
-            foreach (var participant in transaction.Participants)
+            Logger.LogDebug("tcc transaction confirm .......！start");
+            if (currentTransaction == null || currentTransaction.Participants.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            currentTransaction.Status = ActionStage.Confirming;
+            await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
+            foreach (var participant in currentTransaction.Participants)
             {
                 await participant.ParticipantConfirm();
             }
-
-            if (SilkyTransactionHolder.Instance.CurrentTransaction != null)
-            {
-                SilkyTransactionHolder.Instance.CurrentTransaction.Status = ActionStage.Canceled;
-            }
         }
 
-        public async Task GlobalCancel(ITransaction transaction)
+        public async Task GlobalCancel(ITransaction currentTransaction)
         {
-            foreach (var participant in transaction.Participants)
+            Logger.LogDebug("tcc transaction cancel .......！start");
+            if (currentTransaction == null || currentTransaction.Participants.IsNullOrEmpty())
             {
-                await participant.ParticipantCancel();
-
-                transaction.Status = ActionStage.Canceled;
+                return;
             }
 
-            if (SilkyTransactionHolder.Instance.CurrentTransaction != null)
+            currentTransaction.Status = ActionStage.Canceling;
+            await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
+            foreach (var participant in currentTransaction.Participants)
             {
-                SilkyTransactionHolder.Instance.CurrentTransaction.Status = ActionStage.Canceled;
+                await participant.ParticipantCancel();
             }
         }
 
@@ -117,16 +103,45 @@ namespace Silky.Transaction.Tcc.Executor
             string participantId,
             string participantRefId,
             TransactionRole transactionRole,
-            ParticipantType participantType,
             string transId)
         {
+            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
+            var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
+
+            Debug.Assert(serviceEntry != null);
+            if (!serviceEntry.IsTransactionServiceEntry())
+            {
+                return null;
+            }
+
+            if (!serviceEntry.IsLocal)
+            {
+                return null;
+            }
+
+            var confirmMethodInfo = serviceEntry.GetTccExcutorInfo(serviceKey, TccMethodType.Confirm);
+            if (confirmMethodInfo.Item1 == null)
+            {
+                return null;
+            }
+
+            var cancelMethodInfo = serviceEntry.GetTccExcutorInfo(serviceKey, TccMethodType.Cancel);
+            if (cancelMethodInfo.Item1 == null)
+            {
+                return null;
+            }
+
             var participant = new SilkyParticipant()
             {
                 Role = transactionRole,
                 TransId = transId,
                 TransType = TransactionType.Tcc,
-                ParticipantType = participantType,
                 Invocation = invocation,
+                ServiceId = serviceEntry.Id,
+                Status = ActionStage.PreTry,
+                ServiceKey = serviceKey,
+                Parameters = parameters
             };
             if (participantId.IsNullOrEmpty())
             {
@@ -147,7 +162,8 @@ namespace Silky.Transaction.Tcc.Executor
 
         private ITransaction CreateTransaction()
         {
-            var transaction = new SilkyTransaction(GuidGenerator.CreateGuidStrWithNoUnderline());
+            var transaction = new SilkyTransaction();
+            transaction.TransId = GuidGenerator.CreateGuidStrWithNoUnderline();
             transaction.Status = ActionStage.PreTry;
             transaction.TransType = TransactionType.Tcc;
             return transaction;
@@ -161,28 +177,60 @@ namespace Silky.Transaction.Tcc.Executor
             return transaction;
         }
 
+        public async Task UpdateStartStatus(ITransaction transaction)
+        {
+            await TransRepositoryStore.UpdateTransactionStatus(transaction);
+            var participant = FilterStartParticipant(transaction);
+            if (participant != null)
+            {
+                participant.Status = transaction.Status;
+                await TransRepositoryStore.UpdateParticipantStatus(participant);
+            }
+        }
 
-        // public async Task<object> ConsumerParticipantExecute(TransactionContext context,
-        //     ISilkyMethodInvocation invocation, TccMethodType tccMethodType)
-        // {
-        //     var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-        //     Debug.Assert(serviceEntry != null);
-        //     Debug.Assert(serviceEntry.IsLocal);
-        //
-        //     var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-        //     var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
-        //     if (tccMethodType == TccMethodType.Try)
-        //     {
-        //         PreTryParticipant(context, invocation);
-        //     }
-        //
-        //     var executorInfo = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
-        //
-        //     if (executorInfo.Item2)
-        //     {
-        //         return await executorInfo.Item1.ExecuteAsync(executorInfo.Item3, parameters);
-        //     }
-        //     return executorInfo.Item1.Execute(executorInfo.Item3, parameters);
-        // }
+        public void Remove()
+        {
+            SilkyTransactionHolder.Instance.Remove();
+        }
+
+        private IParticipant FilterStartParticipant(ITransaction transaction)
+        {
+            if (transaction.Participants.IsNullOrEmpty())
+            {
+                return null;
+            }
+
+            return transaction.Participants.FirstOrDefault(p => p.Role == TransactionRole.Start);
+        }
+
+        public async Task ParticipantConfirm(ISilkyMethodInvocation invocation,
+            IList<IParticipant> confirmingParticipantList, string participantId)
+
+        {
+            foreach (var confirmParticipant in confirmingParticipantList)
+            {
+                await confirmParticipant.ParticipantConfirm(invocation);
+            }
+
+            ParticipantCacheManager.Instance.RemoveByKey(participantId);
+        }
+
+        public async Task ParticipantCancel(ISilkyMethodInvocation invocation,
+            IList<IParticipant> cancelingParticipantList, string participantId)
+        {
+            var selfParticipant = cancelingParticipantList.FirstOrDefault(p => p.ParticipantRefId != null);
+            if (selfParticipant != null)
+            {
+                selfParticipant.Status = ActionStage.Canceling;
+                await TransRepositoryStore.UpdateParticipantStatus(selfParticipant);
+            }
+
+            foreach (var cancelingParticipant in cancelingParticipantList)
+            {
+                await cancelingParticipant.ParticipantCancel(invocation);
+            }
+
+            ParticipantCacheManager.Instance.RemoveByKey(participantId);
+        }
     }
 }

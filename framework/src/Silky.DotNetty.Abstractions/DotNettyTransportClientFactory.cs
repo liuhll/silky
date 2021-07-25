@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.DotNetty.Handlers;
+using Silky.Rpc.Runtime.Client;
 
 namespace Silky.DotNetty
 {

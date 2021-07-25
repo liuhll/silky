@@ -74,6 +74,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Rpc.Tests", "test\Sil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyTestBase", "test\SilkyTestBase\SilkyTestBase.csproj", "{DD21342C-871C-4FF2-9FCB-03C189E32B58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Repository.Spi", "src\Silky.Transaction.Repository.Spi\Silky.Transaction.Repository.Spi.csproj", "{737612EA-3E7F-4A45-99B0-BF95079D3C4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Repository.Redis", "src\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj", "{0A8C5303-B3A3-4432-90CC-060509187DD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +119,8 @@ Global
 		{B730C43A-E13D-4F74-B63E-5270143A033E} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{77EE115C-9584-431C-AE06-DE2EE7F81F1D} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{DD21342C-871C-4FF2-9FCB-03C189E32B58} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
+		{737612EA-3E7F-4A45-99B0-BF95079D3C4B} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{0A8C5303-B3A3-4432-90CC-060509187DD9} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -257,5 +263,13 @@ Global
 		{DD21342C-871C-4FF2-9FCB-03C189E32B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD21342C-871C-4FF2-9FCB-03C189E32B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD21342C-871C-4FF2-9FCB-03C189E32B58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{737612EA-3E7F-4A45-99B0-BF95079D3C4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{737612EA-3E7F-4A45-99B0-BF95079D3C4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{737612EA-3E7F-4A45-99B0-BF95079D3C4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{737612EA-3E7F-4A45-99B0-BF95079D3C4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A8C5303-B3A3-4432-90CC-060509187DD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A8C5303-B3A3-4432-90CC-060509187DD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A8C5303-B3A3-4432-90CC-060509187DD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A8C5303-B3A3-4432-90CC-060509187DD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

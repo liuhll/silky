@@ -6,6 +6,7 @@ using Polly;
 using Silky.Core;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Messages;
+using Silky.Rpc.Runtime.Filters;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
@@ -14,13 +15,14 @@ namespace Silky.Rpc.Runtime.Client
     {
         private readonly IRemoteServiceInvoker _remoteServiceInvoker;
         private readonly IMiniProfiler _miniProfiler;
+
         public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker,
             IMiniProfiler miniProfiler)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
             _miniProfiler = miniProfiler;
         }
-        
+
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
             var remoteInvokeMessage = new RemoteInvokeMessage()
@@ -55,7 +57,20 @@ namespace Silky.Rpc.Runtime.Client
                 executePolicy = Policy.WrapAsync(executePolicy, fallbackPolicy);
             }
 
-            return await executePolicy
+            var filters = EngineContext.Current.ResolveAll<IClientFilter>().OrderBy(p => p.Order).ToArray();
+            var rpcActionExcutingContext = new ServiceEntryExecutingContext()
+            {
+                ServiceEntry = serviceEntry,
+                Parameters = parameters,
+                ServiceKey = serviceKey
+            };
+
+            foreach (var filter in filters)
+            {
+                filter.OnActionExecuting(rpcActionExcutingContext);
+            }
+
+            var result = await executePolicy
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
@@ -63,6 +78,22 @@ namespace Silky.Rpc.Runtime.Client
                             hashKey);
                     return invokeResult.Result;
                 });
+
+            var rpcActionExecutedContext = new ServiceEntryExecutedContext()
+            {
+                Result = result
+            };
+            foreach (var filter in filters)
+            {
+                filter.OnActionExecuted(rpcActionExecutedContext);
+            }
+
+            if (rpcActionExecutedContext.Exception != null)
+            {
+                throw rpcActionExecutedContext.Exception;
+            }
+
+            return rpcActionExecutedContext.Result;
         }
     }
 }

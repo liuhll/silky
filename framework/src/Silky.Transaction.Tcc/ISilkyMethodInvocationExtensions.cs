@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
+using Silky.Transaction.Repository.Spi;
 
 namespace Silky.Transaction.Tcc
 {
@@ -29,8 +30,6 @@ namespace Silky.Transaction.Tcc
             }
             else
             {
-                context.TransactionRole = TransactionRole.Consumer;
-                RpcContext.GetContext().SetTransactionContext(context);
                 await invocation.ProceedAsync();
             }
             

@@ -76,7 +76,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.ErrorRpcRequest)]
-        public void RpcError([Object] RpcExcetionEventData eventData)
+        public void RpcError([Object] RpcExceptionEventData eventData)
         {
             var context = _exitSegmentContextAccessor.Context;
             if (context != null)

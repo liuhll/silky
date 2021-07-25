@@ -6,7 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Transaction.Repository.Spi\Silky.Transaction.Repository.Spi.csproj" />
     </ItemGroup>
 
 </Project>

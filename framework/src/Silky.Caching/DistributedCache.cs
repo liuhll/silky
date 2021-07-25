@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -724,6 +725,34 @@ namespace Silky.Caching
             keyNormalizer: keyNormalizer)
         {
         }
-        
+
+        public async Task<IReadOnlyCollection<string>> SearchKeys(string keyPattern)
+        {
+            var distributedInterceptCache = (Cache as ICacheSupportsMultipleItems);
+            if (distributedInterceptCache == null)
+            {
+                var cacheKeys = GetCacheKeys();
+                return cacheKeys.Where(k => Regex.IsMatch(k, keyPattern)).ToImmutableArray();
+                
+            }
+            return await distributedInterceptCache.SearchKeys(keyPattern);
+        }
+
+        private List<string> GetCacheKeys()
+        {
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var memCache = Cache.GetType().GetField("_memCache", flags).GetValue(Cache);
+            Debug.Assert(memCache != null);
+            var entries = memCache.GetType().GetField("_entries", flags).GetValue(memCache);
+            var cacheItems = entries as IDictionary;
+            var keys = new List<string>();
+            if (cacheItems == null) return keys;
+            foreach (DictionaryEntry cacheItem in cacheItems)
+            {
+                keys.Add(cacheItem.Key.ToString());
+            }
+
+            return keys;
+        }
     }
 }

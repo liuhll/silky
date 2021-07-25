@@ -52,14 +52,18 @@ namespace Silky.Transaction.Tcc
             {
                 execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.ConfirmMethod);
             }
-            else
+            else if (tccMethodType == TccMethodType.Cancel)
             {
                 execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.CancelMethod);
+            }
+            else
+            {
+                execMethod = serviceEntry.MethodInfo;
             }
 
             if (execMethod == null)
             {
-                throw new SilkyException($"未定义{tccMethodType}方法");
+                return (null, false, null);
             }
 
             return (execMethod.CreateExecutor(instance.GetType()), implementationMethod.IsAsyncMethodInfo(),
