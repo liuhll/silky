@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Silky.Caching;
-using Silky.Core.DynamicProxy;
 using Silky.Transaction.Repository.Spi;
 using Silky.Transaction.Repository.Spi.Participant;
 
@@ -14,11 +14,11 @@ namespace Silky.Transaction.Repository.Redis
         private const string TransactionCacheKey = "transaction:tcc:{0}";
         private const string ParticipantsCacheKey = "transaction:participant:tcc:{0}:{1}";
 
-        private readonly IDistributedCache<ITransaction> _transactionDistributedCache;
-        private readonly IDistributedCache<IParticipant> _participantDistributedCache;
+        private readonly IDistributedCache<SilkyTransaction> _transactionDistributedCache;
+        private readonly IDistributedCache<SilkyParticipant> _participantDistributedCache;
 
-        public RedisTransRepository(IDistributedCache<ITransaction> transactionDistributedCache,
-            IDistributedCache<IParticipant> participantDistributedCache)
+        public RedisTransRepository(IDistributedCache<SilkyTransaction> transactionDistributedCache,
+            IDistributedCache<SilkyParticipant> participantDistributedCache)
         {
             _transactionDistributedCache = transactionDistributedCache;
             _participantDistributedCache = participantDistributedCache;
@@ -28,30 +28,45 @@ namespace Silky.Transaction.Repository.Redis
         public async Task SaveTransaction(ITransaction transaction)
         {
             await _transactionDistributedCache.SetAsync(string.Format(TransactionCacheKey, transaction.TransId),
-                transaction);
-            await _participantDistributedCache.SetManyAsync(transaction.Participants.Select(
-                p => new KeyValuePair<string, IParticipant>(
-                    string.Format(ParticipantsCacheKey, transaction.TransId, p.ParticipantId), p)));
+                (SilkyTransaction) transaction);
+            var participants = transaction.Participants
+                .ToDictionary(k => string.Format(ParticipantsCacheKey, transaction.TransId, k.ParticipantId),
+                    v => (SilkyParticipant) v);
+            await _participantDistributedCache.SetManyAsync(participants);
         }
 
-        
+
         public async Task<ITransaction> FindByTransId(string transId)
         {
             var transaction = await _transactionDistributedCache.GetAsync(string.Format(TransactionCacheKey, transId));
-            var participantKeys = await _participantDistributedCache.SearchKeys(string.Format(ParticipantsCacheKey,transId,"*"));
+            var participantKeys = await GetParticipantKeys(transId);
             var participants = await _participantDistributedCache.GetManyAsync(participantKeys);
-            transaction.RegisterParticipantList(participants.Select(p=> p.Value));
+            transaction.RegisterParticipantList(participants.Select(p => p.Value));
             return transaction;
         }
 
-        public Task UpdateTransactionStatus(string transId, ActionStage status)
+        public async Task UpdateTransactionStatus(string transId, ActionStage status)
         {
-            throw new NotImplementedException();
+            var transaction = await _transactionDistributedCache.GetAsync(string.Format(TransactionCacheKey, transId));
+            if (transaction == null)
+            {
+                throw new TransactionException($"There is no transaction information with id {transId}");
+            }
+
+            transaction.Status = status;
+            transaction.UpdateTime = DateTime.Now;
+            await _transactionDistributedCache.SetAsync(string.Format(TransactionCacheKey, transaction.TransId),
+                transaction);
         }
 
-        public Task RemoveTransaction(string transId)
+        public async Task RemoveTransaction(string transId)
         {
-            throw new NotImplementedException();
+            await _transactionDistributedCache.RemoveAsync(string.Format(TransactionCacheKey, transId));
+            var participantKeys = await GetParticipantKeys(transId);
+            foreach (var participantKey in participantKeys)
+            {
+                await _participantDistributedCache.RemoveAsync(participantKey);
+            }
         }
 
         public Task<int> RemoveTransactionByDate(DateTime date)
@@ -59,39 +74,45 @@ namespace Silky.Transaction.Repository.Redis
             throw new NotImplementedException();
         }
 
-        public Task<bool> CreateParticipant(IParticipant participant)
+        public async Task SaveParticipant(IParticipant participant)
         {
-            throw new NotImplementedException();
+            var participantKey = string.Format(ParticipantsCacheKey, participant.TransId, participant.ParticipantId);
+            await _participantDistributedCache.SetAsync(participantKey, (SilkyParticipant) participant);
         }
 
-        public Task<IParticipant> FindParticipant(string participantId)
+        public async Task<IParticipant> FindParticipant(string transId, string participantId)
         {
-            throw new NotImplementedException();
+            var participantKey = await GetParticipantKey(transId, participantId);
+            var participant = await _participantDistributedCache.GetAsync(participantKey);
+            return participant;
         }
 
-        public Task<IEnumerable<IParticipant>> ListParticipant(DateTime date, TransactionType transType, int limit)
+
+        public async Task<IEnumerable<IParticipant>> ListParticipantByTransId(string transId)
         {
-            throw new NotImplementedException();
+            var participantKeys = await GetParticipantKeys(transId);
+            return (await _participantDistributedCache.GetManyAsync(participantKeys)).Select(p => p.Value);
         }
 
-        public Task<IEnumerable<IParticipant>> ListParticipantByTransId(string transId)
+        public async Task<bool> ExistParticipantByTransId(string transId)
         {
-            throw new NotImplementedException();
+            var participantKeys = await GetParticipantKeys(transId);
+            return participantKeys.Count > 0;
         }
 
-        public Task<bool> ExistParticipantByTransId(string transId)
+        public async Task UpdateParticipantStatus(string transId, string participantId, ActionStage status)
         {
-            throw new NotImplementedException();
+            var participant = await FindParticipant(transId, participantId);
+            participant.Status = status;
+            participant.UpdateTime = DateTime.Now;
+            await SaveParticipant(participant);
+          
         }
 
-        public Task<int> UpdateParticipantStatus(string participantId, ActionStage status)
+        public async Task RemoveParticipant(string transId, string participantId)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> RemoveParticipant(string participantId)
-        {
-            throw new NotImplementedException();
+            var participantKey = await GetParticipantKey(transId, participantId);
+            await _participantDistributedCache.RemoveAsync(participantKey);
         }
 
         public Task<int> RemoveParticipantByDate(DateTime date)
@@ -102,6 +123,28 @@ namespace Silky.Transaction.Repository.Redis
         public Task<bool> LockParticipant(IParticipant participant)
         {
             throw new NotImplementedException();
+        }
+
+        private async Task<IReadOnlyCollection<string>> GetParticipantKeys(string transId)
+        {
+            var participantsCacheKeyPattern = "*" + string.Format(ParticipantsCacheKey, transId, "*");
+            var participantKeys =
+                await _participantDistributedCache.SearchKeys(participantsCacheKeyPattern);
+            return participantKeys;
+        }
+
+        private async Task<string> GetParticipantKey(string transId, string participantId)
+        {
+            // var participantKeyPattern = "*" + string.Format(ParticipantsCacheKey, "*", participantId) + "*";
+            // var participantKeys =
+            //     await _participantDistributedCache.SearchKeys(participantKeyPattern);
+            // if (participantKeys.Count != 1)
+            // {
+            //     throw new TransactionException("Failed to obtain the key of transaction participant data");
+            // }
+            //
+            // return participantKeys.First();
+            return string.Format(ParticipantsCacheKey, transId, participantId);
         }
     }
 }

@@ -55,6 +55,7 @@ namespace NormHostDemo.AppService
         {
             await _anotherAppService.DeleteOne(name);
             await _anotherAppService.DeleteTwo(name);
+            throw new BusinessException("test exception");
             return name + " v1";
         }
 

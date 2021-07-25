@@ -26,5 +26,10 @@ namespace Silky.Transaction.Repository.Spi
 
             rpcContext.SetAttachment(AttachmentKeys.TransactionContext, serializer.Serialize(transactionContext));
         }
+
+        // public static void RemoveTransactionContext(this RpcContext rpcContext, TransactionContext transactionContext)
+        // {
+        //     
+        // }
     }
 }

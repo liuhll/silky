@@ -13,17 +13,33 @@ namespace Silky.Transaction.Tcc.Handlers
 
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
-            var transaction = executor.PreTry(invocation);
             try
             {
-                await invocation.ProceedAsync();
-                transaction.Status = ActionStage.Trying;
-                await executor.GlobalConfirm(transaction);
+                var preTryInfo = await executor.PreTry(invocation);
+                var transaction = preTryInfo.Item1;
+                var transactionContext = preTryInfo.Item2;
+                SilkyTransactionHolder.Instance.Set(transaction);
+                SilkyTransactionContextHolder.Set(transactionContext);
+                try
+                {
+                    await invocation.ProceedAsync();
+                    transaction.Status = ActionStage.Trying;
+                    await executor.UpdateStartStatus(transaction);
+                }
+                catch (Exception e)
+                {
+                    var errorCurrentTransaction = SilkyTransactionHolder.Instance.CurrentTransaction;
+                    await executor.GlobalCancel(errorCurrentTransaction);
+                    throw;
+                }
+
+                var currentTransaction = SilkyTransactionHolder.Instance.CurrentTransaction;
+                await executor.GlobalConfirm(currentTransaction);
             }
-            catch (Exception e)
+            finally
             {
-                await executor.GlobalCancel(transaction);
-                throw;
+                SilkyTransactionContextHolder.Remove();
+                executor.Remove();
             }
         }
     }

@@ -30,8 +30,6 @@ namespace Silky.Transaction.Tcc
             }
             else
             {
-                context.TransactionRole = TransactionRole.Consumer;
-                RpcContext.GetContext().SetTransactionContext(context);
                 await invocation.ProceedAsync();
             }
             

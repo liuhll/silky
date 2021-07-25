@@ -11,19 +11,22 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 
 namespace Silky.Core
 {
-    internal class SilkyEngine : IEngine, IModuleContainer
+    internal sealed class SilkyEngine : IEngine, IModuleContainer
     {
         private ITypeFinder _typeFinder;
 
         public IConfiguration Configuration { get; protected set; }
 
         public IHostEnvironment HostEnvironment { get; protected set; }
+
+        public string AppName => GetOptions<AppSettingsOptions>().AppName;
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration,
             IHostEnvironment hostEnvironment)
@@ -43,7 +46,7 @@ namespace Silky.Core
             foreach (var instance in instances)
                 instance.ConfigureServices(services, configuration);
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-            
+
             // configure modules 
             foreach (var module in Modules)
             {
@@ -195,7 +198,7 @@ namespace Silky.Core
                 innerException);
         }
 
-        protected IServiceProvider GetServiceProvider()
+        private IServiceProvider GetServiceProvider()
         {
             if (ServiceProvider == null)
                 return null;
@@ -252,7 +255,7 @@ namespace Silky.Core
             Modules = moduleLoader.LoadModules(services, typeof(T));
         }
 
-        public virtual IServiceProvider ServiceProvider { get; set; }
+        public IServiceProvider ServiceProvider { get; set; }
 
         public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; protected set; }
     }

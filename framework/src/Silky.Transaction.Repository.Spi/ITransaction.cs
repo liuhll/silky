@@ -7,7 +7,7 @@ namespace Silky.Transaction.Repository.Spi
 {
     public interface ITransaction
     {
-        string TransId { get; }
+        string TransId { get; set; }
 
         ActionStage Status { get; set; }
 
@@ -18,14 +18,9 @@ namespace Silky.Transaction.Repository.Spi
         DateTime UpdateTime { get; set; }
 
         int ReTry { get; set; }
-        
-        [JsonIgnore]
-        IReadOnlyCollection<IParticipant> Participants { get; }
+
+        [JsonIgnore] IReadOnlyCollection<IParticipant> Participants { get; }
 
         void RegisterParticipant(IParticipant participant);
-
-        void RemoveParticipant(IParticipant participant);
-
-        void RegisterParticipantList(IEnumerable<IParticipant> participants);
     }
 }

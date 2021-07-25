@@ -8,18 +8,18 @@ namespace Silky.Transaction.Repository.Spi.Participant
     {
         string TransId { get; set; }
         string ParticipantId { get; set; }
+        string ServiceId { get; set; }
+        string ServiceKey { get; set; }
+        object[] Parameters { get; set; }
+        string AppName { get; set; }
         string ParticipantRefId { get; set; }
         TransactionType TransType { get; set; }
         ActionStage Status { get; set; }
 
         TransactionRole Role { get; set; }
-
-        ParticipantType ParticipantType { get; set; }
-
         int ReTry { get; set; }
 
-        [JsonIgnore]
-        ISilkyMethodInvocation Invocation { get; set; }
+        [JsonIgnore] ISilkyMethodInvocation Invocation { get; set; }
 
         DateTime CreateTime { get; }
 

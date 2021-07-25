@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Linq;
 using Silky.EntityFrameworkCore.ContextPools;
-using Silky.Rpc.Runtime.Server.Filters;
+using Silky.Rpc.Runtime.Filters;
 using Silky.Rpc.Runtime.Server.UnitOfWork;
 
 namespace Silky.EntityFrameworkCore.UnitOfWork
 {
-    public class EfCoreUnitOfWorkFilter : IServiceEntryFilter
+    public class EfCoreUnitOfWorkServerFilter : IServerFilter
     {
         private readonly IDbContextPool _dbContextPool;
         private UnitOfWorkAttribute _unitOfWorkAttribute;
         private bool _isManualSaveChanges;
 
-        public EfCoreUnitOfWorkFilter(IDbContextPool dbContextPool)
+        public EfCoreUnitOfWorkServerFilter(IDbContextPool dbContextPool)
         {
             _dbContextPool = dbContextPool;
         }

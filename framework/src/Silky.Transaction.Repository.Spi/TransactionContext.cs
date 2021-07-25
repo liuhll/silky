@@ -5,6 +5,8 @@
         public string TransId { get; set; }
 
         public string ParticipantId { get; set; }
+        
+        public string ParticipantRefId { get; set; }
 
         public ActionStage Action { get; set; }
 

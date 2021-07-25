@@ -6,6 +6,6 @@ namespace Silky.Transaction.Configuration
     {
         public static string DistributedTransaction = "DistributedTransaction";
 
-        public TransRepositorySupport RepositorySupport { get; set; } = TransRepositorySupport.Redis;
+        public TransRepositorySupport UndoLogRepositorySupport { get; set; } = TransRepositorySupport.Redis;
     }
 }

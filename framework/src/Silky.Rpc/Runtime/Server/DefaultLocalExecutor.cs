@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
-using Silky.Rpc.Runtime.Server.Filters;
+using Silky.Rpc.Runtime.Filters;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -12,7 +12,7 @@ namespace Silky.Rpc.Runtime.Server
             var instance = EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
             parameters = serviceEntry.ConvertParameters(parameters);
 
-            var filters = EngineContext.Current.ResolveAll<IServiceEntryFilter>().OrderBy(p => p.Order).ToArray();
+            var filters = EngineContext.Current.ResolveAll<IServerFilter>().OrderBy(p => p.Order).ToArray();
             var rpcActionExcutingContext = new ServiceEntryExecutingContext()
             {
                 ServiceEntry = serviceEntry,
@@ -24,7 +24,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filter.OnActionExecuting(rpcActionExcutingContext);
             }
-
+            
             object result;
             if (serviceEntry.IsAsyncMethod)
             {

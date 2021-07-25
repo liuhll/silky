@@ -3,14 +3,15 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Silky.Core.Exceptions;
-using Silky.Core.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Messages;
+using Silky.Rpc.Transport;
 
-namespace Silky.Rpc.Transport
+namespace Silky.Rpc.Runtime.Client
 {
     public class DefaultTransportClient : ITransportClient
     {
