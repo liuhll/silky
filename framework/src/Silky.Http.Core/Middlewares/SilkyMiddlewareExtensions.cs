@@ -1,4 +1,4 @@
-﻿using Silky.HttpServer.Middlewares;
+﻿using Silky.Http.Core.Middlewares;
 
 namespace Microsoft.AspNetCore.Builder
 {

@@ -8,14 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Silky.Core;
-using Silky.HttpServer.Configuration;
-using Silky.HttpServer.SwaggerDocument.Filters;
+using Silky.Http.Core.Configuration;
+using Silky.Http.Core.SwaggerDocument.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Swagger;
 using Silky.Swagger.SwaggerGen.DependencyInjection;
 using Silky.Swagger.SwaggerUI;
 
-namespace Silky.HttpServer.SwaggerDocument
+namespace Silky.Http.Core.SwaggerDocument
 {
     internal static class SwaggerDocumentBuilder
     {

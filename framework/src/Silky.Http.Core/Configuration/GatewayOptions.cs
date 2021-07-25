@@ -1,4 +1,4 @@
-namespace Silky.HttpServer.Configuration
+namespace Silky.Http.Core.Configuration
 {
     public class GatewayOptions
     {

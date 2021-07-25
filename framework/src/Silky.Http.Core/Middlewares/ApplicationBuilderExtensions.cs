@@ -8,10 +8,10 @@ using Silky.Core.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Silky.HttpServer.Configuration;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc;
 
-namespace Silky.HttpServer.Middlewares
+namespace Silky.Http.Core.Middlewares
 {
     public static class ApplicationBuilderExtensions
     {

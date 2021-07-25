@@ -26,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayDemo", "test\Gateway
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Swagger", "src\Silky.Swagger\Silky.Swagger.csproj", "{63A9EAC9-60F9-479E-B015-B1B160DDAB37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.HttpServer", "src\Silky.HttpServer\Silky.HttpServer.csproj", "{545C0F48-6276-4BC3-B66C-D84C2A65A84C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.Core", "src\Silky.Http.Core\Silky.Http.Core.csproj", "{545C0F48-6276-4BC3-B66C-D84C2A65A84C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.DotNetty.Abstractions", "src\Silky.DotNetty.Abstractions\Silky.DotNetty.Abstractions.csproj", "{222EB00C-1C22-46E9-91BB-89B8219F1AB4}"
 EndProject

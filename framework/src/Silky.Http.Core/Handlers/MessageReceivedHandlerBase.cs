@@ -10,10 +10,10 @@ using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Silky.HttpServer.Configuration;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc;
 
-namespace Silky.HttpServer.Handlers
+namespace Silky.Http.Core.Handlers
 {
     internal abstract class MessageReceivedHandlerBase : IMessageReceivedHandler
     {

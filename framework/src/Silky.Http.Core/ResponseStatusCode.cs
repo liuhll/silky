@@ -1,4 +1,4 @@
-﻿namespace Silky.HttpServer
+﻿namespace Silky.Http.Core
 {
     public static class ResponseStatusCode
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Silky.Core.Exceptions;
 
-namespace Silky.HttpServer
+namespace Silky.Http.Core
 {
     public class ResponseResultDto
     {

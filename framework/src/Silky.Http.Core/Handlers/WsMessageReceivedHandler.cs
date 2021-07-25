@@ -7,10 +7,10 @@ using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Silky.HttpServer.Configuration;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc;
 
-namespace Silky.HttpServer.Handlers
+namespace Silky.Http.Core.Handlers
 {
     internal class WsMessageReceivedHandler : MessageReceivedHandlerBase
     {

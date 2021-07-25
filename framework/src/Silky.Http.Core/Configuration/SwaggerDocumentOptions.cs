@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
-using Silky.HttpServer.SwaggerDocument;
+using Silky.Http.Core.SwaggerDocument;
 using Silky.Swagger.SwaggerUI;
 
-namespace Silky.HttpServer.Configuration
+namespace Silky.Http.Core.Configuration
 {
     public class SwaggerDocumentOptions
     {

@@ -10,12 +10,12 @@ using Silky.Rpc.Proxy;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Silky.HttpServer.Handlers;
+using Silky.Http.Core.Handlers;
 
-namespace Silky.HttpServer
+namespace Silky.Http.Core
 {
     [DependsOn(typeof(RpcModule), typeof(RpcProxyModule))]
-    public class HttpServerModule : SilkyModule
+    public class SilkyHttpCoreModule : SilkyModule
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {

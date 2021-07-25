@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 
-namespace Silky.HttpServer.Handlers
+namespace Silky.Http.Core.Handlers
 {
     internal interface IMessageReceivedHandler
     {

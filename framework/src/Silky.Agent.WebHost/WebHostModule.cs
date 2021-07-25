@@ -2,7 +2,7 @@
 using Silky.Core.Modularity;
 using Silky.DotNetty;
 using Silky.FluentValidation;
-using Silky.HttpServer;
+using Silky.Http.Core;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.Proxy;
 using Silky.Transaction.Tcc;
@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.Hosting
 {
     [DependsOn(typeof(RpcProxyModule),
        typeof(ZookeeperModule),
-       typeof(HttpServerModule),
+       typeof(SilkyHttpCoreModule),
        typeof(DotNettyModule),
        typeof(TransactionTccModule),
        typeof(ValidationModule),

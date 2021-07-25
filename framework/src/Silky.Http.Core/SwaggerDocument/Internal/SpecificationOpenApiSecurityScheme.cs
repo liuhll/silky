@@ -1,6 +1,6 @@
 using Microsoft.OpenApi.Models;
 
-namespace Silky.HttpServer.SwaggerDocument
+namespace Silky.Http.Core.SwaggerDocument
 {
     public class SpecificationOpenApiSecurityScheme : OpenApiSecurityScheme
     {

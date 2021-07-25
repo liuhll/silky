@@ -1,14 +1,14 @@
 using System;
 using Silky.Core;
-using Silky.HttpServer.Middlewares;
+using Silky.Http.Core.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.HttpServer.Configuration;
-using Silky.HttpServer.SwaggerDocument;
+using Silky.Http.Core.Configuration;
+using Silky.Http.Core.SwaggerDocument;
 using Silky.Rpc;
 
-namespace Silky.HttpServer
+namespace Silky.Http.Core
 {
     public class HttpServerSilkyStartup : ISilkyStartup
     {

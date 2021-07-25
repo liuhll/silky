@@ -2,10 +2,10 @@ using Silky.Core.Serialization;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime;
 using Microsoft.Extensions.Options;
-using Silky.HttpServer.Configuration;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc;
 
-namespace Silky.HttpServer.Handlers
+namespace Silky.Http.Core.Handlers
 {
     internal class HttpMessageReceivedHandler : MessageReceivedHandlerBase
     {

@@ -5,7 +5,7 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Http;
 
-namespace Silky.HttpServer
+namespace Silky.Http.Core
 {
     internal interface IParameterParser : ITransientDependency
     {

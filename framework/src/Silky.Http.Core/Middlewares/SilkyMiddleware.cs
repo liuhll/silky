@@ -4,13 +4,13 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
-using Silky.HttpServer.Handlers;
+using Silky.Http.Core.Handlers;
 using Silky.Rpc;
 using Silky.Rpc.Transport;
 using StackExchange.Profiling;
 using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
-namespace Silky.HttpServer.Middlewares
+namespace Silky.Http.Core.Middlewares
 {
     public class SilkyMiddleware
     {
