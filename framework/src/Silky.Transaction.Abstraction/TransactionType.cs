@@ -1,4 +1,4 @@
-﻿namespace Silky.Transaction.Repository.Spi
+﻿namespace Silky.Transaction.Abstraction
 {
     public enum TransactionType
     {

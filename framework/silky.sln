@@ -74,7 +74,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Rpc.Tests", "test\Sil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyTestBase", "test\SilkyTestBase\SilkyTestBase.csproj", "{DD21342C-871C-4FF2-9FCB-03C189E32B58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Repository.Spi", "src\Silky.Transaction.Repository.Spi\Silky.Transaction.Repository.Spi.csproj", "{737612EA-3E7F-4A45-99B0-BF95079D3C4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Abstraction", "src\Silky.Transaction.Abstraction\Silky.Transaction.Abstraction.csproj", "{737612EA-3E7F-4A45-99B0-BF95079D3C4B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Repository.Redis", "src\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj", "{0A8C5303-B3A3-4432-90CC-060509187DD9}"
 EndProject

@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Silky.Caching.StackExchangeRedis;
 using Silky.Core.Modularity;
-using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Repository.Redis
 {

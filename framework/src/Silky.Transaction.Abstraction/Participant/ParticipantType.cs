@@ -1,4 +1,4 @@
-﻿namespace Silky.Transaction.Repository.Spi.Participant
+﻿namespace Silky.Transaction.Abstraction.Participant
 {
     public enum ParticipantType
     {

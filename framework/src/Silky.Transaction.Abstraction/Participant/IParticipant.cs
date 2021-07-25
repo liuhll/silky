@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Silky.Core.DynamicProxy;
 
-namespace Silky.Transaction.Repository.Spi.Participant
+namespace Silky.Transaction.Abstraction.Participant
 {
     public interface IParticipant
     {

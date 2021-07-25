@@ -3,8 +3,8 @@ using System.Transactions;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Transaction.Configuration;
-using Silky.Transaction.Repository.Spi;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Repository
 {

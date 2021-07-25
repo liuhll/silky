@@ -1,5 +1,5 @@
 using System.Threading;
-using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction
 {

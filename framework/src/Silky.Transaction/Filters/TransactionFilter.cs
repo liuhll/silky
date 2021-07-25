@@ -2,8 +2,8 @@ using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
-using Silky.Transaction.Repository.Spi;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Filters
 {

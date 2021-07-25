@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Silky.Core.Modularity;
 using Silky.Transaction.Handler;
-using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Abstraction;
 using Silky.Transaction.Tcc.Handlers;
 
 namespace Silky.Transaction.Tcc

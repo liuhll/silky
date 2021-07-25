@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Silky.Caching;
-using Silky.Transaction.Repository.Spi;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Repository.Redis
 {

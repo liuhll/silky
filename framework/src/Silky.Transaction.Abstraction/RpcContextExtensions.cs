@@ -2,7 +2,7 @@
 using Silky.Core.Serialization;
 using Silky.Rpc.Transport;
 
-namespace Silky.Transaction.Repository.Spi
+namespace Silky.Transaction.Abstraction
 {
     public static class RpcContextExtensions
     {

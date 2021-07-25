@@ -12,8 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Repository;
-using Silky.Transaction.Repository.Spi;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Tcc.Executor
 {

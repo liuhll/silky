@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction.Participant;
 
-namespace Silky.Transaction.Repository.Spi
+namespace Silky.Transaction.Abstraction
 {
     public interface ITransaction
     {

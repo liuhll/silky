@@ -6,8 +6,8 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Repository;
-using Silky.Transaction.Repository.Spi;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Participant;
 using Silky.Transaction.Tcc.Executor;
 
 namespace Silky.Transaction.Tcc.Handlers

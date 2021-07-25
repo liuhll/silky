@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction.Participant;
 
-namespace Silky.Transaction.Repository.Spi
+namespace Silky.Transaction.Abstraction
 {
     public interface ITransRepository
     {

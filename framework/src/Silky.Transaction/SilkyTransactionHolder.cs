@@ -2,8 +2,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Silky.Transaction.Cache;
-using Silky.Transaction.Repository.Spi;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction
 {

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 
-namespace Silky.Transaction.Repository.Spi.Participant
+namespace Silky.Transaction.Abstraction.Participant
 {
     [Serializable]
     public class SilkyParticipant : IParticipant

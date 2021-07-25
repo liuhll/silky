@@ -8,7 +8,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
       <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
-      <ProjectReference Include="..\Silky.Transaction.Repository.Spi\Silky.Transaction.Repository.Spi.csproj" />
+      <ProjectReference Include="..\Silky.Transaction.Abstraction\Silky.Transaction.Abstraction.csproj" />
       <ProjectReference Include="..\Silky.Transaction\Silky.Transaction.csproj" />
     </ItemGroup>
 

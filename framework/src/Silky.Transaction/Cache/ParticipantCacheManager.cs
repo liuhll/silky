@@ -5,7 +5,7 @@ using Castle.Core.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
-using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Cache
 {

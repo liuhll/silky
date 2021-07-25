@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
-using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Handler
 {

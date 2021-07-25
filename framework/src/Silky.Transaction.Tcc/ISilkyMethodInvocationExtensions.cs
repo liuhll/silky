@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
-using Silky.Transaction.Repository.Spi;
+using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Tcc
 {
