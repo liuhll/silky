@@ -37,7 +37,6 @@ namespace Silky.Transaction.Filters
                     TransactionRole = context.TransactionRole,
                     TransId = context.TransId,
                     TransType = context.TransType,
-                    
                 };
                 if (context.TransactionRole == TransactionRole.Participant)
                 {
@@ -48,7 +47,7 @@ namespace Silky.Transaction.Filters
             }
         }
 
-        public void OnActionExecuted(ServiceEntryExecutedContext context)
+        public void OnActionExecuted(ServiceEntryExecutedContext serviceEntryExecutingContext)
         {
             if (this.context == null) return;
 

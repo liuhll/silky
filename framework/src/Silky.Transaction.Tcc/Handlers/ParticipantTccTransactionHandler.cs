@@ -61,7 +61,6 @@ namespace Silky.Transaction.Tcc.Handlers
                 case ActionStage.Canceling:
                     var cancelingParticipantList = ParticipantCacheManager.Instance.Get(context.ParticipantId);
                     await _executor.ParticipantCancel(invocation, cancelingParticipantList, context.ParticipantId);
-
                     break;
                 default:
                     break;

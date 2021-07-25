@@ -207,6 +207,8 @@ namespace Silky.Transaction.Tcc.Executor
             IList<IParticipant> confirmingParticipantList, string participantId)
 
         {
+            if (confirmingParticipantList == null) return;
+
             foreach (var confirmParticipant in confirmingParticipantList)
             {
                 await confirmParticipant.ParticipantConfirm(invocation);
@@ -218,6 +220,8 @@ namespace Silky.Transaction.Tcc.Executor
         public async Task ParticipantCancel(ISilkyMethodInvocation invocation,
             IList<IParticipant> cancelingParticipantList, string participantId)
         {
+            if (cancelingParticipantList == null) return;
+            
             var selfParticipant = cancelingParticipantList.FirstOrDefault(p => p.ParticipantRefId != null);
             if (selfParticipant != null)
             {
