@@ -1,10 +1,10 @@
 ﻿using Silky.Core;
-using Silky.WebSocketServer.Middleware;
+using Silky.WebSocket.Middleware.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Silky.WebSocketServer
+namespace Silky.WebSocket.Middleware
 {
     public class WebSocketServerStartup : ISilkyStartup
     {

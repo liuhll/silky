@@ -54,7 +54,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Agent.WebHost", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction", "src\Silky.Transaction\Silky.Transaction.csproj", "{ADB99941-DCF4-454E-A8DD-72DCE3B794DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.WebSocketServer", "src\Silky.WebSocketServer\Silky.WebSocketServer.csproj", "{6E1539AE-66FE-4407-BC90-2CC5F075EB90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.WebSocket.Middleware", "src\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj", "{6E1539AE-66FE-4407-BC90-2CC5F075EB90}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.WebSocket", "src\Silky.WebSocket\Silky.WebSocket.csproj", "{CEB2FCF0-EC12-4088-A7D9-273A7020A0B0}"
 EndProject

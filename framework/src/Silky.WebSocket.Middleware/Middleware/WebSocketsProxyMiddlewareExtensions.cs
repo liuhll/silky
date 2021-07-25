@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Silky.WebSocketServer.Middleware
+namespace Silky.WebSocket.Middleware.Middleware
 {
     public static class WebSocketsProxyMiddlewareExtensions
     {

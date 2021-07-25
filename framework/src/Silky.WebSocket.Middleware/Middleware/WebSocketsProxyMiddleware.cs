@@ -15,7 +15,7 @@ using Silky.Rpc.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Silky.WebSocketServer.Middleware
+namespace Silky.WebSocket.Middleware.Middleware
 {
     public class WebSocketsProxyMiddleware
     {
@@ -155,7 +155,7 @@ namespace Silky.WebSocketServer.Middleware
         }
 
 
-        private static async Task PumpWebSocket(WebSocket source, WebSocket destination, int bufferSize,
+        private static async Task PumpWebSocket(System.Net.WebSockets.WebSocket source, System.Net.WebSockets.WebSocket destination, int bufferSize,
             CancellationToken cancellationToken)
         {
             if (bufferSize <= 0)
