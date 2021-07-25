@@ -7,6 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
+        <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
         <ProjectReference Include="..\..\src\Silky.Agent.WebHost\Silky.Agent.WebHost.csproj" />
         <ProjectReference Include="..\..\src\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
@@ -34,9 +35,6 @@
       <Content Update="skyapm.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="logs" />
     </ItemGroup>
 
 </Project>

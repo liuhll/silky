@@ -4,10 +4,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Codec;
+using Silky.SkyApm.Agent;
+using Silky.Transaction.Repository.Redis;
 
 namespace AnotherHostDemo
 {
-    [DependsOn(typeof(MessagePackModule))]
+    [DependsOn(typeof(MessagePackModule),
+        typeof(SilkySkyApmAgentModule))]
     public class AnotherDemoModule : WebSocketHostModule
     {
         public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;

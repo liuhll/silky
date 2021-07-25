@@ -20,11 +20,6 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSkyAPM(extensions =>
-            {
-                extensions
-                    .AddSilkyRpc();
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,16 +33,6 @@ namespace GatewayDemo
             app.ConfigureSilkyRequestPipeline();
             // app.UseEndpoints(endpoints=> endpoints.MapControllers());
         }
-
-        private static void InjectMiniProfilerPlugin(SwaggerUIOptions swaggerUIOptions)
-        {
-            // 启用 MiniProfiler 组件
-            var thisType = typeof(SwaggerUIOptions);
-            var thisAssembly = thisType.Assembly;
-
-            // 自定义 Swagger 首页
-            var customIndex = $"Silky.Swagger.SwaggerUI.index-mini-profiler.html";
-            swaggerUIOptions.IndexStream = () => thisAssembly.GetManifestResourceStream(customIndex);
-        }
+        
     }
 }

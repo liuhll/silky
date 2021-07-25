@@ -78,6 +78,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Repositor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Repository.Redis", "src\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj", "{0A8C5303-B3A3-4432-90CC-060509187DD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.SkyApm.Agent", "src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj", "{36EA323F-3B5A-43C2-87B9-0ECA78732729}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,7 @@ Global
 		{DD21342C-871C-4FF2-9FCB-03C189E32B58} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{737612EA-3E7F-4A45-99B0-BF95079D3C4B} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{0A8C5303-B3A3-4432-90CC-060509187DD9} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{36EA323F-3B5A-43C2-87B9-0ECA78732729} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -271,5 +274,9 @@ Global
 		{0A8C5303-B3A3-4432-90CC-060509187DD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A8C5303-B3A3-4432-90CC-060509187DD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A8C5303-B3A3-4432-90CC-060509187DD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36EA323F-3B5A-43C2-87B9-0ECA78732729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36EA323F-3B5A-43C2-87B9-0ECA78732729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36EA323F-3B5A-43C2-87B9-0ECA78732729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36EA323F-3B5A-43C2-87B9-0ECA78732729}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
