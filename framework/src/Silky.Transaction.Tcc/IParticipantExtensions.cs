@@ -1,17 +1,24 @@
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
+using Silky.Transaction.Repository;
 using Silky.Transaction.Repository.Spi;
 using Silky.Transaction.Repository.Spi.Participant;
+using Silky.Transaction.Tcc.Executor;
 
 namespace Silky.Transaction.Tcc
 {
     public static class ParticipantExtensions
     {
+        public static ILogger<TccTransactionExecutor> Logger =
+            EngineContext.Current.Resolve<ILogger<TccTransactionExecutor>>();
+
         public static async Task ParticipantConfirm(this IParticipant participant)
         {
             SetContext(ActionStage.Confirming, participant);
@@ -58,10 +65,19 @@ namespace Silky.Transaction.Tcc
             var invocation = participant.Invocation;
             if (invocation != null && participant.Role == TransactionRole.Start)
             {
-                var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-                Debug.Assert(serviceEntry != null, "invocation cannot be empty");
-                var context = RpcContext.GetContext().GetTransactionContext();
-                await invocation.ExcuteTccMethod(TccMethodType.Cancel, context);
+                try
+                {
+                    var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
+                    Debug.Assert(serviceEntry != null, "invocation cannot be empty");
+                    var context = RpcContext.GetContext().GetTransactionContext();
+                    await invocation.ExcuteTccMethod(TccMethodType.Cancel, context);
+                    participant.Status = ActionStage.Canceled;
+                    await TransRepositoryStore.UpdateParticipantStatus(participant);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("Participant cancel exception", e.Message);
+                }
             }
             else
             {
@@ -81,8 +97,18 @@ namespace Silky.Transaction.Tcc
             var serviceEntry = serviceEntryLocator.GetServiceEntryById(participant.ServiceId);
             if (serviceEntry.IsLocal)
             {
-                var context = RpcContext.GetContext().GetTransactionContext();
-                await invocation.ExcuteTccMethod(TccMethodType.Cancel, context);
+                try
+                {
+                    var context = RpcContext.GetContext().GetTransactionContext();
+                    await invocation.ExcuteTccMethod(TccMethodType.Cancel, context);
+                    participant.Status = ActionStage.Canceled;
+                    await TransRepositoryStore.UpdateParticipantStatus(participant);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("Participant cancel exception", e.Message);
+                }
+               
             }
             else
             {

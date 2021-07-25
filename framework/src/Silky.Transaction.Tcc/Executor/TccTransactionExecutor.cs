@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -77,9 +78,28 @@ namespace Silky.Transaction.Tcc.Executor
 
             currentTransaction.Status = ActionStage.Confirming;
             await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
+            var successList = new List<bool>();
+
             foreach (var participant in currentTransaction.Participants)
             {
-                await participant.ParticipantConfirm();
+                try
+                {
+                    await participant.ParticipantConfirm();
+                    successList.Add(true);
+                    participant.Status = ActionStage.Confirmed;
+                    await TransRepositoryStore.UpdateParticipantStatus(participant);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("Participant confirm exception", e.Message);
+                    successList.Add(false);
+                }
+            }
+
+            if (successList.All(p => true))
+            {
+                currentTransaction.Status = ActionStage.Confirmed;
+                await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
             }
         }
 
@@ -221,7 +241,7 @@ namespace Silky.Transaction.Tcc.Executor
             IList<IParticipant> cancelingParticipantList, string participantId)
         {
             if (cancelingParticipantList == null) return;
-            
+
             var selfParticipant = cancelingParticipantList.FirstOrDefault(p => p.ParticipantRefId != null);
             if (selfParticipant != null)
             {
