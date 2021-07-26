@@ -13,7 +13,5 @@
         Canceling, //准备开始执行Cancel
 
         Canceled, // Canceled执行完成
-        
-        Error, //出现异常
     }
 }
