@@ -16,6 +16,10 @@
 
 </div>
 
+## Give a Star! ⭐️
+
+If you liked this repo or if it helped you, please give a star ⭐️ for this repository. That will not only help strengthen our community but also improve the skills of developers to learn Silky framework 👍. Thank you very much.
+
 ## Project Introduction
 
 The Silky framework is designed to help developers quickly build a microservice development framework through simple code and configuration under the .net platform.
