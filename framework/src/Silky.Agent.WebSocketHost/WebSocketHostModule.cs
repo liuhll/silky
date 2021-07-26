@@ -2,12 +2,12 @@
 using Silky.Core.Modularity;
 using Silky.WebSocket;
 using Silky.DotNetty.Protocol.Tcp;
-using Silky.FluentValidation;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.Proxy;
 using Silky.Transaction.Repository.Redis;
 using Silky.Transaction.Tcc;
 using Silky.Validation;
+using Silky.Validation.Fluent;
 
 namespace Microsoft.Extensions.Hosting
 {

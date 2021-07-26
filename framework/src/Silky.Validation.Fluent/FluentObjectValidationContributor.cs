@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using Silky.Core.DependencyInjection;
 using Silky.Validation;
 
-namespace Silky.FluentValidation
+namespace Silky.Validation.Fluent
 {
     public class FluentObjectValidationContributor : IObjectValidationContributor, ITransientDependency
     {

@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.FluentValidation\Silky.FluentValidation.csproj" />
+      <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
       <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
       <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj" />
       <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj" />

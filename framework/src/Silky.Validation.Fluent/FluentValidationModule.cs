@@ -7,7 +7,7 @@ using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Modularity;
 using Silky.Validation;
 
-namespace Silky.FluentValidation
+namespace Silky.Validation.Fluent
 {
     [DependsOn(typeof(ValidationModule))]
     public class FluentValidationModule : SilkyModule

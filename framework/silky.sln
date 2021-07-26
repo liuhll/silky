@@ -62,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Agent.WebSocketHost",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Validation", "src\Silky.Validation\Silky.Validation.csproj", "{EC8416FD-70D8-4BE4-9DCD-024CBB59401A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.FluentValidation", "src\Silky.FluentValidation\Silky.FluentValidation.csproj", "{D786F374-7E72-4BFD-9F42-5FAB79FC6A44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Validation.Fluent", "src\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj", "{D786F374-7E72-4BFD-9F42-5FAB79FC6A44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.EntityFrameworkCore", "src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj", "{66CEFE14-CE38-4686-9BBA-E3153DBCFB3B}"
 EndProject

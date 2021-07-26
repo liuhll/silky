@@ -1,7 +1,7 @@
 ﻿using Silky.Caching.StackExchangeRedis;
 using Silky.Core.Modularity;
 using Silky.DotNetty.Protocol.Tcp;
-using Silky.FluentValidation;
+using Silky.Validation.Fluent;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.Proxy;
 using Silky.Transaction.Repository.Redis;
