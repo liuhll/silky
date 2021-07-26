@@ -9,6 +9,7 @@ namespace Silky.Codec.Message
     {
         public MessagePackRemoteResultMessage(RemoteResultMessage remoteResultMessage)
         {
+            ServiceId = remoteResultMessage.ServiceId;
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result;

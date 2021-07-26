@@ -1,8 +1,10 @@
 using Autofac;
 using Silky.Core.Modularity;
+using Silky.Rpc;
 
 namespace Silky.Codec
 {
+    [DependsOn(typeof(RpcModule))]
     public class MessagePackModule : SilkyModule
     {
         protected override void RegisterServices(ContainerBuilder builder)

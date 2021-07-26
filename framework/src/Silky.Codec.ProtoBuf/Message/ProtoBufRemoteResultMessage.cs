@@ -10,6 +10,7 @@ namespace Silky.Codec.Message
     {
         public ProtoBufRemoteResultMessage(RemoteResultMessage remoteResultMessage)
         {
+            ServiceId = remoteResultMessage.ServiceId;
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result == null ? null : new DynamicItem(remoteResultMessage.Result);
