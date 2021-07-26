@@ -78,6 +78,23 @@ In the development and design process, the design and ideas of various excellent
 ### Distributed Lock
 - Use [RedLock.net](https://github.com/samcook/RedLock.net) to implement distributed locks
 
+## RoadMap
+### Currently
+- [ ] Refactor distributed transactions, check the status of transaction participants and complete branch transactions through timing tasks and undolog
+
+- [ ] Added a module for implementing object mapping through [Mapster](https://github.com/MapsterMapper/Mapster)
+
+### Recent
+- Added identity authentication and authorization middleware
+- Improve documentation
+
+### Future
+
+- Added service management dashboard
+- Added template project and CLI command line tool
+- Complete example
+- Use silky framework to implement a rights management system
+
 ## Contribute
 - One of the easiest ways to contribute is to participate in discussions and discuss issues. You can also contribute by submitting Pull Request code changes.
 - You can also join the QQ group (934306776) to participate in the discussion of the Silky framework.

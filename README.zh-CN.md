@@ -78,6 +78,24 @@ Silky在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 ### 分布式锁
 - 使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁
 
+## 产品路线图
+
+### 目前
+- [ ] 重构分布式事务,通过定时任务作何和undolog检查事务参与者的状态和完成分支事务
+
+- [ ] 新增通过[Mapster](https://github.com/MapsterMapper/Mapster)实现对象映射的模块
+
+### 近期
+- 新增身份认证与授权中间件
+- 完善文档
+
+### 未来
+
+- 新增服务管理端(Dashboard)
+- 新增模板项目和CLI命令行行工具
+- 完善示例
+- 使用silky框架实现一个权限管理系统
+
 ## 贡献
 - 贡献的最简单的方法之一就是是参与讨论和讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
 - 您也可以加入QQ群(934306776)参与Silky框架的学习讨论。
