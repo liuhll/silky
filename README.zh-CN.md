@@ -102,6 +102,3 @@ Silky在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
 
 ## 贡献
 - 贡献的最简单的方法之一就是是参与讨论和讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
-- 您也可以加入QQ群(934306776)参与Silky框架的学习讨论。
- 
-  ![qq-group.jpg](./docs/.vuepress/assets/public/../../public/assets/imgs/qq-group.jpg)
