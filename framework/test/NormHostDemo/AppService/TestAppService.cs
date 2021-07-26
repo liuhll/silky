@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Mapster;
 using NormHostDemo.Tests;
 using Silky.Caching;
 using Silky.Core.Exceptions;
@@ -30,11 +31,7 @@ namespace NormHostDemo.AppService
         
         public async Task<TestOut> Create(TestInput input)
         {
-            var test = new Test()
-            {
-                Name = input.Name,
-                Address = input.Address
-            };
+            var test = input.Adapt<Test>();
             var result = await _testRepository.InsertNowAsync(test);
            // throw new BusinessException("error");
            return new TestOut()
