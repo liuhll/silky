@@ -1,6 +1,6 @@
 ﻿using Silky.Core.DependencyInjection;
 
-namespace Silky.AutoMapper
+namespace Silky.ObjectMapper.AutoMapper
 {
     public interface IAutoMapperBootstrap : ITransientDependency
     {

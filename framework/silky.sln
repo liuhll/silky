@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.Core", "src\Silk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.DotNetty.Abstraction", "src\Silky.DotNetty.Abstraction\Silky.DotNetty.Abstraction.csproj", "{222EB00C-1C22-46E9-91BB-89B8219F1AB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.AutoMapper", "src\Silky.AutoMapper\Silky.AutoMapper.csproj", "{F6F06209-968E-4FE7-98EE-2C25D74367C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.ObjectMapper.AutoMapper", "src\Silky.ObjectMapper.AutoMapper\Silky.ObjectMapper.AutoMapper.csproj", "{F6F06209-968E-4FE7-98EE-2C25D74367C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Castle", "src\Silky.Castle\Silky.Castle.csproj", "{D96C901F-546D-4B6B-8981-3E0F9178B286}"
 EndProject

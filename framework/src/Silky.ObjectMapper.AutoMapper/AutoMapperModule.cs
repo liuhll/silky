@@ -2,7 +2,7 @@
 using Silky.Core;
 using Silky.Core.Modularity;
 
-namespace Silky.AutoMapper
+namespace Silky.ObjectMapper.AutoMapper
 {
     public class AutoMapperModule : SilkyModule
     {
