@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc;
+using Silky.Rpc.MiniProfiler;
 
 namespace Silky.Http.Core.Handlers
 {
@@ -22,20 +23,17 @@ namespace Silky.Http.Core.Handlers
         protected readonly RpcOptions _rpcOptions;
         protected readonly IServiceExecutor _serviceExecutor;
         protected readonly GatewayOptions _gatewayOptions;
-        protected readonly IMiniProfiler _miniProfiler;
 
         protected MessageReceivedHandlerBase(
             IParameterParser parameterParser,
             ISerializer serializer,
             IOptions<RpcOptions> rpcOptions,
             IOptions<GatewayOptions> gatewayOptions,
-            IServiceExecutor serviceExecutor,
-            IMiniProfiler miniProfiler)
+            IServiceExecutor serviceExecutor)
         {
             _parameterParser = parameterParser;
             _serializer = serializer;
             _serviceExecutor = serviceExecutor;
-            _miniProfiler = miniProfiler;
             _rpcOptions = rpcOptions.Value;
             _gatewayOptions = gatewayOptions.Value;
         }
@@ -56,13 +54,13 @@ namespace Silky.Http.Core.Handlers
             {
                 serviceKey = context.Request.Headers["serviceKey"].ToString();
                 RpcContext.GetContext().SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
-                _miniProfiler.Print(MiniProfileConstant.Route.Name,
+                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
                     $"serviceKey:{serviceKey}");
             }
             else
             {
-                _miniProfiler.Print(MiniProfileConstant.Route.Name,
+                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
                     "没有设置serviceKey");
             }

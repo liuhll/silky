@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc;
+using Silky.Rpc.MiniProfiler;
 
 namespace Silky.Http.Core.Middlewares
 {

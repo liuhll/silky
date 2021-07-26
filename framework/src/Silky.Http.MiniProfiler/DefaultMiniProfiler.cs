@@ -1,9 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Rpc.MiniProfiler;
 using StackExchange.Profiling;
 
-namespace Silky.Rpc
+namespace Silky.Http.MiniProfiler
 {
     public class DefaultMiniProfiler : IMiniProfiler
     {

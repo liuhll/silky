@@ -80,6 +80,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Transaction.Repositor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.SkyApm.Agent", "src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj", "{36EA323F-3B5A-43C2-87B9-0ECA78732729}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.MiniProfiler", "src\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj", "{BAC61EC8-1110-477A-8E7E-08F617A3B50B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,7 @@ Global
 		{737612EA-3E7F-4A45-99B0-BF95079D3C4B} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{0A8C5303-B3A3-4432-90CC-060509187DD9} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{36EA323F-3B5A-43C2-87B9-0ECA78732729} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{BAC61EC8-1110-477A-8E7E-08F617A3B50B} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -278,5 +281,9 @@ Global
 		{36EA323F-3B5A-43C2-87B9-0ECA78732729}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36EA323F-3B5A-43C2-87B9-0ECA78732729}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36EA323F-3B5A-43C2-87B9-0ECA78732729}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAC61EC8-1110-477A-8E7E-08F617A3B50B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC61EC8-1110-477A-8E7E-08F617A3B50B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC61EC8-1110-477A-8E7E-08F617A3B50B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC61EC8-1110-477A-8E7E-08F617A3B50B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

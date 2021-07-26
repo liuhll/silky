@@ -1,6 +1,6 @@
 using Silky.Core.DependencyInjection;
 
-namespace Silky.Rpc
+namespace Silky.Rpc.MiniProfiler
 {
     public interface IMiniProfiler : IScopedDependency
     {

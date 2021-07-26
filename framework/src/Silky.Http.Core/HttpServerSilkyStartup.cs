@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.SwaggerDocument;
-using Silky.Rpc;
 
 namespace Silky.Http.Core
 {
@@ -18,20 +17,7 @@ namespace Silky.Http.Core
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
             services.AddOptions<SwaggerDocumentOptions>()
                 .Bind(configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
-
-            services.AddMiniProfiler(options =>
-            {
-                options.RouteBasePath = MiniProfilerConstants.MiniProfilerRouteBasePath;
-                // Optionally use something other than the "light" color scheme.
-                options.ColorScheme = StackExchange.Profiling.ColorScheme.Auto;
-
-                // Enabled sending the Server-Timing header on responses
-                options.EnableServerTimingHeader = true;
-                options.IgnoredPaths.Add("/lib");
-                options.IgnoredPaths.Add("/css");
-                options.IgnoredPaths.Add("/js");
-                options.IgnoredPaths.Add("/swagger");
-            });
+            
             services.AddSwaggerDocuments(configuration);
         }
 
@@ -45,12 +31,7 @@ namespace Silky.Http.Core
             {
                 application.UseSwaggerDocuments(swaggerDocumentOptions);
             }
-
-            if (swaggerDocumentOptions.InjectMiniProfiler)
-            {
-                application.UseMiniProfiler();
-            }
-
+            
             application.UseSilkyExceptionHandler();
             application.UseSilky();
         }

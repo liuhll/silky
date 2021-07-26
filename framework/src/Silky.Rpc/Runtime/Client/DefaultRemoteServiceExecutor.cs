@@ -6,6 +6,7 @@ using Polly;
 using Silky.Core;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Messages;
+using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Filters;
 using Silky.Rpc.Runtime.Server;
 
@@ -14,13 +15,10 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultRemoteServiceExecutor : IRemoteServiceExecutor
     {
         private readonly IRemoteServiceInvoker _remoteServiceInvoker;
-        private readonly IMiniProfiler _miniProfiler;
 
-        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker,
-            IMiniProfiler miniProfiler)
+        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
-            _miniProfiler = miniProfiler;
         }
 
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
@@ -34,7 +32,7 @@ namespace Silky.Rpc.Runtime.Client
             if (serviceEntry.GovernanceOptions.ShuntStrategy == AddressSelectorMode.HashAlgorithm)
             {
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
-                _miniProfiler.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"hashKey为:{hashKey}");
             }
 

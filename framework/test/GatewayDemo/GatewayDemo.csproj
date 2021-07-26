@@ -7,6 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
         <ProjectReference Include="..\..\src\Silky.Agent.WebHost\Silky.Agent.WebHost.csproj" />

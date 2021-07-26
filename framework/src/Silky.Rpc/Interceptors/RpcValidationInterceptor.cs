@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
+using Silky.Rpc.MiniProfiler;
 using Silky.Validation;
 using Silky.Rpc.Runtime.Server;
 
@@ -9,18 +10,14 @@ namespace Silky.Rpc.Interceptors
 {
     public class RpcValidationInterceptor : ValidationInterceptor
     {
-        private readonly IMiniProfiler _miniProfiler;
-
-        public RpcValidationInterceptor(IMethodInvocationValidator methodInvocationValidator,
-            IMiniProfiler miniProfiler)
+        public RpcValidationInterceptor(IMethodInvocationValidator methodInvocationValidator)
             : base(methodInvocationValidator)
         {
-            _miniProfiler = miniProfiler;
         }
 
         protected override void Validate(ISilkyMethodInvocation invocation)
         {
-            _miniProfiler.Print(MiniProfileConstant.ValidationInterceptor.Name,
+            MiniProfilerPrinter.Print(MiniProfileConstant.ValidationInterceptor.Name,
                 MiniProfileConstant.ValidationInterceptor.State.Begin,
                 $"开始校验输入参数");
             try
@@ -35,13 +32,13 @@ namespace Silky.Rpc.Interceptors
                         parameters
                     )
                 );
-                _miniProfiler.Print(MiniProfileConstant.ValidationInterceptor.Name,
+                MiniProfilerPrinter.Print(MiniProfileConstant.ValidationInterceptor.Name,
                     MiniProfileConstant.ValidationInterceptor.State.Success,
                     $"输入参数校验成功");
             }
             catch (Exception e)
             {
-                _miniProfiler.Print(MiniProfileConstant.ValidationInterceptor.Name,
+                MiniProfilerPrinter.Print(MiniProfileConstant.ValidationInterceptor.Name,
                     MiniProfileConstant.ValidationInterceptor.State.Fail,
                     $"输入参数校验失败", true);
                 throw;

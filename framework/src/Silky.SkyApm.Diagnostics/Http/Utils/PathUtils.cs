@@ -1,4 +1,5 @@
 using System.Linq;
+using Silky.Core;
 
 namespace Silky.Rpc.SkyApm.Diagnostics
 {
@@ -13,7 +14,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             ".png",
             ".gif",
             ".html",
-            MiniProfilerConstants.MiniProfilerRouteBasePath
+            MiniProfileConstant.MiniProfilerRouteBasePath
         };
 
         public static bool IsWebApiPath(string path)

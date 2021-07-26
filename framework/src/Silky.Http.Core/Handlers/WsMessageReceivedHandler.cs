@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc;
+using Silky.Rpc.MiniProfiler;
 
 namespace Silky.Http.Core.Handlers
 {
@@ -20,14 +21,12 @@ namespace Silky.Http.Core.Handlers
             IOptions<GatewayOptions> gatewayOptions,
             IServiceExecutor serviceExecutor,
             IRemoteServiceInvoker remoteServiceInvoker,
-            IOptions<GovernanceOptions> governanceOptions,
-            IMiniProfiler miniProfiler)
+            IOptions<GovernanceOptions> governanceOptions)
             : base(parameterParser,
                 serializer,
                 rpcOptions,
                 gatewayOptions,
-                serviceExecutor,
-                miniProfiler)
+                serviceExecutor)
         {
         }
 

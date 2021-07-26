@@ -12,6 +12,7 @@ using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
 using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
@@ -126,22 +127,21 @@ namespace Silky.Rpc.Runtime.Server
         {
             return async parameters =>
             {
-                var miniProfiler = EngineContext.Current.Resolve<IMiniProfiler>();
                 try
                 {
-                    miniProfiler.Print(MiniProfileConstant.FallBackExecutor.Name,
+                    MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
                         MiniProfileConstant.FallBackExecutor.State.Begin,
                         "开始执行失败回调方法");
                     var instance = EngineContext.Current.Resolve(fallBackType);
                     var result = fallbackMethodExcutor.ExecuteAsync(instance, parameters).GetAwaiter().GetResult();
-                    miniProfiler.Print(MiniProfileConstant.FallBackExecutor.Name,
+                    MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
                         MiniProfileConstant.FallBackExecutor.State.Success,
                         "失败回调执行成功");
                     return result;
                 }
                 catch (Exception e)
                 {
-                    miniProfiler.Print(MiniProfileConstant.FallBackExecutor.Name,
+                    MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
                         MiniProfileConstant.FallBackExecutor.State.Fail,
                         $"失败回调执行失败,原因:{e.Message}", true);
                     throw;

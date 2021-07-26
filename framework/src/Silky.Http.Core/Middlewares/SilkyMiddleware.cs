@@ -6,6 +6,7 @@ using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Silky.Http.Core.Handlers;
 using Silky.Rpc;
+using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Transport;
 using StackExchange.Profiling;
 using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
@@ -16,15 +17,12 @@ namespace Silky.Http.Core.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly IMiniProfiler _miniProfiler;
 
         public SilkyMiddleware(RequestDelegate next,
-            IServiceEntryLocator serviceEntryLocator,
-            IMiniProfiler miniProfiler)
+            IServiceEntryLocator serviceEntryLocator)
         {
             _next = next;
             _serviceEntryLocator = serviceEntryLocator;
-            _miniProfiler = miniProfiler;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -41,7 +39,7 @@ namespace Silky.Http.Core.Middlewares
                 }
 
               
-                _miniProfiler.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
+                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
                     $"通过{path}-{method}查找到服务条目{serviceEntry.Id}");
                 RpcContext.GetContext().SetAttachment(AttachmentKeys.Path, path.ToString());
                 RpcContext.GetContext().SetAttachment(AttachmentKeys.HttpMethod, method.ToString());
@@ -51,7 +49,7 @@ namespace Silky.Http.Core.Middlewares
             }
             else
             {
-                _miniProfiler.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
+                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
                     $"通过{path}-{method}没有查找到服务条目",
                     true);
                 await _next(context);
