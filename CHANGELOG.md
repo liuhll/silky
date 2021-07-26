@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Encapsulate EFCore for data access components
 - Use miniProfile for performance monitoring
 - Use SkyApm to achieve link tracking
+- Add module package for implementing object mapping through Mapster
 
 ## Changed
 - Optimize module loading and module support for service registration through ServiceCollection

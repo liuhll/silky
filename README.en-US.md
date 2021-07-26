@@ -86,7 +86,7 @@ In the development and design process, the design and ideas of various excellent
 ### Currently
 - [ ] Refactor distributed transactions, check the status of transaction participants and complete branch transactions through timing tasks and undolog
 
-- [ ] Added a module for implementing object mapping through [Mapster](https://github.com/MapsterMapper/Mapster)
+- [x] Added a module for implementing object mapping through [Mapster](https://github.com/MapsterMapper/Mapster)
 
 ### Recent
 - Added identity authentication and authorization middleware
