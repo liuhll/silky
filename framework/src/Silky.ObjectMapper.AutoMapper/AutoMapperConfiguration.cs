@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Silky.AutoMapper
+namespace Silky.ObjectMapper.AutoMapper
 {
     public class AutoMapperConfiguration
     {

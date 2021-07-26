@@ -5,7 +5,7 @@ using AutoMapper;
 using Silky.Core;
 using Microsoft.Extensions.Logging;
 
-namespace Silky.AutoMapper
+namespace Silky.ObjectMapper.AutoMapper
 {
     public class DefaultAutoMapperBootstrap : IAutoMapperBootstrap
     {

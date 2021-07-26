@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-namespace Silky.AutoMapper
+﻿namespace Silky.ObjectMapper.AutoMapper
 {
     public static class MapperExtensions
     {
