@@ -19,18 +19,21 @@ namespace Silky.Codec.Message
         {
         }
 
-        [Key(1)] public string ExceptionMessage { get; set; }
+        [Key(1)] public string ServiceId { get; set; }
+        [Key(2)] public string ExceptionMessage { get; set; }
 
-        [Key(2)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
+        [Key(3)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
-        [Key(3)] public object Result { get; set; }
-        
-        [Key(4)] public ValidError[] ValidateErrors { get; set; }
+        [Key(4)] public object Result { get; set; }
+
+        [Key(5)] public ValidError[] ValidateErrors { get; set; }
+
 
         public RemoteResultMessage GetMessage()
         {
             return new()
             {
+                ServiceId = ServiceId,
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
                 Result = Result,

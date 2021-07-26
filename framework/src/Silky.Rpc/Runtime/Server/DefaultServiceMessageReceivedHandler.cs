@@ -31,10 +31,11 @@ namespace Silky.Rpc.Runtime.Server
                 .SetAttachment(AttachmentKeys.IsGatewayHost, false);
             var tracingTimestamp = TracingBefore(message, messageId);
             RemoteResultMessage remoteResultMessage;
+            var serviceEntry =
+                _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceId);
             try
             {
-                var serviceEntry =
-                    _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceId);
+               
                 if (serviceEntry == null)
                 {
                     throw new SilkyException($"通过服务id{message.ServiceId}获取本地服务条目失败", StatusCode.NotFindLocalServiceEntry);
@@ -52,6 +53,7 @@ namespace Silky.Rpc.Runtime.Server
 
                 remoteResultMessage = new RemoteResultMessage()
                 {
+                    ServiceId = serviceEntry.Id,
                     Result = result,
                     StatusCode = StatusCode.Success
                 };
@@ -61,6 +63,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 remoteResultMessage = new RemoteResultMessage()
                 {
+                    ServiceId = serviceEntry?.Id,
                     ExceptionMessage = e.GetExceptionMessage(),
                     StatusCode = e.GetExceptionStatusCode(),
                     ValidateErrors = e.GetValidateErrors().ToArray()

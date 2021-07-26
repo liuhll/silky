@@ -20,22 +20,24 @@ namespace Silky.Codec.Message
         {
         }
 
-        [ProtoMember(1)] public string ExceptionMessage { get; set; }
+        [ProtoMember(1)] public string ServiceId { get; set; }
+        [ProtoMember(2)] public string ExceptionMessage { get; set; }
 
-        [ProtoMember(2)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
+        [ProtoMember(3)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
-        [ProtoMember(3)] public DynamicItem Result { get; set; }
-        
-        [ProtoMember(4)] public DynamicItem[] ValidateErrors { get; set; }
+        [ProtoMember(4)] public DynamicItem Result { get; set; }
+
+        [ProtoMember(5)] public DynamicItem[] ValidateErrors { get; set; }
 
         public RemoteResultMessage GetMessage()
         {
             return new()
             {
+                ServiceId = ServiceId,
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
                 Result = Result?.Get(),
-                ValidateErrors = ValidateErrors.Select(p=> (ValidError)p.Get()).ToArray()
+                ValidateErrors = ValidateErrors.Select(p => (ValidError) p.Get()).ToArray()
             };
         }
     }

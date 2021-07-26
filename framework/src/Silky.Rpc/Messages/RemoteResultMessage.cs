@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Silky.Core.Exceptions;
+﻿using Silky.Core.Exceptions;
 
 namespace Silky.Rpc.Messages
 {
@@ -7,12 +6,12 @@ namespace Silky.Rpc.Messages
     {
         public string ExceptionMessage { get; set; }
 
+        public string ServiceId { get; set; }
+
         public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
         public ValidError[] ValidateErrors { get; set; }
 
         public object Result { get; set; }
     }
-
-
 }

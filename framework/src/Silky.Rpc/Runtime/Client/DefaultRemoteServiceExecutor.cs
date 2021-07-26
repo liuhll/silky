@@ -74,7 +74,7 @@ namespace Silky.Rpc.Runtime.Client
                     var invokeResult =
                         await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions,
                             hashKey);
-                    return invokeResult.Result;
+                    return invokeResult.GetResult();
                 });
 
             var rpcActionExecutedContext = new ServiceEntryExecutedContext()

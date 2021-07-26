@@ -24,7 +24,8 @@ namespace GatewayDemo.AppService
         public async Task<TestOut> CreateProxy(TestInput testInput)
         {
             // _currentServiceKey.Change("v2");
-            return await _testAppService.Create(testInput);
+            var result = await _testAppService.Create(testInput);
+            return result;
         }
 
         public async Task<string> MiniProfilerText()
