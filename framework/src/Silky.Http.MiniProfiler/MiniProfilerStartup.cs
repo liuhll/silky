@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc;
 using Silky.Rpc.MiniProfiler;
 
 namespace Silky.Http.MiniProfiler

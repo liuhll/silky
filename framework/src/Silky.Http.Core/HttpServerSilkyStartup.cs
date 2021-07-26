@@ -36,6 +36,6 @@ namespace Silky.Http.Core
             application.UseSilky();
         }
 
-        public int Order { get; } = Int32.MinValue;
+        public int Order { get; } = Int32.MaxValue;
     }
 }
