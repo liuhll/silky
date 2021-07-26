@@ -89,14 +89,13 @@ namespace Silky.Rpc.Routing
                 serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
             var centreServiceRoutes = registrationCentreServiceRoutes as ServiceRouteDescriptor[] ??
                                       registrationCentreServiceRoutes.ToArray();
+            
+            await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
             if (centreServiceRoutes.Any())
             {
                 await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes, addressDescriptor);
             }
-            else
-            {
-                await CreateSubDirectory();
-            }
+            
 
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
@@ -112,7 +111,7 @@ namespace Silky.Rpc.Routing
             }
         }
 
-        protected abstract Task CreateSubDirectory();
+        protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
 
         protected async Task RegisterRouteWithLockAsync(ServiceRouteDescriptor serviceRouteDescriptor)
         {

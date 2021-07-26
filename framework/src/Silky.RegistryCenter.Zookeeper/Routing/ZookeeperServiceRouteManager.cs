@@ -76,16 +76,16 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        protected async override Task CreateSubDirectory()
+        protected async override Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange()
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
-                await CreateSubDirectory(zookeeperClient);
+                await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange(zookeeperClient);
             }
         }
 
-        private async Task CreateSubDirectory(IZookeeperClient zookeeperClient)
+        private async Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange(IZookeeperClient zookeeperClient)
         {
             var subDirectoryPath = _registryCenterOptions.RoutePath;
 
