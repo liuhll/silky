@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
-using Silky.Lock;
-using Silky.Lock.Provider;
 using Microsoft.Extensions.Options;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
@@ -21,17 +19,14 @@ namespace Silky.Rpc.Routing
         protected readonly IServiceEntryManager _serviceEntryManager;
         protected readonly RegistryCenterOptions _registryCenterOptions;
         protected readonly RpcOptions _rpcOptions;
-        protected readonly ILockerProvider _lockerProvider;
 
         protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
-            ILockerProvider lockerProvider,
             IOptions<RegistryCenterOptions> registryCenterOptions,
             IOptions<RpcOptions> rpcOptions)
         {
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
-            _lockerProvider = lockerProvider;
             _registryCenterOptions = registryCenterOptions.Value;
             _rpcOptions = rpcOptions.Value;
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
@@ -42,7 +37,7 @@ namespace Silky.Rpc.Routing
                 {
                     foreach (var descriptor in descriptors)
                     {
-                        await RegisterRouteWithLockAsync(descriptor);
+                        await RegisterRouteAsync(descriptor);
                     }
                 }
             };
@@ -89,13 +84,13 @@ namespace Silky.Rpc.Routing
                 serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
             var centreServiceRoutes = registrationCentreServiceRoutes as ServiceRouteDescriptor[] ??
                                       registrationCentreServiceRoutes.ToArray();
-            
+
             await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
             if (centreServiceRoutes.Any())
             {
                 await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes, addressDescriptor);
             }
-            
+
 
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
@@ -107,17 +102,12 @@ namespace Silky.Rpc.Routing
                         .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
                 }
 
-                await RegisterRouteWithLockAsync(serviceRouteDescriptor);
+                await RegisterRouteAsync(serviceRouteDescriptor);
             }
         }
 
         protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
 
-        protected async Task RegisterRouteWithLockAsync(ServiceRouteDescriptor serviceRouteDescriptor)
-        {
-            using var locker = await _lockerProvider.CreateLockAsync(serviceRouteDescriptor.ServiceDescriptor.Id);
-            await locker.Lock(async () => { await RegisterRouteAsync(serviceRouteDescriptor); });
-        }
 
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
@@ -139,7 +129,7 @@ namespace Silky.Rpc.Routing
                     {
                         removeRoute.AddressDescriptors =
                             removeRoute.AddressDescriptors.Where(p => !p.Equals(addressDescriptor)).ToList();
-                        await RegisterRouteWithLockAsync(removeRoute);
+                        await RegisterRouteAsync(removeRoute);
                     }
                 }
             }

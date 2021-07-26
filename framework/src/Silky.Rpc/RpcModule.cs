@@ -7,7 +7,6 @@ using Silky.Castle;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
-using Silky.Lock;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Caching;
 using Silky.Rpc.Address;
@@ -25,7 +24,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Silky.Rpc
 {
-    [DependsOn(typeof(LockModule), typeof(CachingModule))]
+    [DependsOn(typeof(CachingModule))]
     public class RpcModule : SilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
@@ -39,7 +38,7 @@ namespace Silky.Rpc
             services.AddOptions<WebSocketOptions>()
                 .Bind(configuration.GetSection(WebSocketOptions.WebSocket));
         }
-        
+
         protected override void RegisterServices(ContainerBuilder builder)
         {
             var localEntryTypes = ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder)

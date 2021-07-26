@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
-using Silky.Lock.Provider;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
@@ -35,13 +34,11 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
             IZookeeperClientProvider zookeeperClientProvider,
-            ILockerProvider lockerProvider,
             IOptions<RegistryCenterOptions> registryCenterOptions,
             IOptions<RpcOptions> rpcOptions,
             ISerializer serializer)
             : base(serviceRouteCache,
                 serviceEntryManager,
-                lockerProvider,
                 registryCenterOptions,
                 rpcOptions)
         {
@@ -212,7 +209,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 serviceRouteDescriptor.AddressDescriptors =
                     serviceRouteDescriptor.AddressDescriptors.Where(p =>
                         p != p.ConvertToAddressModel().Descriptor);
-                await RegisterRouteWithLockAsync(serviceRouteDescriptor);
+                await RegisterRouteAsync(serviceRouteDescriptor);
             }
         }
     }
