@@ -43,7 +43,6 @@ namespace Silky.Transaction.Tcc.Handlers
                         {
                             ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
                         }
-
                         await TransRepositoryStore.RemoveParticipant(participant);
                         throw;
                     }

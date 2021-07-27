@@ -49,9 +49,9 @@ namespace Silky.Transaction.Filters
 
         public void OnActionExecuted(ServiceEntryExecutedContext serviceEntryExecutingContext)
         {
-            if (this.context == null) return;
+            if (context == null) return;
 
-            if (this.context.TransactionRole == TransactionRole.Participant)
+            if (context.TransactionRole == TransactionRole.Participant)
             {
                 SilkyTransactionHolder.Instance.RegisterParticipantByNested(participantId, participant);
             }

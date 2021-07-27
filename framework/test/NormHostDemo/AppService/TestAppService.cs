@@ -16,11 +16,11 @@ namespace NormHostDemo.AppService
     [ServiceKey("v1", 3)]
     public class TestAppService : ITestAppService
     {
-
         private readonly IAnotherAppService _anotherAppService;
         private readonly IDistributedCache<TestOut> _distributedCache;
         private readonly IRepository<Test> _testRepository;
-        public TestAppService(IAnotherAppService anotherAppService, 
+
+        public TestAppService(IAnotherAppService anotherAppService,
             IDistributedCache<TestOut> distributedCache,
             IRepository<Test> testRepository)
         {
@@ -28,13 +28,13 @@ namespace NormHostDemo.AppService
             _distributedCache = distributedCache;
             _testRepository = testRepository;
         }
-        
+
         public async Task<TestOut> Create(TestInput input)
         {
             var test = input.Adapt<Test>();
             var result = await _testRepository.InsertNowAsync(test);
-           // throw new BusinessException("error");
-           return new TestOut()
+            // throw new BusinessException("error");
+            return new TestOut()
             {
                 Id = result.Entity.Id,
                 Name = result.Entity.Name,
@@ -52,7 +52,7 @@ namespace NormHostDemo.AppService
         {
             await _anotherAppService.DeleteOne(name);
             await _anotherAppService.DeleteTwo(name);
-          //  throw new BusinessException("test exception");
+            throw new BusinessException("test exception");
             return name + " v1";
         }
 
