@@ -59,12 +59,12 @@ namespace Silky.WebSocket.Middleware.Middleware
 
             if (serviceRoute == null)
             {
-                throw new SilkyException($"系统中不存在地址为{path}的ws服务");
+                throw new SilkyException($"The ws service with address {path} does not exist.");
             }
 
             if (!serviceRoute.Addresses.Any())
             {
-                throw new SilkyException($"系统中不存在地址为{path}的可用服务");
+                throw new SilkyException($"There is no available service with address {path}.");
             }
 
             var client = new ClientWebSocket();
@@ -106,7 +106,7 @@ namespace Silky.WebSocket.Middleware.Middleware
                 }
                 else
                 {
-                     throw new SilkyException("websocket在建立会话链接时,必须通过header或是qString指定hashkey或是businessId");
+                     throw new SilkyException("When websocket establishes a session link, the hashkey or businessId must be specified through the header or qString");
                 }
             }
 

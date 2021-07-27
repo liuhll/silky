@@ -25,12 +25,12 @@ namespace Silky.Core.Modularity
             {
                 try
                 {
-                    Logger.LogInformation($"初始化模块{module.Name}");
+                    Logger.LogInformation($"Initialize the module {module.Name}");
                     await module.Instance.Initialize(new ApplicationContext(_serviceProvider, _moduleContainer));
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError($"初始化{module.Name}模块是错误,原因:{e.Message}");
+                    Logger.LogError($"Initializing the {module.Name} module is an error, reason: {e.Message}");
                     throw;
                 }
                 

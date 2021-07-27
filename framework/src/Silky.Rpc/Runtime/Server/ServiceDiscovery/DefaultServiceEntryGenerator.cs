@@ -107,7 +107,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
             if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
             {
-                throw new SilkyException("不允许指定多个HashKey");
+                throw new SilkyException("It is not allowed to specify multiple HashKey");
             }
 
             var serviceDescriptor = new ServiceDescriptor

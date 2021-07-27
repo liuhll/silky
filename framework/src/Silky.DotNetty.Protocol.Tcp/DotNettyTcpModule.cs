@@ -35,7 +35,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             if (!applicationContext.ModuleContainer.Modules.Any(p =>
                 p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(), StringComparison.OrdinalIgnoreCase)))
             {
-                throw new SilkyException($"您没有指定依赖的{registryCenterOptions.RegistryCenterType}服务注册中心模块");
+                throw new SilkyException($"You did not specify the dependent {registryCenterOptions.RegistryCenterType} service registry module");
             }
 
             var messageListener = applicationContext.ServiceProvider.GetRequiredService<DotNettyTcpServerMessageListener>();

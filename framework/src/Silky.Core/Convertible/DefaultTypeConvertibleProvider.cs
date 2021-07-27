@@ -19,12 +19,13 @@ namespace Silky.Core.Convertible
 
         public IEnumerable<TypeConvertDelegate> GetConverters()
         {
+            // Enum type converter
             yield return EnumTypeConvert;
-            //简单类型
+            // Simple type converter
             yield return SimpleTypeConvert;
-            //guid转换器
+            // Guid type converter
             yield return GuidTypeConvert;
-
+            // Complex type converter
             yield return ComplexTypeConvert;
         }
 

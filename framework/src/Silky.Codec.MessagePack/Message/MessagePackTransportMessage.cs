@@ -55,7 +55,7 @@ namespace Silky.Codec.Message
             }
             else
             {
-                throw new NotSupportedException($"无法支持的消息类型：{ContentType}！");
+                throw new NotSupportedException($"Unsupported message type:{ContentType}！");
             }
 
             message.Content = contentObject;

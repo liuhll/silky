@@ -34,10 +34,6 @@ namespace Silky.Rpc.Interceptors
 
             if (serviceEntry.GovernanceOptions.CacheEnabled)
             {
-                MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
-                    MiniProfileConstant.Caching.State.CacheEnabled,
-                    $"缓存拦截可用");
-
                 var removeCachingInterceptProviders = serviceEntry.RemoveCachingInterceptProviders;
                 if (removeCachingInterceptProviders.Any())
                 {
@@ -50,7 +46,7 @@ namespace Silky.Rpc.Interceptors
                             true);
                         MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.RemoveCaching + index,
-                            $"移除key为{removeCacheKey}的缓存");
+                            $"Remove the cache with key {removeCacheKey}");
                         index++;
                     }
                 }
@@ -61,7 +57,7 @@ namespace Silky.Rpc.Interceptors
                     {
                         MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
-                            $"分布式事务缓存拦截无效");
+                            $"Cache interception is invalid in distributed transaction processing");
                         await invocation.ProceedAsync();
                     }
                     else
@@ -70,7 +66,7 @@ namespace Silky.Rpc.Interceptors
                             serviceEntry.GetCachingInterceptProvider);
                         MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
-                            $"准备从缓存服务中获取数据:[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{getCacheKey}]");
+                            $"Ready to get data from the cache service:[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{getCacheKey}]");
                         invocation.ReturnValue = await GetResultFirstFromCache(
                             serviceEntry.GetCacheName(),
                             getCacheKey,
@@ -83,7 +79,7 @@ namespace Silky.Rpc.Interceptors
                     {
                         MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.UpdateCaching,
-                            $"分布式事务缓存拦截无效");
+                            $"Cache interception is invalid in distributed transaction processing");
                         await invocation.ProceedAsync();
                     }
                     else
@@ -92,7 +88,7 @@ namespace Silky.Rpc.Interceptors
                             serviceEntry.UpdateCachingInterceptProvider);
                         MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.UpdateCaching,
-                            $"更新缓存数据的cacheKey为[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{updateCacheKey}]");
+                            $"The cacheKey for updating the cache data is[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{updateCacheKey}]");
                         await _distributedCache.RemoveAsync(updateCacheKey, serviceEntry.GetCacheName(),
                             hideErrors: true);
                         invocation.ReturnValue = await GetResultFirstFromCache(
@@ -105,15 +101,12 @@ namespace Silky.Rpc.Interceptors
                 {
                     MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                         MiniProfileConstant.Caching.State.NotSet,
-                        $"没有设置缓存拦截");
+                        $"No cache interception is set");
                     await invocation.ProceedAsync();
                 }
             }
             else
             {
-                MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
-                    MiniProfileConstant.Caching.State.CacheEnabled,
-                    $"缓存拦截不可用");
                 await invocation.ProceedAsync();
             }
         }

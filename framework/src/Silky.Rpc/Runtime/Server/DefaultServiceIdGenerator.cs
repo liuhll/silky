@@ -30,7 +30,7 @@ namespace Silky.Rpc.Runtime.Server
             Check.NotNull(method, nameof(method));
             var type = method.DeclaringType;
             if (type == null)
-                throw new ArgumentNullException(nameof(method.DeclaringType), "方法的定义类型不能为空。");
+                throw new ArgumentNullException(nameof(method.DeclaringType), "The definition type of the method cannot be empty.");
 
             if (m_serviceIdCache.TryGetValue(method, out var id))
             {
@@ -44,7 +44,7 @@ namespace Silky.Rpc.Runtime.Server
                 id += "_" + string.Join("_", parameters.Select(i => i.Name));
             }
 
-            Logger.LogDebug($"为方法：{method}生成服务Id：{id}。");
+            Logger.LogDebug($"Generate serviceId {id} for method {method.DeclaringType?.FullName}{method.Name}");
             return m_serviceIdCache.GetOrAdd(method, id);
         }
     }

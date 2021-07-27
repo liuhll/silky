@@ -46,11 +46,11 @@ namespace Silky.WebSocket
             try
             {
                 _socketServer.Start();
-                _logger.LogInformation($"Ws服务启动成功,服务地址:{_socketServer.Address}");
+                _logger.LogInformation($"Ws service started successfully, service address: {_socketServer.Address}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Ws服务启动失败,服务地址:{_socketServer.Address},原因：{e.Message}", e);
+                _logger.LogError($"Ws service failed to start, service address: {_socketServer.Address}, reason: {e.Message}", e);
                 throw;
             }
         }

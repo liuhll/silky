@@ -17,7 +17,7 @@ namespace Silky.Core.Convertible
             ILogger<DefaultTypeConvertibleService> logger)
         {
             _logger = logger;
-            _logger.LogDebug($"发现了以下类型转换提供程序：{string.Join(",", converterProviders.Select(p => p.ToString()))}。");
+            _logger.LogDebug($"The following type conversion providers were found:{string.Join(",", converterProviders.Select(p => p.ToString()))}.");
             _converters = converterProviders.SelectMany(p=> p.GetConverters());
          
         }

@@ -27,7 +27,7 @@ namespace Silky.Validation
             if (errors.Any())
             {
                 throw new ValidationException(
-                    "输入参数校验未通过",
+                    "Input parameter is invalid",
                     errors
                 );
             }

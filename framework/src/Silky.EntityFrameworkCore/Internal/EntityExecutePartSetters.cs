@@ -6,13 +6,13 @@ using Silky.EntityFrameworkCore.Locators;
 namespace Silky.EntityFrameworkCore
 {
     /// <summary>
-    /// 实体执行部件
+    /// Entity Execution Unit
     /// </summary>
     public sealed partial class EntityExecutePart<TEntity>
         where TEntity : class, IPrivateEntity, new()
     {
         /// <summary>
-        /// 设置实体
+        /// Set entity
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
@@ -23,7 +23,7 @@ namespace Silky.EntityFrameworkCore
         }
         
         /// <summary>
-        /// 设置数据库上下文定位器
+        /// Set the database context locator
         /// </summary>
         /// <typeparam name="TDbContextLocator"></typeparam>
         /// <returns></returns>
@@ -35,7 +35,7 @@ namespace Silky.EntityFrameworkCore
         }
 
         /// <summary>
-        /// 设置数据库上下文定位器
+        /// Set the database context locator
         /// </summary>
         /// <returns></returns>
         public EntityExecutePart<TEntity> Change(Type dbContextLocator)

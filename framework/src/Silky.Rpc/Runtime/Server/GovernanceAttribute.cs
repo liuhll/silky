@@ -10,49 +10,48 @@ namespace Silky.Rpc.Runtime.Server
     public class GovernanceAttribute : Attribute, IGovernanceProvider
     {
         /// <summary>
-        /// 负载分流策略
+        /// Shunt Strategy
         /// </summary>
         public AddressSelectorMode ShuntStrategy { get; set; } = AddressSelectorMode.Polling;
 
         /// <summary>
-        /// 执行超时时间
+        /// Execution timeout
         /// </summary>
         public int ExecutionTimeout { get; set; } = Timeout.Infinite;
 
         /// <summary>
-        /// 是否开启缓存拦截
+        /// Whether to enable cache interception
         /// </summary>
         public bool CacheEnabled { get; set; } = true;
 
         /// <summary>
-        /// 允许的最大并发量
+        /// Maximum allowed concurrency
         /// </summary>
         public int MaxConcurrent { get; set; } = 10;
 
         /// <summary>
-        /// 熔断休眠时间
+        /// Fuse sleep time
         /// </summary>
         public int FuseSleepDuration { get; set; } = 60;
 
         /// <summary>
-        /// 是否开启熔断保护
+        /// Whether to open the fuse protection
         /// </summary>
         public bool FuseProtection { get; set; } = true;
 
         /// <summary>
-        /// 故障转移次数
+        /// Number of failovers
         /// </summary>
         public int FailoverCount { get; set; } = 0;
 
         /// <summary>
-        /// 失败回调指定的类型
+        /// The type specified by the failure callback
         /// </summary>
         [CanBeNull] public Type FallBackType { get; set; }
         
         /// <summary>
-        /// 是否禁止外网访问
-        /// 缺省值:false
+        /// Whether to prohibit external network access
         /// </summary>
-        public bool ProhibitExtranet{ get; set; } = false;
+        public bool ProhibitExtranet{ get; set; }
     }
 }

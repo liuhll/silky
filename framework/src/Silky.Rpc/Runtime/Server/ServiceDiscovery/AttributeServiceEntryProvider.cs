@@ -23,7 +23,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         public IReadOnlyList<ServiceEntry> GetEntries()
         {
             var serviceEntryTypes = ServiceEntryHelper.FindAllServiceEntryTypes(_typeFinder);
-            Logger.LogDebug($"发现了以下服务：{string.Join(",", serviceEntryTypes.Select(i => i.ToString()))}。");
+            Logger.LogDebug($"The following AppServices were found: {string.Join(",", serviceEntryTypes.Select(i => i.Item1.FullName))}.");
             var entries = new List<ServiceEntry>();
             foreach (var serviceEntryType in serviceEntryTypes)
             {

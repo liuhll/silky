@@ -107,7 +107,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             try
             {
                 m_boundChannel = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
-                Logger.LogInformation($"服务监听者启动成功,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol}");
+                Logger.LogInformation($"The service listener started successfully, the listening address: {_hostAddress}, the communication protocol: {_hostAddress.ServiceProtocol}");
             }
             catch (Exception e)
             {

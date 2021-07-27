@@ -33,7 +33,7 @@ namespace Silky.Rpc.Runtime.Server
             }
             else
             {
-                throw new SilkyException($"Silky暂不支持该{scheme}类型的通信协议");
+                throw new SilkyException($"Silky does not currently support this {scheme} type of communication protocol");
             }
 
             return serviceProtocol;

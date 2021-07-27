@@ -58,8 +58,8 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 var data = jsonString.GetBytes();
                 if (!await zookeeperClient.ExistsAsync(routePath))
                 {
-                    Logger.LogDebug($"节点{routePath}不存在将进行创建");
                     await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                    Logger.LogDebug($"Node {routePath} does not exist and will be created");
                 }
                 else
                 {
@@ -67,7 +67,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                     if (!onlineData.Equals(data))
                     {
                         await zookeeperClient.SetDataAsync(routePath, data);
-                        Logger.LogDebug($"{routePath}节点的缓存的路由数据已被更新。");
+                        Logger.LogDebug($"The cached routing data of the {routePath} node has been updated.");
                     }
                 }
             }

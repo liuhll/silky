@@ -131,19 +131,19 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
                         MiniProfileConstant.FallBackExecutor.State.Begin,
-                        "开始执行失败回调方法");
+                        "Start execution failure callback method");
                     var instance = EngineContext.Current.Resolve(fallBackType);
                     var result = fallbackMethodExcutor.ExecuteAsync(instance, parameters).GetAwaiter().GetResult();
                     MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
                         MiniProfileConstant.FallBackExecutor.State.Success,
-                        "失败回调执行成功");
+                        "Failed callback executed successfully");
                     return result;
                 }
                 catch (Exception e)
                 {
                     MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
                         MiniProfileConstant.FallBackExecutor.State.Fail,
-                        $"失败回调执行失败,原因:{e.Message}", true);
+                        $"Failure callback execution failed, reason:{e.Message}", true);
                     throw;
                 }
             };

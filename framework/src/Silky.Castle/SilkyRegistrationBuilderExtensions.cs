@@ -19,7 +19,7 @@ namespace Silky.Castle
             var serviceType = registrationBuilder.RegistrationData.Services.OfType<IServiceWithType>().FirstOrDefault()?.ServiceType;
             if (serviceType == null)
             {
-                throw new SilkyException("获取指定的注册类型失败");
+                throw new SilkyException("Failed to get the specified registration type");
             }
 
             if (serviceType.IsInterface)

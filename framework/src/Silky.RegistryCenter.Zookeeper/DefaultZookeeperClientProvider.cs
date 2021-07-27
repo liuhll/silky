@@ -70,7 +70,7 @@ namespace Silky.RegistryCenter.Zookeeper
             }
             catch (Exception e)
             {
-                Logger.LogWarning($"无法链接服务注册中心{connStr},原因:{e.Message}");
+                Logger.LogWarning($"Unable to link to the service registry {connStr}, reason: {e.Message}");
             }
         }
 
@@ -78,7 +78,7 @@ namespace Silky.RegistryCenter.Zookeeper
         {
             if (_zookeeperClients.Count <= 0)
             {
-                throw new SilkyException("当前没有可用服务注册中心");
+                throw new SilkyException("There is currently no service registry available");
             }
 
             if (_zookeeperClients.Count == 1)
@@ -99,7 +99,7 @@ namespace Silky.RegistryCenter.Zookeeper
         {
             if (_zookeeperClients.Count <= 0)
             {
-                throw new SilkyException("当前没有可用服务注册中心");
+                throw new SilkyException("There is currently no service registry available");
             }
 
             return _zookeeperClients.Values.ToImmutableList();

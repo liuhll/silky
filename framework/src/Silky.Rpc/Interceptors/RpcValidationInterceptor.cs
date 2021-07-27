@@ -17,9 +17,6 @@ namespace Silky.Rpc.Interceptors
 
         protected override void Validate(ISilkyMethodInvocation invocation)
         {
-            MiniProfilerPrinter.Print(MiniProfileConstant.ValidationInterceptor.Name,
-                MiniProfileConstant.ValidationInterceptor.State.Begin,
-                $"开始校验输入参数");
             try
             {
                 var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
@@ -34,13 +31,13 @@ namespace Silky.Rpc.Interceptors
                 );
                 MiniProfilerPrinter.Print(MiniProfileConstant.ValidationInterceptor.Name,
                     MiniProfileConstant.ValidationInterceptor.State.Success,
-                    $"输入参数校验成功");
+                    $"Input parameter verification succeeded");
             }
             catch (Exception e)
             {
                 MiniProfilerPrinter.Print(MiniProfileConstant.ValidationInterceptor.Name,
                     MiniProfileConstant.ValidationInterceptor.State.Fail,
-                    $"输入参数校验失败", true);
+                    $"Input parameter is invalid", true);
                 throw;
             }
         }

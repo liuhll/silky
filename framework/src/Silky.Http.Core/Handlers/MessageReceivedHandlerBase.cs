@@ -56,13 +56,13 @@ namespace Silky.Http.Core.Handlers
                 RpcContext.GetContext().SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
                 MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
-                    $"serviceKey:{serviceKey}");
+                    $"serviceKey => {serviceKey}");
             }
             else
             {
                 MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
-                    "没有设置serviceKey");
+                    "No serviceKey is set");
             }
 
             RpcContext.GetContext().SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);

@@ -129,7 +129,6 @@ namespace Silky.DotNetty
             }
             catch (Exception ex)
             {
-                //移除
                 m_clients.TryRemove(addressModel, out var value);
                 throw;
             }
@@ -140,7 +139,8 @@ namespace Silky.DotNetty
             return await m_clients.GetOrAdd(addressModel
                 , k => new Lazy<Task<ITransportClient>>(async () =>
                     {
-                        Logger.LogInformation($"准备为服务端地址：{addressModel.IPEndPoint}创建客户端");
+                        Logger.LogInformation($"Ready to create a client for the server address: {addressModel.IPEndPoint}" +
+                                              $"");
                         var bootstrap = _bootstrap;
                         var channel = await bootstrap.ConnectAsync(k.IPEndPoint);
                         var pipeline = channel.Pipeline;

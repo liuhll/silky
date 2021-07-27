@@ -79,7 +79,7 @@ namespace Silky.Validation
         protected virtual void ThrowValidationError(MethodInvocationValidationContext context)
         {
             throw new ValidationException(
-                "输入参数校验未通过",
+                "Input parameter is invalid",
                 context.Errors         
             );
         }

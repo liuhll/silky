@@ -47,14 +47,14 @@ namespace Silky.WebSocket
             if (wsToken == null)
             {
                 Context.WebSocket.Close();
-                throw new SilkyException("您没有指定wsToken,请通过gateway与ws服务进行链接", StatusCode.RpcUnAuthentication);
+                throw new SilkyException("You did not specify wsToken, please link with ws service through gateway", StatusCode.RpcUnAuthentication);
             }
 
             var webSocketOptions = EngineContext.Current.Resolve<IOptions<WebSocketOptions>>().Value;
             if (webSocketOptions.Token != wsToken)
             {
                 Context.WebSocket.Close();
-                throw new SilkyException("您指定的rpc token不正确", StatusCode.RpcUnAuthentication);
+                throw new SilkyException("The rpc token you specified is incorrect", StatusCode.RpcUnAuthentication);
             }
         }
 

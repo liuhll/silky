@@ -35,12 +35,12 @@ namespace Silky.Http.Core.Middlewares
             {
                 if (serviceEntry.GovernanceOptions.ProhibitExtranet)
                 {
-                    throw new FuseProtectionException($"Id为{serviceEntry.Id}的服务条目不允许外网访问");
+                    throw new FuseProtectionException($"The ServiceEntry whose Id is {serviceEntry.Id} is not allowed to be accessed from the external network");
                 }
 
               
                 MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
-                    $"通过{path}-{method}查找到服务条目{serviceEntry.Id}");
+                    $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
                 RpcContext.GetContext().SetAttachment(AttachmentKeys.Path, path.ToString());
                 RpcContext.GetContext().SetAttachment(AttachmentKeys.HttpMethod, method.ToString());
                 await EngineContext.Current
@@ -50,7 +50,7 @@ namespace Silky.Http.Core.Middlewares
             else
             {
                 MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
-                    $"通过{path}-{method}没有查找到服务条目",
+                    $"No ServiceEntry was found through {path}-{method}",
                     true);
                 await _next(context);
             }

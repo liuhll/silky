@@ -17,12 +17,12 @@ namespace AnotherHostDemo
 
         public async override Task Initialize(ApplicationContext applicationContext)
         {
-            Logger.LogInformation("服务启动时执行方法");
+            Logger.LogInformation("Execution method when the service starts");
         }
 
         public async override Task Shutdown(ApplicationContext applicationContext)
         {
-            Logger.LogInformation("服务停止时执行的方法");
+            Logger.LogInformation("Method to be executed when the service is stopped");
         }
     }
 }
