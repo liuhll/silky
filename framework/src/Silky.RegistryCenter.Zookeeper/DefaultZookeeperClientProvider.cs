@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Timers;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Configuration;
@@ -12,15 +11,15 @@ using Silky.Zookeeper.Implementation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using org.apache.zookeeper;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
     public class DefaultZookeeperClientProvider : IDisposable, IZookeeperClientProvider
     {
-        private ConcurrentDictionary<string, IZookeeperClient> _zookeeperClients =
-            new ConcurrentDictionary<string, IZookeeperClient>();
-
-        private Timer _timer;
+        private ConcurrentDictionary<string, IZookeeperClient> _zookeeperClients = new ();
+        
+        
         private readonly RegistryCenterOptions _registryCenterOptions;
         public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
 
@@ -31,22 +30,6 @@ namespace Silky.RegistryCenter.Zookeeper
                 nameof(_registryCenterOptions.ConnectionStrings));
             Logger = NullLogger<DefaultZookeeperClientProvider>.Instance;
             CreateZookeeperClients();
-            _timer = new Timer(TimeSpan.FromSeconds(_registryCenterOptions.HealthCheckInterval).TotalMilliseconds);
-            _timer.Enabled = true;
-            _timer.AutoReset = true;
-            _timer.Elapsed += (sender, args) =>
-            {
-                foreach (var client in _zookeeperClients)
-                {
-                    if (!client.Value.WaitUntilConnected(TimeSpan.FromSeconds(_registryCenterOptions.ConnectionTimeout)))
-
-                    {
-                        _zookeeperClients.TryRemove(client.Key, out IZookeeperClient removeClient);
-                        removeClient?.Dispose();
-                    }
-                }
-                CreateZookeeperClients();
-            };
         }
 
         private void CreateZookeeperClients()
@@ -59,7 +42,6 @@ namespace Silky.RegistryCenter.Zookeeper
                     CreateZookeeperClient(connStr);
                 }
             }
-
         }
 
         private void CreateZookeeperClient(string connStr)
@@ -73,6 +55,17 @@ namespace Silky.RegistryCenter.Zookeeper
             try
             {
                 var zookeeperClient = new ZookeeperClient(zookeeperClientOptions);
+                zookeeperClient.SubscribeStatusChange(async (client, connectionStateChangeArgs) =>
+                {
+                    if (connectionStateChangeArgs.State == Watcher.Event.KeeperState.Expired)
+                    {
+                        if (client.WaitForKeeperState(Watcher.Event.KeeperState.SyncConnected,
+                            zookeeperClientOptions.ConnectionTimeout))
+                        {
+                            _zookeeperClients.Remove(client.Options.ConnectionString, out _);
+                        }
+                    }
+                });
                 _zookeeperClients.GetOrAdd(connStr, zookeeperClient);
             }
             catch (Exception e)
@@ -98,7 +91,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         private int RondomSelectorIndex(int min, int max)
         {
-            var random = new Random((int)DateTime.Now.Ticks);
+            var random = new Random((int) DateTime.Now.Ticks);
             return random.Next(min, max);
         }
 
@@ -114,7 +107,6 @@ namespace Silky.RegistryCenter.Zookeeper
 
         public void Dispose()
         {
-            _timer?.Dispose();
             foreach (var _client in _zookeeperClients)
             {
                 _client.Value?.Dispose();
