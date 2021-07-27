@@ -17,3 +17,4 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fix bugs in distributed locks
 - Fix that the client may not be able to subscribe to the routing information of the service registry
+- Fix the bug that the zookeeper client session timeout can not subscribe to the routing information of the service registry
