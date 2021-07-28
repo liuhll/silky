@@ -22,7 +22,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             if (!serviceEntry.IsLocal)
             {
-                throw new SilkyException("只允许本地服务条目生成路由描述符");
+                throw new SilkyException("Only allow local service entries to generate routing descriptors");
             }
 
             return new ServiceRouteDescriptor()
@@ -117,7 +117,7 @@ namespace Silky.Rpc.Runtime.Server
             var templete = cachingInterceptProvider.KeyTemplete;
             if (templete.IsNullOrEmpty())
             {
-                throw new SilkyException("缓存拦截指定的KeyTemplete不允许为空", StatusCode.CachingInterceptError);
+                throw new SilkyException("The KeyTemplete specified by the cache interception is not allowed to be empty", StatusCode.CachingInterceptError);
             }
 
             var cachingInterceptKey = string.Empty;
@@ -164,7 +164,7 @@ namespace Silky.Rpc.Runtime.Server
                 var session = NullSession.Instance;
                 if (!session.IsLogin())
                 {
-                    throw new SilkyException("缓存数据如果指定与当前登录用户相关,那么必须登录系统才允许使用缓存拦截", StatusCode.CachingInterceptError);
+                    throw new SilkyException("If the cached data is specified to be related to the currently logged in user, then you must log in to the system to allow the use of cache interception", StatusCode.CachingInterceptError);
                 }
 
                 cachingInterceptKey = cachingInterceptKey + $":userId:{session.UserId}";
@@ -201,7 +201,7 @@ namespace Silky.Rpc.Runtime.Server
                 var propVal = parameterValues[index];
                 if (propVal == null)
                 {
-                    throw new SilkyException("hashKey指定的值不允许为空");
+                    throw new SilkyException("The value specified by hashKey is not allowed to be empty");
                 }
 
                 hashKey = propVal.ToString();
@@ -223,7 +223,7 @@ namespace Silky.Rpc.Runtime.Server
                 var propValue = hashKeyProp.GetValue(parameterValue);
                 if (propValue == null)
                 {
-                    throw new SilkyException("hashKey指定的属性的值不允许为空");
+                    throw new SilkyException("The value of the attribute specified by hashKey cannot be empty");
                 }
 
                 hashKey = propValue.ToString();

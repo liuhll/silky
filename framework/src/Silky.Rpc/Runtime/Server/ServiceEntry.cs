@@ -98,7 +98,7 @@ namespace Silky.Rpc.Runtime.Server
                         .FirstOrDefault(p => p == governanceAttribute.FallBackType);
                     if (fallBackType == null)
                     {
-                        throw new SilkyException($"未能找到{governanceAttribute.FallBackType.FullName}的实现类");
+                        throw new SilkyException($"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
                     }
                 }
                 else
@@ -108,7 +108,7 @@ namespace Silky.Rpc.Runtime.Server
                     if (!EngineContext.Current.TypeFinder.FindClassesOfType(fallBackType)
                         .Any(p => p == governanceAttribute.FallBackType))
                     {
-                        throw new SilkyException($"未能找到{governanceAttribute.FallBackType.FullName}的实现类");
+                        throw new SilkyException($"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
                     }
                 }
 
