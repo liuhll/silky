@@ -44,7 +44,7 @@ namespace Silky.Rpc.Runtime.Server
                 id += "_" + string.Join("_", parameters.Select(i => i.Name));
             }
 
-            Logger.LogDebug($"Generate serviceId {id} for method {method.DeclaringType?.FullName}{method.Name}");
+            Logger.LogDebug($"Generate serviceId {id} for method {method.DeclaringType?.FullName}.{method.Name}");
             return m_serviceIdCache.GetOrAdd(method, id);
         }
     }
