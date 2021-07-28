@@ -29,14 +29,6 @@ namespace Silky.Transaction.Tcc.Handlers
                 case TransactionRole.Participant:
                     handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(TransactionRole.Participant
                         .ToString());
-                    break; 
-                case TransactionRole.Consumer:
-                    handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(
-                        TransactionRole.Consumer.ToString());
-                    break;
-                case TransactionRole.Local:
-                    handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(
-                        TransactionRole.Local.ToString());
                     break;
             }
 

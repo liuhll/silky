@@ -16,18 +16,11 @@ namespace Silky.Transaction.Tcc
             builder.RegisterType<StarterTccTransactionHandler>()
                 .InstancePerDependency()
                 .Named<ITransactionHandler>(TransactionRole.Start.ToString());
-            
-            builder.RegisterType<ConsumerTccTransactionHandler>()
-                .InstancePerDependency()
-                .Named<ITransactionHandler>(TransactionRole.Consumer.ToString());
-            
+
             builder.RegisterType<ParticipantTccTransactionHandler>()
                 .InstancePerDependency()
                 .Named<ITransactionHandler>(TransactionRole.Participant.ToString());
-            builder.RegisterType<LocalTccTransactionHandler>()
-                .InstancePerDependency()
-                .Named<ITransactionHandler>(TransactionRole.Local.ToString());
-            
+
             builder.RegisterType<TccTransactionRecoveryService>()
                 .InstancePerDependency()
                 .Named<ITransactionRecoveryService>(TransactionType.Tcc.ToString());

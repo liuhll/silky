@@ -6,8 +6,5 @@
 
         Participant,
         
-        Local,
-
-        Consumer,
     }
 }
