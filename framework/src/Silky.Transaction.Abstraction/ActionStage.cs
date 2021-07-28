@@ -2,16 +2,16 @@
 {
     public enum ActionStage
     {
-        PreTry = 0, // 准备开始执行方法
+        PreTry = 0, // Pre try tcc action enum.
 
-        Trying, // Try方法执行完成
+        Trying, // Trying tcc action enum.
 
-        Confirming,
-        
-        Confirmed, //Confirm执行完成
+        Confirming, // Confirming tcc action enum.
 
-        Canceling, //准备开始执行Cancel
+        Canceling, //  Canceling tcc action enum.
 
-        Canceled, // Canceled执行完成
+        Delete, // DELETE action enum.
+
+        Death, // Death action enum.
     }
 }

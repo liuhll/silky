@@ -151,9 +151,11 @@ namespace Silky.Caching
 
             return cachedValues.Concat(ToCacheItems(cachedBytes, readKeys)).ToArray();
         }
-
-        public async Task<KeyValuePair<TCacheKey, TCacheItem>[]> GetManyAsync(IEnumerable<TCacheKey> keys,
-            bool? hideErrors = null, CancellationToken token = default)
+        
+        public virtual async Task<KeyValuePair<TCacheKey, TCacheItem>[]> GetManyAsync(
+            IEnumerable<TCacheKey> keys,
+            bool? hideErrors = null,
+            CancellationToken token = default)
         {
             var keyArray = keys.ToArray();
 
@@ -168,8 +170,6 @@ namespace Silky.Caching
             }
 
             var notCachedKeys = new List<TCacheKey>();
-            var cachedValues = new List<KeyValuePair<TCacheKey, TCacheItem>>();
-
             hideErrors = hideErrors ?? _distributedCacheOption.HideErrors;
             byte[][] cachedBytes;
 
@@ -192,8 +192,9 @@ namespace Silky.Caching
                 throw;
             }
 
-            return cachedValues.Concat(ToCacheItems(cachedBytes, readKeys)).ToArray();
+            return ToCacheItems(cachedBytes, readKeys);
         }
+
 
         public TCacheItem GetOrAdd(TCacheKey key, Func<TCacheItem> factory,
             Func<DistributedCacheEntryOptions> optionsFactory = null, bool? hideErrors = null)
@@ -708,7 +709,7 @@ namespace Silky.Caching
             }
         }
     }
-    
+
     public class DistributedCache<TCacheItem> : DistributedCache<TCacheItem, string>, IDistributedCache<TCacheItem>
         where TCacheItem : class
     {
@@ -733,8 +734,8 @@ namespace Silky.Caching
             {
                 var cacheKeys = GetCacheKeys();
                 return cacheKeys.Where(k => Regex.IsMatch(k, keyPattern)).ToImmutableArray();
-                
             }
+
             return await distributedInterceptCache.SearchKeys(keyPattern);
         }
 

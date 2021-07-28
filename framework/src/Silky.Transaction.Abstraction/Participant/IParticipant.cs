@@ -21,8 +21,10 @@ namespace Silky.Transaction.Abstraction.Participant
 
         [JsonIgnore] ISilkyMethodInvocation Invocation { get; set; }
 
-        DateTime CreateTime { get; }
+        DateTime CreateTime { get; set; }
 
         DateTime UpdateTime { get; set; }
+        
+        int Version { get; set; }
     }
 }

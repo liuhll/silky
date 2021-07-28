@@ -41,7 +41,8 @@ namespace Silky.Transaction.Tcc.Executor
                 TransactionRole.Start,
                 transaction.TransId);
             transaction.RegisterParticipant(participant);
-            await TransRepositoryStore.SaveTransaction(transaction);
+            await TransRepositoryStore.CreateTransaction(transaction);
+            await TransRepositoryStore.CreateParticipant(participant);
             var context = new TransactionContext
             {
                 Action = ActionStage.Trying,
@@ -61,7 +62,7 @@ namespace Silky.Transaction.Tcc.Executor
             var participant = BuildParticipant(invocation, context.ParticipantId, context.ParticipantRefId,
                 TransactionRole.Participant, context.TransId);
             await SilkyTransactionHolder.Instance.CacheParticipant(participant);
-            await TransRepositoryStore.SaveParticipant(participant);
+            await TransRepositoryStore.CreateParticipant(participant);
             context.TransactionRole = TransactionRole.Participant;
             //  SilkyTransactionContextHolder.Instance.Set(context);
             return (participant, context);
@@ -94,8 +95,7 @@ namespace Silky.Transaction.Tcc.Executor
 
             if (successList.All(p => true))
             {
-                currentTransaction.Status = ActionStage.Confirmed;
-                await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
+                await TransRepositoryStore.RemoveTransaction(currentTransaction);
             }
         }
 
@@ -229,7 +229,7 @@ namespace Silky.Transaction.Tcc.Executor
             IList<IParticipant> cancelingParticipantList, string participantId)
         {
             if (cancelingParticipantList == null) return;
-            
+
             foreach (var cancelingParticipant in cancelingParticipantList)
             {
                 await cancelingParticipant.Executor(ActionStage.Canceling, invocation);

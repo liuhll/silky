@@ -8,7 +8,7 @@ namespace Silky.Transaction.Abstraction
 {
     public interface ITransRepository
     {
-        Task SaveTransaction([NotNull] ITransaction transaction);
+        Task CreateTransaction([NotNull] ITransaction transaction);
 
         Task<ITransaction> FindByTransId(string transId);
 
@@ -18,9 +18,9 @@ namespace Silky.Transaction.Abstraction
 
         Task<int> RemoveTransactionByDate(DateTime date);
 
-        Task SaveParticipant([NotNull] IParticipant participant);
+        Task CreateParticipant([NotNull] IParticipant participant);
 
-        Task<IParticipant> FindParticipant(string transId, string participantId);
+        Task<IReadOnlyCollection<IParticipant>> FindParticipant(string transId, string participantId);
 
         Task<IEnumerable<IParticipant>> ListParticipantByTransId(string transId);
 
@@ -33,18 +33,7 @@ namespace Silky.Transaction.Abstraction
         Task<int> RemoveParticipantByDate(DateTime date);
 
         Task<bool> LockParticipant(IParticipant participant);
-
-
-        // Task<int> CreateParticipantUndo(IParticipantUndo participantUndo);
-        //
-        // Task<IEnumerable<HmilyParticipantUndo>> FindParticipantUndoByParticipantId(string participantId);
-        //
-        //
-        // Task<int> RemoveParticipantUndo(string undoId);
-        //
-        //
-        // Task<int> RemoveParticipantUndoByDate(DateTime date);
-        //
-        // Task<int> UpdateHmilyParticipantUndoStatus(string undoId, ActionStage status);
+        
+        Task<IReadOnlyCollection<IParticipant>> ListParticipant(DateTime dateTime, TransactionType transactionType, int limit);
     }
 }

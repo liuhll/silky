@@ -18,6 +18,11 @@ namespace Silky.Caching
 
         public virtual string NormalizeKey(DistributedCacheKeyNormalizeArgs args)
         {
+            if (args.Key.Contains($"c:{args.CacheName}") && args.Key.Contains("k:"))
+            {
+                return args.Key;
+            }
+
             var normalizedKey = $"c:{args.CacheName},k:{DistributedCacheOptions.KeyPrefix}{args.Key}";
             return normalizedKey;
         }

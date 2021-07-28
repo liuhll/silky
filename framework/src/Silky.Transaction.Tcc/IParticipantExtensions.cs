@@ -33,11 +33,23 @@ namespace Silky.Transaction.Tcc
                 {
                     await localInvocation.ExcuteTccMethod(methodType, RpcContext.GetContext().GetTransactionContext());
                 }
-                else
+                else if (localParticipant.Invocation != null)
                 {
                     Debug.Assert(participant.Invocation != null, "participant.Invocation is not null");
                     await localParticipant.Invocation.ExcuteTccMethod(methodType,
                         RpcContext.GetContext().GetTransactionContext());
+                }
+                else
+                {
+                    var excutorInfo = serviceEntry.GetTccExcutorInfo(participant.ServiceKey, methodType);
+                    if (excutorInfo.Item2)
+                    {
+                        await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, participant.Parameters);
+                    }
+                    else
+                    {
+                        excutorInfo.Item1.Execute(excutorInfo.Item3, participant.Parameters);
+                    }
                 }
             }
 
@@ -48,15 +60,13 @@ namespace Silky.Transaction.Tcc
                 if (stage == ActionStage.Confirming)
                 {
                     await LocalExecutor(invocation, participant, TccMethodType.Confirm);
-                    participant.Status = ActionStage.Confirmed;
                 }
                 else
                 {
                     await LocalExecutor(invocation, participant, TccMethodType.Cancel);
-                    participant.Status = ActionStage.Canceled;
                 }
 
-                await TransRepositoryStore.UpdateParticipantStatus(participant);
+                await TransRepositoryStore.RemoveParticipant(participant);
             }
             else
             {
@@ -74,7 +84,7 @@ namespace Silky.Transaction.Tcc
                 Action = action,
                 TransId = participant.TransId,
                 ParticipantId = participant.ParticipantId,
-                TransactionRole = SilkyTransactionContextHolder.Get().TransactionRole,
+                TransactionRole = participant.Role,
                 TransType = TransactionType.Tcc
             };
 

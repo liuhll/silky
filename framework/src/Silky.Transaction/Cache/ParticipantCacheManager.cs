@@ -11,8 +11,6 @@ namespace Silky.Transaction.Cache
 {
     public class ParticipantCacheManager
     {
-        private static readonly ParticipantCacheManager instance = new();
-
         //private readonly IEasyCachingProvider _cache;
         private readonly IMemoryCache _cache;
         public const string CacheName = "DefaultInMemory";
@@ -23,7 +21,9 @@ namespace Silky.Transaction.Cache
             _cache = EngineContext.Current.Resolve<IMemoryCache>();
         }
 
-        public static ParticipantCacheManager Instance => instance;
+        public static ParticipantCacheManager Instance =>
+            Singleton<ParticipantCacheManager>.Instance ??
+            (Singleton<ParticipantCacheManager>.Instance = new ParticipantCacheManager());
 
         public async Task CacheParticipant(IParticipant participant)
         {
@@ -49,7 +49,7 @@ namespace Silky.Transaction.Cache
         public IList<IParticipant> Get(string participantId)
         {
             var participantsCacheValue = _cache.Get<IList<IParticipant>>(participantId);
-            
+
             return participantsCacheValue;
         }
 

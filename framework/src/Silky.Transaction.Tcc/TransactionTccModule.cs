@@ -2,7 +2,9 @@
 using Silky.Core.Modularity;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Abstraction;
+using Silky.Transaction.Schedule;
 using Silky.Transaction.Tcc.Handlers;
+using Silky.Transaction.Tcc.Schedule;
 
 namespace Silky.Transaction.Tcc
 {
@@ -25,6 +27,10 @@ namespace Silky.Transaction.Tcc
             builder.RegisterType<LocalTccTransactionHandler>()
                 .InstancePerDependency()
                 .Named<ITransactionHandler>(TransactionRole.Local.ToString());
+            
+            builder.RegisterType<TccTransactionRecoveryService>()
+                .InstancePerDependency()
+                .Named<ITransactionRecoveryService>(TransactionType.Tcc.ToString());
         }
     }
 }

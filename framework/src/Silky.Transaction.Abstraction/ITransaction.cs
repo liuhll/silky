@@ -13,11 +13,13 @@ namespace Silky.Transaction.Abstraction
 
         TransactionType TransType { get; set; }
 
-        DateTime CreateTime { get; }
+        DateTime CreateTime { get; set; }
 
         DateTime UpdateTime { get; set; }
 
         int ReTry { get; set; }
+
+        int Version { get; set; }
 
         [JsonIgnore] IReadOnlyCollection<IParticipant> Participants { get; }
 

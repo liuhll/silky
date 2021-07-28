@@ -1,16 +1,13 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Caching;
 using Silky.Castle;
 using Silky.Core.Modularity;
 using Silky.Rpc;
-using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Transaction.Cache;
 using Silky.Transaction.Configuration;
-using Silky.Transaction.Filters;
 using Silky.Transaction.Interceptors;
+using Silky.Transaction.Schedule;
 
 namespace Silky.Transaction
 {
@@ -21,7 +18,7 @@ namespace Silky.Transaction
         {
             services.AddOptions<DistributedTransactionOptions>()
                 .Bind(configuration.GetSection(DistributedTransactionOptions.DistributedTransaction));
-           // services.AddEasyCaching(options => { options.UseInMemory(ParticipantCacheManager.CacheName); });
+            services.AddHostedService<TransactionSelfRecoveryScheduled>();
         }
 
         protected override void RegisterServices(ContainerBuilder builder)
@@ -32,14 +29,6 @@ namespace Silky.Transaction
                 .AddInterceptors(
                     typeof(TransactionInterceptor)
                 )
-                ;
-
-            builder.RegisterType<DefaultRemoteServiceExecutor>()
-                .As<IRemoteServiceExecutor>()
-                .InstancePerLifetimeScope()
-                // .AddInterceptors(
-                //     typeof(TransactionInterceptor)
-                // )
                 ;
         }
     }

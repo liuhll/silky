@@ -9,12 +9,13 @@ namespace Silky.Transaction.Abstraction
     public class SilkyTransaction : ITransaction
     {
         private IList<IParticipant> m_participants;
-        
-        
+
+
         public SilkyTransaction()
         {
             CreateTime = DateTime.Now;
             UpdateTime = DateTime.Now;
+            Version = 1;
             m_participants = new List<IParticipant>();
         }
 
@@ -29,10 +30,12 @@ namespace Silky.Transaction.Abstraction
         public ActionStage Status { get; set; }
 
         public TransactionType TransType { get; set; }
-        public DateTime CreateTime { get; }
+        public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
 
         public int ReTry { get; set; }
+
+        public int Version { get; set; }
 
         [JsonIgnore] public IReadOnlyCollection<IParticipant> Participants => m_participants.ToImmutableArray();
 

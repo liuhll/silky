@@ -20,6 +20,8 @@ namespace Silky.Core
         
         string AppName { get; }
 
+        string HostName { get; }
+
         void ConfigureServices(IServiceCollection services, IConfiguration configuration,
             IHostEnvironment hostEnvironment);
 

@@ -28,6 +28,8 @@ namespace Silky.Core
 
         public string AppName => GetOptions<AppSettingsOptions>().AppName;
 
+        public string HostName { get; protected set; }
+
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration,
             IHostEnvironment hostEnvironment)
         {
@@ -35,6 +37,8 @@ namespace Silky.Core
             ServiceProvider = services.BuildServiceProvider();
             Configuration = configuration;
             HostEnvironment = hostEnvironment;
+            HostName = Assembly.GetEntryAssembly()?.GetName().Name;
+
             var startupConfigurations = _typeFinder.FindClassesOfType<IConfigureService>();
 
             //create and sort instances of startup configurations
@@ -45,13 +49,11 @@ namespace Silky.Core
             //configure services
             foreach (var instance in instances)
                 instance.ConfigureServices(services, configuration);
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
             // configure modules 
             foreach (var module in Modules)
-            {
                 module.Instance.ConfigureServices(services, configuration);
-            }
+
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
         /// <summary>
