@@ -183,7 +183,7 @@ namespace Silky.Transaction.Repository.Redis
             }
             catch (Exception e)
             {
-                Logger.LogWarning($"updateRetryByLock occur a exception", e);
+                Logger.LogWarning($"Lock participant occur a exception", e);
                 return false;
             }
         }
