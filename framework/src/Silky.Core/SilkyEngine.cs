@@ -22,13 +22,13 @@ namespace Silky.Core
     {
         private ITypeFinder _typeFinder;
 
-        public IConfiguration Configuration { get; protected set; }
+        public IConfiguration Configuration { get; private set; }
 
-        public IHostEnvironment HostEnvironment { get; protected set; }
+        public IHostEnvironment HostEnvironment { get; private set; }
 
         public string AppName => GetOptions<AppSettingsOptions>().AppName;
 
-        public string HostName { get; protected set; }
+        public string HostName { get; private set; }
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration,
             IHostEnvironment hostEnvironment)
@@ -259,6 +259,6 @@ namespace Silky.Core
 
         public IServiceProvider ServiceProvider { get; set; }
 
-        public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; protected set; }
+        public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; private set; }
     }
 }
