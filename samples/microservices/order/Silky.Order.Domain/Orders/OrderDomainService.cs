@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
+using Mapster;
 using Silky.Account.Application.Contracts.Accounts;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Order.Application.Contracts.Orders.Dtos;
 using Silky.Stock.Application.Contracts.Products;
 using Silky.Stock.Application.Contracts.Products.Dtos;
 using Microsoft.EntityFrameworkCore;
-using Silky.AutoMapper;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Transport;
 using TanvirArjel.EFCore.GenericRepository;
@@ -67,7 +67,7 @@ namespace Silky.Order.Domain.Orders
             });
 
             // 创建订单
-            var order = input.MapTo<Domain.Orders.Order>();
+            var order = input.Adapt<Domain.Orders.Order>();
             order.Amount = product.UnitPrice * input.Quantity;
             order = await Create(order);
             RpcContext.GetContext().SetAttachment("orderId", order.Id);
@@ -81,7 +81,7 @@ namespace Silky.Order.Domain.Orders
                 RpcContext.GetContext().SetAttachment("orderBalanceId", orderBalanceId.Value);
             }
 
-            return order.MapTo<GetOrderOutput>();
+            return order.Adapt<GetOrderOutput>();
         }
     }
 }

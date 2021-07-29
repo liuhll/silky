@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Account.Domain.Shared.Accounts;
-using Silky.AutoMapper;
 using Silky.Caching;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -86,7 +86,7 @@ namespace Silky.Account.Domain.Accounts
             }
 
             await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
-            account = input.MapTo(account);
+            account = input.Adapt(account);
             await _repository.UpdateAsync(account);
             return account;
         }

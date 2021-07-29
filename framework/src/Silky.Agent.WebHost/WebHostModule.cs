@@ -5,7 +5,6 @@ using Silky.Validation.Fluent;
 using Silky.Http.Core;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.Proxy;
-using Silky.Transaction.Tcc;
 using Silky.Validation;
 
 namespace Microsoft.Extensions.Hosting
@@ -14,7 +13,6 @@ namespace Microsoft.Extensions.Hosting
        typeof(ZookeeperModule),
        typeof(SilkyHttpCoreModule),
        typeof(DotNettyModule),
-       typeof(TransactionTccModule),
        typeof(ValidationModule),
        typeof(FluentValidationModule),
        typeof(RedisCachingModule)

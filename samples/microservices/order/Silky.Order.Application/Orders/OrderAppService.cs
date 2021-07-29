@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
+using Mapster;
 using Silky.Order.Application.Contracts.Orders;
 using Silky.Order.Application.Contracts.Orders.Dtos;
 using Silky.Order.Domain.Orders;
 using Silky.Order.Domain.Shared.Orders;
-using Silky.AutoMapper;
 using Silky.Core.Extensions;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Tcc;
@@ -32,7 +32,7 @@ namespace Silky.Order.Application.Orders
             var order = await _orderDomainService.GetById(orderId.To<long>());
             order.Status = OrderStatus.Payed;
             order = await _orderDomainService.Update(order);
-            return order.MapTo<GetOrderOutput>();
+            return order.Adapt<GetOrderOutput>();
         }
 
         public async Task OrderCreateCancel(CreateOrderInput input)

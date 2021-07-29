@@ -1,11 +1,11 @@
-﻿using Silky.Stock.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Core;
+using Microsoft.Extensions.Hosting;
+using Silky.Stock.EntityFrameworkCore;
 
 namespace Silky.StockHost
 {
-    public class CapConfigure : IConfigureService
+    public class StockHostModule : GeneralHostModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -20,7 +20,5 @@ namespace Silky.StockHost
                 });
             });
         }
-
-        public int Order { get; } = 10;
     }
 }

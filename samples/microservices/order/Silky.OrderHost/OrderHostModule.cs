@@ -1,14 +1,14 @@
-﻿using Silky.Order.Application.Subscribe;
-using Silky.Order.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Core;
+using Microsoft.Extensions.Hosting;
+using Silky.Order.Application.Subscribe;
+using Silky.Order.EntityFrameworkCore;
 
 namespace Silky.OrderHost
 {
-    public class CapConfigure : IConfigureService
+    public class OrderHostModule : GeneralHostModule
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<ISubscriberService,SubscriberService>();
             services.AddCap(x =>
@@ -22,7 +22,5 @@ namespace Silky.OrderHost
                 });
             });
         }
-
-        public int Order { get; } = 1;
     }
 }

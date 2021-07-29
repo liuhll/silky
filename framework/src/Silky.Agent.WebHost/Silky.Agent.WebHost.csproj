@@ -19,7 +19,6 @@
         <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
         <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
-        <ProjectReference Include="..\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj" />
         <ProjectReference Include="..\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj" />
     </ItemGroup>
 </Project>

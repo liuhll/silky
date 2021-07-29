@@ -8,7 +8,7 @@
     <ItemGroup>
       <PackageReference Include="DotNetCore.CAP.MySql" Version="5.1.0" />
         <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="5.1.0" />
-      <PackageReference Include="Silky.NormHost" Version="$(SilkyVersion)" />
+      <PackageReference Include="Silky.Agent.GeneralHost" Version="$(SilkyVersion)" />
     </ItemGroup>
 
     <ItemGroup>

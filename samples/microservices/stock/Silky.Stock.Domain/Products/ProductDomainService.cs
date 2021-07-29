@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Silky.Stock.Application.Contracts.Products.Dtos;
-using Silky.AutoMapper;
 using Silky.Core.Exceptions;
 using TanvirArjel.EFCore.GenericRepository;
 
@@ -31,7 +31,7 @@ namespace Silky.Stock.Domain.Products
         public async Task<Product> Update(UpdateProductInput input)
         {
             var product = await GetById(input.Id);
-            product = input.MapTo(product);
+            product = input.Adapt(product);
             await _repository.UpdateAsync(product);
             return product;
         }

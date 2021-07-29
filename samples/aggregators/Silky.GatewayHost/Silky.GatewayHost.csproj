@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Silky.WebHost" Version="$(SilkyVersion)" />
+      <PackageReference Include="Silky.Agent.WebHost" Version="$(SilkyVersion)" />
     </ItemGroup>
 
     <ItemGroup>

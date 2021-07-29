@@ -1,13 +1,13 @@
-﻿using Silky.Account.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Core;
+using Microsoft.Extensions.Hosting;
+using Silky.Account.EntityFrameworkCore;
 
 namespace Silky.AccountHost
 {
-    public class CapConfigure : IConfigureService
+    public class AccountHostModule : GeneralHostModule
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddCap(x =>
             {
@@ -20,7 +20,5 @@ namespace Silky.AccountHost
                 });
             });
         }
-
-        public int Order { get; } = 1;
     }
 }

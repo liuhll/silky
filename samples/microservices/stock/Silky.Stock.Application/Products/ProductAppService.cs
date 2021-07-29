@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
+using Mapster;
 using Silky.Stock.Application.Contracts.Products;
 using Silky.Stock.Application.Contracts.Products.Dtos;
 using Silky.Stock.Domain.Products;
-using Silky.AutoMapper;
 using Silky.Core.Exceptions;
 using Silky.Transaction.Tcc;
 
@@ -19,21 +19,21 @@ namespace Silky.Stock.Application.Products
 
         public async Task<GetProductOutput> Create(CreateProductInput input)
         {
-            var product = input.MapTo<Product>();
+            var product = input.Adapt<Product>();
             product = await _productDomainService.Create(product);
-            return product.MapTo<GetProductOutput>();
+            return product.Adapt<GetProductOutput>();
         }
 
         public async Task<GetProductOutput> Update(UpdateProductInput input)
         {
             var product = await _productDomainService.Update(input);
-            return product.MapTo<GetProductOutput>();
+            return product.Adapt<GetProductOutput>();
         }
 
         public async Task<GetProductOutput> Get(long id)
         {
             var product = await _productDomainService.GetById(id);
-            return product.MapTo<GetProductOutput>();
+            return product.Adapt<GetProductOutput>();
         }
 
         public Task Delete(long id)
@@ -53,14 +53,14 @@ namespace Silky.Stock.Application.Products
             product.LockStock += input.Quantity;
             product.Stock -= input.Quantity;
             product = await _productDomainService.Update(product);
-            return product.MapTo<GetProductOutput>();
+            return product.Adapt<GetProductOutput>();
           
         }
 
         public async Task<GetProductOutput> DeductStockConfirm(DeductStockInput input)
         {
             var product = await _productDomainService.DeductStockConfirm(input);
-            return product.MapTo<GetProductOutput>();
+            return product.Adapt<GetProductOutput>();
         }
 
         public Task DeductStockCancel(DeductStockInput input)

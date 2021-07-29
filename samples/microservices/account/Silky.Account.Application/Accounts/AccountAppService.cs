@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using DotNetCore.CAP;
+using Mapster;
 using Silky.Account.Application.Contracts.Accounts;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Account.Domain.Accounts;
-using Silky.AutoMapper;
 using Silky.Core.Exceptions;
 using Silky.Transaction.Tcc;
 
@@ -23,28 +23,28 @@ namespace Silky.Account.Application.Accounts
         public async Task<GetAccountOutput> Create(CreateAccountInput input)
         {
            
-            var account = input.MapTo<Domain.Accounts.Account>();
+            var account = input.Adapt<Domain.Accounts.Account>();
             account = await _accountDomainService.Create(account);
             await _capBus.PublishAsync("account.create.time", DateTime.Now);
-             return account.MapTo<GetAccountOutput>();
+             return account.Adapt<GetAccountOutput>();
         }
 
         public async Task<GetAccountOutput> GetAccountByName(string name)
         {
             var account = await _accountDomainService.GetAccountByName(name);
-            return account.MapTo<GetAccountOutput>();
+            return account.Adapt<GetAccountOutput>();
         }
 
         public async Task<GetAccountOutput> GetAccountById(long id)
         {
             var account = await _accountDomainService.GetAccountById(id);
-            return account.MapTo<GetAccountOutput>();
+            return account.Adapt<GetAccountOutput>();
         }
 
         public async Task<GetAccountOutput> Update(UpdateAccountInput input)
         {
             var account = await _accountDomainService.Update(input);
-            return account.MapTo<GetAccountOutput>();
+            return account.Adapt<GetAccountOutput>();
         }
 
         public Task Delete(long id)
