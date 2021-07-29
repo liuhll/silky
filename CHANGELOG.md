@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0]
+
 ### Added
 - Rename the project name and the names of some packages
 - Encapsulate EFCore for data access components
