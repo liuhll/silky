@@ -19,9 +19,6 @@ namespace Silky.Transaction.Tcc.Handlers
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
             IParticipant participant = null;
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-            Debug.Assert(serviceEntry != null, "ServiceEntry is not Empty");
             switch (context.Action)
             {
                 case ActionStage.Trying:
