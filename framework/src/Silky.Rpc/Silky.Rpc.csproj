@@ -14,7 +14,6 @@
 
     <ItemGroup>
         <PackageReference Include="Polly" Version="7.2.1" />
-        <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
     </ItemGroup>
 
 </Project>
