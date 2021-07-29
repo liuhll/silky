@@ -53,9 +53,9 @@ namespace Silky.Rpc.Runtime.Client
             {
                 item.Item2.MakeFusing(governanceOptions.FuseSleepDuration);
                 Logger.LogWarning(
-                    $"服务Id{item.Item1}--请求的地址{item.Item2}超过允许大最大并发量{governanceOptions.MaxConcurrent},当前并发量为{serviceInvokeInfo.ConcurrentRequests}");
+                    $"ServiceId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
                 throw new OverflowException(
-                    $"服务Id{item.Item1}--请求的地址{item.Item2}超过允许大最大并发量{governanceOptions.MaxConcurrent},当前并发量为{serviceInvokeInfo.ConcurrentRequests}");
+                    $"ServiceId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
             }
 
             serviceInvokeInfo.ConcurrentRequests++;
