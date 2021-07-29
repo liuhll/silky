@@ -1,4 +1,3 @@
-using System;
 using Silky.Core;
 using Silky.Http.Core.Middlewares;
 using Microsoft.AspNetCore.Builder;
@@ -17,7 +16,7 @@ namespace Silky.Http.Core
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
             services.AddOptions<SwaggerDocumentOptions>()
                 .Bind(configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
-            
+
             services.AddSwaggerDocuments(configuration);
         }
 
@@ -31,11 +30,12 @@ namespace Silky.Http.Core
             {
                 application.UseSwaggerDocuments(swaggerDocumentOptions);
             }
-            
+
             application.UseSilkyExceptionHandler();
             application.UseSilky();
+            application.UseHttpsRedirection();
         }
 
-        public int Order { get; } = Int32.MaxValue;
+        public int Order { get; } = 0;
     }
 }

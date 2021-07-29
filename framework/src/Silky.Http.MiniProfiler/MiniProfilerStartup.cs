@@ -27,7 +27,7 @@ namespace Silky.Http.MiniProfiler
             services.AddTransient<IMiniProfiler, DefaultMiniProfiler>();
         }
 
-        public int Order { get; } = 1;
+        public int Order { get; } = -1;
 
         public void Configure(IApplicationBuilder application)
         {
