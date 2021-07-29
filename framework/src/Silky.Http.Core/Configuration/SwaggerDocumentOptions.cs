@@ -75,6 +75,8 @@ namespace Silky.Http.Core.Configuration
         public bool EnableAuthorized { get; set; }
 
         public SpecificationOpenApiSecurityScheme[] SecurityDefinitions { get; set; }
+        
+        public string[] XmlComments { get; set; }
     }
 
     public enum OrganizationMode

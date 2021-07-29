@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Silky.Core;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.SwaggerDocument.Filters;
 using Silky.Rpc.Runtime.Server;
@@ -21,11 +22,14 @@ namespace Silky.Http.Core.SwaggerDocument
     {
         private static readonly IEnumerable<string> DocumentGroups;
         private static readonly IEnumerable<Assembly> ApplicationInterfaceAssemblies;
+        private static readonly IEnumerable<Assembly> ProjectAssemblies;
+        
 
         private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
 
         static SwaggerDocumentBuilder()
         {
+            ProjectAssemblies = EngineContext.Current.TypeFinder.GetAssemblies();
             ApplicationInterfaceAssemblies = ReadInterfaceAssemblies();
             DocumentGroups = ReadGroups(ApplicationInterfaceAssemblies);
         }
@@ -57,13 +61,30 @@ namespace Silky.Http.Core.SwaggerDocument
                 swaggerGenOptions.MultipleServiceKey();
             }
 
-            foreach (var applicationInterfaceAssembly in ApplicationInterfaceAssemblies)
+            LoadXmlComments(swaggerGenOptions, swaggerDocumentOptions);
+        }
+
+        private static void LoadXmlComments(SwaggerGenOptions swaggerGenOptions,
+            SwaggerDocumentOptions swaggerDocumentOptions)
+        {
+            foreach (var projectAssembly in ProjectAssemblies)
             {
-                var xmlFile = $"{applicationInterfaceAssembly.GetName().Name}.xml";
+                var xmlFile = $"{projectAssembly.GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 if (File.Exists(xmlPath))
                 {
                     swaggerGenOptions.IncludeXmlComments(xmlPath);
+                }
+            }
+
+            if (!swaggerDocumentOptions.XmlComments.IsNullOrEmpty())
+            {
+                foreach (var xmlPath in swaggerDocumentOptions.XmlComments)
+                {
+                    if (File.Exists(xmlPath))
+                    {
+                        swaggerGenOptions.IncludeXmlComments(xmlPath);
+                    }
                 }
             }
         }
@@ -87,7 +108,7 @@ namespace Silky.Http.Core.SwaggerDocument
 
             // 配置多语言和自动登录token
             AddDefaultInterceptor(swaggerUIOptions);
-            
+
             // 配置文档标题
             swaggerUIOptions.DocumentTitle = swaggerDocumentOptions.Title;
 
@@ -135,7 +156,8 @@ namespace Silky.Http.Core.SwaggerDocument
             SwaggerDocumentOptions swaggerDocumentOptions)
         {
             // 判断是否启用了授权
-            if (swaggerDocumentOptions.EnableAuthorized != true || swaggerDocumentOptions.SecurityDefinitions.Length == 0) return;
+            if (swaggerDocumentOptions.EnableAuthorized != true ||
+                swaggerDocumentOptions.SecurityDefinitions.Length == 0) return;
 
             var openApiSecurityRequirement = new OpenApiSecurityRequirement();
 
@@ -153,7 +175,7 @@ namespace Silky.Http.Core.SwaggerDocument
                 var securityRequirement = securityDefinition.Requirement;
 
                 // C# 9.0 模式匹配新语法
-                if (securityRequirement is { Scheme: { Reference: not null } })
+                if (securityRequirement is {Scheme: {Reference: not null}})
                 {
                     securityRequirement.Scheme.Reference.Id ??= securityDefinition.Id;
                     openApiSecurityRequirement.Add(securityRequirement.Scheme, securityRequirement.Accesses);
