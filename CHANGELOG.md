@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ## Changed
 - Optimize module loading and module support for service registration through ServiceCollection
 - Refactoring distributed transactions
+- Use Filter to implement input parameter verification
 
 ### Fixed
 - Fix bugs in distributed locks
