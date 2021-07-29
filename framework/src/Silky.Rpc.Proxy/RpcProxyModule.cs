@@ -8,7 +8,6 @@ using Silky.Core;
 using Silky.Core.Modularity;
 using Silky.Rpc.Proxy.Interceptors;
 using Silky.Rpc.Runtime.Server;
-using Silky.Validation;
 
 namespace Silky.Rpc.Proxy
 {
@@ -33,15 +32,11 @@ namespace Silky.Rpc.Proxy
             services.AddTransient(rpcProxyInterceptorType);
             var rpcInterceptorAdapterType =
                 typeof(SilkyAsyncDeterminationInterceptor<>).MakeGenericType(rpcProxyInterceptorType);
-            var validationInterceptorType = typeof(ValidationInterceptor);
-            var validationInterceptorAdapterType =
-                typeof(SilkyAsyncDeterminationInterceptor<>).MakeGenericType(validationInterceptorType);
             services.AddTransient(
                 type,
                 serviceProvider => ProxyGeneratorInstance
                     .CreateInterfaceProxyWithoutTarget(
                         type,
-                        (IInterceptor) serviceProvider.GetRequiredService(validationInterceptorAdapterType),
                         (IInterceptor) serviceProvider.GetRequiredService(rpcInterceptorAdapterType)
                     )
             );

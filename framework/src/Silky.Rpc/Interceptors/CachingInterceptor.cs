@@ -13,6 +13,7 @@ namespace Silky.Rpc.Interceptors
     public class CachingInterceptor : SilkyInterceptor, ITransientDependency
     {
         private readonly IDistributedInterceptCache _distributedCache;
+
         public CachingInterceptor(IDistributedInterceptCache distributedCache)
         {
             _distributedCache = distributedCache;
@@ -99,9 +100,6 @@ namespace Silky.Rpc.Interceptors
                 }
                 else
                 {
-                    MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
-                        MiniProfileConstant.Caching.State.NotSet,
-                        $"No cache interception is set");
                     await invocation.ProceedAsync();
                 }
             }
