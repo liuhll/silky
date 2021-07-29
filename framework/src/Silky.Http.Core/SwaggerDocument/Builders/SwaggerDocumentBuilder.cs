@@ -199,7 +199,7 @@ namespace Silky.Http.Core.SwaggerDocument
                 return true;
             }
 
-            return serviceEntry.ServiceDescriptor.Id.Contains(currentGroup);
+            return serviceEntry.GroupName.Contains(currentGroup);
         }
 
 
