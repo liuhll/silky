@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Silky.Core;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
@@ -9,15 +10,16 @@ namespace Silky.Transaction
 {
     public class SilkyTransactionHolder
     {
-        private static readonly SilkyTransactionHolder instance = new();
-
         private static readonly AsyncLocal<ITransaction> CURRENT = new();
-
         private SilkyTransactionHolder()
         {
         }
 
-        public static SilkyTransactionHolder Instance => instance;
+        public static SilkyTransactionHolder Instance =>
+            Singleton<SilkyTransactionHolder>.Instance ??
+            (Singleton<SilkyTransactionHolder>.Instance =
+                new SilkyTransactionHolder());
+
 
         public void Set(ITransaction transaction)
         {

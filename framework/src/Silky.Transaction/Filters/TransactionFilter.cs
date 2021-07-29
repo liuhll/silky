@@ -17,7 +17,7 @@ namespace Silky.Transaction.Filters
 
         public void OnActionExecuting(ServiceEntryExecutingContext serviceEntryExecutingContext)
         {
-            context = SilkyTransactionContextHolder.Get();
+            context = SilkyTransactionContextHolder.Instance.Get();
             if (context == null) return;
 
             if (!serviceEntryExecutingContext.ServiceEntry.IsTransactionServiceEntry()) return;

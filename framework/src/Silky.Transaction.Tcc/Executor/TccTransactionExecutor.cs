@@ -50,7 +50,6 @@ namespace Silky.Transaction.Tcc.Executor
                 TransactionRole = TransactionRole.Start,
                 TransType = TransactionType.Tcc
             };
-
             return (transaction, context);
         }
 
@@ -64,7 +63,6 @@ namespace Silky.Transaction.Tcc.Executor
             await SilkyTransactionHolder.Instance.CacheParticipant(participant);
             await TransRepositoryStore.CreateParticipant(participant);
             context.TransactionRole = TransactionRole.Participant;
-            //  SilkyTransactionContextHolder.Instance.Set(context);
             return (participant, context);
         }
 

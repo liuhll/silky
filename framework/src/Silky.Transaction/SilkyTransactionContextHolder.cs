@@ -1,32 +1,34 @@
 using System.Threading;
+using Silky.Core;
 using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction
 {
     public class SilkyTransactionContextHolder
     {
-        private static ISilkyContext silkyContext;
+        private static readonly AsyncLocal<TransactionContext> CURRENT_LOCAL = new();
 
-        static SilkyTransactionContextHolder()
+        private SilkyTransactionContextHolder()
         {
-            silkyContext = new ThreadLocalSilkyContext();
         }
 
+        public static SilkyTransactionContextHolder Instance => Singleton<SilkyTransactionContextHolder>.Instance ??
+                                                                (Singleton<SilkyTransactionContextHolder>.Instance =
+                                                                    new SilkyTransactionContextHolder());
 
-        public static void Set(TransactionContext context)
+        public void Set(TransactionContext context)
         {
-            silkyContext.Set(context);
+            CURRENT_LOCAL.Value = context;
         }
 
-        public static TransactionContext Get()
+        public TransactionContext Get()
         {
-            return silkyContext.Get();
+            return CURRENT_LOCAL.Value;
         }
 
-
-        public static void Remove()
+        public void Remove()
         {
-            silkyContext.Remove();
+            CURRENT_LOCAL.Value = null;
         }
     }
 }

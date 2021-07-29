@@ -19,7 +19,7 @@ namespace Silky.Transaction.Tcc.Handlers
                 var transaction = preTryInfo.Item1;
                 var transactionContext = preTryInfo.Item2;
                 SilkyTransactionHolder.Instance.Set(transaction);
-                SilkyTransactionContextHolder.Set(transactionContext);
+                SilkyTransactionContextHolder.Instance.Set(transactionContext);
                 try
                 {
                     await invocation.ProceedAsync();
@@ -38,7 +38,7 @@ namespace Silky.Transaction.Tcc.Handlers
             }
             finally
             {
-                SilkyTransactionContextHolder.Remove();
+                SilkyTransactionContextHolder.Instance.Remove();
                 executor.Remove();
             }
         }

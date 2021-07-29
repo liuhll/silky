@@ -26,7 +26,7 @@ namespace Silky.Transaction.Tcc.Handlers
                     {
                         var preTryParticipantInfo = await _executor.PreTryParticipant(context, invocation);
                         participant = preTryParticipantInfo.Item1;
-                        SilkyTransactionContextHolder.Set(preTryParticipantInfo.Item2);
+                        SilkyTransactionContextHolder.Instance.Set(preTryParticipantInfo.Item2);
                         await invocation.ProceedAsync();
                         if (participant != null)
                         {
@@ -45,7 +45,7 @@ namespace Silky.Transaction.Tcc.Handlers
                     }
                     finally
                     {
-                        SilkyTransactionContextHolder.Remove();
+                        SilkyTransactionContextHolder.Instance.Remove();
                     }
 
                     break;

@@ -70,7 +70,7 @@ namespace Silky.Transaction.Tcc
             }
             else
             {
-                RpcContext.GetContext().SetTransactionContext(SilkyTransactionContextHolder.Get());
+                RpcContext.GetContext().SetTransactionContext(SilkyTransactionContextHolder.Instance.Get());
                 var serviceExecutor = EngineContext.Current.Resolve<IServiceExecutor>();
                 await serviceExecutor.Execute(serviceEntry, participant.Parameters, participant.ServiceKey);
             }
@@ -88,7 +88,7 @@ namespace Silky.Transaction.Tcc
                 TransType = TransactionType.Tcc
             };
 
-            SilkyTransactionContextHolder.Set(context);
+            SilkyTransactionContextHolder.Instance.Set(context);
         }
     }
 }
