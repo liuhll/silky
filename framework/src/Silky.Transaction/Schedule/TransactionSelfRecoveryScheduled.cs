@@ -56,15 +56,33 @@ namespace Silky.Transaction.Schedule
             return Task.CompletedTask;
         }
 
-        private void PhyDeleted([CanBeNull] object state)
+        private async void PhyDeleted([CanBeNull] object state)
         {
+            if (!_transactionConfig.PhyDeleted)
+            {
+                try
+                {
+                    var seconds = _transactionConfig.StoreDays * 24 * 60 * 60;
+                    var removeTransCount =
+                        await TransRepositoryStore.RemoveTransactionByDate(AcquireDelayData(seconds));
+                    var removeParticipantCount =
+                        await TransRepositoryStore.RemoveParticipantByDate(AcquireDelayData(seconds));
+                    _logger.LogDebug(
+                        $"silky scheduled phyDeleted => transaction:{removeTransCount},participant:{removeParticipantCount}");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"silky scheduled phyDeleted log is error{e.Message}", e);
+                }
+            }
         }
 
         private async void CleanRecovery([CanBeNull] object state)
         {
             try
             {
-                var transactionList = await TransRepositoryStore.ListLimitByDelay(AcquireDelayData(_transactionConfig.CleanDelayTime),
+                var transactionList = await TransRepositoryStore.ListLimitByDelay(
+                    AcquireDelayData(_transactionConfig.CleanDelayTime),
                     _transactionConfig.Limit);
                 if (transactionList.IsNullOrEmpty())
                 {
@@ -79,7 +97,6 @@ namespace Silky.Transaction.Schedule
                         await TransRepositoryStore.RemoveTransaction(transaction);
                     }
                 }
-                   
             }
             catch (Exception e)
             {

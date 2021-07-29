@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Transactions;
 using Silky.Core;
-using Silky.Core.DynamicProxy;
 using Silky.Transaction.Configuration;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
@@ -128,6 +127,16 @@ namespace Silky.Transaction.Repository
         public static async Task<bool> ExistParticipantByTransId(string transId)
         {
             return await _transRepository.ExistParticipantByTransId(transId);
+        }
+
+        public static async Task<int> RemoveTransactionByDate(DateTime dateTime)
+        {
+            return await _transRepository.RemoveTransactionByDate(dateTime);
+        }
+
+        public static async Task<int> RemoveParticipantByDate(DateTime dateTime)
+        {
+            return await _transRepository.RemoveParticipantByDate(dateTime);
         }
     }
 }
