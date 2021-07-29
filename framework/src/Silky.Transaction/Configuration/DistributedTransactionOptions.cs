@@ -10,7 +10,7 @@ namespace Silky.Transaction.Configuration
 
         public TransactionType TransactionType { get; set; } = TransactionType.Tcc;
 
-        public int ScheduledRecoveryDelay { get; set; } = 60;
+        public int ScheduledRecoveryDelay { get; set; } = 30;
 
         public int ScheduledCleanDelay { get; set; } = 60;
 
@@ -18,7 +18,7 @@ namespace Silky.Transaction.Configuration
 
         public int ScheduledInitDelay { get; set; } = 10;
 
-        public int RecoverDelayTime { get; set; } = 6000000;
+        public int RecoverDelayTime { get; set; } = 60;
 
         public int CleanDelayTime { get; set; } = 60;
 

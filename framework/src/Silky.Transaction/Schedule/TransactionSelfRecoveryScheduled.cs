@@ -60,47 +60,78 @@ namespace Silky.Transaction.Schedule
         {
         }
 
-        private void CleanRecovery([CanBeNull] object state)
+        private async void CleanRecovery([CanBeNull] object state)
         {
+            try
+            {
+                var transactionList = await TransRepositoryStore.ListLimitByDelay(AcquireDelayData(_transactionConfig.CleanDelayTime),
+                    _transactionConfig.Limit);
+                if (transactionList.IsNullOrEmpty())
+                {
+                    return;
+                }
+
+                foreach (var transaction in transactionList)
+                {
+                    var exist = await TransRepositoryStore.ExistParticipantByTransId(transaction.TransId);
+                    if (!exist)
+                    {
+                        await TransRepositoryStore.RemoveTransaction(transaction);
+                    }
+                }
+                   
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"silky scheduled cleanRecovery log is error{e.Message}", e);
+            }
         }
 
         private async void SelfTccRecovery([CanBeNull] object state)
         {
-            var participantList = await TransRepositoryStore.ListParticipant(
-                AcquireDelayData(_transactionConfig.RecoverDelayTime), TransactionType.Tcc, _transactionConfig.Limit);
-            if (participantList.IsNullOrEmpty())
+            try
             {
-                return;
+                var participantList = await TransRepositoryStore.ListParticipant(
+                    AcquireDelayData(_transactionConfig.RecoverDelayTime), TransactionType.Tcc,
+                    _transactionConfig.Limit);
+                if (participantList.IsNullOrEmpty())
+                {
+                    return;
+                }
+
+                foreach (var participant in participantList)
+                {
+                    if (participant.ReTry > _transactionConfig.RetryMax)
+                    {
+                        _logger.LogError(
+                            $"This tcc transaction exceeds the maximum number of retries and no retries will occur：{_serializer.Serialize(participant)}");
+                        participant.Status = ActionStage.Death;
+                        await TransRepositoryStore.UpdateParticipantStatus(participant);
+                    }
+
+                    if (participant.Status == ActionStage.PreTry)
+                    {
+                        continue;
+                    }
+
+                    var successful = await TransRepositoryStore.LockParticipant(participant);
+                    if (successful)
+                    {
+                        var globalTransaction = await TransRepositoryStore.LoadTransaction(participant.TransId);
+                        if (globalTransaction != null)
+                        {
+                            await TccRecovery(globalTransaction.Status, participant);
+                        }
+                        else
+                        {
+                            await TccRecovery(participant.Status, participant);
+                        }
+                    }
+                }
             }
-
-            foreach (var participant in participantList)
+            catch (Exception e)
             {
-                if (participant.ReTry > _transactionConfig.RetryMax)
-                {
-                    _logger.LogError(
-                        $"This tcc transaction exceeds the maximum number of retries and no retries will occur：{_serializer.Serialize(participant)}");
-                    participant.Status = ActionStage.Death;
-                    await TransRepositoryStore.UpdateParticipantStatus(participant);
-                }
-
-                if (participant.Status == ActionStage.PreTry)
-                {
-                    continue;
-                }
-
-                var successful = await TransRepositoryStore.LockParticipant(participant);
-                if (successful)
-                {
-                    var globalTransaction = await TransRepositoryStore.LoadTransaction(participant.TransId);
-                    if (globalTransaction != null)
-                    {
-                        await TccRecovery(globalTransaction.Status, participant);
-                    }
-                    else
-                    {
-                        await TccRecovery(participant.Status, participant);
-                    }
-                }
+                _logger.LogError($"silky scheduled transaction log is error{e.Message}", e);
             }
         }
 

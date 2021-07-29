@@ -35,5 +35,6 @@ namespace Silky.Transaction.Abstraction
         Task<bool> LockParticipant(IParticipant participant);
         
         Task<IReadOnlyCollection<IParticipant>> ListParticipant(DateTime dateTime, TransactionType transactionType, int limit);
+        Task<IReadOnlyCollection<ITransaction>> ListLimitByDelay(DateTime dateTime, int limit);
     }
 }

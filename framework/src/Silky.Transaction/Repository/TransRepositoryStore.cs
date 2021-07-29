@@ -119,5 +119,15 @@ namespace Silky.Transaction.Repository
 
             return false;
         }
+
+        public static async Task<IReadOnlyCollection<ITransaction>> ListLimitByDelay(DateTime dateTime, int limit)
+        {
+            return await _transRepository.ListLimitByDelay(dateTime, limit);
+        }
+
+        public static async Task<bool> ExistParticipantByTransId(string transId)
+        {
+            return await _transRepository.ExistParticipantByTransId(transId);
+        }
     }
 }

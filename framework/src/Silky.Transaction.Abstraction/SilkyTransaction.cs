@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Newtonsoft.Json;
+using Silky.Core;
 using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Abstraction
@@ -16,6 +17,7 @@ namespace Silky.Transaction.Abstraction
             CreateTime = DateTime.Now;
             UpdateTime = DateTime.Now;
             Version = 1;
+            HostName = EngineContext.Current.HostName;
             m_participants = new List<IParticipant>();
         }
 
@@ -25,8 +27,9 @@ namespace Silky.Transaction.Abstraction
         }
 
         public string TransId { get; set; }
-
-
+        
+        public string HostName { get; set; }
+        
         public ActionStage Status { get; set; }
 
         public TransactionType TransType { get; set; }

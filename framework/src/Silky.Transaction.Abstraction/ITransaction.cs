@@ -9,6 +9,8 @@ namespace Silky.Transaction.Abstraction
     {
         string TransId { get; set; }
 
+        string HostName { get; set; }
+
         ActionStage Status { get; set; }
 
         TransactionType TransType { get; set; }

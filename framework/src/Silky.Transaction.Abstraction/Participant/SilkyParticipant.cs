@@ -13,7 +13,7 @@ namespace Silky.Transaction.Abstraction.Participant
             CreateTime = DateTime.Now;
             UpdateTime = DateTime.Now;
             Version = 1;
-            AppName = EngineContext.Current.HostName;
+            HostName = EngineContext.Current.HostName;
         }
 
         public string TransId { get; set; }
@@ -24,7 +24,7 @@ namespace Silky.Transaction.Abstraction.Participant
         public string ServiceKey { get; set; }
         public object[] Parameters { get; set; }
         
-        public string AppName { get; set; }
+        public string HostName { get; set; }
         public string ParticipantRefId { get; set; }
         public TransactionType TransType { get; set; }
         public ActionStage Status { get; set; }

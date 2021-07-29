@@ -11,7 +11,7 @@ namespace Silky.Transaction.Abstraction.Participant
         string ServiceId { get; set; }
         string ServiceKey { get; set; }
         object[] Parameters { get; set; }
-        string AppName { get; set; }
+        string HostName { get; set; }
         string ParticipantRefId { get; set; }
         TransactionType TransType { get; set; }
         ActionStage Status { get; set; }

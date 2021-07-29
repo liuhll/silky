@@ -58,9 +58,6 @@ namespace Silky.Transaction.Repository.Redis
         public async Task<ITransaction> FindByTransId(string transId)
         {
             var transaction = await _transactionDistributedCache.GetAsync(GetTransactionKey(transId));
-            var participantKeys = await GetParticipantKeys(transId);
-            var participants = await _participantDistributedCache.GetManyAsync(participantKeys);
-            transaction.RegisterParticipantList(participants.Select(p => p.Value));
             return transaction;
         }
 
@@ -132,7 +129,9 @@ namespace Silky.Transaction.Repository.Redis
         public async Task<bool> ExistParticipantByTransId(string transId)
         {
             var participantKeys = await GetParticipantKeys(transId);
-            return participantKeys.Count > 0;
+            var participants = (await _participantDistributedCache.GetManyAsync(participantKeys)).Select(p => p.Value);
+            
+            return participants.Count(p=> p.Status != ActionStage.Delete) > 0;
         }
 
         public async Task UpdateParticipantStatus(string transId, string participantId, ActionStage status)
@@ -203,6 +202,20 @@ namespace Silky.Transaction.Repository.Redis
                                            && p.Status != ActionStage.Delete
                                            && p.Status != ActionStage.Death
                 ).Take(limit)
+                .ToArray();
+        }
+
+        public async Task<IReadOnlyCollection<ITransaction>> ListLimitByDelay(DateTime dateTime, int limit)
+        {
+            var transactionKeyPattern = "*" + GetTransactionKey("*");
+            var transactionKeys = await _participantDistributedCache.SearchKeys(transactionKeyPattern);
+
+            var transactions = (await _transactionDistributedCache.GetManyAsync(transactionKeys)).Select(p => p.Value);
+            return transactions
+                .Where(p => p.UpdateTime > dateTime 
+                            && p.Status != ActionStage.Delete 
+                            && p.HostName == _hostName)
+                .Take(limit)
                 .ToArray();
         }
 
