@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Repository;
@@ -21,37 +22,51 @@ namespace Silky.Transaction.Tcc
 
         public static async Task Executor(this IParticipant participant, ActionStage stage,
             ISilkyMethodInvocation invocation = null)
+
         {
             SetContext(stage, participant);
             var serviceEntryLocator = EngineContext.Current.Resolve<IServiceEntryLocator>();
             var serviceEntry = serviceEntryLocator.GetServiceEntryById(participant.ServiceId);
 
-            async Task<object> LocalExecutor(IParticipant localParticipant,
+            async Task LocalExecutor(ISilkyMethodInvocation localInvocation, IParticipant localParticipant,
                 MethodType methodType)
+
             {
-                var localExecutor = EngineContext.Current.Resolve<ILocalExecutor>();
-                return await localExecutor.Execute(serviceEntry, localParticipant.Parameters,
-                    localParticipant.ServiceKey,
-                    methodType);
+                if (localInvocation != null)
+                {
+                    await localInvocation.ExcuteTccMethod(methodType, RpcContext.GetContext().GetTransactionContext());
+                }
+                else if (participant.Invocation != null)
+                {
+                    await participant.Invocation.ExcuteTccMethod(methodType,
+                        RpcContext.GetContext().GetTransactionContext());
+                }
+                else
+                {
+                    var excutorInfo = serviceEntry.GetTccExcutorInfo(participant.ServiceKey, methodType);
+                    if (excutorInfo.Item2)
+                    {
+                        await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, participant.Parameters);
+                    }
+                    else
+                    {
+                        excutorInfo.Item1.Execute(excutorInfo.Item3, participant.Parameters);
+                    }
+                }
             }
 
             if (serviceEntry.IsLocal)
             {
                 participant.Status = stage;
                 await TransRepositoryStore.UpdateParticipantStatus(participant);
-                object execResult = null;
+
                 if (stage == ActionStage.Confirming)
                 {
-                    execResult = await LocalExecutor(participant, MethodType.Confirm);
+                    await LocalExecutor(invocation, participant, MethodType.Confirm);
                 }
                 else
                 {
-                    execResult = await LocalExecutor(participant, MethodType.Cancel);
-                }
-
-                if (invocation != null)
-                {
-                    invocation.ReturnValue = execResult;
+                    await LocalExecutor(invocation, participant, MethodType.Cancel);
                 }
 
                 await TransRepositoryStore.RemoveParticipant(participant);

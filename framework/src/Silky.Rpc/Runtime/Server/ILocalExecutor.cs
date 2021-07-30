@@ -2,9 +2,7 @@
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface ILocalExecutor
+    public interface ILocalExecutor : IServiceExecutor
     {
-        Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null,
-            MethodType methodType = MethodType.Try);
     }
 }

@@ -118,7 +118,9 @@ namespace Silky.Rpc.Runtime.Server
             var templete = cachingInterceptProvider.KeyTemplete;
             if (templete.IsNullOrEmpty())
             {
-                throw new SilkyException("The KeyTemplete specified by the cache interception is not allowed to be empty", StatusCode.CachingInterceptError);
+                throw new SilkyException(
+                    "The KeyTemplete specified by the cache interception is not allowed to be empty",
+                    StatusCode.CachingInterceptError);
             }
 
             var cachingInterceptKey = string.Empty;
@@ -165,7 +167,9 @@ namespace Silky.Rpc.Runtime.Server
                 var session = NullSession.Instance;
                 if (!session.IsLogin())
                 {
-                    throw new SilkyException("If the cached data is specified to be related to the currently logged in user, then you must log in to the system to allow the use of cache interception", StatusCode.CachingInterceptError);
+                    throw new SilkyException(
+                        "If the cached data is specified to be related to the currently logged in user, then you must log in to the system to allow the use of cache interception",
+                        StatusCode.CachingInterceptError);
                 }
 
                 cachingInterceptKey = cachingInterceptKey + $":userId:{session.UserId}";
@@ -190,6 +194,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 return cacheNameAttribute.Name;
             }
+
             return returnType.FullName.RemovePostFix("CacheItem");
         }
 
@@ -232,7 +237,8 @@ namespace Silky.Rpc.Runtime.Server
 
             return hashKey;
         }
-         public static ITccTransactionProvider GetTccTransactionProvider([NotNull] this ServiceEntry serviceEntry,
+
+        public static ITccTransactionProvider GetTccTransactionProvider([NotNull] this ServiceEntry serviceEntry,
             string serviceKey)
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
@@ -250,16 +256,24 @@ namespace Silky.Rpc.Runtime.Server
             return implementationMethod.GetCustomAttributes().OfType<ITccTransactionProvider>().FirstOrDefault();
         }
 
-        public static (ObjectMethodExecutor, bool) GetTccExcutorInfo([NotNull] this ServiceEntry serviceEntry,object instance, MethodType methodType)
+        public static (ObjectMethodExecutor, bool, object) GetTccExcutorInfo([NotNull] this ServiceEntry serviceEntry,
+            string serviceKey, MethodType methodType)
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             Debug.Assert(serviceEntry.IsLocal);
+            var instance =
+                EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
+            if (instance == null)
+            {
+                return (null, false, null);
+            }
+
             var methods = instance.GetType().GetTypeInfo().GetMethods();
             var implementationMethod = methods.Single(p => p.AchievingEquality(serviceEntry.MethodInfo));
             if (methodType == MethodType.Try)
             {
                 return (implementationMethod.CreateExecutor(instance.GetType()),
-                    implementationMethod.IsAsyncMethodInfo());
+                    implementationMethod.IsAsyncMethodInfo(), instance);
             }
 
             var tccTransactionProvider =
@@ -280,23 +294,26 @@ namespace Silky.Rpc.Runtime.Server
 
             if (execMethod == null)
             {
-                return (null, false);
+                return (null, false, instance);
             }
 
-            return (execMethod.CreateExecutor(instance.GetType()), implementationMethod.IsAsyncMethodInfo());
+            return (execMethod.CreateExecutor(instance.GetType()), implementationMethod.IsAsyncMethodInfo(), instance);
         }
 
-        public static bool IsDefinitionTccMethod([NotNull] this ServiceEntry serviceEntry,string serviceKey, MethodType methodType)
+        public static bool IsDefinitionTccMethod([NotNull] this ServiceEntry serviceEntry, string serviceKey,
+            MethodType methodType)
         {
             if (!serviceEntry.IsLocal)
             {
                 return false;
             }
+
             var instance = EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
             if (instance == null)
             {
                 return false;
             }
+
             var methods = instance.GetType().GetTypeInfo().GetMethods();
             var implementationMethod = methods.Single(p => p.AchievingEquality(serviceEntry.MethodInfo));
             var tccTransactionProvider =
