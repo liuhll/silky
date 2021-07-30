@@ -20,14 +20,18 @@ namespace Silky.Rpc.Messages
 
         public static object GetResult(this RemoteResultMessage remoteResultMessage)
         {
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteResultMessage.ServiceId);
-
-            if (remoteResultMessage.Result.GetType() == serviceEntry.ReturnType)
+            var result = remoteResultMessage.Result;
+            if (result == null)
             {
-                return remoteResultMessage.Result;
+                return result;
             }
-    
-            return _typeConvertibleService.Convert(remoteResultMessage.Result,serviceEntry.ReturnType);
+
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteResultMessage.ServiceId);
+            result = remoteResultMessage.Result.GetType() == serviceEntry.ReturnType
+                ? remoteResultMessage.Result
+                : _typeConvertibleService.Convert(remoteResultMessage.Result, serviceEntry.ReturnType);
+
+            return result;
         }
     }
 }
