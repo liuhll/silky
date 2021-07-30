@@ -61,17 +61,17 @@ namespace Silky.Account.Application.Accounts
             {
                 throw new BusinessException("账号余额不足");
             }
-            return await _accountDomainService.DeductBalance(input, MethodType.Try);
+            return await _accountDomainService.DeductBalance(input, TccMethodType.Try);
         }
 
         public Task DeductBalanceConfirm(DeductBalanceInput input)
         {
-            return _accountDomainService.DeductBalance(input, MethodType.Confirm);
+            return _accountDomainService.DeductBalance(input, TccMethodType.Confirm);
         }
 
         public Task DeductBalanceCancel(DeductBalanceInput input)
         {
-            return _accountDomainService.DeductBalance(input, MethodType.Cancel);
+            return _accountDomainService.DeductBalance(input, TccMethodType.Cancel);
         }
         
     }

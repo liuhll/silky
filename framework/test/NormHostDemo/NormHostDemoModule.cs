@@ -11,7 +11,7 @@ using Silky.SkyApm.Agent;
 
 namespace NormHostDemo
 {
-    [DependsOn(typeof(MessagePackModule), typeof(SilkySkyApmAgentModule), typeof(MapsterModule))]
+    [DependsOn(/*typeof(MessagePackModule),*/ typeof(SilkySkyApmAgentModule), typeof(MapsterModule))]
     public class NormHostDemoModule : GeneralHostModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)

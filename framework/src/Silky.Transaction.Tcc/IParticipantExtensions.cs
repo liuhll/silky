@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
@@ -42,7 +45,18 @@ namespace Silky.Transaction.Tcc
                     var (excutor, instance) = serviceEntry.GetTccExcutorInfo(localParticipant.ServiceKey, methodType);
                     if (excutor != null && instance != null)
                     {
-                        await excutor?.ExecuteTccMethodAsync(instance, localParticipant.Parameters);
+                        var actualParameters = new List<object>();
+                        var i = 0;
+                        if (!serviceEntry.ParameterDescriptors.IsNullOrEmpty())
+                        {
+                            foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+                            {
+                                actualParameters.Add(
+                                    parameterDescriptor.GetActualParameter(localParticipant.Parameters[i]));
+                            }
+                        }
+
+                        await excutor?.ExecuteTccMethodAsync(instance, actualParameters.ToArray());
                     }
                 }
             }

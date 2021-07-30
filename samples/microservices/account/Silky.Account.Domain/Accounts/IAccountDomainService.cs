@@ -13,6 +13,6 @@ namespace Silky.Account.Domain.Accounts
         Task<Account> GetAccountById(long id);
         Task<Account> Update(UpdateAccountInput input);
         Task Delete(long id);
-        Task<long?> DeductBalance(DeductBalanceInput input, MethodType tccMethodType);
+        Task<long?> DeductBalance(DeductBalanceInput input, TccMethodType tccMethodType);
     }
 }

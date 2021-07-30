@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 
 namespace NormHostDemo.AppService
@@ -8,6 +9,13 @@ namespace NormHostDemo.AppService
     [ServiceKey("v2", 1)]
     public class TestV2AppService : ITestAppService
     {
+        private readonly ISerializer _serializer;
+
+        public TestV2AppService(ISerializer serializer)
+        {
+            _serializer = serializer;
+        }
+
         public async Task<TestOut> Create(TestInput input)
         {
             return new()
@@ -22,9 +30,9 @@ namespace NormHostDemo.AppService
             throw new System.NotImplementedException();
         }
 
-        public async Task<string> Delete(string name)
+        public async Task<string> Delete(TestInput input)
         {
-            return name + "v2";
+            return _serializer.Serialize(input);
         }
 
         public Task<string> Search(TestInput query)

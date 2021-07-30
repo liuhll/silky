@@ -6,6 +6,9 @@ namespace Silky.Rpc.Runtime.Server.ContextPool
 {
     public interface IDbContextPool
     {
+
+        void EnsureDbContextAddToPools();
+        
         /// <summary>
         /// 保存数据库上下文池中所有已更改的数据库上下文
         /// </summary>

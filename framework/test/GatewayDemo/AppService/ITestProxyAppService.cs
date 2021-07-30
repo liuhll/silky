@@ -12,7 +12,7 @@ namespace GatewayDemo.AppService
 
         Task<TestOut> GetProxy(string name);
 
-        Task<string> DeleteProxy(string name);
+        Task<string> DeleteProxy(string name, string address);
 
         [HttpGet]
         Task<string> MiniProfilerText();

@@ -6,8 +6,8 @@ using Mapster;
 using NormHostDemo.Tests;
 using Silky.Caching;
 using Silky.Core.Exceptions;
+using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Repositories;
-using Silky.EntityFrameworkCore.UnitOfWork;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.UnitOfWork;
 using Silky.Transaction.Tcc;
@@ -20,14 +20,17 @@ namespace NormHostDemo.AppService
         private readonly IAnotherAppService _anotherAppService;
         private readonly IDistributedCache<TestOut> _distributedCache;
         private readonly IRepository<Test> _testRepository;
+        private readonly ISerializer _serializer;
 
         public TestAppService(IAnotherAppService anotherAppService,
             IDistributedCache<TestOut> distributedCache,
-            IRepository<Test> testRepository)
+            IRepository<Test> testRepository,
+            ISerializer serializer)
         {
             _anotherAppService = anotherAppService;
             _distributedCache = distributedCache;
             _testRepository = testRepository;
+            _serializer = serializer;
         }
 
         [UnitOfWork]
@@ -50,22 +53,22 @@ namespace NormHostDemo.AppService
         }
 
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
-        public async Task<string> Delete(string name)
+        public async Task<string> Delete(TestInput input)
         {
-            await _anotherAppService.DeleteOne(name);
-            await _anotherAppService.DeleteTwo(name);
+            await _anotherAppService.DeleteOne(input.Name);
+            await _anotherAppService.DeleteTwo(input.Address);
             //throw new BusinessException("test exception");
-            return name + " v1";
+            return "trying" + _serializer.Serialize(input);
         }
 
-        public async Task<string> DeleteConfirm(string name)
+        public async Task<string> DeleteConfirm(TestInput input)
         {
-            return name + " DeleteConfirm v1";
+            return "DeleteConfirm" + _serializer.Serialize(input);
         }
 
-        public async Task<string> DeleteCancel(string name)
+        public async Task<string> DeleteCancel(TestInput input)
         {
-            return name + "DeleteConcel v1";
+            return "DeleteCancel" + _serializer.Serialize(input);
         }
 
         public Task<string> Search(TestInput query)

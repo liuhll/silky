@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Test;
+using ITestApplication.Test.Dtos;
 using Silky.Core.Exceptions;
 using Silky.Transaction.Tcc;
 
@@ -15,19 +16,19 @@ namespace GatewayDemo.AppService
         }
 
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
-        public async Task<string> Delete(string name)
+        public async Task<string> Delete(TestInput input)
         {
-            await _testAppService.Delete(name);
+            await _testAppService.Delete(input);
             //throw new BusinessException("test error");
             return "Tyring";
         }
 
-        public async Task<string> DeleteConfirm(string name)
+        public async Task<string> DeleteConfirm(TestInput input)
         {
             return "DeleteConfirm";
         }
 
-        public async Task<string> DeleteCancel(string name)
+        public async Task<string> DeleteCancel(TestInput input)
         {
             return "DeleteCancel";
         }

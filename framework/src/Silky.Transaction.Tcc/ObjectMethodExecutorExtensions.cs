@@ -22,13 +22,13 @@ namespace Silky.Transaction.Tcc
                 .FirstOrDefault();
             var isManualSaveChanges =
                 executor.MethodInfo.GetCustomAttributes().OfType<ManualCommitAttribute>().Any();
+            dbContextPool?.EnsureDbContextAddToPools();
+            if (unitOfWorkAttribute != null)
+            {
+                dbContextPool?.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
+            }
             try
             {
-                if (unitOfWorkAttribute != null)
-                {
-                    dbContextPool?.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
-                }
-
                 if (executor.IsMethodAsync)
                 {
                     execResult = await executor.ExecuteAsync(target, parameters);

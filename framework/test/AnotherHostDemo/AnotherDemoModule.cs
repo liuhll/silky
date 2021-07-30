@@ -9,7 +9,7 @@ using Silky.Transaction.Repository.Redis;
 
 namespace AnotherHostDemo
 {
-    [DependsOn(typeof(MessagePackModule),
+    [DependsOn(/*typeof(MessagePackModule),*/
         typeof(SilkySkyApmAgentModule))]
     public class AnotherDemoModule : WebSocketHostModule
     {

@@ -40,9 +40,9 @@ namespace GatewayDemo.AppService
             return await _testAppService.Get(name);
         }
 
-        public async Task<string> DeleteProxy(string name)
+        public async Task<string> DeleteProxy(string name,string address)
         {
-            return await _testAppService.Delete(name);
+            return await _testAppService.Delete(new TestInput(){ Name = name, Address = address});
         }
 
         public Task<string> UpdatePart(TestInput input)

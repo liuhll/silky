@@ -6,7 +6,6 @@ using Silky.Caching;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.EntityFrameworkCore.Repositories;
-using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Tcc;
 
@@ -101,14 +100,14 @@ namespace Silky.Account.Domain.Accounts
             await _accountRepository.DeleteAsync(account);
         }
 
-        public async Task<long?> DeductBalance(DeductBalanceInput input, MethodType tccMethodType)
+        public async Task<long?> DeductBalance(DeductBalanceInput input, TccMethodType tccMethodType)
         {
             var account = await GetAccountById(input.AccountId);
             await using var trans = _accountRepository.Database.BeginTransaction();
             BalanceRecord balanceRecord = null;
             switch (tccMethodType)
             {
-                case MethodType.Try:
+                case TccMethodType.Try:
                     account.Balance -= input.OrderBalance;
                     account.LockBalance += input.OrderBalance;
                     balanceRecord = new BalanceRecord()
@@ -120,7 +119,7 @@ namespace Silky.Account.Domain.Accounts
                     await _balanceRecordRepository.InsertNowAsync(balanceRecord);
                     RpcContext.GetContext().SetAttachment("balanceRecordId", balanceRecord.Id);
                     break;
-                case MethodType.Confirm:
+                case TccMethodType.Confirm:
                     account.LockBalance -= input.OrderBalance;
                     var balanceRecordId1 = RpcContext.GetContext().GetAttachment("orderBalanceId")?.To<long>();
                     if (balanceRecordId1.HasValue)
@@ -131,7 +130,7 @@ namespace Silky.Account.Domain.Accounts
                     }
 
                     break;
-                case MethodType.Cancel:
+                case TccMethodType.Cancel:
                     account.Balance += input.OrderBalance;
                     account.LockBalance -= input.OrderBalance;
                     var balanceRecordId2 = RpcContext.GetContext().GetAttachment("orderBalanceId")?.To<long>();

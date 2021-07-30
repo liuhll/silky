@@ -15,11 +15,6 @@ namespace Silky.EntityFrameworkCore.ContextPool
     public class EfCoreDbContextPool : IEfCoreDbContextPool
     {
         /// <summary>
-        ///  MiniProfiler 分类名
-        /// </summary>
-        private const string MiniProfilerCategory = "Transaction";
-
-        /// <summary>
         /// 线程安全的数据库上下文集合
         /// </summary>
         private readonly ConcurrentDictionary<Guid, DbContext> dbContexts;
@@ -97,6 +92,20 @@ namespace Silky.EntityFrameworkCore.ContextPool
         {
             AddToPool(dbContext);
             return Task.CompletedTask;
+        }
+
+        public void EnsureDbContextAddToPools()
+        {
+            if (dbContexts.Any()) return;
+            var locators = Penetrates.DbContextWithLocatorCached;
+            foreach (var locator in locators)
+            {
+                var dbContext = Db.GetDbContext(locator.Key);
+                if (!dbContexts.Values.Contains(dbContext))
+                {
+                    AddToPool(dbContext);
+                }
+            }
         }
 
         /// <summary>
@@ -204,6 +213,7 @@ namespace Silky.EntityFrameworkCore.ContextPool
                     {
                         AddToPool(newDbContext);
                     }
+
                     goto EnsureTransaction;
                 }
             }

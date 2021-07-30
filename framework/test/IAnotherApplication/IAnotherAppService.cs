@@ -17,7 +17,7 @@ namespace IAnotherApplication
         [Transaction]
         [HttpDelete("two")]
         [Governance(ProhibitExtranet = true)]
-        Task<string> DeleteTwo(string name);
+        Task<string> DeleteTwo(string address);
     
         Task<string> Create(string name);
     }

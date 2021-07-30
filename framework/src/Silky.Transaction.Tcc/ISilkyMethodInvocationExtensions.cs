@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Silky.Core;
+using Castle.Core.Internal;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Tcc
@@ -19,7 +21,16 @@ namespace Silky.Transaction.Tcc
             if (serviceEntry.IsLocal)
             {
                 var (excutor, instance) = serviceEntry.GetTccExcutorInfo(serviceKey, tccMethodType);
-                invocation.ReturnValue = await excutor.ExecuteTccMethodAsync(instance, parameters);
+                var actualParameters = new List<object>();
+                var i = 0;
+                if (!serviceEntry.ParameterDescriptors.IsNullOrEmpty())
+                {
+                    foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+                    {
+                        actualParameters.Add(parameterDescriptor.GetActualParameter(parameters[i]));
+                    }
+                }
+                invocation.ReturnValue = await excutor.ExecuteTccMethodAsync(instance, actualParameters.ToArray());
             }
             else
             {
