@@ -11,14 +11,12 @@ using Silky.Http.SkyApm.Diagnostics;
 using Silky.Rpc.SkyApm.Diagnostics.Collections;
 using Silky.Rpc.SkyApm.Diagnostics.Http.Extensions;
 using Silky.Rpc.Transport;
-using Silky.Rpc.Utils;
 using SkyApm;
 using SkyApm.Common;
 using SkyApm.Config;
 using SkyApm.Diagnostics;
 using SkyApm.Tracing;
 using SkyApm.Tracing.Segments;
-using StackExchange.Profiling.Internal;
 
 namespace Silky.Rpc.SkyApm.Diagnostics
 {

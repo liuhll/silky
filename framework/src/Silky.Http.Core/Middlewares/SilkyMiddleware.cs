@@ -5,10 +5,8 @@ using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Silky.Http.Core.Handlers;
-using Silky.Rpc;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Transport;
-using StackExchange.Profiling;
 using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace Silky.Http.Core.Middlewares
@@ -27,7 +25,7 @@ namespace Silky.Http.Core.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            using var timing = MiniProfiler.Current.StepIf(MiniProfileConstant.RemoteInvoker.Name, 0.1M);
+         
             var path = context.Request.Path;
             var method = context.Request.Method.ToEnum<HttpMethod>();
             var serviceEntry = _serviceEntryLocator.GetServiceEntryByApi(path, method);

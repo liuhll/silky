@@ -36,6 +36,15 @@ namespace Silky.Http.MiniProfiler
             {
                 application.UseMiniProfiler();
             }
+            
+             application.UseExceptionHandler(handler =>
+                {
+                    var gatewayOption = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
+                    if (gatewayOption.InjectMiniProfiler)
+                    {
+                        handler.UseMiniProfiler();
+                    }
+                });
         }
     }
 }

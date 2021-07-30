@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.Exceptions;
@@ -9,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc;
 using Silky.Rpc.MiniProfiler;
 
 namespace Silky.Http.Core.Middlewares

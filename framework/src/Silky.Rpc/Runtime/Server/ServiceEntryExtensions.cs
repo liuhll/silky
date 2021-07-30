@@ -8,6 +8,7 @@ using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.MethodExecutor;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Runtime.Session;
@@ -230,6 +231,105 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             return hashKey;
+        }
+         public static ITccTransactionProvider GetTccTransactionProvider([NotNull] this ServiceEntry serviceEntry,
+            string serviceKey)
+        {
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            if (!serviceEntry.IsLocal)
+            {
+                return null;
+            }
+
+            var instance =
+                EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
+            var methods = instance.GetType().GetTypeInfo().GetMethods();
+
+            var implementationMethod = methods.Single(p => p.AchievingEquality(serviceEntry.MethodInfo));
+
+            return implementationMethod.GetCustomAttributes().OfType<ITccTransactionProvider>().FirstOrDefault();
+        }
+
+        public static (ObjectMethodExecutor, bool) GetTccExcutorInfo([NotNull] this ServiceEntry serviceEntry,object instance, MethodType methodType)
+        {
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            Debug.Assert(serviceEntry.IsLocal);
+            var methods = instance.GetType().GetTypeInfo().GetMethods();
+            var implementationMethod = methods.Single(p => p.AchievingEquality(serviceEntry.MethodInfo));
+            if (methodType == MethodType.Try)
+            {
+                return (implementationMethod.CreateExecutor(instance.GetType()),
+                    implementationMethod.IsAsyncMethodInfo());
+            }
+
+            var tccTransactionProvider =
+                implementationMethod.GetCustomAttributes().OfType<ITccTransactionProvider>().First();
+            MethodInfo execMethod;
+            if (methodType == MethodType.Confirm)
+            {
+                execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.ConfirmMethod);
+            }
+            else if (methodType == MethodType.Cancel)
+            {
+                execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.CancelMethod);
+            }
+            else
+            {
+                execMethod = serviceEntry.MethodInfo;
+            }
+
+            if (execMethod == null)
+            {
+                return (null, false);
+            }
+
+            return (execMethod.CreateExecutor(instance.GetType()), implementationMethod.IsAsyncMethodInfo());
+        }
+
+        public static bool IsDefinitionTccMethod([NotNull] this ServiceEntry serviceEntry,string serviceKey, MethodType methodType)
+        {
+            if (!serviceEntry.IsLocal)
+            {
+                return false;
+            }
+            var instance = EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
+            if (instance == null)
+            {
+                return false;
+            }
+            var methods = instance.GetType().GetTypeInfo().GetMethods();
+            var implementationMethod = methods.Single(p => p.AchievingEquality(serviceEntry.MethodInfo));
+            var tccTransactionProvider =
+                implementationMethod.GetCustomAttributes().OfType<ITccTransactionProvider>().First();
+            MethodInfo execMethod = null;
+            if (methodType == MethodType.Confirm)
+            {
+                execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.ConfirmMethod);
+            }
+            else if (methodType == MethodType.Cancel)
+            {
+                execMethod = GetCompareMethod(methods, implementationMethod, tccTransactionProvider.CancelMethod);
+            }
+
+            return execMethod != null;
+        }
+
+
+        private static MethodInfo GetCompareMethod(MethodInfo[] methodInfos, MethodInfo tryMethod,
+            string compareMethodName)
+        {
+            var compareMethods = methodInfos.Where(p => p.Name == compareMethodName);
+            MethodInfo compareMethod = null;
+            foreach (var methodInfo in compareMethods)
+            {
+                if (methodInfo.ParameterEquality(tryMethod))
+                {
+                    compareMethod = methodInfo;
+                    break;
+                }
+            }
+
+            return compareMethod;
         }
     }
 }

@@ -26,44 +26,32 @@ namespace Silky.Transaction.Tcc
             var serviceEntryLocator = EngineContext.Current.Resolve<IServiceEntryLocator>();
             var serviceEntry = serviceEntryLocator.GetServiceEntryById(participant.ServiceId);
 
-            async Task LocalExecutor(ISilkyMethodInvocation localInvocation, IParticipant localParticipant,
-                TccMethodType methodType)
+            async Task<object> LocalExecutor(IParticipant localParticipant,
+                MethodType methodType)
             {
-                if (localInvocation != null)
-                {
-                    await localInvocation.ExcuteTccMethod(methodType, RpcContext.GetContext().GetTransactionContext());
-                }
-                else if (localParticipant.Invocation != null)
-                {
-                    Debug.Assert(participant.Invocation != null, "participant.Invocation is not null");
-                    await localParticipant.Invocation.ExcuteTccMethod(methodType,
-                        RpcContext.GetContext().GetTransactionContext());
-                }
-                else
-                {
-                    var excutorInfo = serviceEntry.GetTccExcutorInfo(participant.ServiceKey, methodType);
-                    if (excutorInfo.Item2)
-                    {
-                        await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, participant.Parameters);
-                    }
-                    else
-                    {
-                        excutorInfo.Item1.Execute(excutorInfo.Item3, participant.Parameters);
-                    }
-                }
+                var localExecutor = EngineContext.Current.Resolve<ILocalExecutor>();
+                return await localExecutor.Execute(serviceEntry, localParticipant.Parameters,
+                    localParticipant.ServiceKey,
+                    methodType);
             }
 
             if (serviceEntry.IsLocal)
             {
                 participant.Status = stage;
                 await TransRepositoryStore.UpdateParticipantStatus(participant);
+                object execResult = null;
                 if (stage == ActionStage.Confirming)
                 {
-                    await LocalExecutor(invocation, participant, TccMethodType.Confirm);
+                    execResult = await LocalExecutor(participant, MethodType.Confirm);
                 }
                 else
                 {
-                    await LocalExecutor(invocation, participant, TccMethodType.Cancel);
+                    execResult = await LocalExecutor(participant, MethodType.Cancel);
+                }
+
+                if (invocation != null)
+                {
+                    invocation.ReturnValue = execResult;
                 }
 
                 await TransRepositoryStore.RemoveParticipant(participant);

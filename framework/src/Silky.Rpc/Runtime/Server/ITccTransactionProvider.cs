@@ -1,4 +1,4 @@
-﻿namespace Silky.Transaction.Tcc
+﻿namespace Silky.Rpc.Runtime.Server
 {
     public interface ITccTransactionProvider
     { 

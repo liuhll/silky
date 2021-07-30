@@ -39,7 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // 注册数据库上下文
             return services.AddDbPool<TDbContext, MasterDbContextLocator>(providerName, optionBuilder, connectionString, poolSize, interceptors);
         }
-
+        
         /// <summary>
         /// 添加默认数据库上下文
         /// </summary>
@@ -85,6 +85,55 @@ namespace Microsoft.Extensions.DependencyInjection
                 var _options = ConfigureDatabase<TDbContext>(providerName, connStr, options);
                 optionBuilder?.Invoke(_options);
             }, interceptors), poolSize: poolSize);
+
+            return services;
+        }
+        
+                /// <summary>
+        ///  添加默认数据库上下文
+        /// </summary>
+        /// <typeparam name="TDbContext">数据库上下文</typeparam>
+        /// <param name="services">服务</param>
+        /// <param name="providerName">数据库提供器</param>
+        /// <param name="optionBuilder"></param>
+        /// <param name="connectionString">连接字符串</param>
+        /// <param name="interceptors">拦截器</param>
+        /// <returns>服务集合</returns>
+        public static IServiceCollection AddDb<TDbContext>(this IServiceCollection services, string providerName = default, Action<DbContextOptionsBuilder> optionBuilder = null, string connectionString = default, params IInterceptor[] interceptors)
+            where TDbContext : DbContext
+        {
+            // 避免重复注册默认数据库上下文
+            if (Penetrates.DbContextWithLocatorCached.ContainsKey(typeof(MasterDbContextLocator))) throw new InvalidOperationException("Prevent duplicate registration of default DbContext.");
+
+            // 注册数据库上下文
+            return services.AddDb<TDbContext, MasterDbContextLocator>(providerName, optionBuilder, connectionString, interceptors);
+        }
+        
+        /// <summary>
+        /// 添加数据库上下文
+        /// </summary>
+        /// <typeparam name="TDbContext">数据库上下文</typeparam>
+        /// <typeparam name="TDbContextLocator">数据库上下文定位器</typeparam>
+        /// <param name="services">服务</param>
+        /// <param name="providerName">数据库提供器</param>
+        /// <param name="optionBuilder"></param>
+        /// <param name="connectionString">连接字符串</param>
+        /// <param name="interceptors">拦截器</param>
+        /// <returns>服务集合</returns>
+        public static IServiceCollection AddDb<TDbContext, TDbContextLocator>(this IServiceCollection services, string providerName = default, Action<DbContextOptionsBuilder> optionBuilder = null, string connectionString = default, params IInterceptor[] interceptors)
+            where TDbContext : DbContext
+            where TDbContextLocator : class, IDbContextLocator
+        {
+            // 注册数据库上下文
+            services.RegisterDbContext<TDbContext, TDbContextLocator>();
+
+            // 配置数据库上下文
+            var connStr = DbProvider.GetConnectionString<TDbContext>(connectionString);
+            services.AddDbContext<TDbContext>(Penetrates.ConfigureDbContext(options =>
+            {
+                var _options = ConfigureDatabase<TDbContext>(providerName, connStr, options);
+                optionBuilder?.Invoke(_options);
+            }, interceptors));
 
             return services;
         }

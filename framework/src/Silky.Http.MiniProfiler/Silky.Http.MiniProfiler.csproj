@@ -5,9 +5,6 @@
         <Description>Use Miniprofiler to implement performance monitoring of Http requests</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
-    </ItemGroup>
-    <ItemGroup>
       <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
       <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>
