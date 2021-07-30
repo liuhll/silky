@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.EntityFrameworkCore.ContextPools;
+using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
 using Silky.EntityFrameworkCore.MultiTenants.Entities;
@@ -189,7 +189,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <summary>
         /// 数据库上下文池
         /// </summary>
-        private readonly IDbContextPool _dbContextPool;
+        private readonly IEfCoreDbContextPool _dbContextPool;
 
         /// <summary>
         /// 构造函数
@@ -217,7 +217,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             EntityType = Entities.EntityType;
 
             // 初始化数据上下文池
-            _dbContextPool = serviceProvider.GetService<IDbContextPool>();
+            _dbContextPool = serviceProvider.GetService<IEfCoreDbContextPool>();
 
             // 非泛型仓储
             _repository = serviceProvider.GetService<IRepository>();

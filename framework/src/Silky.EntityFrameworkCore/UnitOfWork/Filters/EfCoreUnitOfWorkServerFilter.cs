@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Silky.EntityFrameworkCore.ContextPools;
+using Silky.Core;
+using Silky.Core.Extensions;
+using Silky.EntityFrameworkCore.ContextPool;
 using Silky.Rpc.Runtime.Filters;
+using Silky.Rpc.Runtime.Server.ContextPool;
 using Silky.Rpc.Runtime.Server.UnitOfWork;
 
 namespace Silky.EntityFrameworkCore.UnitOfWork
@@ -12,9 +15,9 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
         private UnitOfWorkAttribute _unitOfWorkAttribute;
         private bool _isManualSaveChanges;
 
-        public EfCoreUnitOfWorkServerFilter(IDbContextPool dbContextPool)
+        public EfCoreUnitOfWorkServerFilter()
         {
-            _dbContextPool = dbContextPool;
+            _dbContextPool = EngineContext.Current.Resolve<IEfCoreDbContextPool>();
         }
 
         public int Order { get; } = Int32.MaxValue;
@@ -23,12 +26,21 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
         {
             _unitOfWorkAttribute =
                 context.ServiceEntry.CustomAttributes.OfType<UnitOfWorkAttribute>().FirstOrDefault();
+            if (_unitOfWorkAttribute == null)
+            {
+                var instanceMethod = context.InstanceType?.GetCompareMethod(context.ServiceEntry.MethodInfo,
+                    context.ServiceEntry.MethodInfo.Name);
+
+                _unitOfWorkAttribute = instanceMethod?.GetCustomAttributes(true).OfType<UnitOfWorkAttribute>()
+                    .FirstOrDefault();
+            }
+
             _isManualSaveChanges = context.ServiceEntry.CustomAttributes.OfType<ManualCommitAttribute>().Any();
 
             if (_unitOfWorkAttribute != null)
             {
                 // 开启事务
-                _dbContextPool.BeginTransaction(_unitOfWorkAttribute.EnsureTransaction);
+                _dbContextPool?.BeginTransaction(_unitOfWorkAttribute.EnsureTransaction);
             }
         }
 
@@ -38,16 +50,16 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
             {
                 if (_unitOfWorkAttribute == null)
                 {
-                    if (context.Exception == null && !_isManualSaveChanges) _dbContextPool.SavePoolNow();
+                    if (context.Exception == null && !_isManualSaveChanges) _dbContextPool?.SavePoolNow();
                 }
                 else
                 {
-                    _dbContextPool.CommitTransaction(_isManualSaveChanges, context.Exception);
+                    _dbContextPool?.CommitTransaction(_isManualSaveChanges, context.Exception);
                 }
             }
             finally
             {
-                _dbContextPool.CloseAll();
+                _dbContextPool?.CloseAll();
             }
         }
     }

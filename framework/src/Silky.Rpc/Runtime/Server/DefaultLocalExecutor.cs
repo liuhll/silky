@@ -17,7 +17,8 @@ namespace Silky.Rpc.Runtime.Server
             {
                 ServiceEntry = serviceEntry,
                 Parameters = parameters,
-                ServiceKey = serviceKey
+                ServiceKey = serviceKey,
+                InstanceType = instance.GetType()
             };
 
             foreach (var filter in filters)

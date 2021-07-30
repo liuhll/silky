@@ -1,6 +1,6 @@
-namespace Silky.Rpc.Runtime.Server
+namespace Silky.Transaction.Tcc
 {
-    public enum MethodType
+    public enum TccMethodType
     {
         Try,
         

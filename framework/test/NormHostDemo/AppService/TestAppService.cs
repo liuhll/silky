@@ -9,6 +9,7 @@ using Silky.Core.Exceptions;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.EntityFrameworkCore.UnitOfWork;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Runtime.Server.UnitOfWork;
 using Silky.Transaction.Tcc;
 
 namespace NormHostDemo.AppService
@@ -29,6 +30,7 @@ namespace NormHostDemo.AppService
             _testRepository = testRepository;
         }
 
+        [UnitOfWork]
         public async Task<TestOut> Create(TestInput input)
         {
             var test = input.Adapt<Test>();

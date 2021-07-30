@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Silky.Core;
 using Silky.EntityFrameworkCore.Extensions.DatabaseProvider;
 
-namespace Silky.EntityFrameworkCore.ContextPools
+namespace Silky.EntityFrameworkCore.ContextPool
 {
-    public class DbContextPool : IDbContextPool
+    public class EfCoreDbContextPool : IEfCoreDbContextPool
     {
         /// <summary>
         ///  MiniProfiler 分类名
@@ -29,12 +28,12 @@ namespace Silky.EntityFrameworkCore.ContextPools
         /// 登记错误的数据库上下文
         /// </summary>
         private readonly ConcurrentDictionary<Guid, DbContext> failedDbContexts;
-        
+
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="serviceProvider"></param>
-        public DbContextPool()
+        public EfCoreDbContextPool()
         {
             dbContexts = new ConcurrentDictionary<Guid, DbContext>();
             failedDbContexts = new ConcurrentDictionary<Guid, DbContext>();
@@ -84,7 +83,6 @@ namespace Silky.EntityFrameworkCore.ContextPools
 
                             // 回滚事务
                             currentTransaction.Rollback();
-
                         }
                     }
                 };
@@ -202,6 +200,10 @@ namespace Silky.EntityFrameworkCore.ContextPools
 
                     // 创建一个新的上下文
                     var newDbContext = Db.GetDbContext(defaultDbContextLocator.Key);
+                    if (!dbContexts.Any())
+                    {
+                        AddToPool(newDbContext);
+                    }
                     goto EnsureTransaction;
                 }
             }
@@ -234,7 +236,7 @@ namespace Silky.EntityFrameworkCore.ContextPools
                 {
                     // 回滚事务
                     if (DbContextTransaction?.GetDbTransaction()?.Connection != null) DbContextTransaction?.Rollback();
-                    
+
                     throw;
                 }
                 finally

@@ -22,7 +22,7 @@ namespace ITestApplication.Test
         /// <param name="input"></param>
         /// <returns></returns>
         //[GetCachingIntercept("name:{0}")]
-        [UnitOfWork]
+        //[UnitOfWork]
         Task<TestOut> Create(TestInput input);
 
         [Obsolete]

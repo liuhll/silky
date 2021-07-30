@@ -1,40 +1,11 @@
-﻿using System;
-using System.Collections.Concurrent;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Silky.EntityFrameworkCore.ContextPools
+namespace Silky.Rpc.Runtime.Server.ContextPool
 {
-   /// <summary>
-    /// 数据库上下文池
-    /// </summary>
     public interface IDbContextPool
     {
-        /// <summary>
-        /// 数据库上下文事务
-        /// </summary>
-        IDbContextTransaction DbContextTransaction { get; }
-
-        /// <summary>
-        /// 获取所有数据库上下文
-        /// </summary>
-        /// <returns></returns>
-        ConcurrentDictionary<Guid, DbContext> GetDbContexts();
-
-        /// <summary>
-        /// 保存数据库上下文
-        /// </summary>
-        /// <param name="dbContext"></param>
-        void AddToPool(DbContext dbContext);
-
-        /// <summary>
-        /// 保存数据库上下文（异步）
-        /// </summary>
-        /// <param name="dbContext"></param>
-        Task AddToPoolAsync(DbContext dbContext);
-
         /// <summary>
         /// 保存数据库上下文池中所有已更改的数据库上下文
         /// </summary>

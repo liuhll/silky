@@ -134,13 +134,13 @@ namespace Silky.Transaction.Tcc.Executor
                 return null;
             }
 
-            var isDefinitionConfirmMethod = serviceEntry.IsDefinitionTccMethod(serviceKey, MethodType.Confirm);
+            var isDefinitionConfirmMethod = serviceEntry.IsDefinitionTccMethod(serviceKey, TccMethodType.Confirm);
             if (!isDefinitionConfirmMethod)
             {
                 return null;
             }
 
-            var isDefinitionCancelMethod = serviceEntry.IsDefinitionTccMethod(serviceKey, MethodType.Cancel);
+            var isDefinitionCancelMethod = serviceEntry.IsDefinitionTccMethod(serviceKey, TccMethodType.Cancel);
             if (!isDefinitionCancelMethod)
             {
                 return null;

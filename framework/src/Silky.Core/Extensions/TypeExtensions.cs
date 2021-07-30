@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Silky.Core.Convertible;
 
 namespace Silky.Core.Extensions
@@ -26,13 +27,31 @@ namespace Silky.Core.Extensions
 
             return ObjectDataType.Complex;
         }
-        
+
         public static bool IsSample(this Type type)
         {
             var objectType = type.GetObjectDataType();
             return objectType != ObjectDataType.Complex;
         }
-        
+
+        public static MethodInfo GetCompareMethod(this Type type, MethodInfo method, string compareMethodName)
+
+        {
+            var methodInfos = type.GetMethods();
+            var compareMethods = methodInfos.Where(p => p.Name == compareMethodName);
+            MethodInfo compareMethod = null;
+            foreach (var methodInfo in compareMethods)
+            {
+                if (methodInfo.ParameterEquality(method))
+                {
+                    compareMethod = methodInfo;
+                    break;
+                }
+            }
+
+            return compareMethod;
+        }
+
         /// <summary>
         /// 判断是否是富基元类型
         /// </summary>
@@ -49,11 +68,12 @@ namespace Silky.Core.Extensions
             // 基元类型或值类型或字符串类型
             if (type.IsPrimitive || type.IsValueType || type == typeof(string)) return true;
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) return type.GenericTypeArguments[0].IsRichPrimitive();
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                return type.GenericTypeArguments[0].IsRichPrimitive();
 
             return false;
         }
-        
+
         /// <summary>
         /// 判断是否是元组类型
         /// </summary>
@@ -63,8 +83,8 @@ namespace Silky.Core.Extensions
         {
             return type.ToString().StartsWith(typeof(ValueTuple).FullName);
         }
-        
-        
+
+
         /// <summary>
         /// 判断类型是否实现某个泛型
         /// </summary>
@@ -88,9 +108,10 @@ namespace Silky.Core.Extensions
             return false;
 
             // 判断逻辑
-            bool IsTheRawGenericType(Type type) => generic == (type.IsGenericType ? type.GetGenericTypeDefinition() : type);
+            bool IsTheRawGenericType(Type type) =>
+                generic == (type.IsGenericType ? type.GetGenericTypeDefinition() : type);
         }
-        
+
         /// <summary>
         /// 获取所有祖先类型
         /// </summary>

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
-using Silky.EntityFrameworkCore.ContextPools;
+using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Locators;
 
 namespace Silky.EntityFrameworkCore.Repositories
@@ -138,7 +138,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         {
           
             // 获取数据库上下文
-            var dbContextPool = EngineContext.Current.Resolve<IDbContextPool>();
+            var dbContextPool = EngineContext.Current.Resolve<IEfCoreDbContextPool>();
             if (dbContextPool == null) return;
 
             // 追加上下文

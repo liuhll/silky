@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 
 namespace Silky.Rpc.Runtime.Server.UnitOfWork
 {

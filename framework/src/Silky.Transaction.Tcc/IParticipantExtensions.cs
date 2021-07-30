@@ -1,11 +1,8 @@
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Runtime;
-using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Repository;
@@ -29,28 +26,23 @@ namespace Silky.Transaction.Tcc
             var serviceEntry = serviceEntryLocator.GetServiceEntryById(participant.ServiceId);
 
             async Task LocalExecutor(ISilkyMethodInvocation localInvocation, IParticipant localParticipant,
-                MethodType methodType)
-
+                TccMethodType methodType)
             {
                 if (localInvocation != null)
                 {
                     await localInvocation.ExcuteTccMethod(methodType, RpcContext.GetContext().GetTransactionContext());
                 }
-                else if (participant.Invocation != null)
+                else if (localParticipant.Invocation != null)
                 {
-                    await participant.Invocation.ExcuteTccMethod(methodType,
+                    await localParticipant.Invocation.ExcuteTccMethod(methodType,
                         RpcContext.GetContext().GetTransactionContext());
                 }
                 else
                 {
-                    var excutorInfo = serviceEntry.GetTccExcutorInfo(participant.ServiceKey, methodType);
-                    if (excutorInfo.Item2)
+                    var (excutor, instance) = serviceEntry.GetTccExcutorInfo(localParticipant.ServiceKey, methodType);
+                    if (excutor != null && instance != null)
                     {
-                        await excutorInfo.Item1.ExecuteAsync(excutorInfo.Item3, participant.Parameters);
-                    }
-                    else
-                    {
-                        excutorInfo.Item1.Execute(excutorInfo.Item3, participant.Parameters);
+                        await excutor?.ExecuteTccMethodAsync(instance, localParticipant.Parameters);
                     }
                 }
             }
@@ -62,11 +54,11 @@ namespace Silky.Transaction.Tcc
 
                 if (stage == ActionStage.Confirming)
                 {
-                    await LocalExecutor(invocation, participant, MethodType.Confirm);
+                    await LocalExecutor(invocation, participant, TccMethodType.Confirm);
                 }
                 else
                 {
-                    await LocalExecutor(invocation, participant, MethodType.Cancel);
+                    await LocalExecutor(invocation, participant, TccMethodType.Cancel);
                 }
 
                 await TransRepositoryStore.RemoveParticipant(participant);

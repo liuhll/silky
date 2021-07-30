@@ -14,8 +14,6 @@ namespace ITestApplication.Test.Dtos
         //[Required(ErrorMessage = "地址不允许为空")]
         [CacheKey(1)]
         public string Address { get; set; }
-
-        //[Phone(ErrorMessage = "手机号码格式不正确")] 
-        public string Phone { get; set; }
+        
     }
 }
