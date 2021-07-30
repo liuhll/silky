@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Silky.Order.EntityFrameworkCore.Migrations
+namespace Silky.Order.Database.Migrations.Migrations
 {
-    public partial class InitCreate : Migration
+    public partial class v100 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

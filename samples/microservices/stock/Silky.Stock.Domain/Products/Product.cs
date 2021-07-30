@@ -1,11 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Silky.EntityFrameworkCore.Entities;
 using Silky.Rpc.Runtime.Session;
 
 namespace Silky.Stock.Domain.Products
 {
-    public class Product
+    public class Product : IEntity
     {
         private readonly ISession _session;
         public Product()

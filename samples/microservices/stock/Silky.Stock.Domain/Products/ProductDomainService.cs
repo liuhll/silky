@@ -1,30 +1,29 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
 using Silky.Stock.Application.Contracts.Products.Dtos;
 using Silky.Core.Exceptions;
-using TanvirArjel.EFCore.GenericRepository;
+using Silky.EntityFrameworkCore.Repositories;
 
 namespace Silky.Stock.Domain.Products
 {
     public class ProductDomainService : IProductDomainService
     {
-        private readonly IRepository _repository;
+        private readonly IRepository<Product> _productRepository;
 
-        public ProductDomainService(IRepository repository)
+        public ProductDomainService(IRepository<Product> productRepository)
         {
-            _repository = repository;
+            _productRepository = productRepository;
         }
 
         public async Task<Product> Create(Product product)
         {
-            var existProduct = _repository.GetQueryable<Product>().FirstOrDefault(p => p.Name == product.Name);
+            var existProduct = _productRepository.FirstOrDefault(p => p.Name == product.Name);
             if (existProduct != null)
             {
                 throw new BusinessException($"系统中已经存在{product.Name}的产品");
             }
 
-            await _repository.InsertAsync(product);
+            await _productRepository.InsertNowAsync(product);
             return product;
         }
 
@@ -32,19 +31,19 @@ namespace Silky.Stock.Domain.Products
         {
             var product = await GetById(input.Id);
             product = input.Adapt(product);
-            await _repository.UpdateAsync(product);
+            await _productRepository.UpdateAsync(product);
             return product;
         }
 
         public async Task<Product> Update(Product product)
         {
-            await _repository.UpdateAsync(product);
+            await _productRepository.UpdateAsync(product);
             return product;
         }
 
         public Task<Product> GetById(long id)
         {
-            var product = _repository.GetQueryable<Product>().FirstOrDefault(p => p.Id == id);
+            var product = _productRepository.FirstOrDefault(p => p.Id == id);
             if (product == null)
             {
                 throw new BusinessException($"不存在Id为{id}的产品信息");
@@ -56,14 +55,14 @@ namespace Silky.Stock.Domain.Products
         public async Task Delete(long id)
         {
             var account = await GetById(id);
-            await _repository.DeleteAsync(account);
+            await _productRepository.DeleteAsync(account);
         }
 
         public async Task<Product> DeductStockConfirm(DeductStockInput input)
         {
             var product = await GetById(input.ProductId);
             product.LockStock -= input.Quantity;
-            await _repository.UpdateAsync(product);
+            await _productRepository.UpdateAsync(product);
             return product;
         }
 
@@ -72,7 +71,7 @@ namespace Silky.Stock.Domain.Products
             var product = await GetById(input.ProductId);
             product.LockStock -= input.Quantity;
             product.Stock += input.Quantity;
-            await _repository.UpdateAsync(product);
+            await _productRepository.UpdateAsync(product);
         }
     }
 }

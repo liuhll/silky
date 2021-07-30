@@ -9,6 +9,14 @@
       <PackageReference Include="Silky.Agent.GeneralHost" Version="$(SilkyVersion)" />
         <PackageReference Include="DotNetCore.CAP.MySql" Version="5.1.0" />
         <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="5.1.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
     <ItemGroup>
         <None Update="appsettings.ContainerDev.yml">
@@ -25,6 +33,7 @@
         </None>
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\..\stock\Silky.Stock.Database.Migrations\Silky.Stock.Database.Migrations.csproj" />
       <ProjectReference Include="..\Silky.Stock.Application\Silky.Stock.Application.csproj" />
       <ProjectReference Include="..\Silky.Stock.EntityFrameworkCore\Silky.Stock.EntityFrameworkCore.csproj" />
     </ItemGroup>

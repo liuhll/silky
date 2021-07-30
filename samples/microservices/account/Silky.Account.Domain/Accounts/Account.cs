@@ -1,11 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Silky.EntityFrameworkCore.Entities;
 using Silky.Rpc.Runtime.Session;
 
 namespace Silky.Account.Domain.Accounts
 {
-    public class Account
+    public class Account : IEntity
     {
         private readonly ISession _session;
         public Account()

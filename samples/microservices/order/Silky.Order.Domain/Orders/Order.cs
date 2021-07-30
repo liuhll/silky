@@ -1,12 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Silky.EntityFrameworkCore.Entities;
 using Silky.Order.Domain.Shared.Orders;
 using Silky.Rpc.Runtime.Session;
 
 namespace Silky.Order.Domain.Orders
 {
-    public class Order
+    public class Order : IEntity
     {
         private readonly ISession _session;
         public Order()

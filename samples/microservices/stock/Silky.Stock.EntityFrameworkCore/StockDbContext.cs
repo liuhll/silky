@@ -1,9 +1,12 @@
 using Silky.Stock.Domain.Products;
 using Microsoft.EntityFrameworkCore;
+using Silky.EntityFrameworkCore.Contexts;
+using Silky.EntityFrameworkCore.Contexts.Attributes;
 
 namespace Silky.Stock.EntityFrameworkCore
 {
-    public class StockDbContext: DbContext
+    [AppDbContext("default",DbProvider.MySql)]
+    public class StockDbContext: SilkyDbContext<StockDbContext>
     {
         public StockDbContext(DbContextOptions<StockDbContext> options)
             : base(options)

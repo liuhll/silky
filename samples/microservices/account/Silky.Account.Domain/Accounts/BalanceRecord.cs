@@ -2,11 +2,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Silky.Account.Domain.Shared.Accounts;
+using Silky.EntityFrameworkCore.Entities;
 using Silky.Rpc.Runtime.Session;
 
 namespace Silky.Account.Domain.Accounts
 {
-    public class BalanceRecord
+    public class BalanceRecord : IEntity
     {
         private readonly ISession _session;
         public BalanceRecord()

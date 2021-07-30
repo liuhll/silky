@@ -6,6 +6,7 @@ using Silky.Account.Application.Contracts.Accounts;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Account.Domain.Accounts;
 using Silky.Core.Exceptions;
+using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Application.Accounts
@@ -60,17 +61,17 @@ namespace Silky.Account.Application.Accounts
             {
                 throw new BusinessException("账号余额不足");
             }
-            return await _accountDomainService.DeductBalance(input, TccMethodType.Try);
+            return await _accountDomainService.DeductBalance(input, MethodType.Try);
         }
 
         public Task DeductBalanceConfirm(DeductBalanceInput input)
         {
-            return _accountDomainService.DeductBalance(input, TccMethodType.Confirm);
+            return _accountDomainService.DeductBalance(input, MethodType.Confirm);
         }
 
         public Task DeductBalanceCancel(DeductBalanceInput input)
         {
-            return _accountDomainService.DeductBalance(input, TccMethodType.Cancel);
+            return _accountDomainService.DeductBalance(input, MethodType.Cancel);
         }
         
     }

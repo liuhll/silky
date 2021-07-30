@@ -5,31 +5,30 @@ using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Order.Application.Contracts.Orders.Dtos;
 using Silky.Stock.Application.Contracts.Products;
 using Silky.Stock.Application.Contracts.Products.Dtos;
-using Microsoft.EntityFrameworkCore;
 using Silky.Core.Exceptions;
+using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Transport;
-using TanvirArjel.EFCore.GenericRepository;
 
 namespace Silky.Order.Domain.Orders
 {
     public class OrderDomainService : IOrderDomainService
     {
-        private readonly IRepository _repository;
+        private readonly IRepository<Order> _orderRepository;
         private readonly IProductAppService _productAppService;
         private readonly IAccountAppService _accountAppService;
 
-        public OrderDomainService(IRepository repository,
+        public OrderDomainService(IRepository<Order> orderRepository,
             IProductAppService productAppService, 
             IAccountAppService accountAppService)
         {
-            _repository = repository;
+            _orderRepository = orderRepository;
             _productAppService = productAppService;
             _accountAppService = accountAppService;
         }
 
         public async Task<Order> Create(Order order)
         {
-            await _repository.InsertAsync(order);
+            await _orderRepository.InsertNowAsync(order);
             return order;
         }
 
@@ -37,12 +36,12 @@ namespace Silky.Order.Domain.Orders
         public async Task Delete(long id)
         {
             var order = await GetById(id);
-            await _repository.DeleteAsync(order);
+            await _orderRepository.DeleteAsync(order);
         }
 
         public async Task<Order> GetById(long id)
         {
-            var order = await _repository.GetQueryable<Order>().FirstOrDefaultAsync(p=> p.Id == id);
+            var order = await _orderRepository.FindAsync(id);
             if (order == null)
             {
                 throw new BusinessException($"$不存在ID为{id}的订单");
@@ -53,7 +52,7 @@ namespace Silky.Order.Domain.Orders
 
         public async Task<Order> Update(Order order)
         {
-            await _repository.UpdateAsync(order);
+            await _orderRepository.UpdateAsync(order);
             return order;
         }
 

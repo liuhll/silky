@@ -1,6 +1,11 @@
+using System.Threading.Tasks;
+using DotNetCore.CAP;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Silky.Core;
+using Silky.Core.Modularity;
 using Silky.Order.Application.Subscribe;
 using Silky.Order.EntityFrameworkCore;
 
@@ -11,16 +16,25 @@ namespace Silky.OrderHost
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<ISubscriberService,SubscriberService>();
+            var rabbitMqOptions = configuration.GetSection("cap:rabbitmq").Get<RabbitMQOptions>();
             services.AddCap(x =>
             {
                 x.UseEntityFramework<OrderDbContext>();
-                x.UseRabbitMQ(z =>
-                {
-                    z.HostName = "127.0.0.1";
-                    z.UserName = "rabbitmq";
-                    z.Password = "rabbitmq";
-                });
+                x.UseRabbitMQ(z => { z = rabbitMqOptions; });
             });
+            services.AddDatabaseAccessor(
+                options => { options.AddDbPool<OrderDbContext>(); },
+                "Silky.Order.Database.Migrations");
+        }
+        
+        public async override Task Initialize(ApplicationContext applicationContext)
+        {
+            if (EngineContext.Current.HostEnvironment.IsDevelopment() || EngineContext.Current.HostEnvironment.EnvironmentName == "ContainerDev")
+            {
+                using var scope = applicationContext.ServiceProvider.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+                context.Database.Migrate();
+            }
         }
     }
 }

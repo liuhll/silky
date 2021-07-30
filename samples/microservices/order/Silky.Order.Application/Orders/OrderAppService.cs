@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Mapster;
 using Silky.Order.Application.Contracts.Orders;
@@ -31,6 +32,7 @@ namespace Silky.Order.Application.Orders
             var orderId = RpcContext.GetContext().GetAttachment("orderId");
             var order = await _orderDomainService.GetById(orderId.To<long>());
             order.Status = OrderStatus.Payed;
+            order.UpdateTime = DateTime.Now;
             order = await _orderDomainService.Update(order);
             return order.Adapt<GetOrderOutput>();
         }

@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\sample.common.props" />
+    <Import Project="..\..\..\sample.common.props"/>
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj" />
-      <ProjectReference Include="..\Silky.Account.Domain.Shared\Silky.Account.Domain.Shared.csproj" />
+        <ProjectReference Include="..\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj"/>
+        <ProjectReference Include="..\Silky.Account.Domain.Shared\Silky.Account.Domain.Shared.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotNetCore.CAP" Version="5.1.0" />
-      <PackageReference Include="Silky.ObjectMapper.Mapster" Version="$(SilkyVersion)" />
-      <PackageReference Include="Silky.Caching" Version="$(SilkyVersion)" />
-      <PackageReference Include="TanvirArjel.EFCore.GenericRepository" Version="5.3.0" />
+        <PackageReference Include="DotNetCore.CAP" Version="5.1.0"/>
+        <PackageReference Include="Silky.ObjectMapper.Mapster" Version="$(SilkyVersion)"/>
+        <PackageReference Include="Silky.Caching" Version="$(SilkyVersion)"/>
+        <PackageReference Include="Silky.EntityFrameworkCore" Version="$(SilkyVersion)"/>
     </ItemGroup>
 
 </Project>

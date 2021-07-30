@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Silky.Stock.EntityFrameworkCore\Silky.Stock.EntityFrameworkCore.csproj" />
+    </ItemGroup>
+
+</Project>

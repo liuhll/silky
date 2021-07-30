@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Silky.Stock.EntityFrameworkCore.Migrations
+namespace Silky.Stock.Database.Migrations.Migrations
 {
-    public partial class InitCreate : Migration
+    public partial class v100 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,6 +17,7 @@ namespace Silky.Stock.EntityFrameworkCore.Migrations
                     Name = table.Column<string>(type: "varchar(100) CHARACTER SET utf8mb4", maxLength: 100, nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
+                    LockStock = table.Column<int>(type: "int", nullable: false),
                     CreateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreateBy = table.Column<long>(type: "bigint", nullable: true),
                     UpdateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),

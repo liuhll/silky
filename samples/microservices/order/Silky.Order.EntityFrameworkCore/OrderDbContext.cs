@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Silky.EntityFrameworkCore.Contexts;
+using Silky.EntityFrameworkCore.Contexts.Attributes;
 
 namespace Silky.Order.EntityFrameworkCore
 {
-    public class OrderDbContext : DbContext
+    [AppDbContext("default",DbProvider.MySql)]
+    public class OrderDbContext : SilkyDbContext<OrderDbContext>
     {
         public OrderDbContext(DbContextOptions<OrderDbContext> options) : base(options)
         {

@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Silky.EntityFrameworkCore.Contexts;
+using Silky.EntityFrameworkCore.Contexts.Attributes;
 
 namespace Silky.Account.EntityFrameworkCore
 {
-    public class UserDbContext : DbContext
+    [AppDbContext("default",DbProvider.MySql)]
+    public class UserDbContext : SilkyDbContext<UserDbContext>
     {
         public UserDbContext(DbContextOptions<UserDbContext> options)
             : base(options)

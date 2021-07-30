@@ -53,6 +53,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.GatewayHost", "aggreg
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose\samples\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.Database.Migrations", "microservices\order\Silky.Order.Database.Migrations\Silky.Order.Database.Migrations.csproj", "{0CA3C157-731A-4B50-843E-6A9D4803B938}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.Database.Migrations", "microservices\account\Silky.Account.Database.Migrations\Silky.Account.Database.Migrations.csproj", "{48F6D0CE-95D4-459A-A787-AA5B64454589}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.Database.Migrations", "microservices\stock\Silky.Stock.Database.Migrations\Silky.Stock.Database.Migrations.csproj", "{7021B542-624B-4552-BFAF-587048D55118}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +145,18 @@ Global
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CA3C157-731A-4B50-843E-6A9D4803B938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CA3C157-731A-4B50-843E-6A9D4803B938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CA3C157-731A-4B50-843E-6A9D4803B938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CA3C157-731A-4B50-843E-6A9D4803B938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48F6D0CE-95D4-459A-A787-AA5B64454589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48F6D0CE-95D4-459A-A787-AA5B64454589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48F6D0CE-95D4-459A-A787-AA5B64454589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48F6D0CE-95D4-459A-A787-AA5B64454589}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7021B542-624B-4552-BFAF-587048D55118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7021B542-624B-4552-BFAF-587048D55118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7021B542-624B-4552-BFAF-587048D55118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7021B542-624B-4552-BFAF-587048D55118}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -166,6 +184,9 @@ Global
 		{FD6D7557-56C8-44EC-AEF0-C063EC8265A4} = {90D32BC6-C128-4CA0-B7F8-B55B100314EE}
 		{AF881D66-3E6F-4218-8DFA-031CED443F94} = {90D32BC6-C128-4CA0-B7F8-B55B100314EE}
 		{77AB29AC-D903-4F04-9267-E4D8D69E5832} = {A576E48B-1002-478F-889B-5A23F432FA3B}
+		{0CA3C157-731A-4B50-843E-6A9D4803B938} = {3F654FD6-30FF-43C8-AB04-C4F4B2E4EECF}
+		{48F6D0CE-95D4-459A-A787-AA5B64454589} = {AC0D5F65-4838-4502-BA54-2DAFF445E861}
+		{7021B542-624B-4552-BFAF-587048D55118} = {90D32BC6-C128-4CA0-B7F8-B55B100314EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {148592DC-79FF-4B93-9DF9-21C2E7C97DA6}
