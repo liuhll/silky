@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- Remove unnecessary dependencies of the Silky.Rpc package
+
+### Fixed
+- Fix the bug that the Confirm phase and the Cancel phase will not automatically submit the local transaction and save the data in the TCC transaction
+
 ## [1.1.0]
 
 ### Added
