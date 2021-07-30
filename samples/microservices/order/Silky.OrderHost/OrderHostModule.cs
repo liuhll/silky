@@ -8,9 +8,11 @@ using Silky.Core;
 using Silky.Core.Modularity;
 using Silky.Order.Application.Subscribe;
 using Silky.Order.EntityFrameworkCore;
+using Silky.SkyApm.Agent;
 
 namespace Silky.OrderHost
 {
+    [DependsOn(typeof(SilkySkyApmAgentModule))]
     public class OrderHostModule : GeneralHostModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)

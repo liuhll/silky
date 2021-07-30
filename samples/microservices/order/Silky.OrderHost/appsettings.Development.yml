@@ -18,3 +18,6 @@ cap:
     hostName: 127.0.0.1
     userName: rabbitmq
     password: rabbitmq
+distributedTransaction:
+  scheduledRecoveryDelay: 60
+  scheduledInitDelay: 10

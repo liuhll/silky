@@ -24,7 +24,8 @@ namespace Silky.Order.Application.Orders
         [TccTransaction(ConfirmMethod = "OrderCreateConfirm", CancelMethod = "OrderCreateCancel")]
         public async Task<GetOrderOutput> Create(CreateOrderInput input)
         {
-            return await _orderDomainService.Create(input);
+            var orderOutput = await _orderDomainService.Create(input);
+            return orderOutput;
         }
 
         public async Task<GetOrderOutput> OrderCreateConfirm(CreateOrderInput input)
