@@ -8,7 +8,9 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Fix the bug that the Confirm phase and the Cancel phase will not automatically submit the local transaction and save the data in the TCC transaction
-
+- Fix the exception of parameter conversion in the Cancel and Confirm phases when Json is used as the codec in a distributed transaction
+- Fix the exception that the rpc call returns an empty result
+  
 ## [1.1.0]
 
 ### Added
