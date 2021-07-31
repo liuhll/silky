@@ -19,7 +19,7 @@ namespace Silky.Http.Core.Configuration
             Version = "v1.0.0";
             Groups = new List<GroupDescription>();
             RoutePrefix = "api";
-            InjectMiniProfiler = true;
+            InjectMiniProfiler = false;
             EnableAuthorized = true;
             if (EnableAuthorized)
             {
