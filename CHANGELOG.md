@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Added use of Serilog as a logger
+
 ### Changed
 - Remove unnecessary dependencies of the Silky.Rpc package
 
