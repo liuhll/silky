@@ -13,8 +13,8 @@ namespace Silky.OrderHost
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterSilkyServices<OrderHostModule>()
-                ;
+                .RegisterSilkyServices<OrderHostModule>()
+                .UseSerilogDefault();
         }
     }
 }

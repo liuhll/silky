@@ -5,6 +5,7 @@
         <Description>The package contains the component package for building Silky microservice web host</Description>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
         <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
         <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj" />
         <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj" />

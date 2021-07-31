@@ -13,8 +13,8 @@ namespace Silky.AccountHost
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .RegisterSilkyServices<AccountHostModule>()
-                ;
+                .RegisterSilkyServices<AccountHostModule>()
+                .UseSerilogDefault();
         }
     }
 }

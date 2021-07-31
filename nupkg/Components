@@ -13,6 +13,7 @@ src/Silky.EntityFrameworkCore
 src/Silky.Http.Core
 src/Silky.Http.MiniProfiler
 src/Silky.Lock
+src/Silky.Logging.Serilog
 src/Silky.ObjectMapper.AutoMapper
 src/Silky.ObjectMapper.Mapster
 src/Silky.RegistryCenter.Zookeeper

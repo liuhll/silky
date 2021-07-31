@@ -1,5 +1,16 @@
-Logging:
-    LogLevel:
-        Default: "Debug"
-        Microsoft: "Warning"
-        Microsoft.Hosting.Lifetime: "Information"
+serilog:
+  minimumLevel:
+    default: Information
+    override:
+      Microsoft: Warning
+      Microsoft.Hosting.Lifetime: Information
+      Silky.Rpc: Debug
+  writeTo:
+    - name: File
+      args:
+        path: "./logs/log-.log"
+        rollingInterval: Day
+    - name: Console
+      args:
+        outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u11}] {Message:lj} {NewLine}{Exception}{NewLine}"
+        theme: "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"

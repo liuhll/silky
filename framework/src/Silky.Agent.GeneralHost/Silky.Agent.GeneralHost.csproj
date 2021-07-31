@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
       <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
       <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
       <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj" />
