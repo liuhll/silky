@@ -15,7 +15,6 @@
         <ProjectReference Include="..\Silky.DotNetty.Abstraction\Silky.DotNetty.Abstraction.csproj" />
         <ProjectReference Include="..\Silky.DotNetty.Protocol.Tcp\Silky.DotNetty.Protocol.Tcp.csproj" />
         <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
         <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
         <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
