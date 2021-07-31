@@ -66,7 +66,7 @@ namespace Silky.Rpc.Routing
                 serviceRoute, (id, _) => serviceRoute);
 
             Logger.LogDebug(
-                $"Update the service routing cache, the routing address is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
+                $"Update the service routing [{serviceRoute.ServiceDescriptor.Id}] cache, the routing address is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
 
             foreach (var address in serviceRoute.Addresses)
             {
