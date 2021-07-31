@@ -46,11 +46,14 @@ namespace Silky.WebSocket
             try
             {
                 _socketServer.Start();
-                _logger.LogInformation($"Ws service started successfully, service address: {_socketServer.Address}");
+                _logger.LogInformation(
+                    $"Ws service started successfully, service address: {_socketServer.Address}:{_socketServer.Port}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Ws service failed to start, service address: {_socketServer.Address}, reason: {e.Message}", e);
+                _logger.LogError(
+                    $"Ws service failed to start, service address: {_socketServer.Address}:{_socketServer.Port}, reason: {e.Message}",
+                    e);
                 throw;
             }
         }
