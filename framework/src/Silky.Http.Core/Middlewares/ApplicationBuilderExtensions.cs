@@ -17,7 +17,6 @@ namespace Silky.Http.Core.Middlewares
         {
             var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var miniProfiler = EngineContext.Current.Resolve<IMiniProfiler>();
 
             var useDetailedExceptionPage = gatewayOptions.DisplayFullErrorStack;
             if (useDetailedExceptionPage)
@@ -40,7 +39,7 @@ namespace Silky.Http.Core.Middlewares
                         if (exception == null)
                             return Task.CompletedTask;
                         context.Response.ContentType = "application/json;charset=utf-8";
-                        miniProfiler.Print("Error", "Exception", exception.Message, true);
+                        MiniProfilerPrinter.Print("Error", "Exception", exception.Message, true);
 
                         if (gatewayOptions.WrapResult)
                         {
