@@ -19,7 +19,7 @@ namespace GatewayDemo.AppService
         public async Task<string> Delete(TestInput input)
         {
             await _testAppService.Delete(input);
-            //throw new BusinessException("test error");
+            throw new BusinessException("test error");
             return "Tyring";
         }
 

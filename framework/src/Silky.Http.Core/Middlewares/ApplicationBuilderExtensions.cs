@@ -18,7 +18,7 @@ namespace Silky.Http.Core.Middlewares
             var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
 
-            var useDetailedExceptionPage = gatewayOptions.DisplayFullErrorStack;
+            var useDetailedExceptionPage = gatewayOptions.UseDetailedExceptionPage;
             if (useDetailedExceptionPage)
             {
                 application.UseDeveloperExceptionPage();
