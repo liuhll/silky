@@ -16,4 +16,4 @@ swaggerDocument:
 gateway:
   wrapResult: true
   enableSwaggerDoc: true
-#  injectMiniProfiler: true
+  injectMiniProfiler: false

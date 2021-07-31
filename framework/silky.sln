@@ -84,6 +84,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.MiniProfiler", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.ObjectMapper.Mapster", "src\Silky.ObjectMapper.Mapster\Silky.ObjectMapper.Mapster.csproj", "{5435EAA5-94BC-49F1-980C-7C4FA9F8B712}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Logging.Serilog", "src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj", "{BE7E4C0D-571D-4681-964B-F13031139E65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +132,7 @@ Global
 		{36EA323F-3B5A-43C2-87B9-0ECA78732729} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{BAC61EC8-1110-477A-8E7E-08F617A3B50B} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{5435EAA5-94BC-49F1-980C-7C4FA9F8B712} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{BE7E4C0D-571D-4681-964B-F13031139E65} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -292,5 +295,9 @@ Global
 		{5435EAA5-94BC-49F1-980C-7C4FA9F8B712}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5435EAA5-94BC-49F1-980C-7C4FA9F8B712}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5435EAA5-94BC-49F1-980C-7C4FA9F8B712}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE7E4C0D-571D-4681-964B-F13031139E65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE7E4C0D-571D-4681-964B-F13031139E65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE7E4C0D-571D-4681-964B-F13031139E65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE7E4C0D-571D-4681-964B-F13031139E65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Silky.Logging.Serilog.Extensions;
 using SkyApm.Agent.GeneralHost;
 
 namespace NormHostDemo
@@ -15,6 +16,7 @@ namespace NormHostDemo
         {
             return Host.CreateDefaultBuilder(args)
                     .RegisterSilkyServices<NormHostDemoModule>()
+                    .UseSerilogDefault()
                 ;
         }
     }

@@ -8,6 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
         <ProjectReference Include="..\..\src\Silky.Agent.WebHost\Silky.Agent.WebHost.csproj" />
@@ -18,12 +19,6 @@
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <None Update="appsettings.Development.yml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="appsettings.yml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
       <None Include="skyapm.json">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -35,6 +30,14 @@
     </ItemGroup>
     <ItemGroup>
       <Content Update="skyapm.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="appsettings.Development.yml" />
+      <Content Include="appsettings.Development.yml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="appsettings.yml" />
+      <Content Include="appsettings.yml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
