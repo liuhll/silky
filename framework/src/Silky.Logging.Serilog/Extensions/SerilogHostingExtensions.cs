@@ -2,11 +2,10 @@ using System;
 using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 
-namespace Silky.Logging.Serilog.Extensions
+namespace Microsoft.Extensions.Hosting
 {
     public static class SerilogHostingExtensions
     {
