@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Silky.Logging.Serilog.Extensions;
 
 namespace AnotherHostDemo
 {
