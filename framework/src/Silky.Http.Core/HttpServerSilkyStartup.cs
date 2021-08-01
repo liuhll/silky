@@ -30,10 +30,15 @@ namespace Silky.Http.Core
             {
                 application.UseSwaggerDocuments(swaggerDocumentOptions);
             }
-
+            application.UseRouting();
             application.UseSilkyExceptionHandler();
             application.UseSilky();
             application.UseHttpsRedirection();
+            application.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
         }
 
         public int Order { get; } = 0;

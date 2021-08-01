@@ -8,6 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Http.Security\Silky.Http.Security.csproj" />
         <ProjectReference Include="..\..\src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
