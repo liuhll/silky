@@ -2,7 +2,7 @@
 
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+       <TargetFramework>net5.0</TargetFramework>
         <Description>Silky Object mapping component implemented with Mapster</Description>
     </PropertyGroup>
 

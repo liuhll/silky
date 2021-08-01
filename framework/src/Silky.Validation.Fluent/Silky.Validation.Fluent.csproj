@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+       <TargetFramework>net5.0</TargetFramework>
         <Description>The silky framework uses FluentValidation to verify input parameters</Description>
     </PropertyGroup>
 

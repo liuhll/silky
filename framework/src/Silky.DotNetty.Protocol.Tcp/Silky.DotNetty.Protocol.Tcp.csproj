@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+       <TargetFramework>net5.0</TargetFramework>
         <Description>The Silky framework uses the TCP protocol of dotnetty/SpanNetty as the communication component</Description>
     </PropertyGroup>
 

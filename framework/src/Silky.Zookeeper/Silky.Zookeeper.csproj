@@ -5,7 +5,7 @@
     <Copyright>©RabbitHub. All rights reserved.</Copyright>
     <AssemblyTitle>Apache ZooKeeper .NET async Client Extensions</AssemblyTitle>
     <Authors>majian</Authors>
-      <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+     <TargetFramework>net5.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Silky.Zookeeper</PackageId>
     <PackageTags>RabbitHub;Rabbit;Zookeeper;ZKClient;ZookeeperClient</PackageTags>
