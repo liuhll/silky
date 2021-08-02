@@ -13,9 +13,7 @@ namespace Silky.Transaction.Configuration
         public int ScheduledRecoveryDelay { get; set; } = 30;
 
         public int ScheduledCleanDelay { get; set; } = 60;
-
-        public int ScheduledPhyDeletedDelay { get; set; } = 600;
-
+        
         public int ScheduledInitDelay { get; set; } = 10;
 
         public int RecoverDelayTime { get; set; } = 60;
@@ -26,7 +24,7 @@ namespace Silky.Transaction.Configuration
 
         public int RetryMax { get; set; } = 10;
 
-        public bool PhyDeleted { get; set; }
+        public bool PhyDeleted { get; set; } = true;
 
         public int StoreDays { get; set; } = 3;
     }
