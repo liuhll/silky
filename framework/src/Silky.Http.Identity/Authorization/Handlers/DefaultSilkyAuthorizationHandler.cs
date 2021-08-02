@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Silky.Http.Identity.Authorization.Handlers
 {
-    public class DefaultAuthorizationHandler : SilkyAuthorizationHandler
+    public sealed class DefaultSilkyAuthorizationHandler : SilkyAuthorizationHandler
     {
         public override Task<bool> PipelineAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext)
         {

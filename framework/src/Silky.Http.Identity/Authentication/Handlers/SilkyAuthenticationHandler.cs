@@ -20,7 +20,7 @@ using Silky.Http.Core.Configuration;
 
 namespace Silky.Http.Identity.Authentication.Handlers
 {
-    public class SilkyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    internal class SilkyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly GatewayOptions _gatewayOptions;
         private readonly IJwtDecoder _jwtDecoder;

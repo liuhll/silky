@@ -9,7 +9,6 @@ using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Silky.Rpc.Transport.CachingIntercept;
 using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using Silky.Rpc.Runtime.Server.UnitOfWork;
 
 namespace ITestApplication.Test
 {

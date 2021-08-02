@@ -1,32 +1,51 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Silky.Http.Core;
 using Silky.Http.Identity.Authorization.Extensions;
 
 namespace Silky.Http.Identity.Authorization.Handlers
 {
-    public class SilkyAuthorizationHandler : IAuthorizationHandler
+    public abstract class SilkyAuthorizationHandler : IAuthorizationHandler
     {
-        public virtual async Task HandleAsync(AuthorizationHandlerContext context)
+        public virtual Task<bool> PipelineAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext)
         {
-            // 判断是否授权
-            var isAuthenticated = context.User.Identity.IsAuthenticated;
-            if (isAuthenticated)
-            {
-                await AuthorizeHandleAsync(context);
-            }
-            //else context.GetCurrentHttpContext()?.SignoutToSwagger();    // 退出Swagger登录
+            return Task.FromResult(true);
         }
         
-        protected async Task AuthorizeHandleAsync(AuthorizationHandlerContext context)
+        public virtual Task<bool> PolicyPipelineAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext, IAuthorizationRequirement requirement)
+        {
+            return Task.FromResult(true);
+        }
+
+        public async Task HandleAsync(AuthorizationHandlerContext context)
+        {
+            var httpContext = context.GetCurrentHttpContext();
+            var serviceEntry = httpContext.GetServiceEntry();
+            var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
+            if (serviceEntry != null && isAuthenticated)
+            {
+                await AuthorizeHandleAsync(context, httpContext);
+            }
+            else
+            {
+                var pendingRequirements = context.PendingRequirements;
+                foreach (var requirement in pendingRequirements)
+                {
+                    // 验证策略管道
+                    var policyPipeline = await PolicyPipelineAsync(context, httpContext, requirement);
+                    if (policyPipeline) context.Succeed(requirement);
+                }
+            }
+
+        }
+
+        private async Task AuthorizeHandleAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext)
+
         {
             // 获取所有未成功验证的需求
             var pendingRequirements = context.PendingRequirements;
 
-            // 获取 HttpContext 上下文
-            var httpContext = context.GetCurrentHttpContext();
-
-            // 调用子类管道
             var pipeline = await PipelineAsync(context, httpContext);
             if (pipeline)
             {
@@ -39,16 +58,6 @@ namespace Silky.Http.Identity.Authorization.Handlers
                 }
             }
             else context.Fail();
-        }
-        
-        public virtual Task<bool> PipelineAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext)
-        {
-            return Task.FromResult(true);
-        }
-        
-        public virtual Task<bool> PolicyPipelineAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext, IAuthorizationRequirement requirement)
-        {
-            return Task.FromResult(true);
         }
     }
 }
