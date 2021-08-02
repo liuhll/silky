@@ -113,6 +113,7 @@ namespace Silky.Account.Domain.Accounts
         {
             var account = await GetAccountById(id);
             await _accountCache.RemoveAsync($"Account:UserName:{account.UserName}");
+            await _accountCache.RemoveAsync($"CurrentUserInfo:*:{account.Id}");
             await _accountRepository.DeleteAsync(account);
         }
 
