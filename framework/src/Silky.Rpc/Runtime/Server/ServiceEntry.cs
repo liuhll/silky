@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Authorization;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
@@ -98,7 +99,8 @@ namespace Silky.Rpc.Runtime.Server
                         .FirstOrDefault(p => p == governanceAttribute.FallBackType);
                     if (fallBackType == null)
                     {
-                        throw new SilkyException($"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
+                        throw new SilkyException(
+                            $"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
                     }
                 }
                 else
@@ -108,7 +110,8 @@ namespace Silky.Rpc.Runtime.Server
                     if (!EngineContext.Current.TypeFinder.FindClassesOfType(fallBackType)
                         .Any(p => p == governanceAttribute.FallBackType))
                     {
-                        throw new SilkyException($"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
+                        throw new SilkyException(
+                            $"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
                     }
                 }
 
@@ -120,6 +123,11 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             GovernanceOptions.ProhibitExtranet = governanceAttribute?.ProhibitExtranet ?? false;
+
+            var allowAnonymous = CustomAttributes.OfType<IAllowAnonymous>().FirstOrDefault() ?? MethodInfo.DeclaringType
+                .GetCustomAttributes().OfType<IAllowAnonymous>().FirstOrDefault();
+
+            GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;
         }
 
         private Func<object[], Task<object>> CreateFallBackExecutor(

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,7 @@ namespace GatewayDemo.AppService
         Task<string> DeleteProxy(string name, string address);
 
         [HttpGet]
+        [AllowAnonymous]
         Task<string> MiniProfilerText();
 
         [HttpPatch]

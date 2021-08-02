@@ -7,5 +7,7 @@ namespace Silky.Http.Core.Configuration
         public bool UseDetailedExceptionPage { get; set; }
         public bool WrapResult { get; set; }
         public bool EnableSwaggerDoc { get; set; }
+
+        public string JwtSecret { get; set; }
     }
 }

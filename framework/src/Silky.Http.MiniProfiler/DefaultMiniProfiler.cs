@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Configuration;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc.MiniProfiler;
 using StackExchange.Profiling;
 
@@ -17,8 +17,8 @@ namespace Silky.Http.MiniProfiler
         /// <param name="isError">Is it a error message</param>
         public void Print(string category, string state, string message = null, bool isError = false)
         {
-            var injectMiniProfiler = EngineContext.Current.Configuration.GetValue<bool?>("gateway:injectMiniProfiler") ?? true;
-            if (!injectMiniProfiler) return;
+            var swaggerDocumentOptions = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
+            if (!swaggerDocumentOptions.InjectMiniProfiler) return;
             var customTiming = StackExchange.Profiling.MiniProfiler.Current?.CustomTiming(category,
                 string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);
             if (customTiming == null) return;

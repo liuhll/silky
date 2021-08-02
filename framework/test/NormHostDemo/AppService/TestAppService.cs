@@ -10,6 +10,7 @@ using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.UnitOfWork;
+using Silky.Rpc.Runtime.Session;
 using Silky.Transaction.Tcc;
 
 namespace NormHostDemo.AppService
@@ -21,6 +22,7 @@ namespace NormHostDemo.AppService
         private readonly IDistributedCache<TestOut> _distributedCache;
         private readonly IRepository<Test> _testRepository;
         private readonly ISerializer _serializer;
+        private readonly ISession _session;
 
         public TestAppService(IAnotherAppService anotherAppService,
             IDistributedCache<TestOut> distributedCache,
@@ -31,6 +33,7 @@ namespace NormHostDemo.AppService
             _distributedCache = distributedCache;
             _testRepository = testRepository;
             _serializer = serializer;
+            _session = NullSession.Instance;
         }
 
         [UnitOfWork]

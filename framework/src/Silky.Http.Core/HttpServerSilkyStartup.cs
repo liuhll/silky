@@ -1,3 +1,4 @@
+using System;
 using Silky.Core;
 using Silky.Http.Core.Middlewares;
 using Microsoft.AspNetCore.Builder;
@@ -30,12 +31,11 @@ namespace Silky.Http.Core
             {
                 application.UseSwaggerDocuments(swaggerDocumentOptions);
             }
-
+            application.UseHttpsRedirection();
             application.UseSilkyExceptionHandler();
             application.UseSilky();
-            application.UseHttpsRedirection();
         }
 
-        public int Order { get; } = 0;
+        public int Order { get; } = Int32.MaxValue;
     }
 }
