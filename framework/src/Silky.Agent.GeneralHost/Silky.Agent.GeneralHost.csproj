@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
+      <ProjectReference Include="..\Silky.Codec.ProtoBuf\Silky.Codec.ProtoBuf.csproj" />
       <ProjectReference Include="..\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
       <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
       <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
