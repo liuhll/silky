@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Mapster;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
@@ -8,6 +9,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Jwt;
+using Silky.Rpc.Runtime.Session;
 using Silky.Rpc.Security;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Tcc;
@@ -21,6 +23,7 @@ namespace Silky.Account.Domain.Accounts
         private readonly IDistributedCache<GetAccountOutput, string> _accountCache;
         private readonly IPasswordHelper _passwordHelper;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly ISession _session;
 
         public AccountDomainService(IRepository<Account> accountRepository,
             IDistributedCache<GetAccountOutput, string> accountCache,
@@ -33,6 +36,7 @@ namespace Silky.Account.Domain.Accounts
             _balanceRecordRepository = balanceRecordRepository;
             _passwordHelper = passwordHelper;
             _jwtTokenGenerator = jwtTokenGenerator;
+            _session = NullSession.Instance;
         }
 
         public async Task<Account> Create(CreateAccountInput input)
@@ -184,6 +188,18 @@ namespace Silky.Account.Domain.Accounts
                 {ClaimTypes.Email, userInfo.Email},
             };
             return _jwtTokenGenerator.Generate(payload);
+        }
+
+        public async Task<GetAccountOutput> GetLoginUserInfo()
+        {
+            Debug.Assert(_session.IsLogin());
+            var userInfo = await _accountRepository.FindOrDefaultAsync(_session.UserId);
+            if (userInfo == null)
+            {
+                throw new AuthenticationException($"当前系统不存在用户{_session.UserId}");
+            }
+
+            return userInfo.Adapt<GetAccountOutput>();
         }
     }
 }

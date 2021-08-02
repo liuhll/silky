@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Core.DependencyInjection;
-using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Domain.Accounts
@@ -15,5 +14,6 @@ namespace Silky.Account.Domain.Accounts
         Task Delete(long id);
         Task<long?> DeductBalance(DeductBalanceInput input, TccMethodType tccMethodType);
         Task<string> Login(LoginInput input);
+        Task<GetAccountOutput> GetLoginUserInfo();
     }
 }

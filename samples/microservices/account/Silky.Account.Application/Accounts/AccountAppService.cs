@@ -31,6 +31,11 @@ namespace Silky.Account.Application.Accounts
             return _accountDomainService.Login(input);
         }
 
+        public Task<GetAccountOutput> GetLoginUserInfo()
+        {
+            return _accountDomainService.GetLoginUserInfo();
+        }
+
         public async Task<GetAccountOutput> GetAccountByName(string name)
         {
             var account = await _accountDomainService.GetAccountByName(name);

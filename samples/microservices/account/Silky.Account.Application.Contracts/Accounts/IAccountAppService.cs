@@ -30,6 +30,10 @@ namespace Silky.Account.Application.Contracts.Accounts
         [AllowAnonymous]
         Task<string> Login(LoginInput input);
 
+        [HttpGet("current/userinfo")]
+        [GetCachingIntercept("CurrentUserInfo",OnlyCurrentUserData = true)]
+        Task<GetAccountOutput> GetLoginUserInfo();
+
         /// <summary>
         /// 通过账号名称获取账号
         /// </summary>
