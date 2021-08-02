@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.Extensions.Options;
+using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Jwt.Configuration;
 
 namespace Silky.Jwt
 {
-    public class JwtTokenGenerator : IJwtTokenGenerator
+    public class JwtTokenGenerator : ITransientDependency, IJwtTokenGenerator
     {
         private readonly JwtOptions _jwtOptions;
         private readonly IJwtAlgorithm _jwtAlgorithm;

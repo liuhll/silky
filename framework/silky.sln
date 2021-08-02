@@ -88,7 +88,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Logging.Serilog", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Jwt", "src\Silky.Jwt\Silky.Jwt.csproj", "{F0A600C3-BE40-4667-9D5B-D78DD86B23A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.Security", "src\Silky.Http.Security\Silky.Http.Security.csproj", "{776723B1-78E7-4E1C-9E58-46D0835BA758}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.Identity", "src\Silky.Http.Identity\Silky.Http.Identity.csproj", "{776723B1-78E7-4E1C-9E58-46D0835BA758}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

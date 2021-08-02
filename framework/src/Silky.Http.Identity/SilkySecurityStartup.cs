@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
-using Silky.Http.Security.Authentication;
+using Silky.Http.Identity.Authentication;
+using Silky.Http.Identity.Authentication.Middlewares;
 
-namespace Silky.Http.Security
+namespace Silky.Http.Identity
 {
     public class SilkySecurityStartup : ISilkyStartup
     {
@@ -20,13 +18,7 @@ namespace Silky.Http.Security
                     JwtBearerDefaults.AuthenticationScheme,
                     o => { });
             services.AddAuthorization();
-            services.Configure<MvcOptions>(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            });
+            
         }
 
         public int Order { get; } = -2;
@@ -35,6 +27,7 @@ namespace Silky.Http.Security
         {
             
             application.UseAuthentication();
+            application.UseSilkyAuthentication();
             application.UseAuthorization();
            
         }

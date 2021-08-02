@@ -17,3 +17,4 @@ gateway:
   wrapResult: true
   enableSwaggerDoc: true
   injectMiniProfiler: false
+  jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
