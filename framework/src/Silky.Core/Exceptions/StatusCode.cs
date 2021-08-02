@@ -51,7 +51,7 @@ namespace Silky.Core.Exceptions
         [Description("未授权")] [IsUnAuthorizedException]
         UnAuthorization = 402,
 
-        [Description("未认证")] [IsUnAuthorizedException]
+        [Description("校验token失败")] [IsUnAuthorizedException]
         IssueTokenError = 4011,
 
         [Description("禁止外网访问")] FuseProtection = 406,
