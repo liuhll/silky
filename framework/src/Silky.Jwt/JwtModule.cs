@@ -4,14 +4,14 @@ using JWT.Serializers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Silky.Core;
+using Silky.Core.Modularity;
 using Silky.Jwt.Configuration;
 
 namespace Silky.Jwt
 {
-    public class JwtConfigureService : IConfigureService
+    public class JwtModule : SilkyModule
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions<JwtOptions>()
                 .Bind(configuration.GetSection(JwtOptions.JwtSettings));
@@ -55,7 +55,5 @@ namespace Silky.Jwt
             services.AddTransient<IJwtValidator, JwtValidator>();
             services.AddTransient<IDateTimeProvider, UtcDateTimeProvider>();
         }
-
-        public int Order { get; } = -2;
     }
 }
