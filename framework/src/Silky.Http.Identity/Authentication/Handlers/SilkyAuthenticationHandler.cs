@@ -17,14 +17,12 @@ using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
 using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Http.Identity.Authentication
+namespace Silky.Http.Identity.Authentication.Handlers
 {
     public class SilkyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly GatewayOptions _gatewayOptions;
-        private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IJwtDecoder _jwtDecoder;
         private readonly ISerializer _serializer;
 
@@ -33,14 +31,12 @@ namespace Silky.Http.Identity.Authentication
             [NotNull] ILoggerFactory logger,
             [NotNull] UrlEncoder encoder,
             [NotNull] ISystemClock clock,
-            IServiceEntryLocator serviceEntryLocator,
             IJwtDecoder jwtDecoder, ISerializer serializer) :
             base(options,
                 logger,
                 encoder,
                 clock)
         {
-            _serviceEntryLocator = serviceEntryLocator;
             _jwtDecoder = jwtDecoder;
             _serializer = serializer;
             _gatewayOptions = gatewayOptions.Value;
