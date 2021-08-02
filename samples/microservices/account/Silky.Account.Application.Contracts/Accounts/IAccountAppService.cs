@@ -3,6 +3,7 @@ using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Security;
 using Silky.Rpc.Transport.CachingIntercept;
 using Silky.Transaction;
 
@@ -19,6 +20,7 @@ namespace Silky.Account.Application.Contracts.Accounts
         /// </summary>
         /// <param name="input">账号信息</param>
         /// <returns></returns>
+        [AllowAnonymous]
         Task<GetAccountOutput> Create(CreateAccountInput input);
 
         /// <summary>
@@ -26,7 +28,7 @@ namespace Silky.Account.Application.Contracts.Accounts
         /// </summary>
         /// <param name="name">账号名称</param>
         /// <returns></returns>
-        [GetCachingIntercept("Account:Name:{0}")]
+        [GetCachingIntercept("Account:UserName:{0}")]
         [HttpGet("{name:string}")]
         Task<GetAccountOutput> GetAccountByName([CacheKey(0)] string name);
 

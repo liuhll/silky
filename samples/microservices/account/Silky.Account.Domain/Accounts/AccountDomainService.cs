@@ -16,37 +16,42 @@ namespace Silky.Account.Domain.Accounts
         private readonly IRepository<Account> _accountRepository;
         private readonly IRepository<BalanceRecord> _balanceRecordRepository;
         private readonly IDistributedCache<GetAccountOutput, string> _accountCache;
+        private readonly IPasswordHelper _passwordHelper;
 
         public AccountDomainService(IRepository<Account> accountRepository,
             IDistributedCache<GetAccountOutput, string> accountCache,
-            IRepository<BalanceRecord> balanceRecordRepository)
+            IRepository<BalanceRecord> balanceRecordRepository,
+            IPasswordHelper passwordHelper)
         {
             _accountRepository = accountRepository;
             _accountCache = accountCache;
             _balanceRecordRepository = balanceRecordRepository;
+            _passwordHelper = passwordHelper;
         }
 
-        public async Task<Account> Create(Account account)
+        public async Task<Account> Create(CreateAccountInput input)
         {
-            var exsitAccountCount = await _accountRepository.CountAsync(p => p.Name == account.Name);
+            var exsitAccountCount = await _accountRepository.CountAsync(p => p.UserName == input.UserName);
             if (exsitAccountCount > 0)
             {
-                throw new BusinessException($"已经存在{account.Name}名称的账号");
+                throw new BusinessException($"已经存在{input.UserName}名称的账号");
             }
 
-            exsitAccountCount = await _accountRepository.CountAsync(p => p.Email == account.Email);
+            exsitAccountCount = await _accountRepository.CountAsync(p => p.Email == input.Email);
             if (exsitAccountCount > 0)
             {
-                throw new BusinessException($"已经存在{account.Email}Email的账号");
+                throw new BusinessException($"已经存在{input.Email}Email的账号");
             }
 
+            var account = input.Adapt<Account>();
+            account.Password = _passwordHelper.EncryptPassword(account.UserName, input.Password);
             await _accountRepository.InsertNowAsync(account);
             return account;
         }
 
         public async Task<Account> GetAccountByName(string name)
         {
-            var accountEntry = _accountRepository.FirstOrDefault(p => p.Name == name);
+            var accountEntry = _accountRepository.FirstOrDefault(p => p.UserName == name);
             if (accountEntry == null)
             {
                 throw new BusinessException($"不存在名称为{name}的账号");
@@ -78,17 +83,18 @@ namespace Silky.Account.Domain.Accounts
                 }
             }
 
-            if (!account.Name.Equals(input.Name))
+            if (!account.UserName.Equals(input.UserName))
             {
-                var exsitAccountCount = await _accountRepository.CountAsync(p => p.Name == input.Name);
+                var exsitAccountCount = await _accountRepository.CountAsync(p => p.UserName == input.UserName);
                 if (exsitAccountCount > 0)
                 {
-                    throw new BusinessException($"系统中已经存在Name为{input.Name}的账号");
+                    throw new BusinessException($"系统中已经存在Name为{input.UserName}的账号");
                 }
             }
 
-            await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
+            await _accountCache.RemoveAsync($"Account:UserName:{account.UserName}");
             account = input.Adapt(account);
+            account.Password = _passwordHelper.EncryptPassword(account.UserName, input.Password);
             await _accountRepository.UpdateAsync(account);
             return account;
         }
@@ -96,7 +102,7 @@ namespace Silky.Account.Domain.Accounts
         public async Task Delete(long id)
         {
             var account = await GetAccountById(id);
-            await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
+            await _accountCache.RemoveAsync($"Account:UserName:{account.UserName}");
             await _accountRepository.DeleteAsync(account);
         }
 
@@ -147,7 +153,7 @@ namespace Silky.Account.Domain.Accounts
 
             await _accountRepository.UpdateAsync(account);
             await trans.CommitAsync();
-            await _accountCache.RemoveAsync($"Account:Name:{account.Name}");
+            await _accountCache.RemoveAsync($"Account:UserName:{account.UserName}");
             return balanceRecord?.Id;
         }
     }

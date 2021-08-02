@@ -15,6 +15,7 @@ namespace Silky.Account.Application.Accounts
     {
         private readonly IAccountDomainService _accountDomainService;
         private readonly ICapPublisher _capBus;
+
         public AccountAppService(IAccountDomainService accountDomainService, ICapPublisher capBus)
         {
             _accountDomainService = accountDomainService;
@@ -23,11 +24,10 @@ namespace Silky.Account.Application.Accounts
 
         public async Task<GetAccountOutput> Create(CreateAccountInput input)
         {
-           
-            var account = input.Adapt<Domain.Accounts.Account>();
-            account = await _accountDomainService.Create(account);
-            await _capBus.PublishAsync("account.create.time", DateTime.Now);
-             return account.Adapt<GetAccountOutput>();
+            // var account = input.Adapt<Domain.Accounts.Account>();
+            var account = await _accountDomainService.Create(input);
+            // await _capBus.PublishAsync("account.create.time", DateTime.Now);
+            return account.Adapt<GetAccountOutput>();
         }
 
         public async Task<GetAccountOutput> GetAccountByName(string name)
@@ -61,6 +61,7 @@ namespace Silky.Account.Application.Accounts
             {
                 throw new BusinessException("账号余额不足");
             }
+
             return await _accountDomainService.DeductBalance(input, TccMethodType.Try);
         }
 
@@ -73,6 +74,5 @@ namespace Silky.Account.Application.Accounts
         {
             return _accountDomainService.DeductBalance(input, TccMethodType.Cancel);
         }
-        
     }
 }

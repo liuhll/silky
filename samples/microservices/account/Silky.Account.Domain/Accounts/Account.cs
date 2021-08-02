@@ -21,8 +21,12 @@ namespace Silky.Account.Domain.Accounts
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
-        
+        public string UserName { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string Password { get; set; }
+
         [MaxLength(500)]
         public string Address { get; set; }
 

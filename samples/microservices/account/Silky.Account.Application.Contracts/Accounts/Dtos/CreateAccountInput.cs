@@ -8,7 +8,13 @@ namespace Silky.Account.Application.Contracts.Accounts.Dtos
         /// 账号/姓名
         /// </summary>
         [Required(ErrorMessage = "名称不允许为空")]
-        public string Name { get; set; }
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// 密码
+        /// </summary>
+        [Required(ErrorMessage = "密码不允许为空")]
+        public string Password { get; set; }
 
         /// <summary>
         /// 地址

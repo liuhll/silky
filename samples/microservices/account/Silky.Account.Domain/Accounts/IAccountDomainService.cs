@@ -8,7 +8,7 @@ namespace Silky.Account.Domain.Accounts
 {
     public interface IAccountDomainService : ITransientDependency
     {
-        Task<Account> Create(Account account);
+        Task<Account> Create(CreateAccountInput account);
         Task<Account> GetAccountByName(string name);
         Task<Account> GetAccountById(long id);
         Task<Account> Update(UpdateAccountInput input);
