@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added use of Serilog as a logger
+- Added identity authentication and authorization package
 
 ### Changed
 - Remove unnecessary dependencies of the Silky.Rpc package
