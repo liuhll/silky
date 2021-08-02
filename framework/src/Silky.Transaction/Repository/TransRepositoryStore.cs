@@ -36,7 +36,8 @@ namespace Silky.Transaction.Repository
 
         public static async Task<ITransaction> LoadTransaction(string tranId)
         {
-            return await _transRepository.FindByTransId(tranId);
+            var transaction = await _transRepository.FindByTransId(tranId);
+            return transaction is {Status: ActionStage.Delete} ? null : transaction;
         }
 
         public static async Task UpdateTransactionStatus(ITransaction transaction)
