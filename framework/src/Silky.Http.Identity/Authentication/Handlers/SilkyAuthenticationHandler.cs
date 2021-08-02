@@ -110,7 +110,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
                 }
                 catch (Exception ex)
                 {
-                    await WriteErrorResponse("The token format is illegal, the reason: {ex.Message}");
+                    await WriteErrorResponse($"The token format is illegal, the reason: {ex.Message}");
                     return AuthenticateResult.Fail($"The token format is illegal, the reason: {ex.Message}");
                 }
             }
