@@ -32,19 +32,12 @@ namespace Silky.Http.MiniProfiler
         public void Configure(IApplicationBuilder application)
         {
             var swaggerDocumentOptions = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
+
             if (swaggerDocumentOptions.InjectMiniProfiler)
             {
                 application.UseMiniProfiler();
             }
             
-             application.UseExceptionHandler(handler =>
-                {
-                    var gatewayOption = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
-                    if (gatewayOption.InjectMiniProfiler)
-                    {
-                        handler.UseMiniProfiler();
-                    }
-                });
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Silky.Core;
 using Silky.Http.Core.Middlewares;
 using Microsoft.AspNetCore.Builder;
@@ -30,17 +31,11 @@ namespace Silky.Http.Core
             {
                 application.UseSwaggerDocuments(swaggerDocumentOptions);
             }
-            application.UseRouting();
+            application.UseHttpsRedirection();
             application.UseSilkyExceptionHandler();
             application.UseSilky();
-            application.UseHttpsRedirection();
-            application.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
         }
 
-        public int Order { get; } = 0;
+        public int Order { get; } = Int32.MaxValue;
     }
 }
