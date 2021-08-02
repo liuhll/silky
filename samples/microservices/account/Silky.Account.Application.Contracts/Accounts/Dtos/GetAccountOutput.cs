@@ -14,7 +14,7 @@ namespace Silky.Account.Application.Contracts.Accounts.Dtos
         /// <summary>
         /// 账号名称
         /// </summary>
-        public string Name { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// 地址

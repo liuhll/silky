@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using DotNetCore.CAP;
 using Mapster;
@@ -6,7 +5,6 @@ using Silky.Account.Application.Contracts.Accounts;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Account.Domain.Accounts;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Application.Accounts
@@ -24,10 +22,13 @@ namespace Silky.Account.Application.Accounts
 
         public async Task<GetAccountOutput> Create(CreateAccountInput input)
         {
-            // var account = input.Adapt<Domain.Accounts.Account>();
             var account = await _accountDomainService.Create(input);
-            // await _capBus.PublishAsync("account.create.time", DateTime.Now);
             return account.Adapt<GetAccountOutput>();
+        }
+
+        public Task<string> Login(LoginInput input)
+        {
+            return _accountDomainService.Login(input);
         }
 
         public async Task<GetAccountOutput> GetAccountByName(string name)

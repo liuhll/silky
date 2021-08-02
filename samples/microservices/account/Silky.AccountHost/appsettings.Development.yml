@@ -18,3 +18,5 @@ cap:
     hostName: 127.0.0.1
     userName: rabbitmq
     password: rabbitmq
+jwtSettings:
+  secret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW

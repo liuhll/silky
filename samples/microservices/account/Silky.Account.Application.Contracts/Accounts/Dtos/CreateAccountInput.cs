@@ -14,6 +14,7 @@ namespace Silky.Account.Application.Contracts.Accounts.Dtos
         /// 密码
         /// </summary>
         [Required(ErrorMessage = "密码不允许为空")]
+        [MinLength(6,ErrorMessage = "密码不允许少于6位")]
         public string Password { get; set; }
 
         /// <summary>

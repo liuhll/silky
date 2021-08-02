@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mapster;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
@@ -6,6 +7,8 @@ using Silky.Caching;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.EntityFrameworkCore.Repositories;
+using Silky.Jwt;
+using Silky.Rpc.Security;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Tcc;
 
@@ -17,16 +20,19 @@ namespace Silky.Account.Domain.Accounts
         private readonly IRepository<BalanceRecord> _balanceRecordRepository;
         private readonly IDistributedCache<GetAccountOutput, string> _accountCache;
         private readonly IPasswordHelper _passwordHelper;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
         public AccountDomainService(IRepository<Account> accountRepository,
             IDistributedCache<GetAccountOutput, string> accountCache,
             IRepository<BalanceRecord> balanceRecordRepository,
-            IPasswordHelper passwordHelper)
+            IPasswordHelper passwordHelper,
+            IJwtTokenGenerator jwtTokenGenerator)
         {
             _accountRepository = accountRepository;
             _accountCache = accountCache;
             _balanceRecordRepository = balanceRecordRepository;
             _passwordHelper = passwordHelper;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
         public async Task<Account> Create(CreateAccountInput input)
@@ -155,6 +161,29 @@ namespace Silky.Account.Domain.Accounts
             await trans.CommitAsync();
             await _accountCache.RemoveAsync($"Account:UserName:{account.UserName}");
             return balanceRecord?.Id;
+        }
+
+        public async Task<string> Login(LoginInput input)
+        {
+            var userInfo = await _accountRepository.FirstOrDefaultAsync(p => p.UserName == input.Account
+                                                                             || p.Email == input.Account);
+            if (userInfo == null)
+            {
+                throw new AuthenticationException($"不存在账号为{input.Account}的用户");
+            }
+
+            if (!userInfo.Password.Equals(_passwordHelper.EncryptPassword(userInfo.UserName,input.Password)))
+            {
+                throw new AuthenticationException("密码不正确");
+            }
+
+            var payload = new Dictionary<string, object>()
+            {
+                {ClaimTypes.UserId, userInfo.Id},
+                {ClaimTypes.UserName, userInfo.UserName},
+                {ClaimTypes.Email, userInfo.Email},
+            };
+            return _jwtTokenGenerator.Generate(payload);
         }
     }
 }

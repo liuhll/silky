@@ -20,8 +20,15 @@ namespace Silky.Account.Application.Contracts.Accounts
         /// </summary>
         /// <param name="input">账号信息</param>
         /// <returns></returns>
-        [AllowAnonymous]
         Task<GetAccountOutput> Create(CreateAccountInput input);
+        
+        /// <summary>
+        /// 登陆接口
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        Task<string> Login(LoginInput input);
 
         /// <summary>
         /// 通过账号名称获取账号

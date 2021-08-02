@@ -14,5 +14,6 @@ namespace Silky.Account.Domain.Accounts
         Task<Account> Update(UpdateAccountInput input);
         Task Delete(long id);
         Task<long?> DeductBalance(DeductBalanceInput input, TccMethodType tccMethodType);
+        Task<string> Login(LoginInput input);
     }
 }
