@@ -11,7 +11,9 @@ src/Silky.DotNetty.Abstraction
 src/Silky.DotNetty.Protocol.Tcp
 src/Silky.EntityFrameworkCore
 src/Silky.Http.Core
+src/Silky.Http.Identity
 src/Silky.Http.MiniProfiler
+src/Silky.Jwt
 src/Silky.Lock
 src/Silky.Logging.Serilog
 src/Silky.ObjectMapper.AutoMapper
