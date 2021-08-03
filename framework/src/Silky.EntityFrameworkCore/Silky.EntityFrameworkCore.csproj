@@ -10,6 +10,9 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.7" />
     </ItemGroup>
     <ItemGroup>
+        <EmbeddedResource Include="LICENSE" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>

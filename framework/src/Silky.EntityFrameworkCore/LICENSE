@@ -1,0 +1,26 @@
+该包的实现主要参考了[Furion](https://gitee.com/dotnetchina/Furion)开源框架的数据访问模块。
+Furion框架使用了[木兰宽松许可证, 第2版](https://gitee.com/dotnetchina/Furion/raw/master/LICENSE)。
+为此,为该包的版权做如下声明：
+
+   Copyright (c) 2020-2021 百小僧, Baiqian Co.,Ltd.
+   Furion is licensed under Mulan PSL v2.
+   You can use this software according to the terms and conditions of the Mulan PSL v2. 
+   You may obtain a copy of Mulan PSL v2 at:
+            http://license.coscl.org.cn/MulanPSL2 
+   THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.  
+   See the Mulan PSL v2 for more details.  
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The implementation of this package mainly refers to the data access module of the open source framework [Furion](https://gitee.com/dotnetchina/Furion).
+The Furion framework uses [Mulan Loose License, Version 2](https://gitee.com/dotnetchina/Furion/raw/master/LICENSE).
+To this end, make the following statement for the copyright of the package:
+
+     Copyright (c) 2020-2021 百小僧, Baiqian Co.,Ltd.
+   Furion is licensed under Mulan PSL v2.
+   You can use this software according to the terms and conditions of the Mulan PSL v2. 
+   You may obtain a copy of Mulan PSL v2 at:
+            http://license.coscl.org.cn/MulanPSL2 
+   THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.  
+   See the Mulan PSL v2 for more details.  
