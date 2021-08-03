@@ -39,7 +39,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public ObjectMethodExecutor MethodExecutor => _methodExecutor;
 
-        public ServiceEntry(IRouter router,
+        internal ServiceEntry(IRouter router,
             ServiceDescriptor serviceDescriptor,
             Type serviceType,
             MethodInfo methodInfo,
@@ -53,12 +53,27 @@ namespace Silky.Rpc.Runtime.Server
             ParameterDescriptors = parameterDescriptors;
             _serviceType = serviceType;
             IsLocal = isLocal;
+
             MultipleServiceKey = routeTemplateProvider.MultipleServiceKey;
-            GroupName = serviceType.FullName;
             MethodInfo = methodInfo;
             CustomAttributes = MethodInfo.GetCustomAttributes(true);
             (IsAsyncMethod, ReturnType) = MethodInfo.ReturnTypeInfo();
             GovernanceOptions = new ServiceEntryGovernance();
+
+            var serviceDessriptionAttr = methodInfo.DeclaringType?.GetCustomAttributes()
+                .OfType<ServiceDescriptionAttribute>().FirstOrDefault();
+            if (serviceDessriptionAttr != null)
+            {
+                GroupName = serviceDessriptionAttr.Name;
+                ServiceDescription = serviceDessriptionAttr.Description;
+            }
+            else
+            {
+                GroupName = !routeTemplateProvider.ServiceName.IsNullOrEmpty()
+                    ? routeTemplateProvider.ServiceName
+                    : _serviceType.Name.TrimStart('I');
+            }
+
             var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
             if (governanceProvider != null)
             {
@@ -189,6 +204,8 @@ namespace Silky.Rpc.Runtime.Server
         public bool IsLocal { get; }
 
         public string GroupName { get; }
+
+        public string ServiceDescription { get; }
 
         public IRouter Router { get; }
 

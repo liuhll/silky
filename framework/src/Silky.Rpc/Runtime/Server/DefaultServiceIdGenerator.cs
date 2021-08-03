@@ -37,11 +37,11 @@ namespace Silky.Rpc.Runtime.Server
                 return id;
             }
 
-            id = $"{type.FullName}.{method.Name}".Replace(".", "_");
+            id = $"{type.FullName}.{method.Name}"; //.Replace(".", "_");
             var parameters = method.GetParameters();
             if (parameters.Any())
             {
-                id += "_" + string.Join("_", parameters.Select(i => i.Name));
+                id += "." + string.Join(".", parameters.Select(i => i.Name));
             }
 
             Logger.LogDebug($"Generate serviceId {id} for method {method.DeclaringType?.FullName}.{method.Name}");

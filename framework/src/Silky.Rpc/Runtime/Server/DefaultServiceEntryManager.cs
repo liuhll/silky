@@ -26,7 +26,7 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     if (allServiceEntries.Any(p => p.ServiceDescriptor.Id == entry.ServiceDescriptor.Id))
                     {
-                        throw new InvalidOperationException($"本地包含多个Id为：{entry.ServiceDescriptor.Id} 的服务条目。");
+                        throw new InvalidOperationException($"Locally contains multiple service entries with Id: {entry.ServiceDescriptor.Id}");
                     }
 
                     allServiceEntries.Add(entry);
@@ -35,7 +35,7 @@ namespace Silky.Rpc.Runtime.Server
 
             if (allServiceEntries.GroupBy(p => p.Router).Any(p => p.Count() > 1))
             {
-                throw new SilkyException("存在重复的路由信息,请检查您设置的服务路由");
+                throw new SilkyException("There is duplicate routing information, please check the service routing you set");
             }
 
             m_allServiceEntries = allServiceEntries;

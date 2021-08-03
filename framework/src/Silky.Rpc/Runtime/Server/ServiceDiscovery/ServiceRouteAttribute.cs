@@ -1,7 +1,4 @@
 using System;
-using Silky.Core;
-using Silky.Rpc.Configuration;
-using Microsoft.Extensions.Options;
 using Silky.Rpc.Address;
 
 namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
@@ -19,5 +16,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         public string Template { get; }
 
         public bool MultipleServiceKey { get; }
+
+        public string ServiceName { get; set; }
     }
 }

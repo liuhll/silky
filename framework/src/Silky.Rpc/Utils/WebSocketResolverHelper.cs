@@ -40,7 +40,7 @@ namespace Silky.Rpc.Utils
         public static string Generator(string wsPath)
         {
             wsPath = wsPath.TrimStart('/');
-            return wsPath.Replace("/", "_");
+            return wsPath.Replace("/", ".");
         }
 
         private static string TrimPrefix(string template)

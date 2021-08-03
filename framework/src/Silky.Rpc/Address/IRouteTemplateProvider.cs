@@ -12,6 +12,8 @@ namespace Silky.Rpc.Address
         string Template { get; }
 
         bool MultipleServiceKey { get; }
+        
+        string ServiceName { get; set; }
     }
 
     public static class RouteTemplateProviderExtensions
