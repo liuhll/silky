@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.XPath;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
+using Silky.Rpc.Runtime.Server;
 using Silky.Swagger.SwaggerGen.SwaggerGenerator;
 
 namespace Silky.Swagger.SwaggerGen.XmlComments
@@ -23,13 +23,13 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             // Collect (unique) controller names and types in a dictionary
-            var controllerNamesAndTypes = context.ApiDescriptions
-                .Select(apiDesc => apiDesc.ActionDescriptor as ControllerActionDescriptor)
+            var appServiceNamesAndTypes = context.ServiceEntries
+                .Select(apiDesc => apiDesc as ServiceEntry)
                 .SkipWhile(actionDesc => actionDesc == null)
-                .GroupBy(actionDesc => actionDesc.ControllerName)
-                .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().ControllerTypeInfo.AsType()));
+                .GroupBy(actionDesc => actionDesc.GroupName)
+                .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().MethodInfo.DeclaringType));
 
-            foreach (var nameAndType in controllerNamesAndTypes)
+            foreach (var nameAndType in appServiceNamesAndTypes)
             {
                 var memberName = XmlCommentsNodeNameHelper.GetMemberNameForType(nameAndType.Value);
                 var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));

@@ -23,7 +23,7 @@ namespace Silky.Http.Core.SwaggerDocument
         private static readonly IEnumerable<string> DocumentGroups;
         private static readonly IEnumerable<Assembly> ApplicationInterfaceAssemblies;
         private static readonly IEnumerable<Assembly> ProjectAssemblies;
-        
+
 
         private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
 
@@ -199,7 +199,7 @@ namespace Silky.Http.Core.SwaggerDocument
                 return true;
             }
 
-            return serviceEntry.GroupName.Contains(currentGroup);
+            return serviceEntry.ServiceDescriptor.Id.Contains(currentGroup);
         }
 
 

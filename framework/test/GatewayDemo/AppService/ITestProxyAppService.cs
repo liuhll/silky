@@ -3,10 +3,15 @@ using ITestApplication.Test.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Rpc.Runtime.Server;
 
 namespace GatewayDemo.AppService
 {
+    /// <summary>
+    /// Test Proxy AppService
+    /// </summary>
     [ServiceRoute(template: "test/{appservice=proxy}")]
+    [ServiceDescription("TestProxyAppService", Description = " Test Proxy AppService")]
     public interface ITestProxyAppService
     {
         Task<TestOut> CreateProxy(TestInput testInput);

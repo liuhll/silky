@@ -53,6 +53,12 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                 },
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
+            var filterContext =
+                new DocumentFilterContext(entries, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                filter.Apply(swaggerDoc, filterContext);
+            }
             return swaggerDoc;
         }
 
@@ -76,13 +82,13 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
         }
 
         private IDictionary<OperationType, OpenApiOperation> GenerateOperations(
-            IGrouping<string, ServiceEntry> apiDescriptions, SchemaRepository schemaRepository)
+            IGrouping<string, ServiceEntry> serviceEntries, SchemaRepository schemaRepository)
         {
-            var apiDescriptionsByMethod = apiDescriptions
+            var serviceEntriesByMethod = serviceEntries
                 .OrderBy(_options.SortKeySelector)
                 .GroupBy(apiDesc => apiDesc.Router.HttpMethod);
             var operations = new Dictionary<OperationType, OpenApiOperation>();
-            foreach (var group in apiDescriptionsByMethod)
+            foreach (var group in serviceEntriesByMethod)
             {
                 var httpMethod = group.Key;
 
@@ -151,7 +157,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             var allResponseCodes = ResponsesCodeHelper.GetAllCodes();
             // foreach (var responseCode in allResponseCodes)
             // {
-            //     responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(apiDescription, schemaRepository, responseCode));
+            //     responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(serviceEntry, schemaRepository, responseCode));
             // }
             responses.Add(((int) ResponsesCode.Success).ToString(), GenerateResponse(apiDescription, schemaRepository));
             return responses;
@@ -507,9 +513,9 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             }
         }
 
-        private IList<OpenApiTag> GenerateOperationTags(ServiceEntry apiDescription)
+        private IList<OpenApiTag> GenerateOperationTags(ServiceEntry serviceEntry)
         {
-            return _options.TagsSelector(apiDescription)
+            return _options.TagsSelector(serviceEntry)
                 .Select(tagName => new OpenApiTag {Name = tagName})
                 .ToList();
         }

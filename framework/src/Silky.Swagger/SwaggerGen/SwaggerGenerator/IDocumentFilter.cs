@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 {
@@ -12,16 +13,16 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
     public class DocumentFilterContext
     {
         public DocumentFilterContext(
-            IEnumerable<ApiDescription> apiDescriptions,
+            IEnumerable<ServiceEntry> serviceEntries,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository)
         {
-            ApiDescriptions = apiDescriptions;
+            ServiceEntries = serviceEntries;
             SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
         }
 
-        public IEnumerable<ApiDescription> ApiDescriptions { get; }
+        public IEnumerable<ServiceEntry> ServiceEntries { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
 

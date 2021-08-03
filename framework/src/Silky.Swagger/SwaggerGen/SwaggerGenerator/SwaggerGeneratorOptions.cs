@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.OpenApi.Models;
 
@@ -54,24 +55,24 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 
         public IList<IDocumentFilter> DocumentFilters { get; set; }
 
-        private bool DefaultDocInclusionPredicate(string documentName, ServiceEntry apiDescription)
+        private bool DefaultDocInclusionPredicate(string documentName, ServiceEntry serviceEntry)
         {
-            return apiDescription.GroupName == null || apiDescription.GroupName == documentName;
+            return serviceEntry.GroupName == null || serviceEntry.GroupName == documentName;
         }
 
-        private string DefaultOperationIdSelector(ServiceEntry apiDescription)
+        private string DefaultOperationIdSelector(ServiceEntry serviceEntry)
         {
-            return apiDescription.ServiceDescriptor.Id;
+            return serviceEntry.ServiceDescriptor.Id;
         }
 
-        private IList<string> DefaultTagsSelector(ServiceEntry apiDescription)
+        private IList<string> DefaultTagsSelector(ServiceEntry serviceEntry)
         {
-            return new[] {apiDescription.GroupName};
+            return new[] {serviceEntry.GroupName};
         }
 
-        private string DefaultSortKeySelector(ServiceEntry apiDescription)
+        private string DefaultSortKeySelector(ServiceEntry serviceEntry)
         {
-            return TagsSelector(apiDescription).First();
+            return TagsSelector(serviceEntry).First();
         }
     }
 }

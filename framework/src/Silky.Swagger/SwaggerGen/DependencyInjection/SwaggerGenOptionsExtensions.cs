@@ -409,7 +409,7 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc);
             swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
             swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
-
+            swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
             if (includeControllerXmlComments)
                 swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
         }

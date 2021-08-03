@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IAnotherApplication
 {
-    [ServiceRoute]
+    [ServiceRoute(ServiceName = "AnotherAppService")]
     public interface IAnotherAppService
     {
         [Transaction]
