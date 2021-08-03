@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silky.Account.EntityFrameworkCore;
+using Silky.Codec;
 using Silky.Core;
 using Silky.Core.Modularity;
 using Silky.Jwt;
@@ -13,7 +14,8 @@ using Silky.SkyApm.Agent;
 namespace Silky.AccountHost
 {
     [DependsOn(typeof(SilkySkyApmAgentModule),
-        typeof(JwtModule))]
+        typeof(JwtModule),
+        typeof(MessagePackModule))]
     public class AccountHostModule : GeneralHostModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)

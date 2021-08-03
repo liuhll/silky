@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Silky.Codec;
 using Silky.Core;
 using Silky.Core.Modularity;
 using Silky.SkyApm.Agent;
@@ -11,7 +12,7 @@ using Silky.Stock.EntityFrameworkCore;
 
 namespace Silky.StockHost
 {
-    [DependsOn(typeof(SilkySkyApmAgentModule))]
+    [DependsOn(typeof(SilkySkyApmAgentModule), typeof(MessagePackModule))]
     public class StockHostModule : GeneralHostModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
