@@ -62,6 +62,44 @@ namespace Silky.Account.Database.Migrations.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Address = "beijing",
+                            Balance = 200m,
+                            CreateTime = new DateTime(2021, 8, 3, 21, 35, 12, 371, DateTimeKind.Local).AddTicks(8680),
+                            Email = "admin@silky.com",
+                            LockBalance = 0m,
+                            Password = "de4b550727f5b0ff46328be48c0765c3",
+                            UpdateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Address = "beijing",
+                            Balance = 500m,
+                            CreateTime = new DateTime(2021, 8, 3, 21, 35, 12, 371, DateTimeKind.Local).AddTicks(8990),
+                            Email = "liuhll@silky.com",
+                            LockBalance = 0m,
+                            Password = "909e74b36a584cb99e9a83636933a39b",
+                            UpdateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "liuhll"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Address = "shenzhen",
+                            Balance = 3000m,
+                            CreateTime = new DateTime(2021, 8, 3, 21, 35, 12, 371, DateTimeKind.Local).AddTicks(9030),
+                            Email = "lisi@silky.com",
+                            LockBalance = 0m,
+                            Password = "01efe69ed557b5525b5cc4c8f98ac7db",
+                            UpdateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "lisi"
+                        });
                 });
 
             modelBuilder.Entity("Silky.Account.Domain.Accounts.BalanceRecord", b =>
@@ -93,7 +131,7 @@ namespace Silky.Account.Database.Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BalanceRecord");
+                    b.ToTable("BalanceRecords");
                 });
 #pragma warning restore 612, 618
         }

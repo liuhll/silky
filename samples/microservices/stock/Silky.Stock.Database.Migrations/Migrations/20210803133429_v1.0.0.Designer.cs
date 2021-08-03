@@ -9,7 +9,7 @@ using Silky.Stock.EntityFrameworkCore;
 namespace Silky.Stock.Database.Migrations.Migrations
 {
     [DbContext(typeof(StockDbContext))]
-    [Migration("20210730030719_v1.0.0")]
+    [Migration("20210803133429_v1.0.0")]
     partial class v100
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,38 @@ namespace Silky.Stock.Database.Migrations.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreateTime = new DateTime(2021, 8, 3, 21, 34, 29, 499, DateTimeKind.Local).AddTicks(6130),
+                            LockStock = 0,
+                            Name = "iPhone11",
+                            Stock = 100,
+                            UnitPrice = 10m,
+                            UpdateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            CreateTime = new DateTime(2021, 8, 3, 21, 34, 29, 499, DateTimeKind.Local).AddTicks(6170),
+                            LockStock = 0,
+                            Name = "huawei",
+                            Stock = 200,
+                            UnitPrice = 120m,
+                            UpdateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            CreateTime = new DateTime(2021, 8, 3, 21, 34, 29, 499, DateTimeKind.Local).AddTicks(6170),
+                            LockStock = 0,
+                            Name = "xiaomi",
+                            Stock = 150,
+                            UnitPrice = 50m,
+                            UpdateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 #pragma warning restore 612, 618
         }

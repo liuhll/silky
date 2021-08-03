@@ -31,7 +31,7 @@ namespace Silky.Account.Database.Migrations.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BalanceRecord",
+                name: "BalanceRecords",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -46,8 +46,23 @@ namespace Silky.Account.Database.Migrations.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BalanceRecord", x => x.Id);
+                    table.PrimaryKey("PK_BalanceRecords", x => x.Id);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "Id", "Address", "Balance", "CreateBy", "CreateTime", "Email", "LockBalance", "Password", "UpdateBy", "UpdateTime", "UserName" },
+                values: new object[] { 1L, "beijing", 200m, null, new DateTime(2021, 8, 3, 21, 35, 12, 371, DateTimeKind.Local).AddTicks(8680), "admin@silky.com", 0m, "de4b550727f5b0ff46328be48c0765c3", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin" });
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "Id", "Address", "Balance", "CreateBy", "CreateTime", "Email", "LockBalance", "Password", "UpdateBy", "UpdateTime", "UserName" },
+                values: new object[] { 2L, "beijing", 500m, null, new DateTime(2021, 8, 3, 21, 35, 12, 371, DateTimeKind.Local).AddTicks(8990), "liuhll@silky.com", 0m, "909e74b36a584cb99e9a83636933a39b", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "liuhll" });
+
+            migrationBuilder.InsertData(
+                table: "Accounts",
+                columns: new[] { "Id", "Address", "Balance", "CreateBy", "CreateTime", "Email", "LockBalance", "Password", "UpdateBy", "UpdateTime", "UserName" },
+                values: new object[] { 3L, "shenzhen", 3000m, null, new DateTime(2021, 8, 3, 21, 35, 12, 371, DateTimeKind.Local).AddTicks(9030), "lisi@silky.com", 0m, "01efe69ed557b5525b5cc4c8f98ac7db", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "lisi" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -56,7 +71,7 @@ namespace Silky.Account.Database.Migrations.Migrations
                 name: "Accounts");
 
             migrationBuilder.DropTable(
-                name: "BalanceRecord");
+                name: "BalanceRecords");
         }
     }
 }

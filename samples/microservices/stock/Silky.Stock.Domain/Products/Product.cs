@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Silky.EntityFrameworkCore.Entities;
+using Silky.EntityFrameworkCore.Entities.Configures;
 using Silky.Rpc.Runtime.Session;
 
 namespace Silky.Stock.Domain.Products
 {
-    public class Product : IEntity
+    public class Product : IEntity, IEntitySeedData<Product>
     {
         private readonly ISession _session;
         public Product()
@@ -39,5 +42,35 @@ namespace Silky.Stock.Domain.Products
         public DateTime UpdateTime { get; set; }
 
         public long? UpdateBy { get; set; }
+        public IEnumerable<Product> HasData(DbContext dbContext, Type dbContextLocator)
+        {
+            return new List<Product>()
+            {
+                new ()
+                {
+                    Id = 1,
+                    Name = "iPhone11",
+                    Stock = 100,
+                    UnitPrice = 10,
+                    CreateTime = DateTime.Now
+                },
+                new ()
+                {
+                    Id = 2,
+                    Name = "huawei",
+                    Stock = 200,
+                    UnitPrice = 120,
+                    CreateTime = DateTime.Now
+                },
+                new ()
+                {
+                    Id = 3,
+                    Name = "xiaomi",
+                    Stock = 150,
+                    UnitPrice = 50,
+                    CreateTime = DateTime.Now
+                }
+            };
+        }
     }
 }

@@ -27,6 +27,21 @@ namespace Silky.Stock.Database.Migrations.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CreateBy", "CreateTime", "LockStock", "Name", "Stock", "UnitPrice", "UpdateBy", "UpdateTime" },
+                values: new object[] { 1L, null, new DateTime(2021, 8, 3, 21, 34, 29, 499, DateTimeKind.Local).AddTicks(6130), 0, "iPhone11", 100, 10m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CreateBy", "CreateTime", "LockStock", "Name", "Stock", "UnitPrice", "UpdateBy", "UpdateTime" },
+                values: new object[] { 2L, null, new DateTime(2021, 8, 3, 21, 34, 29, 499, DateTimeKind.Local).AddTicks(6170), 0, "huawei", 200, 120m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CreateBy", "CreateTime", "LockStock", "Name", "Stock", "UnitPrice", "UpdateBy", "UpdateTime" },
+                values: new object[] { 3L, null, new DateTime(2021, 8, 3, 21, 34, 29, 499, DateTimeKind.Local).AddTicks(6170), 0, "xiaomi", 150, 50m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

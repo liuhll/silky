@@ -13,9 +13,6 @@ namespace Silky.Order.EntityFrameworkCore
 
         public DbSet<Domain.Orders.Order> Orders { get; set; }
         
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Domain.Orders.Order>();
-        }
+       
     }
 }

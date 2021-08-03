@@ -74,8 +74,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
         /// <param name="modelBuilder">模型构建器</param>
         /// <param name="dbContext">数据库上下文</param>
         /// <param name="dbContextLocator">数据库上下文定位器</param>
-        internal static void ConfigureDbContextEntity(ModelBuilder modelBuilder, DbContext dbContext,
-            Type dbContextLocator)
+        internal static void ConfigureDbContextEntity(ModelBuilder modelBuilder, DbContext dbContext, Type dbContextLocator)
         {
             // 获取当前数据库上下文关联的类型
             var dbContextCorrelationType = GetDbContextCorrelationType(dbContext, dbContextLocator);
@@ -91,33 +90,27 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
             foreach (var entityType in dbContextCorrelationType.EntityTypes)
             {
                 // 创建实体类型
-                var entityBuilder = CreateEntityTypeBuilder(entityType, modelBuilder, dbContext, dbContextType,
-                    dbContextLocator, dbContextCorrelationType, appDbContextAttribute);
+                var entityBuilder = CreateEntityTypeBuilder(entityType, modelBuilder, dbContext, dbContextType, dbContextLocator, dbContextCorrelationType, appDbContextAttribute);
                 if (entityBuilder == null) continue;
 
                 // 配置无键实体构建器
                 ConfigureEntityNoKeyType(entityType, entityBuilder, dbContextCorrelationType.EntityNoKeyTypes);
 
                 // 实体构建成功注入拦截
-                LoadModelBuilderOnCreating(modelBuilder, entityBuilder, dbContext, dbContextLocator,
-                    dbContextCorrelationType.ModelBuilderFilterInstances);
+                LoadModelBuilderOnCreating(modelBuilder, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType.ModelBuilderFilterInstances);
 
                 // 配置数据库实体类型构建器
-                ConfigureEntityTypeBuilder(entityType, entityBuilder, dbContext, dbContextLocator,
-                    dbContextCorrelationType);
+                ConfigureEntityTypeBuilder(entityType, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType);
 
                 // 配置数据库实体种子数据
-                ConfigureEntitySeedData(entityType, entityBuilder, dbContext, dbContextLocator,
-                    dbContextCorrelationType);
+                ConfigureEntitySeedData(entityType, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType);
 
                 // 实体完成配置注入拦截
-                LoadModelBuilderOnCreated(modelBuilder, entityBuilder, dbContext, dbContextLocator,
-                    dbContextCorrelationType.ModelBuilderFilterInstances);
+                LoadModelBuilderOnCreated(modelBuilder, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType.ModelBuilderFilterInstances);
             }
 
             // 配置数据库函数
-            EntityFunctions:
-            ConfigureDbFunctions(modelBuilder, dbContextLocator);
+            EntityFunctions: ConfigureDbFunctions(modelBuilder, dbContextLocator);
         }
 
         /// <summary>
