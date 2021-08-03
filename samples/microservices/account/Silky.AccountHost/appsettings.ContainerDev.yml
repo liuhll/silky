@@ -16,3 +16,5 @@ cap:
     hostName: silky.rabbitmq
     userName: rabbitmq
     password: rabbitmq
+jwtSettings:
+  secret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4

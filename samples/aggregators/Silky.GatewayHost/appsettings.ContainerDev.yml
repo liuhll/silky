@@ -12,6 +12,7 @@ distributedCache:
 gateway:
   wrapResult: true
   enableSwaggerDoc: true
+  jwtSecret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4
 swaggerDocument:
   organizationMode: Group
   injectMiniProfiler: true

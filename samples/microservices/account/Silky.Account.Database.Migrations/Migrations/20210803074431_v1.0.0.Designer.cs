@@ -9,7 +9,7 @@ using Silky.Account.EntityFrameworkCore;
 namespace Silky.Account.Database.Migrations.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20210730040544_v1.0.0")]
+    [Migration("20210803074431_v1.0.0")]
     partial class v100
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,7 @@ namespace Silky.Account.Database.Migrations.Migrations
                     b.Property<decimal>("LockBalance")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
@@ -55,6 +55,11 @@ namespace Silky.Account.Database.Migrations.Migrations
 
                     b.Property<DateTime>("UpdateTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
