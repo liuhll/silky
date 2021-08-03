@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Remove unnecessary dependencies of the Silky.Rpc package
+- Optimize swagger document generation
 
 ### Fixed
 - Fix the bug that the Confirm phase and the Cancel phase will not automatically submit the local transaction and save the data in the TCC transaction
