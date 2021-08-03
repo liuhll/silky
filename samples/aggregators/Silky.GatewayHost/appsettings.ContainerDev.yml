@@ -17,3 +17,6 @@ swaggerDocument:
   organizationMode: Group
   injectMiniProfiler: true
   termsOfService: https://www.github.com/liuhll/silky
+skyWalking:
+  gRPC:
+    servers: "aop:11800"

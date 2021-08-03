@@ -34,8 +34,5 @@
     </ItemGroup>
     <ItemGroup>
         <None Remove="skyapm.json" />
-        <Content Include="skyapm.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 </Project>

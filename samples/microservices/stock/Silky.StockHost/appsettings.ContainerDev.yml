@@ -10,9 +10,12 @@ distributedCache:
     isEnabled: true
     configuration: silky.redis1:6379,defaultDatabase=0
 connectionStrings:
-    default: server=silky.mysql;port=3306;database=stock;uid=root;pwd=qwe!P4ss;  
+  default: server=silky.mysql;port=3306;database=stock;uid=root;pwd=qwe!P4ss;
 cap:
   rabbitmq:
     hostName: silky.rabbitmq
     userName: rabbitmq
     password: rabbitmq
+skyWalking:
+  gRPC:
+    servers: "aop:11800"
