@@ -41,63 +41,81 @@ In the development and design process, the design and ideas of various excellent
 
 ## Framework Features
 
+### Agent Host
+-General agent host: business microservice host, the microservice cluster communicates through the RPC protocol within the microservice cluster, and cannot communicate with the outside of the cluster
+-Web agent host: Provide Http access port to the outside of the cluster. When the http request arrives, it communicates with the host inside the cluster through the RPC protocol, which is usually used as a gateway
+-WebSocket agent host: a business microservice host with the ability to provide websocket communication
+
 ### Service Engine
 - Responsible for the initialization process of the Silky host
-- Service registration and resolve
-- Responsible for module resolve and registration
-
-### Routing And Parameters
-- Routing resolve and maintenance of the distributed application cluster routing table through the registry
-- Generate restful style WebAPI through the gateway to provide http services to the outside
-- Realize the verification of input parameters through characteristics
-
-### RPC Communication
-- Use [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty) as the underlying communication component
-- Use [Zookeeper](https://zookeeper.apache.org) as the service registry
-- Use [Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/) to generate dynamic proxy
-- Support cache interception
-- Support JSON, MessagePack, ProtoBuf encoding and decoding methods
-
-### Service Governance
-- Support load balancing routing methods such as polling, random routing, hash consistency, etc.
-- Support failure callback
--Use Policy to realize service fusing and retry
-- Support service failover
-- Support removing unhealthy services
-- Disable external access to services through configuration support
-
-> The service governance module will continue to be updated
+- Service registration and analysis
+- Responsible for module analysis and loading
 
 ### Modular Management
 - Module dependency settings
 - Register service through the module
 - Pass module pre-initialization method or release resources
 
+### Routing and WebAPI
+- Routing analysis and maintenance of the distributed application cluster routing table through the registry
+- Generate restful style through service entries
+- Support for generating online webapi documents through Swagger
+- Support performance monitoring of http requests through Miniprofiler
+
+### Parameter Verification
+- Automatically verify parameters through filters during RPC call
+- Support the verification of input parameters through features
+- Support input parameter verification through Fluent
+
+### RPC Communication
+- Use [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty) as the underlying communication component
+- Use [Zookeeper](https://zookeeper.apache.org) as the service registry
+- Use [Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/) to generate dynamic proxy
+- Support cache interception during service call
+- Support JSON, MessagePack, ProtoBuf encoding and decoding methods
+- Support custom filters during Rpc call (client filter: `IClientFilter`, server filter: `IServerFilter`)
+
+### Service Governance
+- Support load balancing routing methods such as polling, random routing, hash consistency, etc.
+- Support failure callback
+- Use [Polly](https://github.com/App-vNext/Polly) to realize service fusing and retry
+- Support service failover
+- Support removing unhealthy services
+- Disable external access to services through configuration support
+
+> The service governance module will continue to be updated
+
 ### Support Distributed Transactions
 - Realize distributed transactions through TCC
+- Ensure the final consistency of data through timed operations and Undolog
+
+### Link Tracking
+- Realize link tracking of calls between microservices through SkyApm
+
+### Identity Authentication and Authorization
+- Realize identity authentication based on Jwt
+- Support custom interface authentication
+
+### Data Access
+-Use EfCore to implement data access components
 
 ### Support Websocket Communication
-- Realize websocket communication through [websocket-sharp](https://github.com/sta/websocket-sharp)
+-Implement a module that supports websocket communication through [websocket-sharp](https://github.com/sta/websocket-sharp)
 
-### Distributed Lock
-- Use [RedLock.net](https://github.com/samcook/RedLock.net) to implement distributed locks
+### Distributed lock
+-Use [RedLock.net](https://github.com/samcook/RedLock.net) to implement distributed lock related packages
 
 ## RoadMap
-### Currently
-- [ ] Refactor distributed transactions, check the status of transaction participants and complete branch transactions through timing tasks and undolog
-
-- [x] Added a module for implementing object mapping through [Mapster](https://github.com/MapsterMapper/Mapster)
 
 ### Recent
-- Added identity authentication and authorization middleware
 - Improve documentation
 
 ### Future
-
 - Added service management dashboard
 - Added template project and CLI command line tool
-- Complete example
+- Realize a unified configuration center
 - Use silky framework to implement a rights management system
+- Support file upload and download
 
 ## Contribute
 - One of the easiest ways to contribute is to participate in discussions and discuss issues. You can also contribute by submitting Pull Request code changes.
