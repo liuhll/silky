@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Modularity;
-using Silky.Validation;
 
 namespace Silky.Validation.Fluent
 {

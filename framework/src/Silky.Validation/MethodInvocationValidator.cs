@@ -4,6 +4,7 @@ using System.Reflection;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Utils;
 
@@ -88,7 +89,8 @@ namespace Silky.Validation
         {
             for (var i = 0; i < context.Parameters.Length; i++)
             {
-                AddMethodParameterValidationErrors(context, context.Parameters[i], context.ParameterValues[i]);
+                var parameterValue = context.Parameters[i].GetActualValue(context.ParameterValues[i]);
+                AddMethodParameterValidationErrors(context, context.Parameters[i], parameterValue);
             }
         }
 

@@ -2,9 +2,8 @@ using System;
 using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
 using Silky.Rpc.Runtime.Filters;
-using Silky.Validation;
 
-namespace Silky.Rpc.Proxy.Filters
+namespace Silky.Validation.Filters
 {
     public class ValidationFilter : IClientFilter
     {
