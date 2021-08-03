@@ -7,6 +7,7 @@ EXPOSE ${http_port}
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
+COPY NuGet.Config .
 COPY sample.common.props .
 COPY aggregators/Silky.GatewayHost /src/aggregators/Silky.GatewayHost
 COPY microservices/order/Silky.Order.Application.Contracts /src/microservices/order/Silky.Order.Application.Contracts

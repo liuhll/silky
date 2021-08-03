@@ -8,7 +8,7 @@ EXPOSE ${rpc_port} ${ws_port}
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
-COPY ../NuGet.Config .
+COPY NuGet.Config .
 COPY sample.common.props .
 COPY microservices/order /src/microservices/order
 COPY microservices/account/Silky.Account.Application.Contracts /src/microservices/account/Silky.Account.Application.Contracts
