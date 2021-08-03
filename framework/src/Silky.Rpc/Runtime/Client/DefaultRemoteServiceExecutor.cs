@@ -33,7 +33,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
                 MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
-                    $"hashKey为:{hashKey}");
+                    $"hashKey is :{hashKey}");
             }
 
             IAsyncPolicy<object> executePolicy = Policy<object>
