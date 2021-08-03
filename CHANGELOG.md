@@ -1,36 +1,36 @@
-# Changelog
-All notable changes to this project will be documented in this file.
+# 更新日志
+此项目的所有显着更改都将记录在此文件中。
 
-## [Unreleased]
+## [未发布]
 
-### Added
-- Added use of Serilog as a logger
-- Added identity authentication and authorization package
+### 新增
+- 新增 Serilog 作为记录器的使用
+- 新增身份认证授权包
 
-### Changed
-- Remove unnecessary dependencies of the Silky.Rpc package
-- Optimize swagger document generation
+### 变更
+- 删除 Silky.Rpc 包的不必要的依赖项
+- 优化swagger文档生成
 
-### Fixed
-- Fix the bug that the Confirm phase and the Cancel phase will not automatically submit the local transaction and save the data in the TCC transaction
-- Fix the exception of parameter conversion in the Cancel and Confirm phases when Json is used as the codec in a distributed transaction
-- Fix the exception that the rpc call returns an empty result
+### 修复
+- 修复Confirm阶段和Cancel阶段不会自动提交本地交易并在TCC交易中保存数据的bug
+- 修复分布式事务中使用 Json 作为编解码器时，Cancel 和 Confirm 阶段参数转换异常的问题
+- 修复 rpc 调用返回空结果的异常
   
 ## [1.1.0]
 
-### Added
-- Rename the project name and the names of some packages
-- Encapsulate EFCore for data access components
-- Use miniProfile for performance monitoring
-- Use SkyApm to achieve link tracking
-- Add module package for implementing object mapping through Mapster
+### 新增
+- 重命名项目名称和一些包的名称
+- 封装 EFCore 用于数据访问
+- 使用 miniProfile 进行性能监控
+- 使用 SkyApm 实现链接追踪
+- 添加通过Mapster实现对象映射的包
 
-## Changed
-- Optimize module loading and module support for service registration through ServiceCollection
-- Refactoring distributed transactions
-- Use Filter to implement input parameter verification
+### 变更
+- 通过ServiceCollection优化服务注册的模块加载和模块支持
+- 重构分布式事务
+- 使用Filter实现输入参数校验
 
-### Fixed
-- Fix bugs in distributed locks
-- Fix that the client may not be able to subscribe to the routing information of the service registry
-- Fix the bug that the zookeeper client session timeout can not subscribe to the routing information of the service registry
+### 修复
+- 修复分布式锁中的bug
+- 修复客户端可能无法订阅服务注册中心的路由信息​​的问题
+- 修复zookeeper客户端会话超时无法订阅服务注册中心路由信息的bug
