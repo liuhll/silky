@@ -9,7 +9,6 @@
         <ProjectReference Include="..\Silky.Caching\Silky.Caching.csproj" />
         <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
-        <ProjectReference Include="..\Silky.Validation\Silky.Validation.csproj" />
     </ItemGroup>
 
     <ItemGroup>
