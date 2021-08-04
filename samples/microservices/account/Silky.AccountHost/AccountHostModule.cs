@@ -26,7 +26,6 @@ namespace Silky.AccountHost
                 x.UseEntityFramework<UserDbContext>();
                 x.UseRabbitMQ(z => { z = rabbitMqOptions; });
             });
-
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<UserDbContext>(); },
                 "Silky.Account.Database.Migrations");

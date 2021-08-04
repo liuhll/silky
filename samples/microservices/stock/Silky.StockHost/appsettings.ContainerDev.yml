@@ -16,6 +16,8 @@ cap:
     hostName: silky.rabbitmq
     userName: rabbitmq
     password: rabbitmq
+jwtSettings:
+  secret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW
 skyWalking:
   gRPC:
     servers: "aop:11800"
