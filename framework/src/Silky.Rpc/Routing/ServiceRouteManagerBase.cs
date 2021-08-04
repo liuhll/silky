@@ -82,6 +82,7 @@ namespace Silky.Rpc.Routing
         {
             var registrationCentreServiceRoutes = _serviceRouteCache.ServiceRouteDescriptors.Where(p =>
                 serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
+            
             var centreServiceRoutes = registrationCentreServiceRoutes as ServiceRouteDescriptor[] ??
                                       registrationCentreServiceRoutes.ToArray();
 
@@ -94,13 +95,13 @@ namespace Silky.Rpc.Routing
 
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
-                var centreServiceRoute = registrationCentreServiceRoutes.SingleOrDefault(p =>
-                    p.ServiceDescriptor.Equals(serviceRouteDescriptor.ServiceDescriptor));
-                if (centreServiceRoute != null)
-                {
-                    serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors
-                        .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
-                }
+                // var centreServiceRoute = registrationCentreServiceRoutes.SingleOrDefault(p =>
+                //     p.ServiceDescriptor.Equals(serviceRouteDescriptor.ServiceDescriptor));
+                // if (centreServiceRoute != null)
+                // {
+                //     serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors
+                //         .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
+                // }
 
                 await RegisterRouteAsync(serviceRouteDescriptor);
             }

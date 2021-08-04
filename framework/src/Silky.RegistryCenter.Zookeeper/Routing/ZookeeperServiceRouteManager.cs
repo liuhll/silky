@@ -53,14 +53,23 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
-                var routePath = CreateRoutePath(serviceRouteDescriptor.ServiceDescriptor);
-                var jsonString = _serializer.Serialize(serviceRouteDescriptor);
-                var data = jsonString.GetBytes();
                 var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
                 var @lock = synchronizationProvider.CreateLock(
                     $"RegisterRoute_{serviceRouteDescriptor.ServiceDescriptor.Id}");
                 await using (await @lock.AcquireAsync())
                 {
+                    var routePath = CreateRoutePath(serviceRouteDescriptor.ServiceDescriptor);
+                    // The latest routing data must be obtained from the service registry.
+                    // When the service is expanded and contracted, the locally cached routing data is not the latest
+                    var centreServiceRoute = await GetRouteDescriptorAsync(routePath, zookeeperClient);
+                    if (centreServiceRoute != null)
+                    {
+                        serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors
+                            .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
+                    }
+
+                    var jsonString = _serializer.Serialize(serviceRouteDescriptor);
+                    var data = jsonString.GetBytes();
                     if (!await zookeeperClient.ExistsAsync(routePath))
                     {
                         await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
@@ -95,7 +104,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             {
                 var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
                 var @lock = synchronizationProvider.CreateLock(
-                    "CreateSubDirectoryIfNotExistAndSubscribeChildrenChange");
+                    $"CreateSubDirectoryIfNotExistAndSubscribeChildrenChange{subDirectoryPath.Replace("/","_")}");
                 await using (await @lock.AcquireAsync())
                 {
                     if (!await zookeeperClient.ExistsAsync(subDirectoryPath))

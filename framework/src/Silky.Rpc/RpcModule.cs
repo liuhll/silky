@@ -21,11 +21,10 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Configuration;
-using Silky.Lock;
 
 namespace Silky.Rpc
 {
-    [DependsOn(typeof(CachingModule),typeof(LockModule))]
+    [DependsOn(typeof(CachingModule))]
     public class RpcModule : SilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
