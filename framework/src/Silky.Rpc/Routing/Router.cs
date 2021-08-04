@@ -165,7 +165,7 @@ namespace Silky.Rpc.Routing
             var appServiceSegmentCount = RouteTemplate.Segments?.Count(p => p.SegmentType == SegmentType.AppService);
             if (appServiceSegmentCount != 1)
             {
-                throw new SilkyException("路由模板未指定服务应用", StatusCode.RouteParseError);
+                throw new SilkyException("The routing template does not specify a service application", StatusCode.RouteParseError);
             }
         }
 
@@ -183,7 +183,7 @@ namespace Silky.Rpc.Routing
             if (!methodInfo.GetParameters().Any(p =>
                 p.Name.Equals(parameterName, StringComparison.OrdinalIgnoreCase) && p.IsSampleType()))
             {
-                throw new SilkyException("设置路由参数不正常,只允许为简单数据类型设置路径参数", StatusCode.RouteParseError);
+                throw new SilkyException("The setting of routing parameters is abnormal, and it is only allowed to set path parameters for simple data types", StatusCode.RouteParseError);
             }
 
             return (new TemplateSegment(SegmentType.Path, segemnetVal),
@@ -212,7 +212,7 @@ namespace Silky.Rpc.Routing
             }
             else if (template.StartsWith("~", StringComparison.Ordinal))
             {
-                throw new SilkyException($"{template}设置的路由模板格式不正常", StatusCode.RouteParseError);
+                throw new SilkyException($"{template} The format of the route template set is abnormal", StatusCode.RouteParseError);
             }
 
             return template;

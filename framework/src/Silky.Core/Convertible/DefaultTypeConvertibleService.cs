@@ -38,7 +38,7 @@ namespace Silky.Core.Convertible
                     break;
             }
             if (result == null)
-                throw new SilkyException($"无法将实例：{instance}转换为{conversionType}。");
+                throw new SilkyException($"Unable to convert instance: {instance} to {conversionType}");
             return result;
         }
         

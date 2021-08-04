@@ -33,7 +33,7 @@ namespace Silky.Rpc.Runtime.Server.Parameter
             }
             else if (!IsSample && parameterInfoCacheKeyProvider != null)
             {
-                throw new SilkyException("复杂参数类型不允许使用CacheKeyAttribute");
+                throw new SilkyException("Complex parameter types are not allowed to use CacheKeyAttribute");
             }
             else
             {
@@ -70,7 +70,7 @@ namespace Silky.Rpc.Runtime.Server.Parameter
                 .SelectMany(p => p.GetCustomAttributes().OfType<IHashKeyProvider>());
             if (propsHashKeyProvider.Count() > 1)
             {
-                throw new SilkyException("不允许指定多个HashKey");
+                throw new SilkyException("It is not allowed to specify multiple HashKey");
             }
 
             return false;

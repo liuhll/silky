@@ -455,7 +455,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             {
                 if (!propertyInfo.PropertyType.IsSample())
                 {
-                    throw new SilkyException("指定QString 参数不允许指定复杂类型参数");
+                    throw new SilkyException("Specifying QString parameters does not allow specifying complex type parameters");
                 }
 
                 var name = apiParameter.From == ParameterFrom.Path ? apiParameter.Name : propertyInfo.Name;

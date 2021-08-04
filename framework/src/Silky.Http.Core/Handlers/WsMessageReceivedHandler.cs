@@ -32,7 +32,7 @@ namespace Silky.Http.Core.Handlers
 
         public override Task Handle(HttpContext context, ServiceEntry serviceEntry)
         {
-            throw new SilkyException("websocket通信请依赖Silky.WebSocketServer包");
+            throw new SilkyException("Please rely on Silky.WebSocketServer package for websocket communication");
         }
     }
 }

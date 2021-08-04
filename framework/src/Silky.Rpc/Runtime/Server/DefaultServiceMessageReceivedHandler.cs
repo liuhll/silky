@@ -38,13 +38,13 @@ namespace Silky.Rpc.Runtime.Server
                
                 if (serviceEntry == null)
                 {
-                    throw new SilkyException($"通过服务id{message.ServiceId}获取本地服务条目失败", StatusCode.NotFindLocalServiceEntry);
+                    throw new SilkyException($"Failed to get local service entry through service id {message.ServiceId}", StatusCode.NotFindLocalServiceEntry);
                 }
 
                 var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
                 if (!tokenValidator.Validate())
                 {
-                    throw new RpcAuthenticationException("rpc token不合法");
+                    throw new RpcAuthenticationException("rpc token is illegal");
                 }
 
                 var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();

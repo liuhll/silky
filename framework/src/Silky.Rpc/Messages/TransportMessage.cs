@@ -52,7 +52,7 @@ namespace Silky.Rpc.Messages
         {
             if (typeof(T).FullName != ContentType)
             {
-                throw new SilkyException("指定的消息数据类型不正确");
+                throw new SilkyException("The specified message data type is incorrect");
             }
 
             return (T) Content;

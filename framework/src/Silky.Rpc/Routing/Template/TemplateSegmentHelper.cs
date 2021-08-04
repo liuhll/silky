@@ -26,7 +26,7 @@ namespace Silky.Rpc.Routing.Template
             var segemnetLineVal = Regex.Match(segemnetLine, segmentValReg);
             if (segemnetLineVal == null)
             {
-                throw new SilkyException("路由格式设置不正常", StatusCode.RouteParseError);
+                throw new SilkyException("Incorrect routing format", StatusCode.RouteParseError);
             }
 
             if (segemnetLineVal.Value.StartsWith("appservice",StringComparison.OrdinalIgnoreCase))
@@ -44,7 +44,7 @@ namespace Silky.Rpc.Routing.Template
                 var appServiceName = segemnetLineVal.Value.Split("=")[0];
                 if (!serviceName.EndsWith(appServiceName))
                 {
-                    throw new SilkyException("指定的服务应用路由段不正常", StatusCode.RouteParseError);
+                    throw new SilkyException("The specified service application route segment is incorrect", StatusCode.RouteParseError);
                 }
                 return SegmentType.AppService;
             }

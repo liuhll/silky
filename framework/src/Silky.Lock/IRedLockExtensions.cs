@@ -31,7 +31,7 @@ namespace Silky.Lock
                     redLock = await EngineContext.Current.Resolve<ILockerProvider>().CreateLockAsync(redLock.Resource);
                     if (DateTime.Now - lockerTime > lockOptions.DefaultExpiryTimeSpan)
                     {
-                        throw new SilkyException($"获取分布式锁资源{redLock.Resource}超时");
+                        throw new SilkyException($"Obtaining distributed lock resource {redLock.Resource} timed out");
                     }
                 }
             }
@@ -59,7 +59,7 @@ namespace Silky.Lock
                     redLock = await EngineContext.Current.Resolve<ILockerProvider>().CreateLockAsync(redLock.Resource);
                     if (DateTime.Now - lockerTime > lockOptions.DefaultExpiryTimeSpan)
                     {
-                        throw new SilkyException($"获取分布式锁资源{redLock.Resource}超时");
+                        throw new SilkyException($"Obtaining distributed lock resource {redLock.Resource} timed out");
                     }
                 }
             }

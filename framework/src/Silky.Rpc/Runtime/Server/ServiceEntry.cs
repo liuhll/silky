@@ -304,7 +304,7 @@ namespace Silky.Rpc.Runtime.Server
                             var parameterName = TemplateSegmentHelper.GetVariableName(parameterDescriptor.Name);
                             if (!pathVal.ContainsKey(parameterName))
                             {
-                                throw new SilkyException("path参数不允许为空,请确认您传递的参数是否正确");
+                                throw new SilkyException("The path parameter is not allowed to be empty, please confirm whether the parameter you passed is correct");
                             }
 
                             var parameterVal = pathVal[parameterName];
@@ -312,7 +312,7 @@ namespace Silky.Rpc.Runtime.Server
                         }
                         else
                         {
-                            throw new SilkyException("复杂数据类型不支持通过路由模板进行获取");
+                            throw new SilkyException("Complex data types do not support access through routing templates");
                         }
 
                         break;

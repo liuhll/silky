@@ -24,7 +24,7 @@ namespace Silky.Rpc.Runtime.Server.Parameter
                 if (parameterDescriptor.From == ParameterFrom.Body &&
                     parameterDescriptors.Any(p => p.From == ParameterFrom.Body))
                 {
-                    throw new SilkyException("Request Body的参数只允许设置一个");
+                    throw new SilkyException("Only one parameter of Request Body is allowed to be set");
                 }
 
                 parameterDescriptors.Add(parameterDescriptor);
@@ -44,12 +44,12 @@ namespace Silky.Rpc.Runtime.Server.Parameter
                 var parameterFrom = bindingSourceMetadata.BindingSource.Id.To<ParameterFrom>();
                 if (httpMethod == HttpMethod.Get && parameterFrom == ParameterFrom.Body)
                 {
-                    throw new SilkyException("Get请求不允许通过RequestBody获取参数值");
+                    throw new SilkyException("Get requests are not allowed to obtain parameter values through RequestBody");
                 }
 
                 if (parameterFrom == ParameterFrom.Path && !parameter.ParameterType.IsSample())
                 {
-                    throw new SilkyException($"路由类型参数不允许为复杂数据类型");
+                    throw new SilkyException($"Route type parameters are not allowed to be complex data types");
                 }
 
                 parameterDescriptor = new ParameterDescriptor(parameterFrom, parameter);

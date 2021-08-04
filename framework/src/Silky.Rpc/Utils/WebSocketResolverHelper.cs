@@ -31,7 +31,7 @@ namespace Silky.Rpc.Utils
 
             if (routeTemplateProvider == null)
             {
-                throw new SilkyException("ws服务必须要通过ServiceRoute特性进行注解");
+                throw new SilkyException("The ws service must be annotated through the ServiceRoute feature");
             }
 
             return ParseWsPath(routeTemplateProvider.Template, wsAppServiceType.Name);
@@ -55,7 +55,7 @@ namespace Silky.Rpc.Utils
             }
             else if (template.StartsWith("~", StringComparison.Ordinal))
             {
-                throw new SilkyException($"{template}设置的路由模板格式不正常", StatusCode.RouteParseError);
+                throw new SilkyException($"{template}The format of the set routing template is incorrect", StatusCode.RouteParseError);
             }
 
             return template;

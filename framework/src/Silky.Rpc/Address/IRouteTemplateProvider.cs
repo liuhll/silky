@@ -67,7 +67,7 @@ namespace Silky.Rpc.Address
             }
             else if (template.StartsWith("~", StringComparison.Ordinal))
             {
-                throw new SilkyException($"{template}设置的路由模板格式不正常", StatusCode.RouteParseError);
+                throw new SilkyException($"{template} The format of the route template set is incorrect", StatusCode.RouteParseError);
             }
 
             return template;

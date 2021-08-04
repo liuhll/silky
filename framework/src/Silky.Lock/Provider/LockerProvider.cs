@@ -51,12 +51,12 @@ namespace Silky.Lock.Provider
         {
             if (_lockOptions == null) 
             {
-                throw new ArgumentNullException("没有设置分布式锁服务");
+                throw new ArgumentNullException("Distributed lock service is not set");
             }
 
             if (_lockOptions.LockRedisConnection.IsNullOrEmpty())
             {
-                throw new SilkyException("未配置分布式锁服务地址");
+                throw new SilkyException("Distributed lock service address is not configured");
             }
             var multiplexers = new List<RedLockMultiplexer>();
             var existingConnectionMultiplexer = ConnectionMultiplexer.Connect(_lockOptions.LockRedisConnection);
