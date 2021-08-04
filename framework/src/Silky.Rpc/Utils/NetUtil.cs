@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.NetworkInformation;
 using Silky.Core;
-using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Microsoft.Extensions.Options;
 using Silky.Rpc.Address;
@@ -66,6 +62,13 @@ namespace Silky.Rpc.Utils
             var address = new AddressModel(host, port, ServiceProtocol.Tcp);
             return address;
         }
+        
+        public static string GetLocalAddress()
+        {
+            string host = GetAnyHostAddress();
+            return host;
+        }
+
 
         public static IAddressModel GetAddressModel(int port, ServiceProtocol serviceProtocol)
         {

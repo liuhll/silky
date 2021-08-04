@@ -17,6 +17,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             extensions.Services.AddSingleton<ITracingDiagnosticProcessor, RpcClientTracingDiagnosticProcessor>();
             extensions.Services.AddSingleton<ITracingDiagnosticProcessor, RpcServerTracingDiagnosticProcessor>();
             extensions.Services.AddSingleton<ITracingDiagnosticProcessor, HttpTracingDiagnosticProcessor>();
+          
             return extensions;
         }
     }
