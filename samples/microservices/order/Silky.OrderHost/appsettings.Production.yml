@@ -9,8 +9,10 @@ distributedCache:
   redis:
     isEnabled: true
     configuration: 127.0.0.1:6379,defaultDatabase=0
+lock:
+  lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
 connectionStrings:
-    default: server=127.0.0.1;port=3306;database=order;uid=root;pwd=qwe!P4ss;
+  default: server=127.0.0.1;port=3306;database=order;uid=root;pwd=qwe!P4ss;
 cap:
   rabbitmq:
     hostName: 127.0.0.1

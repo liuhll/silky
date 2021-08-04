@@ -21,10 +21,11 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Configuration;
+using Silky.Lock;
 
 namespace Silky.Rpc
 {
-    [DependsOn(typeof(CachingModule))]
+    [DependsOn(typeof(CachingModule),typeof(LockModule))]
     public class RpcModule : SilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
@@ -69,7 +70,7 @@ namespace Silky.Rpc
             var serviceRouteManager = applicationContext.ServiceProvider.GetService<IServiceRouteManager>();
             if (serviceRouteManager == null)
             {
-                throw new SilkyException("您必须指定依赖的服务注册中心模块");
+                throw new SilkyException("You must specify the dependent service registry module");
             }
 
             await serviceRouteManager.CreateSubscribeDataChanges();

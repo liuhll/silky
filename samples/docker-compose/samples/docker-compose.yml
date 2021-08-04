@@ -6,6 +6,8 @@ services:
     build:
       context: ../..
       dockerfile: microservices/account/Silky.AccountHost/Dockerfile
+    volumes:
+      - ./logs/account:/app/logs    
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
@@ -16,6 +18,8 @@ services:
     build:
       context: ../..
       dockerfile: microservices/order/Silky.OrderHost/Dockerfile
+    volumes:
+      - ./logs/order:/app/logs
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
@@ -26,6 +30,8 @@ services:
     build:
       context: ../..
       dockerfile: microservices/stock/Silky.StockHost/Dockerfile
+    volumes:
+      - ./logs/stock:/app/logs
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
     networks: 
@@ -36,6 +42,8 @@ services:
     build:
       context: ../..
       dockerfile: aggregators/Silky.GatewayHost/Dockerfile
+    volumes:
+      - ./logs/gateway:/app/logs      
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
       ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}

@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>Silky usage redlock.net Component package as distributed lock</Description>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="RedLock.net" Version="2.2.0" />
+        <PackageReference Include="DistributedLock" Version="2.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
     </ItemGroup>
 
 </Project>

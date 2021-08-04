@@ -56,18 +56,24 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 var routePath = CreateRoutePath(serviceRouteDescriptor.ServiceDescriptor);
                 var jsonString = _serializer.Serialize(serviceRouteDescriptor);
                 var data = jsonString.GetBytes();
-                if (!await zookeeperClient.ExistsAsync(routePath))
+                var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
+                var @lock = synchronizationProvider.CreateLock(
+                    $"RegisterRoute_{serviceRouteDescriptor.ServiceDescriptor.Id}");
+                await using (await @lock.AcquireAsync())
                 {
-                    await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
-                    Logger.LogDebug($"Node {routePath} does not exist and will be created");
-                }
-                else
-                {
-                    var onlineData = (await zookeeperClient.GetDataAsync(routePath)).ToArray();
-                    if (!onlineData.Equals(data))
+                    if (!await zookeeperClient.ExistsAsync(routePath))
                     {
-                        await zookeeperClient.SetDataAsync(routePath, data);
-                        Logger.LogDebug($"The cached routing data of the {routePath} node has been updated.");
+                        await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                        Logger.LogDebug($"Node {routePath} does not exist and will be created");
+                    }
+                    else
+                    {
+                        var onlineData = (await zookeeperClient.GetDataAsync(routePath)).ToArray();
+                        if (!onlineData.Equals(data))
+                        {
+                            await zookeeperClient.SetDataAsync(routePath, data);
+                            Logger.LogDebug($"The cached routing data of the {routePath} node has been updated.");
+                        }
                     }
                 }
             }
@@ -85,10 +91,22 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         private async Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange(IZookeeperClient zookeeperClient)
         {
             var subDirectoryPath = _registryCenterOptions.RoutePath;
-
-            if (!await zookeeperClient.ExistsAsync(subDirectoryPath))
+            try
             {
-                await zookeeperClient.CreateRecursiveAsync(subDirectoryPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
+                var @lock = synchronizationProvider.CreateLock(
+                    "CreateSubDirectoryIfNotExistAndSubscribeChildrenChange");
+                await using (await @lock.AcquireAsync())
+                {
+                    if (!await zookeeperClient.ExistsAsync(subDirectoryPath))
+                    {
+                        await zookeeperClient.CreateRecursiveAsync(subDirectoryPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                    }
+                }
+            }
+            catch (KeeperException.NodeExistsException e)
+            {
+                Logger.LogWarning("The directory {subDirectoryPath}has been created", e);
             }
 
             await CreateSubscribeChildrenChange(zookeeperClient, subDirectoryPath);

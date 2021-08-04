@@ -107,8 +107,7 @@ namespace Silky.Rpc.Routing
         }
 
         protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
-
-
+        
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
         protected virtual async Task RemoveExceptRouteAsyncs(

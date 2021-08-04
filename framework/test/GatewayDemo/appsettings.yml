@@ -5,7 +5,7 @@
 #        Microsoft.Hosting.Lifetime: "Information"
 serilog:
   minimumLevel:
-    default: Information
+    default: Debug
     override:
       Microsoft: Warning
       Microsoft.Hosting.Lifetime: Information

@@ -9,6 +9,8 @@ distributedCache:
   redis:
     isEnabled: true
     configuration: silky.redis1:6379,defaultDatabase=0
+lock:
+  lockRedisConnection: silky.redis1:6379,defaultDatabase=1
 connectionStrings:
     default: server=silky.mysql;port=3306;database=account;uid=root;pwd=qwe!P4ss;
 cap:
@@ -19,5 +21,6 @@ cap:
 jwtSettings:
   secret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4
 skyWalking:
-  gRPC:
-    servers: "aop:11800"
+  transport:  
+    gRPC:
+      servers: "oap:11800"

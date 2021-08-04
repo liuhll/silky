@@ -9,6 +9,8 @@ distributedCache:
   redis:
     isEnabled: true
     configuration: silky.redis1:6379,defaultDatabase=0
+lock:
+  lockRedisConnection: silky.redis1:6379,defaultDatabase=1
 gateway:
   wrapResult: true
   enableSwaggerDoc: true
@@ -18,5 +20,6 @@ swaggerDocument:
   injectMiniProfiler: true
   termsOfService: https://www.github.com/liuhll/silky
 skyWalking:
-  gRPC:
-    servers: "aop:11800"
+  transport:
+    gRPC:
+      servers: "oap:11800"

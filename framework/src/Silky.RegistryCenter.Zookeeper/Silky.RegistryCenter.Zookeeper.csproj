@@ -1,13 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>Silky uses zookeeper as the service registry</Description>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj" />
-      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
-      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj"/>
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="DistributedLock" Version="2.1.0"/>
     </ItemGroup>
 
 </Project>
