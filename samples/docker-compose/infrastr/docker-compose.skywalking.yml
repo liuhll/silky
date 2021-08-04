@@ -13,6 +13,8 @@ services:
       memlock:
         soft: -1
         hard: -1
+    networks:
+      - silky_service_net
   oap:
     image: apache/skywalking-oap-server:8.6.0-es6
     container_name: oap
@@ -36,6 +38,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - silky_service_net
+
   ui:
     image: apache/skywalking-ui:8.6.0
     container_name: ui
@@ -48,3 +53,14 @@ services:
       - 8080:8080
     environment:
       SW_OAP_ADDRESS: http://oap:12800
+    networks:
+      - silky_service_net
+
+networks:
+  silky_service_net: 
+    driver: bridge
+    name: silky_service_net
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.22.0.1/16 
