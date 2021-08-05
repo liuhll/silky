@@ -80,49 +80,34 @@ namespace Silky.Rpc.Routing
         protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
             AddressDescriptor addressDescriptor)
         {
-            var registrationCentreServiceRoutes = _serviceRouteCache.ServiceRouteDescriptors.Where(p =>
-                serviceRouteDescriptors.Any(q => q.ServiceDescriptor.Equals(p.ServiceDescriptor)));
-            
-            var centreServiceRoutes = registrationCentreServiceRoutes as ServiceRouteDescriptor[] ??
-                                      registrationCentreServiceRoutes.ToArray();
-
             await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
-            if (centreServiceRoutes.Any())
-            {
-                await RemoveExceptRouteAsyncs(registrationCentreServiceRoutes, addressDescriptor);
-            }
-
-
+            await RemoveExceptRouteAsync(serviceRouteDescriptors, addressDescriptor);
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
-                // var centreServiceRoute = registrationCentreServiceRoutes.SingleOrDefault(p =>
-                //     p.ServiceDescriptor.Equals(serviceRouteDescriptor.ServiceDescriptor));
-                // if (centreServiceRoute != null)
-                // {
-                //     serviceRouteDescriptor.AddressDescriptors = serviceRouteDescriptor.AddressDescriptors
-                //         .Concat(centreServiceRoute.AddressDescriptors).Distinct().OrderBy(p => p.ToString());
-                // }
-
                 await RegisterRouteAsync(serviceRouteDescriptor);
             }
         }
 
         protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
-        
+
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
-        protected virtual async Task RemoveExceptRouteAsyncs(
-            IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors, AddressDescriptor addressDescriptor)
+        protected virtual async Task RemoveExceptRouteAsync(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
+            AddressDescriptor addressDescriptor)
         {
             var oldServiceDescriptorIds =
                 _serviceRouteCache.ServiceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
+
             var newServiceDescriptorIds = serviceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
-            var removeServiceDescriptorIds = oldServiceDescriptorIds.Except(newServiceDescriptorIds).ToArray();
-            foreach (var removeServiceDescriptorId in removeServiceDescriptorIds)
+
+            var checkServiceDescriptorIds = oldServiceDescriptorIds.Except(newServiceDescriptorIds).ToArray();
+
+            foreach (var checkServiceDescriptorId in checkServiceDescriptorIds)
             {
                 var removeRoute =
                     _serviceRouteCache.ServiceRouteDescriptors.FirstOrDefault(p =>
-                        p.ServiceDescriptor.Id == removeServiceDescriptorId);
+                        p.ServiceDescriptor.Id == checkServiceDescriptorId);
+
                 if (removeRoute != null && removeRoute.AddressDescriptors.Any())
                 {
                     if (removeRoute.AddressDescriptors.Any(p => p.Equals(addressDescriptor)))
