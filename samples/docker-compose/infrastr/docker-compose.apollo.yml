@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  apollo-quick-start:
+    image: nobodyiam/apollo-quick-start
+    container_name: apollo-quick-start
+    depends_on:
+      - apollo-db
+    ports:
+      - "8180:8080"
+      - "8190:8090"
+      - "8170:8070"
+    links:
+      - apollo-db
+    networks:
+      - silky_service_net
+
+  apollo-db:
+    image: mysql:5.7
+    container_name: apollo-db
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "13306:3306"
+    volumes:
+      - ./apollosql:/docker-entrypoint-initdb.d/sql
+      - ./.mysql.apollo/data:/var/lib/mysql
+    networks:
+      - silky_service_net      
+networks:
+  silky_service_net:
+    external:
+      name: silky_service_net
