@@ -33,11 +33,11 @@ namespace Silky.Rpc.Routing
             _healthCheck = healthCheck;
             _serviceEntryLocator = serviceEntryLocator;
             _serviceEntryManager = serviceEntryManager;
-            _healthCheck.OnRemveAddress += OnRemveAddressHandler;
+            _healthCheck.OnRemveAddress += OnRemoveAddressHandler;
             Logger = NullLogger<ServiceRouteCache>.Instance;
         }
 
-        private async Task OnRemveAddressHandler(IAddressModel addressmodel)
+        private async Task OnRemoveAddressHandler(IAddressModel addressmodel)
         {
             addressmodel.InitFuseTimes();
             var remveAddressServiceRoutes =

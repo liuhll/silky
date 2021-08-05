@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
@@ -91,9 +92,15 @@ namespace Silky.DotNetty.Protocol.Tcp
                     {
                         pipeline.AddLast("tls", TlsHandler.Server(tlsCertificate));
                     }
-
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
+
+                    if (_rpcOptions.EnableHealthCheck)
+                    {
+                        pipeline.AddLast(new IdleStateHandler(_rpcOptions.HealthCheckWatchInterval, 0, 0));
+                        pipeline.AddLast(new ChannelInboundHandlerAdapter());
+                    }
+                    
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
                     pipeline.AddLast(new ServerHandler((channelContext, message) =>
                     {
@@ -112,7 +119,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             catch (Exception e)
             {
                 Logger.LogError(
-                    $"服务监听启动失败,监听地址:{_hostAddress},通信协议:{_hostAddress.ServiceProtocol},原因: {e.Message}");
+                    $"Service monitoring failed to start, monitoring address: {_hostAddress}, communication protocol: {_hostAddress.ServiceProtocol}, reason: {e.Message}");
                 throw;
             }
         }

@@ -22,14 +22,6 @@ namespace Silky.DotNetty.Handlers
             var transportMessage = (TransportMessage)message;
             _readMessageAction(context, transportMessage);
         }
-
-        public override void ChannelInactive(IChannelHandlerContext context)
-        {
-            var remoteServerEndpoint = context.Channel.RemoteAddress as IPEndPoint;
-            if (remoteServerEndpoint != null)
-            {
-                _healthCheck.RemoveAddress(remoteServerEndpoint.Address.MapToIPv4(), remoteServerEndpoint.Port);
-            }
-        }
+        
     }
 }

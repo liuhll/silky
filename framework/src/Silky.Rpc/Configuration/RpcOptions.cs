@@ -13,8 +13,12 @@ namespace Silky.Rpc.Configuration
         public string SslCertificateName { get; set; }
         public string SslCertificatePassword { get; set; }
         public int SoBacklog { get; set; } = 8192;
-        public bool RemoveUnhealthServer { get; set; } = true;
+        public bool RemoveUnHealthServer { get; set; } = true;
+
+        public bool EnableHealthCheck { get; set; } = true;
+
         [NotNull] public string Token { get; set; }
         public double ConnectTimeout { get; set; } = 500;
+        public int HealthCheckWatchInterval { get; set; } = 30;
     }
 }

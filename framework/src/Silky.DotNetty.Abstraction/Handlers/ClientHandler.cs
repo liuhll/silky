@@ -1,4 +1,5 @@
 using System.Net;
+using DotNetty.Common.Concurrency;
 using DotNetty.Transport.Channels;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Messages;
@@ -25,10 +26,19 @@ namespace Silky.DotNetty.Handlers
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-            var remoteServerEndpoint = context.Channel.RemoteAddress as IPEndPoint;
-            if (remoteServerEndpoint != null)
+            var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
+            if (remoteAddress != null)
             {
-                _healthCheck.RemoveAddress(remoteServerEndpoint.Address.MapToIPv4(), remoteServerEndpoint.Port);
+                _healthCheck.RemoveAddress(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
+            }
+        }
+
+        public override void Close(IChannelHandlerContext context, IPromise promise)
+        {
+            var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
+            if (remoteAddress != null)
+            {
+                _healthCheck.RemoveAddress(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
             }
         }
     }

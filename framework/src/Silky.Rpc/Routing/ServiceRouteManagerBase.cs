@@ -33,7 +33,7 @@ namespace Silky.Rpc.Routing
             Check.NotNullOrEmpty(_rpcOptions.Token, nameof(_rpcOptions.Token));
             _serviceRouteCache.OnRemoveServiceRoutes += async descriptors =>
             {
-                if (_rpcOptions.RemoveUnhealthServer)
+                if (_rpcOptions.RemoveUnHealthServer)
                 {
                     foreach (var descriptor in descriptors)
                     {

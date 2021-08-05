@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
@@ -35,6 +36,7 @@ namespace Silky.DotNetty
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
+
         private readonly IHealthCheck _healthCheck;
         // private IEventLoopGroup m_group;
 
@@ -116,6 +118,10 @@ namespace Silky.DotNetty
 
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
+                    if (_rpcOptions.EnableHealthCheck)
+                    {
+                        pipeline.AddLast(new IdleStateHandler(0, 10, 0));
+                    }
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
                 }));
             return bootstrap;
@@ -139,8 +145,9 @@ namespace Silky.DotNetty
             return await m_clients.GetOrAdd(addressModel
                 , k => new Lazy<Task<ITransportClient>>(async () =>
                     {
-                        Logger.LogInformation($"Ready to create a client for the server address: {addressModel.IPEndPoint}" +
-                                              $"");
+                        Logger.LogInformation(
+                            $"Ready to create a client for the server address: {addressModel.IPEndPoint}" +
+                            $"");
                         var bootstrap = _bootstrap;
                         var channel = await bootstrap.ConnectAsync(k.IPEndPoint);
                         var pipeline = channel.Pipeline;
