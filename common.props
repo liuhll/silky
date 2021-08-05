@@ -2,19 +2,19 @@
   <PropertyGroup>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-	
+
     <License>MIT</License>
-    
+
     <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
-    
-    <Version>1.3.1-preview20200804</Version>
-	
+
+    <Version>1.3.3-preview20200805</Version>
+
     <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
-	
-	<RepositoryUrl>https://github.com/liuhll/silky</RepositoryUrl>
+
+    <RepositoryUrl>https://github.com/liuhll/silky</RepositoryUrl>
 
     <PackageTags>silky;micro-service;rpc;distributed-transactions;tcc-transaction</PackageTags>
-		
+
     <RepositoryType>Github</RepositoryType>
 
   </PropertyGroup>
