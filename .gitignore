@@ -260,3 +260,4 @@ package-lock.json
 **/dist/*
 
 **/.mysql/*
+**/.mysql.apollo/*
