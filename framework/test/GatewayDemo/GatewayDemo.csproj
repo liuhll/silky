@@ -6,6 +6,7 @@
          <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Silky.Apollo\Silky.Apollo.csproj" />
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.Identity\Silky.Http.Identity.csproj" />
@@ -34,6 +35,9 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="appsettings.Development.yml" />
+      <Content Include="appsettings.Apollo.yml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
       <Content Include="appsettings.Development.yml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
