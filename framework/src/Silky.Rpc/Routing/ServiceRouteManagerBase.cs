@@ -92,32 +92,7 @@ namespace Silky.Rpc.Routing
 
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
-        protected virtual async Task RemoveExceptRouteAsync(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
-            AddressDescriptor addressDescriptor)
-        {
-            var oldServiceDescriptorIds =
-                _serviceRouteCache.ServiceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
-
-            var newServiceDescriptorIds = serviceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
-
-            var checkServiceDescriptorIds = oldServiceDescriptorIds.Except(newServiceDescriptorIds).ToArray();
-
-            foreach (var checkServiceDescriptorId in checkServiceDescriptorIds)
-            {
-                var removeRoute =
-                    _serviceRouteCache.ServiceRouteDescriptors.FirstOrDefault(p =>
-                        p.ServiceDescriptor.Id == checkServiceDescriptorId);
-
-                if (removeRoute != null && removeRoute.AddressDescriptors.Any())
-                {
-                    if (removeRoute.AddressDescriptors.Any(p => p.Equals(addressDescriptor)))
-                    {
-                        removeRoute.AddressDescriptors =
-                            removeRoute.AddressDescriptors.Where(p => !p.Equals(addressDescriptor)).ToList();
-                        await RegisterRouteAsync(removeRoute);
-                    }
-                }
-            }
-        }
+        protected abstract Task RemoveExceptRouteAsync(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
+            AddressDescriptor addressDescriptor);
     }
 }
