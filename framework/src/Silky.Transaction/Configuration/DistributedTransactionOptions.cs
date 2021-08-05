@@ -1,4 +1,5 @@
-﻿using Silky.Transaction.Abstraction;
+﻿using Silky.Lock;
+using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Configuration
 {
@@ -9,7 +10,7 @@ namespace Silky.Transaction.Configuration
         public TransRepositorySupport UndoLogRepository { get; set; } = TransRepositorySupport.Redis;
 
         public TransactionType TransactionType { get; set; } = TransactionType.Tcc;
-
+        
         public int ScheduledRecoveryDelay { get; set; } = 30;
 
         public int ScheduledCleanDelay { get; set; } = 60;
