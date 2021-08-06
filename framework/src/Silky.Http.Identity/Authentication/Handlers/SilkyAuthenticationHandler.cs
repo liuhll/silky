@@ -9,8 +9,10 @@ using JWT;
 using JWT.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Silky.Core.Configuration;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
@@ -23,11 +25,14 @@ namespace Silky.Http.Identity.Authentication.Handlers
     internal class SilkyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private GatewayOptions _gatewayOptions;
+        private AppSettingsOptions _appSettingsOptions;
         private readonly IJwtDecoder _jwtDecoder;
         private readonly ISerializer _serializer;
 
-        public SilkyAuthenticationHandler([NotNull] [ItemNotNull] IOptionsMonitor<AuthenticationSchemeOptions> authenticationSchemeOptions,
+        public SilkyAuthenticationHandler(
+            [NotNull] [ItemNotNull] IOptionsMonitor<AuthenticationSchemeOptions> authenticationSchemeOptions,
             IOptionsMonitor<GatewayOptions> gatewayOptions,
+            IOptionsMonitor<AppSettingsOptions> appSettingOptions,
             [NotNull] ILoggerFactory logger,
             [NotNull] UrlEncoder encoder,
             [NotNull] ISystemClock clock,
@@ -40,13 +45,20 @@ namespace Silky.Http.Identity.Authentication.Handlers
             _jwtDecoder = jwtDecoder;
             _serializer = serializer;
             _gatewayOptions = gatewayOptions.CurrentValue;
+            _appSettingsOptions = appSettingOptions.CurrentValue;
             gatewayOptions.OnChange((options, s) => _gatewayOptions = options);
+            appSettingOptions.OnChange((options, s) => _appSettingsOptions = options);
         }
 
         protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            Task WriteErrorResponse(string message)
+            Task WriteErrorResponse(string message, Exception ex)
             {
+                if (ex != null && _appSettingsOptions.DisplayFullErrorStack)
+                {
+                    message += Environment.NewLine + ex.StackTrace;
+                }
+
                 if (_gatewayOptions.WrapResult)
                 {
                     Context.Response.ContentType = "application/json;charset=utf-8";
@@ -82,7 +94,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
                 var token = Context.Request.Headers["Authorization"];
                 if (token.IsNullOrEmpty())
                 {
-                    await WriteErrorResponse("You have not logged in to the system");
+                    await WriteErrorResponse("You have not logged in to the system", null);
                     return AuthenticateResult.Fail(new AuthenticationException("You have not logged in to the system"));
                 }
 
@@ -91,7 +103,8 @@ namespace Silky.Http.Identity.Authentication.Handlers
                     if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
                     {
                         await WriteErrorResponse(
-                            "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified");
+                            "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified",
+                            null);
                         return AuthenticateResult.Fail(new AuthenticationException(
                             "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified"));
                     }
@@ -100,19 +113,19 @@ namespace Silky.Http.Identity.Authentication.Handlers
                     var ticket = CreateTicket(payload);
                     return AuthenticateResult.Success(ticket);
                 }
-                catch (TokenExpiredException)
+                catch (TokenExpiredException ex)
                 {
-                    await WriteErrorResponse("Token has expired");
+                    await WriteErrorResponse("Token has expired", ex);
                     return AuthenticateResult.Fail("Token has expired");
                 }
-                catch (SignatureVerificationException)
+                catch (SignatureVerificationException ex)
                 {
-                    await WriteErrorResponse("Token has invalid signature");
+                    await WriteErrorResponse("Token has invalid signature", ex);
                     return AuthenticateResult.Fail("Token has invalid signature");
                 }
                 catch (Exception ex)
                 {
-                    await WriteErrorResponse($"The token format is illegal, the reason: {ex.Message}");
+                    await WriteErrorResponse($"The token format is illegal, the reason: {ex.Message}", ex);
                     return AuthenticateResult.Fail($"The token format is illegal, the reason: {ex.Message}");
                 }
             }
