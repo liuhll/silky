@@ -13,7 +13,12 @@ namespace AnotherHostDemo
         typeof(SilkySkyApmAgentModule))]
     public class AnotherDemoModule : WebSocketHostModule
     {
-        public ILogger<AnotherDemoModule> Logger { get; set; } = NullLogger<AnotherDemoModule>.Instance;
+        public ILogger<AnotherDemoModule> Logger { get; set; }
+
+        public AnotherDemoModule()
+        {
+            Logger = NullLogger<AnotherDemoModule>.Instance;
+        }
 
         public async override Task Initialize(ApplicationContext applicationContext)
         {
