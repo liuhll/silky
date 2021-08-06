@@ -2,7 +2,9 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
+using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Configuration;
@@ -12,6 +14,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
+using Silky.Core.Modularity;
+using Silky.Rpc.Routing;
+using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Utils;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
@@ -23,25 +29,34 @@ namespace Silky.RegistryCenter.Zookeeper
         private RegistryCenterOptions _registryCenterOptions;
         public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
 
+        protected string[] ConnectionStrings
+        {
+            get
+            {
+                var connectionStrings =
+                    _registryCenterOptions?.ConnectionStrings?.Split(";")?.Where(p => !p.IsNullOrEmpty()).ToArray() ??
+                    new string[0];
+                return connectionStrings;
+            }
+        }
+
         public DefaultZookeeperClientProvider(IOptionsMonitor<RegistryCenterOptions> registryCenterOptions)
         {
             _registryCenterOptions = registryCenterOptions.CurrentValue;
-            registryCenterOptions.OnChange((options, s) =>
-            {
-                _registryCenterOptions = options;
-                CreateZookeeperClients();
-            });
+
             Check.NotNullOrEmpty(_registryCenterOptions.ConnectionStrings,
                 nameof(_registryCenterOptions.ConnectionStrings));
             Logger = NullLogger<DefaultZookeeperClientProvider>.Instance;
+
             CreateZookeeperClients();
         }
 
         private void CreateZookeeperClients()
         {
-            var connStrs = _registryCenterOptions.ConnectionStrings.Split(";");
-            foreach (var connStr in connStrs)
+            foreach (var connStr in ConnectionStrings)
             {
+                if (connStr.IsNullOrEmpty()) continue;
+
                 if (!_zookeeperClients.Keys.Contains(connStr))
                 {
                     CreateZookeeperClient(connStr);
@@ -96,7 +111,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         private int RondomSelectorIndex(int min, int max)
         {
-            var random = new Random((int) DateTime.Now.Ticks);
+            var random = new Random((int)DateTime.Now.Ticks);
             return random.Next(min, max);
         }
 

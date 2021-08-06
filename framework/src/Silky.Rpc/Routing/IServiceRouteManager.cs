@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
@@ -11,6 +11,8 @@ namespace Silky.Rpc.Routing
 
         Task CreateSubscribeDataChanges();
 
+        void UpdateRegistryCenterOptions(RegistryCenterOptions options);
+        
         Task CreateWsSubscribeDataChanges(string[] wsPaths);
 
         Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol);

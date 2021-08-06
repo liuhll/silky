@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
@@ -29,24 +28,10 @@ namespace Silky.Rpc.Routing
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
-
-            registryCenterOptions.OnChange(async options =>
-            {
-                Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
-                _registryCenterOptions = options;
-                await RegisterRpcRoutes(Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds,
-                    ServiceProtocol.Tcp);
-                var wsServicesTypes = ServiceEntryHelper.FindServiceLocalWsEntryTypes(EngineContext.Current.TypeFinder);
-                var wsServiceTypeInfo =
-                    wsServicesTypes.Select(p => (p, WebSocketResolverHelper.ParseWsPath(p))).ToArray();
-                var wsOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
-                await RegisterWsRoutes(Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds,
-                    wsServiceTypeInfo.Select(p => p.Item1).ToArray(), wsOptions.WsPort);
-            });
-
+            
             _rpcOptions = rpcOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
-
+            
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
             Check.NotNullOrEmpty(_rpcOptions.Token, nameof(_rpcOptions.Token));
             _serviceRouteCache.OnRemoveServiceRoutes += async descriptors =>
@@ -62,6 +47,11 @@ namespace Silky.Rpc.Routing
         }
 
         public abstract Task CreateSubscribeDataChanges();
+
+        public void UpdateRegistryCenterOptions(RegistryCenterOptions options)
+        {
+            _registryCenterOptions = options;
+        }
 
         public abstract Task CreateWsSubscribeDataChanges(string[] wsPaths);
 
