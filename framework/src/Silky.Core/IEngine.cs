@@ -59,5 +59,7 @@ namespace Silky.Core
         void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
 
         void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule;
+        
+        bool IsEnvironment(string environmentName);
     }
 }

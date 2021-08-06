@@ -1,8 +1,8 @@
+using System;
 using System.Threading.Tasks;
-using Com.Ctrip.Framework.Apollo.Logging;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Silky.Core;
 
 namespace GatewayDemo
 {
@@ -10,18 +10,26 @@ namespace GatewayDemo
     {
         public async static Task Main(string[] args)
         {
-            LogManager.UseConsoleLogging(LogLevel.Debug);
+            // LogManager.UseConsoleLogging(LogLevel.Debug);
             await CreateHostBuilder(args).Build().RunAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var hostBuilder = Host.CreateDefaultBuilder(args)
                 .RegisterSilkyServices<GatewayHostModule>()
-                .AddApollo()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
                         .UseSerilogDefault();
                 });
+
+            if (EngineContext.Current.IsEnvironment("Apollo"))
+            {
+                hostBuilder.AddApollo();
+            }
+
+            return hostBuilder;
+        }
     }
 }

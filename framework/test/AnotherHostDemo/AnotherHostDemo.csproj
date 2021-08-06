@@ -5,6 +5,7 @@
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Silky.Apollo\Silky.Apollo.csproj" />
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
@@ -39,6 +40,10 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="apollo.properties" />
     </ItemGroup>
 
 </Project>

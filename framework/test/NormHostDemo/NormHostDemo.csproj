@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\Silky.Apollo\Silky.Apollo.csproj" />
       <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
       <ProjectReference Include="..\..\src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
       <ProjectReference Include="..\..\src\Silky.Agent.GeneralHost\Silky.Agent.GeneralHost.csproj" />
@@ -47,6 +48,10 @@
       <Content Include="skyapm.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="apollo.properties" />
     </ItemGroup>
 
 </Project>

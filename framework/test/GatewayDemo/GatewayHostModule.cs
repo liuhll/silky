@@ -14,7 +14,7 @@ namespace GatewayDemo
     [DependsOn( /*typeof(MessagePackModule),*/
         typeof(TransactionRepositoryRedisModule),
         typeof(SilkySkyApmAgentModule),
-      //  typeof(TransactionTccModule),
+        typeof(TransactionTccModule),
         typeof(IdentityModule)
     )]
     public class GatewayHostModule : WebHostModule

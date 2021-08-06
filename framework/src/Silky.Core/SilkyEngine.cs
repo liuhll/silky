@@ -257,6 +257,27 @@ namespace Silky.Core
             Modules = moduleLoader.LoadModules(services, typeof(T));
         }
 
+        public bool IsEnvironment(string environmentName)
+        {
+            if (HostEnvironment != null)
+            {
+                return HostEnvironment.IsEnvironment(environmentName);
+            }
+
+            var dotnetEnvironment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+            if (!dotnetEnvironment.IsNullOrEmpty())
+            {
+                return dotnetEnvironment.Equals(environmentName);
+            }
+            var aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (!aspNetCoreEnvironment.IsNullOrEmpty())
+            {
+                return aspNetCoreEnvironment.Equals(environmentName);
+            }
+
+            return false;
+        }
+
         public IServiceProvider ServiceProvider { get; set; }
 
         public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; private set; }

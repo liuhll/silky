@@ -10,6 +10,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: qwe!P4ss
       eureka.service.url: http://apollo-configservice:8080/eureka/
       EUREKA_INSTANCE_IP_ADDRESS: ${EUREKA_INSTANCE_IP_ADDRESS:-apollo-configservice}
+    restart: always
     ports:
       - "8080:8080"      
     volumes:
@@ -25,6 +26,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: qwe!P4ss
       eureka.service.url: http://apollo-configservice:8080/eureka/
       EUREKA_INSTANCE_IP_ADDRESS: ${EUREKA_INSTANCE_IP_ADDRESS:-apollo-configservice}
+    restart: always
     depends_on: 
       - apollo-configservice
     ports:
@@ -43,6 +45,7 @@ services:
       APOLLO_PORTAL_ENVS: dev,pro
       DEV_META: ${DEV_META:-http://apollo-configservice:8080}
       PRO_META: ${PRO_META:-http://apollo-configservice:8080}  
+    restart: always
     depends_on: 
       - apollo-configservice
       - apollo-adminservice

@@ -1,5 +1,5 @@
 apollo:
-  appId: "silky-gateway"
+  appId: "silky-norm-host"
   cluster: default
   metaServer: "http://127.0.0.1:8080/"
 #  secret: "ffd9d01130ee4329875ac3441c0bedda"
