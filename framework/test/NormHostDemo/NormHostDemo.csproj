@@ -41,6 +41,9 @@
 
     <ItemGroup>
       <None Remove="skyapm.json" />
+      <Content Include="appsettings.Apollo.yml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
       <Content Include="skyapm.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
