@@ -261,3 +261,5 @@ package-lock.json
 
 **/.mysql/*
 **/.mysql.apollo/*
+
+**/logs/*
