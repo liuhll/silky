@@ -1,10 +1,12 @@
 apollo:
   appId: "silky-gateway"
-  cluster: test
-  metaServer:  "http://127.0.0.1:18080/"
-  secret: "ffd9d01130ee4329875ac3441c0bedda"
-  namespaces: [ "application.xml", "application.json", "application.yml", "application.yaml", "application" ]
+  cluster: default
+  metaServer: "http://192.168.23.221:8080/"
+#  secret: "ffd9d01130ee4329875ac3441c0bedda"
+  namespaces:
+    - application
+    - TEST1.silky.test
   env: Dev
   meta:
-    DEV: http://127.0.0.1:18080/
+    DEV: "http://192.168.23.221:8080/"
     
