@@ -299,12 +299,13 @@ namespace Silky.Rpc.Runtime.Server
                         if (parameterDescriptor.IsSample)
                         {
                             var pathVal =
-                                (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
+                                (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
                                     typeof(IDictionary<string, object>));
                             var parameterName = TemplateSegmentHelper.GetVariableName(parameterDescriptor.Name);
                             if (!pathVal.ContainsKey(parameterName))
                             {
-                                throw new SilkyException("The path parameter is not allowed to be empty, please confirm whether the parameter you passed is correct");
+                                throw new SilkyException(
+                                    "The path parameter is not allowed to be empty, please confirm whether the parameter you passed is correct");
                             }
 
                             var parameterVal = pathVal[parameterName];
@@ -312,7 +313,8 @@ namespace Silky.Rpc.Runtime.Server
                         }
                         else
                         {
-                            throw new SilkyException("Complex data types do not support access through routing templates");
+                            throw new SilkyException(
+                                "Complex data types do not support access through routing templates");
                         }
 
                         break;
@@ -339,7 +341,7 @@ namespace Silky.Rpc.Runtime.Server
             ParameterDescriptor parameterDescriptor, List<object> list)
         {
             var dict =
-                (IDictionary<string, object>) typeConvertibleService.Convert(parameter,
+                (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
                     typeof(IDictionary<string, object>));
             var parameterVal = parameterDescriptor.ParameterInfo.GetDefaultValue();
             if (dict.ContainsKey(parameterDescriptor.Name))
@@ -348,6 +350,11 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             list.Add(parameterVal);
+        }
+
+        internal void UpdateGovernance(GovernanceOptions options)
+        {
+            ReConfiguration(options);
         }
     }
 }

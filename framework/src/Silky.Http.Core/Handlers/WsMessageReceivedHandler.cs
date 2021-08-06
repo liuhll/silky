@@ -19,9 +19,7 @@ namespace Silky.Http.Core.Handlers
             ISerializer serializer,
             IOptions<RpcOptions> rpcOptions,
             IOptions<GatewayOptions> gatewayOptions,
-            IServiceExecutor serviceExecutor,
-            IRemoteServiceInvoker remoteServiceInvoker,
-            IOptions<GovernanceOptions> governanceOptions)
+            IServiceExecutor serviceExecutor)
             : base(parameterParser,
                 serializer,
                 rpcOptions,

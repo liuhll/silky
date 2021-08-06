@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Rpc.Utils;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Options;
+using Silky.Core;
 using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
@@ -21,17 +21,32 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         private readonly IServiceIdGenerator _serviceIdGenerator;
         private readonly IParameterProvider _parameterProvider;
         private readonly IHttpMethodProvider _httpMethodProvider;
-        private readonly GovernanceOptions _governanceOptions;
+        private GovernanceOptions _governanceOptions;
 
         public DefaultServiceEntryGenerator(IServiceIdGenerator serviceIdGenerator,
             IParameterProvider parameterProvider,
             IHttpMethodProvider httpMethodProvider,
-            IOptions<GovernanceOptions> governanceOptions)
+            IOptionsMonitor<GovernanceOptions> governanceOptions)
         {
             _serviceIdGenerator = serviceIdGenerator;
             _parameterProvider = parameterProvider;
             _httpMethodProvider = httpMethodProvider;
-            _governanceOptions = governanceOptions.Value;
+            _governanceOptions = governanceOptions.CurrentValue;
+            governanceOptions.OnChange(GovernanceOptionsChangeListener);
+        }
+
+        private void GovernanceOptionsChangeListener(GovernanceOptions options, string name)
+        {
+            _governanceOptions = options;
+            var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
+            var serviceEntryCache = EngineContext.Current.Resolve<ServiceEntryCache>();
+            var serviceEntries = serviceEntryManager.GetAllEntries();
+            
+            foreach (var serviceEntry in serviceEntries)
+            {
+                serviceEntry.UpdateGovernance(options);
+                serviceEntryCache.UpdateServiceEntryCache(serviceEntry);
+            }
         }
 
         public IEnumerable<ServiceEntry> CreateServiceEntry((Type, bool) serviceType)
