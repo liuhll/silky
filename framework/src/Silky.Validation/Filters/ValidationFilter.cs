@@ -10,13 +10,14 @@ namespace Silky.Validation.Filters
         public int Order { get; } = Int32.MaxValue;
 
         private readonly IMethodInvocationValidator _methodInvocationValidator;
-        private readonly AppSettingsOptions _appSettingsOptions;
+        private AppSettingsOptions _appSettingsOptions;
 
         public ValidationFilter(IMethodInvocationValidator methodInvocationValidator,
-            IOptions<AppSettingsOptions> appSettingsOptions)
+            IOptionsMonitor<AppSettingsOptions> appSettingsOptions)
         {
             _methodInvocationValidator = methodInvocationValidator;
-            _appSettingsOptions = appSettingsOptions.Value;
+            _appSettingsOptions = appSettingsOptions.CurrentValue;
+            appSettingsOptions.OnChange((options, s) => _appSettingsOptions = options);
         }
 
         public void OnActionExecuting(ServiceEntryExecutingContext context)

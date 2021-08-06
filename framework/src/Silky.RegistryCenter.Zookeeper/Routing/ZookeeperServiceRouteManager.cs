@@ -35,8 +35,8 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
             IZookeeperClientProvider zookeeperClientProvider,
-            IOptions<RegistryCenterOptions> registryCenterOptions,
-            IOptions<RpcOptions> rpcOptions,
+            IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
+            IOptionsMonitor<RpcOptions> rpcOptions,
             ISerializer serializer)
             : base(serviceRouteCache,
                 serviceEntryManager,

@@ -17,15 +17,20 @@ namespace Silky.RegistryCenter.Zookeeper
 {
     public class DefaultZookeeperClientProvider : IDisposable, IZookeeperClientProvider
     {
-        private ConcurrentDictionary<string, IZookeeperClient> _zookeeperClients = new ();
-        
-        
-        private readonly RegistryCenterOptions _registryCenterOptions;
+        private ConcurrentDictionary<string, IZookeeperClient> _zookeeperClients = new();
+
+
+        private RegistryCenterOptions _registryCenterOptions;
         public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
 
-        public DefaultZookeeperClientProvider(IOptions<RegistryCenterOptions> registryCenterOptions)
+        public DefaultZookeeperClientProvider(IOptionsMonitor<RegistryCenterOptions> registryCenterOptions)
         {
-            _registryCenterOptions = registryCenterOptions.Value;
+            _registryCenterOptions = registryCenterOptions.CurrentValue;
+            registryCenterOptions.OnChange((options, s) =>
+            {
+                _registryCenterOptions = options;
+                CreateZookeeperClients();
+            });
             Check.NotNullOrEmpty(_registryCenterOptions.ConnectionStrings,
                 nameof(_registryCenterOptions.ConnectionStrings));
             Logger = NullLogger<DefaultZookeeperClientProvider>.Instance;

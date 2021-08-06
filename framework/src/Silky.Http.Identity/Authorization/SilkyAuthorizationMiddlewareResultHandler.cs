@@ -16,15 +16,16 @@ namespace Silky.Http.Identity.Authorization
     public class SilkyAuthorizationMiddlewareResultHandler : IAuthorizationMiddlewareResultHandler
     {
         private readonly IAuthorizationMiddlewareResultHandler _handler;
-        private readonly GatewayOptions _gatewayOptions;
+        private GatewayOptions _gatewayOptions;
         private readonly ISerializer _serializer;
 
-        public SilkyAuthorizationMiddlewareResultHandler(IOptions<GatewayOptions> gatewayOptions,
+        public SilkyAuthorizationMiddlewareResultHandler(IOptionsMonitor<GatewayOptions> gatewayOptions,
             ISerializer serializer)
         {
             _serializer = serializer;
             _handler = new AuthorizationMiddlewareResultHandler();
-            _gatewayOptions = gatewayOptions.Value;
+            _gatewayOptions = gatewayOptions.CurrentValue;
+            gatewayOptions.OnChange((options, s) => _gatewayOptions = options);
         }
 
         public async Task HandleAsync(

@@ -30,6 +30,9 @@ namespace Silky.Core
 
         TOptions GetOptionsMonitor<TOptions>()
             where TOptions : class, new();
+        
+        TOptions GetOptionsMonitor<TOptions>(Action<TOptions,string> listener)
+            where TOptions : class, new();
 
         TOptions GetOptionsSnapshot<TOptions>()
             where TOptions : class, new();
@@ -59,7 +62,6 @@ namespace Silky.Core
         void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
 
         void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule;
-        
         bool IsEnvironment(string environmentName);
     }
 }

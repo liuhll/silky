@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
 using Silky.Core.Logging;
 
@@ -13,7 +14,10 @@ namespace Silky.Core.Exceptions
 
         static ExceptionExtensions()
         {
-            _appSettingsOptions = EngineContext.Current.GetOptions<AppSettingsOptions>();
+            _appSettingsOptions = EngineContext.Current.GetOptionsMonitor<AppSettingsOptions>((options, name) =>
+            {
+                _appSettingsOptions = options;
+            });
         }
 
         public static string GetExceptionMessage(this Exception exception)

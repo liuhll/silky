@@ -31,7 +31,12 @@ namespace Silky.Http.MiniProfiler
 
         public void Configure(IApplicationBuilder application)
         {
-            var swaggerDocumentOptions = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
+            SwaggerDocumentOptions swaggerDocumentOptions = default;
+            swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
+                (options, name) =>
+                {
+                    swaggerDocumentOptions = options;
+                });
 
             if (swaggerDocumentOptions.InjectMiniProfiler)
             {

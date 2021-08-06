@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
@@ -17,18 +18,35 @@ namespace Silky.Rpc.Routing
     {
         protected readonly ServiceRouteCache _serviceRouteCache;
         protected readonly IServiceEntryManager _serviceEntryManager;
-        protected readonly RegistryCenterOptions _registryCenterOptions;
-        protected readonly RpcOptions _rpcOptions;
+        protected RegistryCenterOptions _registryCenterOptions;
+        protected RpcOptions _rpcOptions;
 
         protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
-            IOptions<RegistryCenterOptions> registryCenterOptions,
-            IOptions<RpcOptions> rpcOptions)
+            IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
+            IOptionsMonitor<RpcOptions> rpcOptions)
         {
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
-            _registryCenterOptions = registryCenterOptions.Value;
-            _rpcOptions = rpcOptions.Value;
+            _registryCenterOptions = registryCenterOptions.CurrentValue;
+
+            registryCenterOptions.OnChange(async options =>
+            {
+                Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
+                _registryCenterOptions = options;
+                await RegisterRpcRoutes(Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds,
+                    ServiceProtocol.Tcp);
+                var wsServicesTypes = ServiceEntryHelper.FindServiceLocalWsEntryTypes(EngineContext.Current.TypeFinder);
+                var wsServiceTypeInfo =
+                    wsServicesTypes.Select(p => (p, WebSocketResolverHelper.ParseWsPath(p))).ToArray();
+                var wsOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
+                await RegisterWsRoutes(Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds,
+                    wsServiceTypeInfo.Select(p => p.Item1).ToArray(), wsOptions.WsPort);
+            });
+
+            _rpcOptions = rpcOptions.CurrentValue;
+            rpcOptions.OnChange((options, s) => _rpcOptions = options);
+
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
             Check.NotNullOrEmpty(_rpcOptions.Token, nameof(_rpcOptions.Token));
             _serviceRouteCache.OnRemoveServiceRoutes += async descriptors =>

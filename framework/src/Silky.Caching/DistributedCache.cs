@@ -43,16 +43,17 @@ namespace Silky.Caching
 
         protected DistributedCacheEntryOptions DefaultCacheOptions;
 
-        protected readonly SilkyDistributedCacheOptions _distributedCacheOption;
+        protected SilkyDistributedCacheOptions _distributedCacheOption;
 
         public DistributedCache(
-            IOptions<SilkyDistributedCacheOptions> distributedCacheOption,
+            IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOption,
             IDistributedCache cache,
             ICancellationTokenProvider cancellationTokenProvider,
             IDistributedCacheSerializer serializer,
             IDistributedCacheKeyNormalizer keyNormalizer)
         {
-            _distributedCacheOption = distributedCacheOption.Value;
+            _distributedCacheOption = distributedCacheOption.CurrentValue;
+            distributedCacheOption.OnChange((options, s) => _distributedCacheOption = options);
             Cache = cache;
             CancellationTokenProvider = cancellationTokenProvider;
             Logger = NullLogger<DistributedCache<TCacheItem, TCacheKey>>.Instance;
@@ -151,7 +152,7 @@ namespace Silky.Caching
 
             return cachedValues.Concat(ToCacheItems(cachedBytes, readKeys)).ToArray();
         }
-        
+
         public virtual async Task<KeyValuePair<TCacheKey, TCacheItem>[]> GetManyAsync(
             IEnumerable<TCacheKey> keys,
             bool? hideErrors = null,
@@ -714,7 +715,7 @@ namespace Silky.Caching
         where TCacheItem : class
     {
         public DistributedCache(
-            IOptions<SilkyDistributedCacheOptions> distributedCacheOption,
+            IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOption,
             IDistributedCache cache,
             ICancellationTokenProvider cancellationTokenProvider,
             IDistributedCacheSerializer serializer,

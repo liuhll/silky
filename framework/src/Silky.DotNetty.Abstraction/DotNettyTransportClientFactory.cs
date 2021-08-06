@@ -33,19 +33,20 @@ namespace Silky.DotNetty
 
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
         private readonly Bootstrap _bootstrap;
-        private readonly RpcOptions _rpcOptions;
+        private RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
 
         private readonly IHealthCheck _healthCheck;
         // private IEventLoopGroup m_group;
 
-        public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
+        public DotNettyTransportClientFactory(IOptionsMonitor<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
             IHealthCheck healthCheck)
         {
-            _rpcOptions = rpcOptions.Value;
+            _rpcOptions = rpcOptions.CurrentValue;
+            rpcOptions.OnChange((options, s) => _rpcOptions = options);
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
             _healthCheck = healthCheck;
@@ -122,6 +123,7 @@ namespace Silky.DotNetty
                     {
                         pipeline.AddLast(new IdleStateHandler(0, 10, 0));
                     }
+
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
                 }));
             return bootstrap;

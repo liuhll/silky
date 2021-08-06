@@ -20,22 +20,25 @@ namespace Silky.Http.Core.Handlers
     {
         protected readonly IParameterParser _parameterParser;
         protected readonly ISerializer _serializer;
-        protected readonly RpcOptions _rpcOptions;
         protected readonly IServiceExecutor _serviceExecutor;
-        protected readonly GatewayOptions _gatewayOptions;
+        
+        protected GatewayOptions _gatewayOptions;
+        protected RpcOptions _rpcOptions;
 
         protected MessageReceivedHandlerBase(
             IParameterParser parameterParser,
             ISerializer serializer,
-            IOptions<RpcOptions> rpcOptions,
-            IOptions<GatewayOptions> gatewayOptions,
+            IOptionsMonitor<RpcOptions> rpcOptions,
+            IOptionsMonitor<GatewayOptions> gatewayOptions,
             IServiceExecutor serviceExecutor)
         {
             _parameterParser = parameterParser;
             _serializer = serializer;
             _serviceExecutor = serviceExecutor;
-            _rpcOptions = rpcOptions.Value;
-            _gatewayOptions = gatewayOptions.Value;
+            _rpcOptions = rpcOptions.CurrentValue;
+            _gatewayOptions = gatewayOptions.CurrentValue;
+            rpcOptions.OnChange((options, s) => _rpcOptions = options);
+            gatewayOptions.OnChange((options, s) => _gatewayOptions = options);
         }
 
         public virtual async Task Handle(HttpContext context, ServiceEntry serviceEntry)

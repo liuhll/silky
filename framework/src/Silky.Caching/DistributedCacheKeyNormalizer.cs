@@ -8,12 +8,13 @@ namespace Silky.Caching
     {
         //protected ICurrentTenant CurrentTenant { get; }
 
-        protected SilkyDistributedCacheOptions DistributedCacheOptions { get; }
+        protected SilkyDistributedCacheOptions DistributedCacheOptions { get; private set; }
 
         public DistributedCacheKeyNormalizer(
-            IOptions<SilkyDistributedCacheOptions> distributedCacheOptions)
+            IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOptions)
         {
-            DistributedCacheOptions = distributedCacheOptions.Value;
+            DistributedCacheOptions = distributedCacheOptions.CurrentValue;
+            distributedCacheOptions.OnChange((options, s) => DistributedCacheOptions = options);
         }
 
         public virtual string NormalizeKey(DistributedCacheKeyNormalizeArgs args)

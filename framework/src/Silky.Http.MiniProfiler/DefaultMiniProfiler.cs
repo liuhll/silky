@@ -17,7 +17,10 @@ namespace Silky.Http.MiniProfiler
         /// <param name="isError">Is it a error message</param>
         public void Print(string category, string state, string message = null, bool isError = false)
         {
-            var swaggerDocumentOptions = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
+            SwaggerDocumentOptions swaggerDocumentOptions = default;
+            swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
+                (options, name) => { swaggerDocumentOptions = options; });
+            
             if (!swaggerDocumentOptions.InjectMiniProfiler) return;
             var customTiming = StackExchange.Profiling.MiniProfiler.Current?.CustomTiming(category,
                 string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);

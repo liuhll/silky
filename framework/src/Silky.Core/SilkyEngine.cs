@@ -26,7 +26,7 @@ namespace Silky.Core
 
         public IHostEnvironment HostEnvironment { get; private set; }
 
-        public string AppName => GetOptions<AppSettingsOptions>().AppName;
+        public string AppName => GetOptionsSnapshot<AppSettingsOptions>().AppName;
 
         public string HostName { get; private set; }
 
@@ -67,15 +67,26 @@ namespace Silky.Core
             return Resolve<IOptions<TOptions>>()?.Value;
         }
 
+        public TOptions GetOptionsMonitor<TOptions>()
+            where TOptions : class, new()
+        {
+            return Resolve<IOptionsMonitor<TOptions>>().CurrentValue;
+        }
+
         /// <summary>
         /// 获取选项
         /// </summary>
         /// <typeparam name="TOptions">强类型选项类</typeparam>
         /// <returns>TOptions</returns>
-        public TOptions GetOptionsMonitor<TOptions>()
+        public TOptions GetOptionsMonitor<TOptions>(Action<TOptions,string> listener)
             where TOptions : class, new()
         {
-            return Resolve<IOptionsMonitor<TOptions>>()?.CurrentValue;
+            var optionsMonitor = Resolve<IOptionsMonitor<TOptions>>();
+            if (optionsMonitor != null)
+            {
+                optionsMonitor.OnChange(listener);
+            }
+            return optionsMonitor?.CurrentValue;
         }
 
         /// <summary>
@@ -269,6 +280,7 @@ namespace Silky.Core
             {
                 return dotnetEnvironment.Equals(environmentName);
             }
+
             var aspNetCoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (!aspNetCoreEnvironment.IsNullOrEmpty())
             {

@@ -14,22 +14,31 @@ namespace Silky.Transaction.Schedule
 {
     public class ScheduledDistributedLockFactory : IScheduledDistributedLockFactory, ITransientDependency
     {
-        public async Task<IDistributedLockProvider> CreateDistributedLockProvider(TransRepositorySupport transRepositorySupport)
+        public async Task<IDistributedLockProvider> CreateDistributedLockProvider(
+            TransRepositorySupport transRepositorySupport)
         {
             IDistributedLockProvider distributedLockProvider = null;
             switch (transRepositorySupport)
             {
                 case TransRepositorySupport.Redis:
-                    var cacheOptions = EngineContext.Current.GetOptions<SilkyDistributedCacheOptions>();
+                    SilkyDistributedCacheOptions cacheOptions = null;
+                    cacheOptions =
+                        EngineContext.Current.GetOptionsMonitor<SilkyDistributedCacheOptions>((options, s) =>
+                            cacheOptions = options);
                     if (cacheOptions.Redis.Configuration.IsNullOrEmpty())
                     {
-                        throw new SilkyException("Failed to acquire redis distributed lock during task scheduling", StatusCode.TransactionError);
+                        throw new SilkyException("Failed to acquire redis distributed lock during task scheduling",
+                            StatusCode.TransactionError);
                     }
-                    var connection = await ConnectionMultiplexer.ConnectAsync(cacheOptions.Redis.Configuration); // uses StackExchange.Redis
+
+                    var connection =
+                        await ConnectionMultiplexer.ConnectAsync(cacheOptions.Redis
+                            .Configuration); // uses StackExchange.Redis
                     distributedLockProvider = new RedisDistributedSynchronizationProvider(connection.GetDatabase());
                     break;
                 default:
-                    throw new SilkyException("Failed to acquire distributed lock during task scheduling", StatusCode.TransactionError);
+                    throw new SilkyException("Failed to acquire distributed lock during task scheduling",
+                        StatusCode.TransactionError);
             }
 
             return distributedLockProvider;

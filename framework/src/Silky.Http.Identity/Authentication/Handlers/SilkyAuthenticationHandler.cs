@@ -22,24 +22,25 @@ namespace Silky.Http.Identity.Authentication.Handlers
 {
     internal class SilkyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private readonly GatewayOptions _gatewayOptions;
+        private GatewayOptions _gatewayOptions;
         private readonly IJwtDecoder _jwtDecoder;
         private readonly ISerializer _serializer;
 
-        public SilkyAuthenticationHandler([NotNull] [ItemNotNull] IOptionsMonitor<AuthenticationSchemeOptions> options,
-            IOptions<GatewayOptions> gatewayOptions,
+        public SilkyAuthenticationHandler([NotNull] [ItemNotNull] IOptionsMonitor<AuthenticationSchemeOptions> authenticationSchemeOptions,
+            IOptionsMonitor<GatewayOptions> gatewayOptions,
             [NotNull] ILoggerFactory logger,
             [NotNull] UrlEncoder encoder,
             [NotNull] ISystemClock clock,
             IJwtDecoder jwtDecoder, ISerializer serializer) :
-            base(options,
+            base(authenticationSchemeOptions,
                 logger,
                 encoder,
                 clock)
         {
             _jwtDecoder = jwtDecoder;
             _serializer = serializer;
-            _gatewayOptions = gatewayOptions.Value;
+            _gatewayOptions = gatewayOptions.CurrentValue;
+            gatewayOptions.OnChange((options, s) => _gatewayOptions = options);
         }
 
         protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -89,7 +90,8 @@ namespace Silky.Http.Identity.Authentication.Handlers
                 {
                     if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
                     {
-                        await WriteErrorResponse("You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified");
+                        await WriteErrorResponse(
+                            "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified");
                         return AuthenticateResult.Fail(new AuthenticationException(
                             "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified"));
                     }

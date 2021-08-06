@@ -23,9 +23,18 @@ namespace Silky.Http.Core
 
         public void Configure(IApplicationBuilder application)
         {
-            var gatewayOption = EngineContext.Current.GetOptions<GatewayOptions>();
+            GatewayOptions gatewayOption = default;
+            gatewayOption = EngineContext.Current.GetOptionsMonitor<GatewayOptions>((options, name) =>
+            {
+                gatewayOption = options;
+            });
 
-            var swaggerDocumentOptions = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
+            SwaggerDocumentOptions swaggerDocumentOptions = default;
+            swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
+                (options, name) =>
+                {
+                    swaggerDocumentOptions = options;
+                });
 
             if (gatewayOption.EnableSwaggerDoc)
             {

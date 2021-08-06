@@ -15,7 +15,12 @@ namespace Silky.Http.Core.Middlewares
     {
         public static void UseSilkyExceptionHandler(this IApplicationBuilder application)
         {
-            var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
+            GatewayOptions gatewayOptions = default;
+            gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>((options, name) =>
+            {
+                gatewayOptions = options;
+            });
+
             var serializer = EngineContext.Current.Resolve<ISerializer>();
 
             var useDetailedExceptionPage = gatewayOptions.UseDetailedExceptionPage;
@@ -27,8 +32,13 @@ namespace Silky.Http.Core.Middlewares
             {
                 application.UseExceptionHandler(handler =>
                 {
-                    var gatewayOption = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
-                    if (gatewayOption.InjectMiniProfiler)
+                    SwaggerDocumentOptions swaggerDocumentOptions = default;
+                    swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
+                        (options, name) =>
+                        {
+                            swaggerDocumentOptions = options;
+                        });
+                    if (swaggerDocumentOptions.InjectMiniProfiler)
                     {
                         handler.UseMiniProfiler();
                     }

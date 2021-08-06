@@ -33,7 +33,9 @@ namespace Silky.Transaction.Schedule
         {
             _logger = logger;
             _serializer = serializer;
-            _transactionConfig = EngineContext.Current.GetOptions<DistributedTransactionOptions>();
+            _transactionConfig =
+                EngineContext.Current.GetOptionsMonitor<DistributedTransactionOptions>((options, s) =>
+                    _transactionConfig = options);
             _scheduledDistributedLockFactory = scheduledDistributedLockFactory;
         }
 
@@ -65,7 +67,6 @@ namespace Silky.Transaction.Schedule
                     TimeSpan.FromSeconds(seconds)
                 );
             }
-            
         }
 
         private async void PhyDeleted([CanBeNull] object state)
@@ -122,12 +123,11 @@ namespace Silky.Transaction.Schedule
                             await TransRepositoryStore.RemoveTransaction(transaction);
                         }
                     }
-                } else
+                }
+                else
                 {
                     _logger.LogWarning($"Silky scheduled cleanRecovery failed to acquire distributed lock");
                 }
-                
-              
             }
             catch (Exception e)
             {

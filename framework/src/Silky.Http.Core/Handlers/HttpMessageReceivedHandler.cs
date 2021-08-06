@@ -12,8 +12,8 @@ namespace Silky.Http.Core.Handlers
     {
         public HttpMessageReceivedHandler(IParameterParser parameterParser,
             ISerializer serializer,
-            IOptions<RpcOptions> rpcOptions,
-            IOptions<GatewayOptions> gatewayOptions,
+            IOptionsMonitor<RpcOptions> rpcOptions,
+            IOptionsMonitor<GatewayOptions> gatewayOptions,
             IServiceExecutor serviceExecutor)
             : base(parameterParser,
                 serializer,

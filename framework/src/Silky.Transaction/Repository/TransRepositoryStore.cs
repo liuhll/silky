@@ -16,17 +16,18 @@ namespace Silky.Transaction.Repository
 
         static TransRepositoryStore()
         {
-            var transactionOptions = EngineContext.Current.GetOptions<DistributedTransactionOptions>();
+            _transactionOptions =
+                EngineContext.Current.GetOptionsMonitor<DistributedTransactionOptions>((options, s) =>
+                    _transactionOptions = options);
+
             _transRepository =
-                EngineContext.Current.ResolveNamed<ITransRepository>(transactionOptions.UndoLogRepository.ToString());
+                EngineContext.Current.ResolveNamed<ITransRepository>(_transactionOptions.UndoLogRepository.ToString());
 
             if (_transRepository == null)
             {
                 throw new TransactionException(
                     "Failed to obtain the distributed log storage repository, please set the distributed transaction log storage module");
             }
-
-            _transactionOptions = EngineContext.Current.GetOptions<DistributedTransactionOptions>();
         }
 
         public static async Task CreateTransaction(ITransaction transaction)
