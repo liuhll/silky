@@ -1,6 +1,7 @@
 src/Silky.Agent.GeneralHost
 src/Silky.Agent.WebHost
 src/Silky.Agent.WebSocketHost
+src/Silky.Apollo
 src/Silky.Caching
 src/Silky.Caching.StackExchangeRedis
 src/Silky.Castle
