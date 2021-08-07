@@ -33,7 +33,7 @@ namespace Silky.StockHost
         public async override Task Initialize(ApplicationContext applicationContext)
         {
             if (EngineContext.Current.HostEnvironment.IsDevelopment() ||
-                EngineContext.Current.HostEnvironment.EnvironmentName == "ContainerDev")
+                EngineContext.Current.HostEnvironment.IsEnvironment("ContainerDev"))
             {
                 using var scope = applicationContext.ServiceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<StockDbContext>();

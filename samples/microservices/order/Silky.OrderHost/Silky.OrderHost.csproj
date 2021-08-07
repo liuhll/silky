@@ -9,6 +9,7 @@
         <PackageReference Include="DotNetCore.CAP.MySql" Version="5.1.0" />
         <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="5.1.0" />
         <PackageReference Include="Silky.Agent.GeneralHost" Version="$(SilkyVersion)" />
+        <PackageReference Include="Silky.Apollo" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.SkyApm.Agent" Version="$(SilkyVersion)" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
             <PrivateAssets>all</PrivateAssets>
@@ -31,6 +32,9 @@
         </None>
         <None Update="appsettings.Development.yml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Apollo.yml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
     <ItemGroup>

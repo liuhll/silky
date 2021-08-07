@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Silky.Core;
 
 namespace Silky.AccountHost
 {
@@ -12,9 +13,15 @@ namespace Silky.AccountHost
 
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args)
+            var hostBuilder = Host.CreateDefaultBuilder(args)
                 .RegisterSilkyServices<AccountHostModule>()
                 .UseSerilogDefault();
+            if (EngineContext.Current.IsEnvironment("Apollo"))
+            {
+                hostBuilder.AddApollo();
+            }
+
+            return hostBuilder;
         }
     }
 }
