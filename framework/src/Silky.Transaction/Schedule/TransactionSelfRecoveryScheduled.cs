@@ -76,7 +76,8 @@ namespace Silky.Transaction.Schedule
                 try
                 {
                     var @lock = _distributedLockProvider.CreateLock("PhyDeleted");
-                    await using (await @lock.AcquireAsync())
+                    await using var handle = await @lock.TryAcquireAsync();
+                    if (handle != null)
                     {
                         var seconds = _transactionConfig.StoreDays * 24 * 60 * 60;
                         var removeTransCount =
@@ -85,6 +86,10 @@ namespace Silky.Transaction.Schedule
                             await TransRepositoryStore.RemoveParticipantByDate(AcquireDelayData(seconds));
                         _logger.LogDebug(
                             $"silky scheduled phyDeleted => transaction:{removeTransCount},participant:{removeParticipantCount}");
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Silky scheduled phyDeleted failed to acquire distributed lock");
                     }
                 }
                 catch (Exception e)
@@ -99,7 +104,8 @@ namespace Silky.Transaction.Schedule
             try
             {
                 var @lock = _distributedLockProvider.CreateLock("CleanRecovery");
-                await using (await @lock.AcquireAsync())
+                await using var handle = await @lock.TryAcquireAsync();
+                if (handle != null)
                 {
                     var transactionList = await TransRepositoryStore.ListLimitByDelay(
                         AcquireDelayData(_transactionConfig.CleanDelayTime),
@@ -118,6 +124,10 @@ namespace Silky.Transaction.Schedule
                         }
                     }
                 }
+                else
+                {
+                    _logger.LogWarning($"Silky scheduled cleanRecovery failed to acquire distributed lock");
+                }
             }
             catch (Exception e)
             {
@@ -130,7 +140,8 @@ namespace Silky.Transaction.Schedule
             try
             {
                 var @lock = _distributedLockProvider.CreateLock("SelfTccRecovery");
-                await using (await @lock.AcquireAsync())
+                await using var handle = await @lock.TryAcquireAsync();
+                if (handle != null)
                 {
                     var participantList = await TransRepositoryStore.ListParticipant(
                         AcquireDelayData(_transactionConfig.RecoverDelayTime), TransactionType.Tcc,
@@ -170,6 +181,10 @@ namespace Silky.Transaction.Schedule
                         }
                     }
                 }
+                else
+                {
+                    _logger.LogWarning($"Silky scheduled SelfTccRecovery failed to acquire distributed lock");
+                }
             }
             catch (Exception e)
             {
@@ -180,10 +195,12 @@ namespace Silky.Transaction.Schedule
         private async Task TccRecovery(ActionStage stage, IParticipant participant)
         {
             var @lock = _distributedLockProvider.CreateLock("TccRecovery");
-            await using (await @lock.AcquireAsync())
+            await using var handle = await @lock.TryAcquireAsync();
+            if (handle != null)
             {
                 var transactionRecoveryService =
-                    EngineContext.Current.ResolveNamed<ITransactionRecoveryService>(_transactionConfig.TransactionType
+                    EngineContext.Current.ResolveNamed<ITransactionRecoveryService>(_transactionConfig
+                        .TransactionType
                         .ToString());
                 if (stage == ActionStage.Trying || stage == ActionStage.Canceling)
                 {
@@ -193,6 +210,10 @@ namespace Silky.Transaction.Schedule
                 {
                     await transactionRecoveryService.Confirm(participant);
                 }
+            }
+            else
+            {
+                _logger.LogWarning($"Silky scheduled TccRecovery failed to acquire distributed lock");
             }
         }
 
