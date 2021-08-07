@@ -7,12 +7,12 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 EXPOSE ${rpc_port} ${ws_port}
 
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY NuGet.Config .
 COPY sample.common.props .
 COPY microservices/stock /src/microservices/stock
-RUN dotnet restore /src/microservices/stock/Silky.StockHost/Silky.StockHost.csproj && \
+RUN dotnet restore /src/microservices/stock/Silky.StockHost/Silky.StockHost.csproj --disable-parallel && \
     dotnet build --no-restore -c Release /src/microservices/stock/Silky.StockHost/Silky.StockHost.csproj
 
 FROM build AS publish

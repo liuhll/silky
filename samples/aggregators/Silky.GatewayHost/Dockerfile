@@ -5,7 +5,7 @@ ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone 
 EXPOSE ${http_port}
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY NuGet.Config .
 COPY sample.common.props .
@@ -17,7 +17,7 @@ COPY microservices/account/Silky.Account.Domain.Shared /src/microservices/accoun
 COPY microservices/stock/Silky.Stock.Application.Contracts /src/microservices/stock/Silky.Stock.Application.Contracts
 COPY microservices/stock/Silky.Stock.Domain.Shared /src/microservices/stock/Silky.Stock.Domain.Shared
 
-RUN dotnet restore /src/aggregators/Silky.GatewayHost/Silky.GatewayHost.csproj && \
+RUN dotnet restore /src/aggregators/Silky.GatewayHost/Silky.GatewayHost.csproj --disable-parallel && \
     dotnet build --no-restore -c Release /src/aggregators/Silky.GatewayHost/Silky.GatewayHost.csproj
 
 FROM build AS publish
