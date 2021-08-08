@@ -76,7 +76,7 @@ namespace Silky.Transaction.Schedule
                 try
                 {
                     var @lock = _distributedLockProvider.CreateLock(LockName.PhyDeleted);
-                    await using var handle = await @lock.TryAcquireAsync();
+                    await using var handle = await @lock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
                     if (handle != null)
                     {
                         var seconds = _transactionConfig.StoreDays * 24 * 60 * 60;
@@ -105,7 +105,7 @@ namespace Silky.Transaction.Schedule
             {
                 var @lock = _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecovery,
                     EngineContext.Current.HostName));
-                await using var handle = await @lock.TryAcquireAsync();
+                await using var handle = await @lock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
                 if (handle != null)
                 {
                     var transactionList = await TransRepositoryStore.ListLimitByDelay(
@@ -121,7 +121,7 @@ namespace Silky.Transaction.Schedule
                         var transactionLock =
                             _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecoveryTransaction,
                                 transaction.TransId));
-                        await using var transactionLockHandle = await transactionLock.TryAcquireAsync();
+                        await using var transactionLockHandle = await transactionLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
                         if (transactionLockHandle != null)
                         {
                             var exist = await TransRepositoryStore.ExistParticipantByTransId(transaction.TransId);
@@ -149,7 +149,7 @@ namespace Silky.Transaction.Schedule
             {
                 var @lock = _distributedLockProvider.CreateLock(string.Format(LockName.SelfTccRecovery,
                     EngineContext.Current.HostName));
-                await using var handle = await @lock.TryAcquireAsync();
+                await using var handle = await @lock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
                 if (handle != null)
                 {
                     var participantList = await TransRepositoryStore.ListParticipant(
@@ -165,7 +165,7 @@ namespace Silky.Transaction.Schedule
                         var @participantLock = _distributedLockProvider.CreateLock(
                             string.Format(LockName.ParticipantTccRecovery, participant.TransId,
                                 participant.ParticipantId));
-                        await using var participantHandle = await @participantLock.TryAcquireAsync();
+                        await using var participantHandle = await @participantLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
                         if (participantHandle != null)
                         {
                             if (participant.ReTry > _transactionConfig.RetryMax)

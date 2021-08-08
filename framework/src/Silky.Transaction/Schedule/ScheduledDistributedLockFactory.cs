@@ -34,7 +34,7 @@ namespace Silky.Transaction.Schedule
                     var connection =
                         await ConnectionMultiplexer.ConnectAsync(cacheOptions.Redis
                             .Configuration); // uses StackExchange.Redis
-                    distributedLockProvider = new RedisDistributedSynchronizationProvider(connection.GetDatabase());
+                    distributedLockProvider = new RedisDistributedSynchronizationProvider(connection.GetDatabase(15));
                     break;
                 default:
                     throw new SilkyException("Failed to acquire distributed lock during task scheduling",
