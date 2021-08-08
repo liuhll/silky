@@ -17,18 +17,19 @@ namespace Silky.Rpc.Configuration
             EnableHealthCheck = true;
             ConnectTimeout = 500;
             HealthCheckWatchInterval = 20;
+            _healthCheckWatchInterval = 120;
         }
 
         public string Host { get; set; }
         public int Port { get; set; }
         public bool UseLibuv { get; set; }
-        public bool IsSsl { get; set; } 
+        public bool IsSsl { get; set; }
         public string SslCertificateName { get; set; }
         public string SslCertificatePassword { get; set; }
-        public int SoBacklog { get; set; } 
-        public bool RemoveUnHealthServer { get; set; } 
+        public int SoBacklog { get; set; }
+        public bool RemoveUnHealthServer { get; set; }
 
-        public bool EnableHealthCheck { get; set; } 
+        public bool EnableHealthCheck { get; set; }
         [NotNull] public string Token { get; set; }
         public double ConnectTimeout { get; set; }
 
@@ -37,7 +38,7 @@ namespace Silky.Rpc.Configuration
         public int HealthCheckWatchInterval
         {
             get => _healthCheckWatchInterval;
-            set => _healthCheckWatchInterval = value <= 10 ? 10 : value;
+            set => _healthCheckWatchInterval = value <= 120 ? 120 : value;
         }
     }
 }

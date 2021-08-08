@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Net;
 using DotNetty.Transport.Channels;
-using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Messages;
 
 namespace Silky.DotNetty.Handlers
