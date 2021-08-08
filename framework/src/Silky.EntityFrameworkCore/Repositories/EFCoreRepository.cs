@@ -9,12 +9,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
 using Silky.EntityFrameworkCore.MultiTenants.Entities;
+using Silky.Rpc.Runtime.Server.ContextPool;
 
 namespace Silky.EntityFrameworkCore.Repositories
 {
@@ -75,7 +77,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             var repository = scoped.ServiceProvider.GetService<IRepository<TEntity>>();
 
             // 添加未托管对象
-           // App.UnmanagedObjects.Add(scoped);
+            // App.UnmanagedObjects.Add(scoped);
 
             return (repository, scoped);
         }
@@ -87,7 +89,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TEntity">实体类型</typeparam>
         /// <typeparam name="TDbContextLocator">数据库上下文定位器</typeparam>
         /// <returns>仓储</returns>
-        public virtual (IRepository<TEntity, TDbContextLocator> Repository, IServiceScope Scoped) BuildChange<TEntity, TDbContextLocator>()
+        public virtual (IRepository<TEntity, TDbContextLocator> Repository, IServiceScope Scoped) BuildChange<TEntity,
+            TDbContextLocator>()
             where TEntity : class, IPrivateEntity, new()
             where TDbContextLocator : class, IDbContextLocator
         {
@@ -114,7 +117,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <returns>ISqlRepository{TDbContextLocator}</returns>
         public virtual ISqlRepository<TDbContextLocator> Sql<TDbContextLocator>()
-             where TDbContextLocator : class, IDbContextLocator
+            where TDbContextLocator : class, IDbContextLocator
         {
             return _serviceProvider.GetService<ISqlRepository<TDbContextLocator>>();
         }
@@ -189,14 +192,15 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <summary>
         /// 数据库上下文池
         /// </summary>
-        private readonly IEfCoreDbContextPool _dbContextPool;
+        private readonly IEfCoreDbContextPool _silkyDbContextPool;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="dbContextLocator"></param>
         /// <param name="serviceProvider">服务提供器</param>
-        public PrivateRepository(Type dbContextLocator, IServiceProvider serviceProvider) : base(dbContextLocator, serviceProvider)
+        public PrivateRepository(Type dbContextLocator, IServiceProvider serviceProvider) : base(dbContextLocator,
+            serviceProvider)
         {
             // 初始化服务提供器
             ServiceProvider = serviceProvider;
@@ -217,7 +221,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             EntityType = Entities.EntityType;
 
             // 初始化数据上下文池
-            _dbContextPool = serviceProvider.GetService<IEfCoreDbContextPool>();
+            _silkyDbContextPool = (serviceProvider.GetService<ISilkyDbContextPool>() as IEfCoreDbContextPool);
 
             // 非泛型仓储
             _repository = serviceProvider.GetService<IRepository>();
@@ -351,7 +355,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="entity">实体</param>
         /// <param name="propertyPredicate">属性表达式</param>
         /// <returns>PropertyEntry</returns>
-        public virtual PropertyEntry<TEntity, TProperty> EntityPropertyEntry<TProperty>(TEntity entity, Expression<Func<TEntity, TProperty>> propertyPredicate)
+        public virtual PropertyEntry<TEntity, TProperty> EntityPropertyEntry<TProperty>(TEntity entity,
+            Expression<Func<TEntity, TProperty>> propertyPredicate)
         {
             return Entry(entity).Property(propertyPredicate);
         }
@@ -426,16 +431,18 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="entityEntry"></param>
         /// <param name="keyName"></param>
         /// <returns></returns>
-        public virtual bool CheckTrackState<TTrackEntity>(object id, out EntityEntry entityEntry, string keyName = default)
+        public virtual bool CheckTrackState<TTrackEntity>(object id, out EntityEntry entityEntry,
+            string keyName = default)
             where TTrackEntity : class, IPrivateEntity, new()
         {
             // 获取主键名
             keyName ??= (typeof(TTrackEntity) == typeof(TEntity) ? EntityType : Context.Set<TTrackEntity>().EntityType)
-                        .FindPrimaryKey()?.Properties?.AsEnumerable()?.FirstOrDefault()?.PropertyInfo?.Name;
+                .FindPrimaryKey()?.Properties?.AsEnumerable()?.FirstOrDefault()?.PropertyInfo?.Name;
 
             // 检查是否已经跟踪
             entityEntry = ChangeTracker.Entries().FirstOrDefault(u => u.Entity.GetType() == typeof(TTrackEntity)
-                                             && u.CurrentValues[keyName].ToString().Equals(id.ToString()));
+                                                                      && u.CurrentValues[keyName].ToString()
+                                                                          .Equals(id.ToString()));
 
             return entityEntry != null;
         }
@@ -540,7 +547,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <returns>ConcurrentBag{DbContext}</returns>
         public ConcurrentDictionary<Guid, DbContext> GetDbContexts()
         {
-            return _dbContextPool.GetDbContexts();
+            return _silkyDbContextPool.GetDbContexts();
         }
 
         /// <summary>
@@ -613,7 +620,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="connectionString">连接字符串</param>
         /// <param name="cancellationToken">异步取消令牌</param>
-        public virtual async Task ChangeDatabaseAsync(string connectionString, CancellationToken cancellationToken = default)
+        public virtual async Task ChangeDatabaseAsync(string connectionString,
+            CancellationToken cancellationToken = default)
         {
             if (DbConnection.State == ConnectionState.Open)
             {
@@ -741,7 +749,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TChangeEntity">实体类型</typeparam>
         /// <typeparam name="TChangeDbContextLocator">数据库上下文定位器</typeparam>
         /// <returns>仓储</returns>
-        public virtual IRepository<TChangeEntity, TChangeDbContextLocator> Change<TChangeEntity, TChangeDbContextLocator>()
+        public virtual IRepository<TChangeEntity, TChangeDbContextLocator> Change<TChangeEntity,
+            TChangeDbContextLocator>()
             where TChangeEntity : class, IPrivateEntity, new()
             where TChangeDbContextLocator : class, IDbContextLocator
         {
@@ -767,7 +776,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TChangeEntity">实体类型</typeparam>
         /// <typeparam name="TChangeDbContextLocator">数据库上下文定位器</typeparam>
         /// <returns>仓储</returns>
-        public virtual (IRepository<TChangeEntity, TChangeDbContextLocator> Repository, IServiceScope Scoped) BuildChange<TChangeEntity, TChangeDbContextLocator>()
+        public virtual (IRepository<TChangeEntity, TChangeDbContextLocator> Repository, IServiceScope Scoped)
+            BuildChange<TChangeEntity, TChangeDbContextLocator>()
             where TChangeEntity : class, IPrivateEntity, new()
             where TChangeDbContextLocator : class, IDbContextLocator
         {

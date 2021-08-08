@@ -11,13 +11,13 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 {
     public class EfCoreUnitOfWorkServerFilter : IServerFilter
     {
-        private readonly IDbContextPool _dbContextPool;
+        private readonly ISilkyDbContextPool _silkyDbContextPool;
         private UnitOfWorkAttribute _unitOfWorkAttribute;
         private bool _isManualSaveChanges;
 
         public EfCoreUnitOfWorkServerFilter()
         {
-            _dbContextPool = EngineContext.Current.Resolve<IEfCoreDbContextPool>();
+            _silkyDbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>() as IEfCoreDbContextPool;
         }
 
         public int Order { get; } = Int32.MaxValue;
@@ -40,7 +40,7 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
             if (_unitOfWorkAttribute != null)
             {
                 // 开启事务
-                _dbContextPool?.BeginTransaction(_unitOfWorkAttribute.EnsureTransaction);
+                _silkyDbContextPool?.BeginTransaction(_unitOfWorkAttribute.EnsureTransaction);
             }
         }
 
@@ -50,16 +50,16 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
             {
                 if (_unitOfWorkAttribute == null)
                 {
-                    if (context.Exception == null && !_isManualSaveChanges) _dbContextPool?.SavePoolNow();
+                    if (context.Exception == null && !_isManualSaveChanges) _silkyDbContextPool?.SavePoolNow();
                 }
                 else
                 {
-                    _dbContextPool?.CommitTransaction(_isManualSaveChanges, context.Exception);
+                    _silkyDbContextPool?.CommitTransaction(_isManualSaveChanges, context.Exception);
                 }
             }
             finally
             {
-                _dbContextPool?.CloseAll();
+                _silkyDbContextPool?.CloseAll();
             }
         }
     }

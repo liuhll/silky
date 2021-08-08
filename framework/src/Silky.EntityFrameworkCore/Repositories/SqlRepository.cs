@@ -6,6 +6,7 @@ using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Locators;
+using Silky.Rpc.Runtime.Server.ContextPool;
 
 namespace Silky.EntityFrameworkCore.Repositories
 {
@@ -87,7 +88,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TChangeDbContextLocator">数据库上下文定位器</typeparam>
         /// <returns>仓储</returns>
         public virtual ISqlRepository<TChangeDbContextLocator> Change<TChangeDbContextLocator>()
-             where TChangeDbContextLocator : class, IDbContextLocator
+            where TChangeDbContextLocator : class, IDbContextLocator
         {
             return _serviceProvider.GetService<ISqlRepository<TChangeDbContextLocator>>();
         }
@@ -123,7 +124,8 @@ namespace Silky.EntityFrameworkCore.Repositories
             where TRestrainRepository : class, IPrivateRootRepository
         {
             var type = typeof(TRestrainRepository);
-            if (!type.IsInterface || typeof(IPrivateRootRepository) == type || type.Name.Equals(nameof(IRepository)) || (type.IsGenericType && type.GetGenericTypeDefinition().Name.Equals(nameof(IRepository))))
+            if (!type.IsInterface || typeof(IPrivateRootRepository) == type || type.Name.Equals(nameof(IRepository)) ||
+                (type.IsGenericType && type.GetGenericTypeDefinition().Name.Equals(nameof(IRepository))))
             {
                 throw new InvalidCastException("Invalid type conversion.");
             }
@@ -136,9 +138,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         public virtual void EnsureTransaction()
         {
-          
             // 获取数据库上下文
-            var dbContextPool = EngineContext.Current.Resolve<IEfCoreDbContextPool>();
+            var dbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>() as IEfCoreDbContextPool;
             if (dbContextPool == null) return;
 
             // 追加上下文

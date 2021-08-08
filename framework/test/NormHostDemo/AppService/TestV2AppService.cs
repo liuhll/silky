@@ -25,6 +25,11 @@ namespace NormHostDemo.AppService
             };
         }
 
+        public Task<TestOut> Get(long id)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<string> Update(TestInput input)
         {
             throw new System.NotImplementedException();

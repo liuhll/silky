@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silky.Core.DependencyInjection;
 using Silky.EntityFrameworkCore;
 using Silky.EntityFrameworkCore.ContextPool;
@@ -8,7 +7,7 @@ using Silky.EntityFrameworkCore.Contexts.Dynamic;
 using Silky.EntityFrameworkCore.Contexts.Enums;
 using Silky.EntityFrameworkCore.Extensions.DatabaseProvider;
 using Silky.EntityFrameworkCore.Repositories;
-using IDbContextPool = Silky.Rpc.Runtime.Server.ContextPool.IDbContextPool;
+using Silky.Rpc.Runtime.Server.ContextPool;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -24,37 +23,36 @@ namespace Microsoft.Extensions.DependencyInjection
             configure?.Invoke(services);
 
             // 注册数据库上下文池
-            services.TryAddScoped<IEfCoreDbContextPool, EfCoreDbContextPool>();
-            services.TryAddScoped<IDbContextPool, EfCoreDbContextPool>();
+            services.AddScoped<ISilkyDbContextPool, EfCoreDbContextPool>();
 
             // 注册 Sql 仓储
-            services.TryAddScoped(typeof(ISqlRepository<>), typeof(SqlRepository<>));
+            services.AddScoped(typeof(ISqlRepository<>), typeof(SqlRepository<>));
 
             // 注册 Sql 非泛型仓储
-            services.TryAddScoped<ISqlRepository, SqlRepository>();
+            services.AddScoped<ISqlRepository, SqlRepository>();
 
             // 注册多数据库上下文仓储
-            services.TryAddScoped(typeof(IRepository<,>), typeof(EFCoreRepository<,>));
+            services.AddScoped(typeof(IRepository<,>), typeof(EFCoreRepository<,>));
 
             // 注册泛型仓储
-            services.TryAddScoped(typeof(IRepository<>), typeof(EFCoreRepository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(EFCoreRepository<>));
 
             // 注册主从库仓储
-            services.TryAddScoped(typeof(IMSRepository), typeof(MSRepository));
-            services.TryAddScoped(typeof(IMSRepository<>), typeof(MSRepository<>));
-            services.TryAddScoped(typeof(IMSRepository<,>), typeof(MSRepository<,>));
-            services.TryAddScoped(typeof(IMSRepository<,,>), typeof(MSRepository<,,>));
-            services.TryAddScoped(typeof(IMSRepository<,,,>), typeof(MSRepository<,,,>));
-            services.TryAddScoped(typeof(IMSRepository<,,,,>), typeof(MSRepository<,,,,>));
-            services.TryAddScoped(typeof(IMSRepository<,,,,,>), typeof(MSRepository<,,,,,>));
-            services.TryAddScoped(typeof(IMSRepository<,,,,,,>), typeof(MSRepository<,,,,,,>));
-            services.TryAddScoped(typeof(IMSRepository<,,,,,,,>), typeof(MSRepository<,,,,,,,>));
+            services.AddScoped(typeof(IMSRepository), typeof(MSRepository));
+            services.AddScoped(typeof(IMSRepository<>), typeof(MSRepository<>));
+            services.AddScoped(typeof(IMSRepository<,>), typeof(MSRepository<,>));
+            services.AddScoped(typeof(IMSRepository<,,>), typeof(MSRepository<,,>));
+            services.AddScoped(typeof(IMSRepository<,,,>), typeof(MSRepository<,,,>));
+            services.AddScoped(typeof(IMSRepository<,,,,>), typeof(MSRepository<,,,,>));
+            services.AddScoped(typeof(IMSRepository<,,,,,>), typeof(MSRepository<,,,,,>));
+            services.AddScoped(typeof(IMSRepository<,,,,,,>), typeof(MSRepository<,,,,,,>));
+            services.AddScoped(typeof(IMSRepository<,,,,,,,>), typeof(MSRepository<,,,,,,,>));
 
             // 注册非泛型仓储
-            services.TryAddScoped<IRepository, EFCoreRepository>();
+            services.AddTransient<IRepository, EFCoreRepository>();
 
             // 注册多数据库仓储
-            services.TryAddScoped(typeof(IDbRepository<>), typeof(DbRepository<>));
+            services.AddTransient(typeof(IDbRepository<>), typeof(DbRepository<>));
 
             // 解析数据库上下文
             services.AddTransient(provider =>
@@ -104,7 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             // 添加数据库上下文到池中
-            var dbContextPool = provider.GetService<IEfCoreDbContextPool>();
+            var dbContextPool = provider.GetService<ISilkyDbContextPool>() as IEfCoreDbContextPool;
             dbContextPool?.AddToPool(dbContext);
 
             return dbContext;

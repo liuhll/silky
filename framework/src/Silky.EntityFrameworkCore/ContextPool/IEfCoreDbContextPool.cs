@@ -10,7 +10,7 @@ namespace Silky.EntityFrameworkCore.ContextPool
     /// <summary>
     /// 数据库上下文池
     /// </summary>
-    public interface IEfCoreDbContextPool : IDbContextPool
+    public interface IEfCoreDbContextPool : ISilkyDbContextPool
     {
         /// <summary>
         /// 数据库上下文事务

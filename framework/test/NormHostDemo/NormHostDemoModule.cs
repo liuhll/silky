@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NormHostDemo.Contexts;
-using Silky.Codec;
 using Silky.Core.Modularity;
 using Silky.Jwt;
 using Silky.ObjectMapper.Mapster;
@@ -18,7 +17,7 @@ namespace NormHostDemo
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
+            services.AddDatabaseAccessor(options => { options.AddDb<DemoDbContext>(); }, "NormHostDemo");
         }
 
         public override async Task Initialize(ApplicationContext applicationContext)

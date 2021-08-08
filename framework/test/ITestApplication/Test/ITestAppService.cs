@@ -24,6 +24,8 @@ namespace ITestApplication.Test
         //[UnitOfWork]
         Task<TestOut> Create(TestInput input);
 
+        Task<TestOut> Get(long id);
+
         [Obsolete]
         Task<string> Update(TestInput input);
 

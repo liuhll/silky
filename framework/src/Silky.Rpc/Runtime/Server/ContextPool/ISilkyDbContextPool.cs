@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Silky.Rpc.Runtime.Server.ContextPool
 {
-    public interface IDbContextPool
+    public interface ISilkyDbContextPool
     {
 
         void EnsureDbContextAddToPools();

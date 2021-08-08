@@ -17,7 +17,7 @@ namespace Silky.Transaction.Tcc
             object?[]? parameters)
         {
             object execResult;
-            var dbContextPool = EngineContext.Current.Resolve<IDbContextPool>();
+            var dbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>();
             var unitOfWorkAttribute = executor.MethodInfo.GetCustomAttributes().OfType<UnitOfWorkAttribute>()
                 .FirstOrDefault();
             var isManualSaveChanges =

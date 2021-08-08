@@ -24,7 +24,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <returns></returns>
         public int SavePoolNow()
         {
-            return _dbContextPool.SavePoolNow();
+            return _silkyDbContextPool.SavePoolNow();
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <returns></returns>
         public int SavePoolNow(bool acceptAllChangesOnSuccess)
         {
-            return _dbContextPool.SavePoolNow(acceptAllChangesOnSuccess);
+            return _silkyDbContextPool.SavePoolNow(acceptAllChangesOnSuccess);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <returns></returns>
         public Task<int> SavePoolNowAsync(CancellationToken cancellationToken = default)
         {
-            return _dbContextPool.SavePoolNowAsync(cancellationToken);
+            return _silkyDbContextPool.SavePoolNowAsync(cancellationToken);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <returns></returns>
         public Task<int> SavePoolNowAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            return _dbContextPool.SavePoolNowAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return _silkyDbContextPool.SavePoolNowAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
         /// <summary>

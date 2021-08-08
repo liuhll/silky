@@ -29,7 +29,7 @@ namespace Silky.OrderHost
             
                         
             services.AddDatabaseAccessor(
-                options => { options.AddDbPool<OrderDbContext>(); },
+                options => { options.AddDb<OrderDbContext>(); },
                 "Silky.Order.Database.Migrations");
         }
 

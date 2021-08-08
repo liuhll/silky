@@ -50,6 +50,12 @@ namespace NormHostDemo.AppService
             };
         }
 
+        public async Task<TestOut> Get(long id)
+        {
+            var test = await _testRepository.FindAsync(id);
+            return test.Adapt<TestOut>();
+        }
+
         public async Task<string> Update(TestInput input)
         {
             throw new BusinessException("test exception");
