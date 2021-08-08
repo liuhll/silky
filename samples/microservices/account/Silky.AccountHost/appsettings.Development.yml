@@ -1,6 +1,6 @@
 rpc:
   host: 0.0.0.0
-  rpcPort: 2201
+  port: 2201
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 governance:
   executionTimeout: -1
