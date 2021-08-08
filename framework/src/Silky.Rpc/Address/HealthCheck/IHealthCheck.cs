@@ -16,14 +16,15 @@ namespace Silky.Rpc.Address.HealthCheck
 
         void ChangeHealthStatus(IAddressModel addressModel, bool isHealth, int unHealthCeilingTimes = 0);
 
+        void ChangeHealthStatus(IPAddress mapToIPv4, int port, bool isHealth, int unHealthCeilingTimes = 0);
+
         void RemoveAddress(IAddressModel addressModel);
 
         void RemoveAddress(IPAddress ipAddress, int port);
-        
+
         event HealthChangeEvent OnHealthChange;
         event RemoveAddressEvent OnRemveAddress;
         event UnhealthEvent OnUnhealth;
         event AddMonitorEvent OnAddMonitor;
-        
     }
 }

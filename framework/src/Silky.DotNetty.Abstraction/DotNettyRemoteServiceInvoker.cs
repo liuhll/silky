@@ -56,7 +56,8 @@ namespace Silky.DotNetty
                 MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                     MiniProfileConstant.Rpc.State.FindServiceRoute,
                     $"The service routing could not be found via {remoteInvokeMessage.ServiceId}", true);
-                throw new SilkyException($"The service routing could not be found via {remoteInvokeMessage.ServiceId}", StatusCode.NotFindServiceRoute);
+                throw new SilkyException($"The service routing could not be found via {remoteInvokeMessage.ServiceId}",
+                    StatusCode.NotFindServiceRoute);
             }
 
             if (!serviceRoute.Addresses.Any(p => p.Enabled))
@@ -64,7 +65,8 @@ namespace Silky.DotNetty
                 MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                     MiniProfileConstant.Rpc.State.FindServiceRoute,
                     $"No available service provider can be found via {remoteInvokeMessage.ServiceId}", true);
-                throw new NotFindServiceRouteAddressException($"No available service provider can be found via {remoteInvokeMessage.ServiceId}");
+                throw new NotFindServiceRouteAddressException(
+                    $"No available service provider can be found via {remoteInvokeMessage.ServiceId}");
             }
 
             var addressSelector =
@@ -83,27 +85,31 @@ namespace Silky.DotNetty
                 _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
-                RpcContext.GetContext().SetAttachment(AttachmentKeys.RemoteAddress, selectedAddress.IPEndPoint.ToString());
+                RpcContext.GetContext()
+                    .SetAttachment(AttachmentKeys.RemoteAddress, selectedAddress.IPEndPoint.ToString());
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }
             catch (IOException ex)
             {
-                Logger.LogError($"IO exception, Service provider {selectedAddress} is unavailable,  reason: {ex.Message}");
+                Logger.LogError(
+                    $"IO exception, Service provider {selectedAddress} is unavailable,  reason: {ex.Message}");
                 _healthCheck.RemoveAddress(selectedAddress);
                 isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (ConnectException ex)
             {
-                Logger.LogError($"The link with the service provider {selectedAddress} is abnormal, the reason: {ex.Message}");
-                MarkAddressFail(governanceOptions, selectedAddress, ex);
+                Logger.LogError(
+                    $"The link with the service provider {selectedAddress} is abnormal, the reason: {ex.Message}");
+                _healthCheck.RemoveAddress(selectedAddress);
                 isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
             catch (ChannelException ex)
             {
-                Logger.LogError($"Abnormal communication with service provider {selectedAddress}, reason: {ex.Message}");
-                MarkAddressFail(governanceOptions, selectedAddress, ex);
+                Logger.LogError(
+                    $"Abnormal communication with service provider {selectedAddress}, reason: {ex.Message}");
+                _healthCheck.RemoveAddress(selectedAddress);
                 isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
@@ -121,6 +127,14 @@ namespace Silky.DotNetty
                     MiniProfilerPrinter.Print(MiniProfileConstant.RemoteInvoker.Name,
                         MiniProfileConstant.RemoteInvoker.State.Fail,
                         $"{ex.Message}", true);
+                }
+
+                if (ex is NotFindLocalServiceEntryException ||
+                    ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
+                {
+                    var serviceRouteManager = EngineContext.Current.Resolve<IServiceRouteManager>();
+                    await serviceRouteManager.RemoveServiceRoute(remoteInvokeMessage.ServiceId, selectedAddress);
+                    throw new NotFindLocalServiceEntryException(ex.Message);
                 }
 
                 throw;

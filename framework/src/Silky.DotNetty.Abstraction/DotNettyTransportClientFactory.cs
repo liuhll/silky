@@ -15,7 +15,6 @@ using DotNetty.Transport.Libuv;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -119,9 +118,10 @@ namespace Silky.DotNetty
 
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
-                    if (_rpcOptions.EnableHealthCheck)
+                    if (_rpcOptions.EnableHealthCheck && _rpcOptions.HealthCheckWatchInterval > 0)
                     {
-                        pipeline.AddLast(new IdleStateHandler(0, 10, 0));
+                        pipeline.AddLast(new IdleStateHandler(_rpcOptions.HealthCheckWatchInterval * 2, 0, 0));
+                        pipeline.AddLast(new ChannelInboundHandlerAdapter());
                     }
 
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));

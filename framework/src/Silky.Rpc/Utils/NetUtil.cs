@@ -58,7 +58,7 @@ namespace Silky.Rpc.Utils
         {
             var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
             string host = GetHostAddress(rpcOptions.Host);
-            int port = rpcOptions.RpcPort;
+            int port = rpcOptions.Port;
             var address = new AddressModel(host, port, ServiceProtocol.Tcp);
             return address;
         }
@@ -80,7 +80,6 @@ namespace Silky.Rpc.Utils
 
         public static IAddressModel GetAddressModel(string host, int port, ServiceProtocol serviceProtocol)
         {
-            var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
             var address = new AddressModel(host, port, serviceProtocol);
             return address;
         }

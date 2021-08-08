@@ -52,7 +52,7 @@ namespace Silky.Rpc.Routing
                 updateRegisterServiceRouteDescriptors.Add(remveAddressServiceRoute.ConvertToDescriptor());
             }
 
-            OnRemoveServiceRoutes?.Invoke(updateRegisterServiceRouteDescriptors);
+            OnRemoveServiceRoutes?.Invoke(updateRegisterServiceRouteDescriptors, addressmodel);
         }
 
 

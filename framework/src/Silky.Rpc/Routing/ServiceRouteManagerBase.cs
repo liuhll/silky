@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
 using Microsoft.Extensions.Options;
+using Silky.Rpc.Address;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing.Descriptor;
@@ -28,23 +29,23 @@ namespace Silky.Rpc.Routing
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
-            
+
             _rpcOptions = rpcOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
-            
+
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
             Check.NotNullOrEmpty(_rpcOptions.Token, nameof(_rpcOptions.Token));
-            _serviceRouteCache.OnRemoveServiceRoutes += async descriptors =>
+            _serviceRouteCache.OnRemoveServiceRoutes += async (descriptors, addressModel) =>
             {
-                if (_rpcOptions.RemoveUnHealthServer)
+                foreach (var descriptor in descriptors)
                 {
-                    foreach (var descriptor in descriptors)
-                    {
-                        await RegisterRouteAsync(descriptor);
-                    }
+                    await RemoveUnHealthServiceRoute(descriptor.ServiceDescriptor.Id, addressModel);
                 }
             };
         }
+
+        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel);
+
 
         public abstract Task CreateSubscribeDataChanges();
 
@@ -56,6 +57,11 @@ namespace Silky.Rpc.Routing
         public abstract Task CreateWsSubscribeDataChanges(string[] wsPaths);
 
         public abstract Task EnterRoutes();
+        
+        public async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
+        {
+            await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
+        }
 
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {

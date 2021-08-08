@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime.Server;
 
@@ -20,5 +21,7 @@ namespace Silky.Rpc.Routing
         Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort);
 
         Task EnterRoutes();
+        
+        Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress);
     }
 }

@@ -4,21 +4,40 @@ namespace Silky.Rpc.Configuration
 {
     public class RpcOptions
     {
-        public static string Rpc = "Rpc";
+        internal static string Rpc = "Rpc";
 
-        public string Host { get; set; } = "0.0.0.0";
-        public int RpcPort { get; set; } = 2200;
-        public bool UseLibuv { get; set; } = true;
-        public bool IsSsl { get; set; } = false;
+        public RpcOptions()
+        {
+            Host = "0.0.0.0";
+            Port = 2200;
+            UseLibuv = true;
+            IsSsl = false;
+            SoBacklog = 8192;
+            RemoveUnHealthServer = true;
+            EnableHealthCheck = true;
+            ConnectTimeout = 500;
+            HealthCheckWatchInterval = 20;
+        }
+
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public bool UseLibuv { get; set; }
+        public bool IsSsl { get; set; } 
         public string SslCertificateName { get; set; }
         public string SslCertificatePassword { get; set; }
-        public int SoBacklog { get; set; } = 8192;
-        public bool RemoveUnHealthServer { get; set; } = true;
+        public int SoBacklog { get; set; } 
+        public bool RemoveUnHealthServer { get; set; } 
 
-        public bool EnableHealthCheck { get; set; } = true;
-
+        public bool EnableHealthCheck { get; set; } 
         [NotNull] public string Token { get; set; }
-        public double ConnectTimeout { get; set; } = 500;
-        public int HealthCheckWatchInterval { get; set; } = 30;
+        public double ConnectTimeout { get; set; }
+
+        private int _healthCheckWatchInterval;
+
+        public int HealthCheckWatchInterval
+        {
+            get => _healthCheckWatchInterval;
+            set => _healthCheckWatchInterval = value <= 10 ? 10 : value;
+        }
     }
 }

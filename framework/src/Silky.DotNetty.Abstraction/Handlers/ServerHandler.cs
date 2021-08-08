@@ -9,12 +9,10 @@ namespace Silky.DotNetty.Handlers
     public class ServerHandler : ChannelHandlerAdapter
     {
         private readonly Action<IChannelHandlerContext, TransportMessage> _readMessageAction;
-        private readonly IHealthCheck _healthCheck;
-        public ServerHandler(Action<IChannelHandlerContext, TransportMessage> readMessageAction,
-            IHealthCheck healthCheck)
+  
+        public ServerHandler(Action<IChannelHandlerContext, TransportMessage> readMessageAction)
         {
             _readMessageAction = readMessageAction;
-            _healthCheck = healthCheck;
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)

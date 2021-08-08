@@ -1,6 +1,9 @@
+using System.Linq;
 using DotNetty.Buffers;
 using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
+using Silky.Core.Extensions;
+using Silky.DotNetty.Abstraction;
 using Silky.Rpc.Transport.Codec;
 
 namespace Silky.DotNetty.Handlers
@@ -19,10 +22,13 @@ namespace Silky.DotNetty.Handlers
             var buffer = (IByteBuffer)message;
             var data = new byte[buffer.ReadableBytes];
             buffer.ReadBytes(data);
-            var transportMessage = _transportMessageDecoder.Decode(data);
-            context.FireChannelRead(transportMessage);
-            ReferenceCountUtil.Release(buffer);
+            if (!data.SequenceEqual(HeartBeat.Semaphore.GetBytes()))
+            {
+                var transportMessage = _transportMessageDecoder.Decode(data);
+                context.FireChannelRead(transportMessage);
+            }
 
+            ReferenceCountUtil.Release(buffer);
         }
     }
 }

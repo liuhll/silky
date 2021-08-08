@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Net;
 using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Address.HealthCheck
 {
@@ -15,11 +17,8 @@ namespace Silky.Rpc.Address.HealthCheck
 
         public void RemoveAddress(IAddressModel addressModel)
         {
-            if (m_healthCheckAddresses.TryGetValue(addressModel, out var val))
-            {
-                m_healthCheckAddresses.TryRemove(addressModel, out val);
-                OnRemveAddress?.Invoke(addressModel);
-            }
+            m_healthCheckAddresses.TryRemove(addressModel, out _);
+            OnRemveAddress?.Invoke(addressModel);
         }
 
         public void RemoveAddress(IPAddress ipAddress, int port)
@@ -71,6 +70,12 @@ namespace Silky.Rpc.Address.HealthCheck
             }
 
             return false;
+        }
+
+        public void ChangeHealthStatus(IPAddress ipAddress, int port, bool isHealth, int unHealthCeilingTimes = 0)
+        {
+            var addressModel = NetUtil.GetAddressModel(ipAddress.ToString(), port, ServiceProtocol.Tcp);
+            ChangeHealthStatus(addressModel, isHealth, unHealthCeilingTimes);
         }
 
         public void ChangeHealthStatus(IAddressModel addressModel, bool isHealth, int unHealthCeilingTimes = 0)

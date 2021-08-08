@@ -1,30 +1,29 @@
+using DotNetty.Buffers;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Channels;
+using Silky.Core.Extensions;
+using Silky.DotNetty.Abstraction;
 
 namespace Silky.DotNetty.Handlers
 {
     public class ChannelInboundHandlerAdapter : ChannelHandlerAdapter
     {
-        private int lossConnectCount = 0;
-
         public override async void UserEventTriggered(IChannelHandlerContext context, object evt)
         {
             if (evt is IdleStateEvent { State: IdleState.ReaderIdle })
             {
-                lossConnectCount++;
-                if (lossConnectCount <= 1) return;
                 await context.Channel.CloseAsync();
+            }
+
+            if (evt is IdleStateEvent { State: IdleState.WriterIdle })
+            {
+                var buffer = Unpooled.WrappedBuffer(HeartBeat.Semaphore.GetBytes());
+                await context.Channel.WriteAndFlushAsync(buffer);
             }
             else
             {
                 base.UserEventTriggered(context, evt);
             }
-        }
-
-        public override void ChannelRead(IChannelHandlerContext context, object message)
-        {
-            lossConnectCount = 0;
-            base.ChannelRead(context,message);
         }
         
     }

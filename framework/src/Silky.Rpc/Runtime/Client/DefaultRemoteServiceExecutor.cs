@@ -40,6 +40,7 @@ namespace Silky.Rpc.Runtime.Client
                     .Handle<TimeoutException>()
                     .Or<CommunicatonException>()
                     .Or<OverflowMaxRequestException>()
+                    .Or<NotFindLocalServiceEntryException>()
                     .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
                 ;
             if (serviceEntry.FallBackExecutor != null)

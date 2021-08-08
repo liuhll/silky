@@ -33,19 +33,16 @@ namespace Silky.DotNetty.Protocol.Tcp
         private readonly IHostEnvironment _hostEnvironment;
         private readonly IAddressModel _hostAddress;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
-        private readonly IHealthCheck _healthCheck;
         private IChannel m_boundChannel;
         private IEventLoopGroup m_bossGroup;
         private IEventLoopGroup m_workerGroup;
 
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
-            ITransportMessageDecoder transportMessageDecoder,
-            IHealthCheck healthCheck)
+            ITransportMessageDecoder transportMessageDecoder)
         {
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
-            _healthCheck = healthCheck;
             _rpcOptions = rpcOptions.Value;
             _hostAddress = NetUtil.GetRpcAddressModel();
             if (_rpcOptions.IsSsl)
@@ -92,16 +89,21 @@ namespace Silky.DotNetty.Protocol.Tcp
                     {
                         pipeline.AddLast("tls", TlsHandler.Server(tlsCertificate));
                     }
+
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
-
-                    if (_rpcOptions.EnableHealthCheck)
+                    if (_rpcOptions.EnableHealthCheck && _rpcOptions.HealthCheckWatchInterval > 0)
                     {
-                        pipeline.AddLast(new IdleStateHandler(_rpcOptions.HealthCheckWatchInterval, 0, 0));
-                        pipeline.AddLast(new ChannelInboundHandlerAdapter());
+                        if (_rpcOptions.EnableHealthCheck && _rpcOptions.HealthCheckWatchInterval > 0)
+                        {
+                            pipeline.AddLast(new IdleStateHandler(0, _rpcOptions.HealthCheckWatchInterval, 0));
+                            pipeline.AddLast(new ChannelInboundHandlerAdapter());
+                        }
                     }
-                    
+
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
+
+
                     pipeline.AddLast(new ServerHandler((channelContext, message) =>
                     {
                         if (message.IsInvokeMessage())
@@ -109,12 +111,13 @@ namespace Silky.DotNetty.Protocol.Tcp
                             var sender = new DotNettyTcpServerMessageSender(channelContext);
                             OnReceived(sender, message);
                         }
-                    }, _healthCheck));
+                    }));
                 }));
             try
             {
                 m_boundChannel = await bootstrap.BindAsync(_hostAddress.IPEndPoint);
-                Logger.LogInformation($"The service listener started successfully, the listening address: {_hostAddress}, the communication protocol: {_hostAddress.ServiceProtocol}");
+                Logger.LogInformation(
+                    $"The service listener started successfully, the listening address: {_hostAddress}, the communication protocol: {_hostAddress.ServiceProtocol}");
             }
             catch (Exception e)
             {

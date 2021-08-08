@@ -38,7 +38,7 @@ namespace Silky.Rpc.Runtime.Server
                
                 if (serviceEntry == null)
                 {
-                    throw new SilkyException($"Failed to get local service entry through service id {message.ServiceId}", StatusCode.NotFindLocalServiceEntry);
+                    throw new NotFindLocalServiceEntryException($"Failed to get local service entry through service id {message.ServiceId}");
                 }
 
                 var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
