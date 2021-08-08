@@ -75,7 +75,7 @@ namespace Silky.Transaction.Schedule
             {
                 try
                 {
-                    var @lock = _distributedLockProvider.CreateLock("PhyDeleted");
+                    var @lock = _distributedLockProvider.CreateLock(LockName.PhyDeleted);
                     await using var handle = await @lock.TryAcquireAsync();
                     if (handle != null)
                     {
@@ -103,7 +103,8 @@ namespace Silky.Transaction.Schedule
         {
             try
             {
-                var @lock = _distributedLockProvider.CreateLock("CleanRecovery");
+                var @lock = _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecovery,
+                    EngineContext.Current.HostName));
                 await using var handle = await @lock.TryAcquireAsync();
                 if (handle != null)
                 {
@@ -117,10 +118,17 @@ namespace Silky.Transaction.Schedule
 
                     foreach (var transaction in transactionList)
                     {
-                        var exist = await TransRepositoryStore.ExistParticipantByTransId(transaction.TransId);
-                        if (!exist)
+                        var transactionLock =
+                            _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecoveryTransaction,
+                                transaction.TransId));
+                        await using var transactionLockHandle = await transactionLock.TryAcquireAsync();
+                        if (transactionLockHandle != null)
                         {
-                            await TransRepositoryStore.RemoveTransaction(transaction);
+                            var exist = await TransRepositoryStore.ExistParticipantByTransId(transaction.TransId);
+                            if (!exist)
+                            {
+                                await TransRepositoryStore.RemoveTransaction(transaction);
+                            }
                         }
                     }
                 }
@@ -139,7 +147,8 @@ namespace Silky.Transaction.Schedule
         {
             try
             {
-                var @lock = _distributedLockProvider.CreateLock("SelfTccRecovery");
+                var @lock = _distributedLockProvider.CreateLock(string.Format(LockName.SelfTccRecovery,
+                    EngineContext.Current.HostName));
                 await using var handle = await @lock.TryAcquireAsync();
                 if (handle != null)
                 {
@@ -153,31 +162,42 @@ namespace Silky.Transaction.Schedule
 
                     foreach (var participant in participantList)
                     {
-                        if (participant.ReTry > _transactionConfig.RetryMax)
+                        var @participantLock = _distributedLockProvider.CreateLock(
+                            string.Format(LockName.ParticipantTccRecovery, participant.TransId,
+                                participant.ParticipantId));
+                        await using var participantHandle = await @participantLock.TryAcquireAsync();
+                        if (participantHandle != null)
                         {
-                            _logger.LogError(
-                                $"This tcc transaction exceeds the maximum number of retries and no retries will occur：{_serializer.Serialize(participant)}");
-                            participant.Status = ActionStage.Death;
-                            await TransRepositoryStore.UpdateParticipantStatus(participant);
-                        }
-
-                        if (participant.Status == ActionStage.PreTry)
-                        {
-                            continue;
-                        }
-
-                        var successful = await TransRepositoryStore.LockParticipant(participant);
-                        if (successful)
-                        {
-                            var globalTransaction = await TransRepositoryStore.LoadTransaction(participant.TransId);
-                            if (globalTransaction != null)
+                            if (participant.ReTry > _transactionConfig.RetryMax)
                             {
-                                await TccRecovery(globalTransaction.Status, participant);
+                                _logger.LogError(
+                                    $"This tcc transaction exceeds the maximum number of retries and no retries will occur：{_serializer.Serialize(participant)}");
+                                participant.Status = ActionStage.Death;
+                                await TransRepositoryStore.UpdateParticipantStatus(participant);
                             }
-                            else
+
+                            if (participant.Status == ActionStage.PreTry)
                             {
-                                await TccRecovery(participant.Status, participant);
+                                continue;
                             }
+
+                            var successful = await TransRepositoryStore.LockParticipant(participant);
+                            if (successful)
+                            {
+                                var globalTransaction = await TransRepositoryStore.LoadTransaction(participant.TransId);
+                                if (globalTransaction != null)
+                                {
+                                    await TccRecovery(globalTransaction.Status, participant);
+                                }
+                                else
+                                {
+                                    await TccRecovery(participant.Status, participant);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"Silky scheduled TccRecovery failed to acquire distributed lock");
                         }
                     }
                 }
@@ -194,26 +214,17 @@ namespace Silky.Transaction.Schedule
 
         private async Task TccRecovery(ActionStage stage, IParticipant participant)
         {
-            var @lock = _distributedLockProvider.CreateLock("TccRecovery");
-            await using var handle = await @lock.TryAcquireAsync();
-            if (handle != null)
+            var transactionRecoveryService =
+                EngineContext.Current.ResolveNamed<ITransactionRecoveryService>(_transactionConfig
+                    .TransactionType
+                    .ToString());
+            if (stage == ActionStage.Trying || stage == ActionStage.Canceling)
             {
-                var transactionRecoveryService =
-                    EngineContext.Current.ResolveNamed<ITransactionRecoveryService>(_transactionConfig
-                        .TransactionType
-                        .ToString());
-                if (stage == ActionStage.Trying || stage == ActionStage.Canceling)
-                {
-                    await transactionRecoveryService.Cancel(participant);
-                }
-                else if (stage == ActionStage.Confirming)
-                {
-                    await transactionRecoveryService.Confirm(participant);
-                }
+                await transactionRecoveryService.Cancel(participant);
             }
-            else
+            else if (stage == ActionStage.Confirming)
             {
-                _logger.LogWarning($"Silky scheduled TccRecovery failed to acquire distributed lock");
+                await transactionRecoveryService.Confirm(participant);
             }
         }
 

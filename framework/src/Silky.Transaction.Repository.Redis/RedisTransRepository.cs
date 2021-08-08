@@ -224,6 +224,7 @@ namespace Silky.Transaction.Repository.Redis
 
             return participants.Where(p => p.TransType == transactionType
                                            && p.UpdateTime >= dateTime
+                                           && p.HostName == _hostName
                                            && p.Status != ActionStage.Delete
                                            && p.Status != ActionStage.Death
                 ).Take(limit)
