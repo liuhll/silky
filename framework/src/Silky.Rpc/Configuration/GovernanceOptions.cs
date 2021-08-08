@@ -1,4 +1,3 @@
-using System.Threading;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Runtime.Server;
 
@@ -17,7 +16,7 @@ namespace Silky.Rpc.Configuration
         /// <summary>
         /// 执行超时时间
         /// </summary>
-        public int ExecutionTimeout { get; set; } = 10000;
+        public int ExecutionTimeout { get; set; } = 5000;
 
         /// <summary>
         /// 是否开启缓存拦截
