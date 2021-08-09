@@ -33,7 +33,7 @@ namespace Silky.Order.Application.Orders
         [UnitOfWork]
         public async Task<GetOrderOutput> OrderCreateConfirm(CreateOrderInput input)
         {
-            var orderId = RpcContext.GetContext().GetAttachment("orderId");
+            var orderId = RpcContext.Context.GetAttachment("orderId");
             var order = await _orderDomainService.GetById(orderId.To<long>());
             order.Status = OrderStatus.Payed;
             order.UpdateTime = DateTime.Now;
@@ -43,7 +43,7 @@ namespace Silky.Order.Application.Orders
 
         public async Task OrderCreateCancel(CreateOrderInput input)
         {
-            var orderId = RpcContext.GetContext().GetAttachment("orderId");
+            var orderId = RpcContext.Context.GetAttachment("orderId");
             if (orderId != null)
             {
                 // await _orderDomainService.Delete(orderId.To<long>());

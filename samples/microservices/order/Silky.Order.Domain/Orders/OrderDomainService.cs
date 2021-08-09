@@ -8,7 +8,6 @@ using Silky.Stock.Application.Contracts.Products.Dtos;
 using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
 using Silky.EntityFrameworkCore.Repositories;
-using Silky.Rpc.Transport;
 
 namespace Silky.Order.Domain.Orders
 {
@@ -70,7 +69,7 @@ namespace Silky.Order.Domain.Orders
             var order = input.Adapt<Domain.Orders.Order>();
             order.Amount = product.UnitPrice * input.Quantity;
             order = await Create(order);
-            RpcContext.GetContext().SetAttachment("orderId", order.Id);
+            RpcContext.Context.SetAttachment("orderId", order.Id);
 
             //扣减账户余额
             var deductBalanceInput = new DeductBalanceInput()
@@ -78,7 +77,7 @@ namespace Silky.Order.Domain.Orders
             var orderBalanceId = await _accountAppService.DeductBalance(deductBalanceInput);
             if (orderBalanceId.HasValue)
             {
-                RpcContext.GetContext().SetAttachment("orderBalanceId", orderBalanceId.Value);
+                RpcContext.Context.SetAttachment("orderBalanceId", orderBalanceId.Value);
             }
 
             return order.Adapt<GetOrderOutput>();

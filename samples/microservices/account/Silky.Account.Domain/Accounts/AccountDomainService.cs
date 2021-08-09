@@ -12,7 +12,6 @@ using Silky.EntityFrameworkCore.Repositories;
 using Silky.Jwt;
 using Silky.Rpc.Runtime.Session;
 using Silky.Rpc.Security;
-using Silky.Rpc.Transport;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Domain.Accounts
@@ -135,11 +134,11 @@ namespace Silky.Account.Domain.Accounts
                         PayStatus = PayStatus.NoPay
                     };
                     await _balanceRecordRepository.InsertNowAsync(balanceRecord);
-                    RpcContext.GetContext().SetAttachment("balanceRecordId", balanceRecord.Id);
+                    RpcContext.Context.SetAttachment("balanceRecordId", balanceRecord.Id);
                     break;
                 case TccMethodType.Confirm:
                     account.LockBalance -= input.OrderBalance;
-                    var balanceRecordId1 = RpcContext.GetContext().GetAttachment("orderBalanceId")?.To<long>();
+                    var balanceRecordId1 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
                     if (balanceRecordId1.HasValue)
                     {
                         balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId1.Value);
@@ -151,7 +150,7 @@ namespace Silky.Account.Domain.Accounts
                 case TccMethodType.Cancel:
                     account.Balance += input.OrderBalance;
                     account.LockBalance -= input.OrderBalance;
-                    var balanceRecordId2 = RpcContext.GetContext().GetAttachment("orderBalanceId")?.To<long>();
+                    var balanceRecordId2 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
                     if (balanceRecordId2.HasValue)
                     {
                         balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId2.Value);
