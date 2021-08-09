@@ -16,8 +16,7 @@ namespace Silky.Rpc.Configuration
             RemoveUnHealthServer = true;
             EnableHealthCheck = true;
             ConnectTimeout = 500;
-            HealthCheckWatchInterval = 20;
-            _healthCheckWatchInterval = 120;
+            _healthCheckWatchInterval = 300;
         }
 
         public string Host { get; set; }
