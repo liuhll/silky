@@ -1,9 +1,7 @@
 using System.Net;
 using DotNetty.Common.Concurrency;
 using DotNetty.Transport.Channels;
-using Silky.Core;
 using Silky.Rpc.Address.HealthCheck;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Transport;
 
@@ -31,15 +29,7 @@ namespace Silky.DotNetty.Handlers
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)
             {
-                var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
-                if (rpcOptions.RemoveUnHealthServer)
-                {
-                    _healthCheck.RemoveAddress(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
-                }
-                else
-                {
-                    _healthCheck.ChangeHealthStatus(remoteAddress.Address.MapToIPv4(), remoteAddress.Port, false);
-                }
+                _healthCheck.RemoveAddress(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
             }
         }
 

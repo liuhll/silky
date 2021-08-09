@@ -14,7 +14,7 @@ namespace Silky.Rpc.Configuration
             IsSsl = false;
             SoBacklog = 8192;
             RemoveUnHealthServer = true;
-            EnableHealthCheck = false;
+            EnableHealthCheck = true;
             ConnectTimeout = 500;
             HealthCheckWatchInterval = 20;
             _healthCheckWatchInterval = 120;
