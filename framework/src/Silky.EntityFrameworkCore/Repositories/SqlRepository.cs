@@ -133,7 +133,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual void EnsureTransaction()
         {
             // 获取数据库上下文
-            var dbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>() as IEfCoreDbContextPool;
+            var dbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>() as EfCoreDbContextPool;
             if (dbContextPool == null) return;
 
             // 追加上下文

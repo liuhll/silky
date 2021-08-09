@@ -102,7 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             // 添加数据库上下文到池中
-            var dbContextPool = provider.GetService<ISilkyDbContextPool>() as IEfCoreDbContextPool;
+            var dbContextPool = provider.GetService<ISilkyDbContextPool>() as EfCoreDbContextPool;
             dbContextPool?.AddToPool(dbContext);
 
             return dbContext;

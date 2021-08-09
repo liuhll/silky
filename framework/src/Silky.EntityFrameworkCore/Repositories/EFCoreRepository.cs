@@ -168,7 +168,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <summary>
         /// 数据库上下文池
         /// </summary>
-        private readonly IEfCoreDbContextPool _silkyDbContextPool;
+        private readonly EfCoreDbContextPool _silkyDbContextPool;
 
         /// <summary>
         /// 构造函数
@@ -193,7 +193,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             EntityType = Entities.EntityType;
 
             // 初始化数据上下文池
-            _silkyDbContextPool = (EngineContext.Current.Resolve<ISilkyDbContextPool>() as IEfCoreDbContextPool);
+            _silkyDbContextPool = (EngineContext.Current.Resolve<ISilkyDbContextPool>() as EfCoreDbContextPool);
 
             // 非泛型仓储
             _repository = EngineContext.Current.Resolve<IRepository>();

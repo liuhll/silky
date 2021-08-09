@@ -17,7 +17,7 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 
         public EfCoreUnitOfWorkServerFilter()
         {
-            _silkyDbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>() as IEfCoreDbContextPool;
+            _silkyDbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>();
         }
 
         public int Order { get; } = Int32.MaxValue;

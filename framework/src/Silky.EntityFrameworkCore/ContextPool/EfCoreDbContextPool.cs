@@ -9,10 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Silky.EntityFrameworkCore.Extensions.DatabaseProvider;
+using Silky.Rpc.Runtime.Server.ContextPool;
 
 namespace Silky.EntityFrameworkCore.ContextPool
 {
-    public class EfCoreDbContextPool : IEfCoreDbContextPool
+    public class EfCoreDbContextPool : ISilkyDbContextPool
     {
         /// <summary>
         /// 线程安全的数据库上下文集合
