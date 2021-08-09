@@ -1,7 +1,10 @@
+using System;
+using JetBrains.Annotations;
+
 namespace Silky.Core.Rpc
 {
-    public interface IRpcContextAccessor
+    public interface IRpcContextAccessor : IDisposable
     {
-        RpcContext RpcContext { get; }
+        [CanBeNull] RpcContext RpcContext { get; set; }
     }
 }

@@ -219,13 +219,13 @@ namespace Silky.Core
                 return null;
             var serviceProvider = ServiceProvider;
             var httpContextAccessor = serviceProvider?.GetService<IHttpContextAccessor>();
-            if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
+            if (httpContextAccessor is { HttpContext: { } })
             {
                 serviceProvider = httpContextAccessor.HttpContext.RequestServices;
             }
 
-            var rpcContextAccessor = serviceProvider?.GetService<IRpcContextAccessor>();
-            if (rpcContextAccessor != null && rpcContextAccessor.RpcContext.ServiceProvider != null)
+            var rpcContextAccessor = serviceProvider.GetService<IRpcContextAccessor>();
+            if (rpcContextAccessor is { RpcContext: { ServiceProvider: { } } })
             {
                 serviceProvider = rpcContextAccessor.RpcContext.ServiceProvider;
             }
