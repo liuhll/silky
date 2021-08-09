@@ -26,7 +26,7 @@ namespace Silky.StockHost
             });
             
             services.AddDatabaseAccessor(
-                options => { options.AddDb<StockDbContext>(); },
+                options => { options.AddDbPool<StockDbContext>(); },
                 "Silky.Stock.Database.Migrations");
         }
 

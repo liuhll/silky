@@ -6,6 +6,7 @@ using Silky.Order.Application.Contracts.Orders.Dtos;
 using Silky.Stock.Application.Contracts.Products;
 using Silky.Stock.Application.Contracts.Products.Dtos;
 using Silky.Core.Exceptions;
+using Silky.Core.Rpc;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Transport;
 

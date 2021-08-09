@@ -7,6 +7,7 @@ using Silky.Account.Domain.Shared.Accounts;
 using Silky.Caching;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Jwt;
 using Silky.Rpc.Runtime.Session;
