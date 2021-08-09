@@ -6,6 +6,6 @@ namespace Silky.Rpc.Security
 {
     public class CurrentRpcToken : ICurrentRpcToken, IScopedDependency
     {
-        public string Token { get; } = RpcContext.GetContext().GetAttachment(AttachmentKeys.RpcToken)?.ToString();
+        public string Token { get; } = RpcContext.Context.GetAttachment(AttachmentKeys.RpcToken)?.ToString();
     }
 }

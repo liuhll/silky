@@ -44,7 +44,7 @@ namespace Silky.Transaction.Filters
                     rpcTransactionContext.ParticipantRefId = context.ParticipantId;
                 }
 
-                RpcContext.GetContext().SetTransactionContext(rpcTransactionContext);
+                RpcContext.Context.SetTransactionContext(rpcTransactionContext);
             }
         }
 

@@ -22,7 +22,7 @@ namespace Silky.Transaction.Interceptors
             }
             else
             {
-                var transactionContext = RpcContext.GetContext().GetTransactionContext();
+                var transactionContext = RpcContext.Context.GetTransactionContext();
                 await TransactionAspectInvoker.GetInstance().Invoke(transactionContext, invocation);
             }
         }

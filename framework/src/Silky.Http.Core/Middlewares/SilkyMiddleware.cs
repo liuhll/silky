@@ -40,8 +40,8 @@ namespace Silky.Http.Core.Middlewares
               
                 MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
                     $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
-                RpcContext.GetContext().SetAttachment(AttachmentKeys.Path, path.ToString());
-                RpcContext.GetContext().SetAttachment(AttachmentKeys.HttpMethod, method.ToString());
+                RpcContext.Context.SetAttachment(AttachmentKeys.Path, path.ToString());
+                RpcContext.Context.SetAttachment(AttachmentKeys.HttpMethod, method.ToString());
                 await EngineContext.Current
                     .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceDescriptor.ServiceProtocol.ToString())
                     .Handle(context, serviceEntry);

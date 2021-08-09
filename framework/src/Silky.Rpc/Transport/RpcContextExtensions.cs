@@ -7,7 +7,7 @@ namespace Silky.Rpc.Transport
     {
         public static bool IsGateway(this RpcContext rpcContext)
         {
-            var isGateway = RpcContext.GetContext().GetAttachment(AttachmentKeys.IsGatewayHost);
+            var isGateway = RpcContext.Context.GetAttachment(AttachmentKeys.IsGatewayHost);
             if (isGateway == null)
             {
                 return false;

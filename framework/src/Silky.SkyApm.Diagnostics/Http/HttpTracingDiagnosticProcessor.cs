@@ -52,7 +52,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             //var host = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
             var context = _tracingContext.CreateEntrySegmentContext(
                 $"{HttpContext.Request.Path}-{HttpContext.Request.Method}",
-                new SilkyCarrierHeaderCollection(RpcContext.GetContext()));
+                new SilkyCarrierHeaderCollection(RpcContext.Context));
 
             context.Span.SpanLayer = SpanLayer.HTTP;
             context.Span.Component = Components.SilkyHttp;

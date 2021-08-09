@@ -39,7 +39,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         [DiagnosticName(RpcDiagnosticListenerNames.BeginRpcServerHandler)]
         public void BeginRpcServerHandle([Object] RpcInvokeEventData eventData)
         {
-            var carrierHeader = new SilkyCarrierHeaderCollection(RpcContext.GetContext());
+            var carrierHeader = new SilkyCarrierHeaderCollection(RpcContext.Context);
             var context =
                 _tracingContext.CreateEntrySegmentContext($"[ServerHandle]{eventData.ServiceId}", carrierHeader);
 

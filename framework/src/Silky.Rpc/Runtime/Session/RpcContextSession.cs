@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Session
         {
             get
             {
-                var userId = RpcContext.GetContext().GetAttachment(ClaimTypes.UserId);
+                var userId = RpcContext.Context.GetAttachment(ClaimTypes.UserId);
                 if (userId != null)
                 {
                     return Convert.ToInt64(userId);
@@ -29,7 +29,7 @@ namespace Silky.Rpc.Runtime.Session
         {
             get
             {
-                var userName = RpcContext.GetContext().GetAttachment(ClaimTypes.UserName);
+                var userName = RpcContext.Context.GetAttachment(ClaimTypes.UserName);
                 if (userName != null)
                 {
                     return userName.ToString();
@@ -43,7 +43,7 @@ namespace Silky.Rpc.Runtime.Session
         {
             get
             {
-                var tenantId = RpcContext.GetContext().GetAttachment(ClaimTypes.TenantId);
+                var tenantId = RpcContext.Context.GetAttachment(ClaimTypes.TenantId);
                 if (tenantId != null)
                 {
                     return Convert.ToInt64(tenantId);

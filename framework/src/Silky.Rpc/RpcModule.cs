@@ -82,11 +82,10 @@ namespace Silky.Rpc
                 {
                     messageListener.Received += async (sender, message) =>
                     {
-                        using var scope = EngineContext.Current.ServiceProvider.CreateScope();
-                        RpcContext.GetContext().SetServiceProvider(scope.ServiceProvider);
+                        using var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
+                        rpcContextAccessor.RpcContext = RpcContext.Context;
                         Debug.Assert(message.IsInvokeMessage());
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
-
                         var messageReceivedHandler = EngineContext.Current.Resolve<IServiceMessageReceivedHandler>();
                         await messageReceivedHandler.Handle(message.Id, sender, remoteInvokeMessage);
                     };

@@ -43,7 +43,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             var localHost = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
             var context = _tracingContext.CreateExitSegmentContext($"[ClientInvoke]{eventData.ServiceId}",
                 eventData.RemoteAddress,
-                new SilkyCarrierHeaderCollection(RpcContext.GetContext()));
+                new SilkyCarrierHeaderCollection(RpcContext.Context));
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
             context.Span.Component = Components.SilkyRpc;
             context.Span.AddLog(LogEvent.Event("Rpc Client Begin Invoke"),

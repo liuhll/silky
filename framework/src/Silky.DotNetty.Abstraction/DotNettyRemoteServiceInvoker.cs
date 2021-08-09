@@ -86,7 +86,7 @@ namespace Silky.DotNetty
                 _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
-                RpcContext.GetContext()
+                RpcContext.Context
                     .SetAttachment(AttachmentKeys.RemoteAddress, selectedAddress.IPEndPoint.ToString());
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }

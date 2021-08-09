@@ -74,7 +74,7 @@ namespace Silky.Rpc.Runtime.Client
 
         public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout = Timeout.Infinite)
         {
-            message.Attachments = RpcContext.GetContext().GetContextAttachments();
+            message.Attachments = RpcContext.Context.GetContextAttachments();
             var transportMessage = new TransportMessage(message);
             var tracingTimestamp = TracingBefore(message, transportMessage.Id);
             var callbackTask =
@@ -117,9 +117,9 @@ namespace Silky.Rpc.Runtime.Client
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     ServiceId = message.ServiceId,
                     Message = message,
-                    RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
-                    IsGateWay = RpcContext.GetContext().IsGateway(),
-                    ServiceMethodName = RpcContext.GetContext().GetAttachment(AttachmentKeys.ServiceMethodName).ToString()
+                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
+                    IsGateWay = RpcContext.Context.IsGateway(),
+                    ServiceMethodName = RpcContext.Context.GetAttachment(AttachmentKeys.ServiceMethodName).ToString()
                 };
 
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcRequest, eventData);
@@ -143,7 +143,7 @@ namespace Silky.Rpc.Runtime.Client
                     Result = remoteResultMessage.Result,
                     StatusCode = remoteResultMessage.StatusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
-                    RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString()
+                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.RemoteAddress).ToString()
                 };
 
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.EndRpcRequest, eventData);
@@ -163,7 +163,7 @@ namespace Silky.Rpc.Runtime.Client
                     ServiceId = serviceId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
-                    RemoteAddress = RpcContext.GetContext().GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
+                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.RemoteAddress).ToString(),
                     Exception = ex
                 };
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);

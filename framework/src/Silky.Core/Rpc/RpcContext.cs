@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
@@ -20,16 +19,19 @@ namespace Silky.Core.Rpc
             contextAttachments = new();
         }
 
-        public static RpcContext GetContext()
+        public static RpcContext Context
         {
-            var context = rpcContextThreadLocal.Value;
-            if (context == null)
+            get
             {
-                context = new RpcContext();
-                rpcContextThreadLocal.Value = context;
-            }
+                var context = rpcContextThreadLocal.Value;
+                if (context == null)
+                {
+                    context = new RpcContext();
+                    rpcContextThreadLocal.Value = context;
+                }
 
-            return rpcContextThreadLocal.Value;
+                return rpcContextThreadLocal.Value;
+            }
         }
 
         public IServiceProvider ServiceProvider { private set; get; }
@@ -53,7 +55,7 @@ namespace Silky.Core.Rpc
                 && !(value is JArray)
             )
             {
-                throw new SilkyException("rpcContext attachments 不允许设置复杂类型参数");
+                throw new SilkyException("rpcContext attachments complex type parameters are not allowed");
             }
 
             contextAttachments.AddOrUpdate(key, value, (k, v) => value);
@@ -77,6 +79,7 @@ namespace Silky.Core.Rpc
                 SetAttachment(item.Key, item.Value);
             }
         }
+
 
         public IDictionary<string, object> GetContextAttachments()
         {

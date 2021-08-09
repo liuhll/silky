@@ -24,7 +24,7 @@ namespace Silky.Http.Identity.Authentication.Middlewares
                 {
                     foreach (var userClaim in context.User.Claims)
                     {
-                        RpcContext.GetContext().SetAttachment(userClaim.Type, userClaim.Value);
+                        RpcContext.Context.SetAttachment(userClaim.Type, userClaim.Value);
                     }
 
                     await _next(context);

@@ -34,12 +34,12 @@ namespace Silky.Transaction.Tcc
             {
                 if (localInvocation != null)
                 {
-                    await localInvocation.ExcuteTccMethod(methodType, RpcContext.GetContext().GetTransactionContext());
+                    await localInvocation.ExcuteTccMethod(methodType, RpcContext.Context.GetTransactionContext());
                 }
                 else if (localParticipant.Invocation != null)
                 {
                     await localParticipant.Invocation.ExcuteTccMethod(methodType,
-                        RpcContext.GetContext().GetTransactionContext());
+                        RpcContext.Context.GetTransactionContext());
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace Silky.Transaction.Tcc
             }
             else
             {
-                RpcContext.GetContext().SetTransactionContext(SilkyTransactionContextHolder.Instance.Get());
+                RpcContext.Context.SetTransactionContext(SilkyTransactionContextHolder.Instance.Get());
                 var serviceExecutor = EngineContext.Current.Resolve<IServiceExecutor>();
                 await serviceExecutor.Execute(serviceEntry, participant.Parameters, participant.ServiceKey);
             }

@@ -6,11 +6,11 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class CurrentServiceKey : ICurrentServiceKey, IScopedDependency
     {
-        public string ServiceKey => RpcContext.GetContext().GetAttachment(AttachmentKeys.ServiceKey)?.ToString();
+        public string ServiceKey => RpcContext.Context.GetAttachment(AttachmentKeys.ServiceKey)?.ToString();
 
         public void Change(string seviceKey)
         {
-            RpcContext.GetContext().SetAttachment(AttachmentKeys.ServiceKey, seviceKey);
+            RpcContext.Context.SetAttachment(AttachmentKeys.ServiceKey, seviceKey);
         }
     }
 }
