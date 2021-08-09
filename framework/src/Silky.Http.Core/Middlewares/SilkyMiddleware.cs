@@ -4,6 +4,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
+using Silky.Core.Rpc;
 using Silky.Http.Core.Handlers;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Transport;

@@ -24,19 +24,6 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <returns></returns>
         ISqlRepository<TDbContextLocator> Sql();
-
-        /// <summary>
-        /// 解析服务
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <returns></returns>
-        TService GetService<TService>();
-
-        /// <summary>
-        /// 解析服务
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <returns></returns>
-        TService GetRequiredService<TService>();
+        
     }
 }

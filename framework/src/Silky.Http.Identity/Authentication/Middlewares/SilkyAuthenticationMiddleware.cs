@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Silky.Core.Rpc;
 using Silky.Http.Core;
 using Silky.Rpc.Transport;
 

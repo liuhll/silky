@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using Silky.Core.Convertible;
+using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.SkyApm.Diagnostics.Collections;

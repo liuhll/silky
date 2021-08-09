@@ -6,6 +6,7 @@ using Mapster;
 using NormHostDemo.Tests;
 using Silky.Caching;
 using Silky.Core.Exceptions;
+using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Runtime.Server;
@@ -23,16 +24,19 @@ namespace NormHostDemo.AppService
         private readonly IRepository<Test> _testRepository;
         private readonly ISerializer _serializer;
         private readonly ISession _session;
+        private readonly IRpcContextAccessor _rpcContextAccessor;
 
         public TestAppService(IAnotherAppService anotherAppService,
             IDistributedCache<TestOut> distributedCache,
             IRepository<Test> testRepository,
-            ISerializer serializer)
+            ISerializer serializer,
+             IRpcContextAccessor rpcContextAccessor)
         {
             _anotherAppService = anotherAppService;
             _distributedCache = distributedCache;
             _testRepository = testRepository;
             _serializer = serializer;
+            _rpcContextAccessor = rpcContextAccessor;
             _session = NullSession.Instance;
         }
 

@@ -17,7 +17,7 @@ namespace NormHostDemo
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDatabaseAccessor(options => { options.AddDb<DemoDbContext>(); }, "NormHostDemo");
+            services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
         }
 
         public override async Task Initialize(ApplicationContext applicationContext)

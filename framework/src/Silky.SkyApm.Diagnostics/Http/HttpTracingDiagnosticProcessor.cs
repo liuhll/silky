@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
+using Silky.Core.Rpc;
 using Silky.Http.SkyApm.Diagnostics;
 using Silky.Rpc.SkyApm.Diagnostics.Collections;
 using Silky.Rpc.SkyApm.Diagnostics.Http.Extensions;

@@ -1,4 +1,5 @@
 ﻿using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 
 namespace Silky.Rpc.Transport
 {

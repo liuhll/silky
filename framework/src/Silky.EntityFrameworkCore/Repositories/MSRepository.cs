@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using Silky.Core;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Extensions.DatabaseProvider;
 using Silky.EntityFrameworkCore.Locators;
@@ -17,8 +18,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="serviceProvider"></param>
         /// <param name="repository">非泛型仓储</param>
-        public MSRepository(IServiceProvider serviceProvider
-            , IRepository repository) : base(serviceProvider, repository)
+        public MSRepository(IRepository repository) : base(repository)
         {
         }
     }
@@ -30,11 +30,7 @@ namespace Silky.EntityFrameworkCore.Repositories
     public partial class MSRepository<TMasterDbContextLocator> : IMSRepository<TMasterDbContextLocator>
         where TMasterDbContextLocator : class, IDbContextLocator
     {
-        /// <summary>
-        /// 服务提供器
-        /// </summary>
-        private readonly IServiceProvider _serviceProvider;
-
+        
         /// <summary>
         /// 非泛型仓储
         /// </summary>
@@ -45,10 +41,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="serviceProvider"></param>
         /// <param name="repository">非泛型仓储</param>
-        public MSRepository(IServiceProvider serviceProvider
-            , IRepository repository)
+        public MSRepository(IRepository repository)
         {
-            _serviceProvider = serviceProvider;
             _repository = repository;
         }
 
@@ -113,7 +107,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             if (!isRegister) throw new InvalidCastException($" The slave locator `{dbContextLocatorType.Name}` is not bind.");
 
             // 解析从库定位器
-            var repository = _serviceProvider.GetService(typeof(IRepository<,>).MakeGenericType(typeof(TEntity), dbContextLocatorType)) as IPrivateRepository<TEntity>;
+            var repository = EngineContext.Current.Resolve(typeof(IRepository<,>).MakeGenericType(typeof(TEntity), dbContextLocatorType)) as IPrivateRepository<TEntity>;
 
             // 返回从库仓储
             return repository.Constraint<IPrivateReadableRepository<TEntity>>();

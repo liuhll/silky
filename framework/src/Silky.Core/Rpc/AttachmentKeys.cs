@@ -1,4 +1,4 @@
-namespace Silky.Rpc.Transport
+namespace Silky.Core.Rpc
 {
     public static class AttachmentKeys
     {

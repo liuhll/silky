@@ -49,10 +49,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped(typeof(IMSRepository<,,,,,,,>), typeof(MSRepository<,,,,,,,>));
 
             // 注册非泛型仓储
-            services.AddTransient<IRepository, EFCoreRepository>();
+            services.AddScoped<IRepository, EFCoreRepository>();
 
             // 注册多数据库仓储
-            services.AddTransient(typeof(IDbRepository<>), typeof(DbRepository<>));
+            services.AddScoped(typeof(IDbRepository<>), typeof(DbRepository<>));
 
             // 解析数据库上下文
             services.AddTransient(provider =>

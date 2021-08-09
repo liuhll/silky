@@ -15,6 +15,7 @@ using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
+using Silky.Core.Rpc;
 
 namespace Silky.Core
 {
@@ -43,7 +44,7 @@ namespace Silky.Core
 
             //create and sort instances of startup configurations
             var instances = startupConfigurations
-                .Select(startup => (IConfigureService) Activator.CreateInstance(startup))
+                .Select(startup => (IConfigureService)Activator.CreateInstance(startup))
                 .OrderBy(startup => startup.Order);
 
             //configure services
@@ -78,7 +79,7 @@ namespace Silky.Core
         /// </summary>
         /// <typeparam name="TOptions">强类型选项类</typeparam>
         /// <returns>TOptions</returns>
-        public TOptions GetOptionsMonitor<TOptions>(Action<TOptions,string> listener)
+        public TOptions GetOptionsMonitor<TOptions>(Action<TOptions, string> listener)
             where TOptions : class, new()
         {
             var optionsMonitor = Resolve<IOptionsMonitor<TOptions>>();
@@ -86,6 +87,7 @@ namespace Silky.Core
             {
                 optionsMonitor.OnChange(listener);
             }
+
             return optionsMonitor?.CurrentValue;
         }
 
@@ -112,7 +114,7 @@ namespace Silky.Core
 
             //create and sort instances of startup configurations
             var instances = startupConfigurations
-                .Select(startup => (ISilkyStartup) Activator.CreateInstance(startup))
+                .Select(startup => (ISilkyStartup)Activator.CreateInstance(startup))
                 .OrderBy(startup => startup.Order);
 
             //configure request pipeline
@@ -122,7 +124,7 @@ namespace Silky.Core
 
         public T Resolve<T>() where T : class
         {
-            return (T) Resolve(typeof(T));
+            return (T)Resolve(typeof(T));
         }
 
         public object Resolve(Type type)
@@ -164,12 +166,12 @@ namespace Silky.Core
 
         public T ResolveNamed<T>(string name)
         {
-            return (T) ResolveNamed(name, typeof(T));
+            return (T)ResolveNamed(name, typeof(T));
         }
 
         public IEnumerable<T> ResolveAll<T>()
         {
-            return (IEnumerable<T>) GetServiceProvider().GetServices(typeof(T));
+            return (IEnumerable<T>)GetServiceProvider().GetServices(typeof(T));
         }
 
         public bool IsRegistered(Type type)
@@ -215,9 +217,20 @@ namespace Silky.Core
         {
             if (ServiceProvider == null)
                 return null;
-            var accessor = ServiceProvider?.GetService<IHttpContextAccessor>();
-            var context = accessor?.HttpContext;
-            return context?.RequestServices ?? ServiceProvider;
+            var serviceProvider = ServiceProvider;
+            var httpContextAccessor = serviceProvider?.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
+            {
+                serviceProvider = httpContextAccessor.HttpContext.RequestServices;
+            }
+
+            var rpcContextAccessor = serviceProvider?.GetService<IRpcContextAccessor>();
+            if (rpcContextAccessor != null && rpcContextAccessor.RpcContext.ServiceProvider != null)
+            {
+                serviceProvider = rpcContextAccessor.RpcContext.ServiceProvider;
+            }
+
+            return serviceProvider;
         }
 
         public void RegisterDependencies(ContainerBuilder containerBuilder)
@@ -227,7 +240,7 @@ namespace Silky.Core
 
             var dependencyRegistrars = _typeFinder.FindClassesOfType<IDependencyRegistrar>();
             var instances = dependencyRegistrars
-                .Select(dependencyRegistrar => (IDependencyRegistrar) Activator.CreateInstance(dependencyRegistrar))
+                .Select(dependencyRegistrar => (IDependencyRegistrar)Activator.CreateInstance(dependencyRegistrar))
                 .OrderBy(dependencyRegistrar => dependencyRegistrar.Order);
             foreach (var dependencyRegistrar in instances)
                 dependencyRegistrar.Register(containerBuilder, _typeFinder);
@@ -251,15 +264,15 @@ namespace Silky.Core
         public void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterInstance(this).As<IModuleContainer>().SingleInstance();
-            var assemblyNames = ((AppDomainTypeFinder) _typeFinder).AssemblyNames;
+            var assemblyNames = ((AppDomainTypeFinder)_typeFinder).AssemblyNames;
             foreach (var module in Modules)
             {
                 if (!assemblyNames.Contains(module.Assembly.FullName))
                 {
-                    ((AppDomainTypeFinder) _typeFinder).AssemblyNames.Add(module.Assembly.FullName);
+                    ((AppDomainTypeFinder)_typeFinder).AssemblyNames.Add(module.Assembly.FullName);
                 }
 
-                containerBuilder.RegisterModule((SilkyModule) module.Instance);
+                containerBuilder.RegisterModule((SilkyModule)module.Instance);
             }
         }
 

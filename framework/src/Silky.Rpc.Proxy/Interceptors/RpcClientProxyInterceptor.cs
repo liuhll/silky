@@ -8,7 +8,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Proxy.Interceptors
 {
-    public class RpcClientProxyInterceptor : SilkyInterceptor, ITransientDependency
+    public class RpcClientProxyInterceptor : SilkyInterceptor, IScopedDependency
     {
         private readonly IServiceIdGenerator _serviceIdGenerator;
         private readonly IServiceEntryLocator _serviceEntryLocator;

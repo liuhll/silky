@@ -33,8 +33,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="serviceProvider">服务提供器</param>
-        public SqlRepository(IServiceProvider serviceProvider) : base(typeof(TDbContextLocator), serviceProvider)
+        public SqlRepository(IServiceProvider serviceProvider) : base(typeof(TDbContextLocator))
         {
         }
     }
@@ -44,22 +43,17 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// </summary>
     public partial class PrivateSqlRepository : IPrivateSqlRepository
     {
-        /// <summary>
-        /// 服务提供器
-        /// </summary>
-        private readonly IServiceProvider _serviceProvider;
+
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="dbContextLocator"></param>
-        /// <param name="serviceProvider">服务提供器</param>
-        public PrivateSqlRepository(Type dbContextLocator, IServiceProvider serviceProvider)
+        public PrivateSqlRepository(Type dbContextLocator)
         {
-            _serviceProvider = serviceProvider;
 
             // 解析数据库上下文
-            var dbContextResolve = serviceProvider.GetService<Func<Type, IScopedDependency, DbContext>>();
+            var dbContextResolve = EngineContext.Current.Resolve<Func<Type, IScopedDependency, DbContext>>();
             var dbContext = dbContextResolve(dbContextLocator, default);
             DynamicContext = Context = dbContext;
 
@@ -90,7 +84,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual ISqlRepository<TChangeDbContextLocator> Change<TChangeDbContextLocator>()
             where TChangeDbContextLocator : class, IDbContextLocator
         {
-            return _serviceProvider.GetService<ISqlRepository<TChangeDbContextLocator>>();
+            return EngineContext.Current.Resolve<ISqlRepository<TChangeDbContextLocator>>();
         }
 
         /// <summary>
@@ -101,7 +95,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual TService GetService<TService>()
             where TService : class
         {
-            return _serviceProvider.GetService<TService>();
+            return EngineContext.Current.Resolve<TService>();
         }
 
         /// <summary>
@@ -112,7 +106,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual TService GetRequiredService<TService>()
             where TService : class
         {
-            return _serviceProvider.GetRequiredService<TService>();
+            return EngineContext.Current.Resolve<TService>();
         }
 
         /// <summary>

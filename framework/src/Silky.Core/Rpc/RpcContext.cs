@@ -1,14 +1,14 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
-using Silky.Core;
-using Silky.Core.ClayObject;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 
-namespace Silky.Rpc.Transport
+namespace Silky.Core.Rpc
 {
     public class RpcContext
     {
@@ -30,6 +30,13 @@ namespace Silky.Rpc.Transport
             }
 
             return rpcContextThreadLocal.Value;
+        }
+
+        public IServiceProvider ServiceProvider { private set; get; }
+
+        public void SetServiceProvider(IServiceProvider serviceProvider)
+        {
+            ServiceProvider = serviceProvider;
         }
 
         public void SetAttachment(string key, object value)

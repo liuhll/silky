@@ -10,7 +10,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Interceptors
 {
-    public class CachingInterceptor : SilkyInterceptor, ITransientDependency
+    public class CachingInterceptor : SilkyInterceptor, IScopedDependency
     {
         private readonly IDistributedInterceptCache _distributedCache;
 

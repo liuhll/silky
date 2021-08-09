@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Core;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
 
@@ -12,19 +13,13 @@ namespace Silky.EntityFrameworkCore.Repositories
     public partial class DbRepository<TDbContextLocator> : IDbRepository<TDbContextLocator>
         where TDbContextLocator : class, IDbContextLocator
     {
-        /// <summary>
-        /// 服务提供器
-        /// </summary>
-        private readonly IServiceProvider _serviceProvider;
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="serviceProvider">服务提供器</param>
-        public DbRepository(
-            IServiceProvider serviceProvider)
+        public DbRepository()
         {
-            _serviceProvider = serviceProvider;
+
         }
 
         /// <summary>
@@ -35,7 +30,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IRepository<TEntity, TDbContextLocator> Change<TEntity>()
              where TEntity : class, IPrivateEntity, new()
         {
-            return _serviceProvider.GetService<IRepository<TEntity, TDbContextLocator>>();
+            return EngineContext.Current.Resolve<IRepository<TEntity, TDbContextLocator>>();
         }
 
         /// <summary>
@@ -44,27 +39,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <returns></returns>
         public virtual ISqlRepository<TDbContextLocator> Sql()
         {
-            return _serviceProvider.GetService<ISqlRepository<TDbContextLocator>>();
+            return EngineContext.Current.Resolve<ISqlRepository<TDbContextLocator>>();
         }
-
-        /// <summary>
-        /// 解析服务
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <returns></returns>
-        public virtual TService GetService<TService>()
-        {
-            return _serviceProvider.GetService<TService>();
-        }
-
-        /// <summary>
-        /// 解析服务
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <returns></returns>
-        public virtual TService GetRequiredService<TService>()
-        {
-            return _serviceProvider.GetRequiredService<TService>();
-        }
+        
     }
 }

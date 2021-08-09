@@ -404,7 +404,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     $"The locator `{dbContextLocatorType.FullName}` is bound to another DbContext.");
 
             // 注册数据库上下文
-            services.TryAddTransient<TDbContext>();
+            services.TryAddScoped<TDbContext>();
 
             return services;
         }

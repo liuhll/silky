@@ -21,6 +21,7 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Configuration;
+using Silky.Core.Rpc;
 
 namespace Silky.Rpc
 {
@@ -46,7 +47,7 @@ namespace Silky.Rpc
             builder.RegisterTypes(localEntryTypes)
                 .PropertiesAutowired()
                 .AsSelf()
-                .InstancePerDependency()
+                .InstancePerLifetimeScope()
                 .AsImplementedInterfaces();
 
             var serviceKeyTypes =
@@ -81,8 +82,11 @@ namespace Silky.Rpc
                 {
                     messageListener.Received += async (sender, message) =>
                     {
+                        using var scope = EngineContext.Current.ServiceProvider.CreateScope();
+                        RpcContext.GetContext().SetServiceProvider(scope.ServiceProvider);
                         Debug.Assert(message.IsInvokeMessage());
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
+
                         var messageReceivedHandler = EngineContext.Current.Resolve<IServiceMessageReceivedHandler>();
                         await messageReceivedHandler.Handle(message.Id, sender, remoteInvokeMessage);
                     };

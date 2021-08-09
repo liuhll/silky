@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Silky.Core;
+using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Transport;

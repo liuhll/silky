@@ -10,6 +10,7 @@ using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Silky.Core.Rpc;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc;
 using Silky.Rpc.MiniProfiler;

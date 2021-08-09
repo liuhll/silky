@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
+using Silky.Core.Rpc;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Interceptors
 {
-    public class TransactionInterceptor : SilkyInterceptor, ITransientDependency
+    public class TransactionInterceptor : SilkyInterceptor, IScopedDependency
     {
         public async override Task InterceptAsync(ISilkyMethodInvocation invocation)
         {

@@ -4,6 +4,7 @@ using Castle.Core.Internal;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
+using Silky.Core.Rpc;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.Parameter;

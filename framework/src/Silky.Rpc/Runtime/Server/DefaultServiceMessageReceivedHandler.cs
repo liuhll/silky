@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Security;

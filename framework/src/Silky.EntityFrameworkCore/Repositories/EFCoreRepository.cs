@@ -9,9 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Core;
 using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
@@ -25,19 +25,13 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// </summary>
     public partial class EFCoreRepository : IRepository
     {
-        /// <summary>
-        /// 服务提供器
-        /// </summary>
-        private readonly IServiceProvider _serviceProvider;
-
+        
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="serviceProvider">服务提供器</param>
-        public EFCoreRepository(
-            IServiceProvider serviceProvider)
+        public EFCoreRepository()
         {
-            _serviceProvider = serviceProvider;
+     
         }
 
         /// <summary>
@@ -48,7 +42,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IRepository<TEntity> Change<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _serviceProvider.GetService<IRepository<TEntity>>();
+            return EngineContext.Current.Resolve<IRepository<TEntity>>();
         }
 
         /// <summary>
@@ -61,7 +55,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             where TEntity : class, IPrivateEntity, new()
             where TDbContextLocator : class, IDbContextLocator
         {
-            return _serviceProvider.GetService<IRepository<TEntity, TDbContextLocator>>();
+            return EngineContext.Current.Resolve<IRepository<TEntity, TDbContextLocator>>();
         }
 
         /// <summary>
@@ -73,7 +67,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual (IRepository<TEntity> Repository, IServiceScope Scoped) BuildChange<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            var scoped = _serviceProvider.CreateScope();
+            var scoped = EngineContext.Current.ServiceProvider.CreateScope();
             var repository = scoped.ServiceProvider.GetService<IRepository<TEntity>>();
 
             // 添加未托管对象
@@ -94,7 +88,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             where TEntity : class, IPrivateEntity, new()
             where TDbContextLocator : class, IDbContextLocator
         {
-            var scoped = _serviceProvider.CreateScope();
+            var scoped = EngineContext.Current.ServiceProvider.CreateScope();
             var repository = scoped.ServiceProvider.GetService<IRepository<TEntity, TDbContextLocator>>();
 
             // 添加未托管对象
@@ -109,7 +103,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <returns>ISqlRepository</returns>
         public virtual ISqlRepository Sql()
         {
-            return _serviceProvider.GetService<ISqlRepository>();
+            return EngineContext.Current.Resolve<ISqlRepository>();
         }
 
         /// <summary>
@@ -119,28 +113,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual ISqlRepository<TDbContextLocator> Sql<TDbContextLocator>()
             where TDbContextLocator : class, IDbContextLocator
         {
-            return _serviceProvider.GetService<ISqlRepository<TDbContextLocator>>();
+            return EngineContext.Current.Resolve<ISqlRepository<TDbContextLocator>>();
         }
 
-        /// <summary>
-        /// 解析服务
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <returns></returns>
-        public virtual TService GetService<TService>()
-        {
-            return _serviceProvider.GetService<TService>();
-        }
+  
 
-        /// <summary>
-        /// 解析服务
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <returns></returns>
-        public virtual TService GetRequiredService<TService>()
-        {
-            return _serviceProvider.GetRequiredService<TService>();
-        }
+      
     }
 
     /// <summary>
@@ -154,8 +132,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="serviceProvider">服务提供器</param>
-        public EFCoreRepository(IServiceProvider serviceProvider) : base(serviceProvider)
+        public EFCoreRepository()
         {
         }
     }
@@ -171,8 +148,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="serviceProvider">服务提供器</param>
-        public EFCoreRepository(IServiceProvider serviceProvider) : base(typeof(TDbContextLocator), serviceProvider)
+        public EFCoreRepository() : base(typeof(TDbContextLocator))
         {
         }
     }
@@ -198,13 +174,9 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// 构造函数
         /// </summary>
         /// <param name="dbContextLocator"></param>
-        /// <param name="serviceProvider">服务提供器</param>
-        public PrivateRepository(Type dbContextLocator, IServiceProvider serviceProvider) : base(dbContextLocator,
-            serviceProvider)
+        public PrivateRepository(Type dbContextLocator) : base(dbContextLocator)
         {
-            // 初始化服务提供器
-            ServiceProvider = serviceProvider;
-
+            
             DbConnection = Database.GetDbConnection();
             ChangeTracker = Context.ChangeTracker;
             Model = Context.Model;
@@ -221,10 +193,10 @@ namespace Silky.EntityFrameworkCore.Repositories
             EntityType = Entities.EntityType;
 
             // 初始化数据上下文池
-            _silkyDbContextPool = (serviceProvider.GetService<ISilkyDbContextPool>() as IEfCoreDbContextPool);
+            _silkyDbContextPool = (EngineContext.Current.Resolve<ISilkyDbContextPool>() as IEfCoreDbContextPool);
 
             // 非泛型仓储
-            _repository = serviceProvider.GetService<IRepository>();
+            _repository = EngineContext.Current.Resolve<IRepository>();
         }
 
         /// <summary>

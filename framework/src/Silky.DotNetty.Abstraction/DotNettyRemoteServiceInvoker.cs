@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc;
 using Silky.Rpc.MiniProfiler;

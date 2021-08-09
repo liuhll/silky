@@ -11,6 +11,7 @@ using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
+using Silky.Core.Rpc;
 using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.MiniProfiler;
