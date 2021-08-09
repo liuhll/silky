@@ -34,11 +34,11 @@ namespace Silky.Core.Rpc
             }
         }
 
-        public IServiceProvider ServiceProvider { private set; get; }
+        public IServiceProvider RpcServices { private set; get; }
 
-        public void SetServiceProvider(IServiceProvider serviceProvider)
+        internal void SetServiceProvider(IServiceProvider serviceProvider)
         {
-            ServiceProvider = serviceProvider;
+            RpcServices = serviceProvider;
         }
 
         public void SetAttachment(string key, object value)

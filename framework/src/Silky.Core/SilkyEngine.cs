@@ -225,9 +225,9 @@ namespace Silky.Core
             }
 
             var rpcContextAccessor = serviceProvider.GetService<IRpcContextAccessor>();
-            if (rpcContextAccessor is { RpcContext: { ServiceProvider: { } } })
+            if (rpcContextAccessor is { RpcContext: { RpcServices: { } } })
             {
-                serviceProvider = rpcContextAccessor.RpcContext.ServiceProvider;
+                serviceProvider = rpcContextAccessor.RpcContext.RpcServices;
             }
 
             return serviceProvider;

@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,19 +27,12 @@ namespace Silky.Core.Rpc
                 {
                     RpcContext = value
                 };
-                CreateScope();
+                _serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
+                _rpcContextCurrent.Value?.RpcContext.SetServiceProvider(_serviceScope.ServiceProvider);
             }
         }
 
-
-
-        private IServiceScope CreateScope()
-        {
-            _serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
-            _rpcContextCurrent.Value?.RpcContext.SetServiceProvider(_serviceScope.ServiceProvider);
-            return _serviceScope;
-        }
-
+        
         public void Dispose()
         {
             _serviceScope?.Dispose();

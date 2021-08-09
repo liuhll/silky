@@ -529,7 +529,7 @@ namespace Silky.Caching
 
             // using (var scope = ServiceScopeFactory.CreateScope())
             // {
-            //     await scope.ServiceProvider
+            //     await scope.RpcServices
             //         .GetRequiredService<IExceptionNotifier>()
             //         .NotifyAsync(new ExceptionNotificationContext(ex, LogLevel.Warning));
             // }
