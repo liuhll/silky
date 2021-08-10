@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -121,51 +122,58 @@ namespace Silky.Account.Domain.Accounts
         {
             var account = await GetAccountById(input.AccountId);
             await using var trans = _accountRepository.Database.BeginTransaction();
-            BalanceRecord balanceRecord = null;
-            switch (tccMethodType)
+            try
             {
-                case TccMethodType.Try:
-                    account.Balance -= input.OrderBalance;
-                    account.LockBalance += input.OrderBalance;
-                    balanceRecord = new BalanceRecord()
-                    {
-                        OrderBalance = input.OrderBalance,
-                        OrderId = input.OrderId,
-                        PayStatus = PayStatus.NoPay
-                    };
-                    await _balanceRecordRepository.InsertNowAsync(balanceRecord);
-                    RpcContext.Context.SetAttachment("balanceRecordId", balanceRecord.Id);
-                    break;
-                case TccMethodType.Confirm:
-                    account.LockBalance -= input.OrderBalance;
-                    var balanceRecordId1 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
-                    if (balanceRecordId1.HasValue)
-                    {
-                        balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId1.Value);
-                        balanceRecord.PayStatus = PayStatus.Payed;
-                        await _balanceRecordRepository.UpdateAsync(balanceRecord);
-                    }
+                BalanceRecord balanceRecord = null;
+                switch (tccMethodType)
+                {
+                    case TccMethodType.Try:
+                        account.Balance -= input.OrderBalance;
+                        account.LockBalance += input.OrderBalance;
+                        balanceRecord = new BalanceRecord()
+                        {
+                            OrderBalance = input.OrderBalance,
+                            OrderId = input.OrderId,
+                            PayStatus = PayStatus.NoPay
+                        };
+                        await _balanceRecordRepository.InsertNowAsync(balanceRecord);
+                        RpcContext.Context.SetAttachment("balanceRecordId", balanceRecord.Id);
+                        break;
+                    case TccMethodType.Confirm:
+                        account.LockBalance -= input.OrderBalance;
+                        var balanceRecordId1 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
+                        if (balanceRecordId1.HasValue)
+                        {
+                            balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId1.Value);
+                            balanceRecord.PayStatus = PayStatus.Payed;
+                            await _balanceRecordRepository.UpdateNowAsync(balanceRecord);
+                        }
 
-                    break;
-                case TccMethodType.Cancel:
-                    account.Balance += input.OrderBalance;
-                    account.LockBalance -= input.OrderBalance;
-                    var balanceRecordId2 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
-                    if (balanceRecordId2.HasValue)
-                    {
-                        balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId2.Value);
-                        balanceRecord.PayStatus = PayStatus.Cancel;
-                        await _balanceRecordRepository.UpdateAsync(balanceRecord);
-                    }
+                        break;
+                    case TccMethodType.Cancel:
+                        account.Balance += input.OrderBalance;
+                        account.LockBalance -= input.OrderBalance;
+                        var balanceRecordId2 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
+                        if (balanceRecordId2.HasValue)
+                        {
+                            balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId2.Value);
+                            balanceRecord.PayStatus = PayStatus.Cancel;
+                            await _balanceRecordRepository.UpdateNowAsync(balanceRecord);
+                        }
 
-                    break;
+                        break;
+                }
+
+                await _accountRepository.UpdateNowAsync(account);
+                await trans.CommitAsync();
+                await _accountCache.RemoveAsync($"Account:UserName:{account.UserName}");
+                return balanceRecord?.Id;
             }
-
-
-            await _accountRepository.UpdateAsync(account);
-            await trans.CommitAsync();
-            await _accountCache.RemoveAsync($"Account:UserName:{account.UserName}");
-            return balanceRecord?.Id;
+            catch (Exception e)
+            {
+                await trans.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<string> Login(LoginInput input)
@@ -177,16 +185,16 @@ namespace Silky.Account.Domain.Accounts
                 throw new AuthenticationException($"不存在账号为{input.Account}的用户");
             }
 
-            if (!userInfo.Password.Equals(_passwordHelper.EncryptPassword(userInfo.UserName,input.Password)))
+            if (!userInfo.Password.Equals(_passwordHelper.EncryptPassword(userInfo.UserName, input.Password)))
             {
                 throw new AuthenticationException("密码不正确");
             }
 
             var payload = new Dictionary<string, object>()
             {
-                {ClaimTypes.UserId, userInfo.Id},
-                {ClaimTypes.UserName, userInfo.UserName},
-                {ClaimTypes.Email, userInfo.Email},
+                { ClaimTypes.UserId, userInfo.Id },
+                { ClaimTypes.UserName, userInfo.UserName },
+                { ClaimTypes.Email, userInfo.Email },
             };
             return _jwtTokenGenerator.Generate(payload);
         }

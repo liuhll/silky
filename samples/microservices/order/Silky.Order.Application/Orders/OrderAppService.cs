@@ -24,6 +24,7 @@ namespace Silky.Order.Application.Orders
         }
 
         [TccTransaction(ConfirmMethod = "OrderCreateConfirm", CancelMethod = "OrderCreateCancel")]
+        [UnitOfWork]
         public async Task<GetOrderOutput> Create(CreateOrderInput input)
         {
             var orderOutput = await _orderDomainService.Create(input);
@@ -40,7 +41,8 @@ namespace Silky.Order.Application.Orders
             order = await _orderDomainService.Update(order);
             return order.Adapt<GetOrderOutput>();
         }
-
+        
+        [UnitOfWork]
         public async Task OrderCreateCancel(CreateOrderInput input)
         {
             var orderId = RpcContext.Context.GetAttachment("orderId");

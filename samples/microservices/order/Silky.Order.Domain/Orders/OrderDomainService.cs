@@ -55,7 +55,7 @@ namespace Silky.Order.Domain.Orders
             await _orderRepository.UpdateAsync(order);
             return order;
         }
-
+        
         public async Task<GetOrderOutput> Create(CreateOrderInput input)
         {
             // 扣减库存

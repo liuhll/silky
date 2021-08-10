@@ -5,6 +5,7 @@ using Silky.Account.Application.Contracts.Accounts;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Account.Domain.Accounts;
 using Silky.Core.Exceptions;
+using Silky.Rpc.Runtime.Server.UnitOfWork;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Application.Accounts
@@ -60,6 +61,7 @@ namespace Silky.Account.Application.Accounts
         }
 
         [TccTransaction(ConfirmMethod = "DeductBalanceConfirm", CancelMethod = "DeductBalanceCancel")]
+        [ManualCommit]
         public async Task<long?> DeductBalance(DeductBalanceInput input)
         {
             var account = await _accountDomainService.GetAccountById(input.AccountId);
@@ -70,12 +72,13 @@ namespace Silky.Account.Application.Accounts
         
             return await _accountDomainService.DeductBalance(input, TccMethodType.Try);
         }
-
+        
+        [ManualCommit]
         public Task DeductBalanceConfirm(DeductBalanceInput input)
         {
             return _accountDomainService.DeductBalance(input, TccMethodType.Confirm);
         }
-
+        [ManualCommit]
         public Task DeductBalanceCancel(DeductBalanceInput input)
         {
             return _accountDomainService.DeductBalance(input, TccMethodType.Cancel);
