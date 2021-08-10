@@ -92,50 +92,45 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
-                var lockProvider = zookeeperClient.GetSynchronizationProvider();
-                var @lock = lockProvider.CreateLock(
-                    string.Format(LockName.RemoveExceptRoute, addressDescriptor.Address));
-                await using (await @lock.AcquireAsync())
+                var allServiceRouteDescriptor = await GetServiceRouteDescriptors(zookeeperClient);
+                var serviceRouteDescriptor = allServiceRouteDescriptor as ServiceRouteDescriptor[] ??
+                                             allServiceRouteDescriptor.ToArray();
+                if (!serviceRouteDescriptor.Any())
                 {
-                    var allServiceRouteDescriptor = await GetServiceRouteDescriptors(zookeeperClient);
-                    var serviceRouteDescriptor = allServiceRouteDescriptor as ServiceRouteDescriptor[] ??
-                                                 allServiceRouteDescriptor.ToArray();
-                    if (!serviceRouteDescriptor.Any())
+                    continue;
+                }
+
+                var registerCenterServiceDescriptorIds =
+                    serviceRouteDescriptor
+                        .Where(p => p.ServiceDescriptor.ServiceProtocol == addressDescriptor.ServiceProtocol)
+                        .Select(i => i.ServiceDescriptor.Id).ToArray();
+
+                var localRegisterServiceDescriptorIds =
+                    serviceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
+
+                var checkServiceDescriptorIds = registerCenterServiceDescriptorIds
+                    .Except(localRegisterServiceDescriptorIds).ToArray();
+                var lockProvider = zookeeperClient.GetSynchronizationProvider();
+                foreach (var checkServiceDescriptorId in checkServiceDescriptorIds)
+                {
+                    var removeRouteDescriptor = serviceRouteDescriptor.FirstOrDefault(p =>
+                        p.ServiceDescriptor.Id == checkServiceDescriptorId
+                        && p.ServiceDescriptor.ServiceProtocol == addressDescriptor.ServiceProtocol
+                        && p.AddressDescriptors.Any(p => p.Equals(addressDescriptor)));
+                    if (removeRouteDescriptor != null)
                     {
-                        continue;
-                    }
+                        var @lock = lockProvider.CreateLock(string.Format(LockName.RegisterRoute,
+                            checkServiceDescriptorId));
 
-                    var registerCenterServiceDescriptorIds =
-                        serviceRouteDescriptor
-                            .Where(p => p.ServiceDescriptor.ServiceProtocol == addressDescriptor.ServiceProtocol)
-                            .Select(i => i.ServiceDescriptor.Id).ToArray();
-
-                    var localRegisterServiceDescriptorIds =
-                        serviceRouteDescriptors.Select(i => i.ServiceDescriptor.Id).ToArray();
-
-                    var checkServiceDescriptorIds = registerCenterServiceDescriptorIds
-                        .Except(localRegisterServiceDescriptorIds).ToArray();
-                    foreach (var checkServiceDescriptorId in checkServiceDescriptorIds)
-                    {
-                        var removeRouteDescriptor = serviceRouteDescriptor.FirstOrDefault(p =>
-                            p.ServiceDescriptor.Id == checkServiceDescriptorId
-                            && p.ServiceDescriptor.ServiceProtocol == addressDescriptor.ServiceProtocol
-                            && p.AddressDescriptors.Any(p => p.Equals(addressDescriptor)));
-                        if (removeRouteDescriptor != null)
+                        await using (await @lock.AcquireAsync())
                         {
-                            var @removeExceptRoutelock =
-                                lockProvider.CreateLock(string.Format(LockName.RegisterRoute,
-                                    checkServiceDescriptorId));
-                            await using (await @removeExceptRoutelock.AcquireAsync())
-                            {
-                                var routePath = CreateRoutePath(removeRouteDescriptor.ServiceDescriptor);
-                                removeRouteDescriptor.AddressDescriptors =
-                                    removeRouteDescriptor.AddressDescriptors.Where(p => !p.Equals(addressDescriptor))
-                                        .ToList();
-                                var jsonString = _serializer.Serialize(removeRouteDescriptor);
-                                var data = jsonString.GetBytes();
-                                await zookeeperClient.SetDataAsync(routePath, data);
-                            }
+                            var routePath = CreateRoutePath(removeRouteDescriptor.ServiceDescriptor);
+                            removeRouteDescriptor.AddressDescriptors =
+                                removeRouteDescriptor.AddressDescriptors.Where(p => !p.Equals(addressDescriptor))
+                                    .ToList();
+                            var jsonString = _serializer.Serialize(removeRouteDescriptor);
+                            var data = jsonString.GetBytes();
+                            await zookeeperClient.SetDataAsync(routePath, data);
                         }
                     }
                 }
