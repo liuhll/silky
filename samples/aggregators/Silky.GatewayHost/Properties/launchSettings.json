@@ -16,8 +16,8 @@
       "launchUrl": "api",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Apollo",
-        "DOTNET_ENVIRONMENT": "Apollo"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development"
       }
     }
   }
