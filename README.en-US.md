@@ -24,11 +24,11 @@ If you liked this repo or if it helped you, please give a star ⭐️ for this r
 
 The Silky framework is designed to help developers quickly build a microservice development framework through simple code and configuration under the .net platform.
 
-Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
+Build general business microservice applications through the [Generic Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0) of the .net framework, internal Communicate through the rpc implemented by [dotnetty](https://github.com/Azure/DotNetty). During the message transmission process, the message is communicated within the same cluster through `rpcToken`, and the rpc communication supports ssl encryption.
 
 Through the [Web Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0) of .net  build a service host that provides access to the outside world ( Gateway), when the `http` request or the `ws` session request arrives at the host, the routing entry of the service cluster is resolved through the built-in middleware, and the `rpcToken` is specified, and the built-in load balancing algorithm and routing addressing and The hosts inside the cluster communicate with `rpc`.
 
-In the communication process, Silky uses cache-based interception to realize TCC distributed transaction.
+In the process of rpc communication, Silky uses interceptors and Undo Log logs to implement TCC distributed transactions to ensure the final consistency of data.
 
 
 In the development and design process, the design and ideas of various excellent open source products have been borrowed and absorbed. Here, the author expresses his tribute and gratitude to the ancestors.
