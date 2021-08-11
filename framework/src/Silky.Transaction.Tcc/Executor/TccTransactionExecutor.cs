@@ -221,7 +221,7 @@ namespace Silky.Transaction.Tcc.Executor
                 await confirmParticipant.Executor(ActionStage.Confirming, invocation);
             }
 
-            await ParticipantCacheManager.Instance.RemoveByKey(participantId);
+            ParticipantCacheManager.Instance.RemoveByKey(participantId);
         }
 
         public async Task ParticipantCancel(ISilkyMethodInvocation invocation,
@@ -234,7 +234,7 @@ namespace Silky.Transaction.Tcc.Executor
                 await cancelingParticipant.Executor(ActionStage.Canceling, invocation);
             }
 
-            await ParticipantCacheManager.Instance.RemoveByKey(participantId);
+            ParticipantCacheManager.Instance.RemoveByKey(participantId);
         }
     }
 }

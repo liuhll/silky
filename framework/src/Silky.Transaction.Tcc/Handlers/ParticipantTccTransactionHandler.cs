@@ -36,7 +36,7 @@ namespace Silky.Transaction.Tcc.Handlers
                     {
                         if (participant != null)
                         {
-                            await ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
+                            ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
                         }
 
                         await TransRepositoryStore.RemoveParticipant(participant);
@@ -49,12 +49,12 @@ namespace Silky.Transaction.Tcc.Handlers
 
                     break;
                 case ActionStage.Confirming:
-                    var confirmingParticipantList = await ParticipantCacheManager.Instance.Get(context.ParticipantId);
+                    var confirmingParticipantList = ParticipantCacheManager.Instance.Get(context.ParticipantId);
                     await _executor.ParticipantConfirm(invocation, confirmingParticipantList, context.ParticipantId);
                     break;
 
                 case ActionStage.Canceling:
-                    var cancelingParticipantList = await ParticipantCacheManager.Instance.Get(context.ParticipantId);
+                    var cancelingParticipantList = ParticipantCacheManager.Instance.Get(context.ParticipantId);
                     await _executor.ParticipantCancel(invocation, cancelingParticipantList, context.ParticipantId);
                     break;
                 default:

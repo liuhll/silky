@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Serialization;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
+using Silky.Transaction.Cache;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Schedule;
 namespace Silky.Transaction.Tcc.Schedule
@@ -26,6 +27,7 @@ namespace Silky.Transaction.Tcc.Schedule
             try
             {
                 await participant.Executor(ActionStage.Canceling);
+                ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
                 Logger.LogDebug(
                     $"The transaction participant {participant.ParticipantId} executes the Canceling method successfully");
                 return true;
@@ -44,6 +46,7 @@ namespace Silky.Transaction.Tcc.Schedule
             {
                 await participant.Executor(ActionStage.Confirming);
                 await TransRepositoryStore.RemoveParticipant(participant);
+                ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
                 Logger.LogDebug(
                     $"The transaction participant {participant.ParticipantId} executes the Confirming method successfully");
                 return true;

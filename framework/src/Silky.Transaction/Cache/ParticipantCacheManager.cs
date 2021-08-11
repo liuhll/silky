@@ -1,10 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Castle.Core.Internal;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
@@ -28,14 +24,14 @@ namespace Silky.Transaction.Cache
             Singleton<ParticipantCacheManager>.Instance ??
             (Singleton<ParticipantCacheManager>.Instance = new ParticipantCacheManager());
 
-        public async Task CacheParticipant(IParticipant participant)
+        public void CacheParticipant(IParticipant participant)
         {
-            await CacheParticipant(participant.ParticipantId, participant);
+            CacheParticipant(participant.ParticipantId, participant);
         }
 
-        public async Task CacheParticipant(string participantId, IParticipant participant)
+        public void CacheParticipant(string participantId, IParticipant participant)
         {
-            var existParticipantList = await Get(participantId);
+            var existParticipantList = Get(participantId);
             string cacheValue = string.Empty;
             if (existParticipantList.IsNullOrEmpty())
             {
@@ -51,7 +47,7 @@ namespace Silky.Transaction.Cache
             _cache.Set(participantId, cacheValue);
         }
 
-        public async Task<IList<IParticipant>> Get(string participantId)
+        public IList<IParticipant> Get(string participantId)
         {
             var participantsCacheValue = _cache.Get(participantId);
             if (participantsCacheValue != null)
@@ -63,11 +59,11 @@ namespace Silky.Transaction.Cache
             return null;
         }
 
-        public async Task RemoveByKey(string participantId)
+        public void RemoveByKey(string participantId)
         {
             if (!participantId.IsNullOrEmpty())
             {
-                await _cache.RemoveAsync(participantId);
+                _cache.Remove(participantId, true);
             }
         }
     }

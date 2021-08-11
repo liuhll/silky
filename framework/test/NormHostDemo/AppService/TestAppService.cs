@@ -70,7 +70,7 @@ namespace NormHostDemo.AppService
         {
             await _anotherAppService.DeleteOne(input.Name);
             await _anotherAppService.DeleteTwo(input.Address);
-            //throw new BusinessException("test exception");
+           // throw new BusinessException("test exception");
             return "trying" + _serializer.Serialize(input);
         }
 

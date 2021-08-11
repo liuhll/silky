@@ -26,14 +26,14 @@ namespace AnotherHostDemo.AppService
 
         [TccTransaction(ConfirmMethod = "DeleteTwoConfirm", CancelMethod = "DeleteTwoCancel")]
         public async Task<string> DeleteTwo(string address)
-        { 
+        {
            // throw new BusinessException("DeleteTwo exception");
             return "DeleteTwo " + address;
         }
 
         public async Task<string> Create(string name)
         {
-            await _testAppService.Create(new TestInput() {Name = name});
+            await _testAppService.Create(new TestInput() { Name = name });
             return "ok";
         }
 

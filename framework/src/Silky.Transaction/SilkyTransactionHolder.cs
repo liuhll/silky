@@ -11,6 +11,7 @@ namespace Silky.Transaction
     public class SilkyTransactionHolder
     {
         private static readonly AsyncLocal<ITransaction> CURRENT = new();
+
         private SilkyTransactionHolder()
         {
         }
@@ -37,13 +38,13 @@ namespace Silky.Transaction
         public async Task CacheParticipant(IParticipant participant)
         {
             if (participant == null) return;
-            await ParticipantCacheManager.Instance.CacheParticipant(participant);
+            ParticipantCacheManager.Instance.CacheParticipant(participant);
         }
 
         public void RegisterParticipantByNested(string participantId, IParticipant participant)
         {
             if (participant == null) return;
-            ParticipantCacheManager.Instance.CacheParticipant(participantId, participant).GetAwaiter().GetResult();
+            ParticipantCacheManager.Instance.CacheParticipant(participantId, participant);
         }
 
         public void RegisterStarterParticipant(IParticipant participant)
