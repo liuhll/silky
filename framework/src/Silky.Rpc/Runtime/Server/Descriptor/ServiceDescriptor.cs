@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Silky.Core;
 
 namespace Silky.Rpc.Runtime.Server.Descriptor
 {
@@ -10,11 +11,14 @@ namespace Silky.Rpc.Runtime.Server.Descriptor
         public ServiceDescriptor()
         {
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            HostName = EngineContext.Current.HostName;
         }
 
         [NotNull] public string Id { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
+
+        public string HostName { get; set; }
 
         public IDictionary<string, object> Metadatas { get; set; }
 
@@ -23,7 +27,7 @@ namespace Silky.Rpc.Runtime.Server.Descriptor
             if (!Metadatas.ContainsKey(name))
                 return def;
 
-            return (T) Metadatas[name];
+            return (T)Metadatas[name];
         }
 
         #region Equality Members

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Silky.Core.DependencyInjection;
 using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Address.HealthCheck
 {
@@ -20,11 +21,14 @@ namespace Silky.Rpc.Address.HealthCheck
 
         void RemoveAddress(IAddressModel addressModel);
 
+        void RemoveServiceRouteAddress(string serviceId, IAddressModel addressModel);
+
         void RemoveAddress(IPAddress ipAddress, int port);
 
         event HealthChangeEvent OnHealthChange;
         event RemoveAddressEvent OnRemveAddress;
         event UnhealthEvent OnUnhealth;
         event AddMonitorEvent OnAddMonitor;
+        event RemoveServiceRouteAddressEvent OnRemoveServiceRouteAddress;
     }
 }

@@ -14,15 +14,29 @@ namespace Silky.Rpc.Address.Selector
         public PollingAddressSelector(IHealthCheck healthCheck)
         {
             _healthCheck = healthCheck;
-            _healthCheck.OnRemveAddress += async addressMoel =>
+            _healthCheck.OnRemveAddress += async addressModel =>
             {
-                var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(addressMoel)))
+                var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(addressModel)))
                     .Select(p => p.Key);
                 foreach (var removeKey in removeKeys)
                 {
                     addressesPools.TryRemove(removeKey, out var removeAdress);
                 }
             };
+
+            _healthCheck.OnRemoveServiceRouteAddress += async (serviceId, addressModel) =>
+            {
+                var removeKeys = addressesPools.Where(p
+                        => p.Value.Item2.Any(q => q.Equals(addressModel))
+                           && p.Key == serviceId
+                    )
+                    .Select(p => p.Key);
+                foreach (var removeKey in removeKeys)
+                {
+                    addressesPools.TryRemove(removeKey, out var removeAdress);
+                }
+            };
+
             _healthCheck.OnUnhealth += async addressMoel =>
             {
                 var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(addressMoel)))

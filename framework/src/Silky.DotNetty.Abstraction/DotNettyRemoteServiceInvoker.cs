@@ -133,8 +133,7 @@ namespace Silky.DotNetty
                 if (ex is NotFindLocalServiceEntryException ||
                     ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
                 {
-                    var serviceRouteManager = EngineContext.Current.Resolve<IServiceRouteManager>();
-                    await serviceRouteManager.RemoveServiceRoute(remoteInvokeMessage.ServiceId, selectedAddress);
+                    _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceId, selectedAddress);
                     throw new NotFindLocalServiceEntryException(ex.Message);
                 }
 

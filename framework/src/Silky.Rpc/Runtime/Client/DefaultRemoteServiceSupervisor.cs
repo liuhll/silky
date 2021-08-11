@@ -40,8 +40,13 @@ namespace Silky.Rpc.Runtime.Client
                 var keys = m_monitor.Keys.Where(p => p.Item2.Equals(model));
                 foreach (var key in keys)
                 {
-                    m_monitor.TryRemove(key, out var value);
+                    m_monitor.TryRemove(key, out var _);
                 }
+            };
+
+            _healthCheck.OnRemoveServiceRouteAddress += async (serviceId, model) =>
+            {
+                m_monitor.TryRemove((serviceId, model), out _);
             };
             Logger = NullLogger<DefaultRemoteServiceSupervisor>.Instance;
         }

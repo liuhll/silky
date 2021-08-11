@@ -69,7 +69,7 @@ namespace Silky.DotNetty
             _healthCheck.OnRemveAddress += async addressModel =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
-                m_clients.TryRemove(addressModel, out var remoteModule);
+                m_clients.TryRemove(addressModel, out _);
             };
 
             _bootstrap = CreateBootstrap();

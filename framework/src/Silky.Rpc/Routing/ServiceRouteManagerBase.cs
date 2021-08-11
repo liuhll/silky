@@ -42,6 +42,10 @@ namespace Silky.Rpc.Routing
                     await RemoveUnHealthServiceRoute(descriptor.ServiceDescriptor.Id, addressModel);
                 }
             };
+            _serviceRouteCache.OnRemoveServiceRoute += async (serviceId, addressModel) =>
+            {
+                await RemoveServiceRoute(serviceId, addressModel);
+            };
         }
 
         protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel);
@@ -57,11 +61,12 @@ namespace Silky.Rpc.Routing
         public abstract Task CreateWsSubscribeDataChanges(string[] wsPaths);
 
         public abstract Task EnterRoutes();
-        
+
         public async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
         {
             await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
         }
+
 
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {

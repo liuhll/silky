@@ -24,6 +24,18 @@ namespace Silky.Rpc.Address.Selector
                     consistentHash.Remove(addressModel);
                 }
             };
+
+            _healthCheck.OnRemoveServiceRouteAddress += async (serviceId, addressModel) =>
+            {
+                var removeItems = _consistentHashAddressPools
+                    .Where(p => p.Value.ContainNode(addressModel) && p.Key == serviceId)
+                    .Select(p => p.Value);
+                foreach (var consistentHash in removeItems)
+                {
+                    consistentHash.Remove(addressModel);
+                }
+            };
+
             _healthCheck.OnHealthChange += async (addressModel, isHealth) =>
             {
                 var changeItems = _consistentHashAddressPools
