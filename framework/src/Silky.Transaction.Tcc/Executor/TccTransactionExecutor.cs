@@ -77,13 +77,6 @@ namespace Silky.Transaction.Tcc.Executor
             currentTransaction.Status = ActionStage.Confirming;
             await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
             
-            var transParticipants = await TransRepositoryStore.ListParticipantByTransId(currentTransaction.TransId);
-            foreach (var transParticipant in transParticipants)
-            {
-                transParticipant.Status = ActionStage.Confirming;
-                await TransRepositoryStore.UpdateParticipantStatus(transParticipant);
-            }
-            
             var successList = new List<bool>();
             foreach (var participant in currentTransaction.Participants)
             {
@@ -228,7 +221,7 @@ namespace Silky.Transaction.Tcc.Executor
                 await confirmParticipant.Executor(ActionStage.Confirming, invocation);
             }
 
-            ParticipantCacheManager.Instance.RemoveByKey(participantId);
+            await ParticipantCacheManager.Instance.RemoveByKey(participantId);
         }
 
         public async Task ParticipantCancel(ISilkyMethodInvocation invocation,
@@ -241,7 +234,7 @@ namespace Silky.Transaction.Tcc.Executor
                 await cancelingParticipant.Executor(ActionStage.Canceling, invocation);
             }
 
-            ParticipantCacheManager.Instance.RemoveByKey(participantId);
+            await ParticipantCacheManager.Instance.RemoveByKey(participantId);
         }
     }
 }

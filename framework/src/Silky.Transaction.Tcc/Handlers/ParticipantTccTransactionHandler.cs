@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
-using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Repository;
@@ -38,8 +36,9 @@ namespace Silky.Transaction.Tcc.Handlers
                     {
                         if (participant != null)
                         {
-                            ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
+                            await ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
                         }
+
                         await TransRepositoryStore.RemoveParticipant(participant);
                         throw;
                     }
@@ -50,12 +49,12 @@ namespace Silky.Transaction.Tcc.Handlers
 
                     break;
                 case ActionStage.Confirming:
-                    var confirmingParticipantList = ParticipantCacheManager.Instance.Get(context.ParticipantId);
+                    var confirmingParticipantList = await ParticipantCacheManager.Instance.Get(context.ParticipantId);
                     await _executor.ParticipantConfirm(invocation, confirmingParticipantList, context.ParticipantId);
                     break;
 
                 case ActionStage.Canceling:
-                    var cancelingParticipantList = ParticipantCacheManager.Instance.Get(context.ParticipantId);
+                    var cancelingParticipantList = await ParticipantCacheManager.Instance.Get(context.ParticipantId);
                     await _executor.ParticipantCancel(invocation, cancelingParticipantList, context.ParticipantId);
                     break;
                 default:

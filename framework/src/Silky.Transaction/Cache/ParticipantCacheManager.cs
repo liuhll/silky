@@ -1,24 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.Serialization;
 using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Cache
 {
     public class ParticipantCacheManager
     {
-        //private readonly IEasyCachingProvider _cache;
-        private readonly IMemoryCache _cache;
-        public const string CacheName = "DefaultInMemory";
+        private readonly IDistributedCache<string> _cache;
+        private readonly ISerializer _serializer;
 
         private ParticipantCacheManager()
         {
-            //var factory = EngineContext.Current.Resolve<IMemoryCache>();
-            _cache = EngineContext.Current.Resolve<IMemoryCache>();
+            _cache = EngineContext.Current.Resolve<IDistributedCache<string>>();
+            _serializer = EngineContext.Current.Resolve<ISerializer>();
         }
 
         public static ParticipantCacheManager Instance =>
@@ -32,32 +35,39 @@ namespace Silky.Transaction.Cache
 
         public async Task CacheParticipant(string participantId, IParticipant participant)
         {
-            var existParticipantList = Get(participantId);
+            var existParticipantList = await Get(participantId);
+            string cacheValue = string.Empty;
             if (existParticipantList.IsNullOrEmpty())
             {
-                var list = new List<IParticipant>() {participant};
-                _cache.Set<IList<IParticipant>>(participantId, list, TimeSpan.FromSeconds(60));
+                var list = new List<IParticipant>() { participant };
+                cacheValue = _serializer.Serialize(list);
             }
             else
             {
                 existParticipantList.Add(participant);
-                _cache.Set(participantId, existParticipantList,
-                    TimeSpan.FromSeconds(60));
+                cacheValue = _serializer.Serialize(existParticipantList);
             }
+
+            _cache.Set(participantId, cacheValue);
         }
 
-        public IList<IParticipant> Get(string participantId)
+        public async Task<IList<IParticipant>> Get(string participantId)
         {
-            var participantsCacheValue = _cache.Get<IList<IParticipant>>(participantId);
+            var participantsCacheValue = _cache.Get(participantId);
+            if (participantsCacheValue != null)
+            {
+                var participants = _serializer.Deserialize<IList<SilkyParticipant>>(participantsCacheValue);
+                return participants.Select(p => (IParticipant)p).ToList();
+            }
 
-            return participantsCacheValue;
+            return null;
         }
 
-        public void RemoveByKey(string participantId)
+        public async Task RemoveByKey(string participantId)
         {
             if (!participantId.IsNullOrEmpty())
             {
-                _cache.Remove(participantId);
+                await _cache.RemoveAsync(participantId);
             }
         }
     }

@@ -11,14 +11,14 @@ namespace IAnotherApplication
     {
         [Transaction]
         [HttpDelete("one")]
-        [Governance(ProhibitExtranet = true)]
+        [Governance(ProhibitExtranet = true, ExecutionTimeout = -1)]
         Task<string> DeleteOne(string name);
-        
+
         [Transaction]
         [HttpDelete("two")]
-        [Governance(ProhibitExtranet = true)]
+        [Governance(ProhibitExtranet = true, ExecutionTimeout = -1)]
         Task<string> DeleteTwo(string address);
-    
+
         Task<string> Create(string name);
     }
 }
