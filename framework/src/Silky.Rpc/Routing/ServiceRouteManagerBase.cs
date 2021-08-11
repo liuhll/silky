@@ -100,7 +100,7 @@ namespace Silky.Rpc.Routing
             AddressDescriptor addressDescriptor)
         {
             await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
-            await RemoveExceptRouteAsync(serviceRouteDescriptors, addressDescriptor);
+            await RemoveExceptRouteAsync(addressDescriptor);
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
                 await RegisterRouteAsync(serviceRouteDescriptor);
@@ -111,7 +111,6 @@ namespace Silky.Rpc.Routing
 
         protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
 
-        protected abstract Task RemoveExceptRouteAsync(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
-            AddressDescriptor addressDescriptor);
+        protected abstract Task RemoveExceptRouteAsync(AddressDescriptor addressDescriptor);
     }
 }
