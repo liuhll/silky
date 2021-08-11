@@ -76,6 +76,14 @@ namespace Silky.Transaction.Tcc.Executor
 
             currentTransaction.Status = ActionStage.Confirming;
             await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
+            
+            var transParticipants = await TransRepositoryStore.ListParticipantByTransId(currentTransaction.TransId);
+            foreach (var transParticipant in transParticipants)
+            {
+                transParticipant.Status = ActionStage.Confirming;
+                await TransRepositoryStore.UpdateParticipantStatus(transParticipant);
+            }
+            
             var successList = new List<bool>();
             foreach (var participant in currentTransaction.Participants)
             {

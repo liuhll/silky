@@ -130,12 +130,12 @@ namespace Silky.Transaction.Repository.Redis
         }
 
 
-        public async Task<IEnumerable<IParticipant>> ListParticipantByTransId(string transId)
+        public async Task<IReadOnlyCollection<IParticipant>> ListParticipantByTransId(string transId)
         {
             var participantKeys = await GetParticipantKeys(transId);
             var participantCaches = await _participantDistributedCache.GetManyAsync(participantKeys);
 
-            return participantCaches.Select(p => p.Value);
+            return participantCaches.Select(p => p.Value).ToArray();
         }
 
         public async Task<bool> ExistParticipantByTransId(string transId)
@@ -244,7 +244,7 @@ namespace Silky.Transaction.Repository.Redis
                 .Take(limit)
                 .ToArray();
         }
-
+        
         private async Task<IReadOnlyCollection<string>> GetParticipantKeys(string transId)
         {
             var participantsCacheKeyPattern = "*" + GetParticipantKey(transId, "*");

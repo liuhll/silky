@@ -46,6 +46,7 @@ namespace Silky.Transaction.Repository
             if (transaction != null)
             {
                 await _transRepository.UpdateTransactionStatus(transaction.TransId, transaction.Status);
+                
             }
         }
 
@@ -139,6 +140,11 @@ namespace Silky.Transaction.Repository
         public static async Task<int> RemoveParticipantByDate(DateTime dateTime)
         {
             return await _transRepository.RemoveParticipantByDate(dateTime);
+        }
+
+        public static async Task<IReadOnlyCollection<IParticipant>> ListParticipantByTransId(string transId)
+        {
+            return await _transRepository.ListParticipantByTransId(transId);
         }
     }
 }
