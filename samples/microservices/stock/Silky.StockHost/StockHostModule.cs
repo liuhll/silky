@@ -17,14 +17,13 @@ namespace Silky.StockHost
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-
             var rabbitMqOptions = configuration.GetSection("cap:rabbitmq").Get<RabbitMQOptions>();
             services.AddCap(x =>
             {
                 x.UseEntityFramework<StockDbContext>();
                 x.UseRabbitMQ(z => { z = rabbitMqOptions; });
             });
-            
+
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<StockDbContext>(); },
                 "Silky.Stock.Database.Migrations");
@@ -32,8 +31,9 @@ namespace Silky.StockHost
 
         public async override Task Initialize(ApplicationContext applicationContext)
         {
-            if (EngineContext.Current.HostEnvironment.IsDevelopment() ||
-                EngineContext.Current.HostEnvironment.IsEnvironment("ContainerDev"))
+            if (EngineContext.Current.HostEnvironment.IsDevelopment()
+                || EngineContext.Current.HostEnvironment.IsEnvironment("ContainerDev")
+                || EngineContext.Current.HostEnvironment.IsEnvironment("Apollo"))
             {
                 using var scope = applicationContext.ServiceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<StockDbContext>();

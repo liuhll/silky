@@ -35,8 +35,9 @@ namespace Silky.OrderHost
 
         public async override Task Initialize(ApplicationContext applicationContext)
         {
-            if (EngineContext.Current.HostEnvironment.IsDevelopment() ||
-                EngineContext.Current.HostEnvironment.IsEnvironment("ContainerDev"))
+            if (EngineContext.Current.HostEnvironment.IsDevelopment() 
+                || EngineContext.Current.HostEnvironment.IsEnvironment("ContainerDev")
+                || EngineContext.Current.HostEnvironment.IsEnvironment("Apollo"))
             {
                 using var scope = applicationContext.ServiceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
