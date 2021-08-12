@@ -7,7 +7,6 @@ using Silky.Core;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Messages;
 using Silky.Rpc.MiniProfiler;
-using Silky.Rpc.Runtime.Filters;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client

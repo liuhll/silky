@@ -2,7 +2,7 @@ using System;
 using JetBrains.Annotations;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Runtime.Filters
+namespace Silky.Rpc.Runtime
 {
     public class ServiceEntryExecutingContext
     {

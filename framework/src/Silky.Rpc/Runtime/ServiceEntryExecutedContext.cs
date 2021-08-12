@@ -1,6 +1,6 @@
 using System;
 
-namespace Silky.Rpc.Runtime.Filters
+namespace Silky.Rpc.Runtime
 {
     public class ServiceEntryExecutedContext
     {

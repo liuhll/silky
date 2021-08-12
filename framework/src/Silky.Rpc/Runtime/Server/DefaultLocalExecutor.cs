@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
-using Silky.Rpc.Runtime.Filters;
 
 namespace Silky.Rpc.Runtime.Server
 {

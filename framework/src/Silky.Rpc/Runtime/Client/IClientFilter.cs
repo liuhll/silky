@@ -1,6 +1,6 @@
 using Silky.Core.DependencyInjection;
 
-namespace Silky.Rpc.Runtime.Filters
+namespace Silky.Rpc.Runtime.Client
 {
     public interface IClientFilter : IScopedDependency
     {
