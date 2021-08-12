@@ -180,6 +180,7 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                     title: '博文',
                     collapsable: false,
                     children: [
+                        'silky-microservice-profile',
                         'transaction-design',
                         'silky-sample',
                         'silky-sample-order'
