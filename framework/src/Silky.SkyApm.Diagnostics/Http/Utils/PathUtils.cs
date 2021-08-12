@@ -1,5 +1,6 @@
 using System.Linq;
 using Silky.Core;
+using Silky.Rpc.MiniProfiler;
 
 namespace Silky.Rpc.SkyApm.Diagnostics
 {

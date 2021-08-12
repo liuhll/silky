@@ -1,4 +1,4 @@
-namespace Silky.Core
+namespace Silky.Rpc.MiniProfiler
 {
     public static class MiniProfileConstant
     {
