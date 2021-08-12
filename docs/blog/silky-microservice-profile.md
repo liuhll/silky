@@ -597,9 +597,135 @@ rpc:token = ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 governance:executionTimeout = -1
 ```
 
+4. 增加Apollo配置中心相关配置(默认读取`appsettings.yml`),如果指定运行环境变量则读取`appsettings.{Environment}.yml`中的配置
+
+例如:
+
+```yml
+apollo:
+  appId: "silky-stock-host"
+  cluster: default
+  metaServer: "http://127.0.0.1:8080/"
+  #  secret: "ffd9d01130ee4329875ac3441c0bedda"
+  namespaces:
+    - application
+    - TEST1.silky.sample
+  env: DEV
+  meta:
+    DEV: "http://127.0.0.1:8080/"
+    PRO: "http://127.0.0.1:8080/"
+```
+
 
 ## 分布式锁
 
+silky使用[DistributedLock](https://github.com/madelson/DistributedLock)作为分布式锁,在服务路由注册和分布式事务作业中均使用了分布式锁.
+
 ## 身份认证与授权
 
+silky身份认证与授权通过包`Silky.Http.Identity`，通过webhost在网关实现统一的身份认证和授权。
+
+### 用户登陆与签发token
+
+silky通过`Silky.Jwt`包提供的`IJwtTokenGenerator`实现jwt格式的token。签发token的微服务应用需要通过nuget安装`Silky.Jwt`包，并在启动模块中依赖`JwtModule`模块。开发者可以对签发的token的密钥、token有效期、Jwt签名算法、签发者、受众等属性通过配置节点`jwtSettings`进行配置。开发者至少需要对`jwtSettings:secret`进行配置。
+
+配置如下:
+```yaml
+jwtSettings:
+  secret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW
+```
+
+用户登陆接口如下:
+
+```csharp
+        public async Task<string> Login(LoginInput input)
+        {
+            var userInfo = await _accountRepository.FirstOrDefaultAsync(p => p.UserName == input.Account
+                                                                             || p.Email == input.Account);
+            if (userInfo == null)
+            {
+                throw new AuthenticationException($"不存在账号为{input.Account}的用户");
+            }
+
+            if (!userInfo.Password.Equals(_passwordHelper.EncryptPassword(userInfo.UserName, input.Password)))
+            {
+                throw new AuthenticationException("密码不正确");
+            }
+
+            var payload = new Dictionary<string, object>()
+            {
+                { ClaimTypes.UserId, userInfo.Id },
+                { ClaimTypes.UserName, userInfo.UserName },
+                { ClaimTypes.Email, userInfo.Email },
+            };
+            return _jwtTokenGenerator.Generate(payload);
+        }
+```
+
+### 身份认证
+
+1. 网关项目(WebHost)的启动模块需要依赖`IdentityModule`模块
+
+```csharp
+    [DependsOn(typeof(IdentityModule))]
+    public class GatewayHostModule : WebHostModule
+    {
+        
+    }
+```
+
+2. `gateway:jwtSecret`配置的属性必须与签发token的微服务应用配置的属性`jwtSettings:secret`的值保持一致。
+
+```yaml
+gateway:
+  jwtSecret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW
+```
+
+3. 匿名访问
+
+开发者只需要在应用接口或是应用接口方法中标注`[AllowAnonymous]`特性即可，这样无需用户登陆,也可以访问该接口。
+
+```csharp
+[AllowAnonymous]
+Task<string> Login(LoginInput input);
+```
+
+### 授权
+
+开发者可以在网关应用通过继承`SilkyAuthorizationHandler`基类,并重写`PipelineAsync`方法即可实现对自定义授权。
+
+```csharp
+ public class TestAuthorizationHandler : SilkyAuthorizationHandler
+    {
+        private readonly ILogger<TestAuthorizationHandler> _logger;
+        private readonly IAuthorizationAppService _authorizationAppService;
+
+        public TestAuthorizationHandler(ILogger<TestAuthorizationHandler> logger,
+        IAuthorizationAppService authorizationAppService)
+        {
+            _logger = logger;
+           _authorizationAppService = authorizationAppService;
+        }
+
+        public async override Task<bool> PipelineAsync(AuthorizationHandlerContext context,
+            DefaultHttpContext httpContext)
+        {
+            // 获取访问的服务条目
+            var serviceEntry = httpContext.GetServiceEntry();
+           
+            // 可以通过rpc调用IdentifyApp,实现自定义的授权 
+           return _authorizationAppService.Authorization(sserviceEntry.ServiceDescriptor.Id);
+           
+        }
+    }
+```
+
+## 对象属性映射
+silky实现了基于[AutoMapper](https://github.com/AutoMapper/AutoMapper)和[Mapster](https://github.com/MapsterMapper/Mapster)的对象属性映射的包。实现的代理主机默认依赖`MapsterModule`包,使用Mapster作为对象映射的组件。
+
+只需要通过`Adapt`方法即可实现对象属性映射。
+
+
 ## 使用efcore作为数据访问组件
+
+efcore数据访问组件主要参考了[furion](https://dotnetchina.gitee.io/furion/docs/dbcontext-start)的实现。提供了数据仓库、数据库定位器、多租户等实现方式。使用方式与其基本保持一致。
