@@ -12,7 +12,7 @@ silky框架支持通过`json`或是`yml`格式的配置文件,开发者可以根
 | 属性 | 说明 | 缺省值 |  备注 |
 |:-----|:-----|:-----|:------|
 | Host | 主机Ip | 0.0.0.0 | 设置微服务托管记住的ip地址,"0.0.0.0"自动获取当前主机Ip地址 |
-| RpcPort | Rpc端口号 | 2200 | rpc通信使用的端口号 |
+| Port | Rpc端口号 | 2200 | rpc通信使用的端口号 |
 | UseLibuv | 是否启用Libuv | true |  |
 | IsSsl | 是否开启Ssl | false |  |
 | SslCertificateName | Ssl证书(文件)名称 |  |  |

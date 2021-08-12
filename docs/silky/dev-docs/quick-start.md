@@ -62,7 +62,7 @@ silky支持通过`json`或是`yml`格式进行配置。您可以通过`appsettin
 ```yaml
 rpc:
   host: 0.0.0.0
-  rpcPort: 2201
+  Port: 2201
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 governance:
   executionTimeout: -1
