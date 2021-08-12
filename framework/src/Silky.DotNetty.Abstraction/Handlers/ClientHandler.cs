@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Messages;
+using Silky.Rpc.Runtime;
 using Silky.Rpc.Transport;
 
 namespace Silky.DotNetty.Handlers

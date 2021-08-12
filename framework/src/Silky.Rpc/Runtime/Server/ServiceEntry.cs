@@ -20,7 +20,6 @@ using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server.Descriptor;
 using Silky.Rpc.Runtime.Server.Parameter;
-using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.CachingIntercept;
 
 namespace Silky.Rpc.Runtime.Server

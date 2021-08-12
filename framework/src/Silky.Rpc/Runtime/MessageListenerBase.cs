@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Silky.Rpc.Messages;
+using Silky.Rpc.Transport;
 
-namespace Silky.Rpc.Transport
+namespace Silky.Rpc.Runtime
 {
     public abstract class MessageListenerBase : IMessageListener
     {
