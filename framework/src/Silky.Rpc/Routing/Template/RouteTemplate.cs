@@ -14,7 +14,7 @@ namespace Silky.Rpc.Routing.Template
         {
             get
             {
-                var order = 0;
+                var order = 1000;
                 if (Parameters.Any(p => "int".Equals(p.Constraint) ||
                                         "uint".Equals(p.Constraint) ||
                                         "long".Equals(p.Constraint) ||
