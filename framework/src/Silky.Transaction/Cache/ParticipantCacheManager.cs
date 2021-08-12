@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
-using Silky.Caching;
+using Microsoft.Extensions.Caching.Distributed;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
@@ -11,12 +11,13 @@ namespace Silky.Transaction.Cache
 {
     public class ParticipantCacheManager
     {
-        private readonly IDistributedCache<string> _cache;
+        private readonly IDistributedCache _cache;
         private readonly ISerializer _serializer;
+        private const string ParticipantKey = "Participant:{0}";
 
         private ParticipantCacheManager()
         {
-            _cache = EngineContext.Current.Resolve<IDistributedCache<string>>();
+            _cache = EngineContext.Current.Resolve<IDistributedCache>();
             _serializer = EngineContext.Current.Resolve<ISerializer>();
         }
 
@@ -44,12 +45,12 @@ namespace Silky.Transaction.Cache
                 cacheValue = _serializer.Serialize(existParticipantList);
             }
 
-            _cache.Set(participantId, cacheValue);
+            _cache.SetString(string.Format(ParticipantKey, participant.ParticipantId), cacheValue);
         }
 
         public IList<IParticipant> Get(string participantId)
         {
-            var participantsCacheValue = _cache.Get(participantId);
+            var participantsCacheValue = _cache.GetString(participantId);
             if (participantsCacheValue != null)
             {
                 var participants = _serializer.Deserialize<IList<SilkyParticipant>>(participantsCacheValue);
@@ -63,7 +64,7 @@ namespace Silky.Transaction.Cache
         {
             if (!participantId.IsNullOrEmpty())
             {
-                _cache.Remove(participantId, true);
+                _cache.Remove(string.Format(ParticipantKey, participantId));
             }
         }
     }
