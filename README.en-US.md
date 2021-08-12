@@ -35,9 +35,9 @@ In the development and design process, the design and ideas of various excellent
 
 ## Getting Started
 
-- Learn the Silky framework through [Developer Documentation](http://docs.lms-fk.com/silky/).
-- Use [silky.samples project](http://docs.lms-fk.com/silky/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the Silky framework.
-- Familiarize yourself with the configuration properties of the Silky framework through the [Configuration](http://docs.lms-fk.com/config/) document.
+- Learn the Silky framework through [Developer Documentation](http://docs.silky-fk.com/silky/).
+- Use [silky.samples project](http://docs.silky-fk.com/silky/dev-docs/quick-start.html) to familiarize yourself with how to build a microservice application using the Silky framework.
+- Familiarize yourself with the configuration properties of the Silky framework through the [Configuration](http://docs.silky-fk.com/config/) document.
 
 ## Framework Features
 
