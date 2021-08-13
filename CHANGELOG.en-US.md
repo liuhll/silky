@@ -5,19 +5,19 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.0]
 ### Added
--Support Apollo as a service registration center
+- Support Apollo as a service registration center
 
 ### Changed
--Optimize package dependencies
--Optimize RpcContext
--Optimize the life cycle management of services in Rpc communication
--Optimize the way to remove redundant routes
--Optimize the use of distributed locks to avoid deadlocks caused by service routing registration
--Remove IEfCoreDbContextPool interface
--Optimize heartbeat detection
+- Optimize package dependencies
+- Optimize RpcContext
+- Optimize the life cycle management of services in Rpc communication
+- Optimize the way to remove redundant routes
+- Optimize the use of distributed locks to avoid deadlocks caused by service routing registration
+- Remove IEfCoreDbContextPool interface
+- Optimize heartbeat detection
 
 ### Fixed
--Fix the bug that the Cancel and Confirm phases cannot be submitted when there are multiple service instances when the memory cache is used as a transaction participant
+- Fix the bug that the Cancel and Confirm phases cannot be submitted when there are multiple service instances when the memory cache is used as a transaction participant
 
 ## [1.2.0]
 
