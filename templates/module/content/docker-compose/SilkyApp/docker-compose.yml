@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  silkyapp:
+    image: silkyapp:${TAG:-latest}
+    build:
+      context: ../..
+      dockerfile: microservices/SilkyApp/SilkyAppHost/Dockerfile
+    volumes:
+      - ./logs/silkyapp:/app/logs    
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-dotnetenv}
+    networks: 
+      - silky_service_net
+
+networks:
+  silky_service_net: 
+    external:
+      name: silky_service_net

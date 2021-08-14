@@ -1,0 +1,13 @@
+rpc:
+  host: 0.0.0.0
+  port: rpcPortValue
+  token: rpcTokenValue
+registrycenter:
+  connectionStrings: registrycenterconnections
+  registryCenterType: Zookeeper
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: redisconfiguration
+connectionStrings:
+  default: server=127.0.0.1;port=3306;database=SilkyApp;uid=root;pwd=qwe!P4ss;

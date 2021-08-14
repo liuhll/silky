@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\SilkyApp.Application.Contracts\SilkyApp.Application.Contracts.csproj" />
+      <ProjectReference Include="..\SilkyApp.Domain\SilkyApp.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
