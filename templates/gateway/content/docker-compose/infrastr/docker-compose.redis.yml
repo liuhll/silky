@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  silky.redis1:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - silky_service_net
+networks:
+  silky_service_net:
+    external:
+      name: silky_service_net
