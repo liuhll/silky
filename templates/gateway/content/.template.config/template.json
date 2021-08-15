@@ -4,7 +4,7 @@
     "classifications": [
         "Silky",
         "MicroService",
-        "Web",
+        "Host",
         "Gateway"
       ],
       "name": "Silky Gateway",

@@ -5,7 +5,7 @@
         "Silky",
         "MicroService",
         "Host",
-        "App"
+        "Module"
       ],
       "name": "Silky Module",
       "identity": "Silky.Module.Template",
@@ -71,7 +71,7 @@
        "incudeinfrastr": {
         "type": "parameter",
         "datatype": "bool",
-        "defaultValue": "true",
+        "defaultValue": "false",
         "isRequired": false,
        "description": "Contains infrastr services"
       },
