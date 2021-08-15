@@ -1,0 +1,83 @@
+version: '3.7'
+
+services:
+  silky.zoo1:
+    image: zookeeper
+    restart: always
+    hostname: hero.zoo1
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=hero.zoo2:2888:3888;2181 server.3=hero.zoo3:2888:3888;2181
+    networks:
+      - silky_service_net
+      
+  silky.zoo2:
+    image: zookeeper
+    restart: always
+    hostname: hero.zoo2
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=hero.zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=hero.zoo3:2888:3888;2181
+    networks:
+      - silky_service_net
+
+  silky.zoo3:
+    image: zookeeper
+    restart: always
+    hostname: hero.zoo3
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=hero.zoo1:2888:3888;2181 server.2=hero.zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    networks:
+      - silky_service_net
+
+  silky.zoo4:
+    image: zookeeper
+    restart: always
+    hostname: hero.zoo4
+    ports:
+      - 2184:2181
+    environment:
+      ZOO_MY_ID: 4
+      ZOO_SERVERS: server.4=hero.zoo4:2888:3888;2181 server.5=hero.zoo5:2888:3888;2181 server.6=hero.zoo6:2888:3888;2181
+    networks:
+      - silky_service_net   
+      
+  silky.zoo5:
+    image: zookeeper
+    restart: always
+    hostname: hero.zoo5
+    ports:
+      - 2185:2181
+    environment:
+      ZOO_MY_ID: 5
+      ZOO_SERVERS: server.4=hero.zoo4:2888:3888;2181 server.5=hero.zoo5:2888:3888;2181 server.6=hero.zoo6:2888:3888;2181
+    networks:
+      - silky_service_net
+      
+  silky.zoo6:
+    image: zookeeper
+    restart: always
+    hostname: hero.zoo6
+    ports:
+      - 2186:2181
+    environment:
+      ZOO_MY_ID: 6
+      ZOO_SERVERS: server.4=hero.zoo4:2888:3888;2181 server.5=hero.zoo5:2888:3888;2181 server.6=hero.zoo6:2888:3888;2181
+    networks:
+      - silky_service_net      
+      
+networks:
+  silky_service_net: 
+    driver: bridge
+    name: silky_service_net
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.22.0.1/16 

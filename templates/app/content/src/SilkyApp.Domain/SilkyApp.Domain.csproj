@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+   <ItemGroup>
+       <PackageReference Include="Silky.ObjectMapper.Mapster" Version="$(SilkyVersion)" />
+       <PackageReference Include="Silky.Caching" Version="$(SilkyVersion)" />
+       <PackageReference Include="Silky.EntityFrameworkCore" Version="$(SilkyVersion)" />
+   </ItemGroup>
+   <ItemGroup>
+     <ProjectReference Include="..\SilkyApp.Application.Contracts\SilkyApp.Application.Contracts.csproj" />
+     <ProjectReference Include="..\SilkyApp.Domain.Shared\SilkyApp.Domain.Shared.csproj" />
+   </ItemGroup>
+</Project>

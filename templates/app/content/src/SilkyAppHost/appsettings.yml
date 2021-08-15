@@ -1,0 +1,36 @@
+serilog:
+  minimumLevel:
+    default: Information
+    override:
+      Microsoft: Warning
+      Microsoft.Hosting.Lifetime: Information
+      Silky: Debug
+  writeTo:
+    - name: File
+      args:
+        path: "./logs/log-.log"
+        rollingInterval: Day
+    - name: Console
+      args:
+        outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u11}] {Message:lj} {NewLine}{Exception}{NewLine}"
+        theme: "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"
+skyWalking:
+  serviceName: AccountHost
+  headerVersions:
+    - sw8
+  sampling:
+    samplePer3Secs: -1
+    percentage: -1.0
+  logging:
+    level: Debug
+    filePath: "logs/skyapm-{Date}.log"
+  transport:
+    interval: 3000
+    protocolVersion: v8
+    queueSize: 30000
+    batchSize: 3000
+    gRPC:
+      servers: "127.0.0.1:11800"
+      timeout: 10000
+      connectTimeout: 10000
+      reportTimeout: 600000

@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\common.props" />
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Silky.Agent.GeneralHost" Version="$(SilkyVersion)" Condition="'$(supportwebsocket)' == False"/>
+        <PackageReference Include="Silky.Agent.WebSocketHost" Version="$(SilkyVersion)" Condition="'$(supportwebsocket)' == True"/>
+        <PackageReference Include="Silky.Apollo" Version="$(SilkyVersion)" Condition="'$(dotnetenv)' == 'Apollo'" />
+        <PackageReference Include="Silky.SkyApm.Agent" Version="$(SilkyVersion)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.yml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Development.yml" Condition="'$(dotnetenv)' != 'Apollo'">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Apollo.yml" Condition="'$(dotnetenv)' == 'Apollo'">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Production.yml" Condition="'$(dotnetenv)' != 'Apollo'">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.ContainerDev.yml" Condition="'$(dotnetenv)' != 'Apollo'">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SilkyApp.Application\SilkyApp.Application.csproj" />
+      <ProjectReference Include="..\SilkyApp.Database.Migrations\SilkyApp.Database.Migrations.csproj" />
+    </ItemGroup>
+    
+</Project>

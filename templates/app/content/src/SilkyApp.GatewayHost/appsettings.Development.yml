@@ -1,0 +1,20 @@
+rpc:
+  host: 0.0.0.0
+  token: rpcTokenValue
+governance:
+  executionTimeout: -1  
+registrycenter:
+  connectionStrings: registrycenterconnections
+  registryCenterType: registrycentertype
+distributedCache:
+  redis:
+    isEnabled: redisenable
+    configuration: redisconfiguration
+gateway:
+  wrapResult: true
+  enableSwaggerDoc: true
+  jwtSecret: gatewayjwtsecret
+swaggerDocument:
+  organizationMode: Group
+  injectMiniProfiler: true
+  termsOfService: https://www.github.com/liuhll/silky

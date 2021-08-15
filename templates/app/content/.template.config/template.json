@@ -1,0 +1,198 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Liuhll",
+    "classifications": [
+        "Silky",
+        "MicroService",
+        "Host",
+        "App"
+      ],
+      "name": "Silky App",
+      "identity": "Silky.Template.App",
+      "groupIdentity": "Silky.Template.App",
+      "shortName": "silky.app",
+      "tags": {
+        "language": "C#",
+        "type": "project"
+      },
+      "sourceName": "SilkyApp",
+      "preferNameDirectory": true,
+      "symbols": {
+        "rpcToken": {
+          "type": "parameter",
+          "defaultValue": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
+          "replaces": "rpcTokenValue",
+          "isRequired": false,
+          "description": "The rpc token for application"
+        },
+        "rpcPort": {
+          "type": "parameter",
+          "defaultValue": "2200",
+          "datatype": "int",
+          "replaces": "rpcPortValue",
+          "isRequired": false,
+          "description": "The rpc token for application"
+        },
+        "registrycentertype": {
+          "type": "parameter",
+          "defaultValue": "Zookeeper",
+          "replaces": "registrycentertype",
+          "isRequired": false,
+          "description": "The registrycenter type for application"
+        },
+        "registrycenterconnections": {
+          "type": "parameter",
+          "defaultValue": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186",
+          "replaces": "registrycenterconnections",
+          "isRequired": false,
+          "description": "The registrycenter connectionStrings for application"
+        },
+        "redisenable":{
+          "type": "parameter",
+          "defaultValue": "true",
+          "replaces": "redisenable",
+          "isRequired": false,
+          "description": "Set distributedcache redis is enable"
+        },
+        "redisconfiguration":{
+          "type": "parameter",
+          "defaultValue": "127.0.0.1:6379,defaultDatabase=0",
+          "replaces": "redisconfiguration",
+          "isRequired": false,
+          "description": "Set distributedcache configuration"
+        },
+        "dockersupport": {
+         "type": "parameter",
+         "datatype": "bool",
+         "defaultValue": "true",
+         "isRequired": false,
+        "description": "Add docker support for Silky"
+       },
+       "incudeinfrastr": {
+        "type": "parameter",
+        "datatype": "bool",
+        "defaultValue": "true",
+        "isRequired": false,
+       "description": "Contains infrastr services"
+      },
+      "inculuesln": {
+        "type": "parameter",
+        "datatype": "bool",
+        "defaultValue": "true",
+        "isRequired": false,
+        "description": "Inculue Solution"
+      },
+      "dotnetenv": {
+        "type": "parameter",
+        "datatype": "string",
+        "defaultValue": "Development",
+        "replaces": "dotnetenv",
+        "isRequired": false,
+        "description": "Set dotnet env"
+      },
+      "dockernetwork": {
+        "type": "parameter",
+        "datatype": "string",
+        "defaultValue": "silky_service_net",
+        "replaces": "silky_service_net",
+        "isRequired": false,
+        "description": "Set docker network"
+      },
+      "supportwebsocket": {
+        "type": "parameter",
+        "datatype": "bool",
+        "defaultValue": "false",
+        "isRequired": false,
+        "description": "Support websocket Services"
+      },
+      "isnew": {
+        "type": "parameter",
+        "datatype": "bool",
+        "defaultValue": "true",
+        "isRequired": false,
+        "description": "Is New Project"
+      },
+      "isgateway": {
+        "type": "parameter",
+        "datatype": "bool",
+        "defaultValue": "false",
+        "isRequired": false,
+        "description": "Is Gateway App"
+      }
+    },
+    "sources": [
+      {
+        "modifiers": [
+          {
+            "condition": "(dotnetenv!=Apollo)",
+            "exclude": [
+              "src/SilkyAppHost/appsettings.Apollo.yml",
+              "src/SilkyApp.GatewayHost/appsettings.Apollo.yml"
+            ]
+          },
+          {
+            "condition": "(dotnetenv==Apollo)",
+            "exclude": [
+              "src/SilkyAppHost/appsettings.Development.yml",
+              "src/SilkyAppHost/appsettings.Production.yml",
+              "src/SilkyAppHost/appsettings.ContainerDev.yml",
+              "src/SilkyApp.GatewayHost/appsettings.Development.yml",
+              "src/SilkyApp.GatewayHost/appsettings.Production.yml",
+              "src/SilkyApp.GatewayHost/appsettings.ContainerDev.yml"
+            ]
+          },
+          {
+            "condition": "!(incudeinfrastr)",
+            "exclude": [
+              "docker-compose/infrastr/**"
+            ]
+          },
+          {
+            "condition": "!(dockersupport)",
+            "exclude": [
+              "SilkyApp.DockerCompose.sln",
+              "docker-compose/SilkyApp/**"
+            ]
+          },
+          {
+            "condition": "!(inculuesln)",
+            "exclude": [
+              "SilkyApp.DockerCompose.sln",
+              "SilkyApp.sln"
+            ]
+          },
+          {
+            "condition": "!(isnew)",
+            "exclude": [
+              ".dockerignore",
+              ".gitignore",
+              "common.props",
+              ".DS_Store"
+            ]
+          },
+          {
+            "condition": "isgateway",
+            "exclude": [
+              "src/SilkyApp.Application/**",
+              "src/SilkyApp.Application.Contracts/**",
+              "src/SilkyApp.Database.Migrations/**",
+              "src/SilkyApp.Domain/**",
+              "src/SilkyApp.Domain.Shared/**",
+              "src/SilkyApp.EntityFrameworkCore/**",
+              "src/SilkyAppHost/**",
+              "SilkyApp.DockerCompose.sln",
+              "SilkyApp.sln"
+            ]
+          },
+          {
+            "condition": "!isgateway",
+            "exclude": [
+              "src/SilkyApp.GatewayHost/**",
+              "SilkyAppGateway.sln",
+              "SilkyAppGateway.DockerCompose.sln"
+            ]
+          }
+        ]
+      }
+    ]
+}
