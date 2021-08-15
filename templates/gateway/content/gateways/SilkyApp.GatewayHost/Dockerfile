@@ -7,8 +7,7 @@ EXPOSE ${http_port}
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY NuGet.Config .
-COPY sample.common.props .
+COPY common.props .
 COPY gateways/SilkyApp.GatewayHost /src/gateways/SilkyApp.GatewayHost
 
 
