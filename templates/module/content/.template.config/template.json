@@ -7,10 +7,10 @@
         "Host",
         "App"
       ],
-      "name": "Silky Host",
-      "identity": "Silky.Template.Host",
-      "groupIdentity": "Silky.Template.Host",
-      "shortName": "silky.host",
+      "name": "Silky Module",
+      "identity": "Silky.Module.Template",
+      "groupIdentity": "Silky.Module.Template",
+      "shortName": "silky.module",
       "tags": {
         "language": "C#",
         "type": "project"

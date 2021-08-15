@@ -8,8 +8,8 @@
         "Gateway"
       ],
       "name": "Silky Gateway",
-      "identity": "Silky.Template.Gateway",
-      "groupIdentity": "Silky.Template.Gateway",
+      "identity": "Silky.Gateway.Template",
+      "groupIdentity": "Silky.Gateway.Template",
       "shortName": "silky.gateway",
       "tags": {
         "language": "C#",

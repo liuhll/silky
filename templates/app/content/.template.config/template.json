@@ -8,8 +8,8 @@
         "App"
       ],
       "name": "Silky App",
-      "identity": "Silky.Template.App",
-      "groupIdentity": "Silky.Template.App",
+      "identity": "Silky.App.Template",
+      "groupIdentity": "Silky.App.Template",
       "shortName": "silky.app",
       "tags": {
         "language": "C#",

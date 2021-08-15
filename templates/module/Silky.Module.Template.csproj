@@ -1,17 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+    <Import Project="..\..\common.props" />
     <PropertyGroup>
-      <Version>2.0.0</Version>
       <PackageType>Template</PackageType>
       <License>MIT</License>
       <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
       <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
       <RepositoryUrl>https://github.com/liuhll/silky</RepositoryUrl>
-      <PackageId>Silky.Host.Template</PackageId>
-      <Title>Silky Host Template</Title>
+      <PackageId>Silky.Module.Template</PackageId>
+      <Title>Silky Microservice Module Template</Title>
       <Authors>Liuhll</Authors>
       <Description>Templates to use when creating an application for Silky Host.</Description>
-      <PackageTags>silky,host,microservice,generalhost</PackageTags>
+      <PackageTags>silky,host,microservice,generalhost,websockethost</PackageTags>
   
       <TargetFramework>net5.0</TargetFramework>
   
