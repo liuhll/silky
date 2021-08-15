@@ -1,4 +1,5 @@
 using Silky.Core;
+using Silky.Rpc.Utils;
 using SilkyApp.Application.Contracts.System;
 using SilkyApp.Application.Contracts.System.Dtos;
 
@@ -13,7 +14,7 @@ namespace SilkyApp.Application.System
                 HostName = EngineContext.Current.HostName,
                 AppName = EngineContext.Current.AppName,
                 Environment = EngineContext.Current.HostEnvironment.EnvironmentName,
-                
+                Address = NetUtil.GetRpcAddressModel().ToString()
             };
         }
     }

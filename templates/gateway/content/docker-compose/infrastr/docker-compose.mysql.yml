@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  silky.mysql:
+    image: mysql:8.0.15
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "qwe!P4ss"
+      MYSQL_PASSWORD: "qwe!P4ss"
+    volumes:
+      - ./.mysql/data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+
+    ports:
+      - "3306:3306"
+    networks:
+      - silky_service_net
+networks:
+  silky_service_net:
+    external:
+      name: silky_service_net

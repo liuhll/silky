@@ -7,7 +7,7 @@ namespace SilkyApp.Application.Contracts.System
     /// <summary>
     /// 系统信息服务
     /// </summary>
-    [ServiceRoute]
+    [ServiceRoute(template:"api/system/{appservice=silkyapp}")]
     public interface ISystemAppService
     {
         /// <summary>
