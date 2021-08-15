@@ -6,7 +6,7 @@ governance:
   executionTimeout: -1
 registrycenter:
   connectionStrings: registrycenterconnections
-  registryCenterType: Zookeeper
+  registryCenterType: registrycentertype
 distributedCache:
   redis:
     isEnabled: true

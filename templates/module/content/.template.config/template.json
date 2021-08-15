@@ -36,7 +36,7 @@
         "registrycentertype": {
           "type": "parameter",
           "defaultValue": "Zookeeper",
-          "replaces": "RegistrycenterZookeeper",
+          "replaces": "registrycentertype",
           "isRequired": false,
           "description": "The registrycenter type for application"
         },

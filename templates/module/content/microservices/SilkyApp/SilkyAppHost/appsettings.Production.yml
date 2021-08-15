@@ -4,7 +4,7 @@ rpc:
   token: rpcTokenValue
 registrycenter:
   connectionStrings: registrycenterconnections
-  registryCenterType: Zookeeper
+  registryCenterType: registrycentertype
 distributedCache:
   redis:
     isEnabled: true
