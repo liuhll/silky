@@ -1,5 +1,5 @@
 rpc:
-  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+  token: rpcTokenValue
 governance:
   executionTimeout: -1
 registrycenter:
@@ -12,7 +12,7 @@ distributedCache:
 gateway:
   wrapResult: true
   enableSwaggerDoc: true
-  jwtSecret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4
+  jwtSecret: gatewayjwtsecret
 swaggerDocument:
   organizationMode: Group
   injectMiniProfiler: true

@@ -21,21 +21,21 @@
         "rpcToken": {
           "type": "parameter",
           "defaultValue": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
-          "replaces": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
+          "replaces": "rpcTokenValue",
           "isRequired": false,
           "description": "The rpc token for gateway"
         },
         "registrycentertype": {
           "type": "parameter",
           "defaultValue": "Zookeeper",
-          "replaces": "RegistrycenterZookeeper",
+          "replaces": "registrycentertype",
           "isRequired": false,
           "description": "The registrycenter type for gateway"
         },
         "registrycenterconnections": {
           "type": "parameter",
           "defaultValue": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186",
-          "replaces": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186",
+          "replaces": "registrycenterconnections",
           "isRequired": false,
           "description": "The registrycenter connectionStrings for gateway"
         },
@@ -48,7 +48,7 @@
         },
         "redisconfiguration":{
           "type": "parameter",
-          "defaultValue": "127.0.0.1:6379,defaultDatabase=0",
+          "defaultValue": "redisconfiguration",
           "replaces": "127.0.0.1:6379,defaultDatabase=0",
           "isRequired": false,
           "description": "Set distributedcache configuration"
@@ -56,7 +56,7 @@
         "gatewayjwtsecret":{
           "type": "parameter",
           "defaultValue": "jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW",
-          "replaces": "jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW",
+          "replaces": "gatewayjwtsecret",
           "isRequired": false,
           "description": "Set gateway jwtsecret configuration"
         },
@@ -78,8 +78,8 @@
         "type": "parameter",
         "datatype": "string",
         "defaultValue": "Development",
-        "replaces": "Development",
-        "isRequired": true,
+        "replaces": "dotnetenv",
+        "isRequired": false,
         "description": "Set dotnet env"
       },
       "dockernetwork": {

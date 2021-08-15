@@ -9,8 +9,8 @@ services:
     volumes:
       - ./logs/gateway:/app/logs      
     environment:
-      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
-      ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-dotnetenv}
+      ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-dotnetenv}
     ports:
       - 80:80
     networks: 

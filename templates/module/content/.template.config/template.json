@@ -87,7 +87,7 @@
         "datatype": "string",
         "defaultValue": "Development",
         "replaces": "dotnetenv",
-        "isRequired": true,
+        "isRequired": false,
         "description": "Set dotnet env"
       },
       "dockernetwork": {
@@ -155,7 +155,8 @@
             "exclude": [
               ".dockerignore",
               ".gitignore",
-              "common.props"
+              "common.props",
+              ".DS_Store"
             ]
           }
         ]
