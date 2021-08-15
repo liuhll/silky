@@ -10,13 +10,13 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY common.props .
 COPY microservices/SilkyApp /src/microservices/SilkyApp
-RUN dotnet restore /src/microservices/SilkyApp/Silky.SilkyAppHost/Silky.SilkyAppHost.csproj --disable-parallel && \
-    dotnet build --no-restore -c Release /src/microservices/SilkyApp/Silky.SilkyAppHost/Silky.SilkyAppHost.csproj
+RUN dotnet restore /src/microservices/SilkyApp/SilkyAppHost/SilkyAppHost.csproj --disable-parallel && \
+    dotnet build --no-restore -c Release /src/microservices/SilkyApp/SilkyAppHost/SilkyAppHost.csproj
 
 FROM build AS publish
-WORKDIR /src/microservices/SilkyApp/Silky.SilkyAppHost
+WORKDIR /src/microservices/SilkyApp/SilkyAppHost
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM base AS final
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Silky.SilkyAppHost.dll"]
+ENTRYPOINT ["dotnet", "SilkyAppHost.dll"]
