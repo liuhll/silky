@@ -15,7 +15,7 @@ serilog:
         outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u11}] {Message:lj} {NewLine}{Exception}{NewLine}"
         theme: "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"
 skyWalking:
-  serviceName: AccountHost
+  serviceName: SilkyAppHost
   headerVersions:
     - sw8
   sampling:
