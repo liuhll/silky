@@ -68,7 +68,7 @@ In the development and design process, the design and ideas of various excellent
 - Support input parameter verification through Fluent
 
 ### RPC Communication
-- Use [dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty) as the underlying communication component
+- Use [dotnetty](https://github.com/Azure/DotNetty) as the underlying communication component
 - Use [Zookeeper](https://zookeeper.apache.org) as the service registry
 - Use [Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/) to generate dynamic proxy
 - Support cache interception during service call
@@ -97,13 +97,13 @@ In the development and design process, the design and ideas of various excellent
 - Support custom interface authentication
 
 ### Data Access
--Use EfCore to implement data access components
+- Use EfCore to implement data access components
 
 ### Support Websocket Communication
--Implement a module that supports websocket communication through [websocket-sharp](https://github.com/sta/websocket-sharp)
+- Implement a module that supports websocket communication through [websocket-sharp](https://github.com/sta/websocket-sharp)
 
 ### Distributed lock
--Use [RedLock.net](https://github.com/samcook/RedLock.net) to implement distributed lock related packages
+- Use [madelson/DistributedLock](https://github.com/madelson/DistributedLock) to implement distributed locks
 
 ## RoadMap
 
@@ -112,8 +112,7 @@ In the development and design process, the design and ideas of various excellent
 
 ### Future
 - Added service management dashboard
-- Added template project and CLI command line tool
-- Realize a unified configuration center
+- Added CLI command line tool
 - Use silky framework to implement a rights management system
 - Support file upload and download
 

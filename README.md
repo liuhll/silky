@@ -68,7 +68,7 @@ Silky在rpc通信过程中,使用基于拦截器和Undo Log日志实现了TCC分
 - 支持通过Fluent进行输入参数校验
 
 ### RPC通信
-- 使用[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)作为底层通信组件
+- 使用[dotnetty](https://github.com/Azure/DotNetty)作为底层通信组件
 - 使用[Zookeeper](https://zookeeper.apache.org)作为服务注册中心
 - 使用[Castle.Core.AsyncInterceptor](https://www.nuget.org/packages/Castle.Core.AsyncInterceptor/)生成动态代理
 - 服务调用过程中支持缓存拦截
@@ -103,7 +103,7 @@ Silky在rpc通信过程中,使用基于拦截器和Undo Log日志实现了TCC分
 - 通过[websocket-sharp](https://github.com/sta/websocket-sharp)实现支持websocket通信的模块
 
 ### 分布式锁
-- 使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分布式锁相关的包
+- 使用[madelson/DistributedLock](https://github.com/madelson/DistributedLock)实现分布式锁
 
 ## 产品路线图
 
@@ -112,10 +112,13 @@ Silky在rpc通信过程中,使用基于拦截器和Undo Log日志实现了TCC分
 
 ### 未来
 - 新增服务管理端(Dashboard)
-- 新增模板项目和CLI命令行行工具
-- 实现统一配置中心
+- 新增CLI命令行行工具
 - 使用silky框架实现一个权限管理系统
 - 支持文件上传与下载
+
+## 视频教程
+
+- [通过silky模板快速创建silky微服务框架](https://www.bilibili.com/video/BV1u64y1q7Cy?share_source=copy_web)
 
 ## 贡献
 - 贡献的最简单的方法之一就是是参与讨论和讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
