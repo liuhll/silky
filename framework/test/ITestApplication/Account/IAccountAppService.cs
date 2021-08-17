@@ -8,6 +8,7 @@ namespace ITestApplication.Account
     [ServiceRoute,AllowAnonymous]
     public interface IAccountAppService
     {
+        [Author("liuhll")]
         Task<string> Login(LoginInput input);
     }
 }

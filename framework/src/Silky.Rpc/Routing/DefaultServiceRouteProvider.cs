@@ -1,7 +1,11 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
@@ -25,6 +29,13 @@ namespace Silky.Rpc.Routing
         public async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort)
         {
             await _serviceRouteManager.RegisterWsRoutes(processorTime, wsAppServiceTypes, wsPort);
+        }
+
+        public async Task RegisterGateway()
+        {
+            var server = EngineContext.Current.Resolve<IServer>();
+            var address = server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
+            await _serviceRouteManager.RegisterGateway(address);
         }
     }
 }

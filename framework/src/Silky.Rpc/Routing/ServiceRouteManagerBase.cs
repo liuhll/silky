@@ -67,6 +67,11 @@ namespace Silky.Rpc.Routing
             await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
         }
 
+        public async Task RegisterGateway(string address)
+        {
+            
+        }
+
 
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
@@ -86,6 +91,8 @@ namespace Silky.Rpc.Routing
                 {
                     Id = WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(p)),
                     ServiceProtocol = ServiceProtocol.Ws,
+                    AppService = p.FullName,
+                    HostName = EngineContext.Current.HostName
                 },
                 AddressDescriptors = new[]
                 {

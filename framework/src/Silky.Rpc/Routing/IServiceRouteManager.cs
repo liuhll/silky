@@ -23,6 +23,7 @@ namespace Silky.Rpc.Routing
         Task EnterRoutes();
         
         Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress);
-        
+
+        Task RegisterGateway(string address);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +14,7 @@ namespace Silky.Http.Dashboard
             
         }
 
-        public int Order { get; } = 1;
+        public int Order { get; } = Int32.MinValue;
         public void Configure(IApplicationBuilder application)
         {
             application.UseMiddleware<UiMiddleware>();
