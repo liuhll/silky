@@ -51,7 +51,7 @@ namespace Silky.Rpc.Routing
         protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel);
 
 
-        public abstract Task CreateSubscribeDataChanges();
+        public abstract Task CreateSubscribeServiceRouteDataChanges();
 
         public void UpdateRegistryCenterOptions(RegistryCenterOptions options)
         {
@@ -61,18 +61,12 @@ namespace Silky.Rpc.Routing
         public abstract Task CreateWsSubscribeDataChanges(string[] wsPaths);
 
         public abstract Task EnterRoutes();
-
+        
         public async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
         {
             await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
         }
-
-        public async Task RegisterGateway(string address)
-        {
-            
-        }
-
-
+        
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
             var hostAddr = NetUtil.GetRpcAddressModel();

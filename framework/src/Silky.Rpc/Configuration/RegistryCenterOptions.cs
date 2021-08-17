@@ -15,5 +15,7 @@
         public string ConnectionStrings { get; set; }
 
         public string RoutePath { get; set; } = "/services/serviceroutes";
+
+        public string GatewayPath { get; set; } = "/gateways";
     }
 }

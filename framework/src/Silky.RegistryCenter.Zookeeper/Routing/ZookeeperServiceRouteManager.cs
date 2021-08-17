@@ -177,7 +177,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 }
             }
         }
-
+        
         private async Task<IEnumerable<ServiceRouteDescriptor>> GetServiceRouteDescriptors(
             IZookeeperClient zookeeperClient)
         {
@@ -215,7 +215,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             var jsonString = data.ToArray().GetString();
             return _serializer.Deserialize<ServiceRouteDescriptor>(jsonString);
         }
-
+        
         private string CreateRoutePath(ServiceDescriptor serviceDescriptor)
         {
             return CreateRoutePath(serviceDescriptor.Id);
@@ -261,7 +261,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         }
 
 
-        public async override Task CreateSubscribeDataChanges()
+        public async override Task CreateSubscribeServiceRouteDataChanges()
         {
             var allServiceEntries = _serviceEntryManager.GetAllEntries();
             foreach (var serviceEntry in allServiceEntries)

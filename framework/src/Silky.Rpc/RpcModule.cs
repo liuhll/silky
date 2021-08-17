@@ -73,7 +73,7 @@ namespace Silky.Rpc
                 throw new SilkyException("You must specify the dependent service registry module");
             }
 
-            await serviceRouteManager.CreateSubscribeDataChanges();
+            await serviceRouteManager.CreateSubscribeServiceRouteDataChanges();
             await serviceRouteManager.EnterRoutes();
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())

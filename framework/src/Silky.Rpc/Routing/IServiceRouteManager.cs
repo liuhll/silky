@@ -10,7 +10,7 @@ namespace Silky.Rpc.Routing
     {
         // Task SetRoutesAsync(IReadOnlyList<ServiceRouteDescriptor> serviceRouteDescriptors);
 
-        Task CreateSubscribeDataChanges();
+        Task CreateSubscribeServiceRouteDataChanges();
 
         void UpdateRegistryCenterOptions(RegistryCenterOptions options);
         
@@ -23,7 +23,6 @@ namespace Silky.Rpc.Routing
         Task EnterRoutes();
         
         Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress);
-
-        Task RegisterGateway(string address);
+        
     }
 }

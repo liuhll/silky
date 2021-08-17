@@ -9,6 +9,5 @@ namespace Silky.Rpc.Routing
     {
         Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol);
         Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort);
-        Task RegisterGateway();
     }
 }

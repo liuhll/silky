@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.SwaggerDocument;
+using Silky.Rpc.Gateway;
 using Silky.Rpc.Routing;
 
 namespace Silky.Http.Core
@@ -45,9 +46,9 @@ namespace Silky.Http.Core
             application.UseHttpsRedirection();
             application.UseSilkyExceptionHandler();
             application.UseSilky();
-            var serviceRouteProvider = application.ApplicationServices.GetRequiredService<IServiceRouteProvider>();
+            var gatewayManager = application.ApplicationServices.GetRequiredService<IGatewayManager>();
             
-            await serviceRouteProvider.RegisterGateway();
+            await gatewayManager.RegisterGateway();
         }
 
         public int Order { get; } = Int32.MaxValue;

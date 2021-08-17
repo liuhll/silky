@@ -8,6 +8,7 @@ namespace Silky.Rpc.Runtime.Server
         Tcp,
         Mqtt,
         Ws,
+        Http
     }
 
     public static class ServiceProtocolUtil
@@ -18,9 +19,13 @@ namespace Silky.Rpc.Runtime.Server
             if ("http".Equals(scheme, StringComparison.OrdinalIgnoreCase) ||
                 "https".Equals(scheme, StringComparison.OrdinalIgnoreCase))
             {
-                serviceProtocol = ServiceProtocol.Tcp;
+                serviceProtocol = ServiceProtocol.Http;
             }
 
+            if ("tcp".Equals(scheme, StringComparison.OrdinalIgnoreCase))
+            {
+                serviceProtocol = ServiceProtocol.Tcp;
+            }
             else if ("ws".Equals(scheme, StringComparison.OrdinalIgnoreCase) ||
                      "wss".Equals(scheme, StringComparison.OrdinalIgnoreCase))
             {
@@ -33,7 +38,8 @@ namespace Silky.Rpc.Runtime.Server
             }
             else
             {
-                throw new SilkyException($"Silky does not currently support this {scheme} type of communication protocol");
+                throw new SilkyException(
+                    $"Silky does not currently support this {scheme} type of communication protocol");
             }
 
             return serviceProtocol;

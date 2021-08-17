@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Http.Core.Handlers;
+using Silky.Rpc.Gateway;
 using Silky.Rpc.Routing;
 
 namespace Silky.Http.Core
@@ -44,9 +45,13 @@ namespace Silky.Http.Core
             if (!applicationContext.ModuleContainer.Modules.Any(p =>
                 p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(), StringComparison.OrdinalIgnoreCase)))
             {
-                throw new SilkyException($"You did not specify the dependent {registryCenterOptions.RegistryCenterType} service registry module");
+                throw new SilkyException(
+                    $"You did not specify the dependent {registryCenterOptions.RegistryCenterType} service registry module");
             }
-            
+
+            var gatewayManager = applicationContext.ServiceProvider.GetRequiredService<IGatewayManager>();
+            await gatewayManager.CreateSubscribeGatewayDataChanges();
+            await gatewayManager.EnterGateways();
         }
     }
 }
