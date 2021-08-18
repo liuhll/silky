@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -276,11 +277,11 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        public async override Task CreateWsSubscribeDataChanges(string[] wsPaths)
+        public async override Task CreateWsSubscribeDataChanges(Type[] wsAppTypes)
         {
-            foreach (var wsPath in wsPaths)
+            foreach (var wsAppType in wsAppTypes)
             {
-                var wsServiceId = WebSocketResolverHelper.Generator(wsPath);
+                var wsServiceId = WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(wsAppType));
                 var serviceRoutePath = CreateRoutePath(wsServiceId);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
                 foreach (var zookeeperClient in zookeeperClients)

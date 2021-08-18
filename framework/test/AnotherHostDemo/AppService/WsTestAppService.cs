@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using IAnotherApplication;
 using Silky.Core.Exceptions;
 using Silky.WebSocket;

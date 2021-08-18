@@ -58,15 +58,15 @@ namespace Silky.Rpc.Routing
             _registryCenterOptions = options;
         }
 
-        public abstract Task CreateWsSubscribeDataChanges(string[] wsPaths);
+        public abstract Task CreateWsSubscribeDataChanges(Type[] wsAppTypes);
 
         public abstract Task EnterRoutes();
-        
+
         public async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
         {
             await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
         }
-        
+
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
             var hostAddr = NetUtil.GetRpcAddressModel();
@@ -78,6 +78,7 @@ namespace Silky.Rpc.Routing
 
         public virtual async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort)
         {
+            await CreateWsSubscribeDataChanges(wsAppServiceTypes);
             var hostAddr = NetUtil.GetAddressModel(wsPort, ServiceProtocol.Ws);
             var serviceRouteDescriptors = wsAppServiceTypes.Select(p => new ServiceRouteDescriptor()
             {

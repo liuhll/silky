@@ -14,7 +14,7 @@ namespace Silky.Rpc.Routing
 
         void UpdateRegistryCenterOptions(RegistryCenterOptions options);
         
-        Task CreateWsSubscribeDataChanges(string[] wsPaths);
+        Task CreateWsSubscribeDataChanges(Type[] wsAppTypes);
 
         Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol);
 
