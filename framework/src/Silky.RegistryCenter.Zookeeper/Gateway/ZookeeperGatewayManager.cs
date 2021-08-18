@@ -193,7 +193,7 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
             var addressInfo = ParseAddress(address);
             var addressDescriptor = new AddressDescriptor()
             {
-                Address = address,
+                Address = addressInfo.Item1,
                 Port = addressInfo.Item2,
                 ServiceProtocol = ServiceProtocol.Http
             };
@@ -212,6 +212,7 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
                 await @lock.ExecForHandle(async () =>
                 {
                     var gatewayRoutePath = CreateGatewayRoutePath(gatewayDescriptor.HostName);
+                    await CreateSubscribeDataChange(zookeeperClient, gatewayRoutePath);
                     var centreGatewaysDescriptor = await GetGatewayDescriptorAsync(gatewayRoutePath, zookeeperClient);
                     if (centreGatewaysDescriptor != null)
                     {
