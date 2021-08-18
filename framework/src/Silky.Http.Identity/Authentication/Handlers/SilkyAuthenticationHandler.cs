@@ -9,9 +9,11 @@ using JWT;
 using JWT.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Silky.Core;
 using Silky.Core.Configuration;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -19,6 +21,7 @@ using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
 using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
+using Silky.Http.Identity.Extensions;
 
 namespace Silky.Http.Identity.Authentication.Handlers
 {
@@ -86,6 +89,13 @@ namespace Silky.Http.Identity.Authentication.Handlers
             var serviceEntry = Context.GetServiceEntry();
             if (serviceEntry != null)
             {
+                var silkyAppServiceUseAuth =
+                    EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
+                if (serviceEntry.IsSilkyAppService() && !silkyAppServiceUseAuth)
+                {
+                    return AuthenticateResult.NoResult();
+                }
+
                 if (serviceEntry.GovernanceOptions.IsAllowAnonymous)
                 {
                     return AuthenticateResult.NoResult();

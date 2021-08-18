@@ -26,9 +26,13 @@ namespace Silky.Http.Core.SwaggerDocument
 
 
         private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
+        private static readonly string SilkyAppServicePrefix = "Silky.Http.Dashboard";
+        private static readonly bool SilkyApiDisplayInSwagger = false;
 
         static SwaggerDocumentBuilder()
         {
+            SilkyApiDisplayInSwagger =
+                EngineContext.Current.Configuration.GetValue<bool?>("dashboard:displayWebApiInSwagger") ?? false;
             ProjectAssemblies = EngineContext.Current.TypeFinder.GetAssemblies();
             ApplicationInterfaceAssemblies = ReadInterfaceAssemblies();
             DocumentGroups = ReadGroups(ApplicationInterfaceAssemblies);
@@ -133,6 +137,12 @@ namespace Silky.Http.Core.SwaggerDocument
             var swaggerDocumentOptions = EngineContext.Current.Configuration
                 .GetSection(SwaggerDocumentOptions.SwaggerDocument)
                 .Get<SwaggerDocumentOptions>() ?? new SwaggerDocumentOptions();
+            if (!SilkyApiDisplayInSwagger)
+            {
+                applicationInterfaceAssemblies =
+                    applicationInterfaceAssemblies.Where(p => !p.FullName.Contains(SilkyAppServicePrefix));
+            }
+
             switch (swaggerDocumentOptions.OrganizationMode)
             {
                 case OrganizationMode.Group:
@@ -175,7 +185,7 @@ namespace Silky.Http.Core.SwaggerDocument
                 var securityRequirement = securityDefinition.Requirement;
 
                 // C# 9.0 模式匹配新语法
-                if (securityRequirement is {Scheme: {Reference: not null}})
+                if (securityRequirement is { Scheme: { Reference: not null } })
                 {
                     securityRequirement.Scheme.Reference.Id ??= securityDefinition.Id;
                     openApiSecurityRequirement.Add(securityRequirement.Scheme, securityRequirement.Accesses);
@@ -194,6 +204,12 @@ namespace Silky.Http.Core.SwaggerDocument
             var swaggerDocumentOptions = EngineContext.Current.Configuration
                 .GetSection(SwaggerDocumentOptions.SwaggerDocument)
                 .Get<SwaggerDocumentOptions>() ?? new SwaggerDocumentOptions();
+
+            if (serviceEntry.Id.StartsWith(SilkyAppServicePrefix) && !SilkyApiDisplayInSwagger)
+            {
+                return false;
+            }
+
             if (currentGroup.Equals(swaggerDocumentOptions.Title))
             {
                 return true;

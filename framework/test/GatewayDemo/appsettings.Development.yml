@@ -19,3 +19,6 @@ gateway:
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
 governance:
   executionTimeout: -1
+dashboard:
+  displayWebApiInSwagger: true
+  useAuth: true
