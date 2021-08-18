@@ -19,6 +19,7 @@ using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
 using Silky.Core;
 using Silky.Lock.Extensions;
+using Silky.RegistryCenter.Zookeeper.Routing.Watchers;
 using Silky.Rpc.Address;
 
 namespace Silky.RegistryCenter.Zookeeper.Routing

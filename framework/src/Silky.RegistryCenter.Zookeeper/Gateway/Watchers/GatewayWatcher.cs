@@ -6,10 +6,9 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Rpc.Gateway;
 using Silky.Rpc.Gateway.Descriptor;
-using Silky.Rpc.Routing.Descriptor;
 using Silky.Zookeeper;
 
-namespace Silky.RegistryCenter.Zookeeper
+namespace Silky.RegistryCenter.Zookeeper.Gateway.Watchers
 {
     internal class GatewayWatcher
     {

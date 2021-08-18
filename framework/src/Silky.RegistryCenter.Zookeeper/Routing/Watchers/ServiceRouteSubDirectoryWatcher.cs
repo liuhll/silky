@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Silky.Zookeeper;
-using Silky.RegistryCenter.Zookeeper.Routing;
 
-namespace Silky.RegistryCenter.Zookeeper
+namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
 {
     public class ServiceRouteSubDirectoryWatcher
     {

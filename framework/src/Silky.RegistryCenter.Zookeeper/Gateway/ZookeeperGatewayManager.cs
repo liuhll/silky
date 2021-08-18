@@ -14,6 +14,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Lock.Extensions;
+using Silky.RegistryCenter.Zookeeper.Gateway.Watchers;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;

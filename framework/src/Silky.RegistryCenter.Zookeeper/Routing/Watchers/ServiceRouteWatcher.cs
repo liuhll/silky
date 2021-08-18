@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using org.apache.zookeeper;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Zookeeper;
-using org.apache.zookeeper;
 
-namespace Silky.RegistryCenter.Zookeeper
+namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
 {
     internal class ServiceRouteWatcher
     {

@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
-using Silky.RegistryCenter.Zookeeper.Gateway;
 using Silky.Zookeeper;
 
-namespace Silky.RegistryCenter.Zookeeper
+namespace Silky.RegistryCenter.Zookeeper.Gateway.Watchers
 {
     internal class GatewaySubDirectoryWatcher
     {
