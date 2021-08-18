@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
@@ -49,5 +51,8 @@ namespace Silky.Rpc.Gateway
             Check.NotNull(hostName, nameof(hostName));
             _gatewayDescriptorCache.TryRemove(hostName, out _);
         }
+
+        public IReadOnlyCollection<GatewayDescriptor> Gateways =>
+            _gatewayDescriptorCache.Select(p => p.Value).ToImmutableArray();
     }
 }

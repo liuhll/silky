@@ -4,7 +4,7 @@ namespace Silky.Http.Dashboard.Configuration
     {
         public DashboardOptions()
         {
-            PathMatch = "/silky";
+            PathMatch = "/dashboard";
             StatsPollingInterval = 2000;
         }
         public string PathMatch { get; set; }

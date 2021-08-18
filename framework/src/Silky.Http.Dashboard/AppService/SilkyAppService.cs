@@ -1,22 +1,26 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Silky.Http.Dashboard.AppService.Dtos;
+using Silky.Rpc.Gateway;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Dashboard.AppService
 {
-    public class DashboardAppService : IDashboardAppService
+    public class SilkyAppService : ISilkyAppService
     {
         private readonly ServiceEntryCache _serviceEntryCache;
         private readonly ServiceRouteCache _serviceRouteCache;
+        private readonly GatewayCache _gatewayCache;
 
-        public DashboardAppService(ServiceEntryCache serviceEntryCache,
-            ServiceRouteCache serviceRouteCache)
+        public SilkyAppService(ServiceEntryCache serviceEntryCache,
+            ServiceRouteCache serviceRouteCache, GatewayCache gatewayCache)
         {
             _serviceEntryCache = serviceEntryCache;
             _serviceRouteCache = serviceRouteCache;
+            _gatewayCache = gatewayCache;
         }
 
         public async Task<IReadOnlyCollection<GetHostOutput>> GetHosts()
@@ -32,6 +36,17 @@ namespace Silky.Http.Dashboard.AppService
                     HasWsService = p.Any(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
                 });
             return hosts.ToArray();
+        }
+
+        public async Task<IReadOnlyCollection<GetGatewayOutput>> GetGateways()
+        {
+            return _gatewayCache.Gateways.Select(p => new GetGatewayOutput()
+            {
+                HostName = p.HostName,
+                InstanceCount = p.Addresses.Count(),
+                SupportServiceCount = p.SupportServices.Count()
+
+            }).ToImmutableArray();
         }
     }
 }

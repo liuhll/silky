@@ -9,9 +9,12 @@ namespace Silky.Http.Dashboard.AppService
 {
     [ServiceRoute]
     [AllowAnonymous]
-    public interface IDashboardAppService
+    public interface ISilkyAppService
     {
         [HttpGet("hosts")]
         Task<IReadOnlyCollection<GetHostOutput>> GetHosts();
+        
+        [HttpGet("gateways")]
+        Task<IReadOnlyCollection<GetGatewayOutput>> GetGateways();
     }
 }
