@@ -10,15 +10,15 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultRemoteServiceSupervisor : IRemoteServiceSupervisor
+    public class DefaultRequestServiceSupervisor : IRequestServiceSupervisor
     {
         private ConcurrentDictionary<(string, IAddressModel), ServiceInvokeInfo> m_monitor = new();
         private readonly IHealthCheck _healthCheck;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        public ILogger<DefaultRemoteServiceSupervisor> Logger { get; set; }
+        public ILogger<DefaultRequestServiceSupervisor> Logger { get; set; }
 
 
-        public DefaultRemoteServiceSupervisor(IHealthCheck healthCheck,
+        public DefaultRequestServiceSupervisor(IHealthCheck healthCheck,
             IServiceEntryLocator serviceEntryLocator)
         {
             _healthCheck = healthCheck;
@@ -48,7 +48,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 m_monitor.TryRemove((serviceId, model), out _);
             };
-            Logger = NullLogger<DefaultRemoteServiceSupervisor>.Instance;
+            Logger = NullLogger<DefaultRequestServiceSupervisor>.Instance;
         }
 
         public void Monitor((string, IAddressModel) item, GovernanceOptions governanceOptions)

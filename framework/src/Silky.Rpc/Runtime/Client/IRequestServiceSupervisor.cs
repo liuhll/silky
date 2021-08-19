@@ -4,7 +4,7 @@ using Silky.Rpc.Configuration;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IRemoteServiceSupervisor : ISingletonDependency
+    public interface IRequestServiceSupervisor : ISingletonDependency
     {
         void Monitor((string, IAddressModel) item, GovernanceOptions governanceOptions);
 

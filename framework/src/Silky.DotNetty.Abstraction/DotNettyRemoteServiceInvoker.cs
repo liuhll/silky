@@ -27,20 +27,20 @@ namespace Silky.DotNetty
     public class DotNettyRemoteServiceInvoker : IRemoteServiceInvoker
     {
         private readonly ServiceRouteCache _serviceRouteCache;
-        private readonly IRemoteServiceSupervisor _remoteServiceSupervisor;
+        private readonly IRequestServiceSupervisor _requestServiceSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly IHealthCheck _healthCheck;
         private readonly ISerializer _serializer;
         public ILogger<DotNettyRemoteServiceInvoker> Logger { get; set; }
 
         public DotNettyRemoteServiceInvoker(ServiceRouteCache serviceRouteCache,
-            IRemoteServiceSupervisor remoteServiceSupervisor,
+            IRequestServiceSupervisor requestServiceSupervisor,
             ITransportClientFactory transportClientFactory,
             IHealthCheck healthCheck,
             ISerializer serializer)
         {
             _serviceRouteCache = serviceRouteCache;
-            _remoteServiceSupervisor = remoteServiceSupervisor;
+            _requestServiceSupervisor = requestServiceSupervisor;
             _transportClientFactory = transportClientFactory;
             _healthCheck = healthCheck;
             _serializer = serializer;
@@ -71,7 +71,7 @@ namespace Silky.DotNetty
                     $"No available service provider can be found via {remoteInvokeMessage.ServiceId}");
             }
 
-            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress).ToString();
+            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress)?.ToString();
             IAddressModel selectedAddress;
             if (remoteAddress != null)
             {
@@ -102,7 +102,7 @@ namespace Silky.DotNetty
             var sp = Stopwatch.StartNew();
             try
             {
-                _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
+                _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
                 RpcContext.Context
@@ -157,7 +157,6 @@ namespace Silky.DotNetty
                     _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceId, selectedAddress);
                     throw new NotFindLocalServiceEntryException(ex.Message);
                 }
-
                 throw;
             }
             finally
@@ -165,7 +164,7 @@ namespace Silky.DotNetty
                 sp.Stop();
                 if (isInvakeSuccess)
                 {
-                    _remoteServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceId, selectedAddress),
+                    _requestServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
                     MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                         MiniProfileConstant.Rpc.State.Success,
@@ -173,7 +172,7 @@ namespace Silky.DotNetty
                 }
                 else
                 {
-                    _remoteServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceId, selectedAddress),
+                    _requestServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
                     MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                         MiniProfileConstant.Rpc.State.Fail,
