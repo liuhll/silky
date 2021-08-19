@@ -60,7 +60,6 @@ namespace Silky.Rpc.Routing
             _registryCenterOptions = options;
         }
         
-
         public abstract Task EnterRoutes();
 
         public async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
@@ -81,19 +80,25 @@ namespace Silky.Rpc.Routing
         {
             await CreateWsSubscribeDataChanges(wsAppServiceTypes);
             var hostAddr = NetUtil.GetAddressModel(wsPort, ServiceProtocol.Ws);
-            var serviceRouteDescriptors = wsAppServiceTypes.Select(p => new ServiceRouteDescriptor()
+            var serviceRouteDescriptors = wsAppServiceTypes.Select(p =>
             {
-                ServiceDescriptor = new ServiceDescriptor()
+                var wsPath = WebSocketResolverHelper.ParseWsPath(p);
+                var serviceRouteDescriptor = new ServiceRouteDescriptor()
                 {
-                    Id = WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(p)),
-                    ServiceProtocol = ServiceProtocol.Ws,
-                    AppService = p.FullName,
-                    HostName = EngineContext.Current.HostName
-                },
-                AddressDescriptors = new[]
-                {
-                    hostAddr.Descriptor
-                },
+                    ServiceDescriptor = new ServiceDescriptor()
+                    {
+                        Id = WebSocketResolverHelper.Generator(wsPath),
+                        ServiceProtocol = ServiceProtocol.Ws,
+                        AppService = p.FullName,
+                        HostName = EngineContext.Current.HostName,
+                    },
+                    AddressDescriptors = new[]
+                    {
+                        hostAddr.Descriptor
+                    },
+                };
+                serviceRouteDescriptor.ServiceDescriptor.Metadatas[ServiceEntryConstant.WsPath] = wsPath;
+                return serviceRouteDescriptor;
             });
 
             await RegisterRoutes(serviceRouteDescriptors, hostAddr.Descriptor);
