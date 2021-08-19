@@ -425,7 +425,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                 apiParameter.ParameterInfo);
             var parameter = new OpenApiParameter
             {
-                Name = name,
+                Name = location == ParameterLocation.Path ? name.ToLower() : name,
                 In = location,
                 Required = isRequired,
                 Schema = schema
