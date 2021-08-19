@@ -53,12 +53,13 @@ namespace Silky.Rpc.Routing
 
         public abstract Task CreateSubscribeServiceRouteDataChanges();
 
+        public abstract Task CreateWsSubscribeDataChanges(Type[] wsAppType);
+
         public void UpdateRegistryCenterOptions(RegistryCenterOptions options)
         {
             _registryCenterOptions = options;
         }
-
-        public abstract Task CreateWsSubscribeDataChanges(Type[] wsAppTypes);
+        
 
         public abstract Task EnterRoutes();
 

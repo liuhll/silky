@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Runtime.Server.ServiceDiscovery;
@@ -10,9 +9,12 @@ namespace Silky.Http.Dashboard.AppService
     public interface ISilkyAppService
     {
         [HttpGet("hosts")]
-        Task<PagedList<GetHostOutput>> GetHosts(PagedRequestDto input);
+        PagedList<GetHostOutput> GetHosts(PagedRequestDto input);
+
+        [HttpGet("host/instances")]
+        PagedList<GetHostInstanceOutput> GetHostInstance(GetHostInstanceInput input);
 
         [HttpGet("gateways")]
-        Task<IReadOnlyCollection<GetGatewayOutput>> GetGateways();
+        IReadOnlyCollection<GetGatewayOutput> GetGateways();
     }
 }

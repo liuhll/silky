@@ -11,11 +11,11 @@ namespace Silky.Rpc.Routing
         // Task SetRoutesAsync(IReadOnlyList<ServiceRouteDescriptor> serviceRouteDescriptors);
 
         Task CreateSubscribeServiceRouteDataChanges();
+        
+        Task CreateWsSubscribeDataChanges(Type[] wsAppType);
 
         void UpdateRegistryCenterOptions(RegistryCenterOptions options);
         
-        Task CreateWsSubscribeDataChanges(Type[] wsAppTypes);
-
         Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol);
 
         Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort);

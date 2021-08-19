@@ -179,7 +179,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 }
             }
         }
-        
+
         private async Task<IEnumerable<ServiceRouteDescriptor>> GetServiceRouteDescriptors(
             IZookeeperClient zookeeperClient)
         {
@@ -217,7 +217,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             var jsonString = data.ToArray().GetString();
             return _serializer.Deserialize<ServiceRouteDescriptor>(jsonString);
         }
-        
+
         private string CreateRoutePath(ServiceDescriptor serviceDescriptor)
         {
             return CreateRoutePath(serviceDescriptor.Id);
@@ -270,14 +270,18 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             {
                 var serviceRoutePath = CreateRoutePath(serviceEntry.ServiceDescriptor.Id);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+                var wsServiceId =
+                    WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(serviceEntry.ServiceType));
+                var wsServiceRoutePath = CreateRoutePath(wsServiceId);
                 foreach (var zookeeperClient in zookeeperClients)
                 {
                     await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
+                    await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
                 }
             }
         }
 
-        public async override Task CreateWsSubscribeDataChanges(Type[] wsAppTypes)
+        public override async Task CreateWsSubscribeDataChanges(Type[] wsAppTypes)
         {
             foreach (var wsAppType in wsAppTypes)
             {
