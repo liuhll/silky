@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Gateway;
 using Silky.Rpc.Routing;
@@ -23,7 +23,7 @@ namespace Silky.Http.Dashboard.AppService
             _gatewayCache = gatewayCache;
         }
 
-        public async Task<IReadOnlyCollection<GetHostOutput>> GetHosts()
+        public async Task<PagedList<GetHostOutput>> GetHosts(PagedRequestDto input)
         {
             var serviceRoutes = _serviceRouteCache.ServiceRoutes;
             var hosts = serviceRoutes.GroupBy(p => p.ServiceDescriptor.HostName)
@@ -35,7 +35,7 @@ namespace Silky.Http.Dashboard.AppService
                     AppServiceCount = p.GroupBy(p => p.ServiceDescriptor.AppService).Count(),
                     HasWsService = p.Any(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
                 });
-            return hosts.ToArray();
+            return hosts.ToPagedList(input.PageIndex, input.PageSize);
         }
 
         public async Task<IReadOnlyCollection<GetGatewayOutput>> GetGateways()
@@ -45,8 +45,7 @@ namespace Silky.Http.Dashboard.AppService
                 HostName = p.HostName,
                 InstanceCount = p.Addresses.Count(),
                 SupportServiceCount = p.SupportServices.Count()
-
-            }).ToImmutableArray();
+            }).ToArray();
         }
     }
 }

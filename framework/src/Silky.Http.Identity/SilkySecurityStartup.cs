@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Http.Identity.Authentication.Handlers;
-using Silky.Http.Identity.Authentication.Middlewares;
 
 namespace Silky.Http.Identity
 {
@@ -21,9 +20,7 @@ namespace Silky.Http.Identity
             if (application.ApplicationServices.GetService<SilkyAuthenticationHandler>() != null &&
                 application.ApplicationServices.GetService<IAuthorizationHandler>() != null)
             {
-                application.UseRouting();
                 application.UseAuthentication();
-                application.UseSilkyAuthentication();
                 application.UseAuthorization();
             }
         }

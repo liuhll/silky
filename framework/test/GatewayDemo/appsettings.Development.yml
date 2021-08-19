@@ -21,4 +21,4 @@ governance:
   executionTimeout: -1
 dashboard:
   displayWebApiInSwagger: true
-  useAuth: true
+  useAuth: false
