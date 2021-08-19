@@ -33,8 +33,6 @@ namespace Silky.EntityFrameworkCore.Extensions
 
             return new PagedList<TEntity>
             {
-                PageIndex = pageIndex,
-                PageSize = pageSize,
                 Items = items,
                 TotalCount = totalCount,
                 TotalPages = totalPages,
@@ -63,8 +61,6 @@ namespace Silky.EntityFrameworkCore.Extensions
 
             return new PagedList<TEntity>
             {
-                PageIndex = pageIndex,
-                PageSize = pageSize,
                 Items = items,
                 TotalCount = totalCount,
                 TotalPages = totalPages,

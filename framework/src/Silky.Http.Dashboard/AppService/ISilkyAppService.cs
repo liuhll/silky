@@ -10,7 +10,7 @@ namespace Silky.Http.Dashboard.AppService
     public interface ISilkyAppService
     {
         [HttpGet("hosts")]
-        Task<IReadOnlyCollection<GetHostOutput>> GetHosts();
+        Task<PagedList<GetHostOutput>> GetHosts(PagedRequestDto input);
 
         [HttpGet("gateways")]
         Task<IReadOnlyCollection<GetGatewayOutput>> GetGateways();
