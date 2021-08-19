@@ -25,9 +25,9 @@ namespace Silky.Rpc.Routing.Template
             {
                 if (methodEntryTemplate.IsNullOrEmpty() && constraintDefualtMethods.ContainsKey(httpMethod))
                 {
-                    var constraintDefualtMethod = constraintDefualtMethods[httpMethod];
-                    if (!constraintDefualtMethod.IsNullOrEmpty() &&
-                        !methodName.StartsWith(constraintDefualtMethod, StringComparison.OrdinalIgnoreCase))
+                    var constraintDefaultMethod = constraintDefualtMethods[httpMethod];
+                    if (!constraintDefaultMethod.IsNullOrEmpty() &&
+                        !methodName.StartsWith(constraintDefaultMethod, StringComparison.OrdinalIgnoreCase))
                     {
                         serverEntryTemplate = $"{routeTemplate}/{methodName}";
                     }
