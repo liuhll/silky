@@ -2,7 +2,9 @@ namespace Silky.Core.Rpc
 {
     public static class AttachmentKeys
     {
-        public const string RemoteAddress = "remoteAddress";
+        public const string ServerAddress = "serverAddress";
+
+        public const string ClientAddress = "clientAddress";
 
         public const string RequestHeader = "requestHeader";
 

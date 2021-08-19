@@ -78,7 +78,7 @@ namespace Silky.Rpc.Runtime.Client
             m_monitor.AddOrUpdate(item, serviceInvokeInfo, (key, _) => serviceInvokeInfo);
         }
 
-        public void ExceFail((string, IAddressModel) item, double elapsedTotalMilliseconds)
+        public void ExecFail((string, IAddressModel) item, double elapsedTotalMilliseconds)
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests--;

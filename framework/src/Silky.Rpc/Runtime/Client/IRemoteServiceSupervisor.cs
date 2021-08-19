@@ -10,6 +10,6 @@ namespace Silky.Rpc.Runtime.Client
 
         void ExecSuccess((string, IAddressModel) item, double elapsedTotalMilliseconds);
 
-        void ExceFail((string, IAddressModel) item, double elapsedTotalMilliseconds);
+        void ExecFail((string, IAddressModel) item, double elapsedTotalMilliseconds);
     }
 }
