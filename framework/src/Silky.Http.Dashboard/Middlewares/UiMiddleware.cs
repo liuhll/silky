@@ -22,14 +22,12 @@ namespace Silky.Http.Dashboard.Middlewares
         private readonly DashboardOptions _options;
         private readonly Regex _redirectUrlCheckRegex;
         private readonly Regex _homeUrlCheckRegex;
-        private readonly RequestDelegate _next;
         private readonly StaticFileMiddleware _staticFileMiddleware;
 
         public UiMiddleware(RequestDelegate next, IWebHostEnvironment hostingEnv, ILoggerFactory loggerFactory, IOptions<DashboardOptions> options)
 
         {
             _options = options.Value;
-            _next = next;
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options);
             _redirectUrlCheckRegex = new Regex($"^/?{Regex.Escape(_options.PathMatch)}/?$", RegexOptions.IgnoreCase);
             _homeUrlCheckRegex =
@@ -65,7 +63,7 @@ namespace Silky.Http.Dashboard.Middlewares
 
                     using var sr = new StreamReader(stream);
                     var htmlBuilder = new StringBuilder(await sr.ReadToEndAsync());
-                    htmlBuilder.Replace("%(servicePrefix)", _options.PathBase + _options.PathMatch + "/api");
+                    htmlBuilder.Replace("%(servicePrefix)", _options.PathBase + _options.PathMatch + "/api/silky");
                     htmlBuilder.Replace("%(pollingInterval)", _options.StatsPollingInterval.ToString());
                     await httpContext.Response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
 
