@@ -5,7 +5,6 @@ using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Gateway;
-using Silky.Rpc.Gateway.Descriptor;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.Descriptor;
@@ -53,25 +52,33 @@ namespace Silky.Http.Dashboard.AppService
             var allServiceEntries = _serviceEntryManager.GetAllEntries();
             var appServices = _serviceRouteCache.ServiceRoutes.Where(p => p.ServiceDescriptor.HostName == hostName)
                 .GroupBy(p => (p.ServiceDescriptor.AppService, p.ServiceDescriptor.ServiceProtocol));
-            detailHostOutput.AppServices = appServices.Select(p => new HostAppServiceOutput()
-            {
-                ServiceProtocol = p.Key.ServiceProtocol,
-                AppService = p.Key.AppService,
-                WsPath = p.Key.ServiceProtocol == ServiceProtocol.Ws ? p.First().ServiceDescriptor.GetWsPath() : null,
-                ServiceEntries = allServiceEntries.Where(se =>
-                        se.ServiceDescriptor.AppService == p.Key.AppService &&
-                        se.ServiceDescriptor.ServiceProtocol == p.Key.ServiceProtocol)
-                    .Select(se => new ServiceEntryOutput()
-                    {
-                        ServiceId = se.Id,
-                        MultipleServiceKey = se.MultipleServiceKey,
-                        Author = se.ServiceDescriptor.GetAuthor(),
-                        WebApi = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.RoutePath,
-                        HttpMethod = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.HttpMethod,
-                        ProhibitExtranet = se.GovernanceOptions.ProhibitExtranet,
-                        Method = se.MethodInfo.Name
-                    }).ToArray()
-            }).ToArray();
+            detailHostOutput.AppServices = appServices.Where(p => p.Key.ServiceProtocol == ServiceProtocol.Tcp).Select(
+                p => new HostAppServiceOutput()
+                {
+                    ServiceProtocol = p.Key.ServiceProtocol,
+                    AppService = p.Key.AppService,
+
+                    ServiceEntries = allServiceEntries.Where(se =>
+                            se.ServiceDescriptor.AppService == p.Key.AppService &&
+                            se.ServiceDescriptor.ServiceProtocol == p.Key.ServiceProtocol)
+                        .Select(se => new ServiceEntryOutput()
+                        {
+                            ServiceId = se.Id,
+                            MultipleServiceKey = se.MultipleServiceKey,
+                            Author = se.ServiceDescriptor.GetAuthor(),
+                            WebApi = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.RoutePath,
+                            HttpMethod = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.HttpMethod,
+                            ProhibitExtranet = se.GovernanceOptions.ProhibitExtranet,
+                            Method = se.MethodInfo.Name
+                        }).ToArray()
+                }).ToArray();
+            detailHostOutput.WsServices = appServices.Where(p => p.Key.ServiceProtocol == ServiceProtocol.Ws).Select(
+                p => new WsAppServiceOutput()
+                {
+                    AppService = p.Key.AppService,
+                    WsPath = p.First().ServiceDescriptor.GetWsPath(),
+                    ServiceProtocol = p.Key.ServiceProtocol
+                }).ToArray();
             return detailHostOutput;
         }
 
