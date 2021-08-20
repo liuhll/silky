@@ -17,7 +17,7 @@ namespace Silky.Rpc.Gateway.Descriptor
         public IEnumerable<AddressDescriptor> Addresses { get; set; } = new List<AddressDescriptor>();
 
         public IEnumerable<string> SupportServices { get; set; } = new List<string>();
-
+        
         public long TimeStamp { get; set; }
     }
 }

@@ -3,7 +3,9 @@ using System.Linq;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Dashboard.AppService.Dtos;
+using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Gateway;
+using Silky.Rpc.Gateway.Descriptor;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.Descriptor;
@@ -73,7 +75,7 @@ namespace Silky.Http.Dashboard.AppService
             return detailHostOutput;
         }
 
-        public PagedList<GetHostInstanceOutput> GetHostInstance(GetHostInstanceInput input)
+        public PagedList<GetHostInstanceOutput> GetHostInstances(GetHostInstanceInput input)
         {
             var hostAddresses = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.ServiceDescriptor.HostName == input.HostName &&
@@ -108,6 +110,37 @@ namespace Silky.Http.Dashboard.AppService
                 SupportServiceCount = gateway.SupportServices.Count()
             };
             return gatewayOutput;
+        }
+
+        public PagedList<GetGatewayInstanceOutput> GetGatewayInstances(PagedRequestDto input)
+        {
+            var gateway = _gatewayCache.Gateways.First(p => p.HostName == EngineContext.Current.HostName);
+            var gatewayInstances = new Dictionary<string, GetGatewayInstanceOutput>();
+
+            foreach (var addressDescriptor in gateway.Addresses)
+            {
+                var gatewayInstance =
+                    gatewayInstances.GetValueOrDefault($"{addressDescriptor.Address}:{addressDescriptor.Port}") ??
+                    new GetGatewayInstanceOutput()
+                    {
+                        HostName = gateway.HostName,
+                        Endpoint = $"{addressDescriptor.Address}:{addressDescriptor.Port}",
+                        Addresses = new List<AddressOutput>()
+                    };
+                var address = new AddressOutput()
+                {
+                    Address = addressDescriptor.ConvertToAddress(),
+                    ServiceProtocol = addressDescriptor.ServiceProtocol
+                };
+                if (!gatewayInstance.Addresses.Contains(address))
+                {
+                    gatewayInstance.Addresses.Add(address);
+                }
+
+                gatewayInstances[$"{addressDescriptor.Address}:{addressDescriptor.Port}"] = gatewayInstance;
+            }
+
+            return gatewayInstances.Values.ToPagedList(input.PageIndex, input.PageSize);
         }
     }
 }

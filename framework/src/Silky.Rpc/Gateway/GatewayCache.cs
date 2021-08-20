@@ -53,6 +53,6 @@ namespace Silky.Rpc.Gateway
         }
 
         public IReadOnlyCollection<GatewayDescriptor> Gateways =>
-            _gatewayDescriptorCache.Select(p => p.Value).ToImmutableArray();
+            _gatewayDescriptorCache.Select(p => p.Value).ToArray();
     }
 }

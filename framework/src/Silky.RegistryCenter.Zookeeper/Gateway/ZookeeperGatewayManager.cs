@@ -189,14 +189,7 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
             {
                 throw new SilkyException("Failed to obtain http service address");
             }
-
-            var addressInfo = ParseAddress(address);
-            var addressDescriptor = new AddressDescriptor()
-            {
-                Address = addressInfo.Item1,
-                Port = addressInfo.Item2,
-                ServiceProtocol = ServiceProtocol.Http
-            };
+            var addressDescriptor = ParseAddress(address);
             return addressDescriptor;
         }
 
@@ -294,12 +287,20 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
             return gatewayServiceDescriptor;
         }
 
-        private (string, int) ParseAddress(string address)
+        private AddressDescriptor ParseAddress(string address)
         {
-            var domainAndPort = address.Split("//").Last().Split(":");
+            var addressSegments = address.Split("://");
+            var scheme = addressSegments.First();
+            var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(scheme);
+            var domainAndPort = addressSegments.Last().Split(":");
             var domain = domainAndPort[0];
             var port = int.Parse(domainAndPort[1]);
-            return (domain, port);
+            return new AddressDescriptor()
+            {
+                Address = domain,
+                Port = port,
+                ServiceProtocol = serviceProtocol
+            };
         }
 
         public async Task CreateSubscribeGatewayDataChanges()
