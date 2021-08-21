@@ -40,5 +40,7 @@ namespace Silky.Http.Dashboard.AppService
             bool isGateway = false);
 
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
+
+        IReadOnlyCollection<GetProfileOutput> GetProfiles();
     }
 }

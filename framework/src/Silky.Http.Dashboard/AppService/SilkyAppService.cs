@@ -10,6 +10,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Rpc;
 using Silky.Http.Dashboard.AppService.Dtos;
+using Silky.Rpc.Address;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.AppServices;
 using Silky.Rpc.AppServices.Dtos;
@@ -375,6 +376,69 @@ namespace Silky.Http.Dashboard.AppService
                     UnHealthTimes = p.Value.UnHealthTimes,
                     RegistryCenterType = _registryCenterOptions.RegistryCenterType
                 }).ToArray();
+        }
+
+        public IReadOnlyCollection<GetProfileOutput> GetProfiles()
+        {
+            var getProfileOutputs = new List<GetProfileOutput>();
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "Microservice",
+                Title = "微服务应用",
+                Count = _serviceRouteCache.ServiceRoutes.GroupBy(p => p.ServiceDescriptor.HostName).Select(p => p.Key)
+                    .Count()
+            });
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "ServiceInstance",
+                Title = "微服务主机实例",
+                Count = _serviceRouteCache.ServiceRoutes
+                    .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Tcp)
+                    .SelectMany(p => p.Addresses)
+                    .Select(p => new { p.Address, p.Port }).Distinct().Count()
+            });
+
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "ServiceInstance",
+                Title = "Ws微服务主机实例",
+                Count = _serviceRouteCache.ServiceRoutes
+                    .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
+                    .SelectMany(p => p.Addresses)
+                    .Select(p => new { p.Address, p.Port }).Distinct().Count()
+            });
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "AppService",
+                Title = "应用服务",
+                Count = _serviceRouteCache.ServiceRoutes
+                    .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Tcp)
+                    .Select(p => p.ServiceDescriptor.AppService).Distinct().Count()
+            });
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "WsService",
+                Title = "Websocket服务",
+                Count = _serviceRouteCache.ServiceRoutes
+                    .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
+                    .Select(p => p.ServiceDescriptor.Id).Distinct().Count()
+            });
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "ServiceEntry",
+                Title = "服务条目",
+                Count = _serviceRouteCache.ServiceRoutes
+                    .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Tcp)
+                    .Select(p => p.ServiceDescriptor.Id).Distinct().Count()
+            });
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "RegistryCenter",
+                Title = "服务注册中心",
+                Count = _registerCenterHealthProvider.GetRegistryCenterHealthInfo().Count
+            });
+
+            return getProfileOutputs.Where(p => p.Count > 0).ToArray();
         }
     }
 }
