@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Dashboard.AppService.Dtos;
@@ -148,6 +149,36 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             return gatewayInstances.Values.ToPagedList(input.PageIndex, input.PageSize);
+        }
+
+        public PagedList<GetServiceEntryOutput> GetServiceEntries(GetServiceEntryInput input)
+        {
+            var serviceEntryOutputs = _serviceEntryManager.GetAllEntries()
+                .Select(p =>
+                {
+                    var serviceRoute =
+                        _serviceRouteCache.ServiceRoutes.FirstOrDefault(sr => sr.ServiceDescriptor.Id == p.Id);
+                    var serviceEntryOutput = new GetServiceEntryOutput()
+                    {
+                        ServiceId = p.Id,
+                        Author = p.ServiceDescriptor.GetAuthor(),
+                        AppService = p.ServiceDescriptor.AppService,
+                        Host = serviceRoute?.ServiceDescriptor.HostName,
+                        WebApi = p.GovernanceOptions.ProhibitExtranet ? "" : p.Router.RoutePath,
+                        HttpMethod = p.GovernanceOptions.ProhibitExtranet ? null : p.Router.HttpMethod,
+                        ProhibitExtranet = p.GovernanceOptions.ProhibitExtranet,
+                        Method = p.MethodInfo.Name,
+                        MultipleServiceKey = p.MultipleServiceKey,
+                        IsOnline = serviceRoute != null,
+                        ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0
+                    };
+                    return serviceEntryOutput;
+                }).WhereIf(!input.Host.IsNullOrEmpty(), p => input.Host.Equals(p.Host))
+                .WhereIf(!input.AppService.IsNullOrEmpty(), p => input.AppService.Equals(p.AppService))
+                .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceId.Contains(input.Name))
+                .WhereIf(input.IsOnline.HasValue, p => p.IsOnline == input.IsOnline);
+
+            return serviceEntryOutputs.ToPagedList(input.PageIndex, input.PageSize);
         }
     }
 }

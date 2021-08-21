@@ -8,7 +8,6 @@ namespace Silky.Http.Dashboard.AppService
     [ServiceRoute]
     public interface ISilkyAppService
     {
-        [HttpGet("hosts")]
         PagedList<GetHostOutput> GetHosts(PagedRequestDto input);
 
         [HttpGet("host/{hostName:string}/detail")]
@@ -17,10 +16,11 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("host/instances")]
         PagedList<GetHostInstanceOutput> GetHostInstances(GetHostInstanceInput input);
 
-        [HttpGet("gateway")]
         GetGatewayOutput GetGateway();
-        
+
         [HttpGet("gateway/instances")]
         PagedList<GetGatewayInstanceOutput> GetGatewayInstances(PagedRequestDto input);
+        
+        PagedList<GetServiceEntryOutput> GetServiceEntries(GetServiceEntryInput input);
     }
 }
