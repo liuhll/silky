@@ -15,8 +15,8 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("host/{hostName:string}/detail")]
         GetDetailHostOutput GetHostDetail(string hostName);
 
-        [HttpGet("host/instances")]
-        PagedList<GetHostInstanceOutput> GetHostInstances(GetHostInstanceInput input);
+        [HttpGet("host/{hostName:string}/instances")]
+        PagedList<GetHostInstanceOutput> GetHostInstances(string hostName, GetHostInstanceInput input);
 
         GetGatewayOutput GetGateway();
 

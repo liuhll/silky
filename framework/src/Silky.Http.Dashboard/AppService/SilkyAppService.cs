@@ -10,7 +10,6 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Rpc;
 using Silky.Http.Dashboard.AppService.Dtos;
-using Silky.Rpc.Address;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.AppServices;
 using Silky.Rpc.AppServices.Dtos;
@@ -120,10 +119,10 @@ namespace Silky.Http.Dashboard.AppService
             return detailHostOutput;
         }
 
-        public PagedList<GetHostInstanceOutput> GetHostInstances(GetHostInstanceInput input)
+        public PagedList<GetHostInstanceOutput> GetHostInstances(string hostName, GetHostInstanceInput input)
         {
             var hostAddresses = _serviceRouteCache.ServiceRoutes
-                    .Where(p => p.ServiceDescriptor.HostName == input.HostName &&
+                    .Where(p => p.ServiceDescriptor.HostName == hostName &&
                                 p.ServiceDescriptor.ServiceProtocol == input.ServiceProtocol)
                     .SelectMany(p => p.Addresses)
                     .Distinct()
@@ -133,7 +132,7 @@ namespace Silky.Http.Dashboard.AppService
             {
                 var hostInstance = new GetHostInstanceOutput()
                 {
-                    HostName = input.HostName,
+                    HostName = hostName,
                     Address = address.IPEndPoint.ToString(),
                     IsEnable = address.Enabled,
                     IsHealth = SocketCheck.TestConnection(address.IPEndPoint),
