@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Castle.Core.Internal;
 using Silky.Core;
@@ -14,10 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
-using Silky.Core.Modularity;
-using Silky.Rpc.Routing;
-using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
@@ -25,6 +20,7 @@ namespace Silky.RegistryCenter.Zookeeper
     {
         private ConcurrentDictionary<string, IZookeeperClient> _zookeeperClients = new();
 
+        private ConcurrentDictionary<string, HealthCheckModel> m_healthCheck = new();
 
         private RegistryCenterOptions _registryCenterOptions;
         public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
@@ -77,20 +73,46 @@ namespace Silky.RegistryCenter.Zookeeper
                 var zookeeperClient = new ZookeeperClient(zookeeperClientOptions);
                 zookeeperClient.SubscribeStatusChange(async (client, connectionStateChangeArgs) =>
                 {
+                    var healthCheckModel = m_healthCheck.GetOrAdd(connStr, new HealthCheckModel(true, 0));
                     if (connectionStateChangeArgs.State == Watcher.Event.KeeperState.Expired)
                     {
-                        if (client.WaitForKeeperState(Watcher.Event.KeeperState.SyncConnected,
+                        if (!client.WaitForKeeperState(Watcher.Event.KeeperState.SyncConnected,
                             zookeeperClientOptions.ConnectionTimeout))
                         {
-                            _zookeeperClients.Remove(client.Options.ConnectionString, out _);
+                            healthCheckModel.IsHealth = false;
+                            healthCheckModel.UnHealthTimes += 1;
+                            healthCheckModel.UnHealthReason = "Connection session expired";
+                            if (healthCheckModel.UnHealthTimes > _registryCenterOptions.FuseTimes)
+                            {
+                                _zookeeperClients.Remove(client.Options.ConnectionString, out _);
+                            }
                         }
+                        else
+                        {
+                            healthCheckModel.IsHealth = true;
+                            healthCheckModel.UnHealthTimes = 0;
+                        }
+
+                        m_healthCheck.AddOrUpdate(connStr, healthCheckModel, (k, v) => healthCheckModel);
+                    }
+
+                    if (connectionStateChangeArgs.State == Watcher.Event.KeeperState.Disconnected)
+                    {
+                        healthCheckModel.IsHealth = false;
+                        healthCheckModel.UnHealthReason = "Connection session disconnected";
+                        m_healthCheck.AddOrUpdate(connStr, healthCheckModel, (k, v) => healthCheckModel);
                     }
                 });
                 _zookeeperClients.GetOrAdd(connStr, zookeeperClient);
+                m_healthCheck.GetOrAdd(connStr, new HealthCheckModel(true, 0));
             }
             catch (Exception e)
             {
                 Logger.LogWarning($"Unable to link to the service registry {connStr}, reason: {e.Message}");
+                m_healthCheck.GetOrAdd(connStr, new HealthCheckModel(false)
+                {
+                    UnHealthReason = e.Message
+                });
             }
         }
 
@@ -106,10 +128,10 @@ namespace Silky.RegistryCenter.Zookeeper
                 return _zookeeperClients.First().Value;
             }
 
-            return _zookeeperClients.Values.ToArray()[RondomSelectorIndex(0, _zookeeperClients.Count)];
+            return _zookeeperClients.Values.ToArray()[RandomSelectorIndex(0, _zookeeperClients.Count)];
         }
 
-        private int RondomSelectorIndex(int min, int max)
+        private int RandomSelectorIndex(int min, int max)
         {
             var random = new Random((int)DateTime.Now.Ticks);
             return random.Next(min, max);
@@ -131,6 +153,26 @@ namespace Silky.RegistryCenter.Zookeeper
             {
                 _client.Value?.Dispose();
             }
+        }
+
+        private class HealthCheckModel
+        {
+            public HealthCheckModel(bool isHealth)
+            {
+                IsHealth = isHealth;
+            }
+
+            public HealthCheckModel(bool isHealth, int unHealthTimes)
+            {
+                IsHealth = isHealth;
+                UnHealthTimes = unHealthTimes;
+            }
+
+            public bool IsHealth { get; set; }
+
+            public int UnHealthTimes { get; set; }
+
+            public string UnHealthReason { get; set; }
         }
     }
 }

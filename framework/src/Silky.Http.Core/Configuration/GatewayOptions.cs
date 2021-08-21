@@ -8,6 +8,7 @@ namespace Silky.Http.Core.Configuration
         public bool WrapResult { get; set; }
         public bool EnableSwaggerDoc { get; set; }
 
+        public int FuseTimes { get; set; } = 3;
         public string JwtSecret { get; set; }
     }
 }

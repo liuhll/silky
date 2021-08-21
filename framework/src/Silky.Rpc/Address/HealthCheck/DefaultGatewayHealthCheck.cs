@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using Microsoft.Extensions.Configuration;
+using Silky.Core;
 using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Address.HealthCheck
@@ -13,11 +15,13 @@ namespace Silky.Rpc.Address.HealthCheck
         public event UnhealthEvent OnUnhealth;
         public event AddMonitorEvent OnAddMonitor;
 
-        private Timer _healthTimer;
+        private readonly Timer _healthTimer;
+        private readonly int _fuseTimes;
 
         public DefaultGatewayHealthCheck()
         {
             _healthTimer = new Timer(HealthCheckTask, null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(60));
+            _fuseTimes = EngineContext.Current.Configuration.GetValue<int?>("gateway:fuseTimes") ?? 3;
         }
 
         private void HealthCheckTask(object? state)
@@ -37,7 +41,7 @@ namespace Silky.Rpc.Address.HealthCheck
                 }
 
                 m_healthCheckAddresses[checkAddress.Key] = checkAddress.Value;
-                if (checkAddress.Value.UnHealthTimes > 3)
+                if (checkAddress.Value.UnHealthTimes > _fuseTimes)
                 {
                     OnRemveAddress?.Invoke(checkAddress.Key);
                 }
