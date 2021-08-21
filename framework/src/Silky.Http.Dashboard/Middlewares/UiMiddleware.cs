@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,8 @@ namespace Silky.Http.Dashboard.Middlewares
         private readonly Regex _homeUrlCheckRegex;
         private readonly StaticFileMiddleware _staticFileMiddleware;
 
-        public UiMiddleware(RequestDelegate next, IWebHostEnvironment hostingEnv, ILoggerFactory loggerFactory, IOptions<DashboardOptions> options)
+        public UiMiddleware(RequestDelegate next, IWebHostEnvironment hostingEnv, ILoggerFactory loggerFactory,
+            IOptions<DashboardOptions> options)
 
         {
             _options = options.Value;
@@ -51,7 +53,7 @@ namespace Silky.Http.Dashboard.Middlewares
                     httpContext.Response.Headers["Location"] = redirectUrl;
                     return;
                 }
-                
+
                 if (_homeUrlCheckRegex.IsMatch(path))
                 {
                     httpContext.Response.StatusCode = 200;
@@ -63,7 +65,20 @@ namespace Silky.Http.Dashboard.Middlewares
 
                     using var sr = new StreamReader(stream);
                     var htmlBuilder = new StringBuilder(await sr.ReadToEndAsync());
-                    htmlBuilder.Replace("%(servicePrefix)", _options.PathBase + _options.PathMatch + "/api/silky");
+                    htmlBuilder.Replace("%(servicePrefix)", _options.PathBase + "/api/silky");
+                    htmlBuilder.Replace("%(useAuth)", _options.UseAuth.ToString());
+                    if (_options.UseAuth)
+                    {
+                        var loginWebApi = _options.LoginWebApi.StartsWith("/")
+                            ? _options.LoginWebApi
+                            : "/" + _options.LoginWebApi;
+                        htmlBuilder.Replace("%(loginWebApi)", _options.PathBase + loginWebApi);
+                    }
+                    else
+                    {
+                        htmlBuilder.Replace("%(loginWebApi)", "");
+                    }
+
                     htmlBuilder.Replace("%(pollingInterval)", _options.StatsPollingInterval.ToString());
                     await httpContext.Response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
 
@@ -73,13 +88,15 @@ namespace Silky.Http.Dashboard.Middlewares
 
             await _staticFileMiddleware.Invoke(httpContext);
         }
-        
-        private StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next, IWebHostEnvironment hostingEnv, ILoggerFactory loggerFactory, DashboardOptions options)
+
+        private StaticFileMiddleware CreateStaticFileMiddleware(RequestDelegate next, IWebHostEnvironment hostingEnv,
+            ILoggerFactory loggerFactory, DashboardOptions options)
         {
             var staticFileOptions = new StaticFileOptions
             {
                 RequestPath = options.PathMatch,
-                FileProvider = new EmbeddedFileProvider(typeof(UiMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+                FileProvider =
+                    new EmbeddedFileProvider(typeof(UiMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
             };
 
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);

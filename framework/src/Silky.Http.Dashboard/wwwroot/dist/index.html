@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SilkyDashboar</title>
+</head>
+<body>
+Dashboard
+</body>
+<script>
+    window.serverUrl = window.location.origin + "%(servicePrefix)";
+    window.useAuth = "%(useAuth)";
+    window.pollingInterval = "%(pollingInterval)";
+    if (window.useAuth === "True")
+        window.loginWebApi = window.location.origin + "%(loginWebApi)";
+
+</script>
+</html>

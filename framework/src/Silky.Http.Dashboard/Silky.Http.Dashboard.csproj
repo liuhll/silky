@@ -14,4 +14,8 @@
     <ItemGroup>
         <EmbeddedResource Include="wwwroot/dist/**/*" Exclude="**/*/*.map" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="wwwroot\dist\index.html" />
+    </ItemGroup>
 </Project>
