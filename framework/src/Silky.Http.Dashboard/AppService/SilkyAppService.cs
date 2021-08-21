@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
 using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Address.Descriptor;
@@ -18,15 +19,18 @@ namespace Silky.Http.Dashboard.AppService
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly GatewayCache _gatewayCache;
         private readonly IServiceEntryManager _serviceEntryManager;
+        private readonly ServiceEntryCache _serviceEntryCache;
 
         public SilkyAppService(
             ServiceRouteCache serviceRouteCache,
             GatewayCache gatewayCache,
-            IServiceEntryManager serviceEntryManager)
+            IServiceEntryManager serviceEntryManager,
+            ServiceEntryCache serviceEntryCache)
         {
             _serviceRouteCache = serviceRouteCache;
             _gatewayCache = gatewayCache;
             _serviceEntryManager = serviceEntryManager;
+            _serviceEntryCache = serviceEntryCache;
         }
 
         public PagedList<GetHostOutput> GetHosts(PagedRequestDto input)
@@ -170,7 +174,8 @@ namespace Silky.Http.Dashboard.AppService
                         Method = p.MethodInfo.Name,
                         MultipleServiceKey = p.MultipleServiceKey,
                         IsOnline = serviceRoute != null,
-                        ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0
+                        ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0,
+                        IsDistributeTransaction = p.IsTransactionServiceEntry()
                     };
                     return serviceEntryOutput;
                 }).WhereIf(!input.Host.IsNullOrEmpty(), p => input.Host.Equals(p.Host))
@@ -179,6 +184,92 @@ namespace Silky.Http.Dashboard.AppService
                 .WhereIf(input.IsOnline.HasValue, p => p.IsOnline == input.IsOnline);
 
             return serviceEntryOutputs.ToPagedList(input.PageIndex, input.PageSize);
+        }
+
+        public GetServiceEntryDetailOutput GetServiceEntryDetail(string serviceId)
+        {
+            var serviceEntry = _serviceEntryManager.GetAllEntries().FirstOrDefault(p => p.Id == serviceId);
+            if (serviceEntry == null)
+            {
+                throw new BusinessException($"No service entry for {serviceId} exists");
+            }
+
+            var serviceRoute =
+                _serviceRouteCache.ServiceRoutes.FirstOrDefault(sr => sr.ServiceDescriptor.Id == serviceId);
+            var serviceEntryOutput = new GetServiceEntryDetailOutput()
+            {
+                ServiceId = serviceEntry.Id,
+                Author = serviceEntry.ServiceDescriptor.GetAuthor(),
+                AppService = serviceEntry.ServiceDescriptor.AppService,
+                Host = serviceRoute?.ServiceDescriptor.HostName,
+                WebApi = serviceEntry.GovernanceOptions.ProhibitExtranet ? "" : serviceEntry.Router.RoutePath,
+                HttpMethod = serviceEntry.GovernanceOptions.ProhibitExtranet ? null : serviceEntry.Router.HttpMethod,
+                ProhibitExtranet = serviceEntry.GovernanceOptions.ProhibitExtranet,
+                Method = serviceEntry.MethodInfo.Name,
+                MultipleServiceKey = serviceEntry.MultipleServiceKey,
+                IsOnline = serviceRoute != null,
+                ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0,
+                GovernanceOptions = serviceEntry.GovernanceOptions,
+                IsDistributeTransaction = serviceEntry.IsTransactionServiceEntry()
+            };
+
+            return serviceEntryOutput;
+        }
+
+        public PagedList<GetServiceEntryRouteOutput> GetServiceEntryRoutes(string serviceId, int pageIndex = 1,
+            int pageSize = 10)
+        {
+            var serviceEntry = _serviceEntryManager.GetAllEntries().FirstOrDefault(p => p.Id == serviceId);
+            if (serviceEntry == null)
+            {
+                throw new BusinessException($"No service entry for {serviceId} exists");
+            }
+
+            var serviceEntryInstances = new List<GetServiceEntryRouteOutput>();
+
+            var serviceRoute =
+                _serviceRouteCache.ServiceRoutes.FirstOrDefault(sr => sr.ServiceDescriptor.Id == serviceId);
+
+            if (serviceRoute != null)
+            {
+                foreach (var address in serviceRoute.Addresses)
+                {
+                    var serviceEntryInstance = new GetServiceEntryRouteOutput()
+                    {
+                        ServiceId = serviceId,
+                        Address = address.IPEndPoint.ToString(),
+                        IsEnable = address.Enabled,
+                        IsHealth = SocketCheck.TestConnection(address.IPEndPoint),
+                        ServiceProtocol = address.ServiceProtocol
+                    };
+                    serviceEntryInstances.Add(serviceEntryInstance);
+                }
+            }
+            else
+            {
+                var gateway = _gatewayCache.Gateways.First(p => p.HostName == EngineContext.Current.HostName);
+                if (gateway.SupportServices.Any(p => serviceId.Contains(p)))
+                {
+                    foreach (var addressDescriptor in gateway.Addresses)
+                    {
+                        var address = addressDescriptor.ConvertToAddressModel();
+                        var serviceEntryInstance = new GetServiceEntryRouteOutput()
+                        {
+                            ServiceId = serviceId,
+                            Address = address.IPEndPoint.ToString(),
+                            IsEnable = address.Enabled,
+                            IsHealth = SocketCheck.TestConnection(address.Address, address.Port),
+                            ServiceProtocol = address.ServiceProtocol
+                        };
+                        if (serviceEntryInstances.All(p => p.Address != serviceEntryInstance.Address))
+                        {
+                            serviceEntryInstances.AddIfNotContains(serviceEntryInstance);
+                        }
+                    }
+                }
+            }
+
+            return serviceEntryInstances.ToPagedList(pageIndex, pageSize);
         }
     }
 }

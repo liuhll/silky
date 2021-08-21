@@ -24,5 +24,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public bool ProhibitExtranet { get; set; }
 
         public string Author { get; set; }
+
+        public bool IsDistributeTransaction { get; set; }
     }
 }
