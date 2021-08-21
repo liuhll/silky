@@ -425,7 +425,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                 apiParameter.ParameterInfo);
             var parameter = new OpenApiParameter
             {
-                Name = name,
+                Name = location == ParameterLocation.Path ? name.ToLower() : name,
                 In = location,
                 Required = isRequired,
                 Schema = schema
@@ -453,10 +453,10 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             var propertyInfos = apiParameter.Type.GetProperties();
             foreach (var propertyInfo in propertyInfos)
             {
-                if (!propertyInfo.PropertyType.IsSample())
-                {
-                    throw new SilkyException("Specifying QString parameters does not allow specifying complex type parameters");
-                }
+                // if (!propertyInfo.PropertyType.IsSample())
+                // {
+                //     throw new SilkyException("Specifying QString parameters does not allow specifying complex type parameters");
+                // }
 
                 var name = apiParameter.From == ParameterFrom.Path ? apiParameter.Name : propertyInfo.Name;
                 name = _options.DescribeAllParametersInCamelCase

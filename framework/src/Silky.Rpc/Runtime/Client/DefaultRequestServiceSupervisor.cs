@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -10,15 +11,15 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultRemoteServiceSupervisor : IRemoteServiceSupervisor
+    public class DefaultRequestServiceSupervisor : IRequestServiceSupervisor
     {
         private ConcurrentDictionary<(string, IAddressModel), ServiceInvokeInfo> m_monitor = new();
         private readonly IHealthCheck _healthCheck;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        public ILogger<DefaultRemoteServiceSupervisor> Logger { get; set; }
+        public ILogger<DefaultRequestServiceSupervisor> Logger { get; set; }
 
 
-        public DefaultRemoteServiceSupervisor(IHealthCheck healthCheck,
+        public DefaultRequestServiceSupervisor(IHealthCheck healthCheck,
             IServiceEntryLocator serviceEntryLocator)
         {
             _healthCheck = healthCheck;
@@ -48,7 +49,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 m_monitor.TryRemove((serviceId, model), out _);
             };
-            Logger = NullLogger<DefaultRemoteServiceSupervisor>.Instance;
+            Logger = NullLogger<DefaultRequestServiceSupervisor>.Instance;
         }
 
         public void Monitor((string, IAddressModel) item, GovernanceOptions governanceOptions)
@@ -72,19 +73,72 @@ namespace Silky.Rpc.Runtime.Client
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests--;
-            serviceInvokeInfo.AET = serviceInvokeInfo.AET.HasValue
-                ? (serviceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
-                : elapsedTotalMilliseconds;
+            if (elapsedTotalMilliseconds > 0)
+            {
+                serviceInvokeInfo.AET = serviceInvokeInfo.AET.HasValue
+                    ? (serviceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                    : elapsedTotalMilliseconds;
+            }
+
             m_monitor.AddOrUpdate(item, serviceInvokeInfo, (key, _) => serviceInvokeInfo);
         }
 
-        public void ExceFail((string, IAddressModel) item, double elapsedTotalMilliseconds)
+        public void ExecFail((string, IAddressModel) item, double elapsedTotalMilliseconds)
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests--;
             serviceInvokeInfo.FaultRequests++;
             serviceInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
             m_monitor.AddOrUpdate(item, serviceInvokeInfo, (key, _) => serviceInvokeInfo);
+        }
+
+        public ServiceInstanceInvokeInfo GetServiceInstanceInvokeInfo()
+        {
+            ServiceInstanceInvokeInfo serviceInstanceInvokeInfo = null;
+
+            if (m_monitor.Count <= 0)
+            {
+                serviceInstanceInvokeInfo = new ServiceInstanceInvokeInfo();
+            }
+            else
+            {
+                serviceInstanceInvokeInfo = new ServiceInstanceInvokeInfo()
+                {
+                    AET = m_monitor.Values.Sum(p => p.AET) / m_monitor.Count,
+                    MaxConcurrentRequests = m_monitor.Values.Max(p => p.ConcurrentRequests),
+                    FaultRequests = m_monitor.Values.Sum(p => p.FaultRequests),
+                    TotalRequests = m_monitor.Values.Sum(p => p.TotalRequests),
+                    FinalInvokeTime = m_monitor.Values.Max(p => p.FinalInvokeTime),
+                    FinalFaultInvokeTime = m_monitor.Values.Max(p => p.FinalFaultInvokeTime),
+                    FirstInvokeTime = m_monitor.Values.Min(p => p.FirstInvokeTime)
+                };
+            }
+
+
+            return serviceInstanceInvokeInfo;
+        }
+
+        public IReadOnlyCollection<ServiceEntryInvokeInfo> GetServiceInvokeInfo(string serviceId)
+        {
+            var serviceEntryInvokeInfos = new List<ServiceEntryInvokeInfo>();
+            if (m_monitor.Keys.Any(k => k.Item1 == serviceId))
+            {
+                var keys = m_monitor.Keys.Where(k => k.Item1.Equals(serviceId));
+                foreach (var key in keys)
+                {
+                    if (m_monitor.TryGetValue(key, out var serviceInvokeInfo))
+                    {
+                        serviceEntryInvokeInfos.Add(new ServiceEntryInvokeInfo()
+                        {
+                            Address = key.Item2.IPEndPoint.ToString(),
+                            ServiceId = key.Item1,
+                            ServiceInvokeInfo = serviceInvokeInfo
+                        });
+                    }
+                }
+            }
+
+            return serviceEntryInvokeInfos.ToArray();
         }
     }
 }

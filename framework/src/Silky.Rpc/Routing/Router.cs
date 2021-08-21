@@ -67,6 +67,7 @@ namespace Silky.Rpc.Routing
             }
 
             var parameterIndex = 0;
+            var apiSegmentIsMatch = new List<bool>(apiSegments.Length);
             for (var index = 0; index < apiSegments.Length; index++)
             {
                 var apiSegment = apiSegments[index];
@@ -74,16 +75,17 @@ namespace Silky.Rpc.Routing
                 if (!routeSegment.IsParameter &&
                     !routeSegment.Value.Equals(apiSegment, StringComparison.OrdinalIgnoreCase))
                 {
-                    return false;
+                    apiSegmentIsMatch.Add(false);
+                    break;
                 }
-
                 if (routeSegment.IsParameter)
                 {
                     if (parameterIndex >= RouteTemplate.Parameters.Count())
                     {
-                        return false;
+                        apiSegmentIsMatch.Add(false);
+                        break;
                     }
-                    
+
                     var routeParameter = RouteTemplate.Parameters[parameterIndex];
                     if (!routeParameter.Constraint.IsNullOrEmpty())
                     {
@@ -92,23 +94,27 @@ namespace Silky.Rpc.Routing
                             try
                             {
                                 var val = Convert.ChangeType(apiSegment, convertType);
-                                return true;
+                                apiSegmentIsMatch.Add(true);
+                                continue;
                             }
                             catch (Exception e)
                             {
-                                return false;
+                                apiSegmentIsMatch.Add(false);
+                                break;
                             }
                         }
 
                         if (!Regex.IsMatch(apiSegment, routeParameter.Constraint))
                         {
-                            return false;
+                            apiSegmentIsMatch.Add(false);
                         }
                     }
                 }
+
+                apiSegmentIsMatch.Add(true);
             }
 
-            return true;
+            return apiSegmentIsMatch.All(p => p);
         }
 
         public IDictionary<string, object> ParserRouteParameters(string path)
@@ -165,7 +171,8 @@ namespace Silky.Rpc.Routing
             var appServiceSegmentCount = RouteTemplate.Segments?.Count(p => p.SegmentType == SegmentType.AppService);
             if (appServiceSegmentCount != 1)
             {
-                throw new SilkyException("The routing template does not specify a service application", StatusCode.RouteParseError);
+                throw new SilkyException("The routing template does not specify a service application",
+                    StatusCode.RouteParseError);
             }
         }
 
@@ -183,7 +190,9 @@ namespace Silky.Rpc.Routing
             if (!methodInfo.GetParameters().Any(p =>
                 p.Name.Equals(parameterName, StringComparison.OrdinalIgnoreCase) && p.IsSampleType()))
             {
-                throw new SilkyException("The setting of routing parameters is abnormal, and it is only allowed to set path parameters for simple data types", StatusCode.RouteParseError);
+                throw new SilkyException(
+                    "The setting of routing parameters is abnormal, and it is only allowed to set path parameters for simple data types",
+                    StatusCode.RouteParseError);
             }
 
             return (new TemplateSegment(SegmentType.Path, segemnetVal),
@@ -212,7 +221,8 @@ namespace Silky.Rpc.Routing
             }
             else if (template.StartsWith("~", StringComparison.Ordinal))
             {
-                throw new SilkyException($"{template} The format of the route template set is abnormal", StatusCode.RouteParseError);
+                throw new SilkyException($"{template} The format of the route template set is abnormal",
+                    StatusCode.RouteParseError);
             }
 
             return template;

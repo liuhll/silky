@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Description>Silky Dashboard Project</Description>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="wwwroot/dist/**/*" Exclude="**/*/*.map" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="wwwroot\dist\index.html" />
+    </ItemGroup>
+</Project>

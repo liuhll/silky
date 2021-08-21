@@ -11,10 +11,11 @@ namespace Silky.Rpc.Runtime.Server.Descriptor
         public ServiceDescriptor()
         {
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            HostName = EngineContext.Current.HostName;
         }
 
         [NotNull] public string Id { get; set; }
+
+        [NotNull] public string AppService { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
 

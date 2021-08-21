@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
 using Silky.Core;
 using Silky.Lock.Extensions;
+using Silky.RegistryCenter.Zookeeper.Routing.Watchers;
 using Silky.Rpc.Address;
 
 namespace Silky.RegistryCenter.Zookeeper.Routing
@@ -261,25 +263,29 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         }
 
 
-        public async override Task CreateSubscribeDataChanges()
+        public async override Task CreateSubscribeServiceRouteDataChanges()
         {
             var allServiceEntries = _serviceEntryManager.GetAllEntries();
             foreach (var serviceEntry in allServiceEntries)
             {
                 var serviceRoutePath = CreateRoutePath(serviceEntry.ServiceDescriptor.Id);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+                var wsServiceId =
+                    WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(serviceEntry.ServiceType));
+                var wsServiceRoutePath = CreateRoutePath(wsServiceId);
                 foreach (var zookeeperClient in zookeeperClients)
                 {
                     await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
+                    await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
                 }
             }
         }
 
-        public async override Task CreateWsSubscribeDataChanges(string[] wsPaths)
+        public override async Task CreateWsSubscribeDataChanges(Type[] wsAppTypes)
         {
-            foreach (var wsPath in wsPaths)
+            foreach (var wsAppType in wsAppTypes)
             {
-                var wsServiceId = WebSocketResolverHelper.Generator(wsPath);
+                var wsServiceId = WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(wsAppType));
                 var serviceRoutePath = CreateRoutePath(wsServiceId);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
                 foreach (var zookeeperClient in zookeeperClients)

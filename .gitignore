@@ -263,3 +263,4 @@ package-lock.json
 **/.mysql.apollo/*
 
 **/logs/*
+!./framework/src/Silky.Http.Dashboard/wwwroot/dist

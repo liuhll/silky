@@ -20,26 +20,27 @@ using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc;
 using Silky.Rpc.MiniProfiler;
+using Silky.Rpc.Utils;
 
 namespace Silky.DotNetty
 {
     public class DotNettyRemoteServiceInvoker : IRemoteServiceInvoker
     {
         private readonly ServiceRouteCache _serviceRouteCache;
-        private readonly IRemoteServiceSupervisor _remoteServiceSupervisor;
+        private readonly IRequestServiceSupervisor _requestServiceSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly IHealthCheck _healthCheck;
         private readonly ISerializer _serializer;
         public ILogger<DotNettyRemoteServiceInvoker> Logger { get; set; }
 
         public DotNettyRemoteServiceInvoker(ServiceRouteCache serviceRouteCache,
-            IRemoteServiceSupervisor remoteServiceSupervisor,
+            IRequestServiceSupervisor requestServiceSupervisor,
             ITransportClientFactory transportClientFactory,
             IHealthCheck healthCheck,
             ISerializer serializer)
         {
             _serviceRouteCache = serviceRouteCache;
-            _remoteServiceSupervisor = remoteServiceSupervisor;
+            _requestServiceSupervisor = requestServiceSupervisor;
             _transportClientFactory = transportClientFactory;
             _healthCheck = healthCheck;
             _serializer = serializer;
@@ -70,11 +71,29 @@ namespace Silky.DotNetty
                     $"No available service provider can be found via {remoteInvokeMessage.ServiceId}");
             }
 
-            var addressSelector =
-                EngineContext.Current.ResolveNamed<IAddressSelector>(governanceOptions.ShuntStrategy.ToString());
-            var selectedAddress =
-                addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceId, serviceRoute.Addresses,
+            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress)?.ToString();
+            IAddressModel selectedAddress;
+            if (remoteAddress != null)
+            {
+                selectedAddress =
+                    serviceRoute.Addresses.FirstOrDefault(p =>
+                        p.IPEndPoint.ToString().Equals(remoteAddress) && p.Enabled);
+                if (selectedAddress == null)
+                {
+                    throw new NotFindServiceRouteAddressException(
+                        $"ServiceRoute does not have a healthy designated service address {remoteAddress}");
+                }
+            }
+            else
+            {
+                var addressSelector =
+                    EngineContext.Current.ResolveNamed<IAddressSelector>(governanceOptions.ShuntStrategy.ToString());
+
+                selectedAddress = addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceId,
+                    serviceRoute.Addresses,
                     hashKey));
+            }
+            
             MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.SelectedAddress,
                 $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
@@ -83,11 +102,13 @@ namespace Silky.DotNetty
             var sp = Stopwatch.StartNew();
             try
             {
-                _remoteServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
+                _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
                 RpcContext.Context
-                    .SetAttachment(AttachmentKeys.RemoteAddress, selectedAddress.IPEndPoint.ToString());
+                    .SetAttachment(AttachmentKeys.ServerAddress, selectedAddress.IPEndPoint.ToString());
+                RpcContext.Context.SetAttachment(AttachmentKeys.ClientAddress,
+                    NetUtil.GetRpcAddressModel().IPEndPoint.ToString());
                 return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
             }
             catch (IOException ex)
@@ -136,7 +157,6 @@ namespace Silky.DotNetty
                     _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceId, selectedAddress);
                     throw new NotFindLocalServiceEntryException(ex.Message);
                 }
-
                 throw;
             }
             finally
@@ -144,7 +164,7 @@ namespace Silky.DotNetty
                 sp.Stop();
                 if (isInvakeSuccess)
                 {
-                    _remoteServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceId, selectedAddress),
+                    _requestServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
                     MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                         MiniProfileConstant.Rpc.State.Success,
@@ -152,7 +172,7 @@ namespace Silky.DotNetty
                 }
                 else
                 {
-                    _remoteServiceSupervisor.ExceFail((remoteInvokeMessage.ServiceId, selectedAddress),
+                    _requestServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
                     MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                         MiniProfileConstant.Rpc.State.Fail,

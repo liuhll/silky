@@ -9,11 +9,11 @@ namespace Silky.Rpc.Routing.Template
     {
         private static IDictionary<HttpMethod, string> constraintDefualtMethods = new Dictionary<HttpMethod, string>()
         {
-            {HttpMethod.Get, "Get"},
-            {HttpMethod.Post, "Create"},
-            {HttpMethod.Put, "Update"},
-            {HttpMethod.Patch, "Update"},
-            {HttpMethod.Delete, "Delete"},
+            { HttpMethod.Get, "Get" },
+            { HttpMethod.Post, "Create" },
+            { HttpMethod.Put, "Update" },
+            { HttpMethod.Patch, "Update" },
+            { HttpMethod.Delete, "Delete" },
         };
 
 
@@ -25,13 +25,18 @@ namespace Silky.Rpc.Routing.Template
             {
                 if (methodEntryTemplate.IsNullOrEmpty() && constraintDefualtMethods.ContainsKey(httpMethod))
                 {
-                    var constraintDefualtMethod = constraintDefualtMethods[httpMethod];
-                    if (!constraintDefualtMethod.IsNullOrEmpty() &&
-                        !methodName.StartsWith(constraintDefualtMethod, StringComparison.OrdinalIgnoreCase))
+                    var constraintDefaultMethod = constraintDefualtMethods[httpMethod];
+                    if (!constraintDefaultMethod.IsNullOrEmpty() &&
+                        !methodName.StartsWith(constraintDefaultMethod, StringComparison.OrdinalIgnoreCase))
                     {
                         serverEntryTemplate = $"{routeTemplate}/{methodName}";
                     }
-                    
+                    else
+                    {
+                        methodEntryTemplate =
+                            methodName.RemovePreFix(StringComparison.OrdinalIgnoreCase, constraintDefaultMethod);
+                        serverEntryTemplate = $"{routeTemplate}/{methodEntryTemplate}";
+                    }
                 }
                 else
                 {
@@ -40,12 +45,21 @@ namespace Silky.Rpc.Routing.Template
             }
             else
             {
-                var constraintDefualtMethod = constraintDefualtMethods[httpMethod];
-                if (!constraintDefualtMethod.IsNullOrEmpty() &&
-                    !methodName.StartsWith(constraintDefualtMethod, StringComparison.OrdinalIgnoreCase))
+                var constraintDefaultMethod = constraintDefualtMethods[httpMethod];
+                if (!constraintDefaultMethod.IsNullOrEmpty() &&
+                    !methodName.StartsWith(constraintDefaultMethod, StringComparison.OrdinalIgnoreCase))
                 {
                     serverEntryTemplate = $"{routeTemplate}/{methodName}";
                 }
+
+                if (!constraintDefaultMethod.IsNullOrEmpty() &&
+                    methodName.StartsWith(constraintDefaultMethod, StringComparison.OrdinalIgnoreCase))
+                {
+                    methodEntryTemplate =
+                        methodName.RemovePreFix(StringComparison.OrdinalIgnoreCase, constraintDefaultMethod);
+                    serverEntryTemplate = $"{routeTemplate}/{methodEntryTemplate}";
+                }
+                
             }
 
             return serverEntryTemplate;

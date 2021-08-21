@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Silky.Core.Exceptions;
@@ -41,7 +42,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
             var serviceEntryCache = EngineContext.Current.Resolve<ServiceEntryCache>();
             var serviceEntries = serviceEntryManager.GetAllEntries();
-            
+
             foreach (var serviceEntry in serviceEntries)
             {
                 serviceEntry.UpdateGovernance(options);
@@ -124,12 +125,24 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             {
                 throw new SilkyException("It is not allowed to specify multiple HashKey");
             }
-
+            Debug.Assert(method.DeclaringType != null);
             var serviceDescriptor = new ServiceDescriptor
             {
                 Id = serviceId,
                 ServiceProtocol = ServiceProtocol.Tcp,
+                AppService = method.DeclaringType.FullName
             };
+            if (isLocal)
+            {
+                serviceDescriptor.HostName = EngineContext.Current.HostName;
+            }
+
+            var metaDatas = method.GetCustomAttributes<MetadataAttribute>();
+
+            foreach (var metaData in metaDatas)
+            {
+                serviceDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
+            }
 
             var serviceEntry = new ServiceEntry(router,
                 serviceDescriptor,

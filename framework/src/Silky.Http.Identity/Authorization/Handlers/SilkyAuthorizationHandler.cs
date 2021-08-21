@@ -1,8 +1,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Silky.Core;
+using Silky.Core.Rpc;
 using Silky.Http.Core;
 using Silky.Http.Identity.Authorization.Extensions;
+using Silky.Http.Identity.Extensions;
 
 namespace Silky.Http.Identity.Authorization.Handlers
 {
@@ -12,22 +16,16 @@ namespace Silky.Http.Identity.Authorization.Handlers
         {
             return Task.FromResult(true);
         }
-        
-        public virtual Task<bool> PolicyPipelineAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext, IAuthorizationRequirement requirement)
+
+        public virtual Task<bool> PolicyPipelineAsync(AuthorizationHandlerContext context,
+            DefaultHttpContext httpContext, IAuthorizationRequirement requirement)
         {
             return Task.FromResult(true);
         }
 
         public async Task HandleAsync(AuthorizationHandlerContext context)
         {
-            var httpContext = context.GetCurrentHttpContext();
-            var serviceEntry = httpContext.GetServiceEntry();
-            var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-            if (serviceEntry != null && isAuthenticated)
-            {
-                await AuthorizeHandleAsync(context, httpContext);
-            }
-            else
+            async Task HttpContextPipelineAuthorize(DefaultHttpContext httpContext)
             {
                 var pendingRequirements = context.PendingRequirements;
                 foreach (var requirement in pendingRequirements)
@@ -38,6 +36,49 @@ namespace Silky.Http.Identity.Authorization.Handlers
                 }
             }
 
+            var httpContext = context.GetCurrentHttpContext();
+            var serviceEntry = httpContext.GetServiceEntry();
+            if (serviceEntry != null)
+            {
+                var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
+                if (isAuthenticated)
+                {
+                    foreach (var userClaim in context.User.Claims)
+                    {
+                        RpcContext.Context.SetAttachment(userClaim.Type, userClaim.Value);
+                    }
+
+                    await AuthorizeHandleAsync(context, httpContext);
+                }
+                else if (!serviceEntry.GovernanceOptions.IsAllowAnonymous)
+                {
+                    if (serviceEntry.IsSilkyAppService())
+                    {
+                        var silkyAppServiceUseAuth =
+                            EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
+                        if (silkyAppServiceUseAuth)
+                        {
+                            context.Fail();
+                        }
+                        else
+                        {
+                            await HttpContextPipelineAuthorize(httpContext);
+                        }
+                    }
+                    else
+                    {
+                        context.Fail();
+                    }
+                }
+                else
+                {
+                    await HttpContextPipelineAuthorize(httpContext);
+                }
+            }
+            else
+            {
+                await HttpContextPipelineAuthorize(httpContext);
+            }
         }
 
         private async Task AuthorizeHandleAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext)

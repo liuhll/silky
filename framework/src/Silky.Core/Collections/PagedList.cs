@@ -8,15 +8,6 @@ namespace System.Collections.Generic
     public class PagedList<TEntity>
         where TEntity : new()
     {
-        /// <summary>
-        /// 页码
-        /// </summary>
-        public int PageIndex { get; set; }
-
-        /// <summary>
-        /// 页容量
-        /// </summary>
-        public int PageSize { get; set; }
 
         /// <summary>
         /// 总条数

@@ -20,6 +20,11 @@ namespace Silky.Core.Extensions
                 return ObjectDataType.Convertible;
             }
 
+            if (typeof(Nullable<>) == type || typeof(Nullable) == type)
+            {
+                return ObjectDataType.Nullable;
+            }
+
             if (type == typeof(Guid))
             {
                 return ObjectDataType.Guid;

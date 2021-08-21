@@ -65,15 +65,15 @@ namespace Silky.Rpc
             RegisterServicesExecutor(builder);
         }
 
-        public async override Task Initialize(ApplicationContext applicationContext)
+        public override async Task Initialize(ApplicationContext applicationContext)
         {
             var serviceRouteManager = applicationContext.ServiceProvider.GetService<IServiceRouteManager>();
             if (serviceRouteManager == null)
             {
                 throw new SilkyException("You must specify the dependent service registry module");
             }
-
-            await serviceRouteManager.CreateSubscribeDataChanges();
+            
+            await serviceRouteManager.CreateSubscribeServiceRouteDataChanges();
             await serviceRouteManager.EnterRoutes();
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())

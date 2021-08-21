@@ -26,9 +26,15 @@ namespace Silky.Http.Core.SwaggerDocument
 
 
         private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
+        private static readonly string SilkyAppServicePrefix = "Silky.Http.Dashboard";
+        private static readonly bool SilkyApiDisplayInSwagger = false;
+        private static readonly string RpcAppService = "Silky.Rpc";
+
 
         static SwaggerDocumentBuilder()
         {
+            SilkyApiDisplayInSwagger =
+                EngineContext.Current.Configuration.GetValue<bool?>("dashboard:displayWebApiInSwagger") ?? false;
             ProjectAssemblies = EngineContext.Current.TypeFinder.GetAssemblies();
             ApplicationInterfaceAssemblies = ReadInterfaceAssemblies();
             DocumentGroups = ReadGroups(ApplicationInterfaceAssemblies);
@@ -38,6 +44,7 @@ namespace Silky.Http.Core.SwaggerDocument
         {
             return ServiceEntryHelper
                 .FindAllServiceEntryTypes(EngineContext.Current.TypeFinder).Select(p => p.Item1)
+                .Where(p => !p.Assembly.FullName.Contains(RpcAppService))
                 .GroupBy(p => p.Assembly)
                 .Select(p => p.Key);
         }
@@ -133,6 +140,13 @@ namespace Silky.Http.Core.SwaggerDocument
             var swaggerDocumentOptions = EngineContext.Current.Configuration
                 .GetSection(SwaggerDocumentOptions.SwaggerDocument)
                 .Get<SwaggerDocumentOptions>() ?? new SwaggerDocumentOptions();
+            if (!SilkyApiDisplayInSwagger)
+            {
+                applicationInterfaceAssemblies =
+                    applicationInterfaceAssemblies.Where(p => !p.FullName.Contains(SilkyAppServicePrefix));
+            }
+
+
             switch (swaggerDocumentOptions.OrganizationMode)
             {
                 case OrganizationMode.Group:
@@ -175,7 +189,7 @@ namespace Silky.Http.Core.SwaggerDocument
                 var securityRequirement = securityDefinition.Requirement;
 
                 // C# 9.0 模式匹配新语法
-                if (securityRequirement is {Scheme: {Reference: not null}})
+                if (securityRequirement is { Scheme: { Reference: not null } })
                 {
                     securityRequirement.Scheme.Reference.Id ??= securityDefinition.Id;
                     openApiSecurityRequirement.Add(securityRequirement.Scheme, securityRequirement.Accesses);
@@ -194,6 +208,17 @@ namespace Silky.Http.Core.SwaggerDocument
             var swaggerDocumentOptions = EngineContext.Current.Configuration
                 .GetSection(SwaggerDocumentOptions.SwaggerDocument)
                 .Get<SwaggerDocumentOptions>() ?? new SwaggerDocumentOptions();
+
+            if (serviceEntry.Id.StartsWith(SilkyAppServicePrefix) && !SilkyApiDisplayInSwagger)
+            {
+                return false;
+            }
+
+            if (serviceEntry.Id.StartsWith(RpcAppService))
+            {
+                return false;
+            }
+
             if (currentGroup.Equals(swaggerDocumentOptions.Title))
             {
                 return true;

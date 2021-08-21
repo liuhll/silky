@@ -3,11 +3,13 @@
     public enum ObjectDataType
     {
         Convertible,
-        
+
         Enum,
-        
+
         Guid,
-        
-        Complex
+
+        Nullable,
+
+        Complex,
     }
 }

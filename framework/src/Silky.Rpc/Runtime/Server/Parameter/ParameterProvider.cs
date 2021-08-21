@@ -44,7 +44,8 @@ namespace Silky.Rpc.Runtime.Server.Parameter
                 var parameterFrom = bindingSourceMetadata.BindingSource.Id.To<ParameterFrom>();
                 if (httpMethod == HttpMethod.Get && parameterFrom == ParameterFrom.Body)
                 {
-                    throw new SilkyException("Get requests are not allowed to obtain parameter values through RequestBody");
+                    throw new SilkyException(
+                        "Get requests are not allowed to obtain parameter values through RequestBody");
                 }
 
                 if (parameterFrom == ParameterFrom.Path && !parameter.ParameterType.IsSample())
@@ -77,7 +78,8 @@ namespace Silky.Rpc.Runtime.Server.Parameter
                                 && TemplateSegmentHelper.GetVariableName(routeTemplateSegment) == parameter.Name)
                             {
                                 parameterDescriptor =
-                                    new ParameterDescriptor(ParameterFrom.Path, parameter, TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment));
+                                    new ParameterDescriptor(ParameterFrom.Path, parameter,
+                                        TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment));
                                 parameterFromPath = true;
                                 break;
                             }
@@ -92,8 +94,9 @@ namespace Silky.Rpc.Runtime.Server.Parameter
                 }
                 else
                 {
-                    parameterDescriptor =
-                        new ParameterDescriptor(ParameterFrom.Body, parameter);
+                    parameterDescriptor = httpMethod == HttpMethod.Get
+                        ? new ParameterDescriptor(ParameterFrom.Query, parameter)
+                        : new ParameterDescriptor(ParameterFrom.Body, parameter);
                 }
             }
 
