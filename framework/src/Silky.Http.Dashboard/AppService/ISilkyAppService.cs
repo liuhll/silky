@@ -33,7 +33,10 @@ namespace Silky.Http.Dashboard.AppService
             int pageSize = 10);
 
         [HttpGet("instance/{address:string}/detail")]
-        Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address,bool isGateway = false);
-        
+        Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address, bool isGateway = false);
+
+        [HttpGet("instance/{address:string}/{serviceId}/detail")]
+        Task<GetServiceEntrySupervisorOutput> GetServiceEntrySupervisor(string address, string serviceId,
+            bool isGateway = false);
     }
 }

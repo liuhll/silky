@@ -36,6 +36,9 @@ namespace Silky.Http.Dashboard.AppService
         private const string getInstanceSupervisorServiceId =
             "Silky.Rpc.AppServices.IRpcAppService.GetInstanceSupervisor";
 
+        private const string getGetServiceEntrySupervisorServiceId =
+            "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntrySupervisor.serviceId";
+
         public SilkyAppService(
             ServiceRouteCache serviceRouteCache,
             GatewayCache gatewayCache,
@@ -316,6 +319,35 @@ namespace Silky.Http.Dashboard.AppService
 
             var result = await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
             return result as GetInstanceSupervisorOutput;
+        }
+
+        public async Task<GetServiceEntrySupervisorOutput> GetServiceEntrySupervisor(string address, string serviceId,
+            bool isGateway = false)
+        {
+            if (!Regex.IsMatch(address, ipEndpointRegex))
+            {
+                throw new BusinessException($"{address} incorrect address format");
+            }
+
+            var addressInfo = address.Split(":");
+            if (!SocketCheck.TestConnection(addressInfo[0], int.Parse(addressInfo[1])))
+            {
+                throw new BusinessException($"{address} is unHealth");
+            }
+
+            if (isGateway)
+            {
+                return _rpcAppService.GetServiceEntrySupervisor(serviceId);
+            }
+
+            RpcContext.Context.SetAttachment(AttachmentKeys.ServerAddress, address);
+            if (!_serviceEntryCache.TryGetServiceEntry(getGetServiceEntrySupervisorServiceId, out var serviceEntry))
+            {
+                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
+            }
+
+            var result = await _serviceExecutor.Execute(serviceEntry, new object[1] { serviceId  }, null);
+            return result as GetServiceEntrySupervisorOutput;
         }
     }
 }
