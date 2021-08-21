@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Server
@@ -9,5 +10,9 @@ namespace Silky.Rpc.Runtime.Server
         void ExecSuccess((string, string) item, double elapsedTotalMilliseconds);
 
         void ExecFail((string, string) item, bool isBusinessException, double elapsedTotalMilliseconds);
+        
+        ServiceInstanceHandleInfo GetServiceInstanceHandleInfo();
+
+        IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceHandleInfo(string serviceId);
     }
 }

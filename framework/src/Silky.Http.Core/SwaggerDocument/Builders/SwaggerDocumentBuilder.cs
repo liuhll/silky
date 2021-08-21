@@ -28,6 +28,8 @@ namespace Silky.Http.Core.SwaggerDocument
         private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
         private static readonly string SilkyAppServicePrefix = "Silky.Http.Dashboard";
         private static readonly bool SilkyApiDisplayInSwagger = false;
+        private static readonly string RpcAppService = "Silky.Rpc";
+
 
         static SwaggerDocumentBuilder()
         {
@@ -42,6 +44,7 @@ namespace Silky.Http.Core.SwaggerDocument
         {
             return ServiceEntryHelper
                 .FindAllServiceEntryTypes(EngineContext.Current.TypeFinder).Select(p => p.Item1)
+                .Where(p => !p.Assembly.FullName.Contains(RpcAppService))
                 .GroupBy(p => p.Assembly)
                 .Select(p => p.Key);
         }
@@ -143,6 +146,7 @@ namespace Silky.Http.Core.SwaggerDocument
                     applicationInterfaceAssemblies.Where(p => !p.FullName.Contains(SilkyAppServicePrefix));
             }
 
+
             switch (swaggerDocumentOptions.OrganizationMode)
             {
                 case OrganizationMode.Group:
@@ -206,6 +210,11 @@ namespace Silky.Http.Core.SwaggerDocument
                 .Get<SwaggerDocumentOptions>() ?? new SwaggerDocumentOptions();
 
             if (serviceEntry.Id.StartsWith(SilkyAppServicePrefix) && !SilkyApiDisplayInSwagger)
+            {
+                return false;
+            }
+
+            if (serviceEntry.Id.StartsWith(RpcAppService))
             {
                 return false;
             }

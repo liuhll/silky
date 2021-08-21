@@ -1,13 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.Rpc;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.AppServices;
+using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Gateway;
 using Silky.Rpc.Routing;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.Descriptor;
 using Silky.Rpc.Utils;
@@ -20,17 +27,27 @@ namespace Silky.Http.Dashboard.AppService
         private readonly GatewayCache _gatewayCache;
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly ServiceEntryCache _serviceEntryCache;
+        private readonly IRemoteServiceExecutor _serviceExecutor;
+        private readonly IRpcAppService _rpcAppService;
+
+        private const string ipEndpointRegex =
+            @"([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])";
+
+        private const string getInstanceSupervisorServiceId =
+            "Silky.Rpc.AppServices.IRpcAppService.GetInstanceSupervisor";
 
         public SilkyAppService(
             ServiceRouteCache serviceRouteCache,
             GatewayCache gatewayCache,
             IServiceEntryManager serviceEntryManager,
-            ServiceEntryCache serviceEntryCache)
+            ServiceEntryCache serviceEntryCache, IRemoteServiceExecutor serviceExecutor, IRpcAppService rpcAppService)
         {
             _serviceRouteCache = serviceRouteCache;
             _gatewayCache = gatewayCache;
             _serviceEntryManager = serviceEntryManager;
             _serviceEntryCache = serviceEntryCache;
+            _serviceExecutor = serviceExecutor;
+            _rpcAppService = rpcAppService;
         }
 
         public PagedList<GetHostOutput> GetHosts(PagedRequestDto input)
@@ -270,6 +287,35 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             return serviceEntryInstances.ToPagedList(pageIndex, pageSize);
+        }
+
+        public async Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address, bool isGateway = false)
+        {
+            if (!Regex.IsMatch(address, ipEndpointRegex))
+            {
+                throw new BusinessException($"{address} incorrect address format");
+            }
+
+            var addressInfo = address.Split(":");
+            if (!SocketCheck.TestConnection(addressInfo[0], int.Parse(addressInfo[1])))
+            {
+                throw new BusinessException($"{address} is unHealth");
+            }
+
+            if (isGateway)
+            {
+                return _rpcAppService.GetInstanceSupervisor();
+            }
+
+            RpcContext.Context.SetAttachment(AttachmentKeys.ServerAddress, address);
+
+            if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceId, out var serviceEntry))
+            {
+                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
+            }
+
+            var result = await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
+            return result as GetInstanceSupervisorOutput;
         }
     }
 }
