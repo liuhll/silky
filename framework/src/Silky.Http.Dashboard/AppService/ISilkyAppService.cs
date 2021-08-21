@@ -35,8 +35,10 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("instance/{address:string}/detail")]
         Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address, bool isGateway = false);
 
-        [HttpGet("instance/{address:string}/{serviceId}/detail")]
+        [HttpGet("instance/{address:string}/{serviceId:string}/detail")]
         Task<GetServiceEntrySupervisorOutput> GetServiceEntrySupervisor(string address, string serviceId,
             bool isGateway = false);
+
+        IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
     }
 }

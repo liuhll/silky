@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
@@ -12,7 +13,9 @@ using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.AppServices;
 using Silky.Rpc.AppServices.Dtos;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Gateway;
+using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
@@ -29,6 +32,9 @@ namespace Silky.Http.Dashboard.AppService
         private readonly ServiceEntryCache _serviceEntryCache;
         private readonly IRemoteServiceExecutor _serviceExecutor;
         private readonly IRpcAppService _rpcAppService;
+        private readonly IRegisterCenterHealthProvider _registerCenterHealthProvider;
+        private readonly RegistryCenterOptions _registryCenterOptions;
+
 
         private const string ipEndpointRegex =
             @"([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])";
@@ -43,7 +49,11 @@ namespace Silky.Http.Dashboard.AppService
             ServiceRouteCache serviceRouteCache,
             GatewayCache gatewayCache,
             IServiceEntryManager serviceEntryManager,
-            ServiceEntryCache serviceEntryCache, IRemoteServiceExecutor serviceExecutor, IRpcAppService rpcAppService)
+            ServiceEntryCache serviceEntryCache,
+            IRemoteServiceExecutor serviceExecutor,
+            IRpcAppService rpcAppService,
+            IRegisterCenterHealthProvider registerCenterHealthProvider,
+            IOptions<RegistryCenterOptions> registryCenterOptions)
         {
             _serviceRouteCache = serviceRouteCache;
             _gatewayCache = gatewayCache;
@@ -51,6 +61,8 @@ namespace Silky.Http.Dashboard.AppService
             _serviceEntryCache = serviceEntryCache;
             _serviceExecutor = serviceExecutor;
             _rpcAppService = rpcAppService;
+            _registerCenterHealthProvider = registerCenterHealthProvider;
+            _registryCenterOptions = registryCenterOptions.Value;
         }
 
         public PagedList<GetHostOutput> GetHosts(PagedRequestDto input)
@@ -138,8 +150,9 @@ namespace Silky.Http.Dashboard.AppService
             var gatewayOutput = new GetGatewayOutput()
             {
                 HostName = gateway.HostName,
-                InstanceCount = gateway.Addresses.Count(),
-                SupportServiceCount = gateway.SupportServices.Count()
+                InstanceCount = gateway.Addresses.Select(p => new { p.Address, p.Port }).Distinct().Count(),
+                SupportServiceCount = gateway.SupportServices.Count(),
+                SupportServiceEntryCount = _serviceEntryManager.GetAllEntries().Count
             };
             return gatewayOutput;
         }
@@ -346,8 +359,22 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
             }
 
-            var result = await _serviceExecutor.Execute(serviceEntry, new object[1] { serviceId  }, null);
+            var result = await _serviceExecutor.Execute(serviceEntry, new object[1] { serviceId }, null);
             return result as GetServiceEntrySupervisorOutput;
+        }
+
+        public IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters()
+        {
+            var registerCenterInfos = _registerCenterHealthProvider.GetRegistryCenterHealthInfo();
+            return registerCenterInfos.Select(p =>
+                new GetRegistryCenterOutput()
+                {
+                    RegistryCenterAddress = p.Key,
+                    IsHealth = p.Value.IsHealth,
+                    UnHealthReason = p.Value.UnHealthReason,
+                    UnHealthTimes = p.Value.UnHealthTimes,
+                    RegistryCenterType = _registryCenterOptions.RegistryCenterType
+                }).ToArray();
         }
     }
 }

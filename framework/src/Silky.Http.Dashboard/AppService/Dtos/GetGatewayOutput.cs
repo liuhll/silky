@@ -7,5 +7,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public int InstanceCount { get; set; }
 
         public int SupportServiceCount { get; set; }
+
+        public int SupportServiceEntryCount { get; set; }
     }
 }

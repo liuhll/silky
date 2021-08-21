@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
+using Silky.Rpc.RegistryCenters;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
@@ -20,7 +21,7 @@ namespace Silky.RegistryCenter.Zookeeper
     {
         private ConcurrentDictionary<string, IZookeeperClient> _zookeeperClients = new();
 
-        private ConcurrentDictionary<string, HealthCheckModel> m_healthCheck = new();
+        private ConcurrentDictionary<string, RegistryCenterHealthCheckModel> m_healthCheck = new();
 
         private RegistryCenterOptions _registryCenterOptions;
         public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
@@ -73,7 +74,7 @@ namespace Silky.RegistryCenter.Zookeeper
                 var zookeeperClient = new ZookeeperClient(zookeeperClientOptions);
                 zookeeperClient.SubscribeStatusChange(async (client, connectionStateChangeArgs) =>
                 {
-                    var healthCheckModel = m_healthCheck.GetOrAdd(connStr, new HealthCheckModel(true, 0));
+                    var healthCheckModel = m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(true, 0));
                     if (connectionStateChangeArgs.State == Watcher.Event.KeeperState.Expired)
                     {
                         if (!client.WaitForKeeperState(Watcher.Event.KeeperState.SyncConnected,
@@ -104,12 +105,12 @@ namespace Silky.RegistryCenter.Zookeeper
                     }
                 });
                 _zookeeperClients.GetOrAdd(connStr, zookeeperClient);
-                m_healthCheck.GetOrAdd(connStr, new HealthCheckModel(true, 0));
+                m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(true, 0));
             }
             catch (Exception e)
             {
                 Logger.LogWarning($"Unable to link to the service registry {connStr}, reason: {e.Message}");
-                m_healthCheck.GetOrAdd(connStr, new HealthCheckModel(false)
+                m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(false)
                 {
                     UnHealthReason = e.Message
                 });
@@ -147,32 +148,17 @@ namespace Silky.RegistryCenter.Zookeeper
             return _zookeeperClients.Values.ToImmutableList();
         }
 
+        public RegistryCenterHealthCheckModel GetHealthCheckInfo(IZookeeperClient zookeeperClient)
+        {
+            return m_healthCheck.GetValueOrDefault(zookeeperClient.Options.ConnectionString);
+        }
+
         public void Dispose()
         {
             foreach (var _client in _zookeeperClients)
             {
                 _client.Value?.Dispose();
             }
-        }
-
-        private class HealthCheckModel
-        {
-            public HealthCheckModel(bool isHealth)
-            {
-                IsHealth = isHealth;
-            }
-
-            public HealthCheckModel(bool isHealth, int unHealthTimes)
-            {
-                IsHealth = isHealth;
-                UnHealthTimes = unHealthTimes;
-            }
-
-            public bool IsHealth { get; set; }
-
-            public int UnHealthTimes { get; set; }
-
-            public string UnHealthReason { get; set; }
         }
     }
 }
