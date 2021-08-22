@@ -10,5 +10,9 @@ namespace Silky.Http.Core.Configuration
 
         public int FuseTimes { get; set; } = 3;
         public string JwtSecret { get; set; }
+
+        public bool EnableCors { get; set; } = false;
+
+        public CorsAccessorSettingsOptions CorsAccessorSettings { get; set; } = new ();
     }
 }

@@ -22,8 +22,10 @@ namespace Silky.Http.Core
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
             services.AddOptions<SwaggerDocumentOptions>()
                 .Bind(configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
-
+            
             services.AddSwaggerDocuments(configuration);
+            services.AddResponseCaching();
+            services.AddCorsAccessor(configuration);
         }
 
         public async void Configure(IApplicationBuilder application)
@@ -37,12 +39,9 @@ namespace Silky.Http.Core
             SwaggerDocumentOptions swaggerDocumentOptions = default;
             swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
                 (options, name) => { swaggerDocumentOptions = options; });
-
-            if (gatewayOption.EnableSwaggerDoc)
-            {
-                application.UseSwaggerDocuments(swaggerDocumentOptions);
-            }
-
+            application.UseCorsAccessor();
+            application.UseResponseCaching();
+            application.UseSwaggerDocuments(swaggerDocumentOptions);
             application.UseHttpsRedirection();
             application.UseSilkyExceptionHandler();
             application.UseSilky();
