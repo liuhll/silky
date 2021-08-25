@@ -71,7 +71,7 @@ namespace Silky.DotNetty
                     $"No available service provider can be found via {remoteInvokeMessage.ServiceId}");
             }
 
-            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress)?.ToString();
+            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedAddress)?.ToString();
             IAddressModel selectedAddress;
             if (remoteAddress != null)
             {

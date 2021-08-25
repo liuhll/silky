@@ -21,5 +21,7 @@ namespace Silky.Core.Rpc
         public const string IsGatewayHost = "isGatewayHost";
         
         public const string ServiceMethodName = "serviceMethodName";
+
+        public const string SelectedAddress = "SelectedAddress";
     }
 }

@@ -30,10 +30,7 @@ namespace Silky.Rpc.Runtime.Server
         public async Task Handle(string messageId, IMessageSender sender, RemoteInvokeMessage message)
         {
             var sp = Stopwatch.StartNew();
-            RpcContext.Context
-                .SetAttachments(message.Attachments);
-            RpcContext.Context
-                .SetAttachment(AttachmentKeys.IsGatewayHost, false);
+            message.SetRpcAttachments();
             var clientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ClientAddress).ToString();
             var tracingTimestamp = TracingBefore(message, messageId);
 

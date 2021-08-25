@@ -323,7 +323,7 @@ namespace Silky.Http.Dashboard.AppService
                 return _rpcAppService.GetInstanceSupervisor();
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.ServerAddress, address);
+            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
 
             if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceId, out var serviceEntry))
             {
