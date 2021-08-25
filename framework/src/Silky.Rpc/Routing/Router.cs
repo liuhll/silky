@@ -140,7 +140,7 @@ namespace Silky.Rpc.Routing
         private void ParseRouteTemplate(string template, string serviceName, MethodInfo methodInfo)
         {
             template = TrimPrefix(template);
-            var segementLines = template.Split(separator);
+            var segementLines = template.Split(separator).Where(p=> !p.IsNullOrEmpty());
 
             foreach (var segementLine in segementLines)
             {
