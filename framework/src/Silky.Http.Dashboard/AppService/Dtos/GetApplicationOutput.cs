@@ -1,6 +1,6 @@
 namespace Silky.Http.Dashboard.AppService.Dtos
 {
-    public class GetHostOutput
+    public class GetApplicationOutput
     {
         public string HostName { get; set; }
 

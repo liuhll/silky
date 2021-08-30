@@ -2,7 +2,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Dashboard.AppService.Dtos
 {
-    public class GetHostInstanceOutput
+    public class GetApplicationInstanceOutput
     {
         public string HostName { get; set; }
 

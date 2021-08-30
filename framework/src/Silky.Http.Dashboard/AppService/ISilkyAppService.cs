@@ -10,13 +10,13 @@ namespace Silky.Http.Dashboard.AppService
     [ServiceRoute]
     public interface ISilkyAppService
     {
-        PagedList<GetHostOutput> GetHosts(PagedRequestDto input);
+        IReadOnlyCollection<GetApplicationOutput> GetApplications();
 
-        [HttpGet("host/{hostName:string}/detail")]
-        GetDetailHostOutput GetHostDetail(string hostName);
+        [HttpGet("application/{appName:string}/detail")]
+        GetDetailApplicationOutput GetApplicationDetail(string appName);
 
-        [HttpGet("host/{hostName:string}/instances")]
-        PagedList<GetHostInstanceOutput> GetHostInstances(string hostName, GetHostInstanceInput input);
+        [HttpGet("application/{appName:string}/instances")]
+        PagedList<GetApplicationInstanceOutput> GetApplicationInstances(string appName, GetApplicationInstanceInput input);
 
         GetGatewayOutput GetGateway();
 
