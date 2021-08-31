@@ -73,7 +73,9 @@ namespace Silky.Http.Dashboard.AppService
                 .Select(p => new GetApplicationOutput()
                 {
                     HostName = p.Key,
-                    InstanceCount = p.Max(p => p.Addresses.Length),
+                    InstanceCount = p.Where(sr =>
+                            sr.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Tcp)
+                        .Max(sr => sr.Addresses.Length),
                     ServiceEntriesCount = p.Count(),
                     AppServiceCount = p.GroupBy(p => p.ServiceDescriptor.AppService).Count(),
                     HasWsService = p.Any(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
