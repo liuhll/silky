@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Rpc.Address;
+using Silky.Rpc.AppServices;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
@@ -134,7 +135,14 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             };
             if (isLocal)
             {
-                serviceDescriptor.HostName = EngineContext.Current.HostName;
+                if (serviceDescriptor.AppService != typeof(IRpcAppService).FullName)
+                {
+                    serviceDescriptor.HostName = EngineContext.Current.HostName;
+                }
+                else
+                {
+                    serviceDescriptor.HostName = typeof(IRpcAppService).Name;
+                }
             }
 
             var metaDatas = method.GetCustomAttributes<MetadataAttribute>();

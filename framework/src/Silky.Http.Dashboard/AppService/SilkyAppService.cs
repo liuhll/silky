@@ -69,6 +69,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             var serviceRoutes = _serviceRouteCache.ServiceRoutes;
             var hosts = serviceRoutes.GroupBy(p => p.ServiceDescriptor.HostName)
+                .Where(p => p.Key != typeof(IRpcAppService).Name)
                 .Select(p => new GetApplicationOutput()
                 {
                     HostName = p.Key,
@@ -88,38 +89,45 @@ namespace Silky.Http.Dashboard.AppService
             };
             var allServiceEntries = _serviceEntryManager.GetAllEntries();
             var appServices = _serviceRouteCache.ServiceRoutes.Where(p => p.ServiceDescriptor.HostName == appName)
-                .GroupBy(p => (p.ServiceDescriptor.AppService, p.ServiceDescriptor.ServiceProtocol));
-            detailHostOutput.AppServices = appServices.Where(p => p.Key.ServiceProtocol == ServiceProtocol.Tcp).Select(
-                p => new HostAppServiceOutput()
-                {
-                    ServiceProtocol = p.Key.ServiceProtocol,
-                    AppService = p.Key.AppService,
+                .OrderBy(p => p.ServiceDescriptor.AppService);
 
-                    ServiceEntries = allServiceEntries.Where(se =>
-                            se.ServiceDescriptor.AppService == p.Key.AppService &&
-                            se.ServiceDescriptor.ServiceProtocol == p.Key.ServiceProtocol)
-                        .Select(se => new ServiceEntryOutput()
+            detailHostOutput.AppServiceEntries = appServices
+                .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Tcp).Select(
+                    p =>
+                    {
+                        var se = allServiceEntries.SingleOrDefault(se => se.Id == p.ServiceDescriptor.Id);
+                        if (se != null)
                         {
-                            ServiceId = se.Id,
-                            MultipleServiceKey = se.MultipleServiceKey,
-                            Author = se.ServiceDescriptor.GetAuthor(),
-                            WebApi = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.RoutePath,
-                            HttpMethod = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.HttpMethod,
-                            ProhibitExtranet = se.GovernanceOptions.ProhibitExtranet,
-                            Method = se.MethodInfo.Name
-                        }).ToArray()
-                }).ToArray();
-            detailHostOutput.WsServices = appServices.Where(p => p.Key.ServiceProtocol == ServiceProtocol.Ws).Select(
-                p => new WsAppServiceOutput()
-                {
-                    AppService = p.Key.AppService,
-                    WsPath = p.First().ServiceDescriptor.GetWsPath(),
-                    ServiceProtocol = p.Key.ServiceProtocol
-                }).ToArray();
+                            return new ServiceEntryOutput()
+                            {
+                                ServiceProtocol = p.ServiceDescriptor.ServiceProtocol,
+                                AppService = p.ServiceDescriptor.AppService,
+                                ServiceId = p.ServiceDescriptor.Id,
+                                MultipleServiceKey = se.MultipleServiceKey,
+                                Author = se.ServiceDescriptor.GetAuthor(),
+                                WebApi = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.RoutePath,
+                                HttpMethod = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.HttpMethod,
+                                ProhibitExtranet = se.GovernanceOptions.ProhibitExtranet,
+                                Method = se.MethodInfo.Name
+                            };
+                        }
+
+                        return null;
+                    }).Where(o => o != null).ToArray();
+
+            detailHostOutput.WsServices = appServices
+                .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws).Select(
+                    p => new WsAppServiceOutput()
+                    {
+                        AppService = p.ServiceDescriptor.AppService,
+                        WsPath = p.ServiceDescriptor.GetWsPath(),
+                        ServiceProtocol = p.ServiceDescriptor.ServiceProtocol
+                    }).ToArray();
             return detailHostOutput;
         }
 
-        public PagedList<GetApplicationInstanceOutput> GetApplicationInstances(string appName, GetApplicationInstanceInput input)
+        public PagedList<GetApplicationInstanceOutput> GetApplicationInstances(string appName,
+            GetApplicationInstanceInput input)
         {
             var hostAddresses = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.ServiceDescriptor.HostName == appName &&

@@ -8,23 +8,17 @@ namespace Silky.Http.Dashboard.AppService.Dtos
     {
         public GetDetailApplicationOutput()
         {
-            AppServices = new List<HostAppServiceOutput>();
+            AppServiceEntries = new List<ServiceEntryOutput>();
             WsServices = new List<WsAppServiceOutput>();
         }
 
         public string HostName { get; set; }
 
-        public IReadOnlyCollection<HostAppServiceOutput> AppServices { get; set; }
+        public IReadOnlyCollection<ServiceEntryOutput> AppServiceEntries { get; set; }
 
         public IReadOnlyCollection<WsAppServiceOutput> WsServices { get; set; }
     }
-
-    public class HostAppServiceOutput
-    {
-        public string AppService { get; set; }
-        public ServiceProtocol ServiceProtocol { get; set; }
-        public IReadOnlyCollection<ServiceEntryOutput> ServiceEntries { get; set; }
-    }
+    
 
     public class WsAppServiceOutput
     {
@@ -37,6 +31,8 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
     public class ServiceEntryOutput
     {
+        public string AppService { get; set; }
+        public ServiceProtocol ServiceProtocol { get; set; }
         public string ServiceId { get; set; }
 
         public string Method { get; set; }
