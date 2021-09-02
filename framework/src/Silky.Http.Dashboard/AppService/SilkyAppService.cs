@@ -140,7 +140,7 @@ namespace Silky.Http.Dashboard.AppService
                 services.Add(new GetServiceOutput()
                 {
                     AppService = appServiceGroup.Key.AppService,
-                    HostName = appServiceGroup.Key.HostName,
+                    Application = appServiceGroup.Key.HostName,
                     InstanceCount = _serviceRouteCache.ServiceRoutes.Where(p=> 
                         p.ServiceDescriptor.AppService == appServiceGroup.Key.AppService 
                         && p.ServiceDescriptor.HostName == appServiceGroup.Key.HostName).Max(p=> p.Addresses.Length)
