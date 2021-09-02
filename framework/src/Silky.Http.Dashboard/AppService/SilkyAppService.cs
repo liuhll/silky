@@ -418,7 +418,9 @@ namespace Silky.Http.Dashboard.AppService
             {
                 Code = "Microservice",
                 Title = "微服务应用",
-                Count = _serviceRouteCache.ServiceRoutes.Where(p=> !p.ServiceDescriptor.HostName.IsNullOrEmpty()).GroupBy(p => p.ServiceDescriptor.HostName).Select(p => p.Key)
+                Count = _serviceRouteCache.ServiceRoutes
+                    .Where(p=> !p.ServiceDescriptor.HostName.IsNullOrEmpty() && p.ServiceDescriptor.HostName != typeof(IRpcAppService).Name)
+                    .GroupBy(p => p.ServiceDescriptor.HostName).Select(p => p.Key)
                     .Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
