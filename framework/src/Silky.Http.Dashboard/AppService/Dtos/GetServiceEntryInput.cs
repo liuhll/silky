@@ -8,6 +8,6 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public string Name { get; set; }
 
-        public bool? IsOnline { get; set; }
+        public bool? IsEnable { get; set; }
     }
 }

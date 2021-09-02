@@ -9,7 +9,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public string ServiceId { get; set; }
 
-        public bool IsOnline { get; set; }
+        public bool IsEnable { get; set; }
 
         public int ServiceRouteCount { get; set; }
 

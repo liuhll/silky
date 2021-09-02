@@ -238,7 +238,7 @@ namespace Silky.Http.Dashboard.AppService
                         ProhibitExtranet = p.GovernanceOptions.ProhibitExtranet,
                         Method = p.MethodInfo.Name,
                         MultipleServiceKey = p.MultipleServiceKey,
-                        IsOnline = serviceRoute != null && serviceRoute.Addresses.Any(p=> SocketCheck.TestConnection(p.Address,p.Port)),
+                        IsEnable = serviceRoute != null && serviceRoute.Addresses.Any(p=> SocketCheck.TestConnection(p.Address,p.Port)),
                         ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0,
                         IsDistributeTransaction = p.IsTransactionServiceEntry()
                     };
@@ -247,7 +247,7 @@ namespace Silky.Http.Dashboard.AppService
                 .WhereIf(!input.Application.IsNullOrEmpty(), p => input.Application.Equals(p.Application))
                 .WhereIf(!input.AppService.IsNullOrEmpty(), p => input.AppService.Equals(p.AppService))
                 .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceId.Contains(input.Name))
-                .WhereIf(input.IsOnline.HasValue, p => p.IsOnline == input.IsOnline)
+                .WhereIf(input.IsEnable.HasValue, p => p.IsEnable == input.IsEnable)
                 .OrderBy(p=> p.Application).ThenBy(p=> p.AppService);
 
             return serviceEntryOutputs.ToPagedList(input.PageIndex, input.PageSize);
@@ -274,7 +274,7 @@ namespace Silky.Http.Dashboard.AppService
                 ProhibitExtranet = serviceEntry.GovernanceOptions.ProhibitExtranet,
                 Method = serviceEntry.MethodInfo.Name,
                 MultipleServiceKey = serviceEntry.MultipleServiceKey,
-                IsOnline = serviceRoute != null && serviceRoute.Addresses.Any(p=> SocketCheck.TestConnection(p.Address,p.Port)),
+                IsEnable = serviceRoute != null && serviceRoute.Addresses.Any(p=> SocketCheck.TestConnection(p.Address,p.Port)),
                 ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0,
                 GovernanceOptions = serviceEntry.GovernanceOptions,
                 IsDistributeTransaction = serviceEntry.IsTransactionServiceEntry()
