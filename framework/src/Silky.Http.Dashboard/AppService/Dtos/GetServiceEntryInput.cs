@@ -2,7 +2,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 {
     public class GetServiceEntryInput : PagedRequestDto
     {
-        public string Host { get; set; }
+        public string Application { get; set; }
 
         public string AppService { get; set; }
 

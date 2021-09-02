@@ -15,9 +15,11 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("application/{appName:string}/detail")]
         GetDetailApplicationOutput GetApplicationDetail(string appName);
 
+        IReadOnlyCollection<GetServiceOutput> GetServices(string appName);
+
         [HttpGet("application/{appName:string}/instances")]
         PagedList<GetApplicationInstanceOutput> GetApplicationInstances(string appName, GetApplicationInstanceInput input);
-
+        
         GetGatewayOutput GetGateway();
 
         [HttpGet("gateway/instances")]

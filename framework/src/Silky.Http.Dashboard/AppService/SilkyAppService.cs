@@ -128,6 +128,28 @@ namespace Silky.Http.Dashboard.AppService
             return detailHostOutput;
         }
 
+        public IReadOnlyCollection<GetServiceOutput> GetServices(string appName)
+        {
+            var appServiceGroups = _serviceRouteCache.ServiceRoutes
+                .WhereIf(!appName.IsNullOrEmpty(), p => p.ServiceDescriptor.HostName == appName)
+                .OrderBy(p => p.ServiceDescriptor.AppService).GroupBy(p =>
+                    new { p.ServiceDescriptor.HostName, p.ServiceDescriptor.AppService, });
+            var services = new List<GetServiceOutput>();
+            foreach (var appServiceGroup in appServiceGroups)
+            {
+                services.Add(new GetServiceOutput()
+                {
+                    AppService = appServiceGroup.Key.AppService,
+                    HostName = appServiceGroup.Key.HostName,
+                    InstanceCount = _serviceRouteCache.ServiceRoutes.Where(p=> 
+                        p.ServiceDescriptor.AppService == appServiceGroup.Key.AppService 
+                        && p.ServiceDescriptor.HostName == appServiceGroup.Key.HostName).Max(p=> p.Addresses.Length)
+                });
+            }
+
+            return services.ToArray();
+        }
+
         public PagedList<GetApplicationInstanceOutput> GetApplicationInstances(string appName,
             GetApplicationInstanceInput input)
         {
@@ -210,7 +232,7 @@ namespace Silky.Http.Dashboard.AppService
                         ServiceId = p.Id,
                         Author = p.ServiceDescriptor.GetAuthor(),
                         AppService = p.ServiceDescriptor.AppService,
-                        Host = serviceRoute?.ServiceDescriptor.HostName,
+                        Application = serviceRoute?.ServiceDescriptor.HostName,
                         WebApi = p.GovernanceOptions.ProhibitExtranet ? "" : p.Router.RoutePath,
                         HttpMethod = p.GovernanceOptions.ProhibitExtranet ? null : p.Router.HttpMethod,
                         ProhibitExtranet = p.GovernanceOptions.ProhibitExtranet,
@@ -221,7 +243,8 @@ namespace Silky.Http.Dashboard.AppService
                         IsDistributeTransaction = p.IsTransactionServiceEntry()
                     };
                     return serviceEntryOutput;
-                }).WhereIf(!input.Host.IsNullOrEmpty(), p => input.Host.Equals(p.Host))
+                }).Where(p=> !p.Application.IsNullOrEmpty())
+                .WhereIf(!input.Application.IsNullOrEmpty(), p => input.Application.Equals(p.Application))
                 .WhereIf(!input.AppService.IsNullOrEmpty(), p => input.AppService.Equals(p.AppService))
                 .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceId.Contains(input.Name))
                 .WhereIf(input.IsOnline.HasValue, p => p.IsOnline == input.IsOnline);
@@ -244,7 +267,7 @@ namespace Silky.Http.Dashboard.AppService
                 ServiceId = serviceEntry.Id,
                 Author = serviceEntry.ServiceDescriptor.GetAuthor(),
                 AppService = serviceEntry.ServiceDescriptor.AppService,
-                Host = serviceRoute?.ServiceDescriptor.HostName,
+                Application = serviceRoute?.ServiceDescriptor.HostName,
                 WebApi = serviceEntry.GovernanceOptions.ProhibitExtranet ? "" : serviceEntry.Router.RoutePath,
                 HttpMethod = serviceEntry.GovernanceOptions.ProhibitExtranet ? null : serviceEntry.Router.HttpMethod,
                 ProhibitExtranet = serviceEntry.GovernanceOptions.ProhibitExtranet,
@@ -394,13 +417,13 @@ namespace Silky.Http.Dashboard.AppService
             {
                 Code = "Microservice",
                 Title = "微服务应用",
-                Count = _serviceRouteCache.ServiceRoutes.GroupBy(p => p.ServiceDescriptor.HostName).Select(p => p.Key)
+                Count = _serviceRouteCache.ServiceRoutes.Where(p=> !p.ServiceDescriptor.HostName.IsNullOrEmpty()).GroupBy(p => p.ServiceDescriptor.HostName).Select(p => p.Key)
                     .Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
             {
                 Code = "ServiceInstance",
-                Title = "微服务主机实例",
+                Title = "微服务应用实例",
                 Count = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Tcp)
                     .SelectMany(p => p.Addresses)
@@ -410,7 +433,7 @@ namespace Silky.Http.Dashboard.AppService
             getProfileOutputs.Add(new GetProfileOutput()
             {
                 Code = "WebSocketServiceInstance",
-                Title = "WebSocket微服务主机实例",
+                Title = "支持WebSocket的应用实例",
                 Count = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
                     .SelectMany(p => p.Addresses)
