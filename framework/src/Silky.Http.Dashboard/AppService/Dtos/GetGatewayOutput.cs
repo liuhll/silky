@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Silky.Http.Dashboard.AppService.Dtos
 {
     public class GetGatewayOutput
@@ -9,5 +11,9 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public int SupportServiceCount { get; set; }
 
         public int SupportServiceEntryCount { get; set; }
+
+        public bool ExistWebSocketService { get; set; }
+        
+        public IEnumerable<string> SupportServices { get; set; }
     }
 }

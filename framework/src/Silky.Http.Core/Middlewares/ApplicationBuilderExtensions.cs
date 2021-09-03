@@ -6,7 +6,9 @@ using Silky.Core.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Silky.Http.Core.Configuration;
+using Silky.Rpc.Gateway;
 using Silky.Rpc.MiniProfiler;
 
 namespace Silky.Http.Core.Middlewares
@@ -91,6 +93,12 @@ namespace Silky.Http.Core.Middlewares
                     });
                 });
             }
+        }
+
+        public static async void RegisterGateway(this IApplicationBuilder application)
+        {
+            var gatewayManager = application.ApplicationServices.GetRequiredService<IGatewayManager>();
+            await gatewayManager.RegisterGateway();
         }
     }
 }

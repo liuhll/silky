@@ -45,9 +45,7 @@ namespace Silky.Http.Core
             application.UseHttpsRedirection();
             application.UseSilkyExceptionHandler();
             application.UseSilky();
-            var gatewayManager = application.ApplicationServices.GetRequiredService<IGatewayManager>();
-            
-            await gatewayManager.RegisterGateway();
+            application.RegisterGateway();
         }
 
         public int Order { get; } = Int32.MaxValue;
