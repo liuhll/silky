@@ -4,6 +4,7 @@ namespace Silky.Rpc.RegistryCenters
     {
         public RegistryCenterHealthCheckModel()
         {
+            UnHealthTimes = 0;
         }
 
         public RegistryCenterHealthCheckModel(bool isHealth)
@@ -21,6 +22,16 @@ namespace Silky.Rpc.RegistryCenters
 
         public int UnHealthTimes { get; set; }
 
+        public UnHealthType? UnHealthType { get; set; }
+
         public string UnHealthReason { get; set; }
+
+        public void SetHealth()
+        {
+            IsHealth = true;
+            UnHealthTimes = 0;
+            UnHealthReason = null;
+            UnHealthType = null;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Net;
 using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Exceptions;
@@ -14,6 +15,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
 using Silky.Rpc.RegistryCenters;
+using Silky.Rpc.Routing;
+using Silky.Rpc.Utils;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
@@ -82,6 +85,7 @@ namespace Silky.RegistryCenter.Zookeeper
                         {
                             healthCheckModel.IsHealth = false;
                             healthCheckModel.UnHealthTimes += 1;
+                            healthCheckModel.UnHealthType = UnHealthType.ConnectionTimeout;
                             healthCheckModel.UnHealthReason = "Connection session expired";
                             if (healthCheckModel.UnHealthTimes > _registryCenterOptions.FuseTimes)
                             {
@@ -90,8 +94,12 @@ namespace Silky.RegistryCenter.Zookeeper
                         }
                         else
                         {
-                            healthCheckModel.IsHealth = true;
-                            healthCheckModel.UnHealthTimes = 0;
+                            if (healthCheckModel.UnHealthType == UnHealthType.Disconnected)
+                            {
+                                var serviceRouteManager = EngineContext.Current.Resolve<IServiceRouteManager>();
+                                await serviceRouteManager.CreateSubscribeServiceRouteDataChanges();
+                            }
+                            healthCheckModel.SetHealth();
                         }
 
                         m_healthCheck.AddOrUpdate(connStr, healthCheckModel, (k, v) => healthCheckModel);
@@ -100,7 +108,9 @@ namespace Silky.RegistryCenter.Zookeeper
                     if (connectionStateChangeArgs.State == Watcher.Event.KeeperState.Disconnected)
                     {
                         healthCheckModel.IsHealth = false;
+                        healthCheckModel.UnHealthTimes += 1;
                         healthCheckModel.UnHealthReason = "Connection session disconnected";
+                        healthCheckModel.UnHealthType = UnHealthType.Disconnected;
                         m_healthCheck.AddOrUpdate(connStr, healthCheckModel, (k, v) => healthCheckModel);
                     }
                 });

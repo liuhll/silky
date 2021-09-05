@@ -14,7 +14,7 @@
 
         public string ConnectionStrings { get; set; }
 
-        public int FuseTimes { get; set; } = 3;
+        public int FuseTimes { get; set; } = 10;
 
         public string RoutePath { get; set; } = "/services/serviceroutes";
 

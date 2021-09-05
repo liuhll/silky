@@ -297,22 +297,16 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
 
         internal async Task CreateSubscribeDataChange(IZookeeperClient zookeeperClient, string path)
         {
-            if (!m_routeWatchers.ContainsKey((path, zookeeperClient)))
-            {
-                var watcher = new ServiceRouteWatcher(path, _serviceRouteCache, _serializer);
-                await zookeeperClient.SubscribeDataChange(path, watcher.HandleNodeDataChange);
-                m_routeWatchers.GetOrAdd((path, zookeeperClient), watcher);
-            }
+            var watcher = new ServiceRouteWatcher(path, _serviceRouteCache, _serializer);
+            await zookeeperClient.SubscribeDataChange(path, watcher.HandleNodeDataChange);
+            m_routeWatchers.AddOrUpdate((path, zookeeperClient), watcher, (k, v) => watcher);
         }
 
         private async Task CreateSubscribeChildrenChange(IZookeeperClient zookeeperClient, string path)
         {
-            if (!m_routeSubDirWatchers.ContainsKey((path, zookeeperClient)))
-            {
-                var watcher = new ServiceRouteSubDirectoryWatcher(path, this);
-                await zookeeperClient.SubscribeChildrenChange(path, watcher.SubscribeChildrenChange);
-                m_routeSubDirWatchers.GetOrAdd((path, zookeeperClient), watcher);
-            }
+            var watcher = new ServiceRouteSubDirectoryWatcher(path, this);
+            await zookeeperClient.SubscribeChildrenChange(path, watcher.SubscribeChildrenChange);
+            m_routeSubDirWatchers.AddOrUpdate((path, zookeeperClient), watcher, (k, v) => watcher);
         }
 
         public async Task RemoveLocalHostServiceRoute()
