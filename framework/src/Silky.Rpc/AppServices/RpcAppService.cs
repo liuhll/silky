@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
@@ -24,15 +25,15 @@ namespace Silky.Rpc.AppServices
             };
             return instanceSupervisorOutput;
         }
-
-        public GetServiceEntrySupervisorOutput GetServiceEntrySupervisor(string serviceId)
+        
+        public IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceEntryHandleInfos()
         {
-            var serviceEntrySupervisorOutput = new GetServiceEntrySupervisorOutput()
-            {
-                ServiceEntryHandleInfo = _handleSupervisor.GetServiceHandleInfo(serviceId),
-                ServiceEntryInvokeInfo = _requestServiceSupervisor.GetServiceInvokeInfo(serviceId)
-            };
-            return serviceEntrySupervisorOutput;
+            return _handleSupervisor.GetServiceEntryHandleInfos();
+        }
+
+        public IReadOnlyCollection<ServiceEntryInvokeInfo> GetServiceEntryInvokeInfos()
+        {
+            return _requestServiceSupervisor.GetServiceEntryInvokeInfos();
         }
     }
 }

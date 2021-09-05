@@ -42,8 +42,11 @@ namespace Silky.Http.Dashboard.AppService
         private const string getInstanceSupervisorServiceId =
             "Silky.Rpc.AppServices.IRpcAppService.GetInstanceSupervisor";
 
-        private const string getGetServiceEntrySupervisorServiceId =
-            "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntrySupervisor.serviceId";
+        private const string getGetServiceEntrySupervisorServiceHandle =
+            "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryHandleInfos";
+        
+        private const string getGetServiceEntrySupervisorServiceInvoke =
+            "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryInvokeInfos";
 
         public SilkyAppService(
             ServiceRouteCache serviceRouteCache,
@@ -332,7 +335,7 @@ namespace Silky.Http.Dashboard.AppService
             return serviceEntryInstances.ToPagedList(pageIndex, pageSize);
         }
 
-        public async Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address, bool isGateway = false)
+        public async Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -344,12 +347,7 @@ namespace Silky.Http.Dashboard.AppService
             {
                 throw new BusinessException($"{address} is unHealth");
             }
-
-            if (isGateway)
-            {
-                return _rpcAppService.GetInstanceSupervisor();
-            }
-
+            
             RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
 
             if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceId, out var serviceEntry))
@@ -361,8 +359,7 @@ namespace Silky.Http.Dashboard.AppService
             return result as GetInstanceSupervisorOutput;
         }
 
-        public async Task<GetServiceEntrySupervisorOutput> GetServiceEntrySupervisor(string address, string serviceId,
-            bool isGateway = false)
+        public async Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address,PagedRequestDto input)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -374,21 +371,43 @@ namespace Silky.Http.Dashboard.AppService
             {
                 throw new BusinessException($"{address} is unHealth");
             }
-
-            if (isGateway)
+            
+            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
+            
+            if (!_serviceEntryCache.TryGetServiceEntry(getGetServiceEntrySupervisorServiceHandle, out var serviceEntry))
             {
-                return _rpcAppService.GetServiceEntrySupervisor(serviceId);
+                throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceHandle}");
             }
-
-            RpcContext.Context.SetAttachment(AttachmentKeys.ServerAddress, address);
-            if (!_serviceEntryCache.TryGetServiceEntry(getGetServiceEntrySupervisorServiceId, out var serviceEntry))
-            {
-                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
-            }
-
-            var result = await _serviceExecutor.Execute(serviceEntry, new object[1] { serviceId }, null);
-            return result as GetServiceEntrySupervisorOutput;
+            
+            var result = await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as IReadOnlyCollection<ServiceEntryHandleInfo>;
+            return result.ToPagedList(input.PageIndex, input.PageSize);
         }
+        
+        
+        public async Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address,PagedRequestDto input)
+        {
+            if (!Regex.IsMatch(address, ipEndpointRegex))
+            {
+                throw new BusinessException($"{address} incorrect address format");
+            }
+
+            var addressInfo = address.Split(":");
+            if (!SocketCheck.TestConnection(addressInfo[0], int.Parse(addressInfo[1])))
+            {
+                throw new BusinessException($"{address} is unHealth");
+            }
+            
+            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
+            
+            if (!_serviceEntryCache.TryGetServiceEntry(getGetServiceEntrySupervisorServiceInvoke, out var serviceEntry))
+            {
+                throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceInvoke}");
+            }
+            
+            var result = await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as IReadOnlyCollection<ServiceEntryInvokeInfo>;
+            return result.ToPagedList(input.PageIndex, input.PageSize);
+        }
+        
 
         public IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters()
         {

@@ -13,6 +13,7 @@ namespace Silky.Rpc.Runtime.Server
         
         ServiceInstanceHandleInfo GetServiceInstanceHandleInfo();
 
-        IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceHandleInfo(string serviceId);
+        IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceEntryHandleInfos();
+        
     }
 }

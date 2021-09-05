@@ -73,23 +73,26 @@ namespace Silky.Rpc.Runtime.Server
             return serviceInstanceHandleInfo;
         }
 
-        public IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceHandleInfo(string serviceId)
+        public IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceEntryHandleInfos()
         {
             var serviceEntryInvokeInfos = new List<ServiceEntryHandleInfo>();
-            if (m_monitor.Keys.Any(k => k.Item1 == serviceId))
+            foreach (var monitor in m_monitor)
             {
-                var keys = m_monitor.Keys.Where(k => k.Item1.Equals(serviceId));
-                foreach (var key in keys)
+                var serviceEntryInvokeInfo =
+                    serviceEntryInvokeInfos.FirstOrDefault(p => p.ServiceId == monitor.Key.Item1);
+                if (serviceEntryInvokeInfo == null)
                 {
-                    if (m_monitor.TryGetValue(key, out var serviceHandleInfo))
+                    serviceEntryInvokeInfo = new ServiceEntryHandleInfo()
                     {
-                        serviceEntryInvokeInfos.Add(new ServiceEntryHandleInfo()
-                        {
-                            Address = key.Item2.ToString(),
-                            ServiceId = key.Item1,
-                            ServiceHandleInfo = serviceHandleInfo
-                        });
-                    }
+                        ServiceId = monitor.Key.Item1,
+                        Addresses = new List<string>() { monitor.Key.Item2 },
+                        ServiceHandleInfo = monitor.Value
+                    };
+                    serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
+                }
+                else
+                {
+                    serviceEntryInvokeInfo.Addresses.Add(monitor.Key.Item2);
                 }
             }
 

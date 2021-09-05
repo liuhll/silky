@@ -15,6 +15,6 @@ namespace Silky.Rpc.Runtime.Client
 
         ServiceInstanceInvokeInfo GetServiceInstanceInvokeInfo();
 
-        IReadOnlyCollection<ServiceEntryInvokeInfo> GetServiceInvokeInfo(string serviceId);
+        IReadOnlyCollection<ServiceEntryInvokeInfo> GetServiceEntryInvokeInfos();
     }
 }

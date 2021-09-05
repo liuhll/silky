@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.AppServices.Dtos;
+using Silky.Rpc.Runtime.Client;
+using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Silky.Http.Dashboard.AppService
@@ -35,12 +37,14 @@ namespace Silky.Http.Dashboard.AppService
             int pageSize = 10);
 
         [HttpGet("instance/{address:string}/detail")]
-        Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address, bool isGateway = false);
+        Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address);
 
-        [HttpGet("instance/{address:string}/{serviceId:string}/detail")]
-        Task<GetServiceEntrySupervisorOutput> GetServiceEntrySupervisor(string address, string serviceId,
-            bool isGateway = false);
+        [HttpGet("instance/{address:string}/servicehandle")]
+        Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address,PagedRequestDto input);
 
+        [HttpGet("instance/{address:string}/serviceinvoke")]
+        Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address, PagedRequestDto input);
+        
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
 
         IReadOnlyCollection<GetProfileOutput> GetProfiles();
