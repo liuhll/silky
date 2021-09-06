@@ -6,7 +6,7 @@ namespace Silky.Rpc.Runtime.Server
     {
         public string ServiceId { get; set; }
         
-        public IList<string> Addresses{ get; set; }
+        public string Address{ get; set; }
         
         public ServiceHandleInfo ServiceHandleInfo { get; set; }
     }

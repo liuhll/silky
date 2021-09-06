@@ -9,7 +9,7 @@ namespace Silky.Rpc.Runtime.Server
 
         void ExecSuccess((string, string) item, double elapsedTotalMilliseconds);
 
-        void ExecFail((string, string) item, bool isBusinessException, double elapsedTotalMilliseconds);
+        void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds);
         
         ServiceInstanceHandleInfo GetServiceInstanceHandleInfo();
 

@@ -31,16 +31,23 @@ namespace Silky.Rpc.Runtime.Server
             m_monitor.AddOrUpdate(item, serviceHandleInfo, (key, _) => serviceHandleInfo);
         }
 
-        public void ExecFail((string, string) item, bool isBusinessException, double elapsedTotalMilliseconds)
+        public void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds)
         {
             var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServiceHandleInfo());
             serviceHandleInfo.ConcurrentHandles--;
             serviceHandleInfo.FaultHandles++;
             serviceHandleInfo.FinalHandleTime = DateTime.Now;
-            if (!isBusinessException)
+            if (isSeriousError)
             {
                 serviceHandleInfo.SeriousError++;
                 serviceHandleInfo.SeriousErrorTime = DateTime.Now;
+            }
+            serviceHandleInfo.ConcurrentHandles--;
+            if (elapsedTotalMilliseconds > 0)
+            {
+                serviceHandleInfo.AET = serviceHandleInfo.AET.HasValue
+                    ? (serviceHandleInfo.AET + elapsedTotalMilliseconds) / 2
+                    : elapsedTotalMilliseconds;
             }
 
             m_monitor.AddOrUpdate(item, serviceHandleInfo, (key, _) => serviceHandleInfo);
@@ -78,25 +85,16 @@ namespace Silky.Rpc.Runtime.Server
             var serviceEntryInvokeInfos = new List<ServiceEntryHandleInfo>();
             foreach (var monitor in m_monitor)
             {
-                var serviceEntryInvokeInfo =
-                    serviceEntryInvokeInfos.FirstOrDefault(p => p.ServiceId == monitor.Key.Item1);
-                if (serviceEntryInvokeInfo == null)
+                var serviceEntryInvokeInfo =  new ServiceEntryHandleInfo()
                 {
-                    serviceEntryInvokeInfo = new ServiceEntryHandleInfo()
-                    {
-                        ServiceId = monitor.Key.Item1,
-                        Addresses = new List<string>() { monitor.Key.Item2 },
-                        ServiceHandleInfo = monitor.Value
-                    };
-                    serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
-                }
-                else
-                {
-                    serviceEntryInvokeInfo.Addresses.Add(monitor.Key.Item2);
-                }
+                    ServiceId = monitor.Key.Item1,
+                    Address = monitor.Key.Item2,
+                    ServiceHandleInfo = monitor.Value
+                };
+                serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
             }
 
-            return serviceEntryInvokeInfos;
+            return serviceEntryInvokeInfos.OrderBy(p=> p.ServiceId).ToArray();
         }
     }
 }

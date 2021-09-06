@@ -123,25 +123,17 @@ namespace Silky.Rpc.Runtime.Client
             var serviceEntryInvokeInfos = new List<ServiceEntryInvokeInfo>();
             foreach (var monitor in m_monitor)
             {
-                var serviceEntryInvokeInfo =
-                    serviceEntryInvokeInfos.FirstOrDefault(p => p.ServiceId == monitor.Key.Item1);
-                if (serviceEntryInvokeInfo == null)
+                var serviceEntryInvokeInfo = new ServiceEntryInvokeInfo()
                 {
-                    serviceEntryInvokeInfo = new ServiceEntryInvokeInfo()
-                    {
-                        ServiceId = monitor.Key.Item1,
-                        Addresses = new List<string>() { monitor.Key.Item2.IPEndPoint.ToString() },
-                        ServiceInvokeInfo = monitor.Value
-                    };
-                    serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
-                }
-                else
-                {
-                    serviceEntryInvokeInfo.Addresses.Add(monitor.Key.Item2.IPEndPoint.ToString());
-                }
+                    ServiceId = monitor.Key.Item1,
+                    Address = monitor.Key.Item2.IPEndPoint.ToString(),
+                    ServiceInvokeInfo = monitor.Value,
+                    IsEnable = _healthCheck.IsHealth(monitor.Key.Item2)
+                };
+                serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
             }
 
-            return serviceEntryInvokeInfos;
+            return serviceEntryInvokeInfos.OrderBy(p=> p.ServiceId).ToArray();
         }
     }
 }

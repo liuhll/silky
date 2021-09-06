@@ -82,7 +82,7 @@ namespace Silky.Rpc.Runtime.Server
                 else
                 {
                     _handleSupervisor.ExecFail((serviceEntry?.Id, clientAddress),
-                        remoteResultMessage.StatusCode.IsBusinessStatus(), sp.ElapsedMilliseconds);
+                        !(remoteResultMessage.StatusCode.IsBusinessStatus() || remoteResultMessage.StatusCode.IsUnauthorized()), sp.ElapsedMilliseconds);
                 }
             }
             var resultTransportMessage = new TransportMessage(remoteResultMessage, messageId);
