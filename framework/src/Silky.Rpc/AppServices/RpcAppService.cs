@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Diagnostics;
+using Silky.Core;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.AppServices
 {
@@ -16,10 +19,13 @@ namespace Silky.Rpc.AppServices
             _requestServiceSupervisor = requestServiceSupervisor;
         }
 
-        public GetInstanceSupervisorOutput GetInstanceSupervisor()
+        public GetInstanceDetailOutput GetInstanceDetail()
         {
-            var instanceSupervisorOutput = new GetInstanceSupervisorOutput()
+            var instanceSupervisorOutput = new GetInstanceDetailOutput()
             {
+                HostName = EngineContext.Current.HostName,
+                Address = NetUtil.GetRpcAddressModel().IPEndPoint.ToString(),
+                StartTime = Process.GetCurrentProcess().StartTime,
                 InvokeInfo = _requestServiceSupervisor.GetServiceInstanceInvokeInfo(),
                 HandleInfo = _handleSupervisor.GetServiceInstanceHandleInfo()
             };

@@ -40,7 +40,7 @@ namespace Silky.Http.Dashboard.AppService
             @"([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])";
 
         private const string getInstanceSupervisorServiceId =
-            "Silky.Rpc.AppServices.IRpcAppService.GetInstanceSupervisor";
+            "Silky.Rpc.AppServices.IRpcAppService.GetInstanceDetail";
 
         private const string getGetServiceEntrySupervisorServiceHandle =
             "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryHandleInfos";
@@ -335,7 +335,7 @@ namespace Silky.Http.Dashboard.AppService
             return serviceEntryInstances.ToPagedList(pageIndex, pageSize);
         }
 
-        public async Task<GetInstanceSupervisorOutput> GetInstanceDetail(string address)
+        public async Task<GetInstanceDetailOutput> GetInstanceDetail(string address)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -355,8 +355,12 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
             }
 
-            var result = await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
-            return result as GetInstanceSupervisorOutput;
+            var result = (await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
+            if (result?.Address != address)
+            {
+                throw new SilkyException("The address of the routing instance is wrong");
+            }
+            return result;
         }
 
         public async Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address,PagedRequestDto input)
