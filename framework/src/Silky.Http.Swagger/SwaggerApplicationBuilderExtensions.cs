@@ -1,19 +1,25 @@
-﻿using Silky.Http.Swagger.Builders;
+﻿using System;
+using Silky.Core;
+using Silky.Http.Swagger.Builders;
 using Silky.Http.Swagger.Configuration;
+using Silky.Swagger;
+using Silky.Swagger.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    internal static class SwaggerApplicationBuilderExtensions
+    public static class SwaggerApplicationBuilderExtensions
     {
         public static IApplicationBuilder UseSwaggerDocuments(this IApplicationBuilder app,
-            SwaggerDocumentOptions swaggerDocumentOptions)
+            Action<SwaggerOptions> swaggerSetupAction = null, Action<SwaggerUIOptions>
+                swaggerUiSetupAction = null)
         {
-            
-            // 配置 Swagger 全局参数
-            app.UseSwagger(options => SwaggerDocumentBuilder.Build(options,swaggerDocumentOptions));
+            var swaggerDocumentOptions = EngineContext.Current.GetOptionsSnapshot<SwaggerDocumentOptions>();
+            app.UseSwagger(swaggerSetupAction ??
+                           (options => SwaggerDocumentBuilder.Build(options, swaggerDocumentOptions)));
 
-            // 配置 Swagger UI 参数
-            app.UseSwaggerUI(options => SwaggerDocumentBuilder.BuildUI(options,swaggerDocumentOptions));
+
+            app.UseSwaggerUI(swaggerUiSetupAction ??
+                             (options => SwaggerDocumentBuilder.BuildUI(options, swaggerDocumentOptions)));
 
             return app;
         }

@@ -1,17 +1,19 @@
-using Microsoft.Extensions.DependencyInjection;
+using System;
 using Silky.Core;
 using Silky.Http.Swagger.Builders;
 using Silky.Http.Swagger.Configuration;
+using Silky.Swagger.SwaggerGen.DependencyInjection;
 
-namespace Microsoft.AspNetCore.Builder
+namespace Microsoft.Extensions.DependencyInjection
 {
-    internal static class SwaggerServiceCollectionExtensions
+    public static class SwaggerServiceCollectionExtensions
     {
-        public static IServiceCollection AddSwaggerDocuments(this IServiceCollection services)
+        
+        public static IServiceCollection AddSwaggerDocuments(this IServiceCollection services, Action<SwaggerGenOptions> setupAction = null)
         {
             services.AddOptions<SwaggerDocumentOptions>()
                 .Bind(EngineContext.Current.Configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
-            services.AddSwaggerGen(options => SwaggerDocumentBuilder.BuildGen(options, EngineContext.Current.Configuration));
+            services.AddSwaggerGen(setupAction ?? (options => SwaggerDocumentBuilder.BuildGen(options, EngineContext.Current.Configuration)));
             return services;
         }
     }

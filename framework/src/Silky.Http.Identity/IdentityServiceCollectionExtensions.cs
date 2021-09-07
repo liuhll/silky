@@ -21,6 +21,7 @@ namespace  Microsoft.Extensions.DependencyInjection
             services.AddTransient<IAuthorizationHandler, DefaultSilkyAuthorizationHandler>();
             services.AddTransient<IAuthorizationPolicyProvider, SilkyAuthorizationPolicyProvider>();
             services.AddTransient<IAuthorizationMiddlewareResultHandler, SilkyAuthorizationMiddlewareResultHandler>();
+            services.AddJwt();
             return services;
         }
     }

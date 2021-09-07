@@ -8,8 +8,7 @@ namespace Silky.Http.Swagger.Configuration
 {
     public class SwaggerDocumentOptions
     {
-        public static string SwaggerDocument = "SwaggerDocument";
-
+        internal static string SwaggerDocument = "SwaggerDocument";
         public SwaggerDocumentOptions()
         {
             OrganizationMode = OrganizationMode.AllAndGroup;

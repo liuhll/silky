@@ -15,16 +15,10 @@ namespace Silky.Jwt
         private JwtOptions _jwtOptions;
         private IJwtAlgorithm _jwtAlgorithm;
 
-        public JwtTokenGenerator(IOptionsMonitor<JwtOptions> jwtOptions)
+        public JwtTokenGenerator(IOptions<JwtOptions> jwtOptions, IJwtAlgorithm jwtAlgorithm)
         {
-            _jwtOptions = jwtOptions.CurrentValue;
-            jwtOptions.OnChange((options, s) =>
-            {
-                _jwtOptions = options;
-                _jwtAlgorithm = EngineContext.Current.ResolveNamed<IJwtAlgorithm>(_jwtOptions.Algorithm.ToString());
-            });
-            _jwtAlgorithm = EngineContext.Current.ResolveNamed<IJwtAlgorithm>(_jwtOptions.Algorithm.ToString());
-            
+            _jwtOptions = jwtOptions.Value;
+            _jwtAlgorithm = jwtAlgorithm;
         }
 
         public string Generate(IDictionary<string, object> payload)

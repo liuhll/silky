@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Core;
 using Silky.Core.Modularity;
 using Silky.Http.Core;
-using Silky.Http.Swagger.Configuration;
 
 namespace Silky.Http.Swagger
 {
@@ -18,8 +16,7 @@ namespace Silky.Http.Swagger
         }
         public override void Configure(IApplicationBuilder application)
         {
-            var swaggerDocumentOptions = EngineContext.Current.GetOptionsSnapshot<SwaggerDocumentOptions>();
-            application.UseSwaggerDocuments(swaggerDocumentOptions);
+            application.UseSwaggerDocuments();
            
         }
     }
