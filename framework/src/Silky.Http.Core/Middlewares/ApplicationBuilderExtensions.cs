@@ -27,14 +27,7 @@ namespace Silky.Http.Core.Middlewares
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
 
-            var useDetailedExceptionPage = gatewayOptions.UseDetailedExceptionPage;
-            if (useDetailedExceptionPage)
-            {
-                application.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                application.UseExceptionHandler(handler =>
+             application.UseExceptionHandler(handler =>
                 {
                     if (EngineContext.Current.Resolve<IModuleContainer>().Modules.Any(p=> p.Name == "MiniProfiler"))
                     {
@@ -88,7 +81,6 @@ namespace Silky.Http.Core.Middlewares
                         }
                     });
                 });
-            }
         }
 
         public static async void RegisterGateway(this IApplicationBuilder application)

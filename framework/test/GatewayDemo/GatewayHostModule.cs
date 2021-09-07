@@ -21,8 +21,11 @@ namespace GatewayDemo
         typeof(TransactionTccModule),
         typeof(IdentityModule),
         typeof(DashboardModule),
+#if DEBUG
         typeof(SwaggerModule),
         typeof(MiniProfilerModule),
+#endif
+    
         typeof(CorsModule)
     )]
     public class GatewayHostModule : WebHostModule
