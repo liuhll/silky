@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +18,8 @@ namespace Silky.Http.Dashboard.Middlewares
 {
     public class UiMiddleware
     {
-        private const string EmbeddedFileNamespace = "Silky.Http.Dashboard.wwwroot.dist";
+
+        private const string EmbeddedFileNamespace = "Silky.Http.Dashboard.node_modules.silky_dashboard_ui_dist";
         private readonly DashboardOptions _options;
         private readonly Regex _redirectUrlCheckRegex;
         private readonly Regex _homeUrlCheckRegex;
