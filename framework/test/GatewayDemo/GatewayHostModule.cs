@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silky.Core.Modularity;
+using Silky.Http.Dashboard;
 using Silky.Http.Identity;
 using Silky.SkyApm.Agent;
 using Silky.Transaction.Repository.Redis;
@@ -15,7 +16,8 @@ namespace GatewayDemo
         typeof(TransactionRepositoryRedisModule),
         typeof(SilkySkyApmAgentModule),
         typeof(TransactionTccModule),
-        typeof(IdentityModule)
+        typeof(IdentityModule),
+        typeof(DashboardModule)
     )]
     public class GatewayHostModule : WebHostModule
     {

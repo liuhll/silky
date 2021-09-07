@@ -112,6 +112,12 @@ namespace Silky.Core
             var typeFinder = Resolve<ITypeFinder>();
             var startupConfigurations = typeFinder.FindClassesOfType<ISilkyStartup>();
 
+            var webSilkyModules = Modules.Where(p => p.Instance is WebSilkyModule);
+            foreach (var webSilkyModule in webSilkyModules)
+            {
+                ((WebSilkyModule)webSilkyModule.Instance).Configure(application);
+            }
+            
             //create and sort instances of startup configurations
             var instances = startupConfigurations
                 .Select(startup => (ISilkyStartup)Activator.CreateInstance(startup))
@@ -120,6 +126,8 @@ namespace Silky.Core
             //configure request pipeline
             foreach (var instance in instances)
                 instance.Configure(application);
+            
+          
         }
 
         public T Resolve<T>() where T : class

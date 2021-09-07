@@ -29,7 +29,6 @@ namespace GatewayDemo
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.ConfigureSilkyRequestPipeline();
             // app.UseEndpoints(endpoints=> endpoints.MapControllers());
         }
