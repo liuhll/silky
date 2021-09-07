@@ -11,7 +11,7 @@ using Silky.SkyApm.Agent;
 
 namespace NormHostDemo
 {
-    [DependsOn( /*typeof(MessagePackModule),*/ typeof(SilkySkyApmAgentModule), typeof(MapsterModule),
+    [DependsOn( /*typeof(MessagePackModule),*/ typeof(SkyApmAgentModule), typeof(MapsterModule),
         typeof(JwtModule))]
     public class NormHostDemoModule : GeneralHostModule
     {

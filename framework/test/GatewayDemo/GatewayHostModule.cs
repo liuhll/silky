@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silky.Core.Modularity;
+using Silky.Http.CorsAccessor;
 using Silky.Http.Dashboard;
 using Silky.Http.Identity;
 using Silky.Http.MiniProfiler;
@@ -16,12 +17,13 @@ namespace GatewayDemo
 {
     [DependsOn( /*typeof(MessagePackModule),*/
         typeof(TransactionRepositoryRedisModule),
-        typeof(SilkySkyApmAgentModule),
+        typeof(SkyApmAgentModule),
         typeof(TransactionTccModule),
         typeof(IdentityModule),
         typeof(DashboardModule),
         typeof(SwaggerModule),
-        typeof(MiniProfilerModule)
+        typeof(MiniProfilerModule),
+        typeof(CorsModule)
     )]
     public class GatewayHostModule : WebHostModule
     {

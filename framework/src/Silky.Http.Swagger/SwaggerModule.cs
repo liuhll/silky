@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Core.Modularity;
 using Silky.Http.Core;
+using Silky.Http.Core.Configuration;
 using Silky.Http.Swagger.Configuration;
 
 namespace Silky.Http.Swagger
@@ -13,19 +14,22 @@ namespace Silky.Http.Swagger
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddOptions<SwaggerDocumentOptions>()
-                .Bind(configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
-            
-            services.AddSwaggerDocuments(configuration);
+            var enableSwaggerDoc = configuration.GetValue<bool?>("gateway:enableSwaggerDoc") ?? false;
+            if (enableSwaggerDoc)
+            {
+                services.AddSwaggerDocuments();
+            }
 
         }
         public override void Configure(IApplicationBuilder application)
         {
-            SwaggerDocumentOptions swaggerDocumentOptions = default;
-            swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
-                (options, name) => { swaggerDocumentOptions = options; });
-            application.UseSwaggerDocuments(swaggerDocumentOptions);
-            application.UseHttpsRedirection();
+            var gatewayOptions = EngineContext.Current.GetOptionsSnapshot<GatewayOptions>();
+            if (gatewayOptions.EnableSwaggerDoc)
+            {
+                var swaggerDocumentOptions = EngineContext.Current.GetOptionsSnapshot<SwaggerDocumentOptions>();
+                application.UseSwaggerDocuments(swaggerDocumentOptions);
+            }
+           
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Silky.Http.CorsAccessor
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddCorsAccessor(configuration);
+            services.AddCorsAccessor();
         }
 
         public override void Configure(IApplicationBuilder application)

@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Silky.Http.Swagger.Builders;
+﻿using Silky.Http.Swagger.Builders;
 using Silky.Http.Swagger.Configuration;
 
-namespace Silky.Http.Swagger
+namespace Microsoft.AspNetCore.Builder
 {
-    internal static class ApplicationBuilderExtensions
+    internal static class SwaggerApplicationBuilderExtensions
     {
         public static IApplicationBuilder UseSwaggerDocuments(this IApplicationBuilder app,
             SwaggerDocumentOptions swaggerDocumentOptions)
