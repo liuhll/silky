@@ -5,11 +5,13 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Modularity;
+using Silky.Http.Core;
 using Silky.Http.Dashboard.Configuration;
 using Silky.Http.Dashboard.Middlewares;
 
 namespace Silky.Http.Dashboard
 {
+    [DependsOn(typeof(SilkyHttpCoreModule))]
     public class DashboardModule : WebSilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)

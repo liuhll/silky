@@ -9,14 +9,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
-using Silky.Http.Core.Configuration;
-using Silky.Http.Core.SwaggerDocument.Filters;
+using Silky.Http.Swagger.Configuration;
+using Silky.Http.Swagger.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Swagger;
 using Silky.Swagger.SwaggerGen.DependencyInjection;
 using Silky.Swagger.SwaggerUI;
 
-namespace Silky.Http.Core.SwaggerDocument
+namespace Silky.Http.Swagger.Builders
 {
     internal static class SwaggerDocumentBuilder
     {
@@ -108,10 +108,7 @@ namespace Silky.Http.Core.SwaggerDocument
             // 配置分组终点路由
             CreateEndpoint(swaggerUIOptions, swaggerDocumentOptions);
 
-            if (swaggerDocumentOptions.InjectMiniProfiler)
-            {
-                InjectMiniProfilerPlugin(swaggerUIOptions);
-            }
+            InjectMiniProfilerPlugin(swaggerUIOptions);
 
             // 配置多语言和自动登录token
             AddDefaultInterceptor(swaggerUIOptions);

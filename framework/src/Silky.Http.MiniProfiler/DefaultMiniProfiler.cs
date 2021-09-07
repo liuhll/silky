@@ -1,6 +1,7 @@
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Http.Core.Configuration;
+using Silky.Http.Swagger.Configuration;
 using Silky.Rpc.MiniProfiler;
 using StackExchange.Profiling;
 
@@ -21,7 +22,6 @@ namespace Silky.Http.MiniProfiler
             swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
                 (options, name) => { swaggerDocumentOptions = options; });
             
-            if (!swaggerDocumentOptions.InjectMiniProfiler) return;
             var customTiming = StackExchange.Profiling.MiniProfiler.Current?.CustomTiming(category,
                 string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);
             if (customTiming == null) return;

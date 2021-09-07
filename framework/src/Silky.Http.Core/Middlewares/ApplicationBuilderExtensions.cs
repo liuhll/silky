@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.Exceptions;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Core.Modularity;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc.Gateway;
 using Silky.Rpc.MiniProfiler;
@@ -34,17 +36,11 @@ namespace Silky.Http.Core.Middlewares
             {
                 application.UseExceptionHandler(handler =>
                 {
-                    SwaggerDocumentOptions swaggerDocumentOptions = default;
-                    swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
-                        (options, name) =>
-                        {
-                            swaggerDocumentOptions = options;
-                        });
-                    if (swaggerDocumentOptions.InjectMiniProfiler)
+                    if (EngineContext.Current.Resolve<IModuleContainer>().Modules.Any(p=> p.Name == "MiniProfiler"))
                     {
                         handler.UseMiniProfiler();
                     }
-
+                    
                     handler.Run(context =>
                     {
                         var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;

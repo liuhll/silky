@@ -1,9 +1,11 @@
 using System;
 
-namespace Silky.Http.Core.Configuration
+namespace Silky.Http.CorsAccessor.Configuration
 {
-    public class CorsAccessorSettingsOptions
+    public class CorsAccessorOptions
     {
+        internal const string CorsAccessor = "CorsAccessor";
+        
         /// <summary>
         /// 策略名称
         /// </summary>
@@ -39,9 +41,9 @@ namespace Silky.Http.Core.Configuration
         /// </summary>
         public int? SetPreflightMaxAge { get; set; }
         
-        public CorsAccessorSettingsOptions()
+        public CorsAccessorOptions()
         {
-            PolicyName ??= "App.Cors.Policy";
+            PolicyName ??= "App.CorsAccessor.Policy";
             WithOrigins ??= Array.Empty<string>();
             AllowCredentials ??= true;
         }

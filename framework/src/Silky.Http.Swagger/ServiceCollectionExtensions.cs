@@ -1,7 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Http.Swagger.Builders;
 
-namespace Silky.Http.Core.SwaggerDocument
+namespace Silky.Http.Swagger
 {
     internal static class ServiceCollectionExtensions
     {

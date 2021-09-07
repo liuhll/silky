@@ -18,8 +18,8 @@ namespace Silky.Http.Dashboard.Middlewares
 {
     public class UiMiddleware
     {
-
         private const string EmbeddedFileNamespace = "Silky.Http.Dashboard.node_modules.silky_dashboard_ui_dist";
+        private const string PathMatch = "/dashboard";
         private readonly DashboardOptions _options;
         private readonly Regex _redirectUrlCheckRegex;
         private readonly Regex _homeUrlCheckRegex;
@@ -31,9 +31,9 @@ namespace Silky.Http.Dashboard.Middlewares
         {
             _options = options.Value;
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options);
-            _redirectUrlCheckRegex = new Regex($"^/?{Regex.Escape(_options.PathMatch)}/?$", RegexOptions.IgnoreCase);
+            _redirectUrlCheckRegex = new Regex($"^/?{Regex.Escape(PathMatch)}/?$", RegexOptions.IgnoreCase);
             _homeUrlCheckRegex =
-                new Regex($"^/?{Regex.Escape(_options.PathMatch)}/?index.html$", RegexOptions.IgnoreCase);
+                new Regex($"^/?{Regex.Escape(PathMatch)}/?index.html$", RegexOptions.IgnoreCase);
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -94,7 +94,7 @@ namespace Silky.Http.Dashboard.Middlewares
         {
             var staticFileOptions = new StaticFileOptions
             {
-                RequestPath = options.PathMatch,
+                RequestPath = PathMatch,
                 FileProvider =
                     new EmbeddedFileProvider(typeof(UiMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
             };

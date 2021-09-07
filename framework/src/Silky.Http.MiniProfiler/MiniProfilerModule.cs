@@ -1,15 +1,18 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
-using Silky.Http.Core.Configuration;
+using Silky.Core.Modularity;
+using Silky.Http.Swagger;
+using Silky.Http.Swagger.Configuration;
 using Silky.Rpc.MiniProfiler;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace Silky.Http.MiniProfiler
 {
-    public class MiniProfilerStartup : ISilkyStartup
+    [DependsOn(typeof(SwaggerModule))]
+    public class MiniProfilerModule : WebSilkyModule
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddMiniProfiler(options =>
             {
@@ -27,22 +30,13 @@ namespace Silky.Http.MiniProfiler
             services.AddTransient<IMiniProfiler, DefaultMiniProfiler>();
         }
 
-        public int Order { get; } = -1;
-
-        public void Configure(IApplicationBuilder application)
+        public override void Configure(IApplicationBuilder application)
         {
             SwaggerDocumentOptions swaggerDocumentOptions = default;
             swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
-                (options, name) =>
-                {
-                    swaggerDocumentOptions = options;
-                });
+                (options, name) => { swaggerDocumentOptions = options; });
 
-            if (swaggerDocumentOptions.InjectMiniProfiler)
-            {
-                application.UseMiniProfiler();
-            }
-            
+            application.UseMiniProfiler();
         }
     }
 }

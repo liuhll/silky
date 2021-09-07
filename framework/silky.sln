@@ -94,6 +94,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Apollo", "src\Silky.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.Dashboard", "src\Silky.Http.Dashboard\Silky.Http.Dashboard.csproj", "{BBFFFB29-3D1C-4BCA-9621-9A6DF35EE957}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.Swagger", "src\Silky.Http.Swagger\Silky.Http.Swagger.csproj", "{EF191FA7-8DA0-4ED9-95B5-4508C0F4A1D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.CorsAccessor", "src\Silky.Http.CorsAccessor\Silky.Http.CorsAccessor.csproj", "{5211E971-CAFC-4982-9BCA-9938A2E9EA58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +149,8 @@ Global
 		{50F74DB9-A894-4EB6-8E69-66C6C51A53AF} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{A64E4486-1AE1-4D1B-9367-2C54402FE7C2} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{BBFFFB29-3D1C-4BCA-9621-9A6DF35EE957} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{EF191FA7-8DA0-4ED9-95B5-4508C0F4A1D8} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{5211E971-CAFC-4982-9BCA-9938A2E9EA58} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -327,5 +333,13 @@ Global
 		{BBFFFB29-3D1C-4BCA-9621-9A6DF35EE957}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBFFFB29-3D1C-4BCA-9621-9A6DF35EE957}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBFFFB29-3D1C-4BCA-9621-9A6DF35EE957}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF191FA7-8DA0-4ED9-95B5-4508C0F4A1D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF191FA7-8DA0-4ED9-95B5-4508C0F4A1D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF191FA7-8DA0-4ED9-95B5-4508C0F4A1D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF191FA7-8DA0-4ED9-95B5-4508C0F4A1D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5211E971-CAFC-4982-9BCA-9938A2E9EA58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5211E971-CAFC-4982-9BCA-9938A2E9EA58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5211E971-CAFC-4982-9BCA-9938A2E9EA58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5211E971-CAFC-4982-9BCA-9938A2E9EA58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

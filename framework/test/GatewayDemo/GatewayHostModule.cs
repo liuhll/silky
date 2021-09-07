@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Silky.Core.Modularity;
 using Silky.Http.Dashboard;
 using Silky.Http.Identity;
+using Silky.Http.MiniProfiler;
+using Silky.Http.Swagger;
 using Silky.SkyApm.Agent;
 using Silky.Transaction.Repository.Redis;
 using Silky.Transaction.Tcc;
@@ -17,7 +19,9 @@ namespace GatewayDemo
         typeof(SilkySkyApmAgentModule),
         typeof(TransactionTccModule),
         typeof(IdentityModule),
-        typeof(DashboardModule)
+        typeof(DashboardModule),
+        typeof(SwaggerModule),
+        typeof(MiniProfilerModule)
     )]
     public class GatewayHostModule : WebHostModule
     {

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Description>Component that generates swagger online api documentation</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
+        <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
+    </ItemGroup>
+</Project>

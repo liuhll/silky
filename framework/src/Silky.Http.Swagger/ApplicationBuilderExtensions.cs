@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Silky.Http.Core.Configuration;
+using Silky.Http.Swagger.Builders;
+using Silky.Http.Swagger.Configuration;
 
-namespace Silky.Http.Core.SwaggerDocument
+namespace Silky.Http.Swagger
 {
     internal static class ApplicationBuilderExtensions
     {

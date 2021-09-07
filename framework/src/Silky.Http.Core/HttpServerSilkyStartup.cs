@@ -4,6 +4,8 @@ using Silky.Http.Core.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Http.Core.Configuration;
+using Silky.WebSocket.Middleware.Middleware;
 
 namespace Silky.Http.Core
 {
@@ -11,13 +13,22 @@ namespace Silky.Http.Core
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-          
+            services.AddOptions<GatewayOptions>()
+                .Bind(configuration.GetSection(GatewayOptions.Gateway));
+            services.AddResponseCaching();
+           
         }
 
         public async void Configure(IApplicationBuilder application)
         {
-              application.UseSilky();
-              application.RegisterGateway();
+            application.UseResponseCaching();
+            application.UseHttpsRedirection();
+            application.UseWebSockets();
+            application.MapWhen(httpContext => httpContext.WebSockets.IsWebSocketRequest,
+                wenSocketsApp => { wenSocketsApp.UseWebSocketsProxyMiddleware(); });
+            application.UseSilkyExceptionHandler();
+            application.UseSilky();
+            application.RegisterGateway();
         }
 
         public int Order { get; } = Int32.MaxValue;

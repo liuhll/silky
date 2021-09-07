@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
-using Silky.Http.Core.SwaggerDocument;
+using Silky.Http.Swagger.Internal;
 using Silky.Swagger.SwaggerUI;
 
-namespace Silky.Http.Core.Configuration
+namespace Silky.Http.Swagger.Configuration
 {
     public class SwaggerDocumentOptions
     {
@@ -19,7 +19,6 @@ namespace Silky.Http.Core.Configuration
             Version = "v1.0.0";
             Groups = new List<GroupDescription>();
             RoutePrefix = "api";
-            InjectMiniProfiler = false;
             EnableAuthorized = true;
             if (EnableAuthorized)
             {
@@ -69,8 +68,7 @@ namespace Silky.Http.Core.Configuration
         public bool FormatAsV2 { get; set; } = true;
 
         public string RoutePrefix { get; set; }
-
-        public bool InjectMiniProfiler { get; set; }
+        
         public DocExpansion DocExpansionState { get; set; }
         public bool EnableAuthorized { get; set; }
 
