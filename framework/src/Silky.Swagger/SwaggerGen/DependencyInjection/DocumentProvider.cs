@@ -10,7 +10,6 @@ namespace Microsoft.Extensions.serviceEntrys
 {
     /// <summary>
     /// This service will be looked up by name from the service collection when using
-    /// the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.serviceEntry.Server package.
     /// </summary>
     internal interface IDocumentProvider
     {

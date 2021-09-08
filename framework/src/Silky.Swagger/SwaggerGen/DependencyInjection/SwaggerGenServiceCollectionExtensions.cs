@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
             services.TryAddTransient<IOperationFilter, AddServiceKeyOperationFilter>();
-            // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.serviceEntry.Server package.
+         
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 
             if (setupAction != null) services.ConfigureSwaggerGen(setupAction);
