@@ -7,7 +7,7 @@ using Silky.Http.Core;
 namespace Silky.Http.Dashboard
 {
     [DependsOn(typeof(SilkyHttpCoreModule))]
-    public class DashboardModule : WebSilkyModule
+    public class DashboardModule : HttpSilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {

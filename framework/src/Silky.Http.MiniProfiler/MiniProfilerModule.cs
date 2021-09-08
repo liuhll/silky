@@ -7,7 +7,7 @@ using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 namespace Silky.Http.MiniProfiler
 {
     [DependsOn(typeof(SwaggerModule))]
-    public class MiniProfilerModule : WebSilkyModule
+    public class MiniProfilerModule : HttpSilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {

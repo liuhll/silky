@@ -7,7 +7,7 @@ using Silky.Http.Core;
 namespace Silky.Http.Swagger
 {
     [DependsOn(typeof(SilkyHttpCoreModule))]
-    public class SwaggerModule : WebSilkyModule
+    public class SwaggerModule : HttpSilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {

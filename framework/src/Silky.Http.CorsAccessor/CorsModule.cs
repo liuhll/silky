@@ -7,7 +7,7 @@ using Silky.Http.Core;
 namespace Silky.Http.CorsAccessor
 {
     [DependsOn(typeof(SilkyHttpCoreModule))]
-    public class CorsModule : WebSilkyModule
+    public class CorsModule : HttpSilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {

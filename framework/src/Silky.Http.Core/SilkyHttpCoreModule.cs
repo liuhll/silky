@@ -16,7 +16,7 @@ using Silky.Rpc.Gateway;
 namespace Silky.Http.Core
 {
     [DependsOn(typeof(RpcModule), typeof(RpcProxyModule))]
-    public class SilkyHttpCoreModule : WebSilkyModule
+    public class SilkyHttpCoreModule : HttpSilkyModule
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {
