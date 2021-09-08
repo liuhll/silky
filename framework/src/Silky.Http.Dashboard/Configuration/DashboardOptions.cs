@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Silky.Http.Dashboard.Configuration
 {
     public class DashboardOptions
@@ -7,6 +9,7 @@ namespace Silky.Http.Dashboard.Configuration
         public DashboardOptions()
         {
             StatsPollingInterval = 2000;
+            ExternalLinks = new List<ExternalLinkOptions>();
         }
         
         public int StatsPollingInterval { get; set; }
@@ -18,5 +21,7 @@ namespace Silky.Http.Dashboard.Configuration
         public bool DisplayWebApiInSwagger { get; set; }
 
         public string PathBase { get; set; }
+
+        public ICollection<ExternalLinkOptions> ExternalLinks { get; set; }
     }
 }

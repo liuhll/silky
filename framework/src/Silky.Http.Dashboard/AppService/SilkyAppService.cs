@@ -9,7 +9,9 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Rpc;
+using Silky.Core.Utils;
 using Silky.Http.Dashboard.AppService.Dtos;
+using Silky.Http.Dashboard.Configuration;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.AppServices;
 using Silky.Rpc.AppServices.Dtos;
@@ -31,7 +33,6 @@ namespace Silky.Http.Dashboard.AppService
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly ServiceEntryCache _serviceEntryCache;
         private readonly IRemoteServiceExecutor _serviceExecutor;
-        private readonly IRpcAppService _rpcAppService;
         private readonly IRegisterCenterHealthProvider _registerCenterHealthProvider;
         private readonly RegistryCenterOptions _registryCenterOptions;
 
@@ -44,7 +45,7 @@ namespace Silky.Http.Dashboard.AppService
 
         private const string getGetServiceEntrySupervisorServiceHandle =
             "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryHandleInfos";
-        
+
         private const string getGetServiceEntrySupervisorServiceInvoke =
             "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryInvokeInfos";
 
@@ -54,7 +55,6 @@ namespace Silky.Http.Dashboard.AppService
             IServiceEntryManager serviceEntryManager,
             ServiceEntryCache serviceEntryCache,
             IRemoteServiceExecutor serviceExecutor,
-            IRpcAppService rpcAppService,
             IRegisterCenterHealthProvider registerCenterHealthProvider,
             IOptions<RegistryCenterOptions> registryCenterOptions)
         {
@@ -63,7 +63,6 @@ namespace Silky.Http.Dashboard.AppService
             _serviceEntryManager = serviceEntryManager;
             _serviceEntryCache = serviceEntryCache;
             _serviceExecutor = serviceExecutor;
-            _rpcAppService = rpcAppService;
             _registerCenterHealthProvider = registerCenterHealthProvider;
             _registryCenterOptions = registryCenterOptions.Value;
         }
@@ -83,7 +82,7 @@ namespace Silky.Http.Dashboard.AppService
                     AppServiceCount = p.GroupBy(p => p.ServiceDescriptor.AppService).Count(),
                     HasWsService = p.Any(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
                 });
-            return hosts.ToPagedList(input.PageIndex,input.PageSize);
+            return hosts.ToPagedList(input.PageIndex, input.PageSize);
         }
 
         public GetDetailApplicationOutput GetApplicationDetail(string appName)
@@ -347,7 +346,7 @@ namespace Silky.Http.Dashboard.AppService
             {
                 throw new BusinessException($"{address} is unHealth");
             }
-            
+
             RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
 
             if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceId, out var serviceEntry))
@@ -355,15 +354,18 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
             }
 
-            var result = (await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
+            var result =
+                (await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
             if (result?.Address != address)
             {
                 throw new SilkyException("The address of the routing instance is wrong");
             }
+
             return result;
         }
 
-        public async Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address,PagedRequestDto input)
+        public async Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address,
+            PagedRequestDto input)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -375,20 +377,23 @@ namespace Silky.Http.Dashboard.AppService
             {
                 throw new BusinessException($"{address} is unHealth");
             }
-            
+
             RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
-            
+
             if (!_serviceEntryCache.TryGetServiceEntry(getGetServiceEntrySupervisorServiceHandle, out var serviceEntry))
             {
                 throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceHandle}");
             }
-            
-            var result = await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as IReadOnlyCollection<ServiceEntryHandleInfo>;
+
+            var result =
+                await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
+                    IReadOnlyCollection<ServiceEntryHandleInfo>;
             return result.ToPagedList(input.PageIndex, input.PageSize);
         }
-        
-        
-        public async Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address,PagedRequestDto input)
+
+
+        public async Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address,
+            PagedRequestDto input)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -400,18 +405,20 @@ namespace Silky.Http.Dashboard.AppService
             {
                 throw new BusinessException($"{address} is unHealth");
             }
-            
+
             RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
-            
+
             if (!_serviceEntryCache.TryGetServiceEntry(getGetServiceEntrySupervisorServiceInvoke, out var serviceEntry))
             {
                 throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceInvoke}");
             }
-            
-            var result = await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as IReadOnlyCollection<ServiceEntryInvokeInfo>;
+
+            var result =
+                await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
+                    IReadOnlyCollection<ServiceEntryInvokeInfo>;
             return result.ToPagedList(input.PageIndex, input.PageSize);
         }
-        
+
 
         public IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters()
         {
@@ -490,6 +497,47 @@ namespace Silky.Http.Dashboard.AppService
             });
 
             return getProfileOutputs.Where(p => p.Count > 0).ToArray();
+        }
+
+        public IReadOnlyCollection<GetExternalRouteOutput> GetExternalRoutes()
+        {
+            var externalRoutes = new List<GetExternalRouteOutput>();
+            var dashboardOptions = EngineContext.Current.GetOptionsSnapshot<DashboardOptions>();
+            if (dashboardOptions.ExternalLinks != null && dashboardOptions.ExternalLinks.Any())
+            {
+                var externalRoute = CreateExternalRoute("/external");
+                externalRoute.Meta["Icon"] = "el-icon-link";
+                externalRoute.Meta["Title"] = "外部链接";
+                externalRoute.Meta["IsLayout"] = true;
+                externalRoute.Meta["ShowLink"] = true;
+                externalRoute.Meta["SavedPosition"] = false;
+                externalRoute.Name = "external";
+                foreach (var externalLink in dashboardOptions.ExternalLinks)
+                {
+                    var externalRouteChild = CreateExternalRoute(externalLink.Path);
+                    externalRouteChild.Meta["Icon"] = externalLink.Icon ?? "el-icon-link";
+                    externalRouteChild.Meta["Title"] = externalLink.Title;
+                    externalRouteChild.Meta["ShowLink"] = true;
+                    externalRouteChild.Meta["ExternalLink"] = true;
+                    externalRoute.Meta["SavedPosition"] = false;
+                    externalRoute.Children.Add(externalRouteChild);
+                    
+                }
+                externalRoutes.Add(externalRoute);
+            }
+
+            return externalRoutes.ToArray();
+        }
+        
+
+        private GetExternalRouteOutput CreateExternalRoute(string path)
+        {
+            var externalRoute = new GetExternalRouteOutput()
+            {
+                Path = path,
+                Meta = new Dictionary<string, object>()
+            };
+            return externalRoute;
         }
     }
 }

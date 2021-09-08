@@ -48,6 +48,7 @@ namespace Silky.Http.Dashboard.AppService
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
 
         IReadOnlyCollection<GetProfileOutput> GetProfiles();
-        
+
+        IReadOnlyCollection<GetExternalRouteOutput> GetExternalRoutes();
     }
 }

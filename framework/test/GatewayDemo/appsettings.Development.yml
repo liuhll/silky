@@ -23,3 +23,8 @@ governance:
 dashboard:
   displayWebApiInSwagger: true
   useAuth: false
+  externalLinks:
+    - title: "message.swagger"
+      path: "http://localhost:5002"
+    - title: "WkyWalking"
+      path: "http://localhost:8180"
