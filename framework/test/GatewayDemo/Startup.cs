@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Silky.Http.MiniProfiler;
 
 namespace GatewayDemo
 {
@@ -19,7 +20,7 @@ namespace GatewayDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerDocuments();
-            services.AddMiniProfiler();
+            services.AddSilkyMiniProfiler();
             services.AddDashboard();
             services.AddSilkyIdentity();
         }
@@ -31,6 +32,7 @@ namespace GatewayDemo
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwaggerDocuments();
+                app.UseMiniProfiler();
             }
 
             app.UseSilkyIdentity();
