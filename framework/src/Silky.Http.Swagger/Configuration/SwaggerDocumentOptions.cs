@@ -17,7 +17,7 @@ namespace Silky.Http.Swagger.Configuration
             Title = "Swagger UI";
             Version = "v1.0.0";
             Groups = new List<GroupDescription>();
-            RoutePrefix = "api";
+            RoutePrefix = "";
             EnableAuthorized = true;
             if (EnableAuthorized)
             {
