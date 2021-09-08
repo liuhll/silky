@@ -106,10 +106,10 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                         group.First().Router.RoutePath,
                         string.Join(",", group.Select(apiDesc => apiDesc.ServiceDescriptor.Id))));
 
-                var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
+                var serviceEntry = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
 
                 operations.Add(OperationTypeMap[httpMethod.ToString().ToUpper()],
-                    GenerateOperation(apiDescription, schemaRepository));
+                    GenerateOperation(serviceEntry, schemaRepository));
             }
 
             ;
@@ -117,24 +117,24 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             return operations;
         }
 
-        private OpenApiOperation GenerateOperation(ServiceEntry apiDescription, SchemaRepository schemaRepository)
+        private OpenApiOperation GenerateOperation(ServiceEntry serviceEntry, SchemaRepository schemaRepository)
         {
             try
             {
                 var operation = new OpenApiOperation
                 {
-                    Tags = GenerateOperationTags(apiDescription),
-                    OperationId = _options.OperationIdSelector(apiDescription),
-                    Parameters = GenerateParameters(apiDescription, schemaRepository),
-                    RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
-                    Responses = GenerateResponses(apiDescription, schemaRepository),
-                    Deprecated = apiDescription.CustomAttributes.OfType<ObsoleteAttribute>().Any()
+                    Tags = GenerateOperationTags(serviceEntry),
+                    OperationId = _options.OperationIdSelector(serviceEntry),
+                    Parameters = GenerateParameters(serviceEntry, schemaRepository),
+                    RequestBody = GenerateRequestBody(serviceEntry, schemaRepository),
+                    Responses = GenerateResponses(serviceEntry, schemaRepository),
+                    Deprecated = serviceEntry.CustomAttributes.OfType<ObsoleteAttribute>().Any()
                 };
 
 
-                var methodInfo = apiDescription.MethodInfo;
+                var methodInfo = serviceEntry.MethodInfo;
                 var filterContext =
-                    new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
+                    new OperationFilterContext(serviceEntry, _schemaGenerator, schemaRepository, methodInfo);
                 foreach (var filter in _options.OperationFilters)
                 {
                     filter.Apply(operation, filterContext);
@@ -146,12 +146,12 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             {
                 throw new SwaggerGeneratorException(
                     message:
-                    $"Failed to generate ServiceId for action - {apiDescription.ServiceDescriptor.Id}. See inner exception",
+                    $"Failed to generate ServiceId for action - {serviceEntry.ServiceDescriptor.Id}. See inner exception",
                     innerException: ex);
             }
         }
 
-        private OpenApiResponses GenerateResponses(ServiceEntry apiDescription, SchemaRepository schemaRepository)
+        private OpenApiResponses GenerateResponses(ServiceEntry serviceEntry, SchemaRepository schemaRepository)
         {
             var responses = new OpenApiResponses();
             var allResponseCodes = ResponsesCodeHelper.GetAllCodes();
@@ -159,30 +159,30 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             // {
             //     responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(serviceEntry, schemaRepository, responseCode));
             // }
-            responses.Add(((int) ResponsesCode.Success).ToString(), GenerateResponse(apiDescription, schemaRepository));
+            responses.Add(((int) ResponsesCode.Success).ToString(), GenerateResponse(serviceEntry, schemaRepository));
             return responses;
         }
 
-        private OpenApiResponse GenerateResponse(ServiceEntry apiDescription, SchemaRepository schemaRepository)
+        private OpenApiResponse GenerateResponse(ServiceEntry serviceEntry, SchemaRepository schemaRepository)
         {
             var description = ResponsesCode.Success.GetDisplay();
-            var responseContentTypes = apiDescription.SupportedResponseMediaTypes;
+            var responseContentTypes = serviceEntry.SupportedResponseMediaTypes;
             return new OpenApiResponse
             {
                 Description = description,
                 Content = responseContentTypes.ToDictionary(
                     contentType => contentType,
-                    contentType => CreateResponseMediaType(apiDescription.ReturnType, schemaRepository)
+                    contentType => CreateResponseMediaType(serviceEntry.ReturnType, schemaRepository)
                 )
             };
         }
 
 
-        private OpenApiResponse GenerateResponse(ServiceEntry apiDescription, SchemaRepository schemaRepository,
+        private OpenApiResponse GenerateResponse(ServiceEntry serviceEntry, SchemaRepository schemaRepository,
             KeyValuePair<ResponsesCode, string> responseCodeSValuePair)
         {
             var description = responseCodeSValuePair.Value;
-            var responseContentTypes = apiDescription.SupportedResponseMediaTypes;
+            var responseContentTypes = serviceEntry.SupportedResponseMediaTypes;
             if (responseCodeSValuePair.Key == ResponsesCode.Success)
             {
                 return new OpenApiResponse
@@ -190,7 +190,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                     Description = description,
                     Content = responseContentTypes.ToDictionary(
                         contentType => contentType,
-                        contentType => CreateResponseMediaType(apiDescription.ReturnType, schemaRepository)
+                        contentType => CreateResponseMediaType(serviceEntry.ReturnType, schemaRepository)
                     )
                 };
             }
@@ -216,24 +216,24 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             };
         }
 
-        private IEnumerable<string> InferResponseContentTypes(ServiceEntry apiDescription,
+        private IEnumerable<string> InferResponseContentTypes(ServiceEntry serviceEntry,
             ApiResponseType apiResponseType)
         {
-            return apiDescription.SupportedResponseMediaTypes;
+            return serviceEntry.SupportedResponseMediaTypes;
         }
 
-        private OpenApiRequestBody GenerateRequestBody(ServiceEntry apiDescription, SchemaRepository schemaRepository)
+        private OpenApiRequestBody GenerateRequestBody(ServiceEntry serviceEntry, SchemaRepository schemaRepository)
         {
             OpenApiRequestBody requestBody = null;
             RequestBodyFilterContext filterContext = null;
-            var bodyParameter = apiDescription.ParameterDescriptors
+            var bodyParameter = serviceEntry.ParameterDescriptors
                 .FirstOrDefault(paramDesc => paramDesc.From == ParameterFrom.Body);
 
-            var formParameters = apiDescription.ParameterDescriptors
+            var formParameters = serviceEntry.ParameterDescriptors
                 .Where(paramDesc => paramDesc.From == ParameterFrom.Form);
             if (bodyParameter != null)
             {
-                requestBody = GenerateRequestBodyFromBodyParameter(apiDescription, schemaRepository, bodyParameter);
+                requestBody = GenerateRequestBodyFromBodyParameter(serviceEntry, schemaRepository, bodyParameter);
 
                 filterContext = new RequestBodyFilterContext(
                     bodyParameterDescription: bodyParameter,
@@ -243,7 +243,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             }
             else if (formParameters.Any())
             {
-                requestBody = GenerateRequestBodyFromFormParameters(apiDescription, schemaRepository, formParameters);
+                requestBody = GenerateRequestBodyFromFormParameters(serviceEntry, schemaRepository, formParameters);
 
                 filterContext = new RequestBodyFilterContext(
                     bodyParameterDescription: null,
@@ -263,10 +263,10 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             return requestBody;
         }
 
-        private OpenApiRequestBody GenerateRequestBodyFromFormParameters(ServiceEntry apiDescription,
+        private OpenApiRequestBody GenerateRequestBodyFromFormParameters(ServiceEntry serviceEntry,
             SchemaRepository schemaRepository, IEnumerable<ParameterDescriptor> formParameters)
         {
-            var contentTypes = InferRequestContentTypes(apiDescription);
+            var contentTypes = InferRequestContentTypes(serviceEntry);
             contentTypes = contentTypes.Any() ? contentTypes : new[] {"multipart/form-data"};
             var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
             return new OpenApiRequestBody
@@ -340,10 +340,10 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             };
         }
 
-        private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(ServiceEntry apiDescription,
+        private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(ServiceEntry serviceEntry,
             SchemaRepository schemaRepository, ParameterDescriptor bodyParameter)
         {
-            var contentTypes = InferRequestContentTypes(apiDescription);
+            var contentTypes = InferRequestContentTypes(serviceEntry);
             var isRequired =
                 bodyParameter.Type.CustomAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
             var schema = GenerateSchema(
@@ -365,23 +365,23 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             };
         }
 
-        private IEnumerable<string> InferRequestContentTypes(ServiceEntry apiDescription)
+        private IEnumerable<string> InferRequestContentTypes(ServiceEntry serviceEntry)
         {
-            var explicitContentTypes = apiDescription.CustomAttributes.OfType<ConsumesAttribute>()
+            var explicitContentTypes = serviceEntry.CustomAttributes.OfType<ConsumesAttribute>()
                 .SelectMany(attr => attr.ContentTypes)
                 .Distinct();
             if (explicitContentTypes.Any()) return explicitContentTypes;
-            var apiExplorerContentTypes = apiDescription.SupportedRequestMediaTypes
+            var apiExplorerContentTypes = serviceEntry.SupportedRequestMediaTypes
                 .Distinct();
             if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
 
             return Enumerable.Empty<string>();
         }
 
-        private IList<OpenApiParameter> GenerateParameters(ServiceEntry apiDescription,
+        private IList<OpenApiParameter> GenerateParameters(ServiceEntry serviceEntry,
             SchemaRepository schemaRespository)
         {
-            var applicableApiParameters = apiDescription.ParameterDescriptors
+            var applicableApiParameters = serviceEntry.ParameterDescriptors
                 .Where(apiParam =>
                     apiParam.From == ParameterFrom.Path ||
                     apiParam.From == ParameterFrom.Query ||

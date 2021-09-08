@@ -6,7 +6,7 @@ using Silky.Swagger.SwaggerGen.Filters;
 using Silky.Swagger.SwaggerGen.SchemaGenerator;
 using Silky.Swagger.SwaggerGen.SwaggerGenerator;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.ApiDescriptions;
+using Microsoft.Extensions.serviceEntrys;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
             services.TryAddTransient<IOperationFilter, AddServiceKeyOperationFilter>();
-            // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
+            // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.serviceEntry.Server package.
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 
             if (setupAction != null) services.ConfigureSwaggerGen(setupAction);

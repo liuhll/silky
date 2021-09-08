@@ -7,7 +7,7 @@ namespace Silky.Swagger.SwaggerGen.Filters
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (context.ApiDescription.MultipleServiceKey)
+            if (context.ServiceEntry.MultipleServiceKey)
             {
                 operation.Parameters.Add(new OpenApiParameter()
                 {

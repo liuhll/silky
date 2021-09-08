@@ -32,7 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="predicate">
-        /// A lambda that returns true/false based on document name and ApiDescription
+        /// A lambda that returns true/false based on document name and serviceEntry
         /// </param>
         public static void DocInclusionPredicate(
             this SwaggerGenOptions swaggerGenOptions,

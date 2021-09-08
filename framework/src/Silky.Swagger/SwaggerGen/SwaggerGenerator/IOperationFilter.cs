@@ -12,18 +12,18 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
     public class OperationFilterContext
     {
         public OperationFilterContext(
-            ServiceEntry apiDescription,
+            ServiceEntry serviceEntry,
             ISchemaGenerator schemaRegistry,
             SchemaRepository schemaRepository,
             MethodInfo methodInfo)
         {
-            ApiDescription = apiDescription;
+            ServiceEntry = serviceEntry;
             SchemaGenerator = schemaRegistry;
             SchemaRepository = schemaRepository;
             MethodInfo = methodInfo;
         }
 
-        public ServiceEntry ApiDescription { get; }
+        public ServiceEntry ServiceEntry { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
 
