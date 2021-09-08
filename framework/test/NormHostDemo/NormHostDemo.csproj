@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Silky.Apollo\Silky.Apollo.csproj" />
       <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
       <ProjectReference Include="..\..\src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
       <ProjectReference Include="..\..\src\Silky.Agent.GeneralHost\Silky.Agent.GeneralHost.csproj" />
@@ -20,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1" />
       <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
         <PrivateAssets>all</PrivateAssets>
