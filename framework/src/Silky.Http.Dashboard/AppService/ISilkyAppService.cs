@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Http.Dashboard.AppService.Dtos;
-using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.ServiceDiscovery;
@@ -13,7 +12,7 @@ namespace Silky.Http.Dashboard.AppService
     [ServiceRoute]
     public interface ISilkyAppService
     {
-        IReadOnlyCollection<GetApplicationOutput> GetApplications();
+        PagedList<GetApplicationOutput> GetApplications(PagedRequestDto input);
 
         [HttpGet("application/{appName:string}/detail")]
         GetDetailApplicationOutput GetApplicationDetail(string appName);
@@ -49,5 +48,6 @@ namespace Silky.Http.Dashboard.AppService
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
 
         IReadOnlyCollection<GetProfileOutput> GetProfiles();
+        
     }
 }

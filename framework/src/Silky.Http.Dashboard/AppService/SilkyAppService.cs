@@ -68,7 +68,7 @@ namespace Silky.Http.Dashboard.AppService
             _registryCenterOptions = registryCenterOptions.Value;
         }
 
-        public IReadOnlyCollection<GetApplicationOutput> GetApplications()
+        public PagedList<GetApplicationOutput> GetApplications(PagedRequestDto input)
         {
             var serviceRoutes = _serviceRouteCache.ServiceRoutes;
             var hosts = serviceRoutes.GroupBy(p => p.ServiceDescriptor.HostName)
@@ -83,7 +83,7 @@ namespace Silky.Http.Dashboard.AppService
                     AppServiceCount = p.GroupBy(p => p.ServiceDescriptor.AppService).Count(),
                     HasWsService = p.Any(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
                 });
-            return hosts.ToArray();
+            return hosts.ToPagedList(input.PageIndex,input.PageSize);
         }
 
         public GetDetailApplicationOutput GetApplicationDetail(string appName)
