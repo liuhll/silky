@@ -14,10 +14,13 @@ namespace Silky.Rpc.Transport.CachingIntercept
             CacheName = cacheName;
             KeyTemplete = keyTemplete;
             OnlyCurrentUserData = false;
+            CachingMethod = CachingMethod.Remove;
         }
         
         public string CacheName { get; }
         public string KeyTemplete { get; }
+        
+        public CachingMethod CachingMethod { get; }
         
         public bool OnlyCurrentUserData { get; set; }
     }

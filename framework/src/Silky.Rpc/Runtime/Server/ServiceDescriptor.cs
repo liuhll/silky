@@ -2,24 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using Silky.Core;
 
-namespace Silky.Rpc.Runtime.Server.Descriptor
+namespace Silky.Rpc.Runtime.Server
 {
     public class ServiceDescriptor
     {
         public ServiceDescriptor()
         {
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            ServiceEntries = new List<ServiceEntryDescriptor>();
         }
 
         [NotNull] public string Id { get; set; }
+
+        public string HostName { get; set; }
 
         [NotNull] public string AppService { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
 
-        public string HostName { get; set; }
+        public ICollection<ServiceEntryDescriptor> ServiceEntries { get; set; }
 
         public IDictionary<string, object> Metadatas { get; set; }
 
@@ -49,19 +51,26 @@ namespace Silky.Rpc.Runtime.Server.Descriptor
                 return false;
             }
 
-            return model.Metadatas.Count == Metadatas.Count && model.Metadatas.All(metadata =>
-            {
-                object value;
-                if (!Metadatas.TryGetValue(metadata.Key, out value))
-                    return false;
+            return model.ServiceEntries.Count == ServiceEntries.Count
+                   && model.ServiceEntries.All(se =>
+                   {
+                       var thisServiceDesc = ServiceEntries.FirstOrDefault(p => p == se);
+                       return thisServiceDesc != null;
+                   })
+                   && model.Metadatas.Count == Metadatas.Count
+                   && model.Metadatas.All(metadata =>
+                   {
+                       object value;
+                       if (!Metadatas.TryGetValue(metadata.Key, out value))
+                           return false;
 
-                if (metadata.Value == null && value == null)
-                    return true;
-                if (metadata.Value == null || value == null)
-                    return false;
+                       if (metadata.Value == null && value == null)
+                           return true;
+                       if (metadata.Value == null || value == null)
+                           return false;
 
-                return metadata.Value.Equals(value);
-            });
+                       return metadata.Value.Equals(value);
+                   });
         }
 
         public static bool operator ==(ServiceDescriptor model1, ServiceDescriptor model2)
@@ -81,7 +90,9 @@ namespace Silky.Rpc.Runtime.Server.Descriptor
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return (Id
+                    + string.Join("", Metadatas.OrderBy(p => p.Key).Select(p => p.Key + p.Value))
+                    + string.Join("", ServiceEntries.OrderBy(p => p.Id).Select(p => p.Id))).GetHashCode();
         }
 
         #endregion

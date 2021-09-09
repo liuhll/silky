@@ -9,11 +9,9 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Rpc.Address;
-using Silky.Rpc.AppServices;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
-using Silky.Rpc.Runtime.Server.Descriptor;
 using Silky.Rpc.Runtime.Server.Parameter;
 
 namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
@@ -120,31 +118,21 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         {
             var serviceName = serviceType.Name;
             var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
-            var serviceId = _serviceIdGenerator.GenerateServiceId(method);
+            var serviceEntryId = _serviceIdGenerator.GenerateServiceEntryId(method);
+            var serviceId = _serviceIdGenerator.GenerateServiceId(serviceType);
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
             if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
             {
                 throw new SilkyException("It is not allowed to specify multiple HashKey");
             }
             Debug.Assert(method.DeclaringType != null);
-            var serviceDescriptor = new ServiceDescriptor
+            var serviceDescriptor = new ServiceEntryDescriptor()
             {
-                Id = serviceId,
+                Id = serviceEntryId,
+                ServiceId = _serviceIdGenerator.GenerateServiceId(serviceType),
                 ServiceProtocol = ServiceProtocol.Tcp,
-                AppService = method.DeclaringType.FullName
             };
-            if (isLocal)
-            {
-                if (serviceDescriptor.AppService != typeof(IRpcAppService).FullName)
-                {
-                    serviceDescriptor.HostName = EngineContext.Current.HostName;
-                }
-                else
-                {
-                    serviceDescriptor.HostName = typeof(IRpcAppService).Name;
-                }
-            }
-
+            
             var metaDatas = method.GetCustomAttributes<MetadataAttribute>();
 
             foreach (var metaData in metaDatas)
@@ -155,6 +143,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             var serviceEntry = new ServiceEntry(router,
                 serviceDescriptor,
                 serviceType,
+                serviceId,
                 method,
                 parameterDescriptors,
                 routeTemplateProvider,

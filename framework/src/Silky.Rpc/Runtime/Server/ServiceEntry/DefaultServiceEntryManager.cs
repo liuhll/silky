@@ -11,12 +11,12 @@ namespace Silky.Rpc.Runtime.Server
         private IEnumerable<ServiceEntry> m_localServiceEntries;
         private IEnumerable<ServiceEntry> m_allServiceEntries;
 
-        public DefaultServiceEntryManager(IEnumerable<IServiceEntryProvider> providers)
+        public DefaultServiceEntryManager(IEnumerable<IServiceProvider> providers)
         {
             UpdateEntries(providers);
         }
 
-        private void UpdateEntries(IEnumerable<IServiceEntryProvider> providers)
+        private void UpdateEntries(IEnumerable<IServiceProvider> providers)
         {
             var allServiceEntries = new List<ServiceEntry>();
             foreach (var provider in providers)
@@ -24,9 +24,10 @@ namespace Silky.Rpc.Runtime.Server
                 var entries = provider.GetEntries();
                 foreach (var entry in entries)
                 {
-                    if (allServiceEntries.Any(p => p.ServiceDescriptor.Id == entry.ServiceDescriptor.Id))
+                    if (allServiceEntries.Any(p => p.ServiceEntryDescriptor.Id == entry.ServiceEntryDescriptor.Id))
                     {
-                        throw new InvalidOperationException($"Locally contains multiple service entries with Id: {entry.ServiceDescriptor.Id}");
+                        throw new InvalidOperationException(
+                            $"Locally contains multiple service entries with Id: {entry.ServiceEntryDescriptor.Id}");
                     }
 
                     allServiceEntries.Add(entry);
@@ -35,7 +36,8 @@ namespace Silky.Rpc.Runtime.Server
 
             if (allServiceEntries.GroupBy(p => p.Router).Any(p => p.Count() > 1))
             {
-                throw new SilkyException("There is duplicate routing information, please check the service routing you set");
+                throw new SilkyException(
+                    "There is duplicate routing information, please check the service routing you set");
             }
 
             m_allServiceEntries = allServiceEntries;
@@ -52,17 +54,25 @@ namespace Silky.Rpc.Runtime.Server
             return m_allServiceEntries.ToImmutableList();
         }
 
+        public IReadOnlyCollection<ServiceEntry> GetServiceEntries(string serviceId)
+        {
+            return m_allServiceEntries.Where(p => p.ServiceId == serviceId).ToArray();
+        }
+
         public event EventHandler<ServiceEntry> OnUpdate;
 
         public void Update(ServiceEntry serviceEntry)
         {
             m_allServiceEntries = m_allServiceEntries
-                .Where(p => !p.ServiceDescriptor.Id.Equals(serviceEntry.ServiceDescriptor.Id)).Append(serviceEntry);
+                .Where(p => !p.ServiceEntryDescriptor.Id.Equals(serviceEntry.ServiceEntryDescriptor.Id))
+                .Append(serviceEntry);
             if (serviceEntry.IsLocal)
             {
                 m_localServiceEntries = m_localServiceEntries
-                    .Where(p => !p.ServiceDescriptor.Id.Equals(serviceEntry.ServiceDescriptor.Id)).Append(serviceEntry);
+                    .Where(p => !p.ServiceEntryDescriptor.Id.Equals(serviceEntry.ServiceEntryDescriptor.Id))
+                    .Append(serviceEntry);
             }
+
             OnUpdate?.Invoke(this, serviceEntry);
         }
     }

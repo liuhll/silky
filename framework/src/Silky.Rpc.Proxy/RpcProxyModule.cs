@@ -19,7 +19,7 @@ namespace Silky.Rpc.Proxy
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             var serviceEntryServiceTypes =
-                ServiceEntryHelper.FindServiceEntryProxyTypes(EngineContext.Current.TypeFinder);
+                ServiceEntryHelper.FindServiceProxyTypes(EngineContext.Current.TypeFinder);
             foreach (var serviceEntryServiceType in serviceEntryServiceTypes)
             {
                 AddAServiceEntryClientProxy(services, serviceEntryServiceType);

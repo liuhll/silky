@@ -18,7 +18,6 @@ using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
-using Silky.Rpc.Runtime.Server.Descriptor;
 using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Transport.CachingIntercept;
 
@@ -27,21 +26,26 @@ namespace Silky.Rpc.Runtime.Server
     public class ServiceEntry
     {
         private readonly ObjectMethodExecutor _methodExecutor;
+
         private readonly Type _serviceType;
+        private readonly string _serviceId;
 
         public bool FailoverCountIsDefaultValue { get; private set; }
 
         public bool MultipleServiceKey { get; private set; }
 
-        public string Id => ServiceDescriptor.Id;
+        public string Id => ServiceEntryDescriptor.Id;
+
+        public string ServiceId => _serviceId;
 
         public Type ServiceType => _serviceType;
 
         public ObjectMethodExecutor MethodExecutor => _methodExecutor;
 
         internal ServiceEntry(IRouter router,
-            ServiceDescriptor serviceDescriptor,
+            ServiceEntryDescriptor serviceEntryDescriptor,
             Type serviceType,
+            string serviceId,
             MethodInfo methodInfo,
             IReadOnlyList<ParameterDescriptor> parameterDescriptors,
             IRouteTemplateProvider routeTemplateProvider,
@@ -49,9 +53,10 @@ namespace Silky.Rpc.Runtime.Server
             GovernanceOptions governanceOptions)
         {
             Router = router;
-            ServiceDescriptor = serviceDescriptor;
+            ServiceEntryDescriptor = serviceEntryDescriptor;
             ParameterDescriptors = parameterDescriptors;
             _serviceType = serviceType;
+            _serviceId = serviceId;
             IsLocal = isLocal;
 
             MultipleServiceKey = routeTemplateProvider.MultipleServiceKey;
@@ -239,7 +244,7 @@ namespace Silky.Rpc.Runtime.Server
                 return remoteServiceExecutor.Execute(this, parameters, key);
             };
 
-        public ServiceDescriptor ServiceDescriptor { get; }
+        public ServiceEntryDescriptor ServiceEntryDescriptor { get; }
 
 
         public ICachingInterceptProvider GetCachingInterceptProvider =>

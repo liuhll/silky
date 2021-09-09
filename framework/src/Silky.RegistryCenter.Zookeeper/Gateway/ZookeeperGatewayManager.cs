@@ -31,7 +31,7 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
         private readonly ISerializer _serializer;
         private readonly RegistryCenterOptions _registryCenterOptions;
         private readonly GatewayCache _gatewayCache;
-        private readonly IServiceEntryManager _serviceEntryManager;
+        private readonly IServiceManager _serviceManager;
 
         private ConcurrentDictionary<(string, IZookeeperClient), GatewayWatcher> m_gatewayWatchers = new();
 
@@ -44,12 +44,12 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
             ISerializer serializer,
             GatewayCache gatewayCache,
             IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
-            IServiceEntryManager serviceEntryManager)
+            IServiceManager serviceManager)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
             _serializer = serializer;
             _gatewayCache = gatewayCache;
-            _serviceEntryManager = serviceEntryManager;
+            _serviceManager = serviceManager;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
 
             Logger = NullLogger<ZookeeperGatewayManager>.Instance;
@@ -276,11 +276,10 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
 
         private GatewayDescriptor CreateGatewayDescriptor(AddressDescriptor addressDescriptor)
         {
-            var allServiceEntries = _serviceEntryManager.GetAllEntries();
-            var appServices = allServiceEntries.GroupBy(p => p.ServiceDescriptor.AppService).Select(p => p.Key);
+            var appServices =  _serviceManager.GetAllService();
             var gatewayServiceDescriptor = new GatewayDescriptor()
             {
-                SupportServices = appServices,
+                SupportServices = appServices.Select(p=> p.ServiceId),
                 Addresses = new[] { addressDescriptor },
                 HostName = EngineContext.Current.HostName
             };

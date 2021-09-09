@@ -25,7 +25,7 @@ namespace Silky.Rpc.Runtime.Server
         /// </summary>
         /// <param name="method">本地方法信息。</param>
         /// <returns>对应方法的唯一服务Id。</returns>
-        public string GenerateServiceId([NotNull] MethodInfo method)
+        public string GenerateServiceEntryId([NotNull] MethodInfo method)
         {
             Check.NotNull(method, nameof(method));
             var type = method.DeclaringType;
@@ -46,6 +46,12 @@ namespace Silky.Rpc.Runtime.Server
 
             Logger.LogDebug($"Generate serviceId {id} for method {method.DeclaringType?.FullName}.{method.Name}");
             return m_serviceIdCache.GetOrAdd(method, id);
+        }
+
+        public string GenerateServiceId(Type serviceType)
+        {
+            Check.NotNull(serviceType, nameof(serviceType));
+            return serviceType.FullName;
         }
     }
 }

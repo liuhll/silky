@@ -101,7 +101,7 @@ namespace Silky.Rpc.Routing
 
 
             var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
-            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.ServiceDescriptor.Id,
+            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.Service.Id,
                 serviceRoute, (id, _) => serviceRoute);
 
             Logger.LogDebug(
@@ -112,12 +112,12 @@ namespace Silky.Rpc.Routing
                 _healthCheck.Monitor(address);
             }
 
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceRouteDescriptor.ServiceDescriptor.Id);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceRouteDescriptor.Service.Id);
             if (serviceEntry != null)
             {
                 if (serviceEntry.FailoverCountIsDefaultValue)
                 {
-                    serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.AddressDescriptors.Count();
+                    serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.Addresses.Count();
                     _serviceEntryManager.Update(serviceEntry);
                 }
             }

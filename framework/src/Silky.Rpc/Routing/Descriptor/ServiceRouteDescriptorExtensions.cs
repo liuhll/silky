@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using Silky.Rpc.Address;
 using Silky.Rpc.Address.Descriptor;
 
 namespace Silky.Rpc.Routing.Descriptor
@@ -11,8 +9,8 @@ namespace Silky.Rpc.Routing.Descriptor
         {
             var serviceRoute = new ServiceRoute()
             {
-                ServiceDescriptor = serviceRouteDescriptor.ServiceDescriptor,
-                Addresses = serviceRouteDescriptor.AddressDescriptors.Select(p => p.ConvertToAddressModel()).ToArray()
+                ServiceDescriptor = serviceRouteDescriptor.Service,
+                Addresses = serviceRouteDescriptor.Addresses.Select(p => p.ConvertToAddressModel()).ToArray()
             };
             return serviceRoute;
         }

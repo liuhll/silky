@@ -3,8 +3,10 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IServiceEntryProvider : ITransientDependency
+    public interface IServiceProvider : ITransientDependency
     {
         IReadOnlyList<ServiceEntry> GetEntries();
+
+        IReadOnlyCollection<ServiceInfo> GetServices();
     }
 }

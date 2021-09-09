@@ -1,6 +1,6 @@
 namespace Silky.Rpc.Runtime.Server
 {
-    public static class ServiceEntryConstant
+    public static class ServiceConstant
     {
         public const string AuthorKey = "Author";
 
