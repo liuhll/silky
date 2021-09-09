@@ -44,6 +44,13 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             {
                 services.Add(_serviceGenerator.CreateService(serviceTypeInfo));
             }
+            
+            var wsServiceTypes = ServiceEntryHelper.FindServiceLocalWsEntryTypes(_typeFinder);
+            foreach (var wsServiceType in wsServiceTypes)
+            {
+                services.Add(_serviceGenerator.CreateWsService(wsServiceType));
+            }
+            
             return services;
         }
     }

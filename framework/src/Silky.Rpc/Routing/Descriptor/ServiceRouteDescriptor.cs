@@ -14,10 +14,11 @@ namespace Silky.Rpc.Routing.Descriptor
         }
 
         public ServiceDescriptor Service { get; set; }
-
+        
         public IEnumerable<AddressDescriptor> Addresses { get; set; } = new List<AddressDescriptor>();
 
         public long TimeStamp { get; set; }
         
+        public double ProcessorTime { get; set; }
     }
 }

@@ -51,13 +51,7 @@ namespace Silky.Rpc.Routing
 
 
         public abstract Task CreateSubscribeServiceRouteDataChanges();
-
-        public abstract Task CreateWsSubscribeDataChanges(Type[] wsAppType);
-
-        public void UpdateRegistryCenterOptions(RegistryCenterOptions options)
-        {
-            _registryCenterOptions = options;
-        }
+        
         
         public abstract Task EnterRoutes();
 
@@ -66,43 +60,15 @@ namespace Silky.Rpc.Routing
             await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
         }
 
-        public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
+        public virtual async Task RegisterRpcRoutes(AddressDescriptor addressDescriptor, ServiceProtocol serviceProtocol)
         {
-            var hostAddr = NetUtil.GetRpcAddressModel();
+          
             var localServices = _serviceManager.GetLocalService()
                 .Where(p => p.ServiceProtocol == serviceProtocol);
-            var serviceRouteDescriptors = localServices.Select(p => p.CreateLocalRouteDescriptor());
-            await RegisterRoutes(serviceRouteDescriptors, hostAddr.Descriptor);
+            var serviceRouteDescriptors = localServices.Select(p => p.CreateLocalRouteDescriptor(addressDescriptor));
+            await RegisterRoutes(serviceRouteDescriptors, addressDescriptor);
         }
-
-        public virtual async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort)
-        {
-            await CreateWsSubscribeDataChanges(wsAppServiceTypes);
-            var hostAddr = NetUtil.GetAddressModel(wsPort, ServiceProtocol.Ws);
-            var serviceRouteDescriptors = wsAppServiceTypes.Select(p =>
-            {
-                var wsPath = WebSocketResolverHelper.ParseWsPath(p);
-                var serviceRouteDescriptor = new ServiceRouteDescriptor()
-                {
-                    Service = new ServiceDescriptor()
-                    {
-                        Id = WebSocketResolverHelper.Generator(wsPath),
-                        ServiceProtocol = ServiceProtocol.Ws,
-                        Service = p.FullName,
-                        Application = EngineContext.Current.HostName,
-                    },
-                    Addresses = new[]
-                    {
-                        hostAddr.Descriptor
-                    },
-                };
-                serviceRouteDescriptor.Service.Metadatas[ServiceConstant.WsPath] = wsPath;
-                return serviceRouteDescriptor;
-            });
-
-            await RegisterRoutes(serviceRouteDescriptors, hostAddr.Descriptor);
-        }
-
+        
         protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
             AddressDescriptor addressDescriptor)
         {

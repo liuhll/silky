@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Silky.Core;
+using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
 {
@@ -27,6 +28,21 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             return serviceInfo;
         }
 
+        public ServiceInfo CreateWsService(Type wsServiceType)
+        {
+            var wsPath = WebSocketResolverHelper.ParseWsPath(wsServiceType);
+            var serviceId = WebSocketResolverHelper.Generator(wsPath);
+            var serviceInfo = new ServiceInfo()
+            {
+                ServiceId = serviceId,
+                ServiceType = wsServiceType,
+                IsLocal = true,
+                ServiceProtocol = ServiceProtocol.Ws
+            };
+            serviceInfo.ServiceDescriptor = CreateServiceDescriptor(serviceInfo);
+            return serviceInfo;
+        }
+
         private ServiceDescriptor CreateServiceDescriptor(ServiceInfo serviceInfo)
         {
             var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
@@ -36,11 +52,16 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
                 Id = serviceInfo.ServiceId,
                 Service = serviceInfo.ServiceType.Name,
                 Application = EngineContext.Current.HostName,
-                ServiceEntries = serviceEntryManager.GetServiceEntries(serviceInfo.ServiceId)
-                    .Select(p => p.ServiceEntryDescriptor).ToArray(),
             };
-            var metaDatas = serviceInfo.ServiceType.GetCustomAttributes<MetadataAttribute>();
-            foreach (var metaData in metaDatas)
+
+            if (serviceInfo.ServiceProtocol == ServiceProtocol.Tcp)
+            {
+                serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(serviceInfo.ServiceId)
+                    .Select(p => p.ServiceEntryDescriptor).ToArray();
+            }
+
+            var metaDataList = serviceInfo.ServiceType.GetCustomAttributes<MetadataAttribute>();
+            foreach (var metaData in metaDataList)
             {
                 serviceDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
             }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Rpc.Gateway;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Routing
 {
@@ -25,15 +26,16 @@ namespace Silky.Rpc.Routing
             Logger = NullLogger<DefaultServiceRouteProvider>.Instance;
         }
 
-        public async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
+        public async Task RegisterRpcRoutes(ServiceProtocol serviceProtocol)
         {
-            await _serviceRouteManager.RegisterRpcRoutes(processorTime, serviceProtocol);
+            var hostAddress = NetUtil.GetRpcAddressModel();
+            await _serviceRouteManager.RegisterRpcRoutes(hostAddress.Descriptor, serviceProtocol);
         }
 
-        public async Task RegisterWsRoutes(double processorTime, Type[] wsAppServiceTypes, int wsPort)
+        public async Task RegisterWsRoutes(int wsPort)
         {
-            await _serviceRouteManager.RegisterWsRoutes(processorTime, wsAppServiceTypes, wsPort);
+            var hostAddress = NetUtil.GetAddressModel(wsPort, ServiceProtocol.Ws);
+            await _serviceRouteManager.RegisterRpcRoutes(hostAddress.Descriptor, ServiceProtocol.Ws);
         }
-        
     }
 }

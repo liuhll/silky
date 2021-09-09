@@ -72,7 +72,6 @@ namespace Silky.Rpc.Utils
 
         public static IAddressModel GetAddressModel(int port, ServiceProtocol serviceProtocol)
         {
-            var rpcOptions = EngineContext.Current.Resolve<IOptions<RpcOptions>>().Value;
             string host = GetHostAddress(GetAnyHostAddress());
             var address = new AddressModel(host, port, serviceProtocol);
             return address;
