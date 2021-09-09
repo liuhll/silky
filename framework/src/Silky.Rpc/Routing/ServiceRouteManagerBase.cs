@@ -9,7 +9,6 @@ using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.Descriptor;
 using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Routing
@@ -17,17 +16,17 @@ namespace Silky.Rpc.Routing
     public abstract class ServiceRouteManagerBase : IServiceRouteManager
     {
         protected readonly ServiceRouteCache _serviceRouteCache;
-        protected readonly IServiceEntryManager _serviceEntryManager;
+        protected readonly IServiceManager _serviceManager;
         protected RegistryCenterOptions _registryCenterOptions;
         protected RpcOptions _rpcOptions;
 
         protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
-            IServiceEntryManager serviceEntryManager,
+            IServiceManager serviceManager,
             IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
             IOptionsMonitor<RpcOptions> rpcOptions)
         {
             _serviceRouteCache = serviceRouteCache;
-            _serviceEntryManager = serviceEntryManager;
+            _serviceManager = serviceManager;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
 
             _rpcOptions = rpcOptions.CurrentValue;
@@ -39,7 +38,7 @@ namespace Silky.Rpc.Routing
             {
                 foreach (var descriptor in descriptors)
                 {
-                    await RemoveUnHealthServiceRoute(descriptor.ServiceDescriptor.Id, addressModel);
+                    await RemoveUnHealthServiceRoute(descriptor.Service.Id, addressModel);
                 }
             };
             _serviceRouteCache.OnRemoveServiceRoute += async (serviceId, addressModel) =>
@@ -70,9 +69,9 @@ namespace Silky.Rpc.Routing
         public virtual async Task RegisterRpcRoutes(double processorTime, ServiceProtocol serviceProtocol)
         {
             var hostAddr = NetUtil.GetRpcAddressModel();
-            var localServiceEntries = _serviceEntryManager.GetLocalEntries()
-                .Where(p => p.ServiceDescriptor.ServiceProtocol == serviceProtocol);
-            var serviceRouteDescriptors = localServiceEntries.Select(p => p.CreateLocalRouteDescriptor());
+            var localServices = _serviceManager.GetLocalService()
+                .Where(p => p.ServiceProtocol == serviceProtocol);
+            var serviceRouteDescriptors = localServices.Select(p => p.CreateLocalRouteDescriptor());
             await RegisterRoutes(serviceRouteDescriptors, hostAddr.Descriptor);
         }
 
@@ -85,19 +84,19 @@ namespace Silky.Rpc.Routing
                 var wsPath = WebSocketResolverHelper.ParseWsPath(p);
                 var serviceRouteDescriptor = new ServiceRouteDescriptor()
                 {
-                    ServiceDescriptor = new ServiceDescriptor()
+                    Service = new ServiceDescriptor()
                     {
                         Id = WebSocketResolverHelper.Generator(wsPath),
                         ServiceProtocol = ServiceProtocol.Ws,
                         AppService = p.FullName,
                         HostName = EngineContext.Current.HostName,
                     },
-                    AddressDescriptors = new[]
+                    Addresses = new[]
                     {
                         hostAddr.Descriptor
                     },
                 };
-                serviceRouteDescriptor.ServiceDescriptor.Metadatas[ServiceEntryConstant.WsPath] = wsPath;
+                serviceRouteDescriptor.Service.Metadatas[ServiceConstant.WsPath] = wsPath;
                 return serviceRouteDescriptor;
             });
 

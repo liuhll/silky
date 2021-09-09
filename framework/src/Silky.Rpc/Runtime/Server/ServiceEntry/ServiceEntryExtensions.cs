@@ -8,7 +8,6 @@ using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.MethodExecutor;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Runtime.Session;
@@ -19,20 +18,7 @@ namespace Silky.Rpc.Runtime.Server
 {
     public static class ServiceEntryExtensions
     {
-        public static ServiceRouteDescriptor CreateLocalRouteDescriptor(this ServiceEntry serviceEntry)
-        {
-            if (!serviceEntry.IsLocal)
-            {
-                throw new SilkyException("Only allow local service entries to generate routing descriptors");
-            }
-
-            return new ServiceRouteDescriptor()
-            {
-                ServiceDescriptor = serviceEntry.ServiceDescriptor,
-                AddressDescriptors = new[]
-                    {NetUtil.GetRpcAddressModel().Descriptor},
-            };
-        }
+        
 
 
         public static string GetHashKeyValue(this ServiceEntry serviceEntry, object[] parameterValues)

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Silky.Core.Utils;
 using Silky.Rpc.Address.Descriptor;
-using Silky.Rpc.Runtime.Server.Descriptor;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing.Descriptor
 {
@@ -13,9 +13,9 @@ namespace Silky.Rpc.Routing.Descriptor
             TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
         }
 
-        public ServiceDescriptor ServiceDescriptor { get; set; }
+        public ServiceDescriptor Service { get; set; }
 
-        public IEnumerable<AddressDescriptor> AddressDescriptors { get; set; } = new List<AddressDescriptor>();
+        public IEnumerable<AddressDescriptor> Addresses { get; set; } = new List<AddressDescriptor>();
 
         public long TimeStamp { get; set; }
         

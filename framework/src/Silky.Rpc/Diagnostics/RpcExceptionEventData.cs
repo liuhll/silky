@@ -6,7 +6,8 @@ namespace Silky.Rpc.Diagnostics
     public class RpcExceptionEventData
     {
         public string MessageId { get; set; }
-        public string ServiceId { get; set; }
+        
+        public string ServiceEntryId { get; set; }
 
         public StatusCode StatusCode { get; set; }
 

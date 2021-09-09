@@ -43,7 +43,7 @@ namespace Silky.Http.Swagger.Builders
         private static IEnumerable<Assembly> ReadInterfaceAssemblies()
         {
             return ServiceEntryHelper
-                .FindAllServiceEntryTypes(EngineContext.Current.TypeFinder).Select(p => p.Item1)
+                .FindAllServiceTypes(EngineContext.Current.TypeFinder).Select(p => p.Item1)
                 .Where(p => !p.Assembly.FullName.Contains(RpcAppService))
                 .GroupBy(p => p.Assembly)
                 .Select(p => p.Key);
@@ -221,7 +221,7 @@ namespace Silky.Http.Swagger.Builders
                 return true;
             }
 
-            return serviceEntry.ServiceDescriptor.Id.Contains(currentGroup);
+            return serviceEntry.ServiceEntryDescriptor.Id.Contains(currentGroup);
         }
 
 

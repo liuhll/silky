@@ -42,7 +42,7 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             serviceEntry = _serviceEntryManager.GetAllEntries()
-                .FirstOrDefault(p => p.ServiceDescriptor.Id == serviceId);
+                .FirstOrDefault(p => p.ServiceEntryDescriptor.Id == serviceId);
             if (serviceEntry != null)
             {
                 _serviceEntryCache.UpdateServiceEntryCache(serviceEntry);
@@ -59,7 +59,7 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             serviceEntry = _serviceEntryManager.GetLocalEntries()
-                .FirstOrDefault(p => p.ServiceDescriptor.Id == serviceId);
+                .FirstOrDefault(p => p.ServiceEntryDescriptor.Id == serviceId);
             if (serviceEntry != null)
             {
                 _serviceEntryCache.UpdateLocalServiceEntryCache(serviceEntry);

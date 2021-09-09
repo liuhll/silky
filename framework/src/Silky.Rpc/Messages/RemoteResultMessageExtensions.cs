@@ -26,7 +26,7 @@ namespace Silky.Rpc.Messages
                 return result;
             }
 
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteResultMessage.ServiceId);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteResultMessage.ServiceEntryId);
             result = remoteResultMessage.Result.GetType() == serviceEntry.ReturnType
                 ? remoteResultMessage.Result
                 : _typeConvertibleService.Convert(remoteResultMessage.Result, serviceEntry.ReturnType);

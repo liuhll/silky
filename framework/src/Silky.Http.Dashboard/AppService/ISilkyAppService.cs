@@ -13,6 +13,8 @@ namespace Silky.Http.Dashboard.AppService
     public interface ISilkyAppService
     {
         PagedList<GetApplicationOutput> GetApplications(PagedRequestDto input);
+        
+        IReadOnlyCollection<GetApplicationOutput> GetAllApplications();
 
         [HttpGet("application/{appName:string}/detail")]
         GetDetailApplicationOutput GetApplicationDetail(string appName);

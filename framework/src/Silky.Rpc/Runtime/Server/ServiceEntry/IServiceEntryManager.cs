@@ -10,6 +10,8 @@ namespace Silky.Rpc.Runtime.Server
         
         IReadOnlyList<ServiceEntry> GetAllEntries();
 
+        IReadOnlyCollection<ServiceEntry> GetServiceEntries(string serviceId);
+
         void Update(ServiceEntry serviceEntry);
 
         event EventHandler<ServiceEntry> OnUpdate;

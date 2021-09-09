@@ -6,5 +6,7 @@
         string KeyTemplete { get; }
 
         bool OnlyCurrentUserData { get; set; }
+        
+        CachingMethod CachingMethod { get; }
     }
 }

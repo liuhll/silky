@@ -96,7 +96,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                     throw new SwaggerGeneratorException(string.Format(
                         "Ambiguous HTTP method for action - {0}. " +
                         "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
-                        group.First().ServiceDescriptor.Id));
+                        group.First().ServiceEntryDescriptor.Id));
 
                 if (group.Count() > 1 && _options.ConflictingActionsResolver == null)
                     throw new SwaggerGeneratorException(string.Format(
@@ -104,7 +104,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                         "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
                         httpMethod,
                         group.First().Router.RoutePath,
-                        string.Join(",", group.Select(apiDesc => apiDesc.ServiceDescriptor.Id))));
+                        string.Join(",", group.Select(apiDesc => apiDesc.ServiceEntryDescriptor.Id))));
 
                 var serviceEntry = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
 
@@ -146,7 +146,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             {
                 throw new SwaggerGeneratorException(
                     message:
-                    $"Failed to generate ServiceId for action - {serviceEntry.ServiceDescriptor.Id}. See inner exception",
+                    $"Failed to generate ServiceId for action - {serviceEntry.ServiceEntryDescriptor.Id}. See inner exception",
                     innerException: ex);
             }
         }

@@ -6,7 +6,7 @@ namespace Silky.Rpc.Messages
     {
         public string ExceptionMessage { get; set; }
 
-        public string ServiceId { get; set; }
+        public string ServiceEntryId { get; set; }
 
         public StatusCode StatusCode { get; set; } = StatusCode.Success;
 

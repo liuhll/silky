@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Silky.Core;
 
@@ -6,16 +5,16 @@ namespace Silky.Rpc.Address.Selector
 {
     public class AddressSelectContext
     {
-        public AddressSelectContext([NotNull] string serviceId, [NotNull] IAddressModel[] addressModels,string hash = null)
+        public AddressSelectContext([NotNull] string serviceEntryId, [NotNull] IAddressModel[] addressModels,string hash = null)
         {
-            Check.NotNullOrEmpty(serviceId, nameof(serviceId));
+            Check.NotNullOrEmpty(serviceEntryId, nameof(serviceEntryId));
             Check.NotNull(addressModels, nameof(addressModels));
-            ServiceId = serviceId;
+            ServiceEntryId = serviceEntryId;
             AddressModels = addressModels;
             Hash = hash;
         }
 
-        [NotNull] public string ServiceId { get; }
+        [NotNull] public string ServiceEntryId { get; }
 
         public string Hash { get; }
 

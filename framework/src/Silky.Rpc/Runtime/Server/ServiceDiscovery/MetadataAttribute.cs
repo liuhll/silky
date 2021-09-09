@@ -4,7 +4,7 @@ using Silky.Core;
 
 namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Interface, AllowMultiple = true)]
     public class MetadataAttribute : Attribute
     {
         public string Key { get; private set; }

@@ -78,7 +78,7 @@ namespace Silky.Rpc.Runtime.Client
             var transportMessage = new TransportMessage(message);
             var tracingTimestamp = TracingBefore(message, transportMessage.Id);
             var callbackTask =
-                RegisterResultCallbackAsync(transportMessage.Id, message.ServiceId, tracingTimestamp, timeout);
+                RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, tracingTimestamp, timeout);
             await _messageSender.SendAndFlushAsync(transportMessage);
             return await callbackTask;
         }
@@ -115,7 +115,7 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    ServiceId = message.ServiceId,
+                    ServiceEntryId = message.ServiceEntryId,
                     Message = message,
                     RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress).ToString(),
                     IsGateWay = RpcContext.Context.IsGateway(),
@@ -139,7 +139,7 @@ namespace Silky.Rpc.Runtime.Client
                 var eventData = new RpcResultEventData()
                 {
                     MessageId = messageId,
-                    ServiceId = serviceId,
+                    ServiceEntryId = serviceId,
                     Result = remoteResultMessage.Result,
                     StatusCode = remoteResultMessage.StatusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
@@ -160,7 +160,7 @@ namespace Silky.Rpc.Runtime.Client
                 var eventData = new RpcExceptionEventData()
                 {
                     MessageId = messageId,
-                    ServiceId = serviceId,
+                    ServiceEntryId = serviceId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
                     RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress).ToString(),

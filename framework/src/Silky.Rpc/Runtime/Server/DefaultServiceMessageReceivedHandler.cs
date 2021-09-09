@@ -35,10 +35,10 @@ namespace Silky.Rpc.Runtime.Server
             var tracingTimestamp = TracingBefore(message, messageId);
 
             var serviceEntry =
-                _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceId);
+                _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
             var remoteResultMessage = new RemoteResultMessage()
             {
-                ServiceId = serviceEntry?.Id
+                ServiceEntryId = serviceEntry?.Id
             };
             var isHandleSuccess = true;
             try
@@ -46,7 +46,7 @@ namespace Silky.Rpc.Runtime.Server
                 if (serviceEntry == null)
                 {
                     throw new NotFindLocalServiceEntryException(
-                        $"Failed to get local service entry through service id {message.ServiceId}");
+                        $"Failed to get local service entry through serviceEntryId {message.ServiceEntryId}");
                 }
 
                 var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
@@ -62,7 +62,7 @@ namespace Silky.Rpc.Runtime.Server
 
                 remoteResultMessage.Result = result;
                 remoteResultMessage.StatusCode = StatusCode.Success;
-                TracingAfter(tracingTimestamp, messageId, message.ServiceId, remoteResultMessage);
+                TracingAfter(tracingTimestamp, messageId, message.ServiceEntryId, remoteResultMessage);
             }
             catch (Exception e)
             {
@@ -70,7 +70,7 @@ namespace Silky.Rpc.Runtime.Server
                 remoteResultMessage.ExceptionMessage = e.GetExceptionMessage();
                 remoteResultMessage.StatusCode = e.GetExceptionStatusCode();
                 remoteResultMessage.ValidateErrors = e.GetValidateErrors().ToArray();
-                TracingError(tracingTimestamp, messageId, message.ServiceId, e.GetExceptionStatusCode(), e);
+                TracingError(tracingTimestamp, messageId, message.ServiceEntryId, e.GetExceptionStatusCode(), e);
             }
             finally
             {
@@ -98,7 +98,7 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    ServiceId = message.ServiceId,
+                    ServiceEntryId = message.ServiceEntryId,
                     Message = message,
                     RemoteAddress = remoteAddress,
                     IsGateWay = RpcContext.Context.IsGateway(),
@@ -122,7 +122,7 @@ namespace Silky.Rpc.Runtime.Server
                 var eventData = new RpcResultEventData()
                 {
                     MessageId = messageId,
-                    ServiceId = serviceId,
+                    ServiceEntryId = serviceId,
                     Result = remoteResultMessage.Result,
                     StatusCode = remoteResultMessage.StatusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
@@ -143,7 +143,7 @@ namespace Silky.Rpc.Runtime.Server
                 var eventData = new RpcExceptionEventData()
                 {
                     MessageId = messageId,
-                    ServiceId = serviceId,
+                    ServiceEntryId = serviceId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
                     RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress).ToString(),

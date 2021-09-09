@@ -9,7 +9,6 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Rpc;
-using Silky.Core.Utils;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Http.Dashboard.Configuration;
 using Silky.Rpc.Address.Descriptor;
@@ -21,7 +20,7 @@ using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.Descriptor;
+using Silky.Rpc.Transport.CachingIntercept;
 using Silky.Rpc.Utils;
 
 namespace Silky.Http.Dashboard.AppService
@@ -40,7 +39,7 @@ namespace Silky.Http.Dashboard.AppService
         private const string ipEndpointRegex =
             @"([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])";
 
-        private const string getInstanceSupervisorServiceId =
+        private const string getInstanceSupervisorServiceEntryId =
             "Silky.Rpc.AppServices.IRpcAppService.GetInstanceDetail";
 
         private const string getGetServiceEntrySupervisorServiceHandle =
@@ -69,6 +68,11 @@ namespace Silky.Http.Dashboard.AppService
 
         public PagedList<GetApplicationOutput> GetApplications(PagedRequestDto input)
         {
+            return GetAllApplications().ToPagedList(input.PageIndex, input.PageSize);
+        }
+
+        public IReadOnlyCollection<GetApplicationOutput> GetAllApplications()
+        {
             var serviceRoutes = _serviceRouteCache.ServiceRoutes;
             var hosts = serviceRoutes.GroupBy(p => p.ServiceDescriptor.HostName)
                 .Where(p => p.Key != typeof(IRpcAppService).Name)
@@ -82,7 +86,7 @@ namespace Silky.Http.Dashboard.AppService
                     AppServiceCount = p.GroupBy(p => p.ServiceDescriptor.AppService).Count(),
                     HasWsService = p.Any(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
                 });
-            return hosts.ToPagedList(input.PageIndex, input.PageSize);
+            return hosts.ToArray();
         }
 
         public GetDetailApplicationOutput GetApplicationDetail(string appName)
@@ -108,7 +112,7 @@ namespace Silky.Http.Dashboard.AppService
                                 AppService = p.ServiceDescriptor.AppService,
                                 ServiceId = p.ServiceDescriptor.Id,
                                 MultipleServiceKey = se.MultipleServiceKey,
-                                Author = se.ServiceDescriptor.GetAuthor(),
+                                Author = se.ServiceEntryDescriptor.GetAuthor(),
                                 WebApi = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.RoutePath,
                                 HttpMethod = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.HttpMethod,
                                 ProhibitExtranet = se.GovernanceOptions.ProhibitExtranet,
@@ -223,8 +227,7 @@ namespace Silky.Http.Dashboard.AppService
                     var serviceEntryOutput = new GetServiceEntryOutput()
                     {
                         ServiceId = p.Id,
-                        Author = p.ServiceDescriptor.GetAuthor(),
-                        AppService = p.ServiceDescriptor.AppService,
+                        Author = p.ServiceEntryDescriptor.GetAuthor(),
                         Application = serviceRoute?.ServiceDescriptor.HostName,
                         WebApi = p.GovernanceOptions.ProhibitExtranet ? "" : p.Router.RoutePath,
                         HttpMethod = p.GovernanceOptions.ProhibitExtranet ? null : p.Router.HttpMethod,
@@ -239,10 +242,10 @@ namespace Silky.Http.Dashboard.AppService
                     return serviceEntryOutput;
                 }).Where(p => !p.Application.IsNullOrEmpty())
                 .WhereIf(!input.Application.IsNullOrEmpty(), p => input.Application.Equals(p.Application))
-                .WhereIf(!input.AppService.IsNullOrEmpty(), p => input.AppService.Equals(p.AppService))
+                .WhereIf(!input.ServiceId.IsNullOrEmpty(), p => input.ServiceId.Equals(p.ServiceId))
                 .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceId.Contains(input.Name))
                 .WhereIf(input.IsEnable.HasValue, p => p.IsEnable == input.IsEnable)
-                .OrderBy(p => p.Application).ThenBy(p => p.AppService);
+                .OrderBy(p => p.Application).ThenBy(p => p.ServiceId);
 
             return serviceEntryOutputs.ToPagedList(input.PageIndex, input.PageSize);
         }
@@ -260,8 +263,7 @@ namespace Silky.Http.Dashboard.AppService
             var serviceEntryOutput = new GetServiceEntryDetailOutput()
             {
                 ServiceId = serviceEntry.Id,
-                Author = serviceEntry.ServiceDescriptor.GetAuthor(),
-                AppService = serviceEntry.ServiceDescriptor.AppService,
+                Author = serviceEntry.ServiceEntryDescriptor.GetAuthor(),
                 Application = serviceRoute?.ServiceDescriptor.HostName,
                 WebApi = serviceEntry.GovernanceOptions.ProhibitExtranet ? "" : serviceEntry.Router.RoutePath,
                 HttpMethod = serviceEntry.GovernanceOptions.ProhibitExtranet ? null : serviceEntry.Router.HttpMethod,
@@ -272,6 +274,12 @@ namespace Silky.Http.Dashboard.AppService
                            serviceRoute.Addresses.Any(p => SocketCheck.TestConnection(p.Address, p.Port)),
                 ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0,
                 GovernanceOptions = serviceEntry.GovernanceOptions,
+                CacheTemplates = serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().Select(p=> new ServiceEntryCacheTemplateOutput()
+                {
+                    KeyTemplete = p.KeyTemplete,
+                    OnlyCurrentUserData = p.OnlyCurrentUserData,
+                    CachingMethod = p.CachingMethod
+                }).ToArray(),
                 IsDistributeTransaction = serviceEntry.IsTransactionServiceEntry()
             };
 
@@ -349,9 +357,9 @@ namespace Silky.Http.Dashboard.AppService
 
             RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
 
-            if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceId, out var serviceEntry))
+            if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceEntryId, out var serviceEntry))
             {
-                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
+                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceEntryId}");
             }
 
             var result =
@@ -487,7 +495,7 @@ namespace Silky.Http.Dashboard.AppService
                 Code = "ServiceEntry",
                 Title = "服务条目",
                 Count = _serviceEntryManager.GetAllEntries()
-                    .Select(p => p.ServiceDescriptor.Id).Distinct().Count()
+                    .Select(p => p.ServiceEntryDescriptor.Id).Distinct().Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
             {

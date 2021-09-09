@@ -38,13 +38,13 @@ namespace Silky.Rpc.Runtime.Server
 
         public void UpdateLocalServiceEntryCache(ServiceEntry serviceEntry)
         {
-            _localServiceEntriesCache.AddOrUpdate(serviceEntry.ServiceDescriptor.Id, serviceEntry,
+            _localServiceEntriesCache.AddOrUpdate(serviceEntry.ServiceEntryDescriptor.Id, serviceEntry,
                 (k, _) => serviceEntry);
         }
 
         public void UpdateServiceEntryCache(ServiceEntry serviceEntry)
         {
-            _allServiceEntriesCache.AddOrUpdate(serviceEntry.ServiceDescriptor.Id, serviceEntry,
+            _allServiceEntriesCache.AddOrUpdate(serviceEntry.ServiceEntryDescriptor.Id, serviceEntry,
                 (k, _) => serviceEntry);
             if (serviceEntry.IsLocal)
             {
@@ -52,7 +52,7 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             var requestServiceCache = _requestServiceEntriesCache.FirstOrDefault(p =>
-                p.Value.ServiceDescriptor.Id.Equals(serviceEntry.ServiceDescriptor.Id));
+                p.Value.ServiceEntryDescriptor.Id.Equals(serviceEntry.ServiceEntryDescriptor.Id));
             _requestServiceEntriesCache.TryRemove(requestServiceCache.Key, out var value);
         }
 

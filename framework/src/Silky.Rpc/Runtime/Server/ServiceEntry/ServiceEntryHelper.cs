@@ -27,7 +27,7 @@ namespace Silky.Rpc.Runtime.Server
             return types;
         }
 
-        public static IEnumerable<(Type, bool)> FindAllServiceEntryTypes(ITypeFinder typeFinder)
+        public static IEnumerable<(Type, bool)> FindAllServiceTypes(ITypeFinder typeFinder)
         {
             var entryTypes = new List<(Type, bool)>();
             var exportedTypes = typeFinder.GetAssemblies()
@@ -49,9 +49,9 @@ namespace Silky.Rpc.Runtime.Server
             return entryTypes;
         }
 
-        public static IEnumerable<Type> FindServiceEntryProxyTypes(ITypeFinder typeFinder)
+        public static IEnumerable<Type> FindServiceProxyTypes(ITypeFinder typeFinder)
         {
-            var proxyTypes = FindAllServiceEntryTypes(typeFinder).Where(p => !p.Item2)
+            var proxyTypes = FindAllServiceTypes(typeFinder).Where(p => !p.Item2)
                 .Select(p => p.Item1);
             return proxyTypes;
         }

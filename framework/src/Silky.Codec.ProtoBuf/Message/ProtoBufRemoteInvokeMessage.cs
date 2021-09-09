@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Silky.Rpc.Messages;
 using ProtoBuf;
+using ProtoBuf.Meta;
 
 namespace Silky.Codec.Message
 {
@@ -33,6 +34,7 @@ namespace Silky.Codec.Message
         public ProtoBufRemoteInvokeMessage(RemoteInvokeMessage remoteInvokeMessage)
         {
             ServiceId = remoteInvokeMessage.ServiceId;
+            ServiceEntryId = remoteInvokeMessage.ServiceEntryId;
             Parameters = remoteInvokeMessage.Parameters?.Select(i => new DynamicItem(i)).ToArray();
             Attachments = remoteInvokeMessage.Attachments?.Select(i => new ParameterItem(i)).ToArray();
         }
@@ -42,17 +44,19 @@ namespace Silky.Codec.Message
         }
 
 
-        [ProtoMember(1)] public string ServiceId { get; set; }
+        [ProtoMember(1)] public string ServiceEntryId { get; set; }
 
-        [ProtoMember(2)] public DynamicItem[] Parameters { get; set; }
+        [ProtoMember(2)] public string ServiceId { get; set; }
+        
+        [ProtoMember(3)] public DynamicItem[] Parameters { get; set; }
 
-        [ProtoMember(3)] public ParameterItem[] Attachments { get; set; }
+        [ProtoMember(4)] public ParameterItem[] Attachments { get; set; }
 
         public RemoteInvokeMessage GetMessage()
         {
             return new()
             {
-                ServiceId = ServiceId,
+                ServiceEntryId = ServiceEntryId,
                 Parameters = Parameters?.Select(i => i.Get()).ToArray(),
                 Attachments = Attachments?.ToDictionary(i => i.Key, i => i.Value?.Get()),
             };

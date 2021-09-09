@@ -62,7 +62,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 
         private string DefaultOperationIdSelector(ServiceEntry serviceEntry)
         {
-            return serviceEntry.ServiceDescriptor.Id;
+            return serviceEntry.ServiceEntryDescriptor.Id;
         }
 
         private IList<string> DefaultTagsSelector(ServiceEntry serviceEntry)

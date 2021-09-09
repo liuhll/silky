@@ -43,7 +43,7 @@ namespace Silky.Http.Core.Middlewares
                 RpcContext.Context.SetAttachment(AttachmentKeys.Path, path.ToString());
                 RpcContext.Context.SetAttachment(AttachmentKeys.HttpMethod, method.ToString());
                 await EngineContext.Current
-                    .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceDescriptor.ServiceProtocol.ToString())
+                    .ResolveNamed<IMessageReceivedHandler>(serviceEntry.ServiceEntryDescriptor.ServiceProtocol.ToString())
                     .Handle(context, serviceEntry);
             }
             else
