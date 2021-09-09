@@ -46,12 +46,13 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         private ServiceDescriptor CreateServiceDescriptor(ServiceInfo serviceInfo)
         {
             var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
+            var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(serviceInfo.ServiceType);
             var serviceDescriptor = new ServiceDescriptor()
             {
                 ServiceProtocol = serviceInfo.ServiceProtocol,
                 Id = serviceInfo.ServiceId,
                 Service = serviceInfo.ServiceType.Name,
-                Application = EngineContext.Current.HostName,
+                Application = serviceBundleProvider.Application
             };
 
             if (serviceInfo.ServiceProtocol == ServiceProtocol.Tcp)
@@ -64,6 +65,12 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             foreach (var metaData in metaDataList)
             {
                 serviceDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
+            }
+
+            if (serviceInfo.ServiceProtocol == ServiceProtocol.Ws)
+            {
+                serviceDescriptor.Metadatas.Add(ServiceConstant.WsPath,
+                    WebSocketResolverHelper.ParseWsPath(serviceInfo.ServiceType));
             }
 
             return serviceDescriptor;

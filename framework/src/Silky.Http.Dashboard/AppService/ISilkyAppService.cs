@@ -9,7 +9,7 @@ using GetInstanceDetailOutput = Silky.Rpc.AppServices.Dtos.GetInstanceDetailOutp
 
 namespace Silky.Http.Dashboard.AppService
 {
-    [ServiceRoute]
+    [ServiceRoute(Application = "Dashboard")]
     public interface ISilkyAppService
     {
         PagedList<GetApplicationOutput> GetApplications(PagedRequestDto input);
@@ -35,8 +35,8 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("serviceentry/{serviceEntryId:string}/detail")]
         GetServiceEntryDetailOutput GetServiceEntryDetail(string serviceEntryId);
 
-        [HttpGet("serviceentry/{serviceId:string}/routes")]
-        PagedList<GetServiceEntryRouteOutput> GetServiceEntryRoutes(string serviceId, int pageIndex = 1,
+        [HttpGet("serviceentry/{serviceEntryId:string}/routes")]
+        PagedList<GetServiceEntryRouteOutput> GetServiceEntryRoutes(string serviceEntryId, int pageIndex = 1,
             int pageSize = 10);
 
 

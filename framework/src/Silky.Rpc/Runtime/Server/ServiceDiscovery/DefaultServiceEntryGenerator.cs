@@ -130,6 +130,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             var serviceDescriptor = new ServiceEntryDescriptor()
             {
                 Id = serviceEntryId,
+                Service = serviceType.Name,
                 ServiceId = serviceId,
                 ServiceProtocol = ServiceProtocol.Tcp,
                 Application = routeTemplateProvider.Application

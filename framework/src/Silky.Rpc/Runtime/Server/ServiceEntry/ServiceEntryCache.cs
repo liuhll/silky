@@ -21,14 +21,14 @@ namespace Silky.Rpc.Runtime.Server
             _serviceEntryManager.OnUpdate += (sender, entry) => { UpdateServiceEntryCache(entry); };
         }
 
-        public bool TryGetLocalServiceEntry(string serviceId, out ServiceEntry serviceEntry)
+        public bool TryGetLocalServiceEntry(string serviceEntryId, out ServiceEntry serviceEntry)
         {
-            return _localServiceEntriesCache.TryGetValue(serviceId, out serviceEntry);
+            return _localServiceEntriesCache.TryGetValue(serviceEntryId, out serviceEntry);
         }
 
-        public bool TryGetServiceEntry(string serviceId, out ServiceEntry serviceEntry)
+        public bool TryGetServiceEntry(string serviceEntryId, out ServiceEntry serviceEntry)
         {
-            return _allServiceEntriesCache.TryGetValue(serviceId, out serviceEntry);
+            return _allServiceEntriesCache.TryGetValue(serviceEntryId, out serviceEntry);
         }
 
         public bool TryGetRequestServiceEntry((string, HttpMethod) requestApi, out ServiceEntry serviceEntry)

@@ -6,7 +6,7 @@ using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Silky.Rpc.AppServices
 {
-    [ServiceRoute]
+    [ServiceRoute(Application = "Rpc")]
     public interface IRpcAppService
     {
         [Governance(ProhibitExtranet = true)]
