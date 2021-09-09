@@ -59,9 +59,9 @@ namespace Silky.Rpc.Runtime.Client
             {
                 item.Item2.MakeFusing(governanceOptions.FuseSleepDuration);
                 Logger.LogWarning(
-                    $"ServiceId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
+                    $"ServiceEntryId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
                 throw new OverflowException(
-                    $"ServiceId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
+                    $"ServiceEntryId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
             }
 
             serviceInvokeInfo.ConcurrentRequests++;
@@ -125,7 +125,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 var serviceEntryInvokeInfo = new ServiceEntryInvokeInfo()
                 {
-                    ServiceId = monitor.Key.Item1,
+                    ServiceEntryId = monitor.Key.Item1,
                     Address = monitor.Key.Item2.IPEndPoint.ToString(),
                     ServiceInvokeInfo = monitor.Value,
                     IsEnable = _healthCheck.IsHealth(monitor.Key.Item2)
@@ -133,7 +133,7 @@ namespace Silky.Rpc.Runtime.Client
                 serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
             }
 
-            return serviceEntryInvokeInfos.OrderBy(p=> p.ServiceId).ToArray();
+            return serviceEntryInvokeInfos.OrderBy(p=> p.ServiceEntryId).ToArray();
         }
     }
 }

@@ -146,7 +146,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             {
                 throw new SwaggerGeneratorException(
                     message:
-                    $"Failed to generate ServiceId for action - {serviceEntry.ServiceEntryDescriptor.Id}. See inner exception",
+                    $"Failed to generate ServiceEntryId for action - {serviceEntry.ServiceEntryDescriptor.Id}. See inner exception",
                     innerException: ex);
             }
         }

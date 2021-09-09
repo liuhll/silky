@@ -4,7 +4,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
 {
     public class SilkyTags
     {
-        public static readonly string RPC_SERVICEID = "Rpc.ServiceId";
+        public static readonly string RPC_SERVICEID = "Rpc.ServiceEntryId";
         public static readonly string RPC_PARAMETERS = "Rpc.Parameters";
         public static readonly string RPC_LOCAL_ADDRESS = "Rpc.LocalAddress";
         

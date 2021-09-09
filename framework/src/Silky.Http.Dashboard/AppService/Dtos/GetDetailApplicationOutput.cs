@@ -34,6 +34,8 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public string Service { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
         public string ServiceId { get; set; }
+        
+        public string ServiceEntryId { get; set; }
 
         public string Method { get; set; }
 
@@ -46,5 +48,6 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public bool ProhibitExtranet { get; set; }
 
         public string Author { get; set; }
+        
     }
 }

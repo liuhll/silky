@@ -116,6 +116,7 @@ namespace Silky.Http.Dashboard.AppService
                                     ServiceProtocol = se.ServiceEntryDescriptor.ServiceProtocol,
                                     Service = se.ServiceEntryDescriptor.Service,
                                     ServiceId = se.ServiceEntryDescriptor.ServiceId,
+                                    ServiceEntryId = se.ServiceEntryDescriptor.Id,
                                     MultipleServiceKey = se.MultipleServiceKey,
                                     Author = se.ServiceEntryDescriptor.GetAuthor(),
                                     WebApi = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.RoutePath,
@@ -233,7 +234,8 @@ namespace Silky.Http.Dashboard.AppService
                         _serviceRouteCache.GetServiceRoute(p.ServiceId);
                     var serviceEntryOutput = new GetServiceEntryOutput()
                     {
-                        ServiceId = p.Id,
+                        ServiceId = p.ServiceId,
+                        ServiceEntryId = p.Id,
                         Author = p.ServiceEntryDescriptor.GetAuthor(),
                         Application = serviceRoute?.ServiceDescriptor.Application,
                         WebApi = p.GovernanceOptions.ProhibitExtranet ? "" : p.Router.RoutePath,
@@ -250,6 +252,7 @@ namespace Silky.Http.Dashboard.AppService
                 }).Where(p => !p.Application.IsNullOrEmpty())
                 .WhereIf(!input.Application.IsNullOrEmpty(), p => input.Application.Equals(p.Application))
                 .WhereIf(!input.ServiceId.IsNullOrEmpty(), p => input.ServiceId.Equals(p.ServiceId))
+                .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => input.ServiceEntryId.Equals(p.ServiceEntryId))
                 .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceId.Contains(input.Name))
                 .WhereIf(input.IsEnable.HasValue, p => p.IsEnable == input.IsEnable)
                 .OrderBy(p => p.Application).ThenBy(p => p.ServiceId);
@@ -315,6 +318,7 @@ namespace Silky.Http.Dashboard.AppService
                     var serviceEntryInstance = new GetServiceEntryRouteOutput()
                     {
                         ServiceId = serviceEntry.ServiceId,
+                        ServiceEntryId = serviceEntry.Id,
                         Address = address.IPEndPoint.ToString(),
                         IsEnable = address.Enabled,
                         IsHealth = SocketCheck.TestConnection(address.IPEndPoint),
@@ -334,6 +338,7 @@ namespace Silky.Http.Dashboard.AppService
                         var serviceEntryInstance = new GetServiceEntryRouteOutput()
                         {
                             ServiceId = serviceEntry.ServiceId,
+                            ServiceEntryId = serviceEntry.Id,
                             Address = address.IPEndPoint.ToString(),
                             IsEnable = address.Enabled,
                             IsHealth = SocketCheck.TestConnection(address.Address, address.Port),

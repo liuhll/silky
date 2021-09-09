@@ -87,14 +87,14 @@ namespace Silky.Rpc.Runtime.Server
             {
                 var serviceEntryInvokeInfo =  new ServiceEntryHandleInfo()
                 {
-                    ServiceId = monitor.Key.Item1,
+                    ServiceEntryId = monitor.Key.Item1,
                     Address = monitor.Key.Item2,
                     ServiceHandleInfo = monitor.Value
                 };
                 serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
             }
 
-            return serviceEntryInvokeInfos.OrderBy(p=> p.ServiceId).ToArray();
+            return serviceEntryInvokeInfos.OrderBy(p=> p.ServiceEntryId).ToArray();
         }
     }
 }

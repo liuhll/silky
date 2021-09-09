@@ -7,6 +7,8 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public string Application { get; set; }
         
         public string ServiceId { get; set; }
+        
+        public string ServiceEntryId { get; set; }
 
         public bool IsEnable { get; set; }
 
