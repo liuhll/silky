@@ -57,7 +57,7 @@ namespace Silky.Rpc.Routing
                 var removeHostAddressServiceRoutes =
                     ServiceRoutes.Where(p =>
                         p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor)
-                        && p.ServiceDescriptor.HostName == removeAddressServiceRoute.ServiceDescriptor.HostName
+                        && p.ServiceDescriptor.Application == removeAddressServiceRoute.ServiceDescriptor.Application
                     );
                 var updateRegisterServiceRouteDescriptors = new List<ServiceRouteDescriptor>();
                 foreach (var removeHostAddressServiceRoute in removeHostAddressServiceRoutes)

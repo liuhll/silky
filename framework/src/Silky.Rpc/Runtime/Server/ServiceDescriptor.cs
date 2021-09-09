@@ -15,9 +15,9 @@ namespace Silky.Rpc.Runtime.Server
 
         [NotNull] public string Id { get; set; }
 
-        public string HostName { get; set; }
+        [NotNull] public string Application { get; set; }
 
-        [NotNull] public string AppService { get; set; }
+        [NotNull] public string Service { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
 

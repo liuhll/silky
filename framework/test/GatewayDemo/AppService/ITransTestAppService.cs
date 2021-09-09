@@ -7,7 +7,7 @@ using Silky.Transaction;
 namespace GatewayDemo.AppService
 {
     /// <summary>
-    /// Trans Test AppService
+    /// Trans Test Service
     /// </summary>
     [ServiceRoute(template: "test/{appservice=trans}")]
     public interface ITransTestAppService

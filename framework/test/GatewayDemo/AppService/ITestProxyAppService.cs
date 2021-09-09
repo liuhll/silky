@@ -8,10 +8,10 @@ using Silky.Rpc.Runtime.Server;
 namespace GatewayDemo.AppService
 {
     /// <summary>
-    /// Test Proxy AppService
+    /// Test Proxy Service
     /// </summary>
     [ServiceRoute(template: "test/{appservice=proxy}")]
-    [ServiceDescription("TestProxyAppService", Description = " Test Proxy AppService")]
+    [ServiceDescription("TestProxyAppService", Description = " Test Proxy Service")]
     public interface ITestProxyAppService
     {
         Task<TestOut> CreateProxy(TestInput testInput);

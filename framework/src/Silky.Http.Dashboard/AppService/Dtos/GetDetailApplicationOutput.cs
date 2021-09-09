@@ -31,7 +31,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
     public class ServiceEntryOutput
     {
-        public string AppService { get; set; }
+        public string Service { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
         public string ServiceId { get; set; }
 

@@ -13,7 +13,7 @@ namespace Silky.Http.Dashboard.AppService
     public interface ISilkyAppService
     {
         PagedList<GetApplicationOutput> GetApplications(PagedRequestDto input);
-        
+
         IReadOnlyCollection<GetApplicationOutput> GetAllApplications();
 
         [HttpGet("application/{appName:string}/detail")]
@@ -22,8 +22,9 @@ namespace Silky.Http.Dashboard.AppService
         IReadOnlyCollection<GetServiceOutput> GetServices(string appName);
 
         [HttpGet("application/{appName:string}/instances")]
-        PagedList<GetApplicationInstanceOutput> GetApplicationInstances(string appName, GetApplicationInstanceInput input);
-        
+        PagedList<GetApplicationInstanceOutput> GetApplicationInstances(string appName,
+            GetApplicationInstanceInput input);
+
         GetGatewayOutput GetGateway();
 
         [HttpGet("gateway/instances")]
@@ -31,22 +32,23 @@ namespace Silky.Http.Dashboard.AppService
 
         PagedList<GetServiceEntryOutput> GetServiceEntries(GetServiceEntryInput input);
 
-        [HttpGet("serviceentry/{serviceId:string}/detail")]
-        GetServiceEntryDetailOutput GetServiceEntryDetail(string serviceId);
+        [HttpGet("serviceentry/{serviceEntryId:string}/detail")]
+        GetServiceEntryDetailOutput GetServiceEntryDetail(string serviceEntryId);
 
         [HttpGet("serviceentry/{serviceId:string}/routes")]
         PagedList<GetServiceEntryRouteOutput> GetServiceEntryRoutes(string serviceId, int pageIndex = 1,
             int pageSize = 10);
 
+
         [HttpGet("instance/{address:string}/detail")]
         Task<GetInstanceDetailOutput> GetInstanceDetail(string address);
 
         [HttpGet("instance/{address:string}/servicehandle")]
-        Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address,PagedRequestDto input);
+        Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address, PagedRequestDto input);
 
         [HttpGet("instance/{address:string}/serviceinvoke")]
         Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address, PagedRequestDto input);
-        
+
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
 
         IReadOnlyCollection<GetProfileOutput> GetProfiles();

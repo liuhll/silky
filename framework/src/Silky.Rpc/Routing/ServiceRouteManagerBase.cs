@@ -88,8 +88,8 @@ namespace Silky.Rpc.Routing
                     {
                         Id = WebSocketResolverHelper.Generator(wsPath),
                         ServiceProtocol = ServiceProtocol.Ws,
-                        AppService = p.FullName,
-                        HostName = EngineContext.Current.HostName,
+                        Service = p.FullName,
+                        Application = EngineContext.Current.HostName,
                     },
                     Addresses = new[]
                     {

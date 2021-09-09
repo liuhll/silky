@@ -27,8 +27,6 @@ namespace Silky.Core
 
         public IHostEnvironment HostEnvironment { get; private set; }
 
-        public string AppName => GetOptionsSnapshot<AppSettingsOptions>().AppName;
-
         public string HostName { get; private set; }
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration,

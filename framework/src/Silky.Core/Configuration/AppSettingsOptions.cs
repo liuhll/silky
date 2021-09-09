@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Silky.Core.Configuration
 {
     public class AppSettingsOptions
@@ -8,7 +6,6 @@ namespace Silky.Core.Configuration
 
         public AppSettingsOptions()
         {
-            AppName = Assembly.GetEntryAssembly()?.GetName().Name;
             DisplayFullErrorStack = false;
             AutoValidationParameters = true;
         }
@@ -23,11 +20,7 @@ namespace Silky.Core.Configuration
         /// </summary>
         public bool? LogEntityFrameworkCoreSqlExecuteCommand { get; set; }
 
-        /// <summary>
-        /// 应用名称
-        /// </summary>
-        public string AppName { get; set; }
-
+        
         /// <summary>
         /// 是否自动校验输入参数
         /// </summary>

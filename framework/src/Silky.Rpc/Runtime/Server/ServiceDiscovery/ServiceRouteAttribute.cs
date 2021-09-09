@@ -1,4 +1,5 @@
 using System;
+using Silky.Core;
 using Silky.Rpc.Address;
 
 namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
@@ -11,6 +12,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         {
             Template = template;
             MultipleServiceKey = multipleServiceKey;
+            Application = EngineContext.Current.HostName;
         }
 
         public string Template { get; }
@@ -18,5 +20,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         public bool MultipleServiceKey { get; }
 
         public string ServiceName { get; set; }
+        
+        public string Application { get; set; }
     }
 }

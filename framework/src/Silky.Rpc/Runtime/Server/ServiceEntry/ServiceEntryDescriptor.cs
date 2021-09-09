@@ -14,7 +14,9 @@ namespace Silky.Rpc.Runtime.Server
         public string Id { get; set; }
         
         public string ServiceId { get; set; }
-        
+
+        public string Application { get; set; }
+
         public ServiceProtocol ServiceProtocol { get; set; }
         
         public IDictionary<string, object> Metadatas { get; set; }

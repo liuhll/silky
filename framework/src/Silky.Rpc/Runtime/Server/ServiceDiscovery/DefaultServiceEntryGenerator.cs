@@ -125,17 +125,19 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             {
                 throw new SilkyException("It is not allowed to specify multiple HashKey");
             }
+
             Debug.Assert(method.DeclaringType != null);
             var serviceDescriptor = new ServiceEntryDescriptor()
             {
                 Id = serviceEntryId,
-                ServiceId = _serviceIdGenerator.GenerateServiceId(serviceType),
+                ServiceId = serviceId,
                 ServiceProtocol = ServiceProtocol.Tcp,
+                Application = routeTemplateProvider.Application
             };
-            
-            var metaDatas = method.GetCustomAttributes<MetadataAttribute>();
 
-            foreach (var metaData in metaDatas)
+            var metaDataList = method.GetCustomAttributes<MetadataAttribute>();
+
+            foreach (var metaData in metaDataList)
             {
                 serviceDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
             }

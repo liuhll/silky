@@ -2,7 +2,6 @@ using System;
 using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Routing.Template;
 
 namespace Silky.Rpc.Address
@@ -14,6 +13,8 @@ namespace Silky.Rpc.Address
         bool MultipleServiceKey { get; }
         
         string ServiceName { get; set; }
+        
+        string Application { get; set; }
     }
 
     public static class RouteTemplateProviderExtensions

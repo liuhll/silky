@@ -34,17 +34,18 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             {
                 ServiceProtocol = serviceInfo.ServiceProtocol,
                 Id = serviceInfo.ServiceId,
-                AppService = serviceInfo.ServiceType.Name,
-                HostName = EngineContext.Current.HostName,
-               ServiceEntries = serviceEntryManager.GetServiceEntries(serviceInfo.ServiceId).Select(p=> p.ServiceEntryDescriptor).ToArray(),
+                Service = serviceInfo.ServiceType.Name,
+                Application = EngineContext.Current.HostName,
+                ServiceEntries = serviceEntryManager.GetServiceEntries(serviceInfo.ServiceId)
+                    .Select(p => p.ServiceEntryDescriptor).ToArray(),
             };
             var metaDatas = serviceInfo.ServiceType.GetCustomAttributes<MetadataAttribute>();
             foreach (var metaData in metaDatas)
             {
                 serviceDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
             }
+
             return serviceDescriptor;
         }
-        
     }
 }
