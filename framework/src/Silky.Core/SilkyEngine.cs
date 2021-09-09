@@ -4,13 +4,13 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Silky.Core.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Silky.Core.Extensions;
 using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
@@ -56,12 +56,7 @@ namespace Silky.Core
 
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
-
-        /// <summary>
-        /// 获取选项
-        /// </summary>
-        /// <typeparam name="TOptions">强类型选项类</typeparam>
-        /// <returns>TOptions</returns>
+        
         public TOptions GetOptions<TOptions>()
             where TOptions : class, new()
         {
@@ -73,12 +68,7 @@ namespace Silky.Core
         {
             return Resolve<IOptionsMonitor<TOptions>>().CurrentValue;
         }
-
-        /// <summary>
-        /// 获取选项
-        /// </summary>
-        /// <typeparam name="TOptions">强类型选项类</typeparam>
-        /// <returns>TOptions</returns>
+        
         public TOptions GetOptionsMonitor<TOptions>(Action<TOptions, string> listener)
             where TOptions : class, new()
         {
@@ -91,15 +81,10 @@ namespace Silky.Core
             return optionsMonitor?.CurrentValue;
         }
 
-        /// <summary>
-        /// 获取选项
-        /// </summary>
-        /// <typeparam name="TOptions">强类型选项类</typeparam>
-        /// <returns>TOptions</returns>
+
         public TOptions GetOptionsSnapshot<TOptions>()
             where TOptions : class, new()
         {
-            // 这里不能从根服务解析，因为是 Scoped 作用域
             return Resolve<IOptionsSnapshot<TOptions>>()?.Value;
         }
 
