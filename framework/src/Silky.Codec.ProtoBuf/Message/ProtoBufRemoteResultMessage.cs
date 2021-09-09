@@ -10,7 +10,7 @@ namespace Silky.Codec.Message
     {
         public ProtoBufRemoteResultMessage(RemoteResultMessage remoteResultMessage)
         {
-            ServiceId = remoteResultMessage.ServiceId;
+            ServiceEntryId = remoteResultMessage.ServiceEntryId;
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result == null ? null : new DynamicItem(remoteResultMessage.Result);
@@ -21,7 +21,7 @@ namespace Silky.Codec.Message
         {
         }
 
-        [ProtoMember(1)] public string ServiceId { get; set; }
+        [ProtoMember(1)] public string ServiceEntryId { get; set; }
         [ProtoMember(2)] public string ExceptionMessage { get; set; }
 
         [ProtoMember(3)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
@@ -34,7 +34,7 @@ namespace Silky.Codec.Message
         {
             return new()
             {
-                ServiceId = ServiceId,
+                ServiceEntryId = ServiceEntryId,
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
                 Result = Result?.Get(),

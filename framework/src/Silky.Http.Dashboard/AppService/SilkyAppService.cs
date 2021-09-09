@@ -39,7 +39,7 @@ namespace Silky.Http.Dashboard.AppService
         private const string ipEndpointRegex =
             @"([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])";
 
-        private const string getInstanceSupervisorServiceId =
+        private const string getInstanceSupervisorServiceEntryId =
             "Silky.Rpc.AppServices.IRpcAppService.GetInstanceDetail";
 
         private const string getGetServiceEntrySupervisorServiceHandle =
@@ -357,9 +357,9 @@ namespace Silky.Http.Dashboard.AppService
 
             RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
 
-            if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceId, out var serviceEntry))
+            if (!_serviceEntryCache.TryGetServiceEntry(getInstanceSupervisorServiceEntryId, out var serviceEntry))
             {
-                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceId}");
+                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceEntryId}");
             }
 
             var result =

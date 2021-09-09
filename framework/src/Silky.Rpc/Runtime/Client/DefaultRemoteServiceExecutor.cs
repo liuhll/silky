@@ -24,7 +24,8 @@ namespace Silky.Rpc.Runtime.Client
         {
             var remoteInvokeMessage = new RemoteInvokeMessage()
             {
-                ServiceId = serviceEntry.ServiceEntryDescriptor.Id,
+                ServiceEntryId = serviceEntry.ServiceEntryDescriptor.Id,
+                ServiceId = serviceEntry.ServiceId,
                 Parameters = parameters,
             };
             string hashKey = null;

@@ -5,7 +5,7 @@ namespace Silky.Rpc.Diagnostics
     public class RpcResultEventData
     {
         public string MessageId { get; set; }
-        public string ServiceId { get; set; }
+        public string ServiceEntryId { get; set; }
 
         public object Result { get; set; }
 

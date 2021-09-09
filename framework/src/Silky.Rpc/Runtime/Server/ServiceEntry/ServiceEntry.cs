@@ -65,12 +65,11 @@ namespace Silky.Rpc.Runtime.Server
             (IsAsyncMethod, ReturnType) = MethodInfo.ReturnTypeInfo();
             GovernanceOptions = new ServiceEntryGovernance();
 
-            var serviceDessriptionAttr = methodInfo.DeclaringType?.GetCustomAttributes()
+            var serviceDescriptionAttribute = methodInfo.DeclaringType?.GetCustomAttributes()
                 .OfType<ServiceDescriptionAttribute>().FirstOrDefault();
-            if (serviceDessriptionAttr != null)
+            if (serviceDescriptionAttribute != null)
             {
-                GroupName = serviceDessriptionAttr.Name;
-                ServiceDescription = serviceDessriptionAttr.Description;
+                GroupName = serviceDescriptionAttribute.Name;
             }
             else
             {
@@ -209,8 +208,7 @@ namespace Silky.Rpc.Runtime.Server
         public bool IsLocal { get; }
 
         public string GroupName { get; }
-
-        public string ServiceDescription { get; }
+        
 
         public IRouter Router { get; }
 

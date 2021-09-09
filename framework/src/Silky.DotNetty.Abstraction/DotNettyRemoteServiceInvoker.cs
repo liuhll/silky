@@ -57,8 +57,8 @@ namespace Silky.DotNetty
             {
                 MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                     MiniProfileConstant.Rpc.State.FindServiceRoute,
-                    $"The service routing could not be found via {remoteInvokeMessage.ServiceId}", true);
-                throw new SilkyException($"The service routing could not be found via {remoteInvokeMessage.ServiceId}",
+                    $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}", true);
+                throw new SilkyException($"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}",
                     StatusCode.NotFindServiceRoute);
             }
 
@@ -66,9 +66,9 @@ namespace Silky.DotNetty
             {
                 MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                     MiniProfileConstant.Rpc.State.FindServiceRoute,
-                    $"No available service provider can be found via {remoteInvokeMessage.ServiceId}", true);
+                    $"No available service provider can be found via {remoteInvokeMessage.ServiceEntryId}", true);
                 throw new NotFindServiceRouteAddressException(
-                    $"No available service provider can be found via {remoteInvokeMessage.ServiceId}");
+                    $"No available service provider can be found via {remoteInvokeMessage.ServiceEntryId}");
             }
 
             var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedAddress)?.ToString();
@@ -89,7 +89,7 @@ namespace Silky.DotNetty
                 var addressSelector =
                     EngineContext.Current.ResolveNamed<IAddressSelector>(governanceOptions.ShuntStrategy.ToString());
 
-                selectedAddress = addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceId,
+                selectedAddress = addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceEntryId,
                     serviceRoute.Addresses,
                     hashKey));
             }
@@ -102,7 +102,7 @@ namespace Silky.DotNetty
             var sp = Stopwatch.StartNew();
             try
             {
-                _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceId, selectedAddress),
+                _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedAddress),
                     governanceOptions);
                 var client = await _transportClientFactory.GetClient(selectedAddress);
                 RpcContext.Context
@@ -154,7 +154,7 @@ namespace Silky.DotNetty
                 if (ex is NotFindLocalServiceEntryException ||
                     ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
                 {
-                    _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceId, selectedAddress);
+                    _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceEntryId, selectedAddress);
                     throw new NotFindLocalServiceEntryException(ex.Message);
                 }
                 throw;
@@ -164,7 +164,7 @@ namespace Silky.DotNetty
                 sp.Stop();
                 if (isInvakeSuccess)
                 {
-                    _requestServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceId, selectedAddress),
+                    _requestServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
                     MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                         MiniProfileConstant.Rpc.State.Success,
@@ -172,7 +172,7 @@ namespace Silky.DotNetty
                 }
                 else
                 {
-                    _requestServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceId, selectedAddress),
+                    _requestServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedAddress),
                         sp.Elapsed.TotalMilliseconds);
                     MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                         MiniProfileConstant.Rpc.State.Fail,

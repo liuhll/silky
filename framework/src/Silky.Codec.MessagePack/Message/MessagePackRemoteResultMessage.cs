@@ -9,7 +9,7 @@ namespace Silky.Codec.Message
     {
         public MessagePackRemoteResultMessage(RemoteResultMessage remoteResultMessage)
         {
-            ServiceId = remoteResultMessage.ServiceId;
+            ServiceEntryId = remoteResultMessage.ServiceEntryId;
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result;
@@ -20,7 +20,7 @@ namespace Silky.Codec.Message
         {
         }
 
-        [Key(1)] public string ServiceId { get; set; }
+        [Key(1)] public string ServiceEntryId { get; set; }
         [Key(2)] public string ExceptionMessage { get; set; }
 
         [Key(3)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
@@ -34,7 +34,7 @@ namespace Silky.Codec.Message
         {
             return new()
             {
-                ServiceId = ServiceId,
+                ServiceEntryId = ServiceEntryId,
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
                 Result = Result,
