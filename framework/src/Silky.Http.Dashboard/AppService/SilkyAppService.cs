@@ -60,7 +60,7 @@ namespace Silky.Http.Dashboard.AppService
             _serviceRouteCache = serviceRouteCache;
             _gatewayCache = gatewayCache;
             _serviceEntryManager = serviceEntryManager;
-    
+
             _serviceExecutor = serviceExecutor;
             _registerCenterHealthProvider = registerCenterHealthProvider;
             _serviceEntryLocator = serviceEntryLocator;
@@ -83,7 +83,8 @@ namespace Silky.Http.Dashboard.AppService
                     InstanceCount = p.Where(sr =>
                             sr.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Tcp)
                         .Max(sr => sr.Addresses.Length),
-                    ServiceEntriesCount = p.Count(),
+                    ServiceEntriesCount =
+                        p.Select(sr => _serviceEntryManager.GetServiceEntries(sr.ServiceDescriptor.Id).Count).Sum(),
                     AppServiceCount = p.GroupBy(p => p.ServiceDescriptor.ServiceName).Count(),
                     HasWsService = p.Any(p => p.ServiceDescriptor.ServiceProtocol == ServiceProtocol.Ws)
                 });
@@ -114,6 +115,7 @@ namespace Silky.Http.Dashboard.AppService
                                 var seOutput = new ServiceEntryOutput()
                                 {
                                     ServiceProtocol = se.ServiceEntryDescriptor.ServiceProtocol,
+                                    ServiceName = se.ServiceEntryDescriptor.ServiceName,
                                     ServiceId = se.ServiceEntryDescriptor.ServiceId,
                                     ServiceEntryId = se.ServiceEntryDescriptor.Id,
                                     MultipleServiceKey = se.MultipleServiceKey,
@@ -146,16 +148,21 @@ namespace Silky.Http.Dashboard.AppService
             var appServiceGroups = _serviceRouteCache.ServiceRoutes
                 .WhereIf(!appName.IsNullOrEmpty(), p => p.ServiceDescriptor.Application == appName)
                 .OrderBy(p => p.ServiceDescriptor.ServiceName).GroupBy(p =>
-                    new { HostName = p.ServiceDescriptor.Application, AppService = p.ServiceDescriptor.ServiceName, });
+                    new
+                    {
+                        HostName = p.ServiceDescriptor.Application, ServiceName = p.ServiceDescriptor.ServiceName,
+                        ServiceId = p.ServiceDescriptor.Id,
+                    });
             var services = new List<GetServiceOutput>();
             foreach (var appServiceGroup in appServiceGroups)
             {
                 services.Add(new GetServiceOutput()
                 {
-                    AppService = appServiceGroup.Key.AppService,
+                    ServiceId = appServiceGroup.Key.ServiceId,
+                    ServiceName = appServiceGroup.Key.ServiceName,
                     Application = appServiceGroup.Key.HostName,
                     InstanceCount = _serviceRouteCache.ServiceRoutes.Where(p =>
-                        p.ServiceDescriptor.ServiceName == appServiceGroup.Key.AppService
+                        p.ServiceDescriptor.ServiceName == appServiceGroup.Key.ServiceName
                         && p.ServiceDescriptor.Application == appServiceGroup.Key.HostName).Max(p => p.Addresses.Length)
                 });
             }
@@ -234,6 +241,7 @@ namespace Silky.Http.Dashboard.AppService
                     var serviceEntryOutput = new GetServiceEntryOutput()
                     {
                         ServiceId = p.ServiceId,
+                        ServiceName = p.ServiceEntryDescriptor.ServiceName,
                         ServiceEntryId = p.Id,
                         Author = p.ServiceEntryDescriptor.GetAuthor(),
                         Application = serviceRoute?.ServiceDescriptor.Application,
@@ -271,7 +279,9 @@ namespace Silky.Http.Dashboard.AppService
                 _serviceRouteCache.ServiceRoutes.FirstOrDefault(sr => sr.ServiceDescriptor.Id == serviceEntryId);
             var serviceEntryOutput = new GetServiceEntryDetailOutput()
             {
-                ServiceId = serviceEntry.Id,
+                ServiceEntryId = serviceEntry.Id,
+                ServiceId = serviceEntry.ServiceEntryDescriptor.ServiceId,
+                ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
                 Author = serviceEntry.ServiceEntryDescriptor.GetAuthor(),
                 Application = serviceRoute?.ServiceDescriptor.Application,
                 WebApi = serviceEntry.GovernanceOptions.ProhibitExtranet ? "" : serviceEntry.Router.RoutePath,
@@ -316,6 +326,7 @@ namespace Silky.Http.Dashboard.AppService
                 {
                     var serviceEntryInstance = new GetServiceEntryRouteOutput()
                     {
+                        ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
                         ServiceId = serviceEntry.ServiceId,
                         ServiceEntryId = serviceEntry.Id,
                         Address = address.IPEndPoint.ToString(),
@@ -337,6 +348,7 @@ namespace Silky.Http.Dashboard.AppService
                         var serviceEntryInstance = new GetServiceEntryRouteOutput()
                         {
                             ServiceId = serviceEntry.ServiceId,
+                            ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
                             ServiceEntryId = serviceEntry.Id,
                             Address = address.IPEndPoint.ToString(),
                             IsEnable = address.Enabled,

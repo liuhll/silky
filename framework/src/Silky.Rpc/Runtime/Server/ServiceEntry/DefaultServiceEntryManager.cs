@@ -58,7 +58,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             return m_allServiceEntries.Where(p => p.ServiceId == serviceId).ToArray();
         }
-
+        
         public ServiceEntry GetServiceEntry(string serviceEntryId)
         {
             return m_allServiceEntries.FirstOrDefault(p => p.Id == serviceEntryId);

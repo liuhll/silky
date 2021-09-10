@@ -6,6 +6,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
     {
         public string Application { get; set; }
         
+        public string ServiceName { get; set; }
         public string ServiceId { get; set; }
         
         public string ServiceEntryId { get; set; }
@@ -27,5 +28,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public string Author { get; set; }
 
         public bool IsDistributeTransaction { get; set; }
+        
+        
     }
 }

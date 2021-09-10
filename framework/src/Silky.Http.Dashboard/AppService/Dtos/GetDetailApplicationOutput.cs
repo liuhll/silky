@@ -33,6 +33,8 @@ namespace Silky.Http.Dashboard.AppService.Dtos
     {
         public ServiceProtocol ServiceProtocol { get; set; }
         
+        
+        public string ServiceName { get; set; }
         public string ServiceId { get; set; }
         
         public string ServiceEntryId { get; set; }
