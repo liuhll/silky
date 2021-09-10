@@ -5,7 +5,7 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Routing.Template;
 
-namespace Silky.Rpc.Address
+namespace Silky.Rpc.Routing
 {
     public interface IRouteTemplateProvider
     {

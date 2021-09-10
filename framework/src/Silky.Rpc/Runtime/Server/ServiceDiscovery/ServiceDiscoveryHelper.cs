@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Address;
+using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
 {
