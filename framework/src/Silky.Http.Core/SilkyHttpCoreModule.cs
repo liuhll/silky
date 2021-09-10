@@ -11,7 +11,6 @@ using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Silky.Http.Core.Handlers;
-using Silky.Rpc.Gateway;
 
 namespace Silky.Http.Core
 {
@@ -47,10 +46,6 @@ namespace Silky.Http.Core
                 throw new SilkyException(
                     $"You did not specify the dependent {registryCenterOptions.RegistryCenterType} service registry module");
             }
-
-            var gatewayManager = applicationContext.ServiceProvider.GetRequiredService<IGatewayManager>();
-            await gatewayManager.CreateSubscribeGatewayDataChanges();
-            await gatewayManager.EnterGateways();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Silky.Http.Core
                 wenSocketsApp => { wenSocketsApp.UseWebSocketsProxyMiddleware(); });
             application.UseSilkyExceptionHandler();
             application.UseSilky();
-            application.RegisterGateway();
+            application.RegisterHttpRoutes();
         }
 
         public int Order { get; } = Int32.MaxValue;

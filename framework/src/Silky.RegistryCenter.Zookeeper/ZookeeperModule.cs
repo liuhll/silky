@@ -3,7 +3,6 @@ using Silky.Core.Modularity;
 using Silky.Rpc;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Lock;
-using Silky.RegistryCenter.Zookeeper.Gateway;
 using Silky.RegistryCenter.Zookeeper.Routing;
 
 namespace Silky.RegistryCenter.Zookeeper
@@ -15,12 +14,10 @@ namespace Silky.RegistryCenter.Zookeeper
         {
             var serviceRouteManager =
                 applicationContext.ServiceProvider.GetRequiredService<ZookeeperServiceRouteManager>();
-            var gatewayManger =
-                applicationContext.ServiceProvider.GetRequiredService<ZookeeperGatewayManager>();
+
             if (serviceRouteManager != null)
             {
                 await serviceRouteManager.RemoveLocalHostServiceRoute();
-                await gatewayManger.RemoveLocalGatewayAddress();
             }
         }
     }

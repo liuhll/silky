@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Castle.Core.Internal;
 using Silky.Core;
+using Silky.Core.Extensions;
 using Silky.Rpc.Address;
 using Silky.Rpc.Utils;
 
@@ -24,7 +25,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
                 Id = _serviceIdGenerator.GenerateServiceId(serviceTypeInfo.Item1),
                 ServiceType = serviceTypeInfo.Item1,
                 IsLocal = serviceTypeInfo.Item2,
-                ServiceProtocol = ServiceProtocol.Tcp
+                ServiceProtocol = EngineContext.Current.IsContainHttpCoreModule() ? ServiceProtocol.Http : ServiceProtocol.Tcp
             };
             serviceInfo.ServiceDescriptor = CreateServiceDescriptor(serviceInfo);
             return serviceInfo;

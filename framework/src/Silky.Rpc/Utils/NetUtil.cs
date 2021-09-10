@@ -1,9 +1,14 @@
 using System;
+using System.Linq;
 using System.Net.NetworkInformation;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Microsoft.Extensions.Options;
+using Silky.Core.Exceptions;
 using Silky.Rpc.Address;
+using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime.Server;
 
@@ -28,6 +33,35 @@ namespace Silky.Rpc.Utils
             }
 
             return result;
+        }
+
+        public static AddressDescriptor GetLocalWebAddressDescriptor()
+        {
+            var server = EngineContext.Current.Resolve<IServer>();
+            Check.NotNull(server, nameof(server));
+            var address = server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
+            if (address.IsNullOrEmpty())
+            {
+                throw new SilkyException("Failed to obtain http service address");
+            }
+            var addressDescriptor = ParseAddress(address);
+            return addressDescriptor;
+        }
+        
+        private static AddressDescriptor ParseAddress(string address)
+        {
+            var addressSegments = address.Split("://");
+            var scheme = addressSegments.First();
+            var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(scheme);
+            var domainAndPort = addressSegments.Last().Split(":");
+            var domain = domainAndPort[0];
+            var port = int.Parse(domainAndPort[1]);
+            return new AddressDescriptor()
+            {
+                Address = domain,
+                Port = port,
+                ServiceProtocol = serviceProtocol
+            };
         }
 
         private static string GetAnyHostAddress()

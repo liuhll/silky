@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Modularity;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc.Gateway;
 using Silky.Rpc.MiniProfiler;
+using Silky.Rpc.Routing;
+using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Utils;
 
 namespace Silky.Http.Core.Middlewares
 {
@@ -27,66 +29,67 @@ namespace Silky.Http.Core.Middlewares
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
 
-             application.UseExceptionHandler(handler =>
+            application.UseExceptionHandler(handler =>
+            {
+                if (EngineContext.Current.Resolve<IModuleContainer>().Modules.Any(p => p.Name == "MiniProfiler"))
                 {
-                    if (EngineContext.Current.Resolve<IModuleContainer>().Modules.Any(p=> p.Name == "MiniProfiler"))
-                    {
-                        handler.UseMiniProfiler();
-                    }
-                    
-                    handler.Run(context =>
-                    {
-                        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-                        if (exception == null)
-                            return Task.CompletedTask;
-                        context.Response.ContentType = "application/json;charset=utf-8";
-                        MiniProfilerPrinter.Print("Error", "Exception", exception.Message, true);
+                    handler.UseMiniProfiler();
+                }
 
-                        if (gatewayOptions.WrapResult)
+                handler.Run(context =>
+                {
+                    var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+                    if (exception == null)
+                        return Task.CompletedTask;
+                    context.Response.ContentType = "application/json;charset=utf-8";
+                    MiniProfilerPrinter.Print("Error", "Exception", exception.Message, true);
+
+                    if (gatewayOptions.WrapResult)
+                    {
+                        var responseResultDto = new ResponseResultDto()
                         {
-                            var responseResultDto = new ResponseResultDto()
-                            {
-                                Status = exception.GetExceptionStatusCode(),
-                                ErrorMessage = exception.Message
-                            };
-                            if (exception is IHasValidationErrors)
-                            {
-                                responseResultDto.ValidErrors = ((IHasValidationErrors) exception).GetValidateErrors();
-                            }
+                            Status = exception.GetExceptionStatusCode(),
+                            ErrorMessage = exception.Message
+                        };
+                        if (exception is IHasValidationErrors)
+                        {
+                            responseResultDto.ValidErrors = ((IHasValidationErrors)exception).GetValidateErrors();
+                        }
 
-                            var responseResultData = serializer.Serialize(responseResultDto);
+                        var responseResultData = serializer.Serialize(responseResultDto);
+                        context.Response.ContentLength = responseResultData.GetBytes().Length;
+                        context.Response.StatusCode = ResponseStatusCode.Success;
+                        return context.Response.WriteAsync(responseResultData);
+                    }
+                    else
+                    {
+                        context.Response.ContentType = "text/plain";
+                        context.Response.StatusCode = exception.IsBusinessException()
+                            ? ResponseStatusCode.BadCode
+                            : exception.IsUnauthorized()
+                                ? ResponseStatusCode.Unauthorized
+                                : ResponseStatusCode.InternalServerError;
+
+                        if (exception is IHasValidationErrors)
+                        {
+                            var validateErrors = exception.GetValidateErrors();
+                            var responseResultData = serializer.Serialize(validateErrors);
                             context.Response.ContentLength = responseResultData.GetBytes().Length;
-                            context.Response.StatusCode = ResponseStatusCode.Success;
                             return context.Response.WriteAsync(responseResultData);
                         }
-                        else
-                        {
-                            context.Response.ContentType = "text/plain";
-                            context.Response.StatusCode = exception.IsBusinessException()
-                                ? ResponseStatusCode.BadCode
-                                : exception.IsUnauthorized()
-                                    ? ResponseStatusCode.Unauthorized
-                                    : ResponseStatusCode.InternalServerError;
 
-                            if (exception is IHasValidationErrors)
-                            {
-                                var validateErrors = exception.GetValidateErrors();
-                                var responseResultData = serializer.Serialize(validateErrors);
-                                context.Response.ContentLength = responseResultData.GetBytes().Length;
-                                return context.Response.WriteAsync(responseResultData);
-                            }
-
-                            context.Response.ContentLength = exception.Message.GetBytes().Length;
-                            return context.Response.WriteAsync(exception.Message);
-                        }
-                    });
+                        context.Response.ContentLength = exception.Message.GetBytes().Length;
+                        return context.Response.WriteAsync(exception.Message);
+                    }
                 });
+            });
         }
 
-        public static async void RegisterGateway(this IApplicationBuilder application)
+        public static async void RegisterHttpRoutes(this IApplicationBuilder application)
         {
-            var gatewayManager = application.ApplicationServices.GetRequiredService<IGatewayManager>();
-            await gatewayManager.RegisterGateway();
+            var gatewayManager = application.ApplicationServices.GetRequiredService<IServiceRouteManager>();
+            var webAddressDescriptor = NetUtil.GetLocalWebAddressDescriptor();
+            await gatewayManager.RegisterRpcRoutes(webAddressDescriptor, ServiceProtocol.Http);
         }
     }
 }
