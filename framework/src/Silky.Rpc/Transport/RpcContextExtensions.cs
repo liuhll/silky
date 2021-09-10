@@ -7,13 +7,24 @@ namespace Silky.Rpc.Transport
     {
         public static bool IsGateway(this RpcContext rpcContext)
         {
-            var isGateway = RpcContext.Context.GetAttachment(AttachmentKeys.IsGatewayHost);
+            var isGateway = rpcContext.GetAttachment(AttachmentKeys.IsGatewayHost);
             if (isGateway == null)
             {
                 return false;
             }
 
             return isGateway.To<bool>();
+        }
+        
+        public static string GetClientAddress(this RpcContext rpcContext)
+        {
+            var clientAddress = rpcContext.GetAttachment(AttachmentKeys.ClientAddress);
+            return clientAddress?.ToString();
+        }
+        public static string GetServerAddress(this RpcContext rpcContext)
+        {
+            var serverAddress = rpcContext.GetAttachment(AttachmentKeys.ServerAddress);
+            return serverAddress?.ToString();
         }
     }
 }

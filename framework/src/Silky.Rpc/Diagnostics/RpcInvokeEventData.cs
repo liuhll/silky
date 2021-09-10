@@ -7,11 +7,6 @@ namespace Silky.Rpc.Diagnostics
         public string MessageId { get; set; }
         public long? OperationTimestamp { get; set; }
         public string ServiceEntryId { get; set; }
-        public bool IsGateWay { get; set; }
-
         public RemoteInvokeMessage Message { get; set; }
-
-        public string RemoteAddress { get; set; }
-        public string ServiceMethodName { get; set; }
     }
 }

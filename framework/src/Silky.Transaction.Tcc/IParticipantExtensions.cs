@@ -34,12 +34,11 @@ namespace Silky.Transaction.Tcc
             {
                 if (localInvocation != null)
                 {
-                    await localInvocation.ExcuteTccMethod(methodType, RpcContext.Context.GetTransactionContext());
+                    await localInvocation.ExcuteTccMethod(methodType);
                 }
                 else if (localParticipant.Invocation != null)
                 {
-                    await localParticipant.Invocation.ExcuteTccMethod(methodType,
-                        RpcContext.Context.GetTransactionContext());
+                    await localParticipant.Invocation.ExcuteTccMethod(methodType);
                 }
                 else
                 {

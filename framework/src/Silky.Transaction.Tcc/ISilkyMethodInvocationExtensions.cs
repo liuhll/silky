@@ -11,8 +11,7 @@ namespace Silky.Transaction.Tcc
 {
     public static class SilkyMethodInvocationExtensions
     {
-        public static async Task ExcuteTccMethod(this ISilkyMethodInvocation invocation, TccMethodType tccMethodType,
-            TransactionContext context)
+        public static async Task ExcuteTccMethod(this ISilkyMethodInvocation invocation, TccMethodType tccMethodType)
         {
             var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
             Debug.Assert(serviceEntry != null);

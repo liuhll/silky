@@ -40,10 +40,11 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         [DiagnosticName(RpcDiagnosticListenerNames.BeginRpcRequest)]
         public void BeginRequest([Object] RpcInvokeEventData eventData)
         {
-            var localHost = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
+            var clientAddress = RpcContext.Context.GetClientAddress();
+            var serverAddress = RpcContext.Context.GetServerAddress();
             var context = _tracingContext.CreateExitSegmentContext($"[ClientInvoke]{eventData.ServiceEntryId}",
-                eventData.RemoteAddress,
-                new SilkyCarrierHeaderCollection(RpcContext.Context));
+                serverAddress, new SilkyCarrierHeaderCollection(RpcContext.Context));
+
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
             context.Span.Component = Components.SilkyRpc;
             context.Span.AddLog(LogEvent.Event("Rpc Client Begin Invoke"),
@@ -52,11 +53,11 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                                  $"--> MessageId:{eventData.MessageId}."));
 
             context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId.ToString());
-            context.Span.AddTag(SilkyTags.RPC_SERVIC_METHODENAME, eventData.ServiceMethodName);
             context.Span.AddTag(SilkyTags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
             context.Span.AddTag(SilkyTags.RPC_ATTACHMENTS, _serializer.Serialize(eventData.Message.Attachments));
-            context.Span.AddTag(SilkyTags.RPC_LOCAL_ADDRESS, localHost);
-            context.Span.AddTag(SilkyTags.ISGATEWAY, eventData.IsGateWay);
+            context.Span.AddTag(SilkyTags.RPC_CLIENT_ADDRESS, clientAddress);
+            context.Span.AddTag(SilkyTags.RPC_SERVER_ADDRESS, serverAddress);
+            context.Span.AddTag(SilkyTags.ISGATEWAY, RpcContext.Context.IsGateway());
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.EndRpcRequest)]
