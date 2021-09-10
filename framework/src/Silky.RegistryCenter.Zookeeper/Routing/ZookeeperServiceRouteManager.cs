@@ -100,10 +100,11 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 {
                     continue;
                 }
-
+                var applications = _serviceManager.GetAllApplications();
+              
                 var removeExceptRouteDescriptors = serviceRouteDescriptors.Where(p =>
                     p.Addresses.Any(p => p.Equals(addressDescriptor))
-                    && p.Service.Application != EngineContext.Current.HostName
+                    && !applications.Contains(p.Service.Application)
                 );
                 var lockProvider = zookeeperClient.GetSynchronizationProvider();
                 foreach (var removeExceptRouteDescriptor in removeExceptRouteDescriptors)

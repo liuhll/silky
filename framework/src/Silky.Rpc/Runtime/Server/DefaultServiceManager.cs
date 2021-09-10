@@ -44,6 +44,11 @@ namespace Silky.Rpc.Runtime.Server
             return m_allServices.ToArray();
         }
 
+        public IReadOnlyCollection<string> GetAllApplications()
+        {
+            return m_localServices.GroupBy(p => p.ServiceDescriptor.Application).Select(p => p.Key).ToArray();
+        }
+
         public bool IsLocalService(string serviceId)
         {
             return m_localServices.Any(p => p.Id == serviceId);
