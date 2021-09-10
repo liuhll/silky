@@ -24,19 +24,6 @@ namespace Silky.Rpc.Address.Selector
                 }
             };
 
-            _healthCheck.OnRemoveServiceRouteAddress += async (serviceId, addressModel) =>
-            {
-                var removeKeys = addressesPools.Where(p
-                        => p.Value.Item2.Any(q => q.Equals(addressModel))
-                           && p.Key.Contains(serviceId)
-                    )
-                    .Select(p => p.Key);
-                foreach (var removeKey in removeKeys)
-                {
-                    addressesPools.TryRemove(removeKey, out _);
-                }
-            };
-
             _healthCheck.OnUnhealth += async addressMoel =>
             {
                 var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(addressMoel)))
@@ -54,9 +41,9 @@ namespace Silky.Rpc.Address.Selector
         {
             var selectAdderessItem = (0, context.AddressModels);
             var index = 0;
-            if (addressesPools.ContainsKey(context.ServiceEntryId))
+            if (addressesPools.ContainsKey(context.MonitorId))
             {
-                selectAdderessItem = addressesPools.GetOrAdd(context.ServiceEntryId, selectAdderessItem);
+                selectAdderessItem = addressesPools.GetOrAdd(context.MonitorId, selectAdderessItem);
                 index = selectAdderessItem.Item1 >= selectAdderessItem.Item2.Count(p => p.Enabled)
                     ? 0
                     : selectAdderessItem.Item1;
@@ -65,7 +52,7 @@ namespace Silky.Rpc.Address.Selector
             var enableAddress = selectAdderessItem.Item2.Where(p => p.Enabled).ToArray();
             var selectAdderess = enableAddress[index];
             selectAdderessItem.Item1 = index + 1;
-            addressesPools.AddOrUpdate(context.ServiceEntryId, selectAdderessItem, (k, v) => selectAdderessItem);
+            addressesPools.AddOrUpdate(context.MonitorId, selectAdderessItem, (k, v) => selectAdderessItem);
             return selectAdderess;
         }
     }

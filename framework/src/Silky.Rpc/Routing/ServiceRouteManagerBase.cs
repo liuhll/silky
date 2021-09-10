@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Silky.Core;
 using Microsoft.Extensions.Options;
 using Silky.Rpc.Address;
@@ -9,24 +6,23 @@ using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Routing
 {
     public abstract class ServiceRouteManagerBase : IServiceRouteManager
     {
         protected readonly ServiceRouteCache _serviceRouteCache;
-        protected readonly IServiceManager _serviceManager;
+        protected readonly IRouteDescriptorProvider _routeDescriptorProvider;
         protected RegistryCenterOptions _registryCenterOptions;
         protected RpcOptions _rpcOptions;
 
         protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
-            IServiceManager serviceManager,
+            IRouteDescriptorProvider routeDescriptorProvider,
             IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
             IOptionsMonitor<RpcOptions> rpcOptions)
         {
             _serviceRouteCache = serviceRouteCache;
-            _serviceManager = serviceManager;
+            _routeDescriptorProvider = routeDescriptorProvider;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
 
             _rpcOptions = rpcOptions.CurrentValue;
@@ -38,51 +34,47 @@ namespace Silky.Rpc.Routing
             {
                 foreach (var descriptor in descriptors)
                 {
-                    await RemoveUnHealthServiceRoute(descriptor.Service.Id, addressModel);
+                    await RemoveUnHealthServiceRoute(descriptor.HostName, addressModel);
                 }
             };
-            _serviceRouteCache.OnRemoveServiceRoute += async (serviceId, addressModel) =>
+            _serviceRouteCache.OnRemoveServiceRoute += async (hostName, addressModel) =>
             {
-                await RemoveServiceRoute(serviceId, addressModel);
+                await RemoveServiceRoute(hostName, addressModel);
             };
         }
 
-        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel);
+        protected abstract Task RemoveUnHealthServiceRoute(string hostName, IAddressModel addressModel);
 
 
         public abstract Task CreateSubscribeServiceRouteDataChanges();
-        
-        
+
+
         public abstract Task EnterRoutes();
 
-        public async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
+        public async Task RemoveServiceRoute(string hostName, IAddressModel selectedAddress)
         {
-            await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
+            await RemoveUnHealthServiceRoute(hostName, selectedAddress);
         }
 
-        public virtual async Task RegisterRpcRoutes(AddressDescriptor addressDescriptor, ServiceProtocol serviceProtocol)
+        public virtual async Task RegisterRpcRoutes(AddressDescriptor addressDescriptor,
+            ServiceProtocol serviceProtocol)
         {
-          
-            var localServices = _serviceManager.GetLocalService()
-                .Where(p => p.ServiceProtocol == serviceProtocol);
-            var serviceRouteDescriptors = localServices.Select(p => p.CreateLocalRouteDescriptor(addressDescriptor));
-            await RegisterRoutes(serviceRouteDescriptors, addressDescriptor);
+            var serviceRouteDescriptor = _routeDescriptorProvider.Create(addressDescriptor, serviceProtocol);
+            await RegisterRoutes(serviceRouteDescriptor, addressDescriptor);
         }
-        
-        protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
+
+        protected virtual async Task RegisterRoutes(RouteDescriptor serviceRouteDescriptor,
             AddressDescriptor addressDescriptor)
+
         {
             await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
             await RemoveExceptRouteAsync(addressDescriptor);
-            foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
-            {
-                await RegisterRouteAsync(serviceRouteDescriptor);
-            }
+            await RegisterRouteWithServiceRegistry(serviceRouteDescriptor);
         }
 
         protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
 
-        protected abstract Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor);
+        protected abstract Task RegisterRouteWithServiceRegistry(RouteDescriptor routeDescriptor);
 
         protected abstract Task RemoveExceptRouteAsync(AddressDescriptor addressDescriptor);
     }

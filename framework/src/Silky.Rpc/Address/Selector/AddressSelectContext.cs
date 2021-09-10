@@ -5,16 +5,16 @@ namespace Silky.Rpc.Address.Selector
 {
     public class AddressSelectContext
     {
-        public AddressSelectContext([NotNull] string serviceEntryId, [NotNull] IAddressModel[] addressModels,string hash = null)
+        public AddressSelectContext([NotNull] string monitorId, [NotNull] IAddressModel[] addressModels,string hash = null)
         {
-            Check.NotNullOrEmpty(serviceEntryId, nameof(serviceEntryId));
+            Check.NotNullOrEmpty(monitorId, nameof(monitorId));
             Check.NotNull(addressModels, nameof(addressModels));
-            ServiceEntryId = serviceEntryId;
+            MonitorId = monitorId;
             AddressModels = addressModels;
             Hash = hash;
         }
 
-        [NotNull] public string ServiceEntryId { get; }
+        [NotNull] public string MonitorId { get; }
 
         public string Hash { get; }
 

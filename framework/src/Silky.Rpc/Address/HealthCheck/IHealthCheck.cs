@@ -20,15 +20,12 @@ namespace Silky.Rpc.Address.HealthCheck
         void ChangeHealthStatus(IPAddress mapToIPv4, int port, bool isHealth, int unHealthCeilingTimes = 0);
 
         void RemoveAddress(IAddressModel addressModel);
-
-        void RemoveServiceRouteAddress(string serviceId, IAddressModel addressModel);
-
+        
         void RemoveAddress(IPAddress ipAddress, int port);
 
         event HealthChangeEvent OnHealthChange;
         event RemoveAddressEvent OnRemveAddress;
         event UnhealthEvent OnUnhealth;
         event AddMonitorEvent OnAddMonitor;
-        event RemoveServiceRouteAddressEvent OnRemoveServiceRouteAddress;
     }
 }

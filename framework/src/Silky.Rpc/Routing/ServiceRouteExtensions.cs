@@ -5,11 +5,11 @@ namespace Silky.Rpc.Routing
 {
     public static class ServiceRouteExtensions
     {
-        public static ServiceRouteDescriptor ConvertToDescriptor(this ServiceRoute serviceRoute)
+        public static RouteDescriptor ConvertToDescriptor(this ServiceRoute serviceRoute)
         {
-            var descriptor = new ServiceRouteDescriptor()
+            var descriptor = new RouteDescriptor()
             {
-                Service = serviceRoute.ServiceDescriptor,
+                Services = serviceRoute.Services,
                 Addresses = serviceRoute.Addresses.Select(p => p.Descriptor).ToArray()
             };
             return descriptor;

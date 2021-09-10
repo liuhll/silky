@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +17,8 @@ namespace Silky.Rpc.Routing
     public class ServiceRouteCache : ISingletonDependency
     {
         private readonly ConcurrentDictionary<string, ServiceRoute> _serviceRouteCache = new();
+        private readonly ConcurrentDictionary<string, IAddressModel[]> _serviceAddressCache = new();
+
         private readonly IHealthCheck _healthCheck;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IServiceEntryManager _serviceEntryManager;
@@ -36,44 +37,7 @@ namespace Silky.Rpc.Routing
             _serviceEntryLocator = serviceEntryLocator;
             _serviceEntryManager = serviceEntryManager;
             _healthCheck.OnRemveAddress += OnRemoveAddressHandler;
-            _healthCheck.OnRemoveServiceRouteAddress += OnRemoveServiceRouteAddress;
             Logger = NullLogger<ServiceRouteCache>.Instance;
-        }
-
-        private async Task OnRemoveServiceRouteAddress(string serviceId, IAddressModel addressModel)
-        {
-            addressModel.InitFuseTimes();
-            var removeAddressServiceRoute =
-                ServiceRoutes.FirstOrDefault(p =>
-                    p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor) && p.ServiceDescriptor.Id == serviceId
-                );
-            if (removeAddressServiceRoute != null)
-            {
-                removeAddressServiceRoute.Addresses =
-                    removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressModel.Descriptor).ToArray();
-                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.ServiceDescriptor.Id,
-                    removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
-
-                var removeHostAddressServiceRoutes =
-                    ServiceRoutes.Where(p =>
-                        p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor)
-                        && p.ServiceDescriptor.Application == removeAddressServiceRoute.ServiceDescriptor.Application
-                    );
-                var updateRegisterServiceRouteDescriptors = new List<ServiceRouteDescriptor>();
-                foreach (var removeHostAddressServiceRoute in removeHostAddressServiceRoutes)
-                {
-                    removeAddressServiceRoute.Addresses =
-                        removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressModel.Descriptor)
-                            .ToArray();
-                    _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.ServiceDescriptor.Id,
-                        removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
-                    updateRegisterServiceRouteDescriptors.Add(removeAddressServiceRoute.ConvertToDescriptor());
-                }
-
-                OnRemoveServiceRoutes?.Invoke(updateRegisterServiceRouteDescriptors, addressModel);
-            }
-
-            OnRemoveServiceRoute?.Invoke(serviceId, addressModel);
         }
 
         private async Task OnRemoveAddressHandler(IAddressModel addressmodel)
@@ -81,12 +45,12 @@ namespace Silky.Rpc.Routing
             addressmodel.InitFuseTimes();
             var removeAddressServiceRoutes =
                 ServiceRoutes.Where(p => p.Addresses.Any(q => q.Descriptor == addressmodel.Descriptor));
-            var updateRegisterServiceRouteDescriptors = new List<ServiceRouteDescriptor>();
+            var updateRegisterServiceRouteDescriptors = new List<RouteDescriptor>();
             foreach (var removeAddressServiceRoute in removeAddressServiceRoutes)
             {
                 removeAddressServiceRoute.Addresses =
                     removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressmodel.Descriptor).ToArray();
-                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.ServiceDescriptor.Id,
+                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.HostName,
                     removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
                 updateRegisterServiceRouteDescriptors.Add(removeAddressServiceRoute.ConvertToDescriptor());
             }
@@ -95,37 +59,37 @@ namespace Silky.Rpc.Routing
         }
 
 
-        public void UpdateCache([NotNull] ServiceRouteDescriptor serviceRouteDescriptor)
+        public void UpdateCache([NotNull] RouteDescriptor routeDescriptor)
         {
-            Check.NotNull(serviceRouteDescriptor, nameof(serviceRouteDescriptor));
+            Check.NotNull(routeDescriptor, nameof(routeDescriptor));
 
 
-            var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
-            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.Service.Id,
+            var serviceRoute = routeDescriptor.ConvertToServiceRoute();
+            _serviceRouteCache.AddOrUpdate(routeDescriptor.HostName,
                 serviceRoute, (id, _) => serviceRoute);
 
             Logger.LogDebug(
-                $"Update the service routing [{serviceRoute.ServiceDescriptor.Id}] cache, the routing address is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
+                $"Update the service routing [{serviceRoute.HostName}] cache, the routing address is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
 
             foreach (var address in serviceRoute.Addresses)
             {
                 _healthCheck.Monitor(address);
             }
 
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceRouteDescriptor.Service.Id);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(routeDescriptor.HostName);
             if (serviceEntry != null)
             {
                 if (serviceEntry.FailoverCountIsDefaultValue)
                 {
-                    serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.Addresses.Count();
+                    serviceEntry.GovernanceOptions.FailoverCount = routeDescriptor.Addresses.Count();
                     _serviceEntryManager.Update(serviceEntry);
                 }
             }
         }
 
-        public void RemoveCache(string serviceId)
+        public void RemoveCache(string hostName)
         {
-            _serviceRouteCache.TryRemove(serviceId, out ServiceRoute serviceRoute);
+            _serviceRouteCache.TryRemove(hostName, out ServiceRoute serviceRoute);
             if (serviceRoute != null)
             {
                 foreach (var routeAddress in serviceRoute.Addresses)
@@ -135,20 +99,28 @@ namespace Silky.Rpc.Routing
             }
         }
 
-        public IReadOnlyList<ServiceRouteDescriptor> ServiceRouteDescriptors =>
-            _serviceRouteCache.Values.Select(p => p.ConvertToDescriptor()).ToImmutableArray();
+        public IReadOnlyList<RouteDescriptor> ServiceRouteDescriptors =>
+            _serviceRouteCache.Values.Select(p => p.ConvertToDescriptor()).ToArray();
 
-        public IReadOnlyList<ServiceRoute> ServiceRoutes => _serviceRouteCache.Values.ToImmutableArray();
+        public IReadOnlyList<ServiceRoute> ServiceRoutes => _serviceRouteCache.Values.ToArray();
 
-        public ServiceRoute GetServiceRoute(string serviceId)
+        public ServiceRoute GetServiceRoute([NotNull] string hostName)
         {
-            if (_serviceRouteCache.TryGetValue(serviceId, out ServiceRoute serviceRoute))
+            Check.NotNull(hostName, nameof(hostName));
+            if (_serviceRouteCache.TryGetValue(hostName, out ServiceRoute serviceRoute))
             {
                 return serviceRoute;
             }
 
             return null;
         }
-        
+
+        public IAddressModel[] GetServiceAddress([NotNull] string serviceId)
+        {
+            Check.NotNull(serviceId, nameof(serviceId));
+            return _serviceAddressCache.GetOrAdd(serviceId,
+                ServiceRoutes.Where(p => p.Services.Any(s => s.Id == serviceId)).SelectMany(sr => sr.Addresses)
+                    .ToArray());
+        }
     }
 }

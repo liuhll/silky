@@ -34,14 +34,24 @@ namespace Silky.Rpc.Runtime.Server
             m_localServices = allServices.Where(p => p.IsLocal).ToList();
         }
 
-        public IReadOnlyList<Service> GetLocalService()
+        public IReadOnlyCollection<Service> GetLocalService()
         {
             return m_localServices.ToArray();
         }
 
-        public IReadOnlyList<Service> GetAllService()
+        public IReadOnlyCollection<Service> GetLocalService(ServiceProtocol serviceProtocol)
+        {
+            return m_localServices.Where(p => p.ServiceProtocol == serviceProtocol).ToArray();
+        }
+
+        public IReadOnlyCollection<Service> GetAllService()
         {
             return m_allServices.ToArray();
+        }
+
+        public IReadOnlyCollection<Service> GetAllService(ServiceProtocol serviceProtocol)
+        {
+            return m_allServices.Where(p => p.ServiceProtocol == serviceProtocol).ToArray();
         }
 
         public IReadOnlyCollection<string> GetAllApplications()

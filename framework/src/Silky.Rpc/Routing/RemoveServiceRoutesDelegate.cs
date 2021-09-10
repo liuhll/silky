@@ -5,8 +5,8 @@ using Silky.Rpc.Routing.Descriptor;
 
 namespace Silky.Rpc.Routing
 {
-    public delegate Task OnRemoveServiceRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
+    public delegate Task OnRemoveServiceRoutes(IEnumerable<RouteDescriptor> serviceRouteDescriptors,
         IAddressModel addressModel);
 
-    public delegate Task OnRemoveServiceRoute(string serviceId, IAddressModel addressModel);
+    public delegate Task OnRemoveServiceRoute(string hostName, IAddressModel addressModel);
 }

@@ -38,19 +38,19 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
             switch (eventType)
             {
                 case Watcher.Event.EventType.NodeDeleted:
-                    var serviceId = Path.Split("/").Last();
-                    _serviceRouteCache.RemoveCache(serviceId);
+                    var hostName = Path.Split("/").Last();
+                    _serviceRouteCache.RemoveCache(hostName);
                     break;
                 case Watcher.Event.EventType.NodeCreated:
                     Check.NotNullOrEmpty(nodeData, nameof(nodeData));
                     var createdJsonString = nodeData.GetString();
-                    var createdServiceRouteDescriptor = _serializer.Deserialize<ServiceRouteDescriptor>(createdJsonString);
+                    var createdServiceRouteDescriptor = _serializer.Deserialize<RouteDescriptor>(createdJsonString);
                     _serviceRouteCache.UpdateCache(createdServiceRouteDescriptor);
                     break;
                 case Watcher.Event.EventType.NodeDataChanged:
                     Check.NotNullOrEmpty(nodeData, nameof(nodeData));
                     var updateJsonString = nodeData.GetString();
-                    var updateServiceRouteDescriptor = _serializer.Deserialize<ServiceRouteDescriptor>(updateJsonString);
+                    var updateServiceRouteDescriptor = _serializer.Deserialize<RouteDescriptor>(updateJsonString);
                     _serviceRouteCache.UpdateCache(updateServiceRouteDescriptor);
                     break;
             }

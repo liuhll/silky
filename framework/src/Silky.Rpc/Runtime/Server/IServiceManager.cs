@@ -6,9 +6,13 @@ namespace Silky.Rpc.Runtime.Server
 {
     public interface IServiceManager : ISingletonDependency
     {
-        IReadOnlyList<Service> GetLocalService();
+        IReadOnlyCollection<Service> GetLocalService();
+        
+        IReadOnlyCollection<Service> GetLocalService(ServiceProtocol serviceProtocol);
 
-        IReadOnlyList<Service> GetAllService();
+        IReadOnlyCollection<Service> GetAllService();
+        
+        IReadOnlyCollection<Service> GetAllService(ServiceProtocol serviceProtocol);
 
         IReadOnlyCollection<string> GetAllApplications();
 

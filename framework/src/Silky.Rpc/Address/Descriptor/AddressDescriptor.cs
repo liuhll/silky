@@ -1,10 +1,22 @@
-using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Address.Descriptor
 {
     public class AddressDescriptor
     {
+        public AddressDescriptor()
+        {
+            ProcessorTime = Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds;
+            TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
+        }
+
+        public double ProcessorTime { get; set; }
+        
+        public long TimeStamp { get; set; }
+        
         public string Address { get; set; }
 
         public int Port { get; set; }

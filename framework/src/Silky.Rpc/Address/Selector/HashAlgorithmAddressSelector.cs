@@ -24,17 +24,7 @@ namespace Silky.Rpc.Address.Selector
                     consistentHash.Remove(addressModel);
                 }
             };
-
-            _healthCheck.OnRemoveServiceRouteAddress += async (serviceId, addressModel) =>
-            {
-                var removeItems = _consistentHashAddressPools
-                    .Where(p => p.Value.ContainNode(addressModel) && p.Key.Contains(serviceId))
-                    .Select(p => p.Value);
-                foreach (var consistentHash in removeItems)
-                {
-                    consistentHash.Remove(addressModel);
-                }
-            };
+            
 
             _healthCheck.OnHealthChange += async (addressModel, isHealth) =>
             {
@@ -60,7 +50,7 @@ namespace Silky.Rpc.Address.Selector
         protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
         {
             Check.NotNullOrEmpty(context.Hash, nameof(context.Hash));
-            var addressModels = _consistentHashAddressPools.GetOrAdd(context.ServiceEntryId, v =>
+            var addressModels = _consistentHashAddressPools.GetOrAdd(context.MonitorId, v =>
             {
                 var consistentHash = new ConsistentHash<IAddressModel>();
                 foreach (var address in context.AddressModels)

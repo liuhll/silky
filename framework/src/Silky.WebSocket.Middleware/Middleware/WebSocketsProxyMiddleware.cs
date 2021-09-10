@@ -55,14 +55,15 @@ namespace Silky.WebSocket.Middleware.Middleware
                 throw new InvalidOperationException();
             }
 
-            var serviceRoute = _serviceRouteCache.GetServiceRoute(WebSocketResolverHelper.Generator(path));
+            var serviceId = WebSocketResolverHelper.Generator(path);
+            var serviceRouteAddresses = _serviceRouteCache.GetServiceAddress(serviceId);
 
-            if (serviceRoute == null)
+            if (serviceRouteAddresses == null)
             {
                 throw new SilkyException($"The ws service with address {path} does not exist.");
             }
 
-            if (!serviceRoute.Addresses.Any())
+            if (!serviceRouteAddresses.Any())
             {
                 throw new SilkyException($"There is no available service with address {path}.");
             }
@@ -96,7 +97,7 @@ namespace Silky.WebSocket.Middleware.Middleware
             {
                 client.Options.SetRequestHeader("businessId", businessId);
             }
-            
+
             var hashKey = GetKeyValue(context, "hashKey");
             if (hashKey.IsNullOrEmpty())
             {
@@ -106,15 +107,16 @@ namespace Silky.WebSocket.Middleware.Middleware
                 }
                 else
                 {
-                     throw new SilkyException("When websocket establishes a session link, the hashkey or businessId must be specified through the header or qString");
+                    throw new SilkyException(
+                        "When websocket establishes a session link, the hashkey or businessId must be specified through the header or qString");
                 }
             }
 
 
             var addressSelector =
                 EngineContext.Current.ResolveNamed<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
-            var address = addressSelector.Select(new AddressSelectContext(serviceRoute.ServiceDescriptor.Id,
-                serviceRoute.Addresses, hashKey));
+            var address = addressSelector.Select(new AddressSelectContext(serviceId, serviceRouteAddresses, hashKey));
+
 
             var destinationUri = CreateDestinationUri(address, path);
             await client.ConnectAsync(destinationUri, context.RequestAborted);
@@ -155,7 +157,8 @@ namespace Silky.WebSocket.Middleware.Middleware
         }
 
 
-        private static async Task PumpWebSocket(System.Net.WebSockets.WebSocket source, System.Net.WebSockets.WebSocket destination, int bufferSize,
+        private static async Task PumpWebSocket(System.Net.WebSockets.WebSocket source,
+            System.Net.WebSockets.WebSocket destination, int bufferSize,
             CancellationToken cancellationToken)
         {
             if (bufferSize <= 0)

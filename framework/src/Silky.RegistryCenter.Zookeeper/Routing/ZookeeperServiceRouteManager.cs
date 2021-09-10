@@ -28,6 +28,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
         private readonly ISerializer _serializer;
+        private readonly IServiceManager _serviceManager;
         public ILogger<ZookeeperServiceRouteManager> Logger { get; set; }
 
         private ConcurrentDictionary<(string, IZookeeperClient), ServiceRouteWatcher> m_routeWatchers = new();
@@ -36,43 +37,47 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             m_routeSubDirWatchers = new();
 
         public ZookeeperServiceRouteManager(ServiceRouteCache serviceRouteCache,
-            IServiceManager serviceManager,
             IZookeeperClientProvider zookeeperClientProvider,
+            IRouteDescriptorProvider routeDescriptorProvider,
             IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
             IOptionsMonitor<RpcOptions> rpcOptions,
-            ISerializer serializer)
+            ISerializer serializer,
+            IServiceManager serviceManager)
             : base(serviceRouteCache,
-                serviceManager,
+                routeDescriptorProvider,
                 registryCenterOptions,
                 rpcOptions)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
             _serializer = serializer;
+            _serviceManager = serviceManager;
             Logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
         }
 
 
-        protected override async Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor)
+        protected override async Task RegisterRouteWithServiceRegistry(RouteDescriptor routeDescriptor)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
                 var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
                 var @lock = synchronizationProvider.CreateLock(string.Format(LockName.RegisterRoute,
-                    serviceRouteDescriptor.Service.Id));
+                    routeDescriptor.HostName));
                 await @lock.ExecForHandle(async () =>
                 {
-                    var routePath = CreateRoutePath(serviceRouteDescriptor.Service);
+                    var routePath = CreateRoutePath(routeDescriptor.HostName);
                     // The latest routing data must be obtained from the service registry.
                     // When the service is expanded and contracted, the locally cached routing data is not the latest
                     var centreServiceRoute = await GetRouteDescriptorAsync(routePath, zookeeperClient);
                     if (centreServiceRoute != null)
                     {
-                        serviceRouteDescriptor.Addresses = serviceRouteDescriptor.Addresses
+                        routeDescriptor.Addresses = routeDescriptor.Addresses
                             .Concat(centreServiceRoute.Addresses).Distinct().OrderBy(p => p.ToString());
+                        routeDescriptor.Services = routeDescriptor.Services
+                            .Concat(centreServiceRoute.Services).Distinct().OrderBy(p => p.Id);
                     }
 
-                    var jsonString = _serializer.Serialize(serviceRouteDescriptor);
+                    var jsonString = _serializer.Serialize(routeDescriptor);
                     var data = jsonString.GetBytes();
                     if (!await zookeeperClient.ExistsAsync(routePath))
                     {
@@ -94,26 +99,25 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             foreach (var zookeeperClient in zookeeperClients)
             {
                 var allServiceRouteDescriptor = await GetServiceRouteDescriptors(zookeeperClient);
-                var serviceRouteDescriptors = allServiceRouteDescriptor as ServiceRouteDescriptor[] ??
+                var serviceRouteDescriptors = allServiceRouteDescriptor as RouteDescriptor[] ??
                                               allServiceRouteDescriptor.ToArray();
                 if (!serviceRouteDescriptors.Any())
                 {
                     continue;
                 }
-                var applications = _serviceManager.GetAllApplications();
-              
-                var removeExceptRouteDescriptors = serviceRouteDescriptors.Where(p =>
+
+                var removeExceptRouteAddressDescriptors = serviceRouteDescriptors.Where(p =>
                     p.Addresses.Any(p => p.Equals(addressDescriptor))
-                    && !applications.Contains(p.Service.Application)
-                );
+                    && p.HostName != EngineContext.Current.HostName);
+
                 var lockProvider = zookeeperClient.GetSynchronizationProvider();
-                foreach (var removeExceptRouteDescriptor in removeExceptRouteDescriptors)
+                foreach (var removeExceptRouteDescriptor in removeExceptRouteAddressDescriptors)
                 {
                     var @lock = lockProvider.CreateLock(string.Format(LockName.RegisterRoute,
-                        removeExceptRouteDescriptor.Service.Id));
+                        removeExceptRouteDescriptor.HostName));
                     await @lock.ExecForHandle(async () =>
                     {
-                        var routePath = CreateRoutePath(removeExceptRouteDescriptor.Service);
+                        var routePath = CreateRoutePath(removeExceptRouteDescriptor.HostName);
                         removeExceptRouteDescriptor.Addresses =
                             removeExceptRouteDescriptor.Addresses
                                 .Where(p => !p.Equals(addressDescriptor))
@@ -166,7 +170,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             foreach (var zookeeperClient in zookeeperClients)
             {
                 var serviceRouteDescriptors = await GetServiceRouteDescriptors(zookeeperClient);
-                var routeDescriptors = serviceRouteDescriptors as ServiceRouteDescriptor[] ??
+                var routeDescriptors = serviceRouteDescriptors as RouteDescriptor[] ??
                                        serviceRouteDescriptors.ToArray();
                 if (routeDescriptors.Any())
                 {
@@ -180,10 +184,10 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        private async Task<IEnumerable<ServiceRouteDescriptor>> GetServiceRouteDescriptors(
+        private async Task<IEnumerable<RouteDescriptor>> GetServiceRouteDescriptors(
             IZookeeperClient zookeeperClient)
         {
-            var serviceRouteDescriptors = new List<ServiceRouteDescriptor>();
+            var serviceRouteDescriptors = new List<RouteDescriptor>();
             if (await zookeeperClient.ExistsAsync(_registryCenterOptions.RoutePath))
             {
                 var children =
@@ -200,7 +204,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         }
 
 
-        private async Task<ServiceRouteDescriptor> GetRouteDescriptorAsync(string routePath,
+        private async Task<RouteDescriptor> GetRouteDescriptorAsync(string routePath,
             IZookeeperClient zookeeperClient)
         {
             if (!await zookeeperClient.ExistsAsync(routePath))
@@ -215,7 +219,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
 
             var jsonString = data.ToArray().GetString();
-            return _serializer.Deserialize<ServiceRouteDescriptor>(jsonString);
+            return _serializer.Deserialize<RouteDescriptor>(jsonString);
         }
 
         private string CreateRoutePath(ServiceDescriptor serviceDescriptor)
@@ -235,16 +239,16 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             return routePath;
         }
 
-        protected override async Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel)
+        protected override async Task RemoveUnHealthServiceRoute(string hostName, IAddressModel addressModel)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
-                var routePath = CreateRoutePath(serviceId);
+                var routePath = CreateRoutePath(hostName);
 
                 var lockProvider = zookeeperClient.GetSynchronizationProvider();
                 var @lock = lockProvider.CreateLock(
-                    string.Format(LockName.RegisterRoute, serviceId));
+                    string.Format(LockName.RegisterRoute, hostName));
                 await @lock.ExecForHandle(async () =>
                 {
                     var serviceCenterDescriptor = await GetRouteDescriptorAsync(routePath, zookeeperClient);
@@ -262,29 +266,41 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-
         public override async Task CreateSubscribeServiceRouteDataChanges()
         {
-            var allServices = _serviceManager.GetAllService();
-            foreach (var service in allServices)
+            var serviceRoutePath = CreateRoutePath(EngineContext.Current.HostName);
+            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+
+            async Task CreateWsSubscribeServiceRouteDataChanges(IReadOnlyCollection<Service> services,
+                IZookeeperClient zookeeperClient)
             {
-                var serviceRoutePath = CreateRoutePath(service.Id);
-                var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
-                
-                foreach (var zookeeperClient in zookeeperClients)
+                foreach (var service in services)
                 {
-                    await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
-                    if (EngineContext.Current.IsContainHttpCoreModule())
-                    {
-                        var wsServiceId =
-                            WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(service.ServiceType));
-                        var wsServiceRoutePath = CreateRoutePath(wsServiceId);
-                        await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
-                    }
+                    var wsServiceId =
+                        WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(service.ServiceType));
+                    var wsServiceRoutePath = CreateRoutePath(wsServiceId);
+                    await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
+                }
+            }
+
+            foreach (var zookeeperClient in zookeeperClients)
+            {
+                await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
+
+                if (EngineContext.Current.IsContainHttpCoreModule())
+                {
+                    var allServices = _serviceManager.GetAllService();
+                    await CreateWsSubscribeServiceRouteDataChanges(allServices, zookeeperClient);
+                }
+
+                if (EngineContext.Current.IsContainWebSocketModule())
+                {
+                    var wsServices = _serviceManager.GetLocalService(ServiceProtocol.Ws);
+                    await CreateWsSubscribeServiceRouteDataChanges(wsServices, zookeeperClient);
                 }
             }
         }
-        
+
         internal async Task CreateSubscribeDataChange(IZookeeperClient zookeeperClient, string path)
         {
             var watcher = new ServiceRouteWatcher(path, _serviceRouteCache, _serializer);
@@ -314,9 +330,9 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 foreach (var zookeeperClient in zookeeperClients)
                 {
                     var lockProvider = zookeeperClient.GetSynchronizationProvider();
-                    var routePath = CreateRoutePath(serviceRouteDescriptor.Service);
+                    var routePath = CreateRoutePath(serviceRouteDescriptor.HostName);
                     var @lock = lockProvider.CreateLock(
-                        string.Format(LockName.RegisterRoute, serviceRouteDescriptor.Service.Id));
+                        string.Format(LockName.RegisterRoute, serviceRouteDescriptor.HostName));
                     await using (await @lock.AcquireAsync())
                     {
                         var jsonString = _serializer.Serialize(serviceRouteDescriptor);

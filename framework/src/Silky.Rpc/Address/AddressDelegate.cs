@@ -10,5 +10,5 @@ namespace Silky.Rpc.Address
 
     public delegate Task AddMonitorEvent(IAddressModel addressModel);
 
-    public delegate Task RemoveServiceRouteAddressEvent(string serviceId, IAddressModel addressModel);
+    // public delegate Task RemoveServiceRouteAddressEvent(string serviceId, IAddressModel addressModel);
 }
