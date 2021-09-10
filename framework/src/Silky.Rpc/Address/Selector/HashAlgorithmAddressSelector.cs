@@ -60,7 +60,7 @@ namespace Silky.Rpc.Address.Selector
         protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
         {
             Check.NotNullOrEmpty(context.Hash, nameof(context.Hash));
-            var addressModels = _consistentHashAddressPools.GetOrAdd(context.ServiceEntryId, v =>
+            var addressModels = _consistentHashAddressPools.GetOrAdd(context.MonitorId, v =>
             {
                 var consistentHash = new ConsistentHash<IAddressModel>();
                 foreach (var address in context.AddressModels)

@@ -39,9 +39,19 @@ namespace Silky.Rpc.Runtime.Server
             return m_localServices.ToArray();
         }
 
+        public IReadOnlyCollection<Service> GetLocalService(ServiceProtocol serviceProtocol)
+        {
+            return m_localServices.Where(p=> p.ServiceProtocol == serviceProtocol).ToArray();
+        }
+
         public IReadOnlyList<Service> GetAllService()
         {
             return m_allServices.ToArray();
+        }
+
+        public IReadOnlyCollection<Service> GetAllService(ServiceProtocol serviceProtocol)
+        {
+            return m_allServices.Where(p=> p.ServiceProtocol == serviceProtocol).ToArray();
         }
 
         public IReadOnlyCollection<string> GetAllApplications()
@@ -57,6 +67,11 @@ namespace Silky.Rpc.Runtime.Server
         public Service GetService(string serviceId)
         {
             return m_allServices.FirstOrDefault(p => p.Id == serviceId);
+        }
+
+        public Service GeLocalService(string serviceId)
+        {
+            return m_localServices.FirstOrDefault(p => p.Id == serviceId);
         }
 
         public void Update(Service service)

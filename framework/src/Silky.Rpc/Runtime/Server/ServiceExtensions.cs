@@ -18,7 +18,6 @@ namespace Silky.Rpc.Runtime.Server
 
             return new ServiceRouteDescriptor()
             {
-                ProcessorTime = Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds,
                 Service = service.ServiceDescriptor,
                 Addresses = new[]
                     { addressDescriptor },

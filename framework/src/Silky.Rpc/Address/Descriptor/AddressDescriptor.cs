@@ -1,16 +1,28 @@
-using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Address.Descriptor
 {
     public class AddressDescriptor
     {
+        public AddressDescriptor()
+        {
+            ProcessorTime = Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds;
+            TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
+        }
+
         public string Address { get; set; }
 
         public int Port { get; set; }
 
+        public double ProcessorTime { get; set; }
+
+        public long TimeStamp { get; set; }
+
         public ServiceProtocol ServiceProtocol { get; set; }
-        
+
         public override bool Equals(object obj)
         {
             var model = obj as AddressDescriptor;
@@ -25,7 +37,8 @@ namespace Silky.Rpc.Address.Descriptor
 
         public override string ToString()
         {
-            return string.Concat(new[] {AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString()});
+            return string.Concat(new[]
+                { AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString() });
         }
 
         public override int GetHashCode()

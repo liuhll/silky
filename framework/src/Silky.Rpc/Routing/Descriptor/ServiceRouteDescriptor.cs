@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Silky.Core.Utils;
 using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Runtime.Server;
@@ -19,6 +20,5 @@ namespace Silky.Rpc.Routing.Descriptor
 
         public long TimeStamp { get; set; }
         
-        public double ProcessorTime { get; set; }
     }
 }
