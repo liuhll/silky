@@ -87,9 +87,9 @@ namespace Silky.Http.Core.Middlewares
 
         public static async void RegisterHttpRoutes(this IApplicationBuilder application)
         {
-            var gatewayManager = application.ApplicationServices.GetRequiredService<IServiceRouteManager>();
+            var serviceRouteManager = application.ApplicationServices.GetRequiredService<IServiceRouteManager>();
             var webAddressDescriptor = NetUtil.GetLocalWebAddressDescriptor();
-            await gatewayManager.RegisterRpcRoutes(webAddressDescriptor, ServiceProtocol.Http);
+            await serviceRouteManager.RegisterRpcRoutes(webAddressDescriptor, ServiceProtocol.Http);
         }
     }
 }
