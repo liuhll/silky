@@ -1,4 +1,5 @@
 using System;
+using Castle.Core.Internal;
 using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Exceptions;
@@ -45,6 +46,11 @@ namespace Silky.Rpc.Address
             return wsPath;
         }
 
+        public static string GetServiceName([NotNull] this IRouteTemplateProvider routeTemplateProvider,
+            Type serviceType)
+        {
+            return routeTemplateProvider.ServiceName.IsNullOrEmpty() ? serviceType.Name.TrimStart('I') : routeTemplateProvider.ServiceName;
+        }
 
         private static string ParseAppServiceName(string segemnetVal, string serviceName)
         {

@@ -14,6 +14,8 @@ namespace Silky.Rpc.Runtime.Server
         public string Id { get; set; }
 
         public string ServiceId { get; set; }
+        
+        public string ServiceName { get; set; }
 
         public string Application { get; set; }
 

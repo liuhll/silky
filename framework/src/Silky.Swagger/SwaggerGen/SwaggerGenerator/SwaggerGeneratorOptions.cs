@@ -57,7 +57,8 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 
         private bool DefaultDocInclusionPredicate(string documentName, ServiceEntry serviceEntry)
         {
-            return serviceEntry.GroupName == null || serviceEntry.GroupName == documentName;
+            return serviceEntry.ServiceEntryDescriptor.ServiceName == null ||
+                   serviceEntry.ServiceEntryDescriptor.ServiceName == documentName;
         }
 
         private string DefaultOperationIdSelector(ServiceEntry serviceEntry)
@@ -67,7 +68,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 
         private IList<string> DefaultTagsSelector(ServiceEntry serviceEntry)
         {
-            return new[] {serviceEntry.GroupName};
+            return new[] { serviceEntry.ServiceEntryDescriptor.ServiceName };
         }
 
         private string DefaultSortKeySelector(ServiceEntry serviceEntry)

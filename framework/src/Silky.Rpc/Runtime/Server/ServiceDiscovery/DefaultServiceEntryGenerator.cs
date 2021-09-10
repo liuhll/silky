@@ -131,6 +131,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             {
                 Id = serviceEntryId,
                 ServiceId = serviceId,
+                ServiceName = routeTemplateProvider.GetServiceName(serviceType),
                 ServiceProtocol = ServiceProtocol.Tcp,
                 Application = routeTemplateProvider.Application
             };

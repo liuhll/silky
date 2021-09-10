@@ -63,19 +63,6 @@ namespace Silky.Rpc.Runtime.Server
             (IsAsyncMethod, ReturnType) = MethodInfo.ReturnTypeInfo();
             GovernanceOptions = new ServiceEntryGovernance();
 
-            var serviceDescriptionAttribute = methodInfo.DeclaringType?.GetCustomAttributes()
-                .OfType<ServiceDescriptionAttribute>().FirstOrDefault();
-            if (serviceDescriptionAttribute != null)
-            {
-                GroupName = serviceDescriptionAttribute.Name;
-            }
-            else
-            {
-                GroupName = !routeTemplateProvider.ServiceName.IsNullOrEmpty()
-                    ? routeTemplateProvider.ServiceName
-                    : _serviceType.Name.TrimStart('I');
-            }
-
             var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
             if (governanceProvider != null)
             {
@@ -204,10 +191,7 @@ namespace Silky.Rpc.Runtime.Server
         public IList<string> SupportedResponseMediaTypes { get; } = new List<string>();
 
         public bool IsLocal { get; }
-
-        public string GroupName { get; }
         
-
         public IRouter Router { get; }
 
         public MethodInfo MethodInfo { get; }

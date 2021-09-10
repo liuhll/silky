@@ -26,7 +26,7 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
             var appServiceNamesAndTypes = context.ServiceEntries
                 .Select(apiDesc => apiDesc as ServiceEntry)
                 .SkipWhile(actionDesc => actionDesc == null)
-                .GroupBy(actionDesc => actionDesc.GroupName)
+                .GroupBy(actionDesc => actionDesc.ServiceEntryDescriptor.ServiceName)
                 .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().MethodInfo.DeclaringType));
 
             foreach (var nameAndType in appServiceNamesAndTypes)

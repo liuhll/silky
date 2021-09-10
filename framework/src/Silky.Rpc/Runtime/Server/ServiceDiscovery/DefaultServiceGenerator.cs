@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Castle.Core.Internal;
 using Silky.Core;
+using Silky.Rpc.Address;
 using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
@@ -51,8 +53,8 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             {
                 ServiceProtocol = service.ServiceProtocol,
                 Id = service.Id,
-                Service = service.ServiceType.Name,
-                Application = service.IsLocal ? serviceBundleProvider.Application : string.Empty
+                ServiceName = serviceBundleProvider.GetServiceName(service.ServiceType),
+                Application = serviceBundleProvider.Application
             };
 
             if (service.ServiceProtocol == ServiceProtocol.Tcp)
