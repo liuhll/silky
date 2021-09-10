@@ -279,7 +279,7 @@ namespace Silky.RegistryCenter.Zookeeper.Gateway
             var appServices =  _serviceManager.GetAllService();
             var gatewayServiceDescriptor = new GatewayDescriptor()
             {
-                SupportServices = appServices.Select(p=> p.ServiceId),
+                SupportServices = appServices.Select(p=> p.Id),
                 Addresses = new[] { addressDescriptor },
                 HostName = EngineContext.Current.HostName
             };

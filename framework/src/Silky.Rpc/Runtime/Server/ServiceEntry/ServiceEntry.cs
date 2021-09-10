@@ -28,15 +28,15 @@ namespace Silky.Rpc.Runtime.Server
         private readonly ObjectMethodExecutor _methodExecutor;
 
         private readonly Type _serviceType;
-        private readonly string _serviceId;
-
         public bool FailoverCountIsDefaultValue { get; private set; }
 
         public bool MultipleServiceKey { get; private set; }
 
         public string Id => ServiceEntryDescriptor.Id;
 
-        public string ServiceId => _serviceId;
+        public string ServiceId => ServiceEntryDescriptor.ServiceId;
+        
+        public string Application => ServiceEntryDescriptor.Application;
 
         public Type ServiceType => _serviceType;
 
@@ -45,7 +45,6 @@ namespace Silky.Rpc.Runtime.Server
         internal ServiceEntry(IRouter router,
             ServiceEntryDescriptor serviceEntryDescriptor,
             Type serviceType,
-            string serviceId,
             MethodInfo methodInfo,
             IReadOnlyList<ParameterDescriptor> parameterDescriptors,
             IRouteTemplateProvider routeTemplateProvider,
@@ -56,7 +55,6 @@ namespace Silky.Rpc.Runtime.Server
             ServiceEntryDescriptor = serviceEntryDescriptor;
             ParameterDescriptors = parameterDescriptors;
             _serviceType = serviceType;
-            _serviceId = serviceId;
             IsLocal = isLocal;
 
             MultipleServiceKey = routeTemplateProvider.MultipleServiceKey;

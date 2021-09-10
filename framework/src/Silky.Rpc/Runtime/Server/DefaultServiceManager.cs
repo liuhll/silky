@@ -24,7 +24,7 @@ namespace Silky.Rpc.Runtime.Server
                 allServices.AddRange(services);
             }
 
-            if (allServices.GroupBy(p => p.ServiceId).Any(p => p.Count() > 1))
+            if (allServices.GroupBy(p => p.Id).Any(p => p.Count() > 1))
             {
                 throw new SilkyException(
                     "There is duplicate service information, please check the service you set");
@@ -46,23 +46,23 @@ namespace Silky.Rpc.Runtime.Server
 
         public bool IsLocalService(string serviceId)
         {
-            return m_localServices.Any(p => p.ServiceId == serviceId);
+            return m_localServices.Any(p => p.Id == serviceId);
         }
 
         public ServiceInfo GetService(string serviceId)
         {
-            return m_allServices.FirstOrDefault(p => p.ServiceId == serviceId);
+            return m_allServices.FirstOrDefault(p => p.Id == serviceId);
         }
 
         public void Update(ServiceInfo serviceInfo)
         {
             m_allServices = m_allServices
-                .Where(p => !p.ServiceId.Equals(serviceInfo.ServiceId))
+                .Where(p => !p.Id.Equals(serviceInfo.Id))
                 .Append(serviceInfo);
             if (serviceInfo.IsLocal)
             {
                 m_localServices = m_localServices
-                    .Where(p => !p.ServiceId.Equals(serviceInfo.ServiceId))
+                    .Where(p => !p.Id.Equals(serviceInfo.Id))
                     .Append(serviceInfo);
             }
 

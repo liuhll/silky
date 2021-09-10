@@ -4,7 +4,7 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class ServiceInfo
     {
-        public string ServiceId { get; set; }
+        public string Id { get; set; }
         
         public ServiceDescriptor ServiceDescriptor { get; set; }
 

@@ -13,7 +13,6 @@ namespace Silky.Rpc.Runtime.Server
 
         public string Id { get; set; }
 
-        public string Service { get; set; }
         public string ServiceId { get; set; }
 
         public string Application { get; set; }

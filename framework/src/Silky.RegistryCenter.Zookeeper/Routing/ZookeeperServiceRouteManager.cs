@@ -262,20 +262,24 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         }
 
 
-        public async override Task CreateSubscribeServiceRouteDataChanges()
+        public override async Task CreateSubscribeServiceRouteDataChanges()
         {
             var allServices = _serviceManager.GetAllService();
             foreach (var service in allServices)
             {
-                var serviceRoutePath = CreateRoutePath(service.ServiceId);
+                var serviceRoutePath = CreateRoutePath(service.Id);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
-                var wsServiceId =
-                    WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(service.ServiceType));
-                var wsServiceRoutePath = CreateRoutePath(wsServiceId);
+                
                 foreach (var zookeeperClient in zookeeperClients)
                 {
                     await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
-                    await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
+                    if (EngineContext.Current.IsContainHttpCoreModule())
+                    {
+                        var wsServiceId =
+                            WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(service.ServiceType));
+                        var wsServiceRoutePath = CreateRoutePath(wsServiceId);
+                        await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
+                    }
                 }
             }
         }

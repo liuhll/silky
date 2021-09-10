@@ -19,7 +19,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         {
             var serviceInfo = new ServiceInfo()
             {
-                ServiceId = _serviceIdGenerator.GenerateServiceId(serviceTypeInfo.Item1),
+                Id = _serviceIdGenerator.GenerateServiceId(serviceTypeInfo.Item1),
                 ServiceType = serviceTypeInfo.Item1,
                 IsLocal = serviceTypeInfo.Item2,
                 ServiceProtocol = ServiceProtocol.Tcp
@@ -34,7 +34,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             var serviceId = WebSocketResolverHelper.Generator(wsPath);
             var serviceInfo = new ServiceInfo()
             {
-                ServiceId = serviceId,
+                Id = serviceId,
                 ServiceType = wsServiceType,
                 IsLocal = true,
                 ServiceProtocol = ServiceProtocol.Ws
@@ -50,14 +50,14 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             var serviceDescriptor = new ServiceDescriptor()
             {
                 ServiceProtocol = serviceInfo.ServiceProtocol,
-                Id = serviceInfo.ServiceId,
+                Id = serviceInfo.Id,
                 Service = serviceInfo.ServiceType.Name,
-                Application = serviceBundleProvider.Application
+                Application = serviceInfo.IsLocal ? serviceBundleProvider.Application : string.Empty
             };
 
             if (serviceInfo.ServiceProtocol == ServiceProtocol.Tcp)
             {
-                serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(serviceInfo.ServiceId)
+                serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(serviceInfo.Id)
                     .Select(p => p.ServiceEntryDescriptor).ToArray();
             }
 

@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Silky.Core.Extensions;
-using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
@@ -271,7 +270,7 @@ namespace Silky.Core
         {
             Modules = moduleLoader.LoadModules(services, typeof(T));
         }
-
+        
         public bool IsEnvironment(string environmentName)
         {
             if (HostEnvironment != null)

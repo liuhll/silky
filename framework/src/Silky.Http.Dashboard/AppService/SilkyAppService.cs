@@ -114,7 +114,6 @@ namespace Silky.Http.Dashboard.AppService
                                 var seOutput = new ServiceEntryOutput()
                                 {
                                     ServiceProtocol = se.ServiceEntryDescriptor.ServiceProtocol,
-                                    Service = se.ServiceEntryDescriptor.Service,
                                     ServiceId = se.ServiceEntryDescriptor.ServiceId,
                                     ServiceEntryId = se.ServiceEntryDescriptor.Id,
                                     MultipleServiceKey = se.MultipleServiceKey,
@@ -253,7 +252,7 @@ namespace Silky.Http.Dashboard.AppService
                 .WhereIf(!input.Application.IsNullOrEmpty(), p => input.Application.Equals(p.Application))
                 .WhereIf(!input.ServiceId.IsNullOrEmpty(), p => input.ServiceId.Equals(p.ServiceId))
                 .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => input.ServiceEntryId.Equals(p.ServiceEntryId))
-                .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceId.Contains(input.Name))
+                .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceEntryId.Contains(input.Name))
                 .WhereIf(input.IsEnable.HasValue, p => p.IsEnable == input.IsEnable)
                 .OrderBy(p => p.Application).ThenBy(p => p.ServiceId);
 
