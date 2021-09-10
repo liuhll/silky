@@ -15,9 +15,9 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             _serviceIdGenerator = serviceIdGenerator;
         }
 
-        public ServiceInfo CreateService((Type, bool) serviceTypeInfo)
+        public Service CreateService((Type, bool) serviceTypeInfo)
         {
-            var serviceInfo = new ServiceInfo()
+            var serviceInfo = new Service()
             {
                 Id = _serviceIdGenerator.GenerateServiceId(serviceTypeInfo.Item1),
                 ServiceType = serviceTypeInfo.Item1,
@@ -28,11 +28,11 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             return serviceInfo;
         }
 
-        public ServiceInfo CreateWsService(Type wsServiceType)
+        public Service CreateWsService(Type wsServiceType)
         {
             var wsPath = WebSocketResolverHelper.ParseWsPath(wsServiceType);
             var serviceId = WebSocketResolverHelper.Generator(wsPath);
-            var serviceInfo = new ServiceInfo()
+            var serviceInfo = new Service()
             {
                 Id = serviceId,
                 ServiceType = wsServiceType,
@@ -43,34 +43,34 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             return serviceInfo;
         }
 
-        private ServiceDescriptor CreateServiceDescriptor(ServiceInfo serviceInfo)
+        private ServiceDescriptor CreateServiceDescriptor(Service service)
         {
             var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
-            var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(serviceInfo.ServiceType);
+            var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(service.ServiceType);
             var serviceDescriptor = new ServiceDescriptor()
             {
-                ServiceProtocol = serviceInfo.ServiceProtocol,
-                Id = serviceInfo.Id,
-                Service = serviceInfo.ServiceType.Name,
-                Application = serviceInfo.IsLocal ? serviceBundleProvider.Application : string.Empty
+                ServiceProtocol = service.ServiceProtocol,
+                Id = service.Id,
+                Service = service.ServiceType.Name,
+                Application = service.IsLocal ? serviceBundleProvider.Application : string.Empty
             };
 
-            if (serviceInfo.ServiceProtocol == ServiceProtocol.Tcp)
+            if (service.ServiceProtocol == ServiceProtocol.Tcp)
             {
-                serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(serviceInfo.Id)
+                serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(service.Id)
                     .Select(p => p.ServiceEntryDescriptor).ToArray();
             }
 
-            var metaDataList = serviceInfo.ServiceType.GetCustomAttributes<MetadataAttribute>();
+            var metaDataList = service.ServiceType.GetCustomAttributes<MetadataAttribute>();
             foreach (var metaData in metaDataList)
             {
                 serviceDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
             }
 
-            if (serviceInfo.ServiceProtocol == ServiceProtocol.Ws)
+            if (service.ServiceProtocol == ServiceProtocol.Ws)
             {
                 serviceDescriptor.Metadatas.Add(ServiceConstant.WsPath,
-                    WebSocketResolverHelper.ParseWsPath(serviceInfo.ServiceType));
+                    WebSocketResolverHelper.ParseWsPath(service.ServiceType));
             }
 
             return serviceDescriptor;

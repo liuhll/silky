@@ -6,12 +6,12 @@ using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public static class ServiceInfoExtensions
+    public static class ServiceExtensions
     {
-        public static ServiceRouteDescriptor CreateLocalRouteDescriptor(this ServiceInfo serviceInfo,
+        public static ServiceRouteDescriptor CreateLocalRouteDescriptor(this Service service,
             AddressDescriptor addressDescriptor)
         {
-            if (!serviceInfo.IsLocal)
+            if (!service.IsLocal)
             {
                 throw new SilkyException("Only allow local service to generate routing descriptors");
             }
@@ -19,7 +19,7 @@ namespace Silky.Rpc.Runtime.Server
             return new ServiceRouteDescriptor()
             {
                 ProcessorTime = Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds,
-                Service = serviceInfo.ServiceDescriptor,
+                Service = service.ServiceDescriptor,
                 Addresses = new[]
                     { addressDescriptor },
             };

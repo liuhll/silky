@@ -5,8 +5,8 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
 {
     public interface IServiceGenerator : ITransientDependency
     {
-        ServiceInfo CreateService((Type,bool) serviceTypeInfo);
+        Service CreateService((Type,bool) serviceTypeInfo);
         
-        ServiceInfo CreateWsService(Type wsServiceType);
+        Service CreateWsService(Type wsServiceType);
     }
 }

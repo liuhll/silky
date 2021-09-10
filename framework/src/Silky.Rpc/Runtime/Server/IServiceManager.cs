@@ -6,16 +6,16 @@ namespace Silky.Rpc.Runtime.Server
 {
     public interface IServiceManager : ISingletonDependency
     {
-        IReadOnlyList<ServiceInfo> GetLocalService();
+        IReadOnlyList<Service> GetLocalService();
 
-        IReadOnlyList<ServiceInfo> GetAllService();
+        IReadOnlyList<Service> GetAllService();
 
         bool IsLocalService(string serviceId);
 
-        ServiceInfo GetService(string serviceId);
+        Service GetService(string serviceId);
 
-        void Update(ServiceInfo serviceInfo);
+        void Update(Service service);
 
-        event EventHandler<ServiceInfo> OnUpdate;
+        event EventHandler<Service> OnUpdate;
     }
 }

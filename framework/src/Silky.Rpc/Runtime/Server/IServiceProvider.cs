@@ -7,6 +7,6 @@ namespace Silky.Rpc.Runtime.Server
     {
         IReadOnlyList<ServiceEntry> GetEntries();
 
-        IReadOnlyCollection<ServiceInfo> GetServices();
+        IReadOnlyCollection<Service> GetServices();
     }
 }

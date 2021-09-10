@@ -7,8 +7,8 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServiceManager : IServiceManager
     {
-        private IEnumerable<ServiceInfo> m_localServices;
-        private IEnumerable<ServiceInfo> m_allServices;
+        private IEnumerable<Service> m_localServices;
+        private IEnumerable<Service> m_allServices;
 
         public DefaultServiceManager(IEnumerable<IServiceProvider> providers)
         {
@@ -17,7 +17,7 @@ namespace Silky.Rpc.Runtime.Server
 
         private void UpdateServices(IEnumerable<IServiceProvider> providers)
         {
-            var allServices = new List<ServiceInfo>();
+            var allServices = new List<Service>();
             foreach (var provider in providers)
             {
                 var services = provider.GetServices();
@@ -34,12 +34,12 @@ namespace Silky.Rpc.Runtime.Server
             m_localServices = allServices.Where(p => p.IsLocal).ToList();
         }
 
-        public IReadOnlyList<ServiceInfo> GetLocalService()
+        public IReadOnlyList<Service> GetLocalService()
         {
             return m_localServices.ToArray();
         }
 
-        public IReadOnlyList<ServiceInfo> GetAllService()
+        public IReadOnlyList<Service> GetAllService()
         {
             return m_allServices.ToArray();
         }
@@ -49,26 +49,26 @@ namespace Silky.Rpc.Runtime.Server
             return m_localServices.Any(p => p.Id == serviceId);
         }
 
-        public ServiceInfo GetService(string serviceId)
+        public Service GetService(string serviceId)
         {
             return m_allServices.FirstOrDefault(p => p.Id == serviceId);
         }
 
-        public void Update(ServiceInfo serviceInfo)
+        public void Update(Service service)
         {
             m_allServices = m_allServices
-                .Where(p => !p.Id.Equals(serviceInfo.Id))
-                .Append(serviceInfo);
-            if (serviceInfo.IsLocal)
+                .Where(p => !p.Id.Equals(service.Id))
+                .Append(service);
+            if (service.IsLocal)
             {
                 m_localServices = m_localServices
-                    .Where(p => !p.Id.Equals(serviceInfo.Id))
-                    .Append(serviceInfo);
+                    .Where(p => !p.Id.Equals(service.Id))
+                    .Append(service);
             }
 
-            OnUpdate?.Invoke(this, serviceInfo);
+            OnUpdate?.Invoke(this, service);
         }
 
-        public event EventHandler<ServiceInfo> OnUpdate;
+        public event EventHandler<Service> OnUpdate;
     }
 }

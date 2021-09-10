@@ -2,7 +2,7 @@ using System;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServiceInfo
+    public class Service
     {
         public string Id { get; set; }
         

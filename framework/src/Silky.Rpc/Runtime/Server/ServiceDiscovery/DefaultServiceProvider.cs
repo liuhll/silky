@@ -35,11 +35,11 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
             return entries;
         }
 
-        public IReadOnlyCollection<ServiceInfo> GetServices()
+        public IReadOnlyCollection<Service> GetServices()
         {
             var serviceTypes = ServiceEntryHelper.FindAllServiceTypes(_typeFinder);
             Logger.LogDebug($"The following AppServices were found: {string.Join(",", serviceTypes.Select(i => i.Item1.FullName))}.");
-            var services = new List<ServiceInfo>();
+            var services = new List<Service>();
             foreach (var serviceTypeInfo in serviceTypes)
             {
                 services.Add(_serviceGenerator.CreateService(serviceTypeInfo));
