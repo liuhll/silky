@@ -11,13 +11,14 @@ using Silky.SkyApm.Agent;
 
 namespace NormHostDemo
 {
-    [DependsOn( /*typeof(MessagePackModule),*/ typeof(SkyApmAgentModule), typeof(MapsterModule),
-        typeof(JwtModule))]
+    // [DependsOn( /*typeof(MessagePackModule),*/ typeof(SkyApmAgentModule), typeof(MapsterModule),
+    //     typeof(JwtModule))]
     public class NormHostDemoModule : GeneralHostModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
+            services.AddSilkySkyApm();
         }
 
         public override async Task Initialize(ApplicationContext applicationContext)

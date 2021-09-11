@@ -22,6 +22,8 @@ namespace Silky.Core.Rpc
         
         public const string ServiceMethodName = "serviceMethodName";
 
-        public const string SelectedAddress = "SelectedAddress";
+        public const string SelectedAddress = "selectedAddress";
+
+        public const string MessageId = "MessageId";
     }
 }

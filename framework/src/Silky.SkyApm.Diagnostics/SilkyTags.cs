@@ -1,5 +1,3 @@
-using SkyApm.Common;
-
 namespace Silky.Rpc.SkyApm.Diagnostics
 {
     public class SilkyTags
@@ -20,5 +18,10 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         public static readonly string RPC_SERVIC_METHODENAME = "Rpc.ServiceMethodName";
         
         public static readonly string ISGATEWAY = "IsGateway";
+        public static readonly string METHOD_NAME = "Method.Name";
+        public static readonly string SERVICEKEY = "ServiceKey";
+        public static readonly string IS_ASYNCMETHOD = "IsAsyncMethod";
+        public static readonly string IS_DISTRIBUTEDTRANS = "IsDistributeTrans";
+        public static readonly string OCCURREDEEXCEPTION = "OccurredException";
     }
 }

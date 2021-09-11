@@ -4,9 +4,7 @@ using Silky.Core.Serialization;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.SkyApm.Diagnostics.Collections;
 using Silky.Rpc.Transport;
-using Silky.Rpc.Utils;
 using SkyApm;
-using SkyApm.Common;
 using SkyApm.Config;
 using SkyApm.Diagnostics;
 using SkyApm.Tracing;
@@ -17,11 +15,9 @@ namespace Silky.Rpc.SkyApm.Diagnostics
     public class RpcServerTracingDiagnosticProcessor : ITracingDiagnosticProcessor
     {
         public string ListenerName { get; } = RpcDiagnosticListenerNames.DiagnosticServerListenerName;
-
         private readonly ITracingContext _tracingContext;
         private readonly IEntrySegmentContextAccessor _entrySegmentContextAccessor;
         private readonly TracingConfig _tracingConfig;
-
         private readonly ISerializer _serializer;
 
         public RpcServerTracingDiagnosticProcessor(ITracingContext tracingContext,
@@ -41,9 +37,11 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         {
             var clientAddress = RpcContext.Context.GetClientAddress();
             var serverAddress = RpcContext.Context.GetServerAddress();
+            var serviceKey = RpcContext.Context.GetServerKey();
             var carrierHeader = new SilkyCarrierHeaderCollection(RpcContext.Context);
             var context =
-                _tracingContext.CreateEntrySegmentContext($"[ServerHandle]{eventData.ServiceEntryId}", carrierHeader);
+                _tracingContext.CreateEntrySegmentContext($"[ServerHandle]{eventData.ServiceEntryId}",
+                    carrierHeader);
 
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
             context.Span.Component = Components.SilkyRpc;
@@ -53,10 +51,13 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                 LogEvent.Message($"Rpc Server Begin Handle {Environment.NewLine}" +
                                  $"--> ServiceEntryId:{eventData.ServiceEntryId}.{Environment.NewLine}" +
                                  $"--> MessageId:{eventData.MessageId}."));
+            context.Span.AddLog(LogEvent.Event("Rpc Parameters"),
+                LogEvent.Message(_serializer.Serialize(eventData.Message.Parameters)));
+            context.Span.AddLog(LogEvent.Event("Rpc Attachments"),
+                LogEvent.Message(_serializer.Serialize(eventData.Message.Attachments)));
             context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
             context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId.ToString());
-            context.Span.AddTag(SilkyTags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
-            context.Span.AddTag(SilkyTags.RPC_ATTACHMENTS, _serializer.Serialize(eventData.Message.Attachments));
+            context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
             context.Span.AddTag(SilkyTags.RPC_CLIENT_ADDRESS, clientAddress);
             context.Span.AddTag(SilkyTags.RPC_SERVER_ADDRESS, serverAddress);
         }
@@ -72,8 +73,10 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                     $"--> Spend Time: {eventData.ElapsedTimeMs}ms.{Environment.NewLine}" +
                     $"--> ServiceEntryId:{eventData.ServiceEntryId}.{Environment.NewLine}" +
                     $"--> MessageId:{eventData.MessageId}."));
+            context.Span.AddLog(LogEvent.Event("Rpc Result"),
+                LogEvent.Message(_serializer.Serialize(eventData.Result)));
+
             context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
-            context.Span.AddTag(SilkyTags.RPC_RESULT, _serializer.Serialize(eventData.Result));
             context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
             _tracingContext.Release(context);
         }
@@ -88,6 +91,18 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                 context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
                 _tracingContext.Release(context);
             }
+        }
+
+        [DiagnosticName(RpcDiagnosticListenerNames.LocalMethodExecute)]
+        public void LocalMethodExecuteHandle([Object] LocalExecuteEventData eventData)
+        {
+            var context = _entrySegmentContextAccessor.Context;
+            context?.Span.AddTag(SilkyTags.METHOD_NAME, eventData.MethodName);
+            context?.Span.AddTag(SilkyTags.IS_ASYNCMETHOD, eventData.IsAsyncMethod);
+            context?.Span.AddTag(SilkyTags.IS_DISTRIBUTEDTRANS, eventData.IsDistributeTrans);
+            context?.Span.AddTag(SilkyTags.OCCURREDEEXCEPTION, eventData.Exception != null);
+            context?.Span.AddLog(LogEvent.Event("Method Executed"));
+            context?.Span.AddLog(LogEvent.Message($"Local Method【{eventData.MethodName}】Executed..."));
         }
     }
 }

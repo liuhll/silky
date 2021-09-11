@@ -7,6 +7,8 @@ namespace Silky.Rpc.Diagnostics
         public const string DiagnosticClientListenerName = "DiagnosticClientListener";
         
         public const string DiagnosticServerListenerName = "DiagnosticServerListener";
+        
+        //public const string DiagnosticExecutorListenerName = "DiagnosticExecutorListener";
 
         public const string BeginRpcRequest = RpcPrefix + "WriteBeginRpcRequest";
         public const string EndRpcRequest = RpcPrefix + "WriteEndRpcRequest";
@@ -15,5 +17,7 @@ namespace Silky.Rpc.Diagnostics
         public const string BeginRpcServerHandler = RpcPrefix + "WriteBeginRpcServerHandler";
         public const string EndRpcServerHandler = RpcPrefix + "WriteEndRpcServerHandler";
         public const string ErrorRpcServerHandler = RpcPrefix + "WriteErrorRpcServerHandler";
+
+        public const string LocalMethodExecute = RpcPrefix + "LocalMethodExecute";
     }
 }

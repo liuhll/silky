@@ -23,6 +23,7 @@ namespace GatewayDemo
             services.AddSilkyMiniProfiler();
             services.AddDashboard();
             services.AddSilkyIdentity();
+            services.AddSilkySkyApm();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -40,7 +40,6 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 
             if (_unitOfWorkAttribute != null)
             {
-                // 开启事务
                 _silkyDbContextPool?.BeginTransaction(_unitOfWorkAttribute.EnsureTransaction);
             }
         }

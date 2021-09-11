@@ -1,11 +1,16 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
+using Silky.Rpc.Diagnostics;
 
 namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultLocalExecutor : ILocalExecutor
     {
+        private static readonly DiagnosticListener s_diagnosticListener =
+            new(RpcDiagnosticListenerNames.DiagnosticServerListenerName);
+
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
             var instance = EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
@@ -20,36 +25,59 @@ namespace Silky.Rpc.Runtime.Server
                 InstanceType = instance.GetType()
             };
 
-            foreach (var filter in filters)
+            var rpcActionExecutedContext = new ServiceEntryExecutedContext();
+            try
             {
-                filter.OnActionExecuting(rpcActionExcutingContext);
-            }
-            
-            object result;
-            if (serviceEntry.IsAsyncMethod)
-            {
-                result = await serviceEntry.MethodExecutor.ExecuteAsync(instance, parameters.ToArray());
-            }
-            else
-            {
-                result = serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
-            }
+                object result;
+                foreach (var filter in filters)
+                {
+                    filter.OnActionExecuting(rpcActionExcutingContext);
+                }
 
-            var rpcActionExecutedContext = new ServiceEntryExecutedContext()
-            {
-                Result = result
-            };
-            foreach (var filter in filters)
-            {
-                filter.OnActionExecuted(rpcActionExecutedContext);
-            }
+                if (serviceEntry.IsAsyncMethod)
+                {
+                    result = await serviceEntry.MethodExecutor.ExecuteAsync(instance, parameters.ToArray());
+                }
+                else
+                {
+                    result = serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
+                }
 
-            if (rpcActionExecutedContext.Exception != null)
-            {
-                throw rpcActionExecutedContext.Exception;
-            }
+                rpcActionExecutedContext.Result = result;
 
-            return rpcActionExecutedContext.Result;
+                foreach (var filter in filters)
+                {
+                    filter.OnActionExecuted(rpcActionExecutedContext);
+                }
+
+                if (rpcActionExecutedContext.Exception != null)
+                {
+                    throw rpcActionExecutedContext.Exception;
+                }
+
+                return rpcActionExecutedContext.Result;
+            }
+            finally
+            {
+                TracingWrite(new LocalExecuteEventData()
+                {
+                    ServiceEntryId = serviceEntry.Id,
+                    FilterNames = filters.Select(p => p.GetType().FullName).ToArray(),
+                    MethodName = serviceEntry.MethodInfo.Name,
+                    IsDistributeTrans = serviceEntry.IsTransactionServiceEntry(),
+                    Exception = rpcActionExecutedContext.Exception,
+                    IsAsyncMethod = serviceEntry.IsAsyncMethod
+                });
+            }
         }
+
+        private void TracingWrite(LocalExecuteEventData localExecuteEventData)
+        {
+            if (s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.LocalMethodExecute))
+            {
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.LocalMethodExecute, localExecuteEventData);
+            }
+        }
+        
     }
 }

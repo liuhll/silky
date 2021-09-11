@@ -42,6 +42,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
         {
             var clientAddress = RpcContext.Context.GetClientAddress();
             var serverAddress = RpcContext.Context.GetServerAddress();
+            var serviceKey = RpcContext.Context.GetServerKey();
             var context = _tracingContext.CreateExitSegmentContext($"[ClientInvoke]{eventData.ServiceEntryId}",
                 serverAddress, new SilkyCarrierHeaderCollection(RpcContext.Context));
 
@@ -51,10 +52,13 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                 LogEvent.Message($"Rpc Client Invoke {Environment.NewLine}" +
                                  $"--> ServiceEntryId:{eventData.ServiceEntryId}.{Environment.NewLine}" +
                                  $"--> MessageId:{eventData.MessageId}."));
-
+            context.Span.AddLog(LogEvent.Event("Rpc Parameters"),
+                LogEvent.Message(_serializer.Serialize(eventData.Message.Parameters)));
+            context.Span.AddLog(LogEvent.Event("Rpc Attachments"),
+                LogEvent.Message(_serializer.Serialize(eventData.Message.Attachments)));
+            
             context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId.ToString());
-            context.Span.AddTag(SilkyTags.RPC_PARAMETERS, _serializer.Serialize(eventData.Message.Parameters));
-            context.Span.AddTag(SilkyTags.RPC_ATTACHMENTS, _serializer.Serialize(eventData.Message.Attachments));
+            context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
             context.Span.AddTag(SilkyTags.RPC_CLIENT_ADDRESS, clientAddress);
             context.Span.AddTag(SilkyTags.RPC_SERVER_ADDRESS, serverAddress);
             context.Span.AddTag(SilkyTags.ISGATEWAY, RpcContext.Context.IsGateway());
@@ -71,8 +75,9 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                     $"--> Spend Time: {eventData.ElapsedTimeMs}ms.{Environment.NewLine}" +
                     $"--> ServiceEntryId: {eventData.ServiceEntryId}.{Environment.NewLine}" +
                     $"--> MessageId: {eventData.MessageId}."));
+            context.Span.AddLog(LogEvent.Event("Rpc Result"),
+                LogEvent.Message(_serializer.Serialize(eventData.Result)));
             context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
-            context.Span.AddTag(SilkyTags.RPC_RESULT, _serializer.Serialize(eventData.Result));
             context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
             _tracingContext.Release(context);
         }

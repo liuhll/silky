@@ -13,7 +13,7 @@ namespace GatewayDemo
 {
     [DependsOn( /*typeof(MessagePackModule),*/
         typeof(TransactionRepositoryRedisModule),
-        typeof(SkyApmAgentModule),
+//        typeof(SkyApmAgentModule),
         typeof(TransactionTccModule),
 //        typeof(IdentityModule),
 //        typeof(DashboardModule),

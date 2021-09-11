@@ -8,7 +8,6 @@ using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Security;
-using Silky.Rpc.Transport;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -31,9 +30,9 @@ namespace Silky.Rpc.Runtime.Server
         {
             var sp = Stopwatch.StartNew();
             message.SetRpcAttachments();
+            
             var clientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ClientAddress).ToString();
             var tracingTimestamp = TracingBefore(message, messageId);
-
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
             var remoteResultMessage = new RemoteResultMessage()
