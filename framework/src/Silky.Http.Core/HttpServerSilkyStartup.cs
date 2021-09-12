@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Http.Core.Configuration;
-using Silky.WebSocket.Middleware.Middleware;
 
 namespace Silky.Http.Core
 {

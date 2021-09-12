@@ -4,6 +4,8 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -12,10 +14,8 @@ using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 
-namespace Silky.WebSocket.Middleware.Middleware
+namespace Silky.Http.Core.Middlewares
 {
     public class WebSocketsProxyMiddleware
     {

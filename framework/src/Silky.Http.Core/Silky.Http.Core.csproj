@@ -10,8 +10,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
-        <ProjectReference Include="..\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj" />
-       
     </ItemGroup>
 
 </Project>
