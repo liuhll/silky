@@ -1,14 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Silky.Caching;
-using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Interceptors
+namespace Silky.Rpc.CachingInterceptor
 {
     public class CachingInterceptor : SilkyInterceptor, IScopedDependency
     {

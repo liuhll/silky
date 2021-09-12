@@ -6,7 +6,7 @@ using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Proxy.Interceptors
+namespace Silky.Rpc.Proxy
 {
     public class RpcClientProxyInterceptor : SilkyInterceptor, IScopedDependency
     {

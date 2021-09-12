@@ -13,7 +13,7 @@ using Silky.Transaction.Schedule;
 
 namespace Silky.Transaction
 {
-    [DependsOn(typeof(RpcModule), typeof(LockModule),typeof(CachingModule))]
+    [DependsOn(typeof(RpcModule), typeof(LockModule), typeof(CachingModule))]
     public class TransactionModule : SilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)

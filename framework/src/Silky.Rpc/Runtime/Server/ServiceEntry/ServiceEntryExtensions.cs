@@ -3,24 +3,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
-using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Runtime.Session;
 using Silky.Rpc.Transport.CachingIntercept;
-using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Server
 {
     public static class ServiceEntryExtensions
     {
-        
-
-
         public static string GetHashKeyValue(this ServiceEntry serviceEntry, object[] parameterValues)
         {
             var hashKey = string.Empty;
@@ -170,20 +164,7 @@ namespace Silky.Rpc.Runtime.Server
             return serviceEntry.CustomAttributes.Any(p =>
                 p.GetType().GetTypeInfo().FullName == "Silky.Transaction.TransactionAttribute");
         }
-
-        public static string GetCacheName([NotNull] this ServiceEntry serviceEntry)
-        {
-            Check.NotNull(serviceEntry, nameof(serviceEntry));
-            var returnType = serviceEntry.ReturnType;
-            var cacheNameAttribute = returnType.GetCustomAttributes().OfType<CacheNameAttribute>().FirstOrDefault();
-            if (cacheNameAttribute != null)
-            {
-                return cacheNameAttribute.Name;
-            }
-
-            return returnType.FullName.RemovePostFix("CacheItem");
-        }
-
+        
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,
             ITypeConvertibleService typeConvertibleService)
         {

@@ -6,7 +6,6 @@ using Silky.Castle;
 using Silky.Castle.Adapter;
 using Silky.Core;
 using Silky.Core.Modularity;
-using Silky.Rpc.Proxy.Interceptors;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Proxy

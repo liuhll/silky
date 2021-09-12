@@ -3,29 +3,23 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
-using Silky.Castle;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Caching;
-using Silky.Rpc.Address;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Interceptors;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Configuration;
 using Silky.Core.Rpc;
 
 namespace Silky.Rpc
 {
-    [DependsOn(typeof(CachingModule))]
     public class RpcModule : SilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
@@ -133,9 +127,6 @@ namespace Silky.Rpc
             builder.RegisterType<DefaultServiceExecutor>()
                 .As<IServiceExecutor>()
                 .InstancePerLifetimeScope()
-                .AddInterceptors(
-                    typeof(CachingInterceptor)
-                )
                 ;
         }
     }
