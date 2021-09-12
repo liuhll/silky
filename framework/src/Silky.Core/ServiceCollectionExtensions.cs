@@ -16,6 +16,7 @@ namespace Silky.Core
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             CommonHelper.DefaultFileProvider = new SilkyFileProvider(hostEnvironment);
+            services.TryAddSingleton(CommonHelper.DefaultFileProvider);
             var engine = EngineContext.Create();
             services.AddOptions<AppSettingsOptions>()
                 .Bind(configuration.GetSection(AppSettingsOptions.AppSettings));

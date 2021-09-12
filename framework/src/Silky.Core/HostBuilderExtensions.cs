@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.Hosting
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureServices((hostBuilder, config) =>
                 {
-                    (engine) = config.AddSilkyServices<T>(hostBuilder.Configuration,
+                    engine = config.AddSilkyServices<T>(hostBuilder.Configuration,
                         hostBuilder.HostingEnvironment);
                     services = config;
                 })
