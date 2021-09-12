@@ -5,5 +5,7 @@ namespace Silky.Core
     public interface ISilkyStartup : IConfigureService
     {
         void Configure(IApplicationBuilder application);
+
+        int Order { get; }
     }
 }

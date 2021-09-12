@@ -30,7 +30,7 @@ namespace Silky.TestBase.Testing
             var hostEnvironment = CreateHostEnvironment();
             services.AddSingleton(Configuration);
 
-            Engine = services.ConfigureSilkyServices<TStartupModule>(Configuration, hostEnvironment);
+            Engine = services.AddSilkyServices<TStartupModule>(Configuration, hostEnvironment);
 
             AfterAddApplication(services);
 

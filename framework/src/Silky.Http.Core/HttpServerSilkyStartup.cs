@@ -14,6 +14,7 @@ namespace Silky.Http.Core
         {
             services.AddOptions<GatewayOptions>()
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
+            services.AddHttpContextAccessor();
             services.AddResponseCaching();
            
         }

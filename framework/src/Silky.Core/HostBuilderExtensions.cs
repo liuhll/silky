@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.Hosting
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureServices((hostBuilder, config) =>
                 {
-                    (engine) = config.ConfigureSilkyServices<T>(hostBuilder.Configuration,
+                    (engine) = config.AddSilkyServices<T>(hostBuilder.Configuration,
                         hostBuilder.HostingEnvironment);
                     services = config;
                 })
@@ -35,14 +35,10 @@ namespace Microsoft.Extensions.Hosting
                     // Adds YAML settings later
                     config.AddYamlFile("appsettings.yml", optional: true)
                         .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
-                    
+
                     config.AddYamlFile("appsettings.yaml", optional: true)
                         .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true);
                 })
-                // .ConfigureLogging(logging =>
-                // {
-                //     
-                // })
                 ;
 
             return builder;

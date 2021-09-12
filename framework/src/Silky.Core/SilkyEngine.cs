@@ -37,12 +37,11 @@ namespace Silky.Core
             HostEnvironment = hostEnvironment;
             HostName = Assembly.GetEntryAssembly()?.GetName().Name;
 
-            var startupConfigurations = _typeFinder.FindClassesOfType<IConfigureService>();
+            var configureServices = _typeFinder.FindClassesOfType<IConfigureService>();
 
             //create and sort instances of startup configurations
-            var instances = startupConfigurations
-                .Select(startup => (IConfigureService)Activator.CreateInstance(startup))
-                .OrderBy(startup => startup.Order);
+            var instances = configureServices
+                .Select(configureService => (IConfigureService)Activator.CreateInstance(configureService));
 
             //configure services
             foreach (var instance in instances)
@@ -53,7 +52,7 @@ namespace Silky.Core
 
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
-        
+
         public TOptions GetOptions<TOptions>()
             where TOptions : class, new()
         {
@@ -65,7 +64,7 @@ namespace Silky.Core
         {
             return Resolve<IOptionsMonitor<TOptions>>().CurrentValue;
         }
-        
+
         public TOptions GetOptionsMonitor<TOptions>(Action<TOptions, string> listener)
             where TOptions : class, new()
         {
@@ -99,7 +98,7 @@ namespace Silky.Core
             {
                 ((HttpSilkyModule)webSilkyModule.Instance).Configure(application);
             }
-            
+
             //create and sort instances of startup configurations
             var instances = startupConfigurations
                 .Select(startup => (ISilkyStartup)Activator.CreateInstance(startup))
@@ -108,8 +107,6 @@ namespace Silky.Core
             //configure request pipeline
             foreach (var instance in instances)
                 instance.Configure(application);
-            
-          
         }
 
         public T Resolve<T>() where T : class
@@ -270,7 +267,7 @@ namespace Silky.Core
         {
             Modules = moduleLoader.LoadModules(services, typeof(T));
         }
-        
+
         public bool IsEnvironment(string environmentName)
         {
             if (HostEnvironment != null)

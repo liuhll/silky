@@ -9,6 +9,7 @@ namespace Silky.Core.Modularity
         string Name { get; }
         Task Initialize(ApplicationContext applicationContext);
         Task Shutdown(ApplicationContext applicationContext);
+
         void ConfigureServices(IServiceCollection services, IConfiguration configuration);
     }
 }

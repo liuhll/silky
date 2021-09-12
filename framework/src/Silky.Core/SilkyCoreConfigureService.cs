@@ -8,9 +8,7 @@ namespace Silky.Core
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHttpContextAccessor();
-            services.AddHostedService<InitSilkyHostedService>();
-            services.AddSingleton<ICancellationTokenProvider>(NullCancellationTokenProvider.Instance);
+          
         }
 
         public int Order { get; } = 0;

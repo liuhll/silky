@@ -6,6 +6,5 @@ namespace Silky.Core
     public interface IConfigureService
     {
         void ConfigureServices(IServiceCollection services, IConfiguration configuration);
-        int Order { get; }
     }
 }
