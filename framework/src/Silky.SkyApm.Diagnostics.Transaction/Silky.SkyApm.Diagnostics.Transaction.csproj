@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Description>Silky Transaction SkyApm Diagnostics</Description>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Abstraction\Silky.SkyApm.Diagnostics.Abstraction.csproj" />
+      <ProjectReference Include="..\Silky.Transaction.Abstraction\Silky.Transaction.Abstraction.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="SkyAPM.Abstractions" Version="1.3.0" />
+    </ItemGroup>
+</Project>

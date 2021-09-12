@@ -7,7 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj" />
-      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Transaction.Tcc\Silky.SkyApm.Diagnostics.Transaction.Tcc.csproj" />
+      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Transaction\Silky.SkyApm.Diagnostics.Transaction.csproj" />
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0" />

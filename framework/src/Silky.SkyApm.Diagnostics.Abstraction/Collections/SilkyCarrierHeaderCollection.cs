@@ -4,7 +4,7 @@ using System.Linq;
 using Silky.Core.Rpc;
 using SkyApm.Tracing;
 
-namespace Silky.SkyApm.Abstraction.Collections
+namespace Silky.SkyApm.Diagnostics.Abstraction.Collections
 {
     public class SilkyCarrierHeaderCollection : ICarrierHeaderDictionary
     {

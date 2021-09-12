@@ -1,15 +1,14 @@
-using Silky.Transaction.Abstraction;
 using SkyApm.Tracing.Segments;
 
-namespace Silky.SkyApm.Diagnostics.Rpc.Factory
+namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
 {
-    public interface ISilkyRpcSegmentContextFactory
+    public interface ISilkySegmentContextFactory
     {
         SegmentContext GetEntryContext(string serviceEntryId);
 
         SegmentContext GetExitSContext(string serviceEntryId);
 
-        SegmentContext GetTransContext(TransactionRole role, ActionStage action);
+        SegmentContext GetCurrentContext(string operationName);
 
         void ReleaseContext(SegmentContext context);
     }

@@ -1,21 +1,30 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
+using Silky.Rpc.Extensions;
+using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Diagnostics;
 using Silky.Transaction.Tcc.Executor;
 
 namespace Silky.Transaction.Tcc.Handlers
 {
     public class StarterTccTransactionHandler : ITransactionHandler
     {
-        private TccTransactionExecutor executor = TccTransactionExecutor.Executor;
-        
+        private readonly TccTransactionExecutor executor = TccTransactionExecutor.Executor;
+
+        private static readonly DiagnosticListener s_diagnosticListener =
+            new(TransactionDiagnosticListenerNames.DiagnosticGlobalTransactionListener);
+
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
             try
             {
+                var serviceEntry = invocation.GetServiceEntry();
                 var transaction = await executor.PreTry(invocation);
+                WriteTracing(TransactionDiagnosticListenerNames.GlobalPreTryHandle, transaction, serviceEntry);
                 SilkyTransactionHolder.Instance.Set(transaction);
                 var transactionContext = new TransactionContext
                 {
@@ -30,21 +39,44 @@ namespace Silky.Transaction.Tcc.Handlers
                     await invocation.ProceedAsync();
                     transaction.Status = ActionStage.Trying;
                     await executor.UpdateStartStatus(transaction);
+                    WriteTracing(TransactionDiagnosticListenerNames.GlobalTryingHandle, transaction, serviceEntry);
                 }
                 catch (Exception e)
                 {
                     var errorCurrentTransaction = SilkyTransactionHolder.Instance.CurrentTransaction;
+                    WriteTracing(TransactionDiagnosticListenerNames.GlobalCancelingHandle, errorCurrentTransaction,
+                        serviceEntry);
                     await executor.GlobalCancel(errorCurrentTransaction);
+                    WriteTracing(TransactionDiagnosticListenerNames.GlobalCancelingHandle, errorCurrentTransaction,
+                        serviceEntry);
                     throw;
                 }
 
                 var currentTransaction = SilkyTransactionHolder.Instance.CurrentTransaction;
+                WriteTracing(TransactionDiagnosticListenerNames.GlobalConfirmingHandle, currentTransaction,
+                    serviceEntry);
                 await executor.GlobalConfirm(currentTransaction);
+                WriteTracing(TransactionDiagnosticListenerNames.GlobalConfirmedHandle, currentTransaction,
+                    serviceEntry);
             }
             finally
             {
                 SilkyTransactionContextHolder.Instance.Remove();
                 executor.Remove();
+            }
+        }
+
+        private void WriteTracing(string tracingName, ITransaction transaction, ServiceEntry serviceEntry)
+        {
+            if (s_diagnosticListener.IsEnabled(tracingName))
+            {
+                s_diagnosticListener.Write(tracingName, new GlobalTransactionEventData()
+                {
+                    ServiceEntryId = serviceEntry.Id,
+                    Transaction = transaction,
+                    Role = TransactionRole.Start,
+                    Type = TransactionType.Tcc
+                });
             }
         }
     }

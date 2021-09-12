@@ -1,22 +1,18 @@
-using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
-using Silky.Rpc.Transport;
-using Silky.SkyApm.Abstraction.Collections;
-using Silky.Transaction.Abstraction;
-using SkyApm.Common;
+using Silky.SkyApm.Diagnostics.Abstraction.Collections;
 using SkyApm.Tracing;
 using SkyApm.Tracing.Segments;
 
-namespace Silky.SkyApm.Diagnostics.Rpc.Factory
+namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
 {
-    public class SilkyRpcSegmentContextFactory : ISilkyRpcSegmentContextFactory
+    public class SilkySegmentContextFactory : ISilkySegmentContextFactory
     {
         private readonly ITracingContext _tracingContext;
         private readonly IEntrySegmentContextAccessor _entrySegmentContextAccessor;
         private readonly ILocalSegmentContextAccessor _localSegmentContextAccessor;
         private readonly IExitSegmentContextAccessor _exitSegmentContextAccessor;
 
-        public SilkyRpcSegmentContextFactory(ITracingContext tracingContext,
+        public SilkySegmentContextFactory(ITracingContext tracingContext,
             IEntrySegmentContextAccessor entrySegmentContextAccessor,
             ILocalSegmentContextAccessor localSegmentContextAccessor,
             IExitSegmentContextAccessor exitSegmentContextAccessor)
@@ -61,60 +57,23 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Factory
             return context;
         }
 
-        public SegmentContext GetTransContext(TransactionRole role, ActionStage action)
+        public SegmentContext GetCurrentContext(string operationName)
         {
             var context = _localSegmentContextAccessor.Context;
             if (context == null)
             {
-                var operationName = GetOperationName(role, action);
                 context = _tracingContext.CreateLocalSegmentContext(operationName);
                 context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
-                context.Span.Component = GetComponent(role);
+                context.Span.Component = SilkyComponents.SilkyTransaction;
             }
 
             return context;
         }
 
+
         public void ReleaseContext(SegmentContext context)
         {
             _tracingContext.Release(context);
-        }
-
-        private StringOrIntValue GetComponent(TransactionRole role)
-        {
-            StringOrIntValue componentName;
-            switch (role)
-            {
-                case TransactionRole.Start:
-                    componentName = SilkyComponents.SilkyStartTransaction;
-                    break;
-                case TransactionRole.Participant:
-                    componentName = SilkyComponents.SilkyParticipantTransaction;
-                    break;
-                default:
-                    throw new SilkyException("There is no such distributed transaction role");
-            }
-
-            return componentName;
-        }
-
-
-        private string GetOperationName(TransactionRole transactionRole, ActionStage actionStage)
-        {
-            var operationName = string.Empty;
-            switch (transactionRole)
-            {
-                case TransactionRole.Start:
-                    operationName = $"Start.{actionStage}";
-                    break;
-                case TransactionRole.Participant:
-                    operationName = $"Participant.{actionStage}";
-                    break;
-                default:
-                    throw new SilkyException("There is no such distributed transaction role");
-            }
-
-            return operationName;
         }
     }
 }

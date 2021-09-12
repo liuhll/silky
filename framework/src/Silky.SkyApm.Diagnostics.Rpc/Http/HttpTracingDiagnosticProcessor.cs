@@ -10,7 +10,7 @@ using Microsoft.Extensions.Primitives;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
-using Silky.SkyApm.Abstraction.Collections;
+using Silky.SkyApm.Diagnostics.Abstraction.Collections;
 using Silky.SkyApm.Diagnostics.Rpc.Http.Configs;
 using Silky.SkyApm.Diagnostics.Rpc.Http.Utils;
 using Silky.SkyApm.Diagnostics.Rpc.Http.Extensions;

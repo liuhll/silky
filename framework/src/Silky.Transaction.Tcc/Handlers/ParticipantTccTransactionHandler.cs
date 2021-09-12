@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
+using Silky.Rpc.Extensions;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
+using Silky.Transaction.Abstraction.Diagnostics;
 using Silky.Transaction.Abstraction.Participant;
 using Silky.Transaction.Tcc.Executor;
 
@@ -14,8 +17,13 @@ namespace Silky.Transaction.Tcc.Handlers
     {
         private readonly TccTransactionExecutor _executor = TccTransactionExecutor.Executor;
 
+        private static readonly DiagnosticListener s_diagnosticListener =
+            new(TransactionDiagnosticListenerNames.DiagnosticParticipantTransactionListener);
+
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
+           // var serviceEntry = invocation.GetServiceEntry();
+            WriteTracing(TransactionDiagnosticListenerNames.ParticipantBeginHandle, context);
             switch (context.Action)
             {
                 case ActionStage.Trying:
@@ -63,6 +71,21 @@ namespace Silky.Transaction.Tcc.Handlers
                     break;
                 default:
                     break;
+            }
+
+            WriteTracing(TransactionDiagnosticListenerNames.ParticipantEndHandle, context);
+        }
+
+        private void WriteTracing(string tracingName, TransactionContext context)
+        {
+            if (s_diagnosticListener.IsEnabled(tracingName))
+            {
+                s_diagnosticListener.Write(tracingName, new ParticipantTransactionEventData()
+                {
+                    Context = context,
+                    Role = TransactionRole.Participant,
+                    Type = TransactionType.Tcc
+                });
             }
         }
     }

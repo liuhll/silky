@@ -2,8 +2,7 @@ using System;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Diagnostics;
-using Silky.Rpc.Transport;
-using Silky.SkyApm.Diagnostics.Rpc.Factory;
+using Silky.SkyApm.Diagnostics.Abstraction.Factory;
 using SkyApm;
 using SkyApm.Config;
 using SkyApm.Diagnostics;
@@ -18,14 +17,14 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
 
         private readonly TracingConfig _tracingConfig;
         private readonly ISerializer _serializer;
-        private readonly ISilkyRpcSegmentContextFactory _silkyRpcSegmentContextFactory;
+        private readonly ISilkySegmentContextFactory _silkySegmentContextFactory;
 
         public RpcClientTracingDiagnosticProcessor(IConfigAccessor configAccessor,
             ISerializer serializer,
-            ISilkyRpcSegmentContextFactory silkyRpcSegmentContextFactory)
+            ISilkySegmentContextFactory silkySegmentContextFactory)
         {
             _serializer = serializer;
-            _silkyRpcSegmentContextFactory = silkyRpcSegmentContextFactory;
+            _silkySegmentContextFactory = silkySegmentContextFactory;
             _tracingConfig = configAccessor.Get<TracingConfig>();
         }
 
@@ -35,7 +34,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
             var clientAddress = RpcContext.Context.GetClientAddress();
             var serverAddress = RpcContext.Context.GetServerAddress();
             var serviceKey = RpcContext.Context.GetServerKey();
-            var context = _silkyRpcSegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
+            var context = _silkySegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
             context.Span.AddLog(
                 LogEvent.Event("Rpc Client Begin Invoke"),
                 LogEvent.Message($"Rpc Client Invoke {Environment.NewLine}" +
@@ -55,7 +54,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
         [DiagnosticName(RpcDiagnosticListenerNames.EndRpcRequest)]
         public void EndRequest([Object] RpcInvokeResultEventData eventData)
         {
-            var context = _silkyRpcSegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
+            var context = _silkySegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
             context.Span.AddLog(LogEvent.Event("Rpc Client Invoke End"),
                 LogEvent.Message(
                     $"Rpc Invoke Succeeded!{Environment.NewLine}" +
@@ -66,16 +65,16 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
 
             context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
             context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
-            _silkyRpcSegmentContextFactory.ReleaseContext(context);
+            _silkySegmentContextFactory.ReleaseContext(context);
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.ErrorRpcRequest)]
         public void RpcError([Object] RpcInvokeExceptionEventData eventData)
         {
-            var context = _silkyRpcSegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
+            var context = _silkySegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
             context.Span?.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
             context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
-            _silkyRpcSegmentContextFactory.ReleaseContext(context);
+            _silkySegmentContextFactory.ReleaseContext(context);
         }
     }
 }

@@ -576,12 +576,9 @@ ajax:
 SilkyRpc:
   id: 2001
   languages: C#
-SilkyStartTransaction:
+SilkyTransaction:
   id: 2002
   languages: C#  
-SilkyParticipantTransaction:
-  id: 2003
-  languages: C#    
 
 # Component Server mapping defines the server display names of some components
 # e.g.
