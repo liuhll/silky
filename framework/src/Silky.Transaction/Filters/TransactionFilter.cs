@@ -3,7 +3,6 @@ using Silky.Core.Utils;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
 
@@ -78,7 +77,8 @@ namespace Silky.Transaction.Filters
                 TransType = context.TransType,
                 ServiceEntryId = serviceId,
                 ServiceKey = serviceKey,
-                Parameters = parameters
+                Parameters = parameters,
+                Role = TransactionRole.Participant
                 // Status = context.Action
             };
         }

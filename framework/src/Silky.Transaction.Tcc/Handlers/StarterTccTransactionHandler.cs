@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
-using Silky.Rpc.Extensions;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Abstraction;
-using Silky.Transaction.Tcc.Diagnostics;
 using Silky.Transaction.Tcc.Executor;
 
 namespace Silky.Transaction.Tcc.Handlers
@@ -18,10 +15,15 @@ namespace Silky.Transaction.Tcc.Handlers
         {
             try
             {
-                var preTryInfo = await executor.PreTry(invocation);
-                var transaction = preTryInfo.Item1;
-                var transactionContext = preTryInfo.Item2;
+                var transaction = await executor.PreTry(invocation);
                 SilkyTransactionHolder.Instance.Set(transaction);
+                var transactionContext = new TransactionContext
+                {
+                    Action = ActionStage.Trying,
+                    TransId = transaction.TransId,
+                    TransactionRole = TransactionRole.Start,
+                    TransType = TransactionType.Tcc
+                };
                 SilkyTransactionContextHolder.Instance.Set(transactionContext);
                 try
                 {
@@ -45,6 +47,5 @@ namespace Silky.Transaction.Tcc.Handlers
                 executor.Remove();
             }
         }
-
     }
 }

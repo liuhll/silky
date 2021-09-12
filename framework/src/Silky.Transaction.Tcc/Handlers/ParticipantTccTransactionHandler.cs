@@ -14,8 +14,6 @@ namespace Silky.Transaction.Tcc.Handlers
     {
         private readonly TccTransactionExecutor _executor = TccTransactionExecutor.Executor;
 
-        public TransactionRole TransactionRole { get; } = TransactionRole.Participant;
-
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
             switch (context.Action)
@@ -24,13 +22,16 @@ namespace Silky.Transaction.Tcc.Handlers
                     IParticipant participant = null;
                     try
                     {
-                        var preTryParticipantInfo = await _executor.PreTryParticipant(context, invocation);
-                        participant = preTryParticipantInfo;
-                        context.TransactionRole = TransactionRole.Participant;
-                        SilkyTransactionContextHolder.Instance.Set(context);
-                        await invocation.ProceedAsync();
-                        if (participant != null)
+                        participant = await _executor.PreTryParticipant(context, invocation);
+                        if (participant == null)
                         {
+                            await invocation.ProceedAsync();
+                        }
+                        else
+                        {
+                            context.TransactionRole = participant.Role;
+                            SilkyTransactionContextHolder.Instance.Set(context);
+                            await invocation.ProceedAsync();
                             participant.Status = ActionStage.Trying;
                             await TransRepositoryStore.UpdateParticipantStatus(participant);
                         }
@@ -64,6 +65,5 @@ namespace Silky.Transaction.Tcc.Handlers
                     break;
             }
         }
-        
     }
 }

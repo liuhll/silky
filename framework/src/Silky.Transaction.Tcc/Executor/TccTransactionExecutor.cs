@@ -31,7 +31,7 @@ namespace Silky.Transaction.Tcc.Executor
         public static TccTransactionExecutor Executor => executor;
 
 
-        public async Task<(ITransaction, TransactionContext)> PreTry(ISilkyMethodInvocation invocation)
+        public async Task<ITransaction> PreTry(ISilkyMethodInvocation invocation)
         {
             Logger.LogDebug("tcc transaction starter");
 
@@ -44,14 +44,8 @@ namespace Silky.Transaction.Tcc.Executor
             transaction.RegisterParticipant(participant);
             await TransRepositoryStore.CreateTransaction(transaction);
             await TransRepositoryStore.CreateParticipant(participant);
-            var context = new TransactionContext
-            {
-                Action = ActionStage.Trying,
-                TransId = transaction.TransId,
-                TransactionRole = TransactionRole.Start,
-                TransType = TransactionType.Tcc
-            };
-            return (transaction, context);
+
+            return transaction;
         }
 
         public async Task<IParticipant> PreTryParticipant(TransactionContext context,
@@ -63,7 +57,6 @@ namespace Silky.Transaction.Tcc.Executor
                 TransactionRole.Participant, context.TransId);
             await SilkyTransactionHolder.Instance.CacheParticipant(participant);
             await TransRepositoryStore.CreateParticipant(participant);
-            context.TransactionRole = TransactionRole.Participant;
             return participant;
         }
 
@@ -77,7 +70,7 @@ namespace Silky.Transaction.Tcc.Executor
 
             currentTransaction.Status = ActionStage.Confirming;
             await TransRepositoryStore.UpdateTransactionStatus(currentTransaction);
-            
+
             var successList = new List<bool>();
             foreach (var participant in currentTransaction.Participants)
             {

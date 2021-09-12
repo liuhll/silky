@@ -6,8 +6,6 @@ namespace Silky.Transaction.Handler
 {
     public interface ITransactionHandler
     {
-        TransactionRole TransactionRole { get; }
-
         Task Handler(TransactionContext context, ISilkyMethodInvocation invocation);
     }
 }
