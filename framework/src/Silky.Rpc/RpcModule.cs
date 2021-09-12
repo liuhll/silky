@@ -55,9 +55,11 @@ namespace Silky.Rpc
             foreach (var serviceKeyType in serviceKeyTypes)
             {
                 var serviceKeyAttribute = serviceKeyType.GetCustomAttributes().OfType<ServiceKeyAttribute>().First();
-                builder.RegisterType(serviceKeyType).Named(serviceKeyAttribute.Name,
+                builder.RegisterType(serviceKeyType)
+                    .Named(serviceKeyAttribute.Name,
                         serviceKeyType.GetInterfaces().First(p =>
                             p.GetCustomAttributes().OfType<IRouteTemplateProvider>().Any()))
+                    .InstancePerLifetimeScope()
                     ;
             }
 
@@ -72,7 +74,7 @@ namespace Silky.Rpc
             {
                 throw new SilkyException("You must specify the dependent service registry module");
             }
-            
+
             await serviceRouteManager.CreateSubscribeServiceRouteDataChanges();
             await serviceRouteManager.EnterRoutes();
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();

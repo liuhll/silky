@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using SkyApm.Config;
 
-namespace Silky.Http.SkyApm.Diagnostics
+namespace Silky.SkyApm.Diagnostics.Rpc.Http.Configs
 {
     [Config("SkyWalking", "Component", "AspNetCore")]
     public class HostingDiagnosticConfig

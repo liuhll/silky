@@ -76,7 +76,7 @@ namespace Silky.Transaction.Filters
                 ParticipantId = GuidGenerator.CreateGuidStrWithNoUnderline(),
                 TransId = context.TransId,
                 TransType = context.TransType,
-                ServiceId = serviceId,
+                ServiceEntryId = serviceId,
                 ServiceKey = serviceKey,
                 Parameters = parameters
                 // Status = context.Action

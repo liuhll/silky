@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Silky.Rpc.SkyApm.Diagnostics.Http.Extensions
+namespace Silky.SkyApm.Diagnostics.Rpc.Http.Extensions
 {
     internal static class EncodingExtensions
     {

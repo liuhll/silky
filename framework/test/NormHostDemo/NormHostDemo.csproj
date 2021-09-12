@@ -13,7 +13,7 @@
       <ProjectReference Include="..\..\src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
       <ProjectReference Include="..\..\src\Silky.ObjectMapper.Mapster\Silky.ObjectMapper.Mapster.csproj" />
       <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
-      <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
+      <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj" />
       <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>

@@ -64,7 +64,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Validation.Fluent", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.EntityFrameworkCore", "src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj", "{66CEFE14-CE38-4686-9BBA-E3153DBCFB3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.SkyApm.Diagnostics", "src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj", "{21EE5C17-9D9B-496B-9C58-EA46DD707481}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.SkyApm.Diagnostics.Rpc", "src\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj", "{21EE5C17-9D9B-496B-9C58-EA46DD707481}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Zookeeper", "src\Silky.Zookeeper\Silky.Zookeeper.csproj", "{B730C43A-E13D-4F74-B63E-5270143A033E}"
 EndProject

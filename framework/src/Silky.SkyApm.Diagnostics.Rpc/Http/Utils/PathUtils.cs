@@ -1,8 +1,7 @@
 using System.Linq;
-using Silky.Core;
 using Silky.Rpc.MiniProfiler;
 
-namespace Silky.Rpc.SkyApm.Diagnostics
+namespace Silky.SkyApm.Diagnostics.Rpc.Http.Utils
 {
     public static class PathUtils
     {

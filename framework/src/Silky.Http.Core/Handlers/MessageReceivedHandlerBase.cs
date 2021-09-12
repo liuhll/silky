@@ -73,6 +73,7 @@ namespace Silky.Http.Core.Handlers
             var excuteResult = await _serviceExecutor.Execute(serviceEntry, rpcParameters, serviceKey);
             context.Response.ContentType = "application/json;charset=utf-8";
             context.Response.StatusCode = ResponseStatusCode.Success;
+            context.Response.SetResultCode(StatusCode.Success);
             if (_gatewayOptions.WrapResult)
             {
                 var responseResult = new ResponseResultDto()

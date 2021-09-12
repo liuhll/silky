@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 
@@ -20,6 +21,11 @@ namespace Silky.Http.Core
         public static void SignoutToSwagger(this HttpContext httpContext)
         {
             httpContext.Response.Headers["access-token"] = "invalid_token";
+        }
+
+        public static void SetResultCode(this HttpResponse httpResponse, StatusCode statusCode)
+        {
+            httpResponse.Headers["SilkyResultCode"] = statusCode.ToString();
         }
     }
 }

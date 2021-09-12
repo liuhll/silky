@@ -1,5 +1,5 @@
-using Silky.Rpc.SkyApm.Diagnostics;
 using Silky.SkyApm.Agent.Configuration;
+using Silky.SkyApm.Diagnostics.Rpc;
 using SkyApm.Utilities.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection

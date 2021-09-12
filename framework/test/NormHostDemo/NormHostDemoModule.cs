@@ -19,6 +19,7 @@ namespace NormHostDemo
         {
             services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
             services.AddSilkySkyApm();
+            services.AddJwt();
         }
 
         public override async Task Initialize(ApplicationContext applicationContext)

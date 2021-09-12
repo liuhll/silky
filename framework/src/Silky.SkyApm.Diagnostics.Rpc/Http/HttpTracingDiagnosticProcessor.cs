@@ -7,11 +7,13 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
+using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Core.Rpc;
-using Silky.Http.SkyApm.Diagnostics;
-using Silky.Rpc.SkyApm.Diagnostics.Collections;
-using Silky.Rpc.SkyApm.Diagnostics.Http.Extensions;
-using Silky.Rpc.Transport;
+using Silky.SkyApm.Abstraction.Collections;
+using Silky.SkyApm.Diagnostics.Rpc.Http.Configs;
+using Silky.SkyApm.Diagnostics.Rpc.Http.Utils;
+using Silky.SkyApm.Diagnostics.Rpc.Http.Extensions;
 using SkyApm;
 using SkyApm.Common;
 using SkyApm.Config;
@@ -19,7 +21,7 @@ using SkyApm.Diagnostics;
 using SkyApm.Tracing;
 using SkyApm.Tracing.Segments;
 
-namespace Silky.Rpc.SkyApm.Diagnostics
+namespace Silky.SkyApm.Diagnostics.Rpc.Http
 {
     public class HttpTracingDiagnosticProcessor : ITracingDiagnosticProcessor
     {
@@ -55,7 +57,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
                 new SilkyCarrierHeaderCollection(RpcContext.Context));
 
             context.Span.SpanLayer = SpanLayer.HTTP;
-            context.Span.Component = Components.SilkyHttp;
+            context.Span.Component = Components.ASPNETCORE;
             context.Span.Peer = new StringOrIntValue(HttpContext.Connection.RemoteIpAddress.ToString());
             ;
             context.Span.AddTag(Tags.URL, HttpContext.Request.GetDisplayUrl());
@@ -97,7 +99,15 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             }
 
             var statusCode = HttpContext.Response.StatusCode;
+
             if (statusCode >= 400)
+            {
+                context.Span.ErrorOccurred();
+            }
+
+            var silkyResultCode = HttpContext.Response.Headers["SilkyResultCode"].ToString().To<StatusCode>();
+
+            if (silkyResultCode != StatusCode.Success)
             {
                 context.Span.ErrorOccurred();
             }

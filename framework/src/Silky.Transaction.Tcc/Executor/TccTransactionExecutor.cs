@@ -10,6 +10,7 @@ using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Rpc.Extensions;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
@@ -120,9 +121,9 @@ namespace Silky.Transaction.Tcc.Executor
             TransactionRole transactionRole,
             string transId)
         {
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-            var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
+            var serviceEntry = invocation.GetServiceEntry();
+            var serviceKey = invocation.GetServiceKey();
+            var parameters = invocation.GetParameters();
 
             Debug.Assert(serviceEntry != null);
             if (!serviceEntry.IsTransactionServiceEntry())
@@ -153,7 +154,7 @@ namespace Silky.Transaction.Tcc.Executor
                 TransId = transId,
                 TransType = TransactionType.Tcc,
                 Invocation = invocation,
-                ServiceId = serviceEntry.Id,
+                ServiceEntryId = serviceEntry.Id,
                 Status = ActionStage.PreTry,
                 ServiceKey = serviceKey,
                 Parameters = parameters
@@ -177,10 +178,12 @@ namespace Silky.Transaction.Tcc.Executor
 
         private ITransaction CreateTransaction()
         {
-            var transaction = new SilkyTransaction();
-            transaction.TransId = GuidGenerator.CreateGuidStrWithNoUnderline();
-            transaction.Status = ActionStage.PreTry;
-            transaction.TransType = TransactionType.Tcc;
+            var transaction = new SilkyTransaction
+            {
+                TransId = GuidGenerator.CreateGuidStrWithNoUnderline(),
+                Status = ActionStage.PreTry,
+                TransType = TransactionType.Tcc
+            };
             return transaction;
         }
 

@@ -59,11 +59,13 @@ namespace Silky.Http.Core.Middlewares
                         var responseResultData = serializer.Serialize(responseResultDto);
                         context.Response.ContentLength = responseResultData.GetBytes().Length;
                         context.Response.StatusCode = ResponseStatusCode.Success;
+                        context.Response.SetResultCode(exception.GetExceptionStatusCode());
                         return context.Response.WriteAsync(responseResultData);
                     }
                     else
                     {
                         context.Response.ContentType = "text/plain";
+                        context.Response.SetResultCode(exception.GetExceptionStatusCode());
                         context.Response.StatusCode = exception.IsBusinessException()
                             ? ResponseStatusCode.BadCode
                             : exception.IsUnauthorized()

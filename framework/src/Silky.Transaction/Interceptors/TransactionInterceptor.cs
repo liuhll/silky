@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Rpc;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Transaction.Abstraction;
@@ -11,10 +12,10 @@ namespace Silky.Transaction.Interceptors
 {
     public class TransactionInterceptor : SilkyInterceptor, IScopedDependency
     {
-        public async override Task InterceptAsync(ISilkyMethodInvocation invocation)
+        public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {
-            var argumentsDictionary = invocation.ArgumentsDictionary;
-            var serviceEntry = argumentsDictionary["serviceEntry"] as ServiceEntry;
+            
+            var serviceEntry = invocation.GetServiceEntry();
             Debug.Assert(serviceEntry != null);
             if (!serviceEntry.IsTransactionServiceEntry())
             {

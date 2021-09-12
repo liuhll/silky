@@ -19,6 +19,7 @@ namespace Silky.Rpc.Runtime.Server
         private static readonly DiagnosticListener s_diagnosticListener =
             new(RpcDiagnosticListenerNames.DiagnosticServerListenerName);
 
+
         public DefaultServiceMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
             IHandleSupervisor handleSupervisor)
         {
@@ -30,7 +31,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             var sp = Stopwatch.StartNew();
             message.SetRpcAttachments();
-            
+
             var clientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ClientAddress).ToString();
             var tracingTimestamp = TracingBefore(message, messageId);
             var serviceEntry =
@@ -81,9 +82,11 @@ namespace Silky.Rpc.Runtime.Server
                 else
                 {
                     _handleSupervisor.ExecFail((serviceEntry?.Id, clientAddress),
-                        !(remoteResultMessage.StatusCode.IsBusinessStatus() || remoteResultMessage.StatusCode.IsUnauthorized()), sp.ElapsedMilliseconds);
+                        !(remoteResultMessage.StatusCode.IsBusinessStatus() ||
+                          remoteResultMessage.StatusCode.IsUnauthorized()), sp.ElapsedMilliseconds);
                 }
             }
+
             var resultTransportMessage = new TransportMessage(remoteResultMessage, messageId);
             await sender.SendAndFlushAsync(resultTransportMessage);
         }
@@ -104,6 +107,7 @@ namespace Silky.Rpc.Runtime.Server
 
                 return eventData.OperationTimestamp;
             }
+
             return null;
         }
 
@@ -114,7 +118,7 @@ namespace Silky.Rpc.Runtime.Server
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcServerHandler))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcResultEventData()
+                var eventData = new RpcInvokeResultEventData()
                 {
                     MessageId = messageId,
                     ServiceEntryId = serviceId,
@@ -134,7 +138,7 @@ namespace Silky.Rpc.Runtime.Server
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcServerHandler))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcExceptionEventData()
+                var eventData = new RpcInvokeExceptionEventData()
                 {
                     MessageId = messageId,
                     ServiceEntryId = serviceId,

@@ -8,7 +8,7 @@
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
-        <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics\Silky.SkyApm.Diagnostics.csproj" />
+        <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj" />
         <ProjectReference Include="..\..\src\Silky.WebSocket\Silky.WebSocket.csproj" />
         <ProjectReference Include="..\..\src\Silky.Agent.WebSocketHost\Silky.Agent.WebSocketHost.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />

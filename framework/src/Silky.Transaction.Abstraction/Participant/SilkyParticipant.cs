@@ -19,7 +19,7 @@ namespace Silky.Transaction.Abstraction.Participant
         public string TransId { get; set; }
         public string ParticipantId { get; set; }
 
-        public string ServiceId { get; set; }
+        public string ServiceEntryId { get; set; }
 
         public string ServiceKey { get; set; }
         public object[] Parameters { get; set; }

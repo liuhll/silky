@@ -23,6 +23,8 @@ services:
     links:
       - elasticsearch
     restart: always
+    volumes: 
+      - ./skywalkingconfig/component-libraries.yml:/skywalking/config/component-libraries.yml
     ports:
       - 11800:11800
       - 12800:12800

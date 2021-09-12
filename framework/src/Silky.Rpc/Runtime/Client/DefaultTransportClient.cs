@@ -133,7 +133,7 @@ namespace Silky.Rpc.Runtime.Client
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcRequest))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcResultEventData()
+                var eventData = new RpcInvokeResultEventData()
                 {
                     MessageId = messageId,
                     ServiceEntryId = serviceId,
@@ -153,7 +153,7 @@ namespace Silky.Rpc.Runtime.Client
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcRequest))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcExceptionEventData()
+                var eventData = new RpcInvokeExceptionEventData()
                 {
                     MessageId = messageId,
                     ServiceEntryId = serviceId,

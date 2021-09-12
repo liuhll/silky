@@ -1,9 +1,13 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.SkyApm.Diagnostics.Rpc.Client;
+using Silky.SkyApm.Diagnostics.Rpc.Factory;
+using Silky.SkyApm.Diagnostics.Rpc.Http;
+using Silky.SkyApm.Diagnostics.Rpc.Server;
 using SkyApm;
 using SkyApm.Utilities.DependencyInjection;
 
-namespace Silky.Rpc.SkyApm.Diagnostics
+namespace Silky.SkyApm.Diagnostics.Rpc
 {
     public static class SkyWalkingBuilderExtensions
     {
@@ -17,7 +21,7 @@ namespace Silky.Rpc.SkyApm.Diagnostics
             extensions.Services.AddSingleton<ITracingDiagnosticProcessor, RpcClientTracingDiagnosticProcessor>();
             extensions.Services.AddSingleton<ITracingDiagnosticProcessor, RpcServerTracingDiagnosticProcessor>();
             extensions.Services.AddSingleton<ITracingDiagnosticProcessor, HttpTracingDiagnosticProcessor>();
-          
+            extensions.Services.AddSingleton<ISilkyRpcSegmentContextFactory, SilkyRpcSegmentContextFactory>();
             return extensions;
         }
     }

@@ -1,4 +1,4 @@
-namespace Silky.Rpc.SkyApm.Diagnostics
+namespace Silky.SkyApm.Diagnostics.Rpc
 {
     public class SilkyTags
     {
