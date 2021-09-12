@@ -45,12 +45,12 @@ namespace Silky.Transaction.Cache
                 cacheValue = _serializer.Serialize(existParticipantList);
             }
 
-            _cache.SetString(string.Format(ParticipantKey, participant.ParticipantId), cacheValue);
+            _cache.SetString(CacheKey(participantId), cacheValue);
         }
 
         public IList<IParticipant> Get(string participantId)
         {
-            var participantsCacheValue = _cache.GetString(participantId);
+            var participantsCacheValue = _cache.GetString(CacheKey(participantId));
             if (participantsCacheValue != null)
             {
                 var participants = _serializer.Deserialize<IList<SilkyParticipant>>(participantsCacheValue);
@@ -59,13 +59,17 @@ namespace Silky.Transaction.Cache
 
             return null;
         }
-
         public void RemoveByKey(string participantId)
         {
             if (!participantId.IsNullOrEmpty())
             {
-                _cache.Remove(string.Format(ParticipantKey, participantId));
+                _cache.Remove(CacheKey(participantId));
             }
+        }
+
+        private string CacheKey(string participantId)
+        {
+            return string.Format(ParticipantKey, participantId);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Silky.Transaction.Tcc.Executor
             return (transaction, context);
         }
 
-        public async Task<(IParticipant, TransactionContext)> PreTryParticipant(TransactionContext context,
+        public async Task<IParticipant> PreTryParticipant(TransactionContext context,
             ISilkyMethodInvocation invocation)
         {
             Logger.LogDebug($"participant tcc transaction start..：{context}");
@@ -64,7 +64,7 @@ namespace Silky.Transaction.Tcc.Executor
             await SilkyTransactionHolder.Instance.CacheParticipant(participant);
             await TransRepositoryStore.CreateParticipant(participant);
             context.TransactionRole = TransactionRole.Participant;
-            return (participant, context);
+            return participant;
         }
 
         public async Task GlobalConfirm(ITransaction currentTransaction)

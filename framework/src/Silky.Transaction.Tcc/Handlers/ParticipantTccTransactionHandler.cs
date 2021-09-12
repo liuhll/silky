@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Silky.Core.DynamicProxy;
-using Silky.Rpc.Extensions;
-using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
-using Silky.Transaction.Tcc.Diagnostics;
 using Silky.Transaction.Tcc.Executor;
 
 namespace Silky.Transaction.Tcc.Handlers
@@ -16,7 +13,9 @@ namespace Silky.Transaction.Tcc.Handlers
     public class ParticipantTccTransactionHandler : ITransactionHandler
     {
         private readonly TccTransactionExecutor _executor = TccTransactionExecutor.Executor;
-        
+
+        public TransactionRole TransactionRole { get; } = TransactionRole.Participant;
+
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
             switch (context.Action)
@@ -26,8 +25,9 @@ namespace Silky.Transaction.Tcc.Handlers
                     try
                     {
                         var preTryParticipantInfo = await _executor.PreTryParticipant(context, invocation);
-                        participant = preTryParticipantInfo.Item1;
-                        SilkyTransactionContextHolder.Instance.Set(preTryParticipantInfo.Item2);
+                        participant = preTryParticipantInfo;
+                        context.TransactionRole = TransactionRole.Participant;
+                        SilkyTransactionContextHolder.Instance.Set(context);
                         await invocation.ProceedAsync();
                         if (participant != null)
                         {
