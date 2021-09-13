@@ -10,15 +10,5 @@ namespace Silky.RegistryCenter.Zookeeper
     [DependsOn(typeof(RpcModule), typeof(LockModule))]
     public class ZookeeperModule : SilkyModule
     {
-        public override async Task Shutdown(ApplicationContext applicationContext)
-        {
-            var serviceRouteManager =
-                applicationContext.ServiceProvider.GetRequiredService<ZookeeperServiceRouteManager>();
-
-            if (serviceRouteManager != null)
-            {
-                await serviceRouteManager.RemoveLocalHostServiceRoute();
-            }
-        }
     }
 }

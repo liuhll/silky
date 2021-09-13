@@ -24,7 +24,7 @@ using Silky.Rpc.Address;
 
 namespace Silky.RegistryCenter.Zookeeper.Routing
 {
-    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, ISingletonDependency
+    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, IDisposable, ISingletonDependency
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
         private readonly ISerializer _serializer;
@@ -100,8 +100,9 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 {
                     continue;
                 }
+
                 var applications = _serviceManager.GetAllApplications();
-              
+
                 var removeExceptRouteDescriptors = serviceRouteDescriptors.Where(p =>
                     p.Addresses.Any(p => p.Equals(addressDescriptor))
                     && !applications.Contains(p.Service.Application)
@@ -270,7 +271,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             {
                 var serviceRoutePath = CreateRoutePath(service.Id);
                 var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
-                
+
                 foreach (var zookeeperClient in zookeeperClients)
                 {
                     await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
@@ -284,7 +285,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 }
             }
         }
-        
+
         internal async Task CreateSubscribeDataChange(IZookeeperClient zookeeperClient, string path)
         {
             var watcher = new ServiceRouteWatcher(path, _serviceRouteCache, _serializer);
@@ -325,6 +326,11 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                     }
                 }
             }
+        }
+
+        public async void Dispose()
+        {
+            await RemoveLocalHostServiceRoute();
         }
     }
 }
