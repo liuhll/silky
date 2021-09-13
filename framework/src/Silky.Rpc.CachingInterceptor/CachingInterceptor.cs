@@ -34,7 +34,7 @@ namespace Silky.Rpc.CachingInterceptor
 
             if (serviceEntry.GovernanceOptions.CacheEnabled)
             {
-                var removeCachingInterceptProviders = serviceEntry.RemoveCachingInterceptProviders;
+                var removeCachingInterceptProviders = serviceEntry.RemoveCachingInterceptProviders();
                 if (removeCachingInterceptProviders.Any())
                 {
                     var index = 1;
@@ -51,7 +51,7 @@ namespace Silky.Rpc.CachingInterceptor
                     }
                 }
 
-                if (serviceEntry.GetCachingInterceptProvider != null)
+                if (serviceEntry.GetCachingInterceptProvider() != null)
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
@@ -63,7 +63,7 @@ namespace Silky.Rpc.CachingInterceptor
                     else
                     {
                         var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            serviceEntry.GetCachingInterceptProvider);
+                            serviceEntry.GetCachingInterceptProvider());
                         MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
                             $"Ready to get data from the cache service:[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{getCacheKey}]");
@@ -73,7 +73,7 @@ namespace Silky.Rpc.CachingInterceptor
                             serviceEntry);
                     }
                 }
-                else if (serviceEntry.UpdateCachingInterceptProvider != null)
+                else if (serviceEntry.UpdateCachingInterceptProvider() != null)
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
@@ -85,7 +85,7 @@ namespace Silky.Rpc.CachingInterceptor
                     else
                     {
                         var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            serviceEntry.UpdateCachingInterceptProvider);
+                            serviceEntry.UpdateCachingInterceptProvider());
                         MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.UpdateCaching,
                             $"The cacheKey for updating the cache data is[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{updateCacheKey}]");

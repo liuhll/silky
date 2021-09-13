@@ -1,4 +1,4 @@
-﻿namespace Silky.Rpc.Transport.CachingIntercept
+﻿namespace Silky.Rpc.CachingInterceptor.Providers
 {
     public interface IUpdateCachingInterceptProvider : ICachingInterceptProvider
     {

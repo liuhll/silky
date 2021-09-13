@@ -1,8 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Silky.Core;
+using Silky.Rpc.CachingInterceptor.Providers;
 
-namespace Silky.Rpc.Transport.CachingIntercept
+namespace Silky.Rpc.CachingInterceptor
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class UpdateCachingInterceptAttribute : Attribute, IUpdateCachingInterceptProvider

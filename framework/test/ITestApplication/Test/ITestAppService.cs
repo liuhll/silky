@@ -6,9 +6,9 @@ using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Rpc.Runtime.Server.ServiceDiscovery;
-using Silky.Rpc.Transport.CachingIntercept;
 using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Rpc.CachingInterceptor;
 
 namespace ITestApplication.Test
 {

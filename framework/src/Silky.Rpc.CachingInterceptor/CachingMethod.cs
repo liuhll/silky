@@ -1,4 +1,4 @@
-﻿namespace Silky.Rpc.Transport.CachingIntercept
+﻿namespace Silky.Rpc.CachingInterceptor
 {
     public enum CachingMethod
     {

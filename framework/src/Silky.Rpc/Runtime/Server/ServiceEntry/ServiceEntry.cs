@@ -12,14 +12,12 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
-using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server.Parameter;
-using Silky.Rpc.Transport.CachingIntercept;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -225,19 +223,6 @@ namespace Silky.Rpc.Runtime.Server
             };
 
         public ServiceEntryDescriptor ServiceEntryDescriptor { get; }
-
-
-        public ICachingInterceptProvider GetCachingInterceptProvider =>
-            CustomAttributes.OfType<IGetCachingInterceptProvider>()
-                .FirstOrDefault();
-
-        public ICachingInterceptProvider UpdateCachingInterceptProvider =>
-            CustomAttributes.OfType<IUpdateCachingInterceptProvider>()
-                .FirstOrDefault();
-
-        public IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders =>
-            CustomAttributes.OfType<IRemoveCachingInterceptProvider>()
-                .ToImmutableList();
 
         public object[] ResolveParameters(IDictionary<ParameterFrom, object> parameters)
         {

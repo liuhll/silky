@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Silky.Core;
+using Silky.Rpc.CachingInterceptor.Providers;
 
-namespace Silky.Rpc.Transport.CachingIntercept
+namespace Silky.Rpc.CachingInterceptor
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class RemoveCachingInterceptAttribute : Attribute, IRemoveCachingInterceptProvider

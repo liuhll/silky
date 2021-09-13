@@ -13,12 +13,12 @@ using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Http.Dashboard.Configuration;
 using Silky.Rpc.AppServices;
 using Silky.Rpc.AppServices.Dtos;
+using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport.CachingIntercept;
 using Silky.Rpc.Utils;
 
 namespace Silky.Http.Dashboard.AppService

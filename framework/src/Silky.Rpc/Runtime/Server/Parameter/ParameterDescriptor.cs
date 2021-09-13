@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Rpc.Transport.CachingIntercept;
 
 namespace Silky.Rpc.Runtime.Server.Parameter
 {
