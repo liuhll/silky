@@ -4,6 +4,7 @@ using Silky.Caching;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Extensions;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
 
@@ -20,9 +21,9 @@ namespace Silky.Rpc.CachingInterceptor
 
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            var serviceKey = invocation.ArgumentsDictionary["serviceKey"] as string;
-            var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
+            var serviceEntry = invocation.GetServiceEntry();
+            var serviceKey = invocation.GetServiceKey();
+            var parameters = invocation.GetParameters();
 
             async Task<object> GetResultFirstFromCache(string cacheName, string cacheKey, ServiceEntry entry)
             {
