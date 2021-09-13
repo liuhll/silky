@@ -52,14 +52,15 @@ namespace Silky.DotNetty
             _healthCheck.OnUnhealth += async addressModel =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
-                m_clients.TryRemove(addressModel, out var remoteModule);
+                m_clients.TryRemove(addressModel, out _);
             };
             _healthCheck.OnHealthChange += async (addressModel, health) =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 if (!health)
                 {
-                    m_clients.TryRemove(addressModel, out var remoteModule);
+                    m_clients.TryRemove(addressModel, out _);
+
                 }
                 else
                 {
@@ -70,6 +71,7 @@ namespace Silky.DotNetty
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 m_clients.TryRemove(addressModel, out _);
+                
             };
 
             _bootstrap = CreateBootstrap();
@@ -137,7 +139,7 @@ namespace Silky.DotNetty
             }
             catch (Exception ex)
             {
-                m_clients.TryRemove(addressModel, out var value);
+                m_clients.TryRemove(addressModel, out _);
                 throw;
             }
         }

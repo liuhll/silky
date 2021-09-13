@@ -1,5 +1,4 @@
 using Silky.Rpc.Runtime;
-using Silky.Rpc.Transport;
 
 namespace Silky.DotNetty
 {
