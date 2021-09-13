@@ -9,13 +9,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Silky.Core.Threading;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using Silky.Caching;
 using Silky.Caching.Configuration;
-using Silky.Core;
+using Silky.Core.Threading;
 
-namespace Silky.Caching
+namespace Silky.Rpc.CachingInterceptor
 {
     public class DistributedInterceptCache : DistributedCache<object, string>, IDistributedInterceptCache
     {

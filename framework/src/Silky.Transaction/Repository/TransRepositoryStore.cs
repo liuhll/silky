@@ -20,8 +20,7 @@ namespace Silky.Transaction.Repository
                 EngineContext.Current.GetOptionsMonitor<DistributedTransactionOptions>((options, s) =>
                     _transactionOptions = options);
 
-            _transRepository =
-                EngineContext.Current.ResolveNamed<ITransRepository>(_transactionOptions.UndoLogRepository.ToString());
+            _transRepository = EngineContext.Current.Resolve<ITransRepository>();
 
             if (_transRepository == null)
             {
@@ -38,7 +37,7 @@ namespace Silky.Transaction.Repository
         public static async Task<ITransaction> LoadTransaction(string tranId)
         {
             var transaction = await _transRepository.FindByTransId(tranId);
-            return transaction is {Status: ActionStage.Delete} ? null : transaction;
+            return transaction is { Status: ActionStage.Delete } ? null : transaction;
         }
 
         public static async Task UpdateTransactionStatus(ITransaction transaction)
@@ -46,7 +45,6 @@ namespace Silky.Transaction.Repository
             if (transaction != null)
             {
                 await _transRepository.UpdateTransactionStatus(transaction.TransId, transaction.Status);
-                
             }
         }
 

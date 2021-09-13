@@ -3,10 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Caching.Distributed;
+using Silky.Caching;
+using Silky.Core.DependencyInjection;
 
-namespace Silky.Caching
+namespace Silky.Rpc.CachingInterceptor
 {
-    public interface IDistributedInterceptCache : IDistributedCache<object, string>
+    public interface IDistributedInterceptCache : IDistributedCache<object, string>, IScopedDependency
     {
         void UpdateCacheName(string cacheName);
 

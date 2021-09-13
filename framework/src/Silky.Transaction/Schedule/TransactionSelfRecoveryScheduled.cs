@@ -20,7 +20,6 @@ namespace Silky.Transaction.Schedule
     {
         private readonly ILogger<TransactionSelfRecoveryScheduled> _logger;
         private readonly ISerializer _serializer;
-        private readonly IScheduledDistributedLockFactory _scheduledDistributedLockFactory;
         private IDistributedLockProvider _distributedLockProvider;
         private DistributedTransactionOptions _transactionConfig;
         private Timer _selfTccRecoveryTimer;
@@ -28,22 +27,18 @@ namespace Silky.Transaction.Schedule
         private Timer _phyDeletedTimer;
 
         public TransactionSelfRecoveryScheduled(ILogger<TransactionSelfRecoveryScheduled> logger,
-            ISerializer serializer,
-            IScheduledDistributedLockFactory scheduledDistributedLockFactory)
+            ISerializer serializer)
         {
             _logger = logger;
             _serializer = serializer;
             _transactionConfig =
                 EngineContext.Current.GetOptionsMonitor<DistributedTransactionOptions>((options, s) =>
                     _transactionConfig = options);
-            _scheduledDistributedLockFactory = scheduledDistributedLockFactory;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _distributedLockProvider =
-                await _scheduledDistributedLockFactory.CreateDistributedLockProvider(_transactionConfig
-                    .UndoLogRepository);
+            _distributedLockProvider = EngineContext.Current.Resolve<IDistributedLockProvider>();
             if (_distributedLockProvider == null)
             {
                 throw new SilkyException("Failed to create distributed lock provider", StatusCode.TransactionError);
@@ -121,7 +116,8 @@ namespace Silky.Transaction.Schedule
                         var transactionLock =
                             _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecoveryTransaction,
                                 transaction.TransId));
-                        await using var transactionLockHandle = await transactionLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
+                        await using var transactionLockHandle =
+                            await transactionLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
                         if (transactionLockHandle != null)
                         {
                             var exist = await TransRepositoryStore.ExistParticipantByTransId(transaction.TransId);
@@ -165,7 +161,8 @@ namespace Silky.Transaction.Schedule
                         var @participantLock = _distributedLockProvider.CreateLock(
                             string.Format(LockName.ParticipantTccRecovery, participant.TransId,
                                 participant.ParticipantId));
-                        await using var participantHandle = await @participantLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
+                        await using var participantHandle =
+                            await @participantLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
                         if (participantHandle != null)
                         {
                             if (participant.ReTry > _transactionConfig.RetryMax)

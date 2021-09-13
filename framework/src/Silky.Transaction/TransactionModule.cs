@@ -1,8 +1,12 @@
-﻿using Autofac;
+﻿using System.Threading.Tasks;
+using Autofac;
+using Medallion.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Caching;
 using Silky.Castle;
+using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 using Silky.Lock;
 using Silky.Rpc;
@@ -32,6 +36,14 @@ namespace Silky.Transaction
                     typeof(TransactionInterceptor)
                 )
                 ;
+        }
+
+        public override async Task Initialize(ApplicationContext applicationContext)
+        {
+            if (!EngineContext.Current.IsRegistered(typeof(IDistributedLockProvider)))
+            {
+                throw new SilkyException("You must specify the implementation of IDistributedLockProvider in the Transaction.Repository project of the distributed transaction");
+            }
         }
     }
 }

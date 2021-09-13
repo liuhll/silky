@@ -7,14 +7,12 @@ namespace Silky.Transaction.Configuration
     {
         public static string DistributedTransaction = "DistributedTransaction";
 
-        public TransRepositorySupport UndoLogRepository { get; set; } = TransRepositorySupport.Redis;
-
         public TransactionType TransactionType { get; set; } = TransactionType.Tcc;
-        
+
         public int ScheduledRecoveryDelay { get; set; } = 30;
 
         public int ScheduledCleanDelay { get; set; } = 60;
-        
+
         public int ScheduledInitDelay { get; set; } = 10;
 
         public int RecoverDelayTime { get; set; } = 60;

@@ -18,6 +18,11 @@ namespace Silky.Core.DependencyInjection
         {
             return services.Any(d => d.ServiceType == type);
         }
+        
+        public static bool IsAddedImplementationType(this IServiceCollection services, Type type)
+        {
+	        return services.Any(d => d.ImplementationType == type);
+        }
 
         public static T GetSingletonInstanceOrNull<T>(this IServiceCollection services)
         {

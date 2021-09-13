@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(ValidationModule),
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
-        typeof(TransactionRepositoryRedisModule)
+        typeof(RedisTransactionRepositoryModule)
     )]
     public abstract class GeneralHostModule : StartUpModule
     {

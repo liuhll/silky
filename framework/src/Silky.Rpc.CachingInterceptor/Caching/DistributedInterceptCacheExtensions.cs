@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Silky.Caching
+namespace Silky.Rpc.CachingInterceptor
 {
     public static class DistributedInterceptCacheExtensions
     {

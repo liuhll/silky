@@ -12,7 +12,7 @@ using Silky.Transaction.Tcc;
 namespace GatewayDemo
 {
     [DependsOn( /*typeof(MessagePackModule),*/
-        typeof(TransactionRepositoryRedisModule),
+        typeof(RedisTransactionRepositoryModule),
 //        typeof(SkyApmAgentModule),
         typeof(TransactionTccModule),
 //        typeof(IdentityModule),

@@ -5,7 +5,7 @@ namespace Silky.Caching.Configuration
 {
     public class SilkyDistributedCacheOptions
     {
-        public static string SilkyDistributedCache = "DistributedCache";
+        internal static string SilkyDistributedCache = "DistributedCache";
 
         public SilkyDistributedCacheOptions()
         {
