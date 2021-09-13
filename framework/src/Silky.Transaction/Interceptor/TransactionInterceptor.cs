@@ -5,10 +5,9 @@ using Silky.Core.DynamicProxy;
 using Silky.Core.Rpc;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport;
 using Silky.Transaction.Abstraction;
 
-namespace Silky.Transaction.Interceptors
+namespace Silky.Transaction.Interceptor
 {
     public class TransactionInterceptor : SilkyInterceptor, IScopedDependency
     {

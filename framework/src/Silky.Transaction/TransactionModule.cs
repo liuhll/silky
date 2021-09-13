@@ -12,7 +12,7 @@ using Silky.Lock;
 using Silky.Rpc;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Configuration;
-using Silky.Transaction.Interceptors;
+using Silky.Transaction.Interceptor;
 using Silky.Transaction.Schedule;
 
 namespace Silky.Transaction
