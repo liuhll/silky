@@ -9,7 +9,7 @@ namespace Silky.Core.Modularity
 
         public IModuleContainer ModuleContainer { get; private set; }
 
-        public ApplicationContext([NotNull] IServiceProvider serviceProvider,
+        internal ApplicationContext([NotNull] IServiceProvider serviceProvider,
             [NotNull] IModuleContainer moduleContainer)
         {
             Check.NotNull(serviceProvider, nameof(serviceProvider));
