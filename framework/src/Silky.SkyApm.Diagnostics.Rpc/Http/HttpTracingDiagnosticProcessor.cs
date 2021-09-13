@@ -105,13 +105,16 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
                 context.Span.ErrorOccurred();
             }
 
-            var silkyResultCode = HttpContext.Response.Headers["SilkyResultCode"].ToString().To<StatusCode>();
-
-            if (silkyResultCode != StatusCode.Success)
+            if (HttpContext.Response.Headers.ContainsKey("SilkyResultCode"))
             {
-                context.Span.ErrorOccurred();
-            }
+                var silkyResultCode = HttpContext.Response.Headers["SilkyResultCode"].ToString().To<StatusCode>();
 
+                if (silkyResultCode != StatusCode.Success)
+                {
+                    context.Span.ErrorOccurred();
+                }
+            }
+            
             context.Span.AddLog(
                 LogEvent.Event("Http Request End"),
                 LogEvent.Message($"Http Request End"));
