@@ -30,24 +30,24 @@ namespace Silky.Rpc.Runtime.Server
 
         public static IEnumerable<(Type, bool)> FindAllServiceTypes(ITypeFinder typeFinder)
         {
-            var entryTypes = new List<(Type, bool)>();
+            var serviceTypes = new List<(Type, bool)>();
             var exportedTypes = typeFinder.GetAssemblies()
                 .SelectMany(p => p.ExportedTypes);
 
-            var entryInterfaces = exportedTypes
+            var serviceInterfaces = exportedTypes
                     .Where(p => p.IsInterface
                                 && p.GetCustomAttributes().Any(a => a is ServiceRouteAttribute)
                                 && !p.IsGenericType
                     )
                 ;
-            foreach (var entryInterface in entryInterfaces)
+            foreach (var entryInterface in serviceInterfaces)
             {
-                entryTypes.Add(exportedTypes.Any(t => entryInterface.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract)
+                serviceTypes.Add(exportedTypes.Any(t => entryInterface.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract)
                     ? (entryInterface, true)
                     : (entryInterface, false));
             }
 
-            return entryTypes;
+            return serviceTypes;
         }
 
         public static IEnumerable<Type> FindServiceProxyTypes(ITypeFinder typeFinder)
