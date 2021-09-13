@@ -111,7 +111,7 @@ namespace Silky.Rpc.Runtime.Server
             return null;
         }
 
-        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceId,
+        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceEntryId,
             RemoteResultMessage remoteResultMessage)
         {
             if (tracingTimestamp != null &&
@@ -121,7 +121,7 @@ namespace Silky.Rpc.Runtime.Server
                 var eventData = new RpcInvokeResultEventData()
                 {
                     MessageId = messageId,
-                    ServiceEntryId = serviceId,
+                    ServiceEntryId = serviceEntryId,
                     Result = remoteResultMessage.Result,
                     StatusCode = remoteResultMessage.StatusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value
@@ -131,7 +131,7 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        private void TracingError(long? tracingTimestamp, string messageId, string serviceId, StatusCode statusCode,
+        private void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId, StatusCode statusCode,
             Exception ex)
         {
             if (tracingTimestamp != null &&
@@ -141,7 +141,7 @@ namespace Silky.Rpc.Runtime.Server
                 var eventData = new RpcInvokeExceptionEventData()
                 {
                     MessageId = messageId,
-                    ServiceEntryId = serviceId,
+                    ServiceEntryId = serviceEntryId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
                     RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress).ToString(),
