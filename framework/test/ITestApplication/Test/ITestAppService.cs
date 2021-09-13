@@ -37,6 +37,7 @@ namespace ITestApplication.Test
         Task<string> Search([FromQuery] TestInput query);
 
         [HttpPost]
+        [HttpPut]
         string Form([FromForm] TestInput query);
 
         [HttpGet("{name:string}")]

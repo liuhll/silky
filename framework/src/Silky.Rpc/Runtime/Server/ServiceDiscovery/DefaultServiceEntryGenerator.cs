@@ -20,17 +20,14 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
     {
         private readonly IServiceIdGenerator _serviceIdGenerator;
         private readonly IParameterProvider _parameterProvider;
-        private readonly IHttpMethodProvider _httpMethodProvider;
         private GovernanceOptions _governanceOptions;
 
         public DefaultServiceEntryGenerator(IServiceIdGenerator serviceIdGenerator,
             IParameterProvider parameterProvider,
-            IHttpMethodProvider httpMethodProvider,
             IOptionsMonitor<GovernanceOptions> governanceOptions)
         {
             _serviceIdGenerator = serviceIdGenerator;
             _parameterProvider = parameterProvider;
-            _httpMethodProvider = httpMethodProvider;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange(GovernanceOptionsChangeListener);
         }
@@ -57,54 +54,21 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
 
             foreach (var method in methods)
             {
-                var (httpMethods, isSpecify) = _httpMethodProvider.GetHttpMethodsInfo(method);
-                foreach (var httpMethodAttribute in httpMethods)
+                var httpMethodInfos = method.GetHttpMethodInfos();
+                foreach (var httpMethodInfo in httpMethodInfos)
                 {
-                    var httpMethod = httpMethodAttribute.HttpMethods.First().To<HttpMethod>();
-                    if (!isSpecify)
-                    {
-                        if (method.Name.StartsWith("Create"))
-                        {
-                            httpMethod = HttpMethod.Post;
-                        }
-
-                        if (method.Name.StartsWith("Update"))
-                        {
-                            httpMethod = HttpMethod.Put;
-                        }
-
-                        if (method.Name.StartsWith("Delete"))
-                        {
-                            httpMethod = HttpMethod.Delete;
-                        }
-
-                        if (method.Name.StartsWith("Search"))
-                        {
-                            httpMethod = HttpMethod.Get;
-                        }
-
-                        if (method.Name.StartsWith("Query"))
-                        {
-                            httpMethod = HttpMethod.Get;
-                        }
-
-                        if (method.Name.StartsWith("Get"))
-                        {
-                            httpMethod = HttpMethod.Get;
-                        }
-                    }
-
                     var serviceEntryTemplate =
-                        TemplateHelper.GenerateServerEntryTemplate(routeTemplate, httpMethodAttribute.Template,
-                            httpMethod, isSpecify,
+                        TemplateHelper.GenerateServerEntryTemplate(routeTemplate, httpMethodInfo.Template,
+                            httpMethodInfo.HttpMethod, httpMethodInfo.IsSpecify,
                             method.Name);
+
 
                     yield return Create(method,
                         serviceType.Item1,
                         serviceType.Item2,
                         serviceEntryTemplate,
                         serviceBundleProvider,
-                        httpMethod);
+                        httpMethodInfo.HttpMethod);
                 }
             }
         }
@@ -118,7 +82,7 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         {
             var serviceName = serviceType.Name;
             var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
-            var serviceEntryId = _serviceIdGenerator.GenerateServiceEntryId(method);
+            var serviceEntryId = _serviceIdGenerator.GenerateServiceEntryId(method, httpMethod);
             var serviceId = _serviceIdGenerator.GenerateServiceId(serviceType);
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
             if (parameterDescriptors.Count(p => p.IsHashKey) > 1)

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Silky.Rpc.Tests.AppService
 {
-    [ServiceRoute("api/test")]
+    [ServiceRoute("api/{appservice=test}")]
     public interface ITestAppService
     {
         [HttpPost("/test")]

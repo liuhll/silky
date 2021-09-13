@@ -8,9 +8,9 @@ namespace Silky.Rpc.Runtime.Server
     {
         public string ServiceKey => RpcContext.Context.GetAttachment(AttachmentKeys.ServiceKey)?.ToString();
 
-        public void Change(string seviceKey)
+        public void Change(string serviceKey)
         {
-            RpcContext.Context.SetAttachment(AttachmentKeys.ServiceKey, seviceKey);
+            RpcContext.Context.SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
         }
     }
 }

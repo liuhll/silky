@@ -4,6 +4,6 @@ namespace Silky.Rpc.Runtime.Server
     {
         string ServiceKey { get; }
 
-        void Change(string seviceKey);
+        void Change(string serviceKey);
     }
 }

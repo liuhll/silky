@@ -28,7 +28,7 @@ namespace Silky.Rpc.Proxy
 
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {
-            var serviceEntryId = _serviceIdGenerator.GenerateServiceEntryId(invocation.Method);
+            var serviceEntryId = _serviceIdGenerator.GetDefaultServiceEntryId(invocation.Method);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
             try
             {

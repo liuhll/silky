@@ -17,8 +17,11 @@ namespace Silky.Rpc.Routing.Template
         };
 
 
-        public static string GenerateServerEntryTemplate(string routeTemplate, string methodEntryTemplate,
-            HttpMethod httpMethod, bool isSpecify, string methodName)
+        public static string GenerateServerEntryTemplate(string routeTemplate,
+            string methodEntryTemplate,
+            HttpMethod httpMethod,
+            bool isSpecify,
+            string methodName)
         {
             var serverEntryTemplate = routeTemplate;
             if (isSpecify)
@@ -59,7 +62,6 @@ namespace Silky.Rpc.Routing.Template
                         methodName.RemovePreFix(StringComparison.OrdinalIgnoreCase, constraintDefaultMethod);
                     serverEntryTemplate = $"{routeTemplate}/{methodEntryTemplate}";
                 }
-                
             }
 
             return serverEntryTemplate;
