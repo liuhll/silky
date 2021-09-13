@@ -5,7 +5,7 @@ namespace Silky.Rpc.Configuration
 {
     public class GovernanceOptions : IGovernanceProvider
     {
-        public static string Governance = "Governance";
+        internal static string Governance = "Governance";
 
         /// <summary>
         /// 负载分流策略

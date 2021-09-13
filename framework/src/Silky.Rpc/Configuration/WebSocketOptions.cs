@@ -2,7 +2,7 @@
 {
     public class WebSocketOptions
     {
-        public static string WebSocket = "WebSocket";
+        internal static string WebSocket = "WebSocket";
 
         public int Port { get; set; } = 3000;
 

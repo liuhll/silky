@@ -2,7 +2,7 @@
 {
     public class RegistryCenterOptions
     {
-        public static string RegistryCenter = "RegistryCenter";
+        internal static string RegistryCenter = "RegistryCenter";
 
         public RegistryCenterType RegistryCenterType { get; set; } = RegistryCenterType.Zookeeper;
 
