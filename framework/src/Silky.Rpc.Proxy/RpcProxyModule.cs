@@ -12,7 +12,5 @@ namespace Silky.Rpc.Proxy
         {
             services.AddRpcProxy();
         }
-
-        
     }
 }
