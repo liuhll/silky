@@ -10,7 +10,7 @@ namespace Silky.SkyApm.Diagnostics.Transaction
 {
     public static class SkyWalkingBuilderExtensions
     {
-        public static SkyApmExtensions AddSilkyTransaction(this SkyApmExtensions extensions)
+        public static SkyApmExtensions AddSkyApmSilkyTransaction(this SkyApmExtensions extensions)
         {
             if (extensions == null)
             {

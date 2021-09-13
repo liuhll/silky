@@ -11,8 +11,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddSkyAPM(extensions =>
             {
-                extensions.AddSilkyRpc();
-                extensions.AddSilkyTransaction();
+                extensions.AddSkyApmSilkyRpc();
+                extensions.AddSkyApmSilkyTransaction();
                 extensions.Services.AddSingleton<IConfigurationFactory, SilkyConfigurationFactory>();
             });
             return services;
