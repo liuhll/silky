@@ -1,15 +1,14 @@
-﻿using System.Threading.Tasks;
-using Silky.Core;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Modularity;
 
 namespace Silky.ObjectMapper.AutoMapper
 {
     public class AutoMapperModule : SilkyModule
     {
-        public override Task Initialize(ApplicationContext applicationContext)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            var autoMapperBootstrap = EngineContext.Current.Resolve<IAutoMapperBootstrap>();
-            return Task.Factory.StartNew(()=> autoMapperBootstrap.Initialize());
+            services.AddObjectMapper();
         }
     }
 }
