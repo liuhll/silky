@@ -7,11 +7,11 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServerHandleSupervisor : IServerHandleSupervisor
     {
-        private ConcurrentDictionary<(string, string), ServiceHandleInfo> m_monitor = new();
+        private ConcurrentDictionary<(string, string), ServerHandleInfo> m_monitor = new();
 
         public void Monitor((string, string) item)
         {
-            var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServiceHandleInfo());
+            var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServerHandleInfo());
             serviceHandleInfo.ConcurrentHandles++;
             serviceHandleInfo.TotalHandles++;
             serviceHandleInfo.FinalHandleTime = DateTime.Now;
@@ -19,7 +19,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public void ExecSuccess((string, string) item, double elapsedTotalMilliseconds)
         {
-            var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServiceHandleInfo());
+            var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServerHandleInfo());
             serviceHandleInfo.ConcurrentHandles--;
             if (elapsedTotalMilliseconds > 0)
             {
@@ -33,7 +33,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds)
         {
-            var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServiceHandleInfo());
+            var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServerHandleInfo());
             serviceHandleInfo.ConcurrentHandles--;
             serviceHandleInfo.FaultHandles++;
             serviceHandleInfo.FinalHandleTime = DateTime.Now;
@@ -53,16 +53,16 @@ namespace Silky.Rpc.Runtime.Server
             m_monitor.AddOrUpdate(item, serviceHandleInfo, (key, _) => serviceHandleInfo);
         }
 
-        public ServiceInstanceHandleInfo GetServiceInstanceHandleInfo()
+        public ServerInstanceHandleInfo GetServiceInstanceHandleInfo()
         {
-            ServiceInstanceHandleInfo serviceInstanceHandleInfo = null;
+            ServerInstanceHandleInfo serverInstanceHandleInfo = null;
             if (m_monitor.Count <= 0)
             {
-                serviceInstanceHandleInfo = new ServiceInstanceHandleInfo();
+                serverInstanceHandleInfo = new ServerInstanceHandleInfo();
             }
             else
             {
-                serviceInstanceHandleInfo = new ServiceInstanceHandleInfo()
+                serverInstanceHandleInfo = new ServerInstanceHandleInfo()
                 {
                     AET = m_monitor.Values.Sum(p => p.AET) / m_monitor.Count,
                     MaxConcurrentHandles = m_monitor.Values.Max(p => p.ConcurrentHandles),
@@ -77,7 +77,7 @@ namespace Silky.Rpc.Runtime.Server
             }
 
 
-            return serviceInstanceHandleInfo;
+            return serverInstanceHandleInfo;
         }
 
         public IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceEntryHandleInfos()
@@ -89,7 +89,7 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     ServiceEntryId = monitor.Key.Item1,
                     Address = monitor.Key.Item2,
-                    ServiceHandleInfo = monitor.Value
+                    ServerHandleInfo = monitor.Value
                 };
                 serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
             }

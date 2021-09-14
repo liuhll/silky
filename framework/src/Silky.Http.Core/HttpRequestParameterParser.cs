@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Http;
 
 namespace Silky.Http.Core

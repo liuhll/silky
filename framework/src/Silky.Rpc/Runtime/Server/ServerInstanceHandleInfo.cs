@@ -2,7 +2,7 @@ using System;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServiceInstanceHandleInfo
+    public class ServerInstanceHandleInfo
     {
         public int MaxConcurrentHandles { get; set; } = 0;
 

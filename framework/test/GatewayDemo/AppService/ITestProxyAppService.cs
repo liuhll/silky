@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
 using Microsoft.AspNetCore.Authorization;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Runtime.Server;
 

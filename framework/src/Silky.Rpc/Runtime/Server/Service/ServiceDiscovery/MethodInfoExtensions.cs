@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     internal static class MethodInfoExtensions
     {

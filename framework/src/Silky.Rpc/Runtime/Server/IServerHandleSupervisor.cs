@@ -11,7 +11,7 @@ namespace Silky.Rpc.Runtime.Server
 
         void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds);
         
-        ServiceInstanceHandleInfo GetServiceInstanceHandleInfo();
+        ServerInstanceHandleInfo GetServiceInstanceHandleInfo();
 
         IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceEntryHandleInfos();
         

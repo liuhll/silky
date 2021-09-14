@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Silky.Rpc.Runtime.Server.Parameter;
 using Microsoft.OpenApi.Models;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 {

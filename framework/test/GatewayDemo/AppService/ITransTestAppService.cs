@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Silky.Transaction;
 
 namespace GatewayDemo.AppService

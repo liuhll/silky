@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Silky.Rpc.Runtime.Server
 {

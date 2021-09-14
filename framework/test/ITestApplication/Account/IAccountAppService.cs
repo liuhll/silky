@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using ITestApplication.Account.Dtos;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
 
 namespace ITestApplication.Account

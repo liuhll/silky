@@ -2,7 +2,7 @@ using System;
 using JetBrains.Annotations;
 using Silky.Core;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Interface, AllowMultiple = true)]
     public class MetadataAttribute : Attribute

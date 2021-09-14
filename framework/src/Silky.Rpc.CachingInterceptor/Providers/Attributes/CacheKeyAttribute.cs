@@ -1,5 +1,5 @@
 ﻿using System;
-using Silky.Rpc.Runtime.Server.Parameter;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.CachingInterceptor
 {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Runtime.Server;
 
 namespace IAnotherApplication
 {

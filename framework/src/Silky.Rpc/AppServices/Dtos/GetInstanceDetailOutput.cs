@@ -12,7 +12,7 @@ namespace Silky.Rpc.AppServices.Dtos
 
         public DateTime StartTime { get; set; }
 
-        public ServiceInstanceHandleInfo HandleInfo { get; set; }
+        public ServerInstanceHandleInfo HandleInfo { get; set; }
 
         public ServiceInstanceInvokeInfo InvokeInfo { get; set; }
     }

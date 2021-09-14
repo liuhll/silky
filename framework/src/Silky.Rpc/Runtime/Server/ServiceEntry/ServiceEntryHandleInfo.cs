@@ -6,6 +6,6 @@ namespace Silky.Rpc.Runtime.Server
         
         public string Address{ get; set; }
         
-        public ServiceHandleInfo ServiceHandleInfo { get; set; }
+        public ServerHandleInfo ServerHandleInfo { get; set; }
     }
 }

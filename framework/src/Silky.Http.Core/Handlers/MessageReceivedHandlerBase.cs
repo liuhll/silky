@@ -8,7 +8,6 @@ using Silky.Core.Serialization;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.Parameter;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Silky.Core.Rpc;

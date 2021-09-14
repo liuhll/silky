@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     internal class HttpMethodInfo
     {

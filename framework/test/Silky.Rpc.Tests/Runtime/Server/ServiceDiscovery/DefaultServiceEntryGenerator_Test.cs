@@ -1,4 +1,4 @@
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Runtime.Server;
 using Silky.TestBase.Testing;
 using Xunit;
 

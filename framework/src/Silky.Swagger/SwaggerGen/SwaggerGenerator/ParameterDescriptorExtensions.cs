@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.Parameter;
 
 namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 {

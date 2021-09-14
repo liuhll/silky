@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Silky.Rpc.Runtime.Server.Parameter
+namespace Silky.Rpc.Runtime.Server
 {
     public static class ParameterFromExtensions
     {

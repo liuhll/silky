@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     public class AuthorAttribute : MetadataAttribute
     {

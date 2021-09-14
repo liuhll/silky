@@ -4,17 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Silky.Core.Exceptions;
-using Silky.Core.Extensions;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Options;
 using Silky.Core;
-using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
-using Silky.Rpc.Runtime.Server.Parameter;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServiceEntryGenerator : IServiceEntryGenerator
     {

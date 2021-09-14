@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using GetInstanceDetailOutput = Silky.Rpc.AppServices.Dtos.GetInstanceDetailOutput;
 
 namespace Silky.Http.Dashboard.AppService

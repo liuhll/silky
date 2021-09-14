@@ -4,9 +4,8 @@ using System.Reflection;
 using Castle.DynamicProxy.Internal;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Routing;
-using Silky.Rpc.Address;
 using Silky.Rpc.Routing.Template;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Utils
 {

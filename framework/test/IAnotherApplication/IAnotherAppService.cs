@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
 

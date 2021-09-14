@@ -4,7 +4,7 @@ using Silky.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServiceProvider : IServiceProvider
     {

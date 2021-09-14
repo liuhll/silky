@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Silky.Rpc.AppServices
 {

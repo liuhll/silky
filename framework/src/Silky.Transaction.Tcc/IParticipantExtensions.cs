@@ -7,7 +7,6 @@ using Silky.Core.DynamicProxy;
 using Silky.Core.Rpc;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.Parameter;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;

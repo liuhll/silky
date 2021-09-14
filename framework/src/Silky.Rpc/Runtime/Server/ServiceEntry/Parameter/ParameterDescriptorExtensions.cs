@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Convertible;
 
-namespace Silky.Rpc.Runtime.Server.Parameter
+namespace Silky.Rpc.Runtime.Server
 {
     public static class ParameterDescriptorExtensions
     {

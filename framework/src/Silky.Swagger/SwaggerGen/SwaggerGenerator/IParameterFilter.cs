@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
-using Silky.Rpc.Runtime.Server.Parameter;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 {

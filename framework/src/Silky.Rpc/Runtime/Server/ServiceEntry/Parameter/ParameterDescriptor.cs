@@ -5,7 +5,7 @@ using System.Reflection;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 
-namespace Silky.Rpc.Runtime.Server.Parameter
+namespace Silky.Rpc.Runtime.Server
 {
     public class ParameterDescriptor
     {

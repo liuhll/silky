@@ -1,14 +1,12 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Rpc.Address;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServiceGenerator : IServiceGenerator
     {

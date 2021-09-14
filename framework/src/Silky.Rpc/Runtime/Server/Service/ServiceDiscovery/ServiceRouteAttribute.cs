@@ -1,9 +1,8 @@
 using System;
 using Silky.Core;
-using Silky.Rpc.Address;
 using Silky.Rpc.Routing;
 
-namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
+namespace Silky.Rpc.Runtime.Server
 {
     [AttributeUsage(AttributeTargets.Interface)]
     public class ServiceRouteAttribute : Attribute, IRouteTemplateProvider

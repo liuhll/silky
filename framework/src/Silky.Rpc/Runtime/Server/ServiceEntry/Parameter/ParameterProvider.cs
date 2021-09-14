@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Rpc.Routing.Template;
 
-namespace Silky.Rpc.Runtime.Server.Parameter
+namespace Silky.Rpc.Runtime.Server
 {
     public class ParameterProvider : IParameterProvider
     {
