@@ -10,9 +10,10 @@ using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Messages;
-using Silky.Rpc.Transport;
+using Silky.Rpc.Runtime;
+using Silky.Rpc.Runtime.Client;
 
-namespace Silky.Rpc.Runtime.Client
+namespace Silky.Rpc.Transport
 {
     public class DefaultTransportClient : ITransportClient
     {

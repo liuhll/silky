@@ -13,11 +13,11 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class DefaultRemoteExecutor : IRemoteExecutor
     {
-        private readonly IRemoteServiceInvoker _remoteServiceInvoker;
+        private readonly IRemoteInvoker _remoteInvoker;
 
-        public DefaultRemoteExecutor(IRemoteServiceInvoker remoteServiceInvoker)
+        public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker)
         {
-            _remoteServiceInvoker = remoteServiceInvoker;
+            _remoteInvoker = remoteInvoker;
         }
 
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
@@ -73,7 +73,7 @@ namespace Silky.Rpc.Runtime.Client
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
-                        await _remoteServiceInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions,
+                        await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions,
                             hashKey);
                     return invokeResult.GetResult();
                 });

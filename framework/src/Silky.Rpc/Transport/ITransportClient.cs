@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Silky.Rpc.Messages;
 
-namespace Silky.Rpc.Runtime.Client
+namespace Silky.Rpc.Transport
 {
     public interface ITransportClient
     {

@@ -23,6 +23,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Runtime.Client;
+using Silky.Rpc.Transport;
 
 namespace Silky.DotNetty
 {

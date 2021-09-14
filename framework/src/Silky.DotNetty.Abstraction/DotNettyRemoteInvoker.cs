@@ -24,16 +24,16 @@ using Silky.Rpc.Utils;
 
 namespace Silky.DotNetty
 {
-    public class DotNettyRemoteServiceInvoker : IRemoteServiceInvoker
+    public class DotNettyRemoteInvoker : IRemoteInvoker
     {
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly IRequestServiceSupervisor _requestServiceSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly IHealthCheck _healthCheck;
         private readonly ISerializer _serializer;
-        public ILogger<DotNettyRemoteServiceInvoker> Logger { get; set; }
+        public ILogger<DotNettyRemoteInvoker> Logger { get; set; }
 
-        public DotNettyRemoteServiceInvoker(ServiceRouteCache serviceRouteCache,
+        public DotNettyRemoteInvoker(ServiceRouteCache serviceRouteCache,
             IRequestServiceSupervisor requestServiceSupervisor,
             ITransportClientFactory transportClientFactory,
             IHealthCheck healthCheck,
@@ -44,7 +44,7 @@ namespace Silky.DotNetty
             _transportClientFactory = transportClientFactory;
             _healthCheck = healthCheck;
             _serializer = serializer;
-            Logger = NullLogger<DotNettyRemoteServiceInvoker>.Instance;
+            Logger = NullLogger<DotNettyRemoteInvoker>.Instance;
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,

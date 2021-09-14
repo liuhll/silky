@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Rpc.Address;
 
-namespace Silky.Rpc.Runtime.Client
+namespace Silky.Rpc.Transport
 {
     public interface ITransportClientFactory : ISingletonDependency
     {
