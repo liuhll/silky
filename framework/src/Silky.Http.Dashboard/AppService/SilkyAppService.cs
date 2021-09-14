@@ -28,7 +28,7 @@ namespace Silky.Http.Dashboard.AppService
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly IRemoteServiceExecutor _serviceExecutor;
+        private readonly IRemoteExecutor _remoteExecutor;
         private readonly IRegisterCenterHealthProvider _registerCenterHealthProvider;
         private readonly RegistryCenterOptions _registryCenterOptions;
 
@@ -49,14 +49,14 @@ namespace Silky.Http.Dashboard.AppService
             ServiceRouteCache serviceRouteCache,
             IServiceEntryManager serviceEntryManager,
             IServiceEntryLocator serviceEntryLocator,
-            IRemoteServiceExecutor serviceExecutor,
+            IRemoteExecutor remoteExecutor,
             IRegisterCenterHealthProvider registerCenterHealthProvider,
             IOptions<RegistryCenterOptions> registryCenterOptions)
         {
             _serviceRouteCache = serviceRouteCache;
             _serviceEntryManager = serviceEntryManager;
 
-            _serviceExecutor = serviceExecutor;
+            _remoteExecutor = remoteExecutor;
             _registerCenterHealthProvider = registerCenterHealthProvider;
             _serviceEntryLocator = serviceEntryLocator;
             _registryCenterOptions = registryCenterOptions.Value;
@@ -358,7 +358,7 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             var result =
-                (await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
+                (await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
             if (result?.Address != address)
             {
                 throw new SilkyException("The address of the routing instance is wrong");
@@ -389,7 +389,7 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             var result =
-                await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
+                await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
                     IReadOnlyCollection<ServiceEntryHandleInfo>;
             return result.ToPagedList(input.PageIndex, input.PageSize);
         }
@@ -418,7 +418,7 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             var result =
-                await _serviceExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
+                await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
                     IReadOnlyCollection<ServiceEntryInvokeInfo>;
             return result.ToPagedList(input.PageIndex, input.PageSize);
         }

@@ -218,7 +218,7 @@ namespace Silky.Rpc.Runtime.Server
                     return localServiceExecutor.Execute(this, parameters, key);
                 }
 
-                var remoteServiceExecutor = EngineContext.Current.Resolve<IRemoteServiceExecutor>();
+                var remoteServiceExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
                 return remoteServiceExecutor.Execute(this, parameters, key);
             };
 

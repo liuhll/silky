@@ -81,8 +81,8 @@ namespace Silky.Transaction.Tcc
             {
               
                 RpcContext.Context.SetTransactionContext(SilkyTransactionContextHolder.Instance.Get());
-                var serviceExecutor = EngineContext.Current.Resolve<IServiceExecutor>();
-                await serviceExecutor.Execute(serviceEntry, participant.Parameters, participant.ServiceKey);
+                var executor = EngineContext.Current.Resolve<IExecutor>();
+                await executor.Execute(serviceEntry, participant.Parameters, participant.ServiceKey);
             }
         }
         

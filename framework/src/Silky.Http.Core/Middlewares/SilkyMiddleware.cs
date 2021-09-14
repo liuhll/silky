@@ -36,8 +36,6 @@ namespace Silky.Http.Core.Middlewares
                 {
                     throw new FuseProtectionException($"The ServiceEntry whose Id is {serviceEntry.Id} is not allowed to be accessed from the external network");
                 }
-
-              
                 MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name, MiniProfileConstant.Route.State.FindServiceEntry,
                     $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
                 RpcContext.Context.SetAttachment(AttachmentKeys.Path, path.ToString());

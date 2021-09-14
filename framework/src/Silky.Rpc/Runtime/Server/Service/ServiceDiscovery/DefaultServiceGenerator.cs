@@ -12,18 +12,18 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
 {
     public class DefaultServiceGenerator : IServiceGenerator
     {
-        private readonly IServiceIdGenerator _serviceIdGenerator;
+        private readonly IIdGenerator _idGenerator;
 
-        public DefaultServiceGenerator(IServiceIdGenerator serviceIdGenerator)
+        public DefaultServiceGenerator(IIdGenerator idGenerator)
         {
-            _serviceIdGenerator = serviceIdGenerator;
+            _idGenerator = idGenerator;
         }
 
         public Service CreateService((Type, bool) serviceTypeInfo)
         {
             var serviceInfo = new Service()
             {
-                Id = _serviceIdGenerator.GenerateServiceId(serviceTypeInfo.Item1),
+                Id = _idGenerator.GenerateServiceId(serviceTypeInfo.Item1),
                 ServiceType = serviceTypeInfo.Item1,
                 IsLocal = serviceTypeInfo.Item2,
                 ServiceProtocol = EngineContext.Current.IsContainHttpCoreModule() ? ServiceProtocol.Http : ServiceProtocol.Tcp

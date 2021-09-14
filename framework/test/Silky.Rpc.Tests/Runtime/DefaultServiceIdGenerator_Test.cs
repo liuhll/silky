@@ -8,11 +8,11 @@ namespace Silky.Rpc.Tests.Runtime
 {
     public class DefaultServiceIdGenerator_Test : SilkyIntegratedTest<SilkyRpcTestModule>
     {
-        private readonly IServiceIdGenerator _serviceIdGenerator;
+        private readonly IIdGenerator _idGenerator;
 
         public DefaultServiceIdGenerator_Test()
         {
-            _serviceIdGenerator = GetRequiredService<IServiceIdGenerator>();
+            _idGenerator = GetRequiredService<IIdGenerator>();
         }
 
         [Fact]

@@ -83,7 +83,7 @@ namespace Silky.Rpc
                         Debug.Assert(message.IsInvokeMessage());
                         message.SetRpcMessageId();
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
-                        var messageReceivedHandler = EngineContext.Current.Resolve<IServiceMessageReceivedHandler>();
+                        var messageReceivedHandler = EngineContext.Current.Resolve<IServerMessageReceivedHandler>();
                         await messageReceivedHandler.Handle(message.Id, sender, remoteInvokeMessage);
                     };
                 }
@@ -119,13 +119,13 @@ namespace Silky.Rpc
                 .InstancePerLifetimeScope()
                 ;
 
-            builder.RegisterType<DefaultRemoteServiceExecutor>()
-                .As<IRemoteServiceExecutor>()
+            builder.RegisterType<DefaultRemoteExecutor>()
+                .As<IRemoteExecutor>()
                 .InstancePerLifetimeScope()
                 ;
 
-            builder.RegisterType<DefaultServiceExecutor>()
-                .As<IServiceExecutor>()
+            builder.RegisterType<DefaultExecutor>()
+                .As<IExecutor>()
                 .InstancePerLifetimeScope()
                 ;
         }

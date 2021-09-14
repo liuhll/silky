@@ -5,7 +5,7 @@ using Silky.Rpc.Transport;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IServiceMessageReceivedHandler : IScopedDependency
+    public interface IServerMessageReceivedHandler : IScopedDependency
     {
         Task Handle(string messageId, IMessageSender sender, RemoteInvokeMessage message);
     }

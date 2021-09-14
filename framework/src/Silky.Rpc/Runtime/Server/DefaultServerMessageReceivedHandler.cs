@@ -11,20 +11,20 @@ using Silky.Rpc.Security;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class DefaultServiceMessageReceivedHandler : IServiceMessageReceivedHandler
+    public class DefaultServerMessageReceivedHandler : IServerMessageReceivedHandler
     {
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly IHandleSupervisor _handleSupervisor;
+        private readonly IServerHandleSupervisor _serverHandleSupervisor;
 
         private static readonly DiagnosticListener s_diagnosticListener =
             new(RpcDiagnosticListenerNames.DiagnosticServerListenerName);
 
 
-        public DefaultServiceMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
-            IHandleSupervisor handleSupervisor)
+        public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
+            IServerHandleSupervisor serverHandleSupervisor)
         {
             _serviceEntryLocator = serviceEntryLocator;
-            _handleSupervisor = handleSupervisor;
+            _serverHandleSupervisor = serverHandleSupervisor;
         }
 
         public async Task Handle(string messageId, IMessageSender sender, RemoteInvokeMessage message)
@@ -55,7 +55,7 @@ namespace Silky.Rpc.Runtime.Server
                     throw new RpcAuthenticationException("rpc token is illegal");
                 }
 
-                _handleSupervisor.Monitor((serviceEntry.Id, clientAddress));
+                _serverHandleSupervisor.Monitor((serviceEntry.Id, clientAddress));
                 var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
                 var result = await serviceEntry.Executor(currentServiceKey.ServiceKey,
                     message.Parameters);
@@ -77,11 +77,11 @@ namespace Silky.Rpc.Runtime.Server
                 sp.Stop();
                 if (isHandleSuccess)
                 {
-                    _handleSupervisor.ExecSuccess((serviceEntry?.Id, clientAddress), sp.ElapsedMilliseconds);
+                    _serverHandleSupervisor.ExecSuccess((serviceEntry?.Id, clientAddress), sp.ElapsedMilliseconds);
                 }
                 else
                 {
-                    _handleSupervisor.ExecFail((serviceEntry?.Id, clientAddress),
+                    _serverHandleSupervisor.ExecFail((serviceEntry?.Id, clientAddress),
                         !(remoteResultMessage.StatusCode.IsBusinessStatus() ||
                           remoteResultMessage.StatusCode.IsUnauthorized()), sp.ElapsedMilliseconds);
                 }

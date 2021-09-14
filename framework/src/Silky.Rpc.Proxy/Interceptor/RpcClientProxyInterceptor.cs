@@ -10,30 +10,30 @@ namespace Silky.Rpc.Proxy
 {
     public class RpcClientProxyInterceptor : SilkyInterceptor, IScopedDependency
     {
-        private readonly IServiceIdGenerator _serviceIdGenerator;
+        private readonly IIdGenerator _idGenerator;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly ICurrentServiceKey _currentServiceKey;
-        private readonly IServiceExecutor _serviceExecutor;
+        private readonly IExecutor _executor;
 
-        public RpcClientProxyInterceptor(IServiceIdGenerator serviceIdGenerator,
+        public RpcClientProxyInterceptor(IIdGenerator idGenerator,
             IServiceEntryLocator serviceEntryLocator,
             ICurrentServiceKey currentServiceKey,
-            IServiceExecutor serviceExecutor)
+            IExecutor executor)
         {
-            _serviceIdGenerator = serviceIdGenerator;
+            _idGenerator = idGenerator;
             _serviceEntryLocator = serviceEntryLocator;
             _currentServiceKey = currentServiceKey;
-            _serviceExecutor = serviceExecutor;
+            _executor = executor;
         }
 
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {
-            var serviceEntryId = _serviceIdGenerator.GetDefaultServiceEntryId(invocation.Method);
+            var serviceEntryId = _idGenerator.GetDefaultServiceEntryId(invocation.Method);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
             try
             {
                 invocation.ReturnValue =
-                    await _serviceExecutor.Execute(serviceEntry, invocation.Arguments, _currentServiceKey.ServiceKey);
+                    await _executor.Execute(serviceEntry, invocation.Arguments, _currentServiceKey.ServiceKey);
             }
             catch (Exception e)
             {

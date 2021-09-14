@@ -11,15 +11,15 @@ using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class DefaultServiceIdGenerator : IServiceIdGenerator
+    public class DefaultIdGenerator : IIdGenerator
     {
         private readonly ServiceEntryIdCache _serviceEntryIdCache;
-        public ILogger<DefaultServiceIdGenerator> Logger { get; set; }
+        public ILogger<DefaultIdGenerator> Logger { get; set; }
 
-        public DefaultServiceIdGenerator(ServiceEntryIdCache serviceEntryIdCache)
+        public DefaultIdGenerator(ServiceEntryIdCache serviceEntryIdCache)
         {
             _serviceEntryIdCache = serviceEntryIdCache;
-            Logger = NullLogger<DefaultServiceIdGenerator>.Instance;
+            Logger = NullLogger<DefaultIdGenerator>.Instance;
         }
 
         /// <summary>

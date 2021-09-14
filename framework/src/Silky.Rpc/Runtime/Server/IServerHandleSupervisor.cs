@@ -3,7 +3,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IHandleSupervisor : ISingletonDependency
+    public interface IServerHandleSupervisor : ISingletonDependency
     {
         void Monitor((string, string) item);
 

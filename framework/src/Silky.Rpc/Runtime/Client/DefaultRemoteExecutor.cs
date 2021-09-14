@@ -11,11 +11,11 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultRemoteServiceExecutor : IRemoteServiceExecutor
+    public class DefaultRemoteExecutor : IRemoteExecutor
     {
         private readonly IRemoteServiceInvoker _remoteServiceInvoker;
 
-        public DefaultRemoteServiceExecutor(IRemoteServiceInvoker remoteServiceInvoker)
+        public DefaultRemoteExecutor(IRemoteServiceInvoker remoteServiceInvoker)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
         }

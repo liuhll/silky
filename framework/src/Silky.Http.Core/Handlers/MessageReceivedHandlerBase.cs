@@ -23,7 +23,7 @@ namespace Silky.Http.Core.Handlers
     {
         protected readonly IParameterParser _parameterParser;
         protected readonly ISerializer _serializer;
-        protected readonly IServiceExecutor _serviceExecutor;
+        protected readonly IExecutor _executor;
 
         protected GatewayOptions _gatewayOptions;
         protected RpcOptions _rpcOptions;
@@ -36,11 +36,11 @@ namespace Silky.Http.Core.Handlers
             ISerializer serializer,
             IOptionsMonitor<RpcOptions> rpcOptions,
             IOptionsMonitor<GatewayOptions> gatewayOptions,
-            IServiceExecutor serviceExecutor)
+            IExecutor executor)
         {
             _parameterParser = parameterParser;
             _serializer = serializer;
-            _serviceExecutor = serviceExecutor;
+            _executor = executor;
             _rpcOptions = rpcOptions.CurrentValue;
             _gatewayOptions = gatewayOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
@@ -87,7 +87,7 @@ namespace Silky.Http.Core.Handlers
             object executeResult = null;
             try
             {
-                executeResult = await _serviceExecutor.Execute(serviceEntry, rpcParameters, serviceKey);
+                executeResult = await _executor.Execute(serviceEntry, rpcParameters, serviceKey);
                 TracingAfter(tracingTimestamp, context.TraceIdentifier, serviceEntry, new RemoteResultMessage()
                 {
                     ServiceEntryId = serviceEntry.Id,

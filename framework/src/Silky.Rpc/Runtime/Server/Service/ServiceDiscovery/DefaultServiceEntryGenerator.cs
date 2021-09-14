@@ -18,15 +18,15 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
 {
     public class DefaultServiceEntryGenerator : IServiceEntryGenerator
     {
-        private readonly IServiceIdGenerator _serviceIdGenerator;
+        private readonly IIdGenerator _idGenerator;
         private readonly IParameterProvider _parameterProvider;
         private GovernanceOptions _governanceOptions;
 
-        public DefaultServiceEntryGenerator(IServiceIdGenerator serviceIdGenerator,
+        public DefaultServiceEntryGenerator(IIdGenerator idGenerator,
             IParameterProvider parameterProvider,
             IOptionsMonitor<GovernanceOptions> governanceOptions)
         {
-            _serviceIdGenerator = serviceIdGenerator;
+            _idGenerator = idGenerator;
             _parameterProvider = parameterProvider;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange(GovernanceOptionsChangeListener);
@@ -82,8 +82,8 @@ namespace Silky.Rpc.Runtime.Server.ServiceDiscovery
         {
             var serviceName = serviceType.Name;
             var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
-            var serviceEntryId = _serviceIdGenerator.GenerateServiceEntryId(method, httpMethod);
-            var serviceId = _serviceIdGenerator.GenerateServiceId(serviceType);
+            var serviceEntryId = _idGenerator.GenerateServiceEntryId(method, httpMethod);
+            var serviceId = _idGenerator.GenerateServiceId(serviceType);
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
             if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
             {

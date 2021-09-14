@@ -14,12 +14,12 @@ namespace Silky.Http.Core.Handlers
             ISerializer serializer,
             IOptionsMonitor<RpcOptions> rpcOptions,
             IOptionsMonitor<GatewayOptions> gatewayOptions,
-            IServiceExecutor serviceExecutor)
+            IExecutor executor)
             : base(parameterParser,
                 serializer,
                 rpcOptions,
                 gatewayOptions,
-                serviceExecutor)
+                executor)
         {
         }
     }

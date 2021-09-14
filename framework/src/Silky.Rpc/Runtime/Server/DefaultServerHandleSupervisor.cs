@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class DefaultHandleSupervisor : IHandleSupervisor
+    public class DefaultServerHandleSupervisor : IServerHandleSupervisor
     {
         private ConcurrentDictionary<(string, string), ServiceHandleInfo> m_monitor = new();
 

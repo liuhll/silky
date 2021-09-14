@@ -6,7 +6,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IServiceIdGenerator : ITransientDependency
+    public interface IIdGenerator : ITransientDependency
     {
         string GenerateServiceEntryId([NotNull] MethodInfo method, HttpMethod httpMethod);
 
