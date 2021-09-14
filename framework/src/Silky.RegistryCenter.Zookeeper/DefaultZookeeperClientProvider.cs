@@ -96,9 +96,10 @@ namespace Silky.RegistryCenter.Zookeeper
                         {
                             if (healthCheckModel.UnHealthType == UnHealthType.Disconnected)
                             {
-                                var serviceRouteManager = EngineContext.Current.Resolve<IServiceRouteManager>();
-                                await serviceRouteManager.CreateSubscribeServiceRouteDataChanges();
+                                var serviceRouteManager = EngineContext.Current.Resolve<IZookeeperStatusChange>();
+                                await serviceRouteManager.CreateSubscribeServiceRouteDataChanges(client);
                             }
+
                             healthCheckModel.SetHealth();
                         }
 

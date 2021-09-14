@@ -24,7 +24,9 @@ using Silky.Rpc.Address;
 
 namespace Silky.RegistryCenter.Zookeeper.Routing
 {
-    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, IDisposable, ISingletonDependency
+    public class ZookeeperServiceRouteManager : ServiceRouteManagerBase, IDisposable, ISingletonDependency,
+        IZookeeperStatusChange
+
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
         private readonly ISerializer _serializer;
@@ -52,7 +54,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         }
 
 
-        protected override async Task RegisterRouteAsync(ServiceRouteDescriptor serviceRouteDescriptor)
+        protected override async Task RegisterRouteServiceCenter(ServiceRouteDescriptor serviceRouteDescriptor)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -88,7 +90,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        protected override async Task RemoveExceptRouteAsync(AddressDescriptor addressDescriptor)
+        protected override async Task RemoveServiceCenterExceptRoute(AddressDescriptor addressDescriptor)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -136,32 +138,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        private async Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange(IZookeeperClient zookeeperClient)
-        {
-            var subDirectoryPath = _registryCenterOptions.RoutePath;
-            try
-            {
-                var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
-                var @lock = synchronizationProvider.CreateLock(
-                    string.Format(LockName.CreateSubDirectoryIfNotExistAndSubscribeChildrenChange,
-                        subDirectoryPath.Replace("/", "_")));
-                await @lock.ExecForHandle(async () =>
-                {
-                    if (!await zookeeperClient.ExistsAsync(subDirectoryPath))
-                    {
-                        await zookeeperClient.CreateRecursiveAsync(subDirectoryPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
-                    }
-                });
-            }
-            catch (KeeperException.NodeExistsException e)
-            {
-                Logger.LogWarning("The directory {subDirectoryPath}has been created", e);
-            }
-
-            await CreateSubscribeChildrenChange(zookeeperClient, subDirectoryPath);
-        }
-
-        public override async Task EnterRoutes()
+        protected override async Task EnterRoutesFromServiceCenter()
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -198,6 +175,31 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
 
             return serviceRouteDescriptors;
+        }
+
+        private async Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange(IZookeeperClient zookeeperClient)
+        {
+            var subDirectoryPath = _registryCenterOptions.RoutePath;
+            try
+            {
+                var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
+                var @lock = synchronizationProvider.CreateLock(
+                    string.Format(LockName.CreateSubDirectoryIfNotExistAndSubscribeChildrenChange,
+                        subDirectoryPath.Replace("/", "_")));
+                await @lock.ExecForHandle(async () =>
+                {
+                    if (!await zookeeperClient.ExistsAsync(subDirectoryPath))
+                    {
+                        await zookeeperClient.CreateRecursiveAsync(subDirectoryPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                    }
+                });
+            }
+            catch (KeeperException.NodeExistsException e)
+            {
+                Logger.LogWarning("The directory {subDirectoryPath}has been created", e);
+            }
+
+            await CreateSubscribeChildrenChange(zookeeperClient, subDirectoryPath);
         }
 
 
@@ -264,24 +266,28 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         }
 
 
-        public override async Task CreateSubscribeServiceRouteDataChanges()
+        protected override async Task CreateSubscribeServiceRouteDataChanges()
+        {
+            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            foreach (var zookeeperClient in zookeeperClients)
+            {
+                await CreateSubscribeServiceRouteDataChanges(zookeeperClient);
+            }
+        }
+
+        public async Task CreateSubscribeServiceRouteDataChanges(IZookeeperClient zookeeperClient)
         {
             var allServices = _serviceManager.GetAllService();
             foreach (var service in allServices)
             {
                 var serviceRoutePath = CreateRoutePath(service.Id);
-                var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
-
-                foreach (var zookeeperClient in zookeeperClients)
+                await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
+                if (EngineContext.Current.IsContainHttpCoreModule())
                 {
-                    await CreateSubscribeDataChange(zookeeperClient, serviceRoutePath);
-                    if (EngineContext.Current.IsContainHttpCoreModule())
-                    {
-                        var wsServiceId =
-                            WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(service.ServiceType));
-                        var wsServiceRoutePath = CreateRoutePath(wsServiceId);
-                        await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
-                    }
+                    var wsServiceId =
+                        WebSocketResolverHelper.Generator(WebSocketResolverHelper.ParseWsPath(service.ServiceType));
+                    var wsServiceRoutePath = CreateRoutePath(wsServiceId);
+                    await CreateSubscribeDataChange(zookeeperClient, wsServiceRoutePath);
                 }
             }
         }
