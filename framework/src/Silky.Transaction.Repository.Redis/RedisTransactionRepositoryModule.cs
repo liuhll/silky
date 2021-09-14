@@ -13,11 +13,19 @@ namespace Silky.Transaction.Repository.Redis
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
+            var redisEnabled = configuration.GetValue<bool>("DistributedCache:Redis:IsEnabled");
+
+            if (!redisEnabled)
+            {
+                throw new SilkyException("The redis cache service is unavailable");
+            }
+
             var redisCacheOptions = configuration.GetSection("DistributedCache:Redis").Get<RedisCacheOptions>();
             if (redisCacheOptions == null || redisCacheOptions.Configuration.IsNullOrEmpty())
             {
                 throw new SilkyException("You must specify the Configuration of the redis service");
             }
+
             services.AddRedisTransactionRepository(redisCacheOptions);
         }
     }
