@@ -1,6 +1,6 @@
 using System;
-using Silky.Rpc.Messages;
 using ProtoBuf;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Codec.Message
 {

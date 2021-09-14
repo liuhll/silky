@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Silky.Rpc.Messages;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime
 {

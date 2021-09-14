@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Silky.Rpc.Messages;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport.Codec
 {

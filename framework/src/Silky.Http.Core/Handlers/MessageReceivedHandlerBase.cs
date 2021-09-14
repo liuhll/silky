@@ -13,8 +13,8 @@ using Microsoft.Extensions.Options;
 using Silky.Core.Rpc;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc.Diagnostics;
-using Silky.Rpc.Messages;
 using Silky.Rpc.MiniProfiler;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core.Handlers
 {

@@ -1,9 +1,8 @@
 ﻿using Silky.Core;
 using Silky.Core.Rpc;
-using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
 
-namespace Silky.Rpc.Messages
+namespace Silky.Rpc.Transport.Messages
 {
     public static class TransportMessageExtensions
     {

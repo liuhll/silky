@@ -1,7 +1,7 @@
 using System.Linq;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Messages;
 using ProtoBuf;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Codec.Message
 {

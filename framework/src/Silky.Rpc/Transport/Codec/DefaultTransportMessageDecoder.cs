@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
-using Silky.Rpc.Messages;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport.Codec
 {

@@ -9,7 +9,6 @@ using Silky.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Messages;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
@@ -18,6 +17,7 @@ using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Configuration;
 using Silky.Core.Rpc;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc
 {

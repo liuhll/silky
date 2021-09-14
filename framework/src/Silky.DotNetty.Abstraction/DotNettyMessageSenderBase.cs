@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
-using Silky.Rpc.Messages;
 using Silky.Rpc.Runtime;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Abstraction
 {

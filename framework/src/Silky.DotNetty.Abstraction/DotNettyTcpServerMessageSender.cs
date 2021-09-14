@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using Silky.DotNetty.Abstraction;
-using Silky.Rpc.Messages;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty
 {

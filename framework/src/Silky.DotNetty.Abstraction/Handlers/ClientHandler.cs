@@ -2,9 +2,9 @@ using System.Net;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Silky.Rpc.Address.HealthCheck;
-using Silky.Rpc.Messages;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Transport;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Handlers
 {

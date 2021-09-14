@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Silky.Rpc.Messages;
 using MessagePack;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Codec.Message
 {

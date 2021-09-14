@@ -9,8 +9,8 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
-using Silky.Rpc.Messages;
 using Silky.Rpc.Runtime;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport
 {

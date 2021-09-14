@@ -20,10 +20,10 @@ using Silky.DotNetty.Handlers;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Messages;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Codec;
+using Silky.Rpc.Transport.Messages;
 using Silky.Rpc.Utils;
 
 namespace Silky.DotNetty.Protocol.Tcp

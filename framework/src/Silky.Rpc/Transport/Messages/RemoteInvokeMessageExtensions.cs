@@ -1,6 +1,6 @@
 using Silky.Core.Rpc;
 
-namespace Silky.Rpc.Messages
+namespace Silky.Rpc.Transport.Messages
 {
     public static class RemoteInvokeMessageExtensions
     {

@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Silky.Codec.Message;
-using Silky.Rpc.Messages;
 using Silky.Rpc.Transport.Codec;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Codec
 {

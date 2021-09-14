@@ -6,8 +6,8 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
-using Silky.Rpc.Messages;
 using Silky.Rpc.Security;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
 {

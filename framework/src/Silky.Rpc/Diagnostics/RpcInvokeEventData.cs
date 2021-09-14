@@ -1,4 +1,4 @@
-using Silky.Rpc.Messages;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Diagnostics
 {

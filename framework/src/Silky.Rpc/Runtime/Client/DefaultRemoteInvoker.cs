@@ -13,10 +13,10 @@ using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Messages;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Transport;
+using Silky.Rpc.Transport.Messages;
 using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Client

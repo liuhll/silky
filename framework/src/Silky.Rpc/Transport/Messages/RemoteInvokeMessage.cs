@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Silky.Rpc.Messages
+namespace Silky.Rpc.Transport.Messages
 {
     public class RemoteInvokeMessage : IRemoteMessage
     {

@@ -1,11 +1,8 @@
-using System;
-using Newtonsoft.Json.Linq;
 using Silky.Core;
 using Silky.Core.Convertible;
-using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Messages
+namespace Silky.Rpc.Transport.Messages
 {
     public static class RemoteResultMessageExtensions
     {

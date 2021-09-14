@@ -1,6 +1,6 @@
 ﻿using Silky.Core.Exceptions;
 
-namespace Silky.Rpc.Messages
+namespace Silky.Rpc.Transport.Messages
 {
     public class RemoteResultMessage : IRemoteMessage
     {

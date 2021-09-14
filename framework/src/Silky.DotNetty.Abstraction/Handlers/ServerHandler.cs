@@ -1,6 +1,6 @@
 ﻿using System;
 using DotNetty.Transport.Channels;
-using Silky.Rpc.Messages;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Handlers
 {

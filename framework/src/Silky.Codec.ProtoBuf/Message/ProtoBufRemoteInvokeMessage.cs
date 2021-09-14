@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Silky.Rpc.Messages;
 using ProtoBuf;
 using ProtoBuf.Meta;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Codec.Message
 {

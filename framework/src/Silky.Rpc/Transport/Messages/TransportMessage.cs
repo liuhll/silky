@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using Silky.Core.Exceptions;
 using Silky.Core.Utils;
 
-namespace Silky.Rpc.Messages
+namespace Silky.Rpc.Transport.Messages
 {
     [Serializable]
     public class TransportMessage

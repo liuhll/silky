@@ -1,4 +1,4 @@
-namespace Silky.Rpc.Messages
+namespace Silky.Rpc.Transport.Messages
 {
     public interface IRemoteMessage
     {
