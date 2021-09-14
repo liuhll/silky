@@ -30,14 +30,16 @@ namespace Microsoft.Extensions.Hosting
                 .ConfigureAppConfiguration((hosting, config) =>
                 {
                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true);
+                        .AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true,
+                            true);
 
                     // Adds YAML settings later
-                    config.AddYamlFile("appsettings.yml", optional: true)
-                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true);
-
-                    config.AddYamlFile("appsettings.yaml", optional: true)
-                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true);
+                    config.AddYamlFile("appsettings.yml", optional: true, true)
+                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true,
+                            true)
+                        .AddYamlFile("appsettings.yaml", optional: true, true)
+                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true,
+                            true);
                 })
                 ;
 
