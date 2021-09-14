@@ -10,6 +10,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 using Silky.Rpc;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 
@@ -27,15 +28,13 @@ namespace Silky.DotNetty.Protocol.Tcp
                 .PropertiesAutowired();
         }
 
-        public async override Task Initialize(ApplicationContext applicationContext)
+        public override async Task Initialize(ApplicationContext applicationContext)
         {
             Check.NotNull(applicationContext, nameof(applicationContext));
-            var registryCenterOptions =
-                applicationContext.ServiceProvider.GetRequiredService<IOptions<RegistryCenterOptions>>().Value;
-            if (!applicationContext.ModuleContainer.Modules.Any(p =>
-                p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(), StringComparison.OrdinalIgnoreCase)))
+            if (!applicationContext.IsDependsOnRegistryCenterModule(out var registryCenterType))
             {
-                throw new SilkyException($"You did not specify the dependent {registryCenterOptions.RegistryCenterType} service registry module");
+                throw new SilkyException(
+                    $"You did not specify the dependent {registryCenterType} service registry module");
             }
 
             var messageListener = applicationContext.ServiceProvider.GetRequiredService<DotNettyTcpServerMessageListener>();

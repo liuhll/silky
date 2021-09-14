@@ -17,6 +17,7 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Configuration;
 using Silky.Core.Rpc;
+using Silky.Rpc.Extensions;
 
 namespace Silky.Rpc
 {
@@ -63,12 +64,13 @@ namespace Silky.Rpc
 
         public override async Task Initialize(ApplicationContext applicationContext)
         {
-            var serviceRouteManager = applicationContext.ServiceProvider.GetService<IServiceRouteManager>();
-            if (serviceRouteManager == null)
+            if (!applicationContext.IsDependsOnRegistryCenterModule(out var registryCenterType))
             {
-                throw new SilkyException("You must specify the dependent service registry module");
+                throw new SilkyException(
+                    $"You did not specify the dependent {registryCenterType} service registry module");
             }
-            
+
+            var serviceRouteManager = applicationContext.ServiceProvider.GetRequiredService<IServiceRouteManager>();
             await serviceRouteManager.EnterRoutes();
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
