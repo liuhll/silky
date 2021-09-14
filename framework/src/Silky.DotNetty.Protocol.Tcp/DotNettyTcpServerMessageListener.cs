@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
+using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
@@ -22,7 +23,6 @@ using Silky.Rpc.Configuration;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Codec;
 using Silky.Rpc.Utils;
 
@@ -120,8 +120,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             }
             catch (Exception e)
             {
-                Logger.LogError(
-                    $"Service monitoring failed to start, monitoring address: {_hostAddress}, communication protocol: {_hostAddress.ServiceProtocol}, reason: {e.Message}");
+                Logger.LogException(e);
                 throw;
             }
         }
