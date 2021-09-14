@@ -13,11 +13,12 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServiceIdGenerator : IServiceIdGenerator
     {
-        private ConcurrentDictionary<MethodInfo, string> m_serviceEntryIdCache = new();
+        private readonly ServiceEntryIdCache _serviceEntryIdCache;
         public ILogger<DefaultServiceIdGenerator> Logger { get; set; }
 
-        public DefaultServiceIdGenerator()
+        public DefaultServiceIdGenerator(ServiceEntryIdCache serviceEntryIdCache)
         {
+            _serviceEntryIdCache = serviceEntryIdCache;
             Logger = NullLogger<DefaultServiceIdGenerator>.Instance;
         }
 
@@ -52,7 +53,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public string GetDefaultServiceEntryId(MethodInfo method)
         {
-            if (m_serviceEntryIdCache.TryGetValue(method, out var id))
+            if (_serviceEntryIdCache.TryGetServiceEntryId(method, out var id))
             {
                 return id;
             }
@@ -60,7 +61,8 @@ namespace Silky.Rpc.Runtime.Server
             var httpMethodInfos = method.GetHttpMethodInfos();
             var defaultHttpMethod = httpMethodInfos.First().HttpMethod;
             id = GenerateServiceEntryId(method, defaultHttpMethod);
-            return m_serviceEntryIdCache.GetOrAdd(method, id);
+            _serviceEntryIdCache.UpdateServiceEntryIdCache(method, id);
+            return id;
         }
 
         public string GenerateServiceId(Type serviceType)

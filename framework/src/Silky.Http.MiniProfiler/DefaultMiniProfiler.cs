@@ -1,6 +1,5 @@
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Http.Core.Configuration;
 using Silky.Http.Swagger.Configuration;
 using Silky.Rpc.MiniProfiler;
 using StackExchange.Profiling;
