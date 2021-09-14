@@ -11,7 +11,6 @@ using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Messages;
 using Silky.Rpc.Runtime;
-using Silky.Rpc.Runtime.Client;
 
 namespace Silky.Rpc.Transport
 {
@@ -80,7 +79,7 @@ namespace Silky.Rpc.Transport
             var tracingTimestamp = TracingBefore(message, transportMessage.Id);
             var callbackTask =
                 RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, tracingTimestamp, timeout);
-            await _messageSender.SendAndFlushAsync(transportMessage);
+            await _messageSender.SendMessageAsync(transportMessage);
             return await callbackTask;
         }
 

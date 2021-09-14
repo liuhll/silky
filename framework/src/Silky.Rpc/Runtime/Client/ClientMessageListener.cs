@@ -1,6 +1,4 @@
-using Silky.Rpc.Runtime;
-
-namespace Silky.DotNetty
+namespace Silky.Rpc.Runtime.Client
 {
     public class ClientMessageListener : MessageListenerBase
     {

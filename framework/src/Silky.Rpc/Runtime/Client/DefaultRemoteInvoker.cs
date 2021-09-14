@@ -3,37 +3,34 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DotNetty.Transport.Channels;
-using Silky.Rpc.Address;
-using Silky.Rpc.Address.HealthCheck;
-using Silky.Rpc.Address.Selector;
-using Silky.Rpc.Configuration;
-using Silky.Rpc.Messages;
-using Silky.Rpc.Routing;
-using Silky.Rpc.Runtime.Client;
-using Silky.Rpc.Transport;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
-using Silky.Rpc;
+using Silky.Rpc.Address;
+using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Configuration;
+using Silky.Rpc.Messages;
 using Silky.Rpc.MiniProfiler;
+using Silky.Rpc.Routing;
+using Silky.Rpc.Transport;
 using Silky.Rpc.Utils;
 
-namespace Silky.DotNetty
+namespace Silky.Rpc.Runtime.Client
 {
-    public class DotNettyRemoteInvoker : IRemoteInvoker
+    public class DefaultRemoteInvoker : IRemoteInvoker
     {
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly IRequestServiceSupervisor _requestServiceSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly IHealthCheck _healthCheck;
         private readonly ISerializer _serializer;
-        public ILogger<DotNettyRemoteInvoker> Logger { get; set; }
+        public ILogger<DefaultRemoteInvoker> Logger { get; set; }
 
-        public DotNettyRemoteInvoker(ServiceRouteCache serviceRouteCache,
+        public DefaultRemoteInvoker(ServiceRouteCache serviceRouteCache,
             IRequestServiceSupervisor requestServiceSupervisor,
             ITransportClientFactory transportClientFactory,
             IHealthCheck healthCheck,
@@ -44,7 +41,7 @@ namespace Silky.DotNetty
             _transportClientFactory = transportClientFactory;
             _healthCheck = healthCheck;
             _serializer = serializer;
-            Logger = NullLogger<DotNettyRemoteInvoker>.Instance;
+            Logger = NullLogger<DefaultRemoteInvoker>.Instance;
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
@@ -58,7 +55,8 @@ namespace Silky.DotNetty
                 MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                     MiniProfileConstant.Rpc.State.FindServiceRoute,
                     $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}", true);
-                throw new SilkyException($"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}",
+                throw new SilkyException(
+                    $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}",
                     StatusCode.NotFindServiceRoute);
             }
 
@@ -93,7 +91,7 @@ namespace Silky.DotNetty
                     serviceRoute.Addresses,
                     hashKey));
             }
-            
+
             MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.SelectedAddress,
                 $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
@@ -119,21 +117,13 @@ namespace Silky.DotNetty
                 isInvakeSuccess = false;
                 throw new CommunicatonException(ex.Message, ex.InnerException);
             }
-            catch (ConnectException ex)
+            catch (CommunicatonException ex)
             {
                 Logger.LogError(
                     $"The link with the service provider {selectedAddress} is abnormal, the reason: {ex.Message}");
                 _healthCheck.RemoveAddress(selectedAddress);
                 isInvakeSuccess = false;
-                throw new CommunicatonException(ex.Message, ex.InnerException);
-            }
-            catch (ChannelException ex)
-            {
-                Logger.LogError(
-                    $"Abnormal communication with service provider {selectedAddress}, reason: {ex.Message}");
-                _healthCheck.RemoveAddress(selectedAddress);
-                isInvakeSuccess = false;
-                throw new CommunicatonException(ex.Message, ex.InnerException);
+                throw;
             }
             catch (TimeoutException ex)
             {
@@ -157,6 +147,7 @@ namespace Silky.DotNetty
                     _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceEntryId, selectedAddress);
                     throw new NotFindLocalServiceEntryException(ex.Message);
                 }
+
                 throw;
             }
             finally

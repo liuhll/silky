@@ -97,11 +97,11 @@ namespace Silky.DotNetty.Protocol.Tcp
                     if (_rpcOptions.EnableHealthCheck && _rpcOptions.HealthCheckWatchInterval > 0)
                     {
                         pipeline.AddLast(new IdleStateHandler(0, _rpcOptions.HealthCheckWatchInterval, 0));
-                        pipeline.AddLast(new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IHealthCheck>()));
+                        pipeline.AddLast(
+                            new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IHealthCheck>()));
                     }
 
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
-
 
                     pipeline.AddLast(new ServerHandler((channelContext, message) =>
                     {

@@ -88,7 +88,7 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             var resultTransportMessage = new TransportMessage(remoteResultMessage, messageId);
-            await sender.SendAndFlushAsync(resultTransportMessage);
+            await sender.SendMessageAsync(resultTransportMessage);
         }
 
         private long? TracingBefore(RemoteInvokeMessage message, string messageId)
