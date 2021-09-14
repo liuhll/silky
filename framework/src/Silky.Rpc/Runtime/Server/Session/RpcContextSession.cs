@@ -1,9 +1,8 @@
 using System;
 using Silky.Core.Rpc;
 using Silky.Rpc.Security;
-using Silky.Rpc.Transport;
 
-namespace Silky.Rpc.Runtime.Session
+namespace Silky.Rpc.Runtime.Server
 {
     public class RpcContextSession : SessionBase
     {

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Silky.Rpc.Runtime.Client
 {
     public class ServiceEntryInvokeInfo

@@ -17,7 +17,7 @@ using Silky.EntityFrameworkCore.Locators;
 using Silky.EntityFrameworkCore.MultiTenants.Dependencies;
 using Silky.EntityFrameworkCore.MultiTenants.Entities;
 using Silky.EntityFrameworkCore.MultiTenants.Locators;
-using Silky.Rpc.Runtime.Session;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.EntityFrameworkCore.Contexts
 {

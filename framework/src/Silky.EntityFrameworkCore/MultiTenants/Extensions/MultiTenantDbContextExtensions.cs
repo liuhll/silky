@@ -1,8 +1,7 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Silky.Core;
-using Silky.Rpc.Runtime.Session;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.EntityFrameworkCore.MultiTenants.Extensions
 {
@@ -17,7 +16,6 @@ namespace Silky.EntityFrameworkCore.MultiTenants.Extensions
         /// <param name="dbContext"></param>
         public static void RefreshTenantCache(this DbContext dbContext)
         {
-
             var silkySession = NullSession.Instance;
 
             // 缓存的 Key

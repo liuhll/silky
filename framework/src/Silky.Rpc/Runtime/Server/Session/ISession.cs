@@ -1,4 +1,4 @@
-namespace Silky.Rpc.Runtime.Session
+namespace Silky.Rpc.Runtime.Server
 {
     public interface ISession
     {

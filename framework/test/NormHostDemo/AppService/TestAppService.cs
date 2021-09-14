@@ -11,7 +11,6 @@ using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.UnitOfWork;
-using Silky.Rpc.Runtime.Session;
 using Silky.Transaction.Tcc;
 
 namespace NormHostDemo.AppService

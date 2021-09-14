@@ -10,7 +10,6 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Session;
 
 namespace Silky.Rpc.CachingInterceptor
 {
