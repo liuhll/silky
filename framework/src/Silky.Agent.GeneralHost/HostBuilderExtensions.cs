@@ -1,16 +1,14 @@
-using Silky.Core.Modularity;
-
 namespace Microsoft.Extensions.Hosting
 {
     public static class HostBuilderExtensions
     {
         public static IHostBuilder ConfigureSilkyGeneralHostDefaults(this IHostBuilder hostBuilder)
         {
-            hostBuilder.RegisterSilkyServices<GeneralHostModule>();
+            hostBuilder.RegisterSilkyServices<DefaultGeneralHostModule>();
             return hostBuilder;
         }
         
-        public static IHostBuilder ConfigureSilkyGeneralHost<T>(this IHostBuilder hostBuilder) where T : StartUpModule
+        public static IHostBuilder ConfigureSilkyGeneralHost<T>(this IHostBuilder hostBuilder) where T : GeneralHostModule
         {
             hostBuilder.RegisterSilkyServices<T>();
             return hostBuilder;

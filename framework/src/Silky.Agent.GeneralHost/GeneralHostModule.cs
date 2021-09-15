@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(RedisCachingModule),
         typeof(RedisTransactionRepositoryModule)
     )]
-    public class GeneralHostModule : StartUpModule
+    public abstract class GeneralHostModule : StartUpModule
     {
     }
 }

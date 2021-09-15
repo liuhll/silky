@@ -5,7 +5,7 @@ namespace Microsoft.Extensions.Hosting
 {
     [DependsOn(typeof(WebSocketModule)
     )]
-    public class WebSocketHostModule : GeneralHostModule
+    public abstract class WebSocketHostModule : GeneralHostModule
     {
     }
 }
