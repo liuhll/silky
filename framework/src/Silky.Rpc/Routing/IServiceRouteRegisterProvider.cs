@@ -3,7 +3,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Routing
 {
-    public interface IServiceRouteProvider : ISingletonDependency
+    public interface IServiceRouteRegisterProvider : ISingletonDependency
     {
         Task RegisterTcpRoutes();
         Task RegisterHttpRoutes();

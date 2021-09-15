@@ -6,15 +6,15 @@ using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Routing
 {
-    public class DefaultServiceRouteProvider : IServiceRouteProvider
+    public class DefaultServiceRouteRegisterProvider : IServiceRouteRegisterProvider
     {
         private readonly IServiceRouteRegister _serviceRouteRegister;
-        public ILogger<DefaultServiceRouteProvider> Logger { get; set; }
+        public ILogger<DefaultServiceRouteRegisterProvider> Logger { get; set; }
 
-        public DefaultServiceRouteProvider(IServiceRouteRegister serviceRouteRegister)
+        public DefaultServiceRouteRegisterProvider(IServiceRouteRegister serviceRouteRegister)
         {
             _serviceRouteRegister = serviceRouteRegister;
-            Logger = NullLogger<DefaultServiceRouteProvider>.Instance;
+            Logger = NullLogger<DefaultServiceRouteRegisterProvider>.Instance;
         }
 
         public async Task RegisterTcpRoutes()

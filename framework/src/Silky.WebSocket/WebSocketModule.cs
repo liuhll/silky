@@ -82,11 +82,11 @@ namespace Silky.WebSocket
             var webSocketServerBootstrap =
                 applicationContext.ServiceProvider.GetRequiredService<WebSocketServerBootstrap>();
             webSocketServerBootstrap.Initialize(webSocketServices);
-            var serviceRouteProvder =
-                applicationContext.ServiceProvider.GetRequiredService<IServiceRouteProvider>();
+            var serviceRouteRegisterProvider =
+                applicationContext.ServiceProvider.GetRequiredService<IServiceRouteRegisterProvider>();
             var webSocketOptions = applicationContext.ServiceProvider
                 .GetRequiredService<IOptions<WebSocketOptions>>().Value;
-            await serviceRouteProvder.RegisterWsRoutes(webSocketOptions.Port);
+            await serviceRouteRegisterProvider.RegisterWsRoutes(webSocketOptions.Port);
         }
 
         private (Type, string)[] GetWebSocketServices(ITypeFinder typeFinder)
