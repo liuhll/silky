@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Silky.Core;
 
 namespace NormHostDemo
 {
@@ -18,7 +17,7 @@ namespace NormHostDemo
                     .ConfigureSilkyGeneralHostDefaults()
                     .UseSerilogDefault()
                 ;
-            if (EngineContext.Current.IsEnvironment("Apollo"))
+            if (hostBuilder.IsEnvironment("Apollo"))
             {
                 hostBuilder.AddApollo();
             }

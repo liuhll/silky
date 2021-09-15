@@ -61,6 +61,5 @@ namespace Silky.Core
 
         void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule;
         
-        bool IsEnvironment(string environmentName);
     }
 }

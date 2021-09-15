@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Silky.Core;
 
 namespace AnotherHostDemo
 {
@@ -17,7 +16,7 @@ namespace AnotherHostDemo
                     .ConfigureSilkyWebSocketDefaults()
                     .UseSerilogDefault()
                 ;
-            if (EngineContext.Current.IsEnvironment("Apollo"))
+            if (hostBuilder.IsEnvironment("Apollo"))
             {
                 hostBuilder.AddApollo();
             }

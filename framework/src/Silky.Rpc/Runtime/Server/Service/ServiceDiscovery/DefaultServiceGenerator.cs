@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Hosting;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Rpc.Routing;

@@ -5,6 +5,7 @@ using Silky.Core;
 using Silky.Core.Modularity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Core.Extensions;
 
 namespace Microsoft.Extensions.Hosting
 {
@@ -44,6 +45,11 @@ namespace Microsoft.Extensions.Hosting
                 ;
 
             return builder;
+        }
+
+        public static bool IsEnvironment(this IHostBuilder builder, string environmentName)
+        {
+            return EngineContext.Current.IsEnvironment(environmentName);
         }
     }
 }

@@ -1,8 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Silky.Core;
 
 namespace GatewayDemo
 {
@@ -24,7 +22,7 @@ namespace GatewayDemo
                         .UseSerilogDefault();
                 });
 
-            if (EngineContext.Current.IsEnvironment("Apollo"))
+            if (hostBuilder.IsEnvironment("Apollo"))
             {
                 hostBuilder.AddApollo();
             }

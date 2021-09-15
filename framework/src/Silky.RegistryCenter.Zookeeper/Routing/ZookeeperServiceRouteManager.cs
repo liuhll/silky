@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
