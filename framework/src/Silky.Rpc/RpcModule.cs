@@ -80,8 +80,8 @@ namespace Silky.Rpc
                     $"You did not specify the dependent {registryCenterType} service registry module");
             }
 
-            var serviceRouteManager = applicationContext.ServiceProvider.GetRequiredService<IServiceRouteManager>();
-            await serviceRouteManager.EnterRoutes();
+            var serviceRouteProvider = applicationContext.ServiceProvider.GetRequiredService<IServiceRouteProvider>();
+            await serviceRouteProvider.EnterRoutes();
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {

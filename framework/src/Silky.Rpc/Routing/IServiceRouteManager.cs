@@ -1,9 +1,6 @@
-using System.Threading.Tasks;
-
 namespace Silky.Rpc.Routing
 {
-    public interface IServiceRouteManager : IServiceRouteRegister
+    public interface IServiceRouteManager : IServiceRouteRegister, IServiceRouteProvider
     {
-        Task EnterRoutes();
     }
 }
