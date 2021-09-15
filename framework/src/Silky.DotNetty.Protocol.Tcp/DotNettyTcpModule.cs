@@ -40,7 +40,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             var messageListener = applicationContext.ServiceProvider.GetRequiredService<DotNettyTcpServerMessageListener>();
             await messageListener.Listen();
             var serviceRouteProvider = applicationContext.ServiceProvider.GetRequiredService<IServiceRouteProvider>();
-            await serviceRouteProvider.RegisterRpcRoutes(ServiceProtocol.Tcp);
+            await serviceRouteProvider.RegisterTcpRoutes();
         }
     }
 }

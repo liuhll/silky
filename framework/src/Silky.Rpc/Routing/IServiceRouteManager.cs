@@ -4,10 +4,8 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
 {
-    public interface IServiceRouteManager
+    public interface IServiceRouteManager : IServiceRouteRegister
     {
-        Task RegisterRpcRoutes(AddressDescriptor addressDescriptor, ServiceProtocol serviceProtocol);
-
         Task EnterRoutes();
     }
 }
