@@ -2,7 +2,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 {
     public class GetApplicationOutput
     {
-        public string HostName { get; set; }
+        public string Application { get; set; }
 
         public int InstanceCount { get; set; }
 

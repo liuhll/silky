@@ -11,7 +11,7 @@ using Silky.Rpc.Routing;
 
 namespace ITestApplication.Test
 {
-    [ServiceRoute(multipleServiceKey: true)]
+    [ServiceRoute]
     public interface ITestAppService
     {
         /// <summary>

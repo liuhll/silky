@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
+using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -85,15 +86,20 @@ namespace Silky.Rpc.Runtime.Server
             return parameters;
         }
 
-       
-
         public static bool IsTransactionServiceEntry([NotNull] this ServiceEntry serviceEntry)
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             return serviceEntry.CustomAttributes.Any(p =>
                 p.GetType().GetTypeInfo().FullName == "Silky.Transaction.TransactionAttribute");
         }
-        
+
+        public static ServiceRoute GetServiceRoute(this ServiceEntry serviceEntry)
+        {
+            var serviceRouteCache = EngineContext.Current.Resolve<ServiceRouteCache>();
+            var serviceRoute = serviceRouteCache.GetServiceRoute(serviceEntry.ServiceId);
+            return serviceRoute;
+        }
+
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,
             ITypeConvertibleService typeConvertibleService)
         {
@@ -133,6 +139,5 @@ namespace Silky.Rpc.Runtime.Server
 
             return hashKey;
         }
-        
     }
 }

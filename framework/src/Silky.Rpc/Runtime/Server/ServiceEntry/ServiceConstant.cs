@@ -7,5 +7,7 @@ namespace Silky.Rpc.Runtime.Server
         public const string WsPath = "WsPath";
 
         public const string ServiceKey = "ServiceKey";
+        
+        public const string HostName = "HostName";
     }
 }

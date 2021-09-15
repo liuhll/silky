@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -30,7 +31,17 @@ namespace Silky.Rpc.Runtime.Server
             if (!Metadatas.ContainsKey(name))
                 return def;
 
-            return (T)Metadatas[name];
+            if (Metadatas[name] == null)
+            {
+                return def;
+            }
+
+            if (Metadatas[name] is T)
+            {
+                return (T)Metadatas[name];
+            }
+
+            return Metadatas[name].ConventTo<T>();
         }
 
         #region Equality Members

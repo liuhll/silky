@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.Json;
+using Silky.Core.Convertible;
 
 namespace Silky.Core.Extensions
 {
@@ -10,7 +11,7 @@ namespace Silky.Core.Extensions
         public static T As<T>(this object obj)
             where T : class
         {
-            return (T) obj;
+            return (T)obj;
         }
 
         public static T To<T>(this object obj)
@@ -18,35 +19,21 @@ namespace Silky.Core.Extensions
         {
             if (typeof(T) == typeof(Guid))
             {
-                return (T) TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(obj.ToString());
+                return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(obj.ToString());
             }
 
             if (typeof(T).IsEnum)
             {
-                return (T) Enum.Parse(typeof(T), obj as string, true);
+                return (T)Enum.Parse(typeof(T), obj as string, true);
             }
 
-            return (T) Convert.ChangeType(obj, typeof(T), CultureInfo.InvariantCulture);
+            return (T)Convert.ChangeType(obj, typeof(T), CultureInfo.InvariantCulture);
         }
-
-        public static T ConventTo<T>(this object obj)
+        
+        public static T ConventTo<T>(this object instance)
         {
-            if (typeof(T).IsValueType)
-            {
-                if (typeof(T) == typeof(Guid))
-                {
-                    return (T) TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(obj.ToString());
-                }
-
-                if (typeof(T).IsEnum)
-                {
-                    return (T) Enum.Parse(typeof(T), obj as string, true);
-                }
-
-                return (T) Convert.ChangeType(obj, typeof(T), CultureInfo.InvariantCulture);
-            }
-
-            return (T) obj;
+            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+            return (T)typeConvertibleService.Convert(instance, typeof(T));
         }
 
         /// <summary>
@@ -110,9 +97,11 @@ namespace Silky.Core.Extensions
                             property.SetValue(o, ChangeType(p.GetValue(obj, null), property.PropertyType), null);
                         }
                     }
+
                     return o;
                 }
             }
+
             return obj;
         }
 
@@ -120,14 +109,13 @@ namespace Silky.Core.Extensions
         {
             return (T)ChangeType(obj, typeof(T));
         }
-        
+
         public static Type GetActualType(this object obj)
         {
             if (obj == null) return default;
 
             var objType = obj.GetType();
-
-            // 处理 JSON 序列化问题
+            
             if (obj is JsonElement jsonElement)
             {
                 return jsonElement.ValueKind switch
@@ -144,9 +132,6 @@ namespace Silky.Core.Extensions
             return objType;
         }
 
-        // public static bool IsIn<T>(this T item, params T[] list)
-        // {
-        //     return list.Contains(item);
-        // }
+     
     }
 }

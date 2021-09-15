@@ -17,14 +17,18 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly IIdGenerator _idGenerator;
         private readonly IParameterProvider _parameterProvider;
+        private readonly ITypeFinder _typeFinder;
         private GovernanceOptions _governanceOptions;
+
 
         public DefaultServiceEntryGenerator(IIdGenerator idGenerator,
             IParameterProvider parameterProvider,
-            IOptionsMonitor<GovernanceOptions> governanceOptions)
+            IOptionsMonitor<GovernanceOptions> governanceOptions,
+            ITypeFinder typeFinder)
         {
             _idGenerator = idGenerator;
             _parameterProvider = parameterProvider;
+            _typeFinder = typeFinder;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange(GovernanceOptionsChangeListener);
         }
@@ -48,7 +52,6 @@ namespace Silky.Rpc.Runtime.Server
             var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(serviceType.Item1);
             var routeTemplate = serviceBundleProvider.Template;
             var methods = serviceType.Item1.GetTypeInfo().GetMethods();
-
             foreach (var method in methods)
             {
                 var httpMethodInfos = method.GetHttpMethodInfos();
@@ -88,7 +91,7 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             Debug.Assert(method.DeclaringType != null);
-            var serviceDescriptor = new ServiceEntryDescriptor()
+            var serviceEntryDescriptor = new ServiceEntryDescriptor()
             {
                 Id = serviceEntryId,
                 ServiceId = serviceId,
@@ -101,15 +104,14 @@ namespace Silky.Rpc.Runtime.Server
 
             foreach (var metaData in metaDataList)
             {
-                serviceDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
+                serviceEntryDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
             }
 
             var serviceEntry = new ServiceEntry(router,
-                serviceDescriptor,
+                serviceEntryDescriptor,
                 serviceType,
                 method,
                 parameterDescriptors,
-                routeTemplateProvider,
                 isLocal,
                 _governanceOptions);
             return serviceEntry;

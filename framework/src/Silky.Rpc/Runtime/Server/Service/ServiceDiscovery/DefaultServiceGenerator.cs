@@ -95,6 +95,8 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     serviceDescriptor.Metadatas.Add(ServiceConstant.ServiceKey, serviceKeys);
                 }
+
+                serviceDescriptor.Metadatas.Add(ServiceConstant.HostName, EngineContext.Current.HostName);
             }
 
             var metaDataList = service.ServiceType.GetCustomAttributes<MetadataAttribute>();

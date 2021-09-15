@@ -11,8 +11,6 @@ namespace Silky.Rpc.Routing
     {
         string Template { get; }
 
-        bool MultipleServiceKey { get; }
-        
         string ServiceName { get; set; }
         
         string Application { get; set; }
