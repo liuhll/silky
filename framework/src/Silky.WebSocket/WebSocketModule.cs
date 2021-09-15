@@ -27,7 +27,7 @@ namespace Silky.WebSocket
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {
-            var localWsEntryTypes = ServiceEntryHelper.FindServiceLocalWsEntryTypes(EngineContext.Current.TypeFinder)
+            var localWsEntryTypes = ServiceHelper.FindServiceLocalWsTypes(EngineContext.Current.TypeFinder)
                 .ToArray();
             builder.RegisterTypes(localWsEntryTypes)
                 .PropertiesAutowired()
@@ -91,7 +91,7 @@ namespace Silky.WebSocket
 
         private (Type, string)[] GetWebSocketServices(ITypeFinder typeFinder)
         {
-            var wsServicesTypes = ServiceEntryHelper.FindServiceLocalWsEntryTypes(typeFinder);
+            var wsServicesTypes = ServiceHelper.FindServiceLocalWsTypes(typeFinder);
             return wsServicesTypes.Select(p => (p, WebSocketResolverHelper.ParseWsPath(p))).ToArray();
         }
     }

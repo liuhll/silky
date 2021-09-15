@@ -46,7 +46,7 @@ namespace Silky.Rpc
 
         protected override void RegisterServices(ContainerBuilder builder)
         {
-            var localEntryTypes = ServiceEntryHelper.FindServiceLocalEntryTypes(EngineContext.Current.TypeFinder)
+            var localEntryTypes = ServiceHelper.FindLocalServiceTypes(EngineContext.Current.TypeFinder)
                 .ToArray();
             builder.RegisterTypes(localEntryTypes)
                 .PropertiesAutowired()

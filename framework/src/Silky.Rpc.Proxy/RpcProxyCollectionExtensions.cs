@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddRpcProxy(this IServiceCollection services)
         {
             var serviceProxyTypes =
-                ServiceEntryHelper.FindServiceProxyTypes(EngineContext.Current.TypeFinder);
+                ServiceHelper.FindServiceProxyTypes(EngineContext.Current.TypeFinder);
             foreach (var serviceServiceType in serviceProxyTypes)
             {
                 AddAServiceClientProxy(services, serviceServiceType);

@@ -7,9 +7,9 @@ using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public static class ServiceEntryHelper
+    public static class ServiceHelper
     {
-        internal static IEnumerable<Type> FindServiceLocalEntryTypes(ITypeFinder typeFinder)
+        internal static IEnumerable<Type> FindLocalServiceTypes(ITypeFinder typeFinder)
         {
             var types = typeFinder.GetAssemblies()
                     .SelectMany(p => p.ExportedTypes)
@@ -18,6 +18,25 @@ namespace Silky.Rpc.Runtime.Server
                                 && !p.IsGenericType
                                 && p.GetInterfaces().Any(i =>
                                     i.GetCustomAttributes().Any(a => a is ServiceRouteAttribute))
+                    )
+                    .OrderBy(p =>
+                        p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(q => q.Weight).FirstOrDefault()
+                    )
+                ;
+            return types;
+        }
+
+        internal static IEnumerable<Type> FindLocalServiceImplementTypes(ITypeFinder typeFinder, Type type)
+        {
+            var types = typeFinder.GetAssemblies()
+                    .SelectMany(p => p.ExportedTypes)
+                    .Where(p => p.IsClass
+                                && !p.IsAbstract
+                                && !p.IsGenericType
+                                && p.GetInterfaces().Any(i =>
+                                    i.GetCustomAttributes().Any(a => a is ServiceRouteAttribute)
+                                    && i == type
+                                )
                     )
                     .OrderBy(p =>
                         p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(q => q.Weight).FirstOrDefault()
@@ -40,9 +59,10 @@ namespace Silky.Rpc.Runtime.Server
                 ;
             foreach (var entryInterface in serviceInterfaces)
             {
-                serviceTypes.Add(exportedTypes.Any(t => entryInterface.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract)
-                    ? (entryInterface, true)
-                    : (entryInterface, false));
+                serviceTypes.Add(
+                    exportedTypes.Any(t => entryInterface.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract)
+                        ? (entryInterface, true)
+                        : (entryInterface, false));
             }
 
             return serviceTypes;
@@ -54,7 +74,7 @@ namespace Silky.Rpc.Runtime.Server
                 .Select(p => p.Item1);
             return proxyTypes;
         }
-        
+
         public static IEnumerable<(Type, bool)> FindWsServiceTypeInfos(ITypeFinder typeFinder)
         {
             var entryTypes = new List<(Type, bool)>();
@@ -82,7 +102,7 @@ namespace Silky.Rpc.Runtime.Server
             return entryTypes;
         }
 
-        public static IEnumerable<Type> FindServiceLocalWsEntryTypes(ITypeFinder typeFinder)
+        public static IEnumerable<Type> FindServiceLocalWsTypes(ITypeFinder typeFinder)
         {
             var types = typeFinder.GetAssemblies()
                     .SelectMany(p => p.ExportedTypes)
