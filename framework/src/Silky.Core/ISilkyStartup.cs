@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Silky.Core
+namespace Microsoft.Extensions.DependencyInjection
 {
     public interface ISilkyStartup : IConfigureService
     {

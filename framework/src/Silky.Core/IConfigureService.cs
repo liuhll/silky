@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Silky.Core
+namespace Microsoft.Extensions.DependencyInjection
 {
     public interface IConfigureService
     {

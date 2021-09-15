@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NormHostDemo.Contexts;
-using Silky.Core;
 
 namespace NormHostDemo
 {
