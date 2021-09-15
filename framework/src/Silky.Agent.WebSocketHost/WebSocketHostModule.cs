@@ -23,7 +23,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(RedisCachingModule),
         typeof(RedisTransactionRepositoryModule)
     )]
-    public abstract class WebSocketHostModule : StartUpModule
+    public class WebSocketHostModule : StartUpModule
     {
     }
 }

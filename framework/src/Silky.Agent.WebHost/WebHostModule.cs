@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(FluentValidationModule),
         typeof(RedisCachingModule)
     )]
-    public abstract class WebHostModule : StartUpModule
+    public class WebHostModule : StartUpModule
     {
     }
 }

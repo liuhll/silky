@@ -16,11 +16,11 @@ namespace Microsoft.Extensions.Hosting
             IServiceCollection services = null;
             builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureServices((hostBuilder, config) =>
+                .ConfigureServices((hostBuilder, sc) =>
                 {
-                    engine = config.AddSilkyServices<T>(hostBuilder.Configuration,
+                    engine = sc.AddSilkyServices<T>(hostBuilder.Configuration,
                         hostBuilder.HostingEnvironment);
-                    services = config;
+                    services = sc;
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {

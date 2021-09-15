@@ -14,7 +14,7 @@ namespace AnotherHostDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                    .RegisterSilkyServices<AnotherDemoModule>()
+                    .ConfigureSilkyWebSocketDefaults()
                     .UseSerilogDefault()
                 ;
             if (EngineContext.Current.IsEnvironment("Apollo"))

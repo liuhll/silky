@@ -17,7 +17,7 @@ namespace GatewayDemo
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                .RegisterSilkyServices<GatewayHostModule>()
+                .ConfigureSilkyWebHostDefaults()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
