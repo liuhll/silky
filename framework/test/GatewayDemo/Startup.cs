@@ -27,6 +27,7 @@ namespace GatewayDemo
             services.AddDashboard();
             services.AddSilkyIdentity();
             services.AddSilkySkyApm();
+            services.AddMessagePackCodec();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

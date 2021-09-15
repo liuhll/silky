@@ -13,10 +13,11 @@ using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Configuration;
+using Silky.Core.DependencyInjection;
 using Silky.Core.Rpc;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Transport.Codec;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc
@@ -33,6 +34,14 @@ namespace Silky.Rpc
                 .Bind(configuration.GetSection(GovernanceOptions.Governance));
             services.AddOptions<WebSocketOptions>()
                 .Bind(configuration.GetSection(WebSocketOptions.WebSocket));
+            if (!services.IsAdded(typeof(ITransportMessageDecoder)))
+            {
+                services.AddTransient<ITransportMessageDecoder, DefaultTransportMessageDecoder>();
+            }
+            if (!services.IsAdded(typeof(ITransportMessageEncoder)))
+            {
+                services.AddTransient<ITransportMessageEncoder, DefaultTransportMessageEncoder>();
+            }
         }
 
         protected override void RegisterServices(ContainerBuilder builder)
@@ -95,11 +104,6 @@ namespace Silky.Rpc
 
         private void RegisterServicesForAddressSelector(ContainerBuilder builder)
         {
-            builder.RegisterType<DefaultTransportMessageEncoder>().AsSelf().AsImplementedInterfaces()
-                .InstancePerDependency();
-            builder.RegisterType<DefaultTransportMessageDecoder>().AsSelf().AsImplementedInterfaces()
-                .InstancePerDependency();
-
             builder.RegisterType<PollingAddressSelector>()
                 .SingleInstance()
                 .AsSelf()

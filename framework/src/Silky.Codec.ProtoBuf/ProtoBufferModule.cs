@@ -1,4 +1,5 @@
-using Autofac;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Modularity;
 using Silky.Rpc;
 
@@ -7,12 +8,9 @@ namespace Silky.Codec
     [DependsOn(typeof(RpcModule))]
     public class ProtoBufferModule : SilkyModule
     {
-        protected override void RegisterServices(ContainerBuilder builder)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            builder.RegisterType<ProtoBufferTransportMessageDecoder>().AsSelf().AsImplementedInterfaces()
-                .InstancePerDependency();
-            builder.RegisterType<ProtoBufferTransportMessageEncoder>().AsSelf().AsImplementedInterfaces()
-                .InstancePerDependency();
+            services.AddProtoBufferCodec();
         }
     }
 }
