@@ -7,6 +7,6 @@ namespace Silky.Rpc.Routing
     {
         public IAddressModel[] Addresses { get; set; }
         
-        public ServiceDescriptor ServiceDescriptor { get; set; }
+        public ServiceDescriptor Service { get; set; }
     }
 }

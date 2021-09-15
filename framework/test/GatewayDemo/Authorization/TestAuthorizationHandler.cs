@@ -19,8 +19,8 @@ namespace GatewayDemo.Authorization
         public async override Task<bool> PipelineAsync(AuthorizationHandlerContext context,
             DefaultHttpContext httpContext)
         {
-            var serviceEntry = httpContext.GetServiceEntry();
-            // if (serviceEntry.ServiceDescriptor.Id.Contains("ITestApplication"))
+            // var serviceEntry = httpContext.GetServiceEntry();
+            // if (serviceEntry.Service.Id.Contains("ITestApplication"))
             // {
             //     _logger.LogInformation($"{serviceEntry.Id} has permission");
             //     return true;

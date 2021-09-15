@@ -43,19 +43,19 @@ namespace Silky.Rpc.Routing
             addressModel.InitFuseTimes();
             var removeAddressServiceRoute =
                 ServiceRoutes.FirstOrDefault(p =>
-                    p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor) && p.ServiceDescriptor.Id == serviceId
+                    p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor) && p.Service.Id == serviceId
                 );
             if (removeAddressServiceRoute != null)
             {
                 removeAddressServiceRoute.Addresses =
                     removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressModel.Descriptor).ToArray();
-                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.ServiceDescriptor.Id,
+                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.Service.Id,
                     removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
 
                 var removeHostAddressServiceRoutes =
                     ServiceRoutes.Where(p =>
                         p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor)
-                        && p.ServiceDescriptor.Application == removeAddressServiceRoute.ServiceDescriptor.Application
+                        && p.Service.Application == removeAddressServiceRoute.Service.Application
                     );
                 var updateRegisterServiceRouteDescriptors = new List<ServiceRouteDescriptor>();
                 foreach (var removeHostAddressServiceRoute in removeHostAddressServiceRoutes)
@@ -63,7 +63,7 @@ namespace Silky.Rpc.Routing
                     removeAddressServiceRoute.Addresses =
                         removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressModel.Descriptor)
                             .ToArray();
-                    _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.ServiceDescriptor.Id,
+                    _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.Service.Id,
                         removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
                     updateRegisterServiceRouteDescriptors.Add(removeAddressServiceRoute.ConvertToDescriptor());
                 }
@@ -84,7 +84,7 @@ namespace Silky.Rpc.Routing
             {
                 removeAddressServiceRoute.Addresses =
                     removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressmodel.Descriptor).ToArray();
-                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.ServiceDescriptor.Id,
+                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.Service.Id,
                     removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
                 updateRegisterServiceRouteDescriptors.Add(removeAddressServiceRoute.ConvertToDescriptor());
             }
@@ -103,7 +103,7 @@ namespace Silky.Rpc.Routing
                 serviceRoute, (id, _) => serviceRoute);
 
             Logger.LogDebug(
-                $"Update the service routing [{serviceRoute.ServiceDescriptor.Id}] cache, the routing address is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
+                $"Update the service routing [{serviceRoute.Service.Id}] cache, the routing address is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
 
             foreach (var address in serviceRoute.Addresses)
             {

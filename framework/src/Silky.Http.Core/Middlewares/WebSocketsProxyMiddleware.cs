@@ -113,7 +113,7 @@ namespace Silky.Http.Core.Middlewares
 
             var addressSelector =
                 EngineContext.Current.ResolveNamed<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
-            var address = addressSelector.Select(new AddressSelectContext(serviceRoute.ServiceDescriptor.Id,
+            var address = addressSelector.Select(new AddressSelectContext(serviceRoute.Service.Id,
                 serviceRoute.Addresses, hashKey));
 
             var destinationUri = CreateDestinationUri(address, path);

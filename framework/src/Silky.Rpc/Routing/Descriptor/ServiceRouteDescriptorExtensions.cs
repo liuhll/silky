@@ -9,7 +9,7 @@ namespace Silky.Rpc.Routing.Descriptor
         {
             var serviceRoute = new ServiceRoute()
             {
-                ServiceDescriptor = serviceRouteDescriptor.Service,
+                Service = serviceRouteDescriptor.Service,
                 Addresses = serviceRouteDescriptor.Addresses.Select(p => p.ConvertToAddressModel()).ToArray()
             };
             return serviceRoute;
