@@ -22,7 +22,7 @@ namespace Silky.Rpc.RegistryCenters
 
         public int UnHealthTimes { get; set; }
 
-        public UnHealthType? UnHealthType { get; set; }
+        public HealthType? HealthType { get; set; }
 
         public string UnHealthReason { get; set; }
 
@@ -31,7 +31,15 @@ namespace Silky.Rpc.RegistryCenters
             IsHealth = true;
             UnHealthTimes = 0;
             UnHealthReason = null;
-            UnHealthType = null;
+            HealthType = RegistryCenters.HealthType.Connected;
+        }
+
+        public void SetUnHealth(HealthType healthType, string unHealthReason)
+        {
+            IsHealth = false;
+            UnHealthTimes += 1;
+            UnHealthReason = unHealthReason;
+            HealthType = healthType;
         }
     }
 }

@@ -78,41 +78,40 @@ namespace Silky.RegistryCenter.Zookeeper
                 zookeeperClient.SubscribeStatusChange(async (client, connectionStateChangeArgs) =>
                 {
                     var healthCheckModel = m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(true, 0));
-                    if (connectionStateChangeArgs.State == Watcher.Event.KeeperState.Expired)
+
+                    switch (connectionStateChangeArgs.State)
                     {
-                        if (!client.WaitForKeeperState(Watcher.Event.KeeperState.SyncConnected,
-                            zookeeperClientOptions.ConnectionTimeout))
-                        {
-                            healthCheckModel.IsHealth = false;
-                            healthCheckModel.UnHealthTimes += 1;
-                            healthCheckModel.UnHealthType = UnHealthType.ConnectionTimeout;
-                            healthCheckModel.UnHealthReason = "Connection session expired";
-                            if (healthCheckModel.UnHealthTimes > _registryCenterOptions.FuseTimes)
+                        case Watcher.Event.KeeperState.Disconnected:
+                        case Watcher.Event.KeeperState.Expired:
+                            if (client.WaitForKeeperState(Watcher.Event.KeeperState.SyncConnected,
+                                zookeeperClientOptions.ConnectionTimeout))
                             {
-                                _zookeeperClients.Remove(client.Options.ConnectionString, out _);
+                                if (healthCheckModel.HealthType == HealthType.Disconnected)
+                                {
+                                    var zookeeperStatusChange = EngineContext.Current.Resolve<IZookeeperStatusChange>();
+                                    await zookeeperStatusChange.CreateSubscribeServiceRouteDataChanges(client);
+                                }
+
+                                healthCheckModel.SetHealth();
                             }
-                        }
-                        else
-                        {
-                            if (healthCheckModel.UnHealthType == UnHealthType.Disconnected)
+                            else
                             {
-                                var zookeeperStatusChange = EngineContext.Current.Resolve<IZookeeperStatusChange>();
-                                await zookeeperStatusChange.CreateSubscribeServiceRouteDataChanges(client);
+                                healthCheckModel.SetUnHealth(HealthType.Disconnected,
+                                    "Connection session disconnected");
+                                if (healthCheckModel.UnHealthTimes > _registryCenterOptions.FuseTimes)
+                                {
+                                    _zookeeperClients.Remove(client.Options.ConnectionString, out _);
+                                }
                             }
 
+                            break;
+                        case Watcher.Event.KeeperState.AuthFailed:
+                            healthCheckModel.SetUnHealth(HealthType.AuthFailed, "AuthFailed");
+                            break;
+                        case Watcher.Event.KeeperState.SyncConnected:
+                        case Watcher.Event.KeeperState.ConnectedReadOnly:
                             healthCheckModel.SetHealth();
-                        }
-
-                        m_healthCheck.AddOrUpdate(connStr, healthCheckModel, (k, v) => healthCheckModel);
-                    }
-
-                    if (connectionStateChangeArgs.State == Watcher.Event.KeeperState.Disconnected)
-                    {
-                        healthCheckModel.IsHealth = false;
-                        healthCheckModel.UnHealthTimes += 1;
-                        healthCheckModel.UnHealthReason = "Connection session disconnected";
-                        healthCheckModel.UnHealthType = UnHealthType.Disconnected;
-                        m_healthCheck.AddOrUpdate(connStr, healthCheckModel, (k, v) => healthCheckModel);
+                            break;
                     }
                 });
                 _zookeeperClients.GetOrAdd(connStr, zookeeperClient);
@@ -123,6 +122,8 @@ namespace Silky.RegistryCenter.Zookeeper
                 Logger.LogWarning($"Unable to link to the service registry {connStr}, reason: {e.Message}");
                 m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(false)
                 {
+                    HealthType = HealthType.Disconnected,
+                    UnHealthTimes = 1,
                     UnHealthReason = e.Message
                 });
             }
