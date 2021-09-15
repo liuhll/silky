@@ -40,9 +40,9 @@ namespace Silky.RegistryCenter.Zookeeper
             }
         }
 
-        public DefaultZookeeperClientProvider(IOptionsMonitor<RegistryCenterOptions> registryCenterOptions)
+        public DefaultZookeeperClientProvider(IOptions<RegistryCenterOptions> registryCenterOptions)
         {
-            _registryCenterOptions = registryCenterOptions.CurrentValue;
+            _registryCenterOptions = registryCenterOptions.Value;
 
             Check.NotNullOrEmpty(_registryCenterOptions.ConnectionStrings,
                 nameof(_registryCenterOptions.ConnectionStrings));
