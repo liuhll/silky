@@ -19,7 +19,6 @@ namespace Silky.Rpc.Routing
     {
         private readonly ConcurrentDictionary<string, ServiceRoute> _serviceRouteCache = new();
         private readonly IHealthCheck _healthCheck;
-        private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IServiceEntryManager _serviceEntryManager;
 
         public ILogger<ServiceRouteCache> Logger { get; set; }
@@ -33,7 +32,6 @@ namespace Silky.Rpc.Routing
             IServiceEntryManager serviceEntryManager)
         {
             _healthCheck = healthCheck;
-            _serviceEntryLocator = serviceEntryLocator;
             _serviceEntryManager = serviceEntryManager;
             _healthCheck.OnRemveAddress += OnRemoveAddressHandler;
             _healthCheck.OnRemoveServiceRouteAddress += OnRemoveServiceRouteAddress;
@@ -112,8 +110,8 @@ namespace Silky.Rpc.Routing
                 _healthCheck.Monitor(address);
             }
 
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceRouteDescriptor.Service.Id);
-            if (serviceEntry != null)
+            var serviceEntries = _serviceEntryManager.GetServiceEntries(serviceRouteDescriptor.Service.Id);
+            foreach (var serviceEntry in serviceEntries)
             {
                 if (serviceEntry.FailoverCountIsDefaultValue)
                 {
@@ -149,6 +147,5 @@ namespace Silky.Rpc.Routing
 
             return null;
         }
-        
     }
 }
