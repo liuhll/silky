@@ -1,3 +1,5 @@
+using GatewayDemo.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +21,7 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IAuthorizationHandler, TestAuthorizationHandler>();
             services.AddSwaggerDocuments();
             services.AddSilkyMiniProfiler();
             services.AddDashboard();
