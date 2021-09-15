@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 
 namespace GatewayDemo.AppService

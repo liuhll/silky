@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Silky.Rpc.Tests.AppService.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Tests.AppService

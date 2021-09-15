@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Http.Dashboard.AppService.Dtos;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using GetInstanceDetailOutput = Silky.Rpc.AppServices.Dtos.GetInstanceDetailOutput;

@@ -7,6 +7,7 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.CachingInterceptor;
+using Silky.Rpc.Routing;
 
 namespace ITestApplication.Test
 {

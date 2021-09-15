@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 
 namespace IAnotherApplication
