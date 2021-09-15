@@ -55,6 +55,7 @@ namespace Silky.Rpc
                         serviceKeyType.GetInterfaces().First(p =>
                             p.GetCustomAttributes().OfType<IRouteTemplateProvider>().Any()))
                     .InstancePerLifetimeScope()
+                    .AsImplementedInterfaces()
                     ;
             }
 
