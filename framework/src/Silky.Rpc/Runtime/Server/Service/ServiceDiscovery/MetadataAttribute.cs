@@ -9,9 +9,9 @@ namespace Silky.Rpc.Runtime.Server
     {
         public string Key { get; private set; }
 
-        public string Value { get; private set; }
+        public object Value { get; private set; }
 
-        public MetadataAttribute([NotNull] string key, [NotNull] string value)
+        public MetadataAttribute([NotNull] string key, [NotNull] object value)
         {
             Check.NotNull(key, nameof(key));
             Check.NotNull(value, nameof(value));

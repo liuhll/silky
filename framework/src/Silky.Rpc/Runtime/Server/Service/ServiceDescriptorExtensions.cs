@@ -21,6 +21,18 @@ namespace Silky.Rpc.Runtime.Server
             return serviceDescriptor.GetMetadata<IDictionary<string, int>>(ServiceConstant.ServiceKey);
         }
 
+
+        public static bool HasMetaData(this ServiceDescriptor serviceDescriptor, string key)
+        {
+            return serviceDescriptor.Metadatas.ContainsKey(key);
+        }
+
+        public static bool IsSilkyService(this ServiceDescriptor serviceDescriptor)
+        {
+            return serviceDescriptor.HasMetaData(ServiceConstant.IsSilkyService) &&
+                   serviceDescriptor.GetMetadata<bool>(ServiceConstant.IsSilkyService);
+        }
+
         public static string GetHostName(this ServiceDescriptor serviceDescriptor)
         {
             if (serviceDescriptor.Metadatas.ContainsKey(ServiceConstant.HostName))

@@ -4,9 +4,9 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Dashboard.AppService.Dtos
 {
-    public class GetDetailApplicationOutput
+    public class GetDetailHostOutput
     {
-        public GetDetailApplicationOutput()
+        public GetDetailHostOutput()
         {
             AppServiceEntries = new List<ServiceEntryOutput>();
             WsServices = new List<WsAppServiceOutput>();
@@ -32,8 +32,10 @@ namespace Silky.Http.Dashboard.AppService.Dtos
     public class ServiceEntryOutput
     {
         public ServiceProtocol ServiceProtocol { get; set; }
+
+        public string HostName { get; set; }
         
-        
+        public string Application { get; set; }
         public string ServiceName { get; set; }
         public string ServiceId { get; set; }
         

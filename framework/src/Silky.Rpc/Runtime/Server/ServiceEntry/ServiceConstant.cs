@@ -9,5 +9,7 @@ namespace Silky.Rpc.Runtime.Server
         public const string ServiceKey = "ServiceKey";
         
         public const string HostName = "HostName";
+
+        public const string IsSilkyService = "IsSilkyService";
     }
 }

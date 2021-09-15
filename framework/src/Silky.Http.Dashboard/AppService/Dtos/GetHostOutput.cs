@@ -1,14 +1,16 @@
 namespace Silky.Http.Dashboard.AppService.Dtos
 {
-    public class GetApplicationOutput
+    public class GetHostOutput
     {
-        public string Application { get; set; }
+        public string Host { get; set; }
+
+        public int ApplicationCount { get; set; }
 
         public int InstanceCount { get; set; }
 
         public int AppServiceCount { get; set; }
 
-        public int ServiceEntriesCount { get; set; }
+        public int LocalServiceEntriesCount { get; set; }
         public bool HasWsService { get; set; }
     }
 }

@@ -4,6 +4,8 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 {
     public class GetServiceEntryOutput
     {
+        public string HostName { get; set; }
+        
         public string Application { get; set; }
         
         public string ServiceName { get; set; }
