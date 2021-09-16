@@ -295,7 +295,7 @@ namespace Silky.Http.Dashboard.AppService
                         OnlyCurrentUserData = p.OnlyCurrentUserData,
                         CachingMethod = p.CachingMethod
                     }).ToArray(),
-                ServiceKeys = serviceRoute?.Service.GetServiceKeys().Select(p => new ServiceKeyOutput()
+                ServiceKeys = serviceRoute?.Service.GetServiceKeys()?.Select(p => new ServiceKeyOutput()
                 {
                     Name = p.Key,
                     Weight = p.Value
