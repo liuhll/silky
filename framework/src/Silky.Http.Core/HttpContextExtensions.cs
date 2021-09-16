@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core
@@ -26,6 +27,24 @@ namespace Silky.Http.Core
         public static void SetResultCode(this HttpResponse httpResponse, StatusCode statusCode)
         {
             httpResponse.Headers["SilkyResultCode"] = statusCode.ToString();
+        }
+
+        public static string GetResponseContentType(this HttpContext httpContext, GatewayOptions gatewayOptions)
+        {
+            var defaultResponseContextType = "application/json;charset=utf-8";
+            if (httpContext.Request.Headers.ContainsKey("Accept"))
+            {
+                if (httpContext.Request.Headers["Accept"] != "*/*")
+                {
+                    return httpContext.Request.Headers["Accept"];
+                }
+            }
+
+            if (!gatewayOptions.ResponseContentType.IsNullOrEmpty())
+            {
+                return gatewayOptions.ResponseContentType;
+            }
+            return defaultResponseContextType;
         }
     }
 }

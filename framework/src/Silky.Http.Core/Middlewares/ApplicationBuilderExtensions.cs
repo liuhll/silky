@@ -41,7 +41,7 @@ namespace Silky.Http.Core.Middlewares
                     var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
                     if (exception == null)
                         return Task.CompletedTask;
-                    context.Response.ContentType = "application/json;charset=utf-8";
+                    context.Response.ContentType = context.GetResponseContentType(gatewayOptions);
                     MiniProfilerPrinter.Print("Error", "Exception", exception.Message, true);
 
                     if (gatewayOptions.WrapResult)
@@ -89,7 +89,8 @@ namespace Silky.Http.Core.Middlewares
 
         public static async void RegisterHttpRoutes(this IApplicationBuilder application)
         {
-            var serviceRouteRegisterProvider = application.ApplicationServices.GetRequiredService<IServiceRouteRegisterProvider>();
+            var serviceRouteRegisterProvider =
+                application.ApplicationServices.GetRequiredService<IServiceRouteRegisterProvider>();
             await serviceRouteRegisterProvider.RegisterHttpRoutes();
         }
     }

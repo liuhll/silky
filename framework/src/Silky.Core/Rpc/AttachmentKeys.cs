@@ -18,7 +18,7 @@ namespace Silky.Core.Rpc
 
         public const string HttpMethod = "httpmethod";
 
-        public const string IsGatewayHost = "isGatewayHost";
+        public const string IsGateway = "isGateway";
         
         public const string ServiceMethodName = "serviceMethodName";
 

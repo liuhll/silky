@@ -6,7 +6,7 @@ namespace Silky.Core.Rpc
     {
         public static bool IsGateway(this RpcContext rpcContext)
         {
-            var isGateway = rpcContext.GetAttachment(AttachmentKeys.IsGatewayHost);
+            var isGateway = rpcContext.GetAttachment(AttachmentKeys.IsGateway);
             if (isGateway == null)
             {
                 return false;

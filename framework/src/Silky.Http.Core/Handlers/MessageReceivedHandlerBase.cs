@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Configuration;
@@ -9,6 +10,7 @@ using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
+using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core.Handlers
@@ -37,6 +39,12 @@ namespace Silky.Http.Core.Handlers
             var sp = Stopwatch.StartNew();
             var parameters = await ResolveParameters(serviceEntry);
             var serviceKey = await ResolveServiceKey();
+            if (!serviceKey.IsNullOrEmpty())
+            {
+                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
+                    MiniProfileConstant.Route.State.FindServiceKey,
+                    $"serviceKey => {serviceKey}");
+            }
             RpcContext.Context.SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);
             var tracingTimestamp = TracingBefore(new RemoteInvokeMessage()
             {

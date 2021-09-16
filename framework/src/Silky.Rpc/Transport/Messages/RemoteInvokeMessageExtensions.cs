@@ -13,7 +13,7 @@ namespace Silky.Rpc.Transport.Messages
                     RpcContext.Context.SetAttachment(messageAttachment.Key,messageAttachment.Value);
                 }
             }
-            RpcContext.Context.SetAttachment(AttachmentKeys.IsGatewayHost, isGateway);
+            RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, isGateway);
         }
     }
 }
