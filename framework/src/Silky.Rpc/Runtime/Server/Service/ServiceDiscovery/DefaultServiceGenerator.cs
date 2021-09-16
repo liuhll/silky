@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;
 
@@ -30,9 +31,7 @@ namespace Silky.Rpc.Runtime.Server
                 Id = _idGenerator.GenerateServiceId(serviceTypeInfo.Item1),
                 ServiceType = serviceTypeInfo.Item1,
                 IsLocal = serviceTypeInfo.Item2,
-                ServiceProtocol = EngineContext.Current.IsContainHttpCoreModule()
-                    ? ServiceProtocol.Http
-                    : ServiceProtocol.Tcp
+                ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceTypeInfo.Item1,serviceTypeInfo.Item2,true)
             };
             serviceInfo.ServiceDescriptor = CreateServiceDescriptor(serviceInfo);
             return serviceInfo;
@@ -65,11 +64,8 @@ namespace Silky.Rpc.Runtime.Server
                 Application = serviceBundleProvider.Application
             };
 
-            if (service.ServiceProtocol == ServiceProtocol.Tcp)
-            {
-                serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(service.Id)
-                    .Select(p => p.ServiceEntryDescriptor).ToArray();
-            }
+            serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(service.Id)
+                .Select(p => p.ServiceEntryDescriptor).ToArray();
 
             if (service.IsLocal)
             {

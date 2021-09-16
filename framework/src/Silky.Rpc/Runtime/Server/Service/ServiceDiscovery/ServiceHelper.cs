@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Silky.Core;
+using Silky.Core.Extensions;
 using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Runtime.Server
@@ -111,14 +112,48 @@ namespace Silky.Rpc.Runtime.Server
                                 && !p.IsGenericType
                                 && p.GetInterfaces().Any(i =>
                                     i.GetCustomAttributes().Any(a => a is ServiceRouteAttribute))
-                                && p.BaseType?.FullName ==
-                                "Silky.WebSocket.WsAppServiceBase"
+                                && p.BaseType?.FullName == ServiceConstant.WebSocketBaseTypeName
                     )
                     .OrderBy(p =>
                         p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Select(q => q.Weight).FirstOrDefault()
                     )
                 ;
             return types;
+        }
+
+        public static bool IsWsType(Type type)
+        {
+            if (type.IsClass && !type.IsAbstract)
+            {
+                return type.GetInterfaces().Any(t => t.GetCustomAttributes().Any(a => a is ServiceRouteAttribute)) &&
+                       type.BaseType?.FullName == ServiceConstant.WebSocketBaseTypeName;
+            }
+
+            // if (type.IsInterface)
+            // {
+            //     var localServiceImplementTypes = FindLocalServiceImplementTypes(EngineContext.Current.TypeFinder, type);
+            //     return localServiceImplementTypes.Any(implementType =>
+            //         implementType.GetInterfaces()
+            //             .Any(t => t.GetCustomAttributes().Any(a => a is ServiceRouteAttribute)) &&
+            //         implementType.BaseType?.FullName == ServiceConstant.WebSocketBaseTypeName);
+            // }
+
+            return false;
+        }
+
+        public static ServiceProtocol GetServiceProtocol(Type type, bool isLocal, bool isService)
+        {
+            if (isLocal && isService && IsWsType(type))
+            {
+                return ServiceProtocol.Ws;
+            }
+
+            if (EngineContext.Current.IsContainHttpCoreModule())
+            {
+                return ServiceProtocol.Http;
+            }
+
+            return ServiceProtocol.Tcp;
         }
     }
 }

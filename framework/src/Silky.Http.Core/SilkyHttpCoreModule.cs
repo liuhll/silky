@@ -6,36 +6,34 @@ using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 using Silky.Rpc;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Proxy;
-using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Silky.Http.Core.Handlers;
 
 namespace Silky.Http.Core
 {
-    [DependsOn(typeof(RpcModule), typeof(RpcProxyModule))]
+    [DependsOn(typeof(RpcModule))]
     public class SilkyHttpCoreModule : HttpSilkyModule
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterType<HttpMessageReceivedHandler>()
+            builder.RegisterType<OuterHttpMessageReceivedHandler>()
                 .InstancePerLifetimeScope()
                 .AsSelf()
-                .Named<IMessageReceivedHandler>(ServiceProtocol.Tcp.ToString());
-
-            builder.RegisterType<WsMessageReceivedHandler>()
+                .Named<IMessageReceivedHandler>(HttpMessageType.Outer.ToString());
+            builder.RegisterType<OuterHttpMessageReceivedHandler>()
                 .InstancePerLifetimeScope()
                 .AsSelf()
-                .Named<IMessageReceivedHandler>(ServiceProtocol.Ws.ToString());
-
-            builder.RegisterType<MqttMessageReceivedHandler>()
+                .Named<IMessageReceivedHandler>(HttpMessageType.Inner.ToString());
+            
+            
+            builder.RegisterType<OuterHttpRequestParameterParser>()
                 .InstancePerLifetimeScope()
                 .AsSelf()
-                .Named<IMessageReceivedHandler>(ServiceProtocol.Mqtt.ToString());
+                .Named<IParameterParser>(HttpMessageType.Outer.ToString());
         }
 
-        
+
         public override async Task Initialize(ApplicationContext applicationContext)
         {
             var registryCenterOptions =

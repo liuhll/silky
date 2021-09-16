@@ -1,5 +1,4 @@
 using System;
-using Silky.Core;
 using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Server

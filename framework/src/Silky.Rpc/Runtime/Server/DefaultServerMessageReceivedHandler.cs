@@ -131,7 +131,8 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        private void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId, StatusCode statusCode,
+        private void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId,
+            StatusCode statusCode,
             Exception ex)
         {
             if (tracingTimestamp != null &&

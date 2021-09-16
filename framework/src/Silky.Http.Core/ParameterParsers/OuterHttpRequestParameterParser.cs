@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
+using Silky.Core;
+using Silky.Core.Rpc;
 
 namespace Silky.Http.Core
 {
-    public class HttpRequestParameterParser : IParameterParser
+    internal class OuterHttpRequestParameterParser : IParameterParser
     {
         private readonly ISerializer _serializer;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HttpRequestParameterParser(ISerializer serializer)
+        public OuterHttpRequestParameterParser(ISerializer serializer,
+            IHttpContextAccessor httpContextAccessor)
         {
             _serializer = serializer;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<IDictionary<ParameterFrom, object>> Parser(HttpRequest request, ServiceEntry serviceEntry)
+        private async Task<IDictionary<ParameterFrom, object>> Parser(HttpRequest request, ServiceEntry serviceEntry)
         {
             var parameters = new Dictionary<ParameterFrom, object>();
             if (request.HasFormContentType)
@@ -36,6 +42,7 @@ namespace Silky.Http.Core
             if (request.Headers.Any())
             {
                 var headerData = request.Headers.ToDictionary(p => p.Key, p => p.Value.ToString());
+                RpcContext.Context.SetAttachment(AttachmentKeys.RequestHeader, headerData);
                 parameters.Add(ParameterFrom.Header, _serializer.Serialize(headerData));
             }
 
@@ -53,6 +60,14 @@ namespace Silky.Http.Core
             }
 
             return parameters;
+        }
+
+        public async Task<object[]> Parser([NotNull] ServiceEntry serviceEntry)
+        {
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            Check.NotNull(_httpContextAccessor.HttpContext, nameof(_httpContextAccessor.HttpContext.Request));
+            var requestParameters = await Parser(_httpContextAccessor.HttpContext.Request, serviceEntry);
+            return serviceEntry.ResolveParameters(requestParameters);
         }
     }
 }
