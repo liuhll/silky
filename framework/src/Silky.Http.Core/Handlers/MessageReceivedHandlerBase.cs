@@ -18,8 +18,8 @@ namespace Silky.Http.Core.Handlers
     internal abstract class MessageReceivedHandlerBase : IMessageReceivedHandler
     {
         protected readonly IExecutor _executor;
-
         protected RpcOptions _rpcOptions;
+
 
         private static readonly DiagnosticListener s_diagnosticListener =
             new(RpcDiagnosticListenerNames.DiagnosticClientListenerName);
@@ -41,10 +41,12 @@ namespace Silky.Http.Core.Handlers
             var serviceKey = await ResolveServiceKey();
             if (!serviceKey.IsNullOrEmpty())
             {
+                RpcContext.Context.SetServiceKey(serviceKey);
                 MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
                     $"serviceKey => {serviceKey}");
             }
+
             RpcContext.Context.SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);
             var tracingTimestamp = TracingBefore(new RemoteInvokeMessage()
             {

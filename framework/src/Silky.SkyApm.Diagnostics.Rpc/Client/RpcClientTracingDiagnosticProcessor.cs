@@ -33,7 +33,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
         {
             var clientAddress = RpcContext.Context.GetClientAddress();
             var serverAddress = RpcContext.Context.GetServerAddress();
-            var serviceKey = RpcContext.Context.GetServerKey();
+            var serviceKey = RpcContext.Context.GetServiceKey();
             var context = _silkySegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
             context.Span.AddLog(
                 LogEvent.Event("Rpc Client Begin Invoke"),

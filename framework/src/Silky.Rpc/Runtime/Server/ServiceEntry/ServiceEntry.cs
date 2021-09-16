@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Logging;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
@@ -69,6 +72,7 @@ namespace Silky.Rpc.Runtime.Server
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
+            FallBackExecutor = CreateFallBackExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
         }
@@ -88,38 +92,6 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             var governanceAttribute = governanceProvider as GovernanceAttribute;
-            if (governanceAttribute?.FallBackType != null)
-            {
-                Type fallBackType;
-                if (ReturnType == typeof(void))
-                {
-                    fallBackType = EngineContext.Current.TypeFinder.FindClassesOfType<IFallbackInvoker>()
-                        .FirstOrDefault(p => p == governanceAttribute.FallBackType);
-                    if (fallBackType == null)
-                    {
-                        throw new SilkyException(
-                            $"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
-                    }
-                }
-                else
-                {
-                    fallBackType = typeof(IFallbackInvoker<>);
-                    fallBackType = fallBackType.MakeGenericType(ReturnType);
-                    if (!EngineContext.Current.TypeFinder.FindClassesOfType(fallBackType)
-                        .Any(p => p == governanceAttribute.FallBackType))
-                    {
-                        throw new SilkyException(
-                            $"Could not find the implementation class of {governanceAttribute.FallBackType.FullName}");
-                    }
-                }
-
-                var invokeMethod = fallBackType.GetMethods().First(p => p.Name == "Invoke");
-
-                var fallbackMethodExcutor = ObjectMethodExecutor.Create(invokeMethod, fallBackType.GetTypeInfo(),
-                    ParameterDefaultValues.GetParameterDefaultValues(invokeMethod));
-                FallBackExecutor = CreateFallBackExecutor(fallbackMethodExcutor, fallBackType);
-            }
-
             GovernanceOptions.ProhibitExtranet = governanceAttribute?.ProhibitExtranet ?? false;
 
             var allowAnonymous = CustomAttributes.OfType<IAllowAnonymous>().FirstOrDefault() ?? MethodInfo.DeclaringType
@@ -128,28 +100,81 @@ namespace Silky.Rpc.Runtime.Server
             GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;
         }
 
-        private Func<object[], Task<object>> CreateFallBackExecutor(
-            ObjectMethodExecutor fallbackMethodExcutor, Type fallBackType)
+        private Func<object[], Task<object>> CreateFallBackExecutor()
+        {
+            var fallbackProviders = CustomAttributes
+                .OfType<IFallbackProvider>()
+                .OrderBy(p => p.Weight);
+            foreach (var fallbackProvider in fallbackProviders)
+            {
+                if (!fallbackProvider.ServiceName.IsNullOrEmpty())
+                {
+                    if (!EngineContext.Current.IsRegisteredWithName(fallbackProvider.ServiceName,
+                        fallbackProvider.Type))
+                    {
+                        continue;
+                    }
+                }
+
+                if (!EngineContext.Current.IsRegistered(fallbackProvider.Type))
+                {
+                    continue;
+                }
+
+                var compareMethodName = fallbackProvider.MethodName ?? MethodInfo.Name;
+                var fallbackMethod = fallbackProvider.Type.GetCompareMethod(MethodInfo, compareMethodName);
+                if (fallbackMethod == null)
+                {
+                    continue;
+                }
+
+                var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(fallbackMethod);
+                var fallbackMethodExecutor =
+                    ObjectMethodExecutor.Create(fallbackMethod, fallbackProvider.Type.GetTypeInfo(),
+                        parameterDefaultValues);
+
+                FallbackProvider = fallbackProvider;
+                return CreateFallBackExecutor(fallbackMethodExecutor, fallbackProvider);
+            }
+
+            return null;
+        }
+
+        private Func<object[], Task<object>> CreateFallBackExecutor(ObjectMethodExecutor fallbackMethodExecutor,
+            IFallbackProvider fallbackProvider)
         {
             return async parameters =>
             {
                 try
                 {
-                    MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
-                        MiniProfileConstant.FallBackExecutor.State.Begin,
-                        "Start execution failure callback method");
-                    var instance = EngineContext.Current.Resolve(fallBackType);
-                    var result = fallbackMethodExcutor.ExecuteAsync(instance, parameters).GetAwaiter().GetResult();
-                    MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
-                        MiniProfileConstant.FallBackExecutor.State.Success,
-                        "Failed callback executed successfully");
+                    object instance = null;
+                    if (fallbackProvider.ServiceName.IsNullOrEmpty())
+                    {
+                        instance = EngineContext.Current.Resolve(fallbackProvider.Type);
+                    }
+                    else
+                    {
+                        instance = EngineContext.Current.ResolveNamed(fallbackProvider.ServiceName,
+                            fallbackProvider.Type);
+                    }
+
+                    Debug.Assert(instance != null);
+                    object result = null;
+                    if (fallbackMethodExecutor.IsMethodAsync)
+                    {
+                        result = await fallbackMethodExecutor.ExecuteAsync(instance, parameters);
+                    }
+                    else
+                    {
+                        result = fallbackMethodExecutor.Execute(instance, parameters);
+                    }
+
                     return result;
                 }
                 catch (Exception e)
                 {
-                    MiniProfilerPrinter.Print(MiniProfileConstant.FallBackExecutor.Name,
-                        MiniProfileConstant.FallBackExecutor.State.Fail,
-                        $"Failure callback execution failed, reason:{e.Message}", true);
+                    var logger = EngineContext.Current.Resolve<ILogger<ServiceEntry>>();
+                    logger.LogException(e);
                     throw;
                 }
             };
@@ -201,6 +226,8 @@ namespace Silky.Rpc.Runtime.Server
         public ServiceEntryGovernance GovernanceOptions { get; }
 
         [CanBeNull] public Func<object[], Task<object>> FallBackExecutor { get; private set; }
+
+        [CanBeNull] public IFallbackProvider FallbackProvider { get; private set; }
 
         private Func<string, object[], Task<object>> CreateExecutor() =>
             (key, parameters) =>

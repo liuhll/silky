@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using JetBrains.Annotations;
 using Silky.Rpc.Address.Selector;
 
 
@@ -45,13 +43,8 @@ namespace Silky.Rpc.Runtime.Server
         public int FailoverCount { get; set; } = 0;
 
         /// <summary>
-        /// The type specified by the failure callback
-        /// </summary>
-        [CanBeNull] public Type FallBackType { get; set; }
-        
-        /// <summary>
         /// Whether to prohibit external network access
         /// </summary>
-        public bool ProhibitExtranet{ get; set; }
+        public bool ProhibitExtranet { get; set; }
     }
 }

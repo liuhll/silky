@@ -37,14 +37,24 @@ namespace Silky.Rpc.Proxy
             }
             catch (Exception e)
             {
-                if (!e.IsBusinessException() && serviceEntry.FallBackExecutor != null)
+                if (serviceEntry.FallBackExecutor != null && serviceEntry.FallbackProvider != null)
                 {
-                    await invocation.ProceedAsync();
-                }
-                else
-                {
+                    if (!e.IsBusinessException())
+                    {
+                        await invocation.ProceedAsync();
+                        return;
+                    }
+
+                    if (serviceEntry.FallbackProvider.ValidWhenBusinessException)
+                    {
+                        await invocation.ProceedAsync();
+                        return;
+                    }
+
                     throw;
                 }
+
+                throw;
             }
         }
     }

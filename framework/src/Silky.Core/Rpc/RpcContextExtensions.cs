@@ -27,12 +27,17 @@ namespace Silky.Core.Rpc
             return serverAddress?.ToString();
         }
 
-        public static string GetServerKey(this RpcContext rpcContext)
+        public static string GetServiceKey(this RpcContext rpcContext)
         {
             var serviceKey = rpcContext.GetAttachment(AttachmentKeys.ServiceKey);
             return serviceKey?.ToString();
         }
-        
+
+        public static void SetServiceKey(this RpcContext rpcContext, string serviceKey)
+        {
+            rpcContext.SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
+        }
+
         public static string GetMessageId(this RpcContext rpcContext)
         {
             var messageId = rpcContext.GetAttachment(AttachmentKeys.MessageId);

@@ -47,11 +47,11 @@ namespace Silky.Rpc.Runtime.Client
             {
                 var dictParams = serviceEntry.CreateDictParameters(parameters.ToArray());
                 var fallbackPolicy = Policy<object>.Handle<SilkyException>(
-                        ex => !ex.IsBusinessException()
-                              && !(ex is CommunicatonException)
+                        // Try other host service instances
+                        ex => !(ex is CommunicatonException)
                               && !(ex is OverflowMaxRequestException)
                     )
-                    .FallbackAsync<object>(serviceEntry.FallBackExecutor(new object[] {dictParams}).GetAwaiter()
+                    .FallbackAsync<object>(serviceEntry.FallBackExecutor(new object[] { dictParams }).GetAwaiter()
                         .GetResult());
                 executePolicy = Policy.WrapAsync(executePolicy, fallbackPolicy);
             }

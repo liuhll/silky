@@ -47,6 +47,7 @@ namespace GatewayDemo.AppService
 
         public Task<string> UpdatePart(TestInput input)
         {
+            _currentServiceKey.Change("v2");
             return _testAppService.UpdatePart(input);
         }
     }

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
-using ITestApplication.Test.FallBack;
+using ITestApplication.Test.Fallback;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction;
@@ -49,9 +49,8 @@ namespace ITestApplication.Test
         [GetCachingIntercept("id:{0}")]
         Task<TestOut> GetById([HashKey] [CacheKey(0)] long id);
 
-        //[HttpPatch("patch")]
         [HttpPatch]
-        [Governance(FallBackType = typeof(UpdatePartFallBack))]
+        [Fallback(typeof(IUpdatePartFallBack))]
         Task<string> UpdatePart(TestInput input);
     }
 }

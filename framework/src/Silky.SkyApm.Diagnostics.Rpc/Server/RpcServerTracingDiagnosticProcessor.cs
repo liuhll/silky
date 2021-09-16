@@ -34,7 +34,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
         {
             var clientAddress = RpcContext.Context.GetClientAddress();
             var serverAddress = RpcContext.Context.GetServerAddress();
-            var serviceKey = RpcContext.Context.GetServerKey();
+            var serviceKey = RpcContext.Context.GetServiceKey();
             var context = _silkySegmentContextFactory.GetEntryContext(eventData.ServiceEntryId);
             context.Span.AddLog(
                 LogEvent.Event("Rpc Server Begin Handle"),
