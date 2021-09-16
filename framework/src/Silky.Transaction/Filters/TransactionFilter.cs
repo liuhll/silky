@@ -3,6 +3,7 @@ using Silky.Core.Utils;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Transport.Messages;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
 
@@ -16,17 +17,24 @@ namespace Silky.Transaction.Filters
         private string participantId;
         private IParticipant participant;
 
-        public void OnActionExecuting(ServiceEntryExecutingContext serviceEntryExecutingContext)
+        private readonly IServiceEntryLocator _serviceEntryLocator;
+
+        public TransactionFilter(IServiceEntryLocator serviceEntryLocator)
+        {
+            _serviceEntryLocator = serviceEntryLocator;
+        }
+
+        public void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage)
         {
             context = SilkyTransactionContextHolder.Instance.Get();
             if (context == null) return;
-
-            if (!serviceEntryExecutingContext.ServiceEntry.IsTransactionServiceEntry()) return;
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
+            if (!serviceEntry.IsTransactionServiceEntry()) return;
 
             participantId = context.ParticipantId;
-            participant = BuildParticipant(context, serviceEntryExecutingContext.ServiceEntry.Id,
-                serviceEntryExecutingContext.ServiceKey,
-                serviceEntryExecutingContext.Parameters);
+            participant = BuildParticipant(context, remoteInvokeMessage.ServiceEntryId,
+                RpcContext.Context.GetServiceKey(),
+                remoteInvokeMessage.Parameters);
 
             if (participant != null)
             {
@@ -48,7 +56,7 @@ namespace Silky.Transaction.Filters
             }
         }
 
-        public void OnActionExecuted(ServiceEntryExecutedContext serviceEntryExecutingContext)
+        public void OnActionExecuted(RemoteResultMessage resultMessage)
         {
             if (context == null) return;
 
@@ -62,7 +70,7 @@ namespace Silky.Transaction.Filters
             }
         }
 
-        private IParticipant BuildParticipant(TransactionContext context, string serviceId, string serviceKey,
+        private IParticipant BuildParticipant(TransactionContext context, string serviceEntryId, string serviceKey,
             object[] parameters)
         {
             if (context.Action != ActionStage.Trying)
@@ -75,7 +83,7 @@ namespace Silky.Transaction.Filters
                 ParticipantId = GuidGenerator.CreateGuidStrWithNoUnderline(),
                 TransId = context.TransId,
                 TransType = context.TransType,
-                ServiceEntryId = serviceId,
+                ServiceEntryId = serviceEntryId,
                 ServiceKey = serviceKey,
                 Parameters = parameters,
                 Role = TransactionRole.Participant

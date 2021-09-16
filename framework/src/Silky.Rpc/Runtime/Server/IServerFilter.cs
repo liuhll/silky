@@ -6,9 +6,9 @@ namespace Silky.Rpc.Runtime.Server
     {
         int Order { get; }
 
-        void OnActionExecuting(ServiceEntryExecutingContext context);
+        void OnActionExecuting(ServerExecutingContext context);
 
-        void OnActionExecuted(ServiceEntryExecutedContext context);
+        void OnActionExecuted(ServerExecutedContext context);
     }
     
 }

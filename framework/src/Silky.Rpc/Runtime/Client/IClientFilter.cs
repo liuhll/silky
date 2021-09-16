@@ -1,4 +1,5 @@
 using Silky.Core.DependencyInjection;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
 {
@@ -6,8 +7,8 @@ namespace Silky.Rpc.Runtime.Client
     {
         int Order { get; }
 
-        void OnActionExecuting(ServiceEntryExecutingContext context);
+        void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage);
 
-        void OnActionExecuted(ServiceEntryExecutedContext context);
+        void OnActionExecuted(RemoteResultMessage context);
     }
 }

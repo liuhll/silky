@@ -12,7 +12,7 @@ namespace Silky.Rpc.Runtime.Server
             parameters = serviceEntry.ConvertParameters(parameters);
 
             var filters = EngineContext.Current.ResolveAll<IServerFilter>().OrderBy(p => p.Order).ToArray();
-            var rpcActionExecutingContext = new ServiceEntryExecutingContext()
+            var rpcActionExecutingContext = new ServerExecutingContext()
             {
                 ServiceEntry = serviceEntry,
                 Parameters = parameters,
@@ -36,7 +36,7 @@ namespace Silky.Rpc.Runtime.Server
                 result = serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
             }
 
-            var rpcActionExecutedContext = new ServiceEntryExecutedContext()
+            var rpcActionExecutedContext = new ServerExecutedContext()
             {
                 Result = result
             };

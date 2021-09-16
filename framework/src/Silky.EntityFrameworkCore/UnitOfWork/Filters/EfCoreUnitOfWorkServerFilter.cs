@@ -2,8 +2,6 @@
 using System.Linq;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.EntityFrameworkCore.ContextPool;
-using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Runtime.Server.ContextPool;
 using Silky.Rpc.Runtime.Server.UnitOfWork;
@@ -23,7 +21,7 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 
         public int Order { get; } = Int32.MaxValue;
 
-        public void OnActionExecuting(ServiceEntryExecutingContext context)
+        public void OnActionExecuting(ServerExecutingContext context)
         {
             _unitOfWorkAttribute =
                 context.ServiceEntry.CustomAttributes.OfType<UnitOfWorkAttribute>().FirstOrDefault();
@@ -44,7 +42,7 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
             }
         }
 
-        public void OnActionExecuted(ServiceEntryExecutedContext context)
+        public void OnActionExecuted(ServerExecutedContext context)
         {
             try
             {

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
+using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Validation.Filters
 {
@@ -11,25 +13,28 @@ namespace Silky.Validation.Filters
         public int Order { get; } = Int32.MaxValue;
 
         private readonly IMethodInvocationValidator _methodInvocationValidator;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
         private AppSettingsOptions _appSettingsOptions;
 
         public ValidationFilter(IMethodInvocationValidator methodInvocationValidator,
-            IOptionsMonitor<AppSettingsOptions> appSettingsOptions)
+            IOptionsMonitor<AppSettingsOptions> appSettingsOptions,
+            IServiceEntryLocator serviceEntryLocator)
         {
             _methodInvocationValidator = methodInvocationValidator;
+            _serviceEntryLocator = serviceEntryLocator;
             _appSettingsOptions = appSettingsOptions.CurrentValue;
             appSettingsOptions.OnChange((options, s) => _appSettingsOptions = options);
         }
 
-        public void OnActionExecuting(ServiceEntryExecutingContext context)
+        public void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage)
         {
             if (!_appSettingsOptions.AutoValidationParameters) return;
-            var serviceEntry = context.ServiceEntry;
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
             _methodInvocationValidator.Validate(
-                new MethodInvocationValidationContext(serviceEntry.MethodInfo, context.Parameters));
+                new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
         }
 
-        public void OnActionExecuted(ServiceEntryExecutedContext context)
+        public void OnActionExecuted(RemoteResultMessage context)
         {
         }
     }

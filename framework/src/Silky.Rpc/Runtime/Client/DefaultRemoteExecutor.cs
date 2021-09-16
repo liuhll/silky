@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core.Exceptions;
 using Polly;
-using Silky.Core;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
@@ -82,19 +81,6 @@ namespace Silky.Rpc.Runtime.Client
                 policy = fallbackPolicy.WrapAsync(policy);
             }
 
-            var filters = EngineContext.Current.ResolveAll<IClientFilter>().OrderBy(p => p.Order).ToArray();
-            var rpcActionExcutingContext = new ServiceEntryExecutingContext()
-            {
-                ServiceEntry = serviceEntry,
-                Parameters = parameters,
-                ServiceKey = serviceKey
-            };
-
-            foreach (var filter in filters)
-            {
-                filter.OnActionExecuting(rpcActionExcutingContext);
-            }
-
             var result = await policy
                 .ExecuteAsync(async () =>
                 {
@@ -104,21 +90,8 @@ namespace Silky.Rpc.Runtime.Client
                     return invokeResult.GetResult();
                 });
 
-            var rpcActionExecutedContext = new ServiceEntryExecutedContext()
-            {
-                Result = result
-            };
-            foreach (var filter in filters)
-            {
-                filter.OnActionExecuted(rpcActionExecutedContext);
-            }
 
-            if (rpcActionExecutedContext.Exception != null)
-            {
-                throw rpcActionExecutedContext.Exception;
-            }
-
-            return rpcActionExecutedContext.Result;
+            return result;
         }
     }
 }

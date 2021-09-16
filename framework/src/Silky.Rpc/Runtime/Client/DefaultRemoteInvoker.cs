@@ -52,9 +52,6 @@ namespace Silky.Rpc.Runtime.Client
             var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
             if (serviceRoute == null)
             {
-                MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
-                    MiniProfileConstant.Rpc.State.FindServiceRoute,
-                    $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}", true);
                 throw new SilkyException(
                     $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}",
                     StatusCode.NotFindServiceRoute);
@@ -62,9 +59,6 @@ namespace Silky.Rpc.Runtime.Client
 
             if (!serviceRoute.Addresses.Any(p => p.Enabled))
             {
-                MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
-                    MiniProfileConstant.Rpc.State.FindServiceRoute,
-                    $"No available service provider can be found via {remoteInvokeMessage.ServiceEntryId}", true);
                 throw new NotFindServiceRouteAddressException(
                     $"No available service provider can be found via {remoteInvokeMessage.ServiceEntryId}");
             }
@@ -98,6 +92,9 @@ namespace Silky.Rpc.Runtime.Client
                 $"The selected service provider address is:{selectedAddress.ToString()}");
             bool isInvakeSuccess = true;
             var sp = Stopwatch.StartNew();
+            RemoteResultMessage invokeResult = null;
+
+            var filters = EngineContext.Current.ResolveAll<IClientFilter>().OrderBy(p => p.Order).ToArray();
             try
             {
                 _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedAddress),
@@ -107,7 +104,14 @@ namespace Silky.Rpc.Runtime.Client
                     .SetAttachment(AttachmentKeys.ServerAddress, selectedAddress.IPEndPoint.ToString());
                 RpcContext.Context.SetAttachment(AttachmentKeys.ClientAddress,
                     NetUtil.GetRpcAddressModel().IPEndPoint.ToString());
-                return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeoutMillSeconds);
+
+                foreach (var filter in filters)
+                {
+                    filter.OnActionExecuting(remoteInvokeMessage);
+                }
+
+                invokeResult =
+                    await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeoutMillSeconds);
             }
             catch (IOException ex)
             {
@@ -174,7 +178,20 @@ namespace Silky.Rpc.Runtime.Client
                         MiniProfileConstant.Rpc.State.Fail,
                         $"rpc remote call failed");
                 }
+
+
+                foreach (var filter in filters)
+                {
+                    filter.OnActionExecuted(invokeResult);
+                }
+
+                if (invokeResult != null && invokeResult?.StatusCode != StatusCode.Success)
+                {
+                    throw new SilkyException(invokeResult.ExceptionMessage, invokeResult.StatusCode);
+                }
             }
+
+            return invokeResult;
         }
 
         private void MarkAddressFail(GovernanceOptions governanceOptions, IAddressModel selectedAddress, Exception ex,

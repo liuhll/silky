@@ -1,8 +1,8 @@
 using System;
 
-namespace Silky.Rpc.Runtime
+namespace Silky.Rpc.Runtime.Server
 {
-    public class ServiceEntryExecutedContext
+    public class ServerExecutedContext
     {
         public Exception Exception { get; set; }
 
