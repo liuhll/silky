@@ -16,7 +16,7 @@ namespace Silky.Rpc.Configuration
         /// <summary>
         /// 执行超时时间
         /// </summary>
-        public int ExecutionTimeout { get; set; } = 5000;
+        public int ExecutionTimeoutMillSeconds { get; set; } = 5000;
 
         /// <summary>
         /// 是否开启缓存拦截

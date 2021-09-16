@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// Execution timeout
         /// </summary>
-        public int ExecutionTimeout { get; set; } = 5000;
+        public int ExecutionTimeoutMillSeconds { get; set; } = 5000;
 
         /// <summary>
         /// Whether to enable cache interception

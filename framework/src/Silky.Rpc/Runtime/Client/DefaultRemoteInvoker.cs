@@ -107,7 +107,7 @@ namespace Silky.Rpc.Runtime.Client
                     .SetAttachment(AttachmentKeys.ServerAddress, selectedAddress.IPEndPoint.ToString());
                 RpcContext.Context.SetAttachment(AttachmentKeys.ClientAddress,
                     NetUtil.GetRpcAddressModel().IPEndPoint.ToString());
-                return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeout);
+                return await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeoutMillSeconds);
             }
             catch (IOException ex)
             {
@@ -146,6 +146,11 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceEntryId, selectedAddress);
                     throw new NotFindLocalServiceEntryException(ex.Message);
+                }
+
+                if (!(ex is SilkyException))
+                {
+                    throw new SilkyException(ex.Message, ex);
                 }
 
                 throw;

@@ -2,7 +2,7 @@ using System;
 
 namespace Silky.Core.Exceptions
 {
-    public class CommunicatonException : SilkyException
+    public class CommunicatonException : SilkyException, INotNeedFallback
     {
         public CommunicatonException(string message) : base(message, StatusCode.CommunicatonError)
         {

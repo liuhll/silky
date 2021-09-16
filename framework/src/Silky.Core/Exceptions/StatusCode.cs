@@ -20,6 +20,10 @@ namespace Silky.Core.Exceptions
 
         [Description("未找到本地服务条目")] NotFindLocalServiceEntry = 507,
 
+        [Description("未找到失败回调的实现类")] NotFindFallbackInstance = 508,
+
+        [Description("执行失败回调方法失败")] FallbackExecFail = 509,
+
         [Description("业务异常")] [IsBusinessException]
         BusinessError = 1000,
 

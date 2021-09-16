@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -15,7 +14,6 @@ using Silky.Core.Logging;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
@@ -31,8 +29,6 @@ namespace Silky.Rpc.Runtime.Server
         private readonly ServiceEntryDescriptor _serviceEntryDescriptor;
         public bool FailoverCountIsDefaultValue { get; private set; }
 
-        // public bool MultipleServiceKey { get; private set; }
-
         public string Id => ServiceEntryDescriptor.Id;
 
         public string ServiceId => ServiceEntryDescriptor.ServiceId;
@@ -40,6 +36,9 @@ namespace Silky.Rpc.Runtime.Server
         public Type ServiceType => _serviceType;
 
         public ObjectMethodExecutor MethodExecutor => _methodExecutor;
+
+        [CanBeNull] public ObjectMethodExecutor FallbackMethodExecutor { get; private set; }
+        [CanBeNull] public IFallbackProvider FallbackProvider { get; private set; }
 
         internal ServiceEntry(IRouter router,
             ServiceEntryDescriptor serviceEntryDescriptor,
@@ -54,7 +53,6 @@ namespace Silky.Rpc.Runtime.Server
             ParameterDescriptors = parameterDescriptors;
             _serviceType = serviceType;
             IsLocal = isLocal;
-            // MultipleServiceKey = multipleServiceKey;
             MethodInfo = methodInfo;
             CustomAttributes = MethodInfo.GetCustomAttributes(true);
             (IsAsyncMethod, ReturnType) = MethodInfo.ReturnTypeInfo();
@@ -72,7 +70,7 @@ namespace Silky.Rpc.Runtime.Server
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
-            FallBackExecutor = CreateFallBackExecutor();
+            CreateFallBackExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
         }
@@ -82,7 +80,7 @@ namespace Silky.Rpc.Runtime.Server
             if (governanceProvider != null)
             {
                 GovernanceOptions.CacheEnabled = governanceProvider.CacheEnabled;
-                GovernanceOptions.ExecutionTimeout = governanceProvider.ExecutionTimeout;
+                GovernanceOptions.ExecutionTimeoutMillSeconds = governanceProvider.ExecutionTimeoutMillSeconds;
                 GovernanceOptions.FuseProtection = governanceProvider.FuseProtection;
                 GovernanceOptions.MaxConcurrent = governanceProvider.MaxConcurrent;
                 GovernanceOptions.ShuntStrategy = governanceProvider.ShuntStrategy;
@@ -100,22 +98,13 @@ namespace Silky.Rpc.Runtime.Server
             GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;
         }
 
-        private Func<object[], Task<object>> CreateFallBackExecutor()
+        private void CreateFallBackExecutor()
         {
             var fallbackProviders = CustomAttributes
                 .OfType<IFallbackProvider>()
                 .OrderBy(p => p.Weight);
             foreach (var fallbackProvider in fallbackProviders)
             {
-                if (!fallbackProvider.ServiceName.IsNullOrEmpty())
-                {
-                    if (!EngineContext.Current.IsRegisteredWithName(fallbackProvider.ServiceName,
-                        fallbackProvider.Type))
-                    {
-                        continue;
-                    }
-                }
-
                 if (!EngineContext.Current.IsRegistered(fallbackProvider.Type))
                 {
                     continue;
@@ -129,57 +118,13 @@ namespace Silky.Rpc.Runtime.Server
                 }
 
                 var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(fallbackMethod);
-                var fallbackMethodExecutor =
+                FallbackMethodExecutor =
                     ObjectMethodExecutor.Create(fallbackMethod, fallbackProvider.Type.GetTypeInfo(),
                         parameterDefaultValues);
 
                 FallbackProvider = fallbackProvider;
-                return CreateFallBackExecutor(fallbackMethodExecutor, fallbackProvider);
             }
-
-            return null;
         }
-
-        private Func<object[], Task<object>> CreateFallBackExecutor(ObjectMethodExecutor fallbackMethodExecutor,
-            IFallbackProvider fallbackProvider)
-        {
-            return async parameters =>
-            {
-                try
-                {
-                    object instance = null;
-                    if (fallbackProvider.ServiceName.IsNullOrEmpty())
-                    {
-                        instance = EngineContext.Current.Resolve(fallbackProvider.Type);
-                    }
-                    else
-                    {
-                        instance = EngineContext.Current.ResolveNamed(fallbackProvider.ServiceName,
-                            fallbackProvider.Type);
-                    }
-
-                    Debug.Assert(instance != null);
-                    object result = null;
-                    if (fallbackMethodExecutor.IsMethodAsync)
-                    {
-                        result = await fallbackMethodExecutor.ExecuteAsync(instance, parameters);
-                    }
-                    else
-                    {
-                        result = fallbackMethodExecutor.Execute(instance, parameters);
-                    }
-
-                    return result;
-                }
-                catch (Exception e)
-                {
-                    var logger = EngineContext.Current.Resolve<ILogger<ServiceEntry>>();
-                    logger.LogException(e);
-                    throw;
-                }
-            };
-        }
-
 
         private void CreateDefaultSupportedResponseMediaTypes()
         {
@@ -224,10 +169,6 @@ namespace Silky.Rpc.Runtime.Server
         public IReadOnlyCollection<object> CustomAttributes { get; }
 
         public ServiceEntryGovernance GovernanceOptions { get; }
-
-        [CanBeNull] public Func<object[], Task<object>> FallBackExecutor { get; private set; }
-
-        [CanBeNull] public IFallbackProvider FallbackProvider { get; private set; }
 
         private Func<string, object[], Task<object>> CreateExecutor() =>
             (key, parameters) =>

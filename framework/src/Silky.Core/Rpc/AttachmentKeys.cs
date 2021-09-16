@@ -10,6 +10,8 @@ namespace Silky.Core.Rpc
 
         public const string ServiceKey = "serviceKey";
 
+        public const string FallbackServiceKey = "fallbackServiceKey";
+
         public const string RpcToken = "rpcToken";
 
         public const string TransactionContext = "transactionContext";

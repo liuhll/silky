@@ -15,8 +15,6 @@ namespace Silky.Rpc.Runtime.Server
 
         public string MethodName { get; set; }
         public int Weight { get; set; }
-        
-        public string ServiceName { get; set; }
 
         public bool ValidWhenBusinessException { get; set; }
     }

@@ -38,6 +38,17 @@ namespace Silky.Core.Rpc
             rpcContext.SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
         }
 
+        public static string GetFallbackServiceKey(this RpcContext rpcContext)
+        {
+            var serviceKey = rpcContext.GetAttachment(AttachmentKeys.FallbackServiceKey);
+            return serviceKey?.ToString();
+        }
+
+        public static void SetFallbackServiceKey(this RpcContext rpcContext, string fallbackServiceKey)
+        {
+            rpcContext.SetAttachment(AttachmentKeys.FallbackServiceKey, fallbackServiceKey);
+        }
+
         public static string GetMessageId(this RpcContext rpcContext)
         {
             var messageId = rpcContext.GetAttachment(AttachmentKeys.MessageId);

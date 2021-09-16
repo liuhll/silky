@@ -14,10 +14,13 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultRemoteExecutor : IRemoteExecutor
     {
         private readonly IRemoteInvoker _remoteInvoker;
+        private readonly IFallbackInvoker _fallbackInvoker;
 
-        public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker)
+        public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker,
+            IFallbackInvoker fallbackInvoker)
         {
             _remoteInvoker = remoteInvoker;
+            _fallbackInvoker = fallbackInvoker;
         }
 
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
@@ -36,24 +39,47 @@ namespace Silky.Rpc.Runtime.Client
                     $"hashKey is :{hashKey}");
             }
 
-            IAsyncPolicy<object> executePolicy = Policy<object>
-                    .Handle<TimeoutException>()
-                    .Or<CommunicatonException>()
-                    .Or<OverflowMaxRequestException>()
-                    .Or<NotFindLocalServiceEntryException>()
-                    .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
-                ;
-            if (serviceEntry.FallBackExecutor != null)
+            IAsyncPolicy<object> policy = Policy.NoOpAsync<object>();
+
+            if (serviceEntry.GovernanceOptions.FailoverCount > 0)
             {
-                var dictParams = serviceEntry.CreateDictParameters(parameters.ToArray());
-                var fallbackPolicy = Policy<object>.Handle<SilkyException>(
-                        // Try other host service instances
-                        ex => !(ex is CommunicatonException)
-                              && !(ex is OverflowMaxRequestException)
-                    )
-                    .FallbackAsync<object>(serviceEntry.FallBackExecutor(new object[] { dictParams }).GetAwaiter()
-                        .GetResult());
-                executePolicy = Policy.WrapAsync(executePolicy, fallbackPolicy);
+                policy.WrapAsync(Policy<object>
+                    .Handle<CommunicatonException>()
+                    .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
+                );
+            }
+
+            if (serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds > 0)
+            {
+                policy.WrapAsync(Policy.TimeoutAsync(
+                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds)));
+            }
+
+            if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
+            {
+                var fallbackPolicy = Policy<object>.Handle<SilkyException>(ex =>
+                    {
+                        var isNotNeedFallback = (ex is INotNeedFallback);
+                        if (isNotNeedFallback)
+                        {
+                            return false;
+                        }
+
+                        if (ex is BusinessException)
+                        {
+                            return serviceEntry.FallbackProvider?.ValidWhenBusinessException == true;
+                        }
+
+                        return true;
+                    })
+                    .FallbackAsync(
+                        async (ctx, t) => await _fallbackInvoker.Invoke(serviceEntry, parameters),
+                        async (ex, t) =>
+                        {
+                            // todo When the service is downgraded, notify the responsible person through the early warning system
+                        });
+
+                policy = fallbackPolicy.WrapAsync(policy);
             }
 
             var filters = EngineContext.Current.ResolveAll<IClientFilter>().OrderBy(p => p.Order).ToArray();
@@ -69,7 +95,7 @@ namespace Silky.Rpc.Runtime.Client
                 filter.OnActionExecuting(rpcActionExcutingContext);
             }
 
-            var result = await executePolicy
+            var result = await policy
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =

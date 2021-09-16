@@ -35,23 +35,11 @@ namespace Silky.Rpc.Proxy
                 invocation.ReturnValue =
                     await _executor.Execute(serviceEntry, invocation.Arguments, _currentServiceKey.ServiceKey);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                if (serviceEntry.FallBackExecutor != null && serviceEntry.FallbackProvider != null)
+                if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
                 {
-                    if (!e.IsBusinessException())
-                    {
-                        await invocation.ProceedAsync();
-                        return;
-                    }
-
-                    if (serviceEntry.FallbackProvider.ValidWhenBusinessException)
-                    {
-                        await invocation.ProceedAsync();
-                        return;
-                    }
-
-                    throw;
+                    await invocation.ProceedAsync();
                 }
 
                 throw;

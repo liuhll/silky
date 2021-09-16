@@ -7,10 +7,8 @@ namespace Silky.Rpc.Runtime.Server
         Type Type { get; }
 
         string MethodName { get; set; }
-        
-        int Weight { get; set; }
 
-        string ServiceName { get; set; }
+        int Weight { get; set; }
 
         bool ValidWhenBusinessException { get; set; }
     }

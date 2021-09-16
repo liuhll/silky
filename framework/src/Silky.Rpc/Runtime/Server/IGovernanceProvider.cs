@@ -12,7 +12,7 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// 执行超时时间
         /// </summary>
-        int ExecutionTimeout { get; set; }
+        int ExecutionTimeoutMillSeconds { get; set; }
 
         /// <summary>
         /// 是否开启缓存拦截
