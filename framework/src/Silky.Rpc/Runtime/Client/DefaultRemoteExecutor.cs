@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Silky.Core.Exceptions;
-using Polly;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
@@ -13,13 +10,13 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultRemoteExecutor : IRemoteExecutor
     {
         private readonly IRemoteInvoker _remoteInvoker;
-        private readonly IFallbackInvoker _fallbackInvoker;
+        private readonly IPolicyBuilder _policyBuilder;
 
         public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker,
-            IFallbackInvoker fallbackInvoker)
+            IPolicyBuilder policyBuilder)
         {
             _remoteInvoker = remoteInvoker;
-            _fallbackInvoker = fallbackInvoker;
+            _policyBuilder = policyBuilder;
         }
 
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
@@ -38,49 +35,7 @@ namespace Silky.Rpc.Runtime.Client
                     $"hashKey is :{hashKey}");
             }
 
-            IAsyncPolicy<object> policy = Policy.NoOpAsync<object>();
-
-            if (serviceEntry.GovernanceOptions.FailoverCount > 0)
-            {
-                policy.WrapAsync(Policy<object>
-                    .Handle<CommunicatonException>()
-                    .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
-                );
-            }
-
-            if (serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds > 0)
-            {
-                policy.WrapAsync(Policy.TimeoutAsync(
-                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds)));
-            }
-
-            if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
-            {
-                var fallbackPolicy = Policy<object>.Handle<SilkyException>(ex =>
-                    {
-                        var isNotNeedFallback = (ex is INotNeedFallback);
-                        if (isNotNeedFallback)
-                        {
-                            return false;
-                        }
-
-                        if (ex is BusinessException)
-                        {
-                            return serviceEntry.FallbackProvider?.ValidWhenBusinessException == true;
-                        }
-
-                        return true;
-                    })
-                    .FallbackAsync(
-                        async (ctx, t) => await _fallbackInvoker.Invoke(serviceEntry, parameters),
-                        async (ex, t) =>
-                        {
-                            // todo When the service is downgraded, notify the responsible person through the early warning system
-                        });
-
-                policy = fallbackPolicy.WrapAsync(policy);
-            }
-
+            var policy = _policyBuilder.Build(serviceEntry, parameters);
             var result = await policy
                 .ExecuteAsync(async () =>
                 {
@@ -89,7 +44,6 @@ namespace Silky.Rpc.Runtime.Client
                             hashKey);
                     return invokeResult.GetResult();
                 });
-
 
             return result;
         }

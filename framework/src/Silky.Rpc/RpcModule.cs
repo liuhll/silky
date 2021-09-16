@@ -34,14 +34,9 @@ namespace Silky.Rpc
                 .Bind(configuration.GetSection(GovernanceOptions.Governance));
             services.AddOptions<WebSocketOptions>()
                 .Bind(configuration.GetSection(WebSocketOptions.WebSocket));
-            if (!services.IsAdded(typeof(ITransportMessageDecoder)))
-            {
-                services.AddTransient<ITransportMessageDecoder, DefaultTransportMessageDecoder>();
-            }
-            if (!services.IsAdded(typeof(ITransportMessageEncoder)))
-            {
-                services.AddTransient<ITransportMessageEncoder, DefaultTransportMessageEncoder>();
-            }
+
+            services.AddDefaultMessageCodec();
+            services.AddDefaultServiceGovernancePolicy();
         }
 
         protected override void RegisterServices(ContainerBuilder builder)
