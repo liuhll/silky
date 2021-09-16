@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Polly;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime.Server;
@@ -8,10 +9,17 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultPolicyBuilder : IPolicyBuilder
     {
         private readonly IFallbackInvoker _fallbackInvoker;
+        private readonly ICollection<IPolicyWithResultProvider> _policyWithResultProviders;
 
-        public DefaultPolicyBuilder(IFallbackInvoker fallbackInvoker)
+        private readonly ICollection<IPolicyProvider> _policyProviders;
+
+        public DefaultPolicyBuilder(IFallbackInvoker fallbackInvoker,
+            ICollection<IPolicyProvider> policyProviders,
+            ICollection<IPolicyWithResultProvider> policyWithResultProviders)
         {
             _fallbackInvoker = fallbackInvoker;
+            _policyProviders = policyProviders;
+            _policyWithResultProviders = policyWithResultProviders;
         }
 
         public event RpcInvokeFallbackHandle OnInvokeFallback;
@@ -20,18 +28,22 @@ namespace Silky.Rpc.Runtime.Client
         {
             IAsyncPolicy<object> policy = Policy.NoOpAsync<object>();
 
-            if (serviceEntry.GovernanceOptions.FailoverCount > 0)
+            foreach (var policyProvider in _policyWithResultProviders)
             {
-                policy.WrapAsync(Policy<object>
-                    .Handle<CommunicatonException>()
-                    .RetryAsync(serviceEntry.GovernanceOptions.FailoverCount)
-                );
+                var policyItem = policyProvider.Create(serviceEntry);
+                if (policyItem != null)
+                {
+                    policy = policy.WrapAsync(policyItem);
+                }
             }
 
-            if (serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds > 0)
+            foreach (var policyProvider in _policyProviders)
             {
-                policy.WrapAsync(Policy.TimeoutAsync(
-                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds)));
+                var policyItem = policyProvider.Create(serviceEntry);
+                if (policyItem != null)
+                {
+                    policy = policy.WrapAsync(policyItem);
+                }
             }
 
             if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
