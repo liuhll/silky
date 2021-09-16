@@ -11,19 +11,19 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (!services.IsAdded(typeof(ITransportMessageDecoder)))
             {
-                services.AddTransient<ITransportMessageDecoder, MessagePackTransportMessageDecoder>();
+                services.AddScoped<ITransportMessageDecoder, MessagePackTransportMessageDecoder>();
             }
             else
             {
-                services.Replace(ServiceDescriptor.Singleton<ITransportMessageDecoder, MessagePackTransportMessageDecoder>());
+                services.Replace(ServiceDescriptor.Scoped<ITransportMessageDecoder, MessagePackTransportMessageDecoder>());
             }
             if (!services.IsAdded(typeof(ITransportMessageEncoder)))
             {
-                services.Replace(ServiceDescriptor.Singleton<ITransportMessageEncoder, MessagePackTransportMessageEncoder>());
+                services.AddScoped<ITransportMessageEncoder, MessagePackTransportMessageEncoder>();
             }
             else
             {
-                services.Replace(ServiceDescriptor.Singleton<ITransportMessageEncoder, MessagePackTransportMessageEncoder>());
+                services.Replace(ServiceDescriptor.Scoped<ITransportMessageEncoder, MessagePackTransportMessageEncoder>());
             }
 
             return services;
