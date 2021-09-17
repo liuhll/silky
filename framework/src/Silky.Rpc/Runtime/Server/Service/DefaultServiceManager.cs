@@ -41,7 +41,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public IReadOnlyCollection<Service> GetLocalService(ServiceProtocol serviceProtocol)
         {
-            return m_localServices.Where(p=> p.ServiceProtocol == serviceProtocol).ToArray();
+            return m_localServices.Where(p => p.ServiceProtocol == serviceProtocol).ToArray();
         }
 
         public IReadOnlyList<Service> GetAllService()
@@ -51,12 +51,17 @@ namespace Silky.Rpc.Runtime.Server
 
         public IReadOnlyCollection<Service> GetAllService(ServiceProtocol serviceProtocol)
         {
-            return m_allServices.Where(p=> p.ServiceProtocol == serviceProtocol).ToArray();
+            return m_allServices.Where(p => p.ServiceProtocol == serviceProtocol).ToArray();
+        }
+
+        public IReadOnlyCollection<string> GetLocalApplications()
+        {
+            return m_localServices.GroupBy(p => p.ServiceDescriptor.Application).Select(p => p.Key).ToArray();
         }
 
         public IReadOnlyCollection<string> GetAllApplications()
         {
-            return m_localServices.GroupBy(p => p.ServiceDescriptor.Application).Select(p => p.Key).ToArray();
+            return m_allServices.GroupBy(p => p.ServiceDescriptor.Application).Select(p => p.Key).ToArray();
         }
 
         public bool IsLocalService(string serviceId)

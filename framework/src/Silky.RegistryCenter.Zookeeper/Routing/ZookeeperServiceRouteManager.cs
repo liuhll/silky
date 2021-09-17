@@ -125,7 +125,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                     continue;
                 }
 
-                var applications = _serviceManager.GetAllApplications();
+                var applications = _serviceManager.GetLocalApplications();
 
                 var removeExceptRouteDescriptors = serviceRouteDescriptors.Where(p =>
                     p.Addresses.Any(p => p.Equals(addressDescriptor))

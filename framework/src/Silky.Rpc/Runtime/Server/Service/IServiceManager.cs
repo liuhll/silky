@@ -14,6 +14,8 @@ namespace Silky.Rpc.Runtime.Server
         
         IReadOnlyCollection<Service> GetAllService(ServiceProtocol serviceProtocol);
 
+        IReadOnlyCollection<string> GetLocalApplications();
+        
         IReadOnlyCollection<string> GetAllApplications();
 
         bool IsLocalService(string serviceId);
