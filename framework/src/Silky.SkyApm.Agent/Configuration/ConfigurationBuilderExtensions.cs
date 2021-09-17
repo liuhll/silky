@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
+using Silky.Core.Extensions;
 using Silky.Core.Modularity;
 using Silky.Rpc.Utils;
 using SkyApm.Config;
@@ -83,12 +84,10 @@ namespace Silky.Rpc.SkyApm.Configuration
 
         private static string BuildDefaultServiceInstanceName()
         {
-            var moduleContainer = EngineContext.Current.Resolve<IModuleContainer>();
-            var modules = moduleContainer.Modules;
             var guid = Guid.NewGuid().ToString("N");
             try
             {
-                if (modules.Any(p => p.Name == "DotNettyTcp"))
+                if (EngineContext.Current.ContainModule("DotNettyTcp"))
                 {
                     var addressModel = AddressUtil.GetRpcAddressModel();
                     var ipAddress = $"{addressModel.Address}:{addressModel.Port}";
@@ -96,9 +95,16 @@ namespace Silky.Rpc.SkyApm.Configuration
                     return $"{ipAddress}";
                 }
 
-                var hostAddress = AddressUtil.GetLocalAddress();
-                var instanceName = $"{hostAddress}@gateway";
-                return instanceName;
+                if (EngineContext.Current.IsContainHttpCoreModule())
+                {
+                    var hostAddress = AddressUtil.GetLocalAddress();
+                    var instanceName = $"{hostAddress}@webhost";
+                    return instanceName;
+                }
+
+                return guid;
+
+
             }
             catch (Exception)
             {
