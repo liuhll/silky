@@ -28,50 +28,12 @@ namespace Silky.Rpc.Routing
         public event OnRemoveServiceRoute OnRemoveServiceRoute;
 
         public ServiceRouteCache(IHealthCheck healthCheck,
-            IServiceEntryLocator serviceEntryLocator,
             IServiceEntryManager serviceEntryManager)
         {
             _healthCheck = healthCheck;
             _serviceEntryManager = serviceEntryManager;
             _healthCheck.OnRemveAddress += OnRemoveAddressHandler;
-            _healthCheck.OnRemoveServiceRouteAddress += OnRemoveServiceRouteAddress;
             Logger = NullLogger<ServiceRouteCache>.Instance;
-        }
-
-        private async Task OnRemoveServiceRouteAddress(string serviceId, IAddressModel addressModel)
-        {
-            addressModel.InitFuseTimes();
-            var removeAddressServiceRoute =
-                ServiceRoutes.FirstOrDefault(p =>
-                    p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor) && p.Service.Id == serviceId
-                );
-            if (removeAddressServiceRoute != null)
-            {
-                removeAddressServiceRoute.Addresses =
-                    removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressModel.Descriptor).ToArray();
-                _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.Service.Id,
-                    removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
-
-                var removeHostAddressServiceRoutes =
-                    ServiceRoutes.Where(p =>
-                        p.Addresses.Any(q => q.Descriptor == addressModel.Descriptor)
-                        && p.Service.Application == removeAddressServiceRoute.Service.Application
-                    );
-                var updateRegisterServiceRouteDescriptors = new List<ServiceRouteDescriptor>();
-                foreach (var removeHostAddressServiceRoute in removeHostAddressServiceRoutes)
-                {
-                    removeAddressServiceRoute.Addresses =
-                        removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressModel.Descriptor)
-                            .ToArray();
-                    _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.Service.Id,
-                        removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
-                    updateRegisterServiceRouteDescriptors.Add(removeAddressServiceRoute.ConvertToDescriptor());
-                }
-
-                OnRemoveServiceRoutes?.Invoke(updateRegisterServiceRouteDescriptors, addressModel);
-            }
-
-            OnRemoveServiceRoute?.Invoke(serviceId, addressModel);
         }
 
         private async Task OnRemoveAddressHandler(IAddressModel addressmodel)

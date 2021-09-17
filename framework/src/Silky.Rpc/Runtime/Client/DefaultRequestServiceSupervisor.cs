@@ -45,10 +45,6 @@ namespace Silky.Rpc.Runtime.Client
                 }
             };
 
-            _healthCheck.OnRemoveServiceRouteAddress += async (serviceId, model) =>
-            {
-                m_monitor.TryRemove((serviceId, model), out _);
-            };
             Logger = NullLogger<DefaultRequestServiceSupervisor>.Instance;
         }
 
@@ -124,7 +120,7 @@ namespace Silky.Rpc.Runtime.Client
                 serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
             }
 
-            return serviceEntryInvokeInfos.OrderBy(p=> p.ServiceEntryId).ToArray();
+            return serviceEntryInvokeInfos.OrderBy(p => p.ServiceEntryId).ToArray();
         }
     }
 }

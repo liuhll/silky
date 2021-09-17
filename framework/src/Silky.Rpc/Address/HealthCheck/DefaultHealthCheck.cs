@@ -15,18 +15,11 @@ namespace Silky.Rpc.Address.HealthCheck
         public event RemoveAddressEvent OnRemveAddress;
         public event UnhealthEvent OnUnhealth;
         public event AddMonitorEvent OnAddMonitor;
-        public event RemoveServiceRouteAddressEvent OnRemoveServiceRouteAddress;
 
         public void RemoveAddress(IAddressModel addressModel)
         {
             m_healthCheckAddresses.TryRemove(addressModel, out _);
             OnRemveAddress?.Invoke(addressModel);
-        }
-
-        public void RemoveServiceRouteAddress(string serviceId, IAddressModel addressModel)
-        {
-            m_healthCheckAddresses.TryRemove(addressModel, out _);
-            OnRemoveServiceRouteAddress?.Invoke(serviceId, addressModel);
         }
 
         public void RemoveAddress(IPAddress ipAddress, int port)

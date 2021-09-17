@@ -24,19 +24,6 @@ namespace Silky.Rpc.Address.Selector
                 }
             };
 
-            _healthCheck.OnRemoveServiceRouteAddress += async (serviceId, addressModel) =>
-            {
-                var removeKeys = addressesPools.Where(p
-                        => p.Value.Item2.Any(q => q.Equals(addressModel))
-                           && p.Key.Contains(serviceId)
-                    )
-                    .Select(p => p.Key);
-                foreach (var removeKey in removeKeys)
-                {
-                    addressesPools.TryRemove(removeKey, out _);
-                }
-            };
-
             _healthCheck.OnUnhealth += async addressMoel =>
             {
                 var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(addressMoel)))
