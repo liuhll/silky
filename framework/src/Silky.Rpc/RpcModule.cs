@@ -41,16 +41,16 @@ namespace Silky.Rpc
 
         protected override void RegisterServices(ContainerBuilder builder)
         {
-            var localEntryTypes = ServiceHelper.FindLocalServiceTypes(EngineContext.Current.TypeFinder)
+            var localServiceTypes = ServiceHelper.FindLocalServiceTypes(EngineContext.Current.TypeFinder)
                 .ToArray();
-            builder.RegisterTypes(localEntryTypes)
+            builder.RegisterTypes(localServiceTypes)
                 .PropertiesAutowired()
                 .AsSelf()
                 .InstancePerLifetimeScope()
                 .AsImplementedInterfaces();
 
             var serviceKeyTypes =
-                localEntryTypes.Where(p => p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Any());
+                localServiceTypes.Where(p => p.GetCustomAttributes().OfType<ServiceKeyAttribute>().Any());
             foreach (var serviceKeyType in serviceKeyTypes)
             {
                 var serviceKeyAttribute = serviceKeyType.GetCustomAttributes().OfType<ServiceKeyAttribute>().First();
