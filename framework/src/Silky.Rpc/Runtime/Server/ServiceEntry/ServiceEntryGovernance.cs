@@ -7,5 +7,7 @@ namespace Silky.Rpc.Runtime.Server
         public bool ProhibitExtranet { get; set; } = false;
 
         public bool IsAllowAnonymous { get; set; } = false;
+        
+        public int CurrentLimit { get; set; }
     }
 }

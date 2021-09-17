@@ -12,31 +12,40 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// 执行超时时间
         /// </summary>
-        int ExecutionTimeoutMillSeconds { get; set; }
+        int TimeoutMillSeconds { get; set; }
 
         /// <summary>
         /// 是否开启缓存拦截
         /// </summary>
-        bool CacheEnabled { get; set; }
+        bool EnableCachingInterceptor { get; set; }
 
-        /// <summary>
-        /// 允许的最大并发量
-        /// </summary>
-        int MaxConcurrent { get; set; }
-
-        /// <summary>
-        /// 熔断休眠时间
-        /// </summary>
-        int FuseSleepDuration { get; set; }
 
         /// <summary>
         /// 是否开启熔断保护
         /// </summary>
-        bool FuseProtection { get; set; }
+        bool EnableCircuitBreaker { get; set; }
+
+        /// <summary>
+        /// 熔断时长
+        /// </summary>
+        int BreakerMillSeconds { get; set; }
+
+        /// <summary>
+        /// 熔断前允许出现的异常
+        /// </summary>
+
+        int ExceptionsAllowedBeforeBreaking { get; set; }
 
         /// <summary>
         /// 故障转移次数
         /// </summary>
-        int FailoverCount { get; set; }
+        int RetryTimes { get; set; }
+
+        int RetryIntervalMillSeconds { get; set; }
+
+        /// <summary>
+        /// 当个服务允许的最大处理
+        /// </summary>
+        int ConcurrentProcessingtCount { get; set; }
     }
 }

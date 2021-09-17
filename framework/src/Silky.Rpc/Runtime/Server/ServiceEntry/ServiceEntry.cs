@@ -5,12 +5,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Logging;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
@@ -79,20 +77,24 @@ namespace Silky.Rpc.Runtime.Server
         {
             if (governanceProvider != null)
             {
-                GovernanceOptions.CacheEnabled = governanceProvider.CacheEnabled;
-                GovernanceOptions.ExecutionTimeoutMillSeconds = governanceProvider.ExecutionTimeoutMillSeconds;
-                GovernanceOptions.FuseProtection = governanceProvider.FuseProtection;
-                GovernanceOptions.MaxConcurrent = governanceProvider.MaxConcurrent;
+                GovernanceOptions.EnableCachingInterceptor = governanceProvider.EnableCachingInterceptor;
+                GovernanceOptions.TimeoutMillSeconds = governanceProvider.TimeoutMillSeconds;
+                GovernanceOptions.EnableCircuitBreaker = governanceProvider.EnableCircuitBreaker;
+                GovernanceOptions.BreakerMillSeconds = governanceProvider.BreakerMillSeconds;
+                GovernanceOptions.ExceptionsAllowedBeforeBreaking = governanceProvider.ExceptionsAllowedBeforeBreaking;
+                GovernanceOptions.CurrentLimit = governanceProvider.ConcurrentProcessingtCount;
                 GovernanceOptions.ShuntStrategy = governanceProvider.ShuntStrategy;
-                GovernanceOptions.FuseSleepDuration = governanceProvider.FuseSleepDuration;
-                GovernanceOptions.FailoverCount = governanceProvider.FailoverCount;
-                FailoverCountIsDefaultValue = governanceProvider.FailoverCount == 0;
+                GovernanceOptions.RetryTimes = governanceProvider.RetryTimes;
+                
+                GovernanceOptions.RetryIntervalMillSeconds = governanceProvider.RetryIntervalMillSeconds;
+                FailoverCountIsDefaultValue = governanceProvider.RetryTimes == 0 &&
+                                              GovernanceOptions.FailoverCountEqualInstanceCount;
+                var governanceAttribute = governanceProvider as GovernanceAttribute;
+                GovernanceOptions.ProhibitExtranet = governanceAttribute?.ProhibitExtranet ?? false;
             }
 
-            var governanceAttribute = governanceProvider as GovernanceAttribute;
-            GovernanceOptions.ProhibitExtranet = governanceAttribute?.ProhibitExtranet ?? false;
-
-            var allowAnonymous = CustomAttributes.OfType<IAllowAnonymous>().FirstOrDefault() ?? MethodInfo.DeclaringType
+            var allowAnonymous = CustomAttributes.OfType<IAllowAnonymous>().FirstOrDefault() ?? MethodInfo
+                .DeclaringType
                 .GetCustomAttributes().OfType<IAllowAnonymous>().FirstOrDefault();
 
             GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;

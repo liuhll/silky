@@ -23,9 +23,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddDefaultServiceGovernancePolicy(this IServiceCollection services)
         {
-            if (!services.IsAdded(typeof(IPolicyBuilder)))
+            if (!services.IsAdded(typeof(IInvokePolicyBuilder)))
             {
-                services.AddScoped<IPolicyBuilder, DefaultPolicyBuilder>();
+                services.AddScoped<IInvokePolicyBuilder, DefaultInvokePolicyBuilder>();
             }
 
             return services;

@@ -13,7 +13,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         
         public ICollection<ServiceKeyOutput> ServiceKeys { get; set; }
         
-        public bool SupportCachingIntercept => GovernanceOptions.CacheEnabled && CacheTemplates.Count > 0;
+        public bool SupportCachingIntercept => GovernanceOptions.EnableCachingInterceptor && CacheTemplates.Count > 0;
     }
 
     public class ServiceKeyOutput

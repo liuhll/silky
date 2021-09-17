@@ -33,7 +33,7 @@ namespace Silky.Rpc.CachingInterceptor
                     async () => await entry.Executor(serviceKey, parameters));
             }
 
-            if (serviceEntry.GovernanceOptions.CacheEnabled)
+            if (serviceEntry.GovernanceOptions.EnableCachingInterceptor)
             {
                 var removeCachingInterceptProviders = serviceEntry.RemoveCachingInterceptProviders();
                 if (removeCachingInterceptProviders.Any())

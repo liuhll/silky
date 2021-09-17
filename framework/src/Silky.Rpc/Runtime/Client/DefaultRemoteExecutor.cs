@@ -10,13 +10,13 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultRemoteExecutor : IRemoteExecutor
     {
         private readonly IRemoteInvoker _remoteInvoker;
-        private readonly IPolicyBuilder _policyBuilder;
+        private readonly IInvokePolicyBuilder _invokePolicyBuilder;
 
         public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker,
-            IPolicyBuilder policyBuilder)
+            IInvokePolicyBuilder invokePolicyBuilder)
         {
             _remoteInvoker = remoteInvoker;
-            _policyBuilder = policyBuilder;
+            _invokePolicyBuilder = invokePolicyBuilder;
         }
 
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
@@ -35,7 +35,7 @@ namespace Silky.Rpc.Runtime.Client
                     $"hashKey is :{hashKey}");
             }
 
-            var policy = _policyBuilder.Build(serviceEntry, parameters);
+            var policy = _invokePolicyBuilder.Build(serviceEntry, parameters);
             var result = await policy
                 .ExecuteAsync(async () =>
                 {

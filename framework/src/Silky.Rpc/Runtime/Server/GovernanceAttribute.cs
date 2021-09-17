@@ -7,44 +7,60 @@ namespace Silky.Rpc.Runtime.Server
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class GovernanceAttribute : Attribute, IGovernanceProvider
     {
+        public GovernanceAttribute()
+        {
+            ShuntStrategy = AddressSelectorMode.Polling;
+            TimeoutMillSeconds = 5000;
+            EnableCachingInterceptor = true;
+            EnableCircuitBreaker = true;
+            ExceptionsAllowedBeforeBreaking = 3;
+            BreakerMillSeconds = 1000;
+            RetryIntervalMillSeconds = 50;
+            RetryTimes = 0;
+            ConcurrentProcessingtCount = 50;
+        }
+
         /// <summary>
         /// Shunt Strategy
         /// </summary>
-        public AddressSelectorMode ShuntStrategy { get; set; } = AddressSelectorMode.Polling;
+        public AddressSelectorMode ShuntStrategy { get; set; }
 
         /// <summary>
         /// Execution timeout
         /// </summary>
-        public int ExecutionTimeoutMillSeconds { get; set; } = 5000;
+        public int TimeoutMillSeconds { get; set; }
 
         /// <summary>
         /// Whether to enable cache interception
         /// </summary>
-        public bool CacheEnabled { get; set; } = true;
+        public bool EnableCachingInterceptor { get; set; }
 
         /// <summary>
         /// Maximum allowed concurrency
         /// </summary>
-        public int MaxConcurrent { get; set; } = 10;
+        public int ConcurrentProcessingtCount { get; set; } 
+        
 
         /// <summary>
-        /// Fuse sleep time
+        /// Whether to open the circuit breaker
         /// </summary>
-        public int FuseSleepDuration { get; set; } = 60;
+        public bool EnableCircuitBreaker { get; set; }
+
+        public int BreakerMillSeconds { get; set; }
+        
+        public int ExceptionsAllowedBeforeBreaking { get; set; }
 
         /// <summary>
-        /// Whether to open the fuse protection
+        /// Number of retry
         /// </summary>
-        public bool FuseProtection { get; set; } = true;
+        public int RetryTimes { get; set; } 
 
-        /// <summary>
-        /// Number of failovers
-        /// </summary>
-        public int FailoverCount { get; set; } = 0;
+        public int RetryIntervalMillSeconds { get; set; }
 
         /// <summary>
         /// Whether to prohibit external network access
         /// </summary>
         public bool ProhibitExtranet { get; set; }
+        
     }
 }

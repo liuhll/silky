@@ -7,45 +7,83 @@ namespace Silky.Rpc.Configuration
     {
         internal static string Governance = "Governance";
 
+        public GovernanceOptions()
+        {
+            ShuntStrategy = AddressSelectorMode.Polling;
+            TimeoutMillSeconds = 5000;
+            EnableCachingInterceptor = true;
+            EnableCircuitBreaker = true;
+            ExceptionsAllowedBeforeBreaking = 3;
+            BreakerMillSeconds = 1000;
+            AddressFuseSleepDurationSeconds = 600;
+            RemovedUnHealthAddressTimes = 0;
+            RetryIntervalMillSeconds = 50;
+            RetryTimes = 0;
+            FailoverCountEqualInstanceCount = true;
+            ConcurrentProcessingtCount = 50;
+            TotalConcurrentProcessingtCount = 500;
+        }
+
+
         /// <summary>
         /// 负载分流策略
         /// </summary>
-        public AddressSelectorMode ShuntStrategy { get; set; } = AddressSelectorMode.Polling;
+        public AddressSelectorMode ShuntStrategy { get; set; } 
 
         
         /// <summary>
-        /// 执行超时时间
+        /// Rpc调用执行超时时间
         /// </summary>
-        public int ExecutionTimeoutMillSeconds { get; set; } = 5000;
+        public int TimeoutMillSeconds { get; set; }
 
         /// <summary>
         /// 是否开启缓存拦截
         /// </summary>
-        public bool CacheEnabled { get; set; } = true;
-
-        /// <summary>
-        /// 允许的最大并发量
-        /// </summary>
-        public int MaxConcurrent { get; set; } = 100;
+        public bool EnableCachingInterceptor { get; set; }
 
         /// <summary>
         /// 熔断休眠时长
         /// </summary>
-        public int FuseSleepDuration { get; set; } = 60;
+        public int AddressFuseSleepDurationSeconds { get; set; }
+        
+        /// <summary>
+        /// 地址被标识不健康多少次后会被移除
+        /// </summary>
+        public int RemovedUnHealthAddressTimes { get; set; }
 
         /// <summary>
-        /// 是否开启熔断保护
+        /// 是否开启熔断保护(业务异常不会导致熔断)
         /// </summary>
-        public bool FuseProtection { get; set; } = true;
+        public bool EnableCircuitBreaker { get; set; }
 
         /// <summary>
-        /// 熔断几次之后标识服务地址不健康
+        /// 熔断时长
         /// </summary>
-        public int FuseTimes { get; set; } = 3;
+        public int BreakerMillSeconds { get; set; }
 
+        /// <summary>
+        /// 熔断前允许出现的异常
+        /// </summary>
+        public int ExceptionsAllowedBeforeBreaking { get; set; }
+        
         /// <summary>
         /// 故障转移次数
         /// </summary>
-        public int FailoverCount { get; set; } = 0;
+        public int RetryTimes { get; set; }
+        
+        /// <summary>
+        /// 故障转移间隔时间
+        /// </summary>
+        public int RetryIntervalMillSeconds{ get; set; }
+
+        public int ConcurrentProcessingtCount { get; set; }
+        
+        public int TotalConcurrentProcessingtCount { get; set; }
+
+        /// <summary>
+        /// 故障转移次数与服务实例个数相同
+        /// </summary>
+        public bool FailoverCountEqualInstanceCount { get; set; }
+
     }
 }

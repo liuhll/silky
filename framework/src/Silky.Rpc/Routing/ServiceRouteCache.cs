@@ -115,7 +115,7 @@ namespace Silky.Rpc.Routing
             {
                 if (serviceEntry.FailoverCountIsDefaultValue)
                 {
-                    serviceEntry.GovernanceOptions.FailoverCount = serviceRouteDescriptor.Addresses.Count();
+                    serviceEntry.GovernanceOptions.RetryTimes = serviceRouteDescriptor.Addresses.Count();
                     _serviceEntryManager.Update(serviceEntry);
                 }
             }

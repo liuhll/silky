@@ -1,18 +1,19 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Logging;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Transport;
@@ -26,7 +27,6 @@ namespace Silky.Rpc.Runtime.Client
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly IRequestServiceSupervisor _requestServiceSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
-        private readonly IHealthCheck _healthCheck;
         private readonly ISerializer _serializer;
         public ILogger<DefaultRemoteInvoker> Logger { get; set; }
 
@@ -39,7 +39,6 @@ namespace Silky.Rpc.Runtime.Client
             _serviceRouteCache = serviceRouteCache;
             _requestServiceSupervisor = requestServiceSupervisor;
             _transportClientFactory = transportClientFactory;
-            _healthCheck = healthCheck;
             _serializer = serializer;
             Logger = NullLogger<DefaultRemoteInvoker>.Instance;
         }
@@ -90,7 +89,6 @@ namespace Silky.Rpc.Runtime.Client
                 MiniProfileConstant.Rpc.State.SelectedAddress,
                 $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
                 $"The selected service provider address is:{selectedAddress.ToString()}");
-            bool isInvakeSuccess = true;
             var sp = Stopwatch.StartNew();
             RemoteResultMessage invokeResult = null;
 
@@ -99,87 +97,16 @@ namespace Silky.Rpc.Runtime.Client
             {
                 _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedAddress),
                     governanceOptions);
-                var client = await _transportClientFactory.GetClient(selectedAddress);
-                RpcContext.Context
-                    .SetAttachment(AttachmentKeys.ServerAddress, selectedAddress.IPEndPoint.ToString());
-                RpcContext.Context.SetAttachment(AttachmentKeys.ClientAddress,
-                    NetUtil.GetRpcAddressModel().IPEndPoint.ToString());
+                RpcContext.Context.SetRcpInvokeAddressInfo(selectedAddress,NetUtil.GetRpcAddressModel());
 
+                var client = await _transportClientFactory.GetClient(selectedAddress);
                 foreach (var filter in filters)
                 {
                     filter.OnActionExecuting(remoteInvokeMessage);
                 }
 
                 invokeResult =
-                    await client.SendAsync(remoteInvokeMessage, governanceOptions.ExecutionTimeoutMillSeconds);
-            }
-            catch (IOException ex)
-            {
-                Logger.LogError(
-                    $"IO exception, Service provider {selectedAddress} is unavailable,  reason: {ex.Message}");
-                _healthCheck.RemoveAddress(selectedAddress);
-                isInvakeSuccess = false;
-                throw new CommunicatonException(ex.Message, ex.InnerException);
-            }
-            catch (CommunicatonException ex)
-            {
-                Logger.LogError(
-                    $"The link with the service provider {selectedAddress} is abnormal, the reason: {ex.Message}");
-                _healthCheck.RemoveAddress(selectedAddress);
-                isInvakeSuccess = false;
-                throw;
-            }
-            catch (TimeoutException ex)
-            {
-                Logger.LogError($"Execution timed out with service provider {selectedAddress}, reason: {ex.Message}");
-                MarkAddressFail(governanceOptions, selectedAddress, ex, true);
-                isInvakeSuccess = false;
-                throw;
-            }
-            catch (Exception ex)
-            {
-                if (!ex.IsBusinessException() && !ex.IsUnauthorized())
-                {
-                    MiniProfilerPrinter.Print(MiniProfileConstant.RemoteInvoker.Name,
-                        MiniProfileConstant.RemoteInvoker.State.Fail,
-                        $"{ex.Message}", true);
-                }
-
-                if (ex is NotFindLocalServiceEntryException ||
-                    ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
-                {
-                    _healthCheck.RemoveServiceRouteAddress(remoteInvokeMessage.ServiceEntryId, selectedAddress);
-                    throw new NotFindLocalServiceEntryException(ex.Message);
-                }
-
-                if (!(ex is SilkyException))
-                {
-                    throw new SilkyException(ex.Message, ex);
-                }
-
-                throw;
-            }
-            finally
-            {
-                sp.Stop();
-                if (isInvakeSuccess)
-                {
-                    _requestServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedAddress),
-                        sp.Elapsed.TotalMilliseconds);
-                    MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
-                        MiniProfileConstant.Rpc.State.Success,
-                        $"rpc remote call succeeded");
-                }
-                else
-                {
-                    _requestServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedAddress),
-                        sp.Elapsed.TotalMilliseconds);
-                    MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
-                        MiniProfileConstant.Rpc.State.Fail,
-                        $"rpc remote call failed");
-                }
-
-
+                    await client.SendAsync(remoteInvokeMessage, governanceOptions.TimeoutMillSeconds);
                 foreach (var filter in filters)
                 {
                     filter.OnActionExecuted(invokeResult);
@@ -190,28 +117,25 @@ namespace Silky.Rpc.Runtime.Client
                     throw new SilkyException(invokeResult.ExceptionMessage, invokeResult.StatusCode);
                 }
             }
+            catch (Exception ex)
+            {
+                sp.Stop();
+                Logger.LogException(ex);
+                _requestServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedAddress),
+                    sp.Elapsed.TotalMilliseconds);
+                MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
+                    MiniProfileConstant.Rpc.State.Fail,
+                    $"rpc remote call failed");
+                throw;
+            }
 
-            return invokeResult;
-        }
-
-        private void MarkAddressFail(GovernanceOptions governanceOptions, IAddressModel selectedAddress, Exception ex,
-            bool isTimeoutEx = false)
-        {
+            sp.Stop();
+            _requestServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedAddress),
+                sp.Elapsed.TotalMilliseconds);
             MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
-                MiniProfileConstant.Rpc.State.MarkAddressFail,
-                $"Failed to call remote service using address {selectedAddress}, reason: {ex.Message}", true);
-            if (governanceOptions.FuseProtection)
-            {
-                selectedAddress.MakeFusing(governanceOptions.FuseSleepDuration);
-                if (selectedAddress.FuseTimes > governanceOptions.FuseTimes && !isTimeoutEx)
-                {
-                    _healthCheck.ChangeHealthStatus(selectedAddress, false, governanceOptions.FuseTimes);
-                }
-            }
-            else if (!isTimeoutEx)
-            {
-                _healthCheck.ChangeHealthStatus(selectedAddress, false);
-            }
+                MiniProfileConstant.Rpc.State.Success,
+                $"rpc remote call succeeded");
+            return invokeResult;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Silky.Rpc.Runtime.Client
                     foreach (var key in keys)
                     {
                         var serviceEntry = _serviceEntryLocator.GetServiceEntryById(key.Item1);
-                        key.Item2.MakeFusing(serviceEntry.GovernanceOptions.FuseSleepDuration);
+                        key.Item2.MakeFusing(serviceEntry.GovernanceOptions.AddressFuseSleepDurationSeconds);
                     }
                 }
             };
@@ -55,15 +55,6 @@ namespace Silky.Rpc.Runtime.Client
         public void Monitor((string, IAddressModel) item, GovernanceOptions governanceOptions)
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
-            if (serviceInvokeInfo.ConcurrentRequests > governanceOptions.MaxConcurrent)
-            {
-                item.Item2.MakeFusing(governanceOptions.FuseSleepDuration);
-                Logger.LogWarning(
-                    $"ServiceEntryId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
-                throw new OverflowException(
-                    $"ServiceEntryId{item.Item1}->The requested address {item.Item2} exceeds the maximum allowed concurrency {governanceOptions.MaxConcurrent}, and the current concurrency is {serviceInvokeInfo.ConcurrentRequests}");
-            }
-
             serviceInvokeInfo.ConcurrentRequests++;
             serviceInvokeInfo.TotalRequests++;
             serviceInvokeInfo.FinalInvokeTime = DateTime.Now;

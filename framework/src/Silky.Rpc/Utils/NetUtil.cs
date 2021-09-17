@@ -44,10 +44,11 @@ namespace Silky.Rpc.Utils
             {
                 throw new SilkyException("Failed to obtain http service address");
             }
+
             var addressDescriptor = ParseAddress(address);
             return addressDescriptor;
         }
-        
+
         private static AddressDescriptor ParseAddress(string address)
         {
             var addressSegments = address.Split("://");
@@ -96,7 +97,7 @@ namespace Silky.Rpc.Utils
             var address = new AddressModel(host, port, ServiceProtocol.Tcp);
             return address;
         }
-        
+
         public static string GetLocalAddress()
         {
             string host = GetAnyHostAddress();
@@ -111,7 +112,7 @@ namespace Silky.Rpc.Utils
             return address;
         }
 
-        public static IAddressModel GetAddressModel(string host, int port, ServiceProtocol serviceProtocol)
+        public static IAddressModel CreateAddressModel(string host, int port, ServiceProtocol serviceProtocol)
         {
             var address = new AddressModel(host, port, serviceProtocol);
             return address;
@@ -135,6 +136,12 @@ namespace Silky.Rpc.Utils
             return host != null
                    && (host.IsMatch(LOCAL_IP_PATTERN)
                        || host.Equals(LOCAL_HOSTADRRESS, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static IAddressModel CreateAddressModel(string address, ServiceProtocol serviceProtocol)
+        {
+            var addressInfo = address.Split(":");
+            return CreateAddressModel(addressInfo[0], addressInfo[1].To<int>(), serviceProtocol);
         }
     }
 }

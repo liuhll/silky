@@ -6,12 +6,12 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class TimeoutPolicyProvider : IPolicyProvider
     {
-        public IAsyncPolicy Create(ServiceEntry serviceEntry)
+        public IAsyncPolicy Create(ServiceEntry serviceEntry, object[] parameters)
         {
-            if (serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds > 0)
+            if (serviceEntry.GovernanceOptions.TimeoutMillSeconds > 0)
             {
                 return Policy.TimeoutAsync(
-                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.ExecutionTimeoutMillSeconds));
+                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.TimeoutMillSeconds));
             }
 
             return null;

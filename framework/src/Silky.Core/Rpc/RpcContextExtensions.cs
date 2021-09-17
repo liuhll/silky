@@ -26,7 +26,7 @@ namespace Silky.Core.Rpc
             var serverAddress = rpcContext.GetAttachment(AttachmentKeys.ServerAddress);
             return serverAddress?.ToString();
         }
-
+        
         public static string GetServiceKey(this RpcContext rpcContext)
         {
             var serviceKey = rpcContext.GetAttachment(AttachmentKeys.ServiceKey);
