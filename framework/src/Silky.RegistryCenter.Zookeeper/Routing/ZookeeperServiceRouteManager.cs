@@ -234,7 +234,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         {
             var serviceRouteDescriptors = _serviceRouteCache.ServiceRouteDescriptors
                 .Where(p => p.Addresses.Any(p =>
-                    p.Address == NetUtil.GetHostAddress(_rpcOptions.Host)));
+                    p.Address == AddressUtil.GetHostAddress(_rpcOptions.Host)));
 
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {

@@ -14,7 +14,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Utils
 {
-    public static class NetUtil
+    public static class AddressUtil
     {
         private const string ANYHOST = "0.0.0.0";
         private const int MIN_PORT = 0;

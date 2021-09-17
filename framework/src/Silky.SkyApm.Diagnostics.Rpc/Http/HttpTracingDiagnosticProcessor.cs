@@ -51,7 +51,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
                 return;
             }
 
-            //var host = NetUtil.GetRpcAddressModel().IPEndPoint.ToString();
+            //var host = AddressUtil.GetRpcAddressModel().IPEndPoint.ToString();
             var context = _tracingContext.CreateEntrySegmentContext(
                 $"{HttpContext.Request.Path}-{HttpContext.Request.Method}",
                 new SilkyCarrierHeaderCollection(RpcContext.Context));

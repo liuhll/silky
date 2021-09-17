@@ -90,13 +90,13 @@ namespace Silky.Rpc.SkyApm.Configuration
             {
                 if (modules.Any(p => p.Name == "DotNettyTcp"))
                 {
-                    var addressModel = NetUtil.GetRpcAddressModel();
+                    var addressModel = AddressUtil.GetRpcAddressModel();
                     var ipAddress = $"{addressModel.Address}:{addressModel.Port}";
 
                     return $"{ipAddress}";
                 }
 
-                var hostAddress = NetUtil.GetLocalAddress();
+                var hostAddress = AddressUtil.GetLocalAddress();
                 var instanceName = $"{hostAddress}@gateway";
                 return instanceName;
             }

@@ -46,7 +46,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
             _rpcOptions = rpcOptions.Value;
-            _hostAddress = NetUtil.GetRpcAddressModel();
+            _hostAddress = AddressUtil.GetRpcAddressModel();
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));

@@ -56,7 +56,7 @@ namespace Silky.WebSocket
         {
             var webSocketOptions = privider.Resolve<IOptions<WebSocketOptions>>().Value;
             var hostEnvironment = privider.Resolve<IHostEnvironment>();
-            var wsAddressModel = NetUtil.GetAddressModel(webSocketOptions.Port, ServiceProtocol.Ws);
+            var wsAddressModel = AddressUtil.GetAddressModel(webSocketOptions.Port, ServiceProtocol.Ws);
             WebSocketServer socketServer = null;
             if (webSocketOptions.IsSsl)
             {

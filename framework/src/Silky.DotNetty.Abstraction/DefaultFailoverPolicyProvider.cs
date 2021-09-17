@@ -63,7 +63,7 @@ namespace Silky.DotNetty.Abstraction
             var serverAddress = RpcContext.Context.GetServerAddress();
             var serverServiceProtocol = RpcContext.Context.GetServerServiceProtocol();
             var serviceAddressModel =
-                NetUtil.CreateAddressModel(serverAddress, serverServiceProtocol);
+                AddressUtil.CreateAddressModel(serverAddress, serverServiceProtocol);
 
             _healthCheck.ChangeHealthStatus(serviceAddressModel, false, _governanceOptions.RemovedUnHealthAddressTimes);
             if (OnInvokeFailover != null)

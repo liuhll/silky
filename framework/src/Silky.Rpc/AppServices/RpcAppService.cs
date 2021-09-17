@@ -24,7 +24,7 @@ namespace Silky.Rpc.AppServices
             var instanceSupervisorOutput = new GetInstanceDetailOutput()
             {
                 HostName = EngineContext.Current.HostName,
-                Address = NetUtil.GetRpcAddressModel().IPEndPoint.ToString(),
+                Address = AddressUtil.GetRpcAddressModel().IPEndPoint.ToString(),
                 StartTime = Process.GetCurrentProcess().StartTime,
                 InvokeInfo = _requestServiceSupervisor.GetServiceInstanceInvokeInfo(),
                 HandleInfo = _serverHandleSupervisor.GetServiceInstanceHandleInfo()

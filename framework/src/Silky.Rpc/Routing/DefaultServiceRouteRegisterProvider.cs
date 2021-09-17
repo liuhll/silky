@@ -19,19 +19,19 @@ namespace Silky.Rpc.Routing
 
         public async Task RegisterTcpRoutes()
         {
-            var hostAddress = NetUtil.GetRpcAddressModel();
+            var hostAddress = AddressUtil.GetRpcAddressModel();
             await _serviceRouteRegister.RegisterRpcRoutes(hostAddress.Descriptor, ServiceProtocol.Tcp);
         }
 
         public async Task RegisterHttpRoutes()
         {
-            var webAddressDescriptor = NetUtil.GetLocalWebAddressDescriptor();
+            var webAddressDescriptor = AddressUtil.GetLocalWebAddressDescriptor();
             await _serviceRouteRegister.RegisterRpcRoutes(webAddressDescriptor, ServiceProtocol.Http);
         }
 
         public async Task RegisterWsRoutes(int wsPort)
         {
-            var hostAddress = NetUtil.GetAddressModel(wsPort, ServiceProtocol.Ws);
+            var hostAddress = AddressUtil.GetAddressModel(wsPort, ServiceProtocol.Ws);
             await _serviceRouteRegister.RegisterRpcRoutes(hostAddress.Descriptor, ServiceProtocol.Ws);
         }
     }
