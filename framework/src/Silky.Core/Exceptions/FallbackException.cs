@@ -10,6 +10,7 @@ namespace Silky.Core.Exceptions
 
         public FallbackException(string message, Exception innerException) : base(message, innerException,
             StatusCode.FallbackExecFail)
+
         {
         }
     }

@@ -66,11 +66,8 @@ namespace Silky.Http.Core.Middlewares
                     {
                         context.Response.ContentType = "text/plain";
                         context.Response.SetResultCode(exception.GetExceptionStatusCode());
-                        context.Response.StatusCode = exception.IsBusinessException()
-                            ? ResponseStatusCode.BadCode
-                            : exception.IsUnauthorized()
-                                ? ResponseStatusCode.Unauthorized
-                                : ResponseStatusCode.InternalServerError;
+                      
+                        context.Response.SetExceptionResponseStatus(exception);
 
                         if (exception is IHasValidationErrors)
                         {

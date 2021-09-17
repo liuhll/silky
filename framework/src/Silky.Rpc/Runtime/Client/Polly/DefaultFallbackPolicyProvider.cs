@@ -19,7 +19,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 var fallbackPolicy = Policy<object>.Handle<SilkyException>(ex =>
                     {
-                        var isNotNeedFallback = (ex is INotNeedFallback);
+                        var isNotNeedFallback = ex is INotNeedFallback;
                         if (isNotNeedFallback)
                         {
                             return false;

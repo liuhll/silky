@@ -23,7 +23,7 @@ namespace Silky.Core.Exceptions
         public static string GetExceptionMessage(this Exception exception)
         {
             var message = exception.Message;
-            if (!exception.IsBusinessException() && _appSettingsOptions.DisplayFullErrorStack)
+            if (!exception.IsFriendlyException() && _appSettingsOptions.DisplayFullErrorStack)
             {
                 message += Environment.NewLine + " 堆栈信息:" + Environment.NewLine + exception.StackTrace;
                 if (exception.InnerException != null)
@@ -40,7 +40,7 @@ namespace Silky.Core.Exceptions
             var validateErrors = new List<ValidError>();
             if (exception is IHasValidationErrors)
             {
-                foreach (var validationError in ((IHasValidationErrors) exception).ValidationErrors)
+                foreach (var validationError in ((IHasValidationErrors)exception).ValidationErrors)
                 {
                     validateErrors.Add(new ValidError()
                     {
@@ -59,6 +59,17 @@ namespace Silky.Core.Exceptions
             return statusCode.IsBusinessStatus();
         }
 
+        public static bool IsFriendlyException(this Exception exception)
+        {
+            return exception.GetExceptionStatusCode().IsFriendlyStatus();
+        }
+
+        public static bool IsUserFriendlyException(this Exception exception)
+        {
+            var statusCode = exception.GetExceptionStatusCode();
+            return statusCode.IsUserFriendlyStatus();
+        }
+
         public static bool IsUnauthorized(this Exception exception)
         {
             var statusCode = exception.GetExceptionStatusCode();
@@ -67,11 +78,17 @@ namespace Silky.Core.Exceptions
 
         public static StatusCode GetExceptionStatusCode(this Exception exception)
         {
-            var statusCode = StatusCode.UnPlatformError;
+            var statusCode = StatusCode.NonSilkyException;
 
-            if (exception is SilkyException)
+            if (exception is IHasErrorCode errorCode)
             {
-                statusCode = ((SilkyException) exception).ExceptionCode;
+                statusCode = errorCode.StatusCode;
+                return statusCode;
+            }
+
+            if (exception is TimeoutException)
+            {
+                statusCode = StatusCode.Timeout;
                 return statusCode;
             }
 

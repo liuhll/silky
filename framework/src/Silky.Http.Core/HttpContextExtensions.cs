@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core;
@@ -24,6 +25,21 @@ namespace Silky.Http.Core
             httpContext.Response.Headers["access-token"] = "invalid_token";
         }
 
+        public static void SetExceptionResponseStatus(this HttpResponse httpResponse, Exception exception)
+        {
+            if (exception.IsBusinessException() || exception.IsUserFriendlyException())
+            {
+                httpResponse.StatusCode = ResponseStatusCode.BadCode;
+            }
+
+            if (exception.IsUnauthorized())
+            {
+                httpResponse.StatusCode = ResponseStatusCode.Unauthorized;
+            }
+
+            httpResponse.StatusCode = ResponseStatusCode.InternalServerError;
+        }
+
         public static void SetResultCode(this HttpResponse httpResponse, StatusCode statusCode)
         {
             httpResponse.Headers["SilkyResultCode"] = statusCode.ToString();
@@ -44,6 +60,7 @@ namespace Silky.Http.Core
             {
                 return gatewayOptions.ResponseContentType;
             }
+
             return defaultResponseContextType;
         }
     }

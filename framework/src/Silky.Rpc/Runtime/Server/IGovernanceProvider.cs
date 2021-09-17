@@ -28,7 +28,7 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// 熔断时长
         /// </summary>
-        int BreakerMillSeconds { get; set; }
+        int BreakerSeconds { get; set; }
 
         /// <summary>
         /// 熔断前允许出现的异常

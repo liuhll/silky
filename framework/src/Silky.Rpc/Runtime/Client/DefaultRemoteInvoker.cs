@@ -51,7 +51,7 @@ namespace Silky.Rpc.Runtime.Client
             var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
             if (serviceRoute == null)
             {
-                throw new SilkyException(
+                throw new NotFindServiceRouteException(
                     $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}",
                     StatusCode.NotFindServiceRoute);
             }

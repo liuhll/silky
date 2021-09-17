@@ -14,7 +14,7 @@ namespace Silky.Rpc.Runtime.Server
             EnableCachingInterceptor = true;
             EnableCircuitBreaker = true;
             ExceptionsAllowedBeforeBreaking = 3;
-            BreakerMillSeconds = 1000;
+            BreakerSeconds = 60;
             RetryIntervalMillSeconds = 50;
             RetryTimes = 0;
             ConcurrentProcessingtCount = 50;
@@ -38,22 +38,22 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// Maximum allowed concurrency
         /// </summary>
-        public int ConcurrentProcessingtCount { get; set; } 
-        
+        public int ConcurrentProcessingtCount { get; set; }
+
 
         /// <summary>
         /// Whether to open the circuit breaker
         /// </summary>
         public bool EnableCircuitBreaker { get; set; }
 
-        public int BreakerMillSeconds { get; set; }
-        
-        public int ExceptionsAllowedBeforeBreaking { get; set; }
+        public int BreakerSeconds { get; set; }
 
+        public int ExceptionsAllowedBeforeBreaking { get; set; }
+        
         /// <summary>
         /// Number of retry
         /// </summary>
-        public int RetryTimes { get; set; } 
+        public int RetryTimes { get; set; }
 
         public int RetryIntervalMillSeconds { get; set; }
 
@@ -61,6 +61,5 @@ namespace Silky.Rpc.Runtime.Server
         /// Whether to prohibit external network access
         /// </summary>
         public bool ProhibitExtranet { get; set; }
-        
     }
 }

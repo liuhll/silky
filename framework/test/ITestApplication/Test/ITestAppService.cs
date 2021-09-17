@@ -30,6 +30,7 @@ namespace ITestApplication.Test
 
         [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
         [Transaction]
+       // [Governance(TimeoutMillSeconds = 5, RetryTimes = 2)]
         Task<string> Delete(TestInput input);
 
         [HttpGet]

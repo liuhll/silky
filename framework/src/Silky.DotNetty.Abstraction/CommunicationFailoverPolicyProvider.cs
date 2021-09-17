@@ -4,36 +4,34 @@ using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Options;
 using Polly;
-using Silky.Core.Rpc;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
 namespace Silky.DotNetty.Abstraction
 {
-    public class DefaultFailoverPolicyProvider : IFailoverPolicyProvider
+    public class CommunicationFailoverPolicyProvider : FailoverPolicyProviderBase
     {
         private readonly IHealthCheck _healthCheck;
         private GovernanceOptions _governanceOptions;
 
-        public DefaultFailoverPolicyProvider(IHealthCheck healthCheck,
+        public CommunicationFailoverPolicyProvider(IHealthCheck healthCheck,
             IOptionsSnapshot<GovernanceOptions> governanceOptions)
         {
             _healthCheck = healthCheck;
             _governanceOptions = governanceOptions.Value;
         }
 
-        public IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters)
+        public override IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters)
         {
             IAsyncPolicy<object> policy = null;
             if (serviceEntry.GovernanceOptions.RetryTimes > 0)
             {
                 if (serviceEntry.GovernanceOptions.RetryIntervalMillSeconds > 0)
                 {
-                    policy = Policy<object>.Handle<ChannelException>()
+                    policy = Policy<object>
+                        .Handle<ChannelException>()
                         .Or<ConnectException>()
                         .Or<IOException>()
                         .WaitAndRetryAsync(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds,
@@ -60,18 +58,17 @@ namespace Silky.DotNetty.Abstraction
         private async Task SetInvokeCurrentSeverUnHealth(DelegateResult<object> outcome, int retryNumber,
             Context context)
         {
-            var serverAddress = RpcContext.Context.GetServerAddress();
-            var serverServiceProtocol = RpcContext.Context.GetServerServiceProtocol();
-            var serviceAddressModel =
-                AddressUtil.CreateAddressModel(serverAddress, serverServiceProtocol);
-
+            var serviceAddressModel = GetSelectedServerAddress();
             _healthCheck.ChangeHealthStatus(serviceAddressModel, false, _governanceOptions.RemovedUnHealthAddressTimes);
             if (OnInvokeFailover != null)
             {
-                await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel);
+                await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,
+                    FailoverType.Communication);
             }
         }
 
-        public event RpcInvokeFailoverHandle OnInvokeFailover;
+        public override event RpcInvokeFailoverHandle OnInvokeFailover;
+
+        public override FailoverType FailoverType { get; } = FailoverType.Communication;
     }
 }

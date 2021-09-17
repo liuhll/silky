@@ -4,7 +4,7 @@ namespace Silky.Transaction.Exceptions
 {
     public class TransactionException : SilkyException
     {
-        public TransactionException(string message) : base(message, StatusCode.BusinessError)
+        public TransactionException(string message) : base(message, Core.Exceptions.StatusCode.BusinessError)
         {
         }
     }

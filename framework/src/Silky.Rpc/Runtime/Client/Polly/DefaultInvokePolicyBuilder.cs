@@ -4,18 +4,22 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultInvokePolicyBuilder : IInvokePolicyBuilder
+    internal sealed class DefaultInvokePolicyBuilder : IInvokePolicyBuilder
     {
         private readonly ICollection<IPolicyWithResultProvider> _policyWithResultProviders;
 
         private readonly ICollection<IPolicyProvider> _policyProviders;
 
+        private readonly ICollection<ICircuitBreakerPolicyProvider> _circuitBreakerPolicyProviders;
+
         public DefaultInvokePolicyBuilder(
             ICollection<IPolicyProvider> policyProviders,
-            ICollection<IPolicyWithResultProvider> policyWithResultProviders)
+            ICollection<IPolicyWithResultProvider> policyWithResultProviders,
+            ICollection<ICircuitBreakerPolicyProvider> circuitBreakerPolicyProviders)
         {
             _policyProviders = policyProviders;
             _policyWithResultProviders = policyWithResultProviders;
+            _circuitBreakerPolicyProviders = circuitBreakerPolicyProviders;
         }
 
 
@@ -41,6 +45,11 @@ namespace Silky.Rpc.Runtime.Client
                 }
             }
 
+            foreach (var circuitBreakerPolicyProvider in _circuitBreakerPolicyProviders)
+            {
+                var policyItem = circuitBreakerPolicyProvider.Create(serviceEntry, parameters);
+                policy = policy.WrapAsync(policyItem);
+            }
 
             return policy;
         }

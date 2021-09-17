@@ -16,6 +16,16 @@ namespace Silky.Core.Exceptions
             return false;
         }
 
+        public static bool IsUserFriendlyStatus(this StatusCode statusCode)
+        {
+            if (statusCode.GetAttribute<IsUserFriendlyExceptionAttribute>() != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool IsUnauthorized(this StatusCode statusCode)
         {
             if (statusCode.GetAttribute<IsUnAuthorizedExceptionAttribute>() != null)
@@ -24,6 +34,11 @@ namespace Silky.Core.Exceptions
             }
 
             return false;
+        }
+
+        public static bool IsFriendlyStatus(this StatusCode statusCode)
+        {
+            return statusCode.IsBusinessStatus() || statusCode.IsUserFriendlyStatus() || statusCode.IsUnauthorized();
         }
     }
 

@@ -4,7 +4,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class TimeoutPolicyProvider : IPolicyProvider
+    public class DefaultTimeoutPolicyProvider : IPolicyProvider
     {
         public IAsyncPolicy Create(ServiceEntry serviceEntry, object[] parameters)
         {

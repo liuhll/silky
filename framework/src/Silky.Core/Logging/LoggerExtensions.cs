@@ -73,7 +73,7 @@ namespace Silky.Core.Logging
         {
             if (exception is IHasErrorCode exceptionWithErrorCode)
             {
-                logger.LogWithLevel(logLevel, "Code:" + exceptionWithErrorCode.ExceptionCode);
+                logger.LogWithLevel(logLevel, "Code:" + exceptionWithErrorCode.StatusCode);
             }
 
             if (exception is IHasErrorDetails exceptionWithErrorDetails)

@@ -80,12 +80,12 @@ namespace Silky.Rpc.Runtime.Server
                 GovernanceOptions.EnableCachingInterceptor = governanceProvider.EnableCachingInterceptor;
                 GovernanceOptions.TimeoutMillSeconds = governanceProvider.TimeoutMillSeconds;
                 GovernanceOptions.EnableCircuitBreaker = governanceProvider.EnableCircuitBreaker;
-                GovernanceOptions.BreakerMillSeconds = governanceProvider.BreakerMillSeconds;
+                GovernanceOptions.BreakerSeconds = governanceProvider.BreakerSeconds;
                 GovernanceOptions.ExceptionsAllowedBeforeBreaking = governanceProvider.ExceptionsAllowedBeforeBreaking;
                 GovernanceOptions.CurrentLimit = governanceProvider.ConcurrentProcessingtCount;
                 GovernanceOptions.ShuntStrategy = governanceProvider.ShuntStrategy;
                 GovernanceOptions.RetryTimes = governanceProvider.RetryTimes;
-                
+
                 GovernanceOptions.RetryIntervalMillSeconds = governanceProvider.RetryIntervalMillSeconds;
                 FailoverCountIsDefaultValue = governanceProvider.RetryTimes == 0 &&
                                               GovernanceOptions.FailoverCountEqualInstanceCount;

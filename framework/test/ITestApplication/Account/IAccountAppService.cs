@@ -10,7 +10,7 @@ namespace ITestApplication.Account
     public interface IAccountAppService
     {
         [Author("liuhll")]
-        [Governance(TimeoutMillSeconds = -1, RetryTimes = 5)]
+       // [Governance(TimeoutMillSeconds = 5, RetryTimes = 2)]
         Task<string> Login(LoginInput input);
     }
 }
