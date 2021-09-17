@@ -40,7 +40,7 @@ namespace Silky.Rpc.Runtime.Client
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
-                        await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions,
+                        await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
                             hashKey);
                     return invokeResult.GetResult();
                 });

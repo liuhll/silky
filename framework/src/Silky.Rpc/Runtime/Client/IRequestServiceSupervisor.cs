@@ -7,7 +7,7 @@ namespace Silky.Rpc.Runtime.Client
 {
     public interface IRequestServiceSupervisor : ISingletonDependency
     {
-        void Monitor((string, IAddressModel) item, GovernanceOptions governanceOptions);
+        void Monitor((string, IAddressModel) item);
 
         void ExecSuccess((string, IAddressModel) item, double elapsedTotalMilliseconds);
 

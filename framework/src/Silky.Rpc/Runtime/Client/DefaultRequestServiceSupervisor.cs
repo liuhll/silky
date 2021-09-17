@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Client
     {
         private ConcurrentDictionary<(string, IAddressModel), ServiceInvokeInfo> m_monitor = new();
         private readonly IHealthCheck _healthCheck;
-        private readonly IServiceEntryLocator _serviceEntryLocator;
+       
         public ILogger<DefaultRequestServiceSupervisor> Logger { get; set; }
 
 
@@ -23,7 +23,7 @@ namespace Silky.Rpc.Runtime.Client
             IServiceEntryLocator serviceEntryLocator)
         {
             _healthCheck = healthCheck;
-            _serviceEntryLocator = serviceEntryLocator;
+            
             _healthCheck.OnHealthChange += async (model, health) =>
             {
                 if (!health)
@@ -31,7 +31,7 @@ namespace Silky.Rpc.Runtime.Client
                     var keys = m_monitor.Keys.Where(p => p.Item2.Equals(model));
                     foreach (var key in keys)
                     {
-                        var serviceEntry = _serviceEntryLocator.GetServiceEntryById(key.Item1);
+                        var serviceEntry = serviceEntryLocator.GetServiceEntryById(key.Item1);
                         key.Item2.MakeFusing(serviceEntry.GovernanceOptions.AddressFuseSleepDurationSeconds);
                     }
                 }
@@ -48,7 +48,7 @@ namespace Silky.Rpc.Runtime.Client
             Logger = NullLogger<DefaultRequestServiceSupervisor>.Instance;
         }
 
-        public void Monitor((string, IAddressModel) item, GovernanceOptions governanceOptions)
+        public void Monitor((string, IAddressModel) item)
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests++;

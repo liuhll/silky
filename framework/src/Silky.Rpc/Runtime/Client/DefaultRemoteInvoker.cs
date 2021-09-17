@@ -12,7 +12,6 @@ using Silky.Core.Serialization;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Address.Selector;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
@@ -44,60 +43,20 @@ namespace Silky.Rpc.Runtime.Client
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
-            GovernanceOptions governanceOptions, string hashKey = null)
+            AddressSelectorMode shuntStrategy, string hashKey = null)
         {
-            MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
-                $"Remote call through Rpc framework");
-            var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
-            if (serviceRoute == null)
-            {
-                throw new NotFindServiceRouteException(
-                    $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}",
-                    StatusCode.NotFindServiceRoute);
-            }
+            var serviceRoute = FindServiceRoute(remoteInvokeMessage);
 
-            if (!serviceRoute.Addresses.Any(p => p.Enabled))
-            {
-                throw new NotFindServiceRouteAddressException(
-                    $"No available service provider can be found via {remoteInvokeMessage.ServiceEntryId}");
-            }
+            var selectedAddress =
+                SelectedAddress(serviceRoute, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey);
 
-            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedAddress)?.ToString();
-            IAddressModel selectedAddress;
-            if (remoteAddress != null)
-            {
-                selectedAddress =
-                    serviceRoute.Addresses.FirstOrDefault(p =>
-                        p.IPEndPoint.ToString().Equals(remoteAddress) && p.Enabled);
-                if (selectedAddress == null)
-                {
-                    throw new NotFindServiceRouteAddressException(
-                        $"ServiceRoute does not have a healthy designated service address {remoteAddress}");
-                }
-            }
-            else
-            {
-                var addressSelector =
-                    EngineContext.Current.ResolveNamed<IAddressSelector>(governanceOptions.ShuntStrategy.ToString());
-
-                selectedAddress = addressSelector.Select(new AddressSelectContext(remoteInvokeMessage.ServiceEntryId,
-                    serviceRoute.Addresses,
-                    hashKey));
-            }
-
-            MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
-                MiniProfileConstant.Rpc.State.SelectedAddress,
-                $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
-                $"The selected service provider address is:{selectedAddress.ToString()}");
             var sp = Stopwatch.StartNew();
             RemoteResultMessage invokeResult = null;
-
             var filters = EngineContext.Current.ResolveAll<IClientFilter>().OrderBy(p => p.Order).ToArray();
             try
             {
-                _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedAddress),
-                    governanceOptions);
-                RpcContext.Context.SetRcpInvokeAddressInfo(selectedAddress,AddressUtil.GetRpcAddressModel());
+                _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedAddress));
+                RpcContext.Context.SetRcpInvokeAddressInfo(selectedAddress, AddressUtil.GetRpcAddressModel());
 
                 var client = await _transportClientFactory.GetClient(selectedAddress);
                 foreach (var filter in filters)
@@ -105,8 +64,8 @@ namespace Silky.Rpc.Runtime.Client
                     filter.OnActionExecuting(remoteInvokeMessage);
                 }
 
-                invokeResult =
-                    await client.SendAsync(remoteInvokeMessage, governanceOptions.TimeoutMillSeconds);
+                invokeResult = await client.SendAsync(remoteInvokeMessage);
+
                 foreach (var filter in filters)
                 {
                     filter.OnActionExecuted(invokeResult);
@@ -136,6 +95,60 @@ namespace Silky.Rpc.Runtime.Client
                 MiniProfileConstant.Rpc.State.Success,
                 $"rpc remote call succeeded");
             return invokeResult;
+        }
+
+        private ServiceRoute FindServiceRoute(RemoteInvokeMessage remoteInvokeMessage)
+        {
+            MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
+                $"Remote call through Rpc framework");
+            var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
+            if (serviceRoute == null)
+            {
+                throw new NotFindServiceRouteException(
+                    $"The service routing could not be found via {remoteInvokeMessage.ServiceEntryId}",
+                    StatusCode.NotFindServiceRoute);
+            }
+
+            if (!serviceRoute.Addresses.Any(p => p.Enabled))
+            {
+                throw new NotFindServiceRouteAddressException(
+                    $"No available service provider can be found via {remoteInvokeMessage.ServiceEntryId}");
+            }
+
+            return serviceRoute;
+        }
+
+        private IAddressModel SelectedAddress(ServiceRoute serviceRoute, AddressSelectorMode shuntStrategy,
+            string serviceEntryId, string hashKey)
+        {
+            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedAddress)?.ToString();
+            IAddressModel selectedAddress;
+            if (remoteAddress != null)
+            {
+                selectedAddress =
+                    serviceRoute.Addresses.FirstOrDefault(p =>
+                        p.IPEndPoint.ToString().Equals(remoteAddress) && p.Enabled);
+                if (selectedAddress == null)
+                {
+                    throw new NotFindServiceRouteAddressException(
+                        $"ServiceRoute does not have a healthy designated service address {remoteAddress}");
+                }
+            }
+            else
+            {
+                var addressSelector =
+                    EngineContext.Current.ResolveNamed<IAddressSelector>(shuntStrategy.ToString());
+
+                selectedAddress = addressSelector.Select(new AddressSelectContext(serviceEntryId,
+                    serviceRoute.Addresses,
+                    hashKey));
+            }
+
+            MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
+                MiniProfileConstant.Rpc.State.SelectedAddress,
+                $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
+                $"The selected service provider address is:{selectedAddress.ToString()}");
+            return selectedAddress;
         }
     }
 }
