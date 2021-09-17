@@ -45,18 +45,6 @@ namespace Silky.Rpc.Routing
             };
         }
 
-        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel);
-
-        protected abstract Task CreateSubscribeServiceRouteDataChanges();
-
-        public virtual async Task EnterRoutes()
-        {
-            await CreateSubscribeServiceRouteDataChanges();
-            await EnterRoutesFromServiceCenter();
-        }
-
-        protected abstract Task EnterRoutesFromServiceCenter();
-
         public virtual async Task RegisterRpcRoutes(AddressDescriptor addressDescriptor,
             ServiceProtocol serviceProtocol)
         {
@@ -64,11 +52,6 @@ namespace Silky.Rpc.Routing
                 .Where(p => p.ServiceProtocol == serviceProtocol);
             var serviceRouteDescriptors = localServices.Select(p => p.CreateLocalRouteDescriptor(addressDescriptor));
             await RegisterRoutes(serviceRouteDescriptors, addressDescriptor);
-        }
-
-        protected async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
-        {
-            await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
         }
 
         protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
@@ -82,10 +65,25 @@ namespace Silky.Rpc.Routing
             }
         }
 
+        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel);
+
+        protected abstract Task CreateSubscribeServiceRouteDataChanges();
+
+        public virtual async Task EnterRoutes()
+        {
+            await CreateSubscribeServiceRouteDataChanges();
+            await EnterRoutesFromServiceCenter();
+        }
+
+        protected abstract Task EnterRoutesFromServiceCenter();
         protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
 
         protected abstract Task RegisterRouteServiceCenter(ServiceRouteDescriptor serviceRouteDescriptor);
-
         protected abstract Task RemoveServiceCenterExceptRoute(AddressDescriptor addressDescriptor);
+
+        private async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
+        {
+            await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
+        }
     }
 }
