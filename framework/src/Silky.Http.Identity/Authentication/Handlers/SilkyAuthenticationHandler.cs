@@ -55,7 +55,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
 
         protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            Task WriteErrorResponse(string message, Exception ex)
+            async Task<AuthenticateResult> WriteErrorAndReturnAuthenticateResult(string message, Exception ex)
             {
                 if (ex != null && _appSettingsOptions.DisplayFullErrorStack)
                 {
@@ -75,15 +75,17 @@ namespace Silky.Http.Identity.Authentication.Handlers
                     var responseResultData = _serializer.Serialize(responseResultDto);
                     Context.Response.ContentLength = responseResultData.GetBytes().Length;
                     Context.Response.StatusCode = ResponseStatusCode.Success;
-                    return Context.Response.WriteAsync(responseResultData);
+                    await Context.Response.WriteAsync(responseResultData);
                 }
                 else
                 {
                     Context.Response.ContentType = "text/plain";
                     Context.Response.ContentLength = message.GetBytes().Length;
                     Context.Response.StatusCode = ResponseStatusCode.Unauthorized;
-                    return Context.Response.WriteAsync(message);
+                    await Context.Response.WriteAsync(message);
                 }
+
+                return AuthenticateResult.Fail(new AuthenticationException(message));
             }
 
             var serviceEntry = Context.GetServiceEntry();
@@ -104,19 +106,16 @@ namespace Silky.Http.Identity.Authentication.Handlers
                 var token = Context.Request.Headers["Authorization"];
                 if (token.IsNullOrEmpty())
                 {
-                    await WriteErrorResponse("You have not logged in to the system", null);
-                    return AuthenticateResult.Fail(new AuthenticationException("You have not logged in to the system"));
+                    return await WriteErrorAndReturnAuthenticateResult("You have not logged in to the system", null);
                 }
 
                 try
                 {
                     if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
                     {
-                        await WriteErrorResponse(
+                        return await WriteErrorAndReturnAuthenticateResult(
                             "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified",
                             null);
-                        return AuthenticateResult.Fail(new AuthenticationException(
-                            "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified"));
                     }
 
                     var payload = _jwtDecoder.DecodeToObject(token, _gatewayOptions.JwtSecret, true);
@@ -125,18 +124,17 @@ namespace Silky.Http.Identity.Authentication.Handlers
                 }
                 catch (TokenExpiredException ex)
                 {
-                    await WriteErrorResponse("Token has expired", ex);
+                    await WriteErrorAndReturnAuthenticateResult("Token has expired", ex);
                     return AuthenticateResult.Fail("Token has expired");
                 }
                 catch (SignatureVerificationException ex)
                 {
-                    await WriteErrorResponse("Token has invalid signature", ex);
-                    return AuthenticateResult.Fail("Token has invalid signature");
+                    return await WriteErrorAndReturnAuthenticateResult("Token has invalid signature", ex);
                 }
                 catch (Exception ex)
                 {
-                    await WriteErrorResponse($"The token format is illegal, the reason: {ex.Message}", ex);
-                    return AuthenticateResult.Fail($"The token format is illegal, the reason: {ex.Message}");
+                    return await WriteErrorAndReturnAuthenticateResult(
+                        $"The token format is illegal, the reason: {ex.Message}", ex);
                 }
             }
 
