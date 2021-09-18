@@ -5,7 +5,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc
         public static readonly string RPC_SERVICEENTRYID = "Rpc.ServiceEntryId";
         public static readonly string RPC_PARAMETERS = "Rpc.Parameters";
         public static readonly string RPC_CLIENT_ADDRESS = "Rpc.ClientAddress";
-        public static readonly string RPC_SERVER_ADDRESS = "Rpc.ServerAddress";
+        public static readonly string RPC_SERVER_RPCENDPOINT = "Rpc.ServerEndpoint";
         
         public static readonly string RPC_ATTACHMENTS = "Rpc.Attchments";
 

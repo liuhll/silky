@@ -47,7 +47,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
             context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId.ToString());
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
             context.Span.AddTag(SilkyTags.RPC_CLIENT_ADDRESS, clientAddress);
-            context.Span.AddTag(SilkyTags.RPC_SERVER_ADDRESS, serverEndpoint);
+            context.Span.AddTag(SilkyTags.RPC_SERVER_RPCENDPOINT, serverEndpoint);
             context.Span.AddTag(SilkyTags.ISGATEWAY, RpcContext.Context.IsGateway());
         }
 
