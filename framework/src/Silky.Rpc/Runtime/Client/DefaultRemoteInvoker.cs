@@ -56,7 +56,7 @@ namespace Silky.Rpc.Runtime.Client
             try
             {
                 _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedAddress));
-                RpcContext.Context.SetRcpInvokeAddressInfo(selectedAddress, AddressUtil.GetRpcAddressModel());
+                RpcContext.Context.SetRcpInvokeAddressInfo(selectedAddress.Descriptor, AddressUtil.GetLocalAddressDescriptor());
 
                 var client = await _transportClientFactory.GetClient(selectedAddress);
                 foreach (var filter in filters)

@@ -24,12 +24,12 @@ namespace Silky.Rpc.Utils
         private const string LOCAL_HOSTADRRESS = "localhost";
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
 
-        public static string GetHostAddress(string hostAddress)
+        public static string GetHostIp(string hostAddress)
         {
             var result = hostAddress;
             if ((!IsValidAddress(hostAddress) && !IsLocalHost(hostAddress)) || IsAnyHost(hostAddress))
             {
-                result = GetAnyHostAddress();
+                result = GetAnyHostIp();
             }
 
             return result;
@@ -65,7 +65,7 @@ namespace Silky.Rpc.Utils
             };
         }
 
-        private static string GetAnyHostAddress()
+        private static string GetAnyHostIp()
         {
             string result = "";
             NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
@@ -92,22 +92,33 @@ namespace Silky.Rpc.Utils
         public static IAddressModel GetRpcAddressModel()
         {
             var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
-            string host = GetHostAddress(rpcOptions.Host);
+            string host = GetHostIp(rpcOptions.Host);
             int port = rpcOptions.Port;
             var address = new AddressModel(host, port, ServiceProtocol.Tcp);
             return address;
         }
 
+        public static AddressDescriptor GetLocalAddressDescriptor()
+        {
+            if (EngineContext.Current.IsContainHttpCoreModule())
+            {
+                return GetLocalWebAddressDescriptor();
+            }
+
+            return GetRpcAddressModel().Descriptor;
+
+        }
+
         public static string GetLocalAddress()
         {
-            string host = GetAnyHostAddress();
+            string host = GetAnyHostIp();
             return host;
         }
 
 
         public static IAddressModel GetAddressModel(int port, ServiceProtocol serviceProtocol)
         {
-            string host = GetHostAddress(GetAnyHostAddress());
+            string host = GetHostIp(GetAnyHostIp());
             var address = new AddressModel(host, port, serviceProtocol);
             return address;
         }
