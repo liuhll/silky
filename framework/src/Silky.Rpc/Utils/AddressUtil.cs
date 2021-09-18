@@ -42,7 +42,7 @@ namespace Silky.Rpc.Utils
             var address = server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
             if (address.IsNullOrEmpty())
             {
-                throw new SilkyException("Failed to obtain http service address");
+                throw new SilkyException("Failed to obtain http service rpcAddress");
             }
 
             var addressDescriptor = ParseAddress(address);
@@ -89,12 +89,12 @@ namespace Silky.Rpc.Utils
             return result;
         }
 
-        public static IAddressModel GetRpcAddressModel()
+        public static IRpcAddress GetRpcAddressModel()
         {
             var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
             string host = GetHostIp(rpcOptions.Host);
             int port = rpcOptions.Port;
-            var address = new AddressModel(host, port, ServiceProtocol.Tcp);
+            var address = new RpcAddress(host, port, ServiceProtocol.Tcp);
             return address;
         }
 
@@ -116,16 +116,16 @@ namespace Silky.Rpc.Utils
         }
 
 
-        public static IAddressModel GetAddressModel(int port, ServiceProtocol serviceProtocol)
+        public static IRpcAddress GetAddressModel(int port, ServiceProtocol serviceProtocol)
         {
             string host = GetHostIp(GetAnyHostIp());
-            var address = new AddressModel(host, port, serviceProtocol);
+            var address = new RpcAddress(host, port, serviceProtocol);
             return address;
         }
 
-        public static IAddressModel CreateAddressModel(string host, int port, ServiceProtocol serviceProtocol)
+        public static IRpcAddress CreateAddressModel(string host, int port, ServiceProtocol serviceProtocol)
         {
-            var address = new AddressModel(host, port, serviceProtocol);
+            var address = new RpcAddress(host, port, serviceProtocol);
             return address;
         }
 
@@ -149,7 +149,7 @@ namespace Silky.Rpc.Utils
                        || host.Equals(LOCAL_HOSTADRRESS, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static IAddressModel CreateAddressModel(string address, ServiceProtocol serviceProtocol)
+        public static IRpcAddress CreateAddressModel(string address, ServiceProtocol serviceProtocol)
         {
             var addressInfo = address.Split(":");
             return CreateAddressModel(addressInfo[0], addressInfo[1].To<int>(), serviceProtocol);

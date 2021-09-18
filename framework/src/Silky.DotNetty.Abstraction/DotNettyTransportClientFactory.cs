@@ -30,7 +30,7 @@ namespace Silky.DotNetty
 {
     public class DotNettyTransportClientFactory : IDisposable, ITransportClientFactory
     {
-        private ConcurrentDictionary<IAddressModel, Lazy<Task<ITransportClient>>> m_clients = new();
+        private ConcurrentDictionary<IRpcAddress, Lazy<Task<ITransportClient>>> m_clients = new();
 
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
         private readonly Bootstrap _bootstrap;
@@ -133,27 +133,27 @@ namespace Silky.DotNetty
             return bootstrap;
         }
 
-        public async Task<ITransportClient> GetClient(IAddressModel addressModel)
+        public async Task<ITransportClient> GetClient(IRpcAddress rpcAddress)
         {
             try
             {
-                return await GetOrCreateClient(addressModel);
+                return await GetOrCreateClient(rpcAddress);
             }
             catch (Exception ex)
             {
-                m_clients.TryRemove(addressModel, out _);
+                m_clients.TryRemove(rpcAddress, out _);
                 Logger.LogException(ex);
                 throw;
             }
         }
 
-        private async Task<ITransportClient> GetOrCreateClient(IAddressModel addressModel)
+        private async Task<ITransportClient> GetOrCreateClient(IRpcAddress rpcAddress)
         {
-            return await m_clients.GetOrAdd(addressModel
+            return await m_clients.GetOrAdd(rpcAddress
                 , k => new Lazy<Task<ITransportClient>>(async () =>
                     {
                         Logger.LogInformation(
-                            $"Ready to create a client for the server address: {addressModel.IPEndPoint}" +
+                            $"Ready to create a client for the server rpcAddress: {rpcAddress.IPEndPoint}" +
                             $"");
                         var bootstrap = _bootstrap;
                         var channel = await bootstrap.ConnectAsync(k.IPEndPoint);

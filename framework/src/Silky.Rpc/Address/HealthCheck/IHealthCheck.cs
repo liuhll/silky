@@ -7,19 +7,19 @@ namespace Silky.Rpc.Address.HealthCheck
 {
     public interface IHealthCheck : ISingletonDependency
     {
-        void Monitor(IAddressModel addressModel);
+        void Monitor(IRpcAddress rpcAddress);
 
         bool IsHealth(IPEndPoint ipEndPoint);
 
         bool IsHealth(AddressDescriptor addressDescriptor);
 
-        bool IsHealth(IAddressModel addressModel);
+        bool IsHealth(IRpcAddress rpcAddress);
 
-        void ChangeHealthStatus(IAddressModel addressModel, bool isHealth, int unHealthCeilingTimes = 0);
+        void ChangeHealthStatus(IRpcAddress rpcAddress, bool isHealth, int unHealthCeilingTimes = 0);
 
         void ChangeHealthStatus(IPAddress mapToIPv4, int port, bool isHealth, int unHealthCeilingTimes = 0);
 
-        void RemoveAddress(IAddressModel addressModel);
+        void RemoveAddress(IRpcAddress rpcAddress);
         
         void RemoveAddress(IPAddress ipAddress, int port);
 

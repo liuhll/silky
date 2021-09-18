@@ -7,5 +7,5 @@ namespace Silky.Rpc.Runtime.Client
     public delegate Task RpcInvokeFallbackHandle(DelegateResult<object> delegateResult, Context context);
 
     public delegate Task RpcInvokeFailoverHandle(DelegateResult<object> delegateResult, int retryNumber,
-        Context context, IAddressModel serviceAddressModel, FailoverType failoverType);
+        Context context, IRpcAddress serviceRpcAddress, FailoverType failoverType);
 }

@@ -13,7 +13,7 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class DefaultRequestServiceSupervisor : IRequestServiceSupervisor
     {
-        private ConcurrentDictionary<(string, IAddressModel), ServiceInvokeInfo> m_monitor = new();
+        private ConcurrentDictionary<(string, IRpcAddress), ServiceInvokeInfo> m_monitor = new();
         private readonly IHealthCheck _healthCheck;
        
         public ILogger<DefaultRequestServiceSupervisor> Logger { get; set; }
@@ -48,7 +48,7 @@ namespace Silky.Rpc.Runtime.Client
             Logger = NullLogger<DefaultRequestServiceSupervisor>.Instance;
         }
 
-        public void Monitor((string, IAddressModel) item)
+        public void Monitor((string, IRpcAddress) item)
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests++;
@@ -56,7 +56,7 @@ namespace Silky.Rpc.Runtime.Client
             serviceInvokeInfo.FinalInvokeTime = DateTime.Now;
         }
 
-        public void ExecSuccess((string, IAddressModel) item, double elapsedTotalMilliseconds)
+        public void ExecSuccess((string, IRpcAddress) item, double elapsedTotalMilliseconds)
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests--;
@@ -70,7 +70,7 @@ namespace Silky.Rpc.Runtime.Client
             m_monitor.AddOrUpdate(item, serviceInvokeInfo, (key, _) => serviceInvokeInfo);
         }
 
-        public void ExecFail((string, IAddressModel) item, double elapsedTotalMilliseconds)
+        public void ExecFail((string, IRpcAddress) item, double elapsedTotalMilliseconds)
         {
             var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
             serviceInvokeInfo.ConcurrentRequests--;

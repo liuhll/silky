@@ -180,7 +180,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        protected override async Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel)
+        protected override async Task RemoveUnHealthServiceRoute(string serviceId, IRpcAddress rpcAddress)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -194,11 +194,11 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 {
                     var serviceCenterDescriptor = await GetRouteDescriptorAsync(routePath, zookeeperClient);
                     if (serviceCenterDescriptor != null &&
-                        serviceCenterDescriptor.Addresses.Any(p => p.Equals(addressModel.Descriptor)))
+                        serviceCenterDescriptor.Addresses.Any(p => p.Equals(rpcAddress.Descriptor)))
                     {
                         serviceCenterDescriptor.Addresses =
                             serviceCenterDescriptor.Addresses.Where(
-                                p => !p.Equals(addressModel.Descriptor));
+                                p => !p.Equals(rpcAddress.Descriptor));
                         var jsonString = _serializer.Serialize(serviceCenterDescriptor);
                         var data = jsonString.GetBytes();
                         await zookeeperClient.SetDataAsync(routePath, data);

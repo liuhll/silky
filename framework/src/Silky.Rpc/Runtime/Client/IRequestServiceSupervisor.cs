@@ -7,11 +7,11 @@ namespace Silky.Rpc.Runtime.Client
 {
     public interface IRequestServiceSupervisor : ISingletonDependency
     {
-        void Monitor((string, IAddressModel) item);
+        void Monitor((string, IRpcAddress) item);
 
-        void ExecSuccess((string, IAddressModel) item, double elapsedTotalMilliseconds);
+        void ExecSuccess((string, IRpcAddress) item, double elapsedTotalMilliseconds);
 
-        void ExecFail((string, IAddressModel) item, double elapsedTotalMilliseconds);
+        void ExecFail((string, IRpcAddress) item, double elapsedTotalMilliseconds);
 
         ServiceInstanceInvokeInfo GetServiceInstanceInvokeInfo();
 

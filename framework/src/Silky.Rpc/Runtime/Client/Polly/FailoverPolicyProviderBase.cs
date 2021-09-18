@@ -10,7 +10,7 @@ namespace Silky.Rpc.Runtime.Client
 {
     public abstract class FailoverPolicyProviderBase : IFailoverPolicyProvider
     {
-        protected virtual IAddressModel GetSelectedServerAddress()
+        protected virtual IRpcAddress GetSelectedServerAddress()
         {
             var serverAddress = RpcContext.Context.GetServerAddress();
            

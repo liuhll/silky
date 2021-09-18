@@ -36,7 +36,7 @@ namespace Silky.Rpc.Routing
             Logger = NullLogger<ServiceRouteCache>.Instance;
         }
 
-        private async Task OnRemoveAddressHandler(IAddressModel addressmodel)
+        private async Task OnRemoveAddressHandler(IRpcAddress addressmodel)
         {
             addressmodel.InitFuseTimes();
             var removeAddressServiceRoutes =
@@ -65,7 +65,7 @@ namespace Silky.Rpc.Routing
                 serviceRoute, (id, _) => serviceRoute);
 
             Logger.LogDebug(
-                $"Update the service routing [{serviceRoute.Service.Id}] cache, the routing address is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
+                $"Update the service routing [{serviceRoute.Service.Id}] cache, the routing rpcAddress is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
 
             foreach (var address in serviceRoute.Addresses)
             {

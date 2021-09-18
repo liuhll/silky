@@ -59,12 +59,12 @@ namespace Silky.Http.Core.Middlewares
 
             if (serviceRoute == null)
             {
-                throw new SilkyException($"The ws service with address {path} does not exist.");
+                throw new SilkyException($"The ws service with rpcAddress {path} does not exist.");
             }
 
             if (!serviceRoute.Addresses.Any())
             {
-                throw new SilkyException($"There is no available service with address {path}.");
+                throw new SilkyException($"There is no available service with rpcAddress {path}.");
             }
 
             var client = new ClientWebSocket();
@@ -126,7 +126,7 @@ namespace Silky.Http.Core.Middlewares
             }
         }
 
-        private Uri CreateDestinationUri(IAddressModel address, string path)
+        private Uri CreateDestinationUri(IRpcAddress rpcAddress, string path)
         {
             var scheme = "ws";
             if (_webSocketOptions.IsSsl)
@@ -134,7 +134,7 @@ namespace Silky.Http.Core.Middlewares
                 scheme = "wss";
             }
 
-            var wsAddress = $"{scheme}://{address.Address}:{address.Port}{path}";
+            var wsAddress = $"{scheme}://{rpcAddress.Address}:{rpcAddress.Port}{path}";
             return new Uri(wsAddress);
         }
 

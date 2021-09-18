@@ -10,16 +10,16 @@ namespace Silky.Rpc.Address.HealthCheck
 {
     public class DefaultHealthCheck : IHealthCheck
     {
-        private ConcurrentDictionary<IAddressModel, HealthCheckModel> m_healthCheckAddresses = new();
+        private ConcurrentDictionary<IRpcAddress, HealthCheckModel> m_healthCheckAddresses = new();
         public event HealthChangeEvent OnHealthChange;
         public event RemoveAddressEvent OnRemveAddress;
         public event UnhealthEvent OnUnhealth;
         public event AddMonitorEvent OnAddMonitor;
 
-        public void RemoveAddress(IAddressModel addressModel)
+        public void RemoveAddress(IRpcAddress rpcAddress)
         {
-            m_healthCheckAddresses.TryRemove(addressModel, out _);
-            OnRemveAddress?.Invoke(addressModel);
+            m_healthCheckAddresses.TryRemove(rpcAddress, out _);
+            OnRemveAddress?.Invoke(rpcAddress);
         }
 
         public void RemoveAddress(IPAddress ipAddress, int port)
@@ -32,12 +32,12 @@ namespace Silky.Rpc.Address.HealthCheck
             }
         }
 
-        public void Monitor(IAddressModel addressModel)
+        public void Monitor(IRpcAddress rpcAddress)
         {
-            if (!m_healthCheckAddresses.ContainsKey(addressModel))
+            if (!m_healthCheckAddresses.ContainsKey(rpcAddress))
             {
-                m_healthCheckAddresses.GetOrAdd(addressModel, new HealthCheckModel(true, 0));
-                OnAddMonitor?.Invoke(addressModel);
+                m_healthCheckAddresses.GetOrAdd(rpcAddress, new HealthCheckModel(true, 0));
+                OnAddMonitor?.Invoke(rpcAddress);
             }
         }
 
@@ -63,9 +63,9 @@ namespace Silky.Rpc.Address.HealthCheck
             return false;
         }
 
-        public bool IsHealth(IAddressModel addressModel)
+        public bool IsHealth(IRpcAddress rpcAddress)
         {
-            if (m_healthCheckAddresses.TryGetValue(addressModel, out var checkModel))
+            if (m_healthCheckAddresses.TryGetValue(rpcAddress, out var checkModel))
             {
                 return checkModel.IsHealth;
             }
@@ -79,35 +79,35 @@ namespace Silky.Rpc.Address.HealthCheck
             ChangeHealthStatus(addressModel, isHealth, unHealthCeilingTimes);
         }
 
-        public void ChangeHealthStatus(IAddressModel addressModel, bool isHealth, int unHealthCeilingTimes = 0)
+        public void ChangeHealthStatus(IRpcAddress rpcAddress, bool isHealth, int unHealthCeilingTimes = 0)
         {
-            if (m_healthCheckAddresses.TryGetValue(addressModel, out var healthCheckModel))
+            if (m_healthCheckAddresses.TryGetValue(rpcAddress, out var healthCheckModel))
             {
                 var newHealthCheckModel =
                     new HealthCheckModel(isHealth, isHealth ? 0 : healthCheckModel.UnHealthTimes + 1);
-                m_healthCheckAddresses.TryUpdate(addressModel, newHealthCheckModel, healthCheckModel);
+                m_healthCheckAddresses.TryUpdate(rpcAddress, newHealthCheckModel, healthCheckModel);
                 healthCheckModel = newHealthCheckModel;
             }
             else
             {
                 healthCheckModel = new HealthCheckModel(isHealth, isHealth ? 0 : 1);
-                m_healthCheckAddresses.TryAdd(addressModel, healthCheckModel);
+                m_healthCheckAddresses.TryAdd(rpcAddress, healthCheckModel);
             }
 
             if (!isHealth && healthCheckModel.UnHealthTimes >= unHealthCeilingTimes)
             {
-                OnRemveAddress?.Invoke(addressModel);
-                m_healthCheckAddresses.TryRemove(addressModel, out var value);
+                OnRemveAddress?.Invoke(rpcAddress);
+                m_healthCheckAddresses.TryRemove(rpcAddress, out var value);
             }
 
             if (healthCheckModel.IsHealth != isHealth)
             {
-                OnHealthChange?.Invoke(addressModel, isHealth);
+                OnHealthChange?.Invoke(rpcAddress, isHealth);
             }
 
             if (!isHealth)
             {
-                OnUnhealth?.Invoke(addressModel);
+                OnUnhealth?.Invoke(rpcAddress);
             }
         }
 

@@ -6,7 +6,7 @@ namespace Silky.Rpc.Address.Selector
 {
     public class PollingAddressSelector : AddressSelectorBase
     {
-        private ConcurrentDictionary<string, (int, IAddressModel[])> addressesPools =
+        private ConcurrentDictionary<string, (int, IRpcAddress[])> addressesPools =
             new();
 
         private readonly IHealthCheck _healthCheck;
@@ -37,7 +37,7 @@ namespace Silky.Rpc.Address.Selector
 
         public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.Polling;
 
-        protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
+        protected override IRpcAddress SelectAddressByAlgorithm(AddressSelectContext context)
         {
             var selectAdderessItem = (0, context.AddressModels);
             var index = 0;

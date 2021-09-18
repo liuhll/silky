@@ -5,7 +5,7 @@ namespace Silky.Rpc.Routing
 {
     public class ServiceRoute
     {
-        public IAddressModel[] Addresses { get; set; }
+        public IRpcAddress[] Addresses { get; set; }
         
         public ServiceDescriptor Service { get; set; }
     }

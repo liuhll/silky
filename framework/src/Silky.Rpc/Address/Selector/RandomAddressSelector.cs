@@ -15,7 +15,7 @@ namespace Silky.Rpc.Address.Selector
 
         public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.Random;
 
-        protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
+        protected override IRpcAddress SelectAddressByAlgorithm(AddressSelectContext context)
         {
              var index = _generate(0, context.AddressModels.Length);
              return context.AddressModels[index];

@@ -7,11 +7,11 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Address
 {
-    public class AddressModel : IAddressModel
+    public class RpcAddress : IRpcAddress
     {
         private int m_fuseTimes;
 
-        public AddressModel(
+        public RpcAddress(
             [NotNull] string address,
             [NotNull] int port,
             ServiceProtocol serviceProtocol = ServiceProtocol.Tcp
@@ -74,7 +74,7 @@ namespace Silky.Rpc.Address
             if (endpoint != null)
                 return endpoint.Address.MapToIPv4() == IPEndPoint.Address && endpoint.Port == IPEndPoint.Port;
 
-            var model = obj as AddressModel;
+            var model = obj as RpcAddress;
             if (model == null)
                 return false;
 
@@ -89,12 +89,12 @@ namespace Silky.Rpc.Address
             return ToString().GetHashCode();
         }
 
-        public static bool operator ==(AddressModel model1, AddressModel model2)
+        public static bool operator ==(RpcAddress model1, RpcAddress model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(AddressModel model1, AddressModel model2)
+        public static bool operator !=(RpcAddress model1, RpcAddress model2)
         {
             return !Equals(model1, model2);
         }

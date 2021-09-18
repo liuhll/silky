@@ -118,20 +118,20 @@ namespace Silky.Rpc.Runtime.Client
             return serviceRoute;
         }
 
-        private IAddressModel SelectedAddress(ServiceRoute serviceRoute, AddressSelectorMode shuntStrategy,
+        private IRpcAddress SelectedAddress(ServiceRoute serviceRoute, AddressSelectorMode shuntStrategy,
             string serviceEntryId, string hashKey)
         {
             var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedAddress)?.ToString();
-            IAddressModel selectedAddress;
+            IRpcAddress selectedRpcAddress;
             if (remoteAddress != null)
             {
-                selectedAddress =
+                selectedRpcAddress =
                     serviceRoute.Addresses.FirstOrDefault(p =>
                         p.IPEndPoint.ToString().Equals(remoteAddress) && p.Enabled);
-                if (selectedAddress == null)
+                if (selectedRpcAddress == null)
                 {
                     throw new NotFindServiceRouteAddressException(
-                        $"ServiceRoute does not have a healthy designated service address {remoteAddress}");
+                        $"ServiceRoute does not have a healthy designated service rpcAddress {remoteAddress}");
                 }
             }
             else
@@ -139,7 +139,7 @@ namespace Silky.Rpc.Runtime.Client
                 var addressSelector =
                     EngineContext.Current.ResolveNamed<IAddressSelector>(shuntStrategy.ToString());
 
-                selectedAddress = addressSelector.Select(new AddressSelectContext(serviceEntryId,
+                selectedRpcAddress = addressSelector.Select(new AddressSelectContext(serviceEntryId,
                     serviceRoute.Addresses,
                     hashKey));
             }
@@ -147,8 +147,8 @@ namespace Silky.Rpc.Runtime.Client
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.SelectedAddress,
                 $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
-                $"The selected service provider address is:{selectedAddress.ToString()}");
-            return selectedAddress;
+                $"The selected service provider rpcAddress is:{selectedRpcAddress.ToString()}");
+            return selectedRpcAddress;
         }
     }
 }

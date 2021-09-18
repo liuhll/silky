@@ -65,7 +65,7 @@ namespace Silky.Rpc.Routing
             }
         }
 
-        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IAddressModel addressModel);
+        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IRpcAddress rpcAddress);
 
         protected abstract Task CreateSubscribeServiceRouteDataChanges();
 
@@ -81,9 +81,9 @@ namespace Silky.Rpc.Routing
         protected abstract Task RegisterRouteServiceCenter(ServiceRouteDescriptor serviceRouteDescriptor);
         protected abstract Task RemoveServiceCenterExceptRoute(AddressDescriptor addressDescriptor);
 
-        private async Task RemoveServiceRoute(string serviceId, IAddressModel selectedAddress)
+        private async Task RemoveServiceRoute(string serviceId, IRpcAddress selectedRpcAddress)
         {
-            await RemoveUnHealthServiceRoute(serviceId, selectedAddress);
+            await RemoveUnHealthServiceRoute(serviceId, selectedRpcAddress);
         }
     }
 }

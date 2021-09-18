@@ -344,7 +344,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
-                throw new BusinessException($"{address} incorrect address format");
+                throw new BusinessException($"{address} incorrect rpcAddress format");
             }
 
             var addressInfo = address.Split(":");
@@ -365,7 +365,7 @@ namespace Silky.Http.Dashboard.AppService
                 (await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
             if (result?.Address != address)
             {
-                throw new SilkyException("The address of the routing instance is wrong");
+                throw new SilkyException("The rpcAddress of the routing instance is wrong");
             }
 
             return result;
@@ -376,7 +376,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
-                throw new BusinessException($"{address} incorrect address format");
+                throw new BusinessException($"{address} incorrect rpcAddress format");
             }
 
             var addressInfo = address.Split(":");
@@ -404,7 +404,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
-                throw new BusinessException($"{address} incorrect address format");
+                throw new BusinessException($"{address} incorrect rpcAddress format");
             }
 
             var addressInfo = address.Split(":");

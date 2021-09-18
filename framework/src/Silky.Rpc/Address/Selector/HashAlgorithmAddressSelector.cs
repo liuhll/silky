@@ -7,7 +7,7 @@ namespace Silky.Rpc.Address.Selector
 {
     public class HashAlgorithmAddressSelector : AddressSelectorBase
     {
-        private ConcurrentDictionary<string, ConsistentHash<IAddressModel>> _consistentHashAddressPools = new();
+        private ConcurrentDictionary<string, ConsistentHash<IRpcAddress>> _consistentHashAddressPools = new();
 
         private readonly IHealthCheck _healthCheck;
 
@@ -46,12 +46,12 @@ namespace Silky.Rpc.Address.Selector
 
         public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.HashAlgorithm;
 
-        protected override IAddressModel SelectAddressByAlgorithm(AddressSelectContext context)
+        protected override IRpcAddress SelectAddressByAlgorithm(AddressSelectContext context)
         {
             Check.NotNullOrEmpty(context.Hash, nameof(context.Hash));
             var addressModels = _consistentHashAddressPools.GetOrAdd(context.MonitorId, v =>
             {
-                var consistentHash = new ConsistentHash<IAddressModel>();
+                var consistentHash = new ConsistentHash<IRpcAddress>();
                 foreach (var address in context.AddressModels)
                 {
                     consistentHash.Add(address);

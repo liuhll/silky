@@ -5,7 +5,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Address
 {
-    public interface IAddressModel
+    public interface IRpcAddress
     {
         /// <summary>
         /// 地址(Ip或是域名)

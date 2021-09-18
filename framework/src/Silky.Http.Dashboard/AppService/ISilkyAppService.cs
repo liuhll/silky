@@ -41,13 +41,13 @@ namespace Silky.Http.Dashboard.AppService
             int pageSize = 10);
 
 
-        [HttpGet("instance/{address:string}/detail")]
+        [HttpGet("instance/{rpcAddress:string}/detail")]
         Task<GetInstanceDetailOutput> GetInstanceDetail(string address);
 
-        [HttpGet("instance/{address:string}/servicehandle")]
+        [HttpGet("instance/{rpcAddress:string}/servicehandle")]
         Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address, PagedRequestDto input);
 
-        [HttpGet("instance/{address:string}/serviceinvoke")]
+        [HttpGet("instance/{rpcAddress:string}/serviceinvoke")]
         Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address, PagedRequestDto input);
 
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
