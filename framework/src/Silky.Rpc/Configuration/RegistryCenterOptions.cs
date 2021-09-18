@@ -16,8 +16,7 @@
 
         public int FuseTimes { get; set; } = 10;
 
-        public string RoutePath { get; set; } = "/services/serviceroutes";
+        public string RoutePath { get; set; } = "/silky/serviceroutes";
 
-        public string GatewayPath { get; set; } = "/gateways";
     }
 }
