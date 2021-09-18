@@ -19,7 +19,7 @@ namespace Silky.Rpc.Address.Descriptor
             return SingletonDictionary<string, IRpcAddress>.Instance[addressDescriptor.ToString()];
         }
 
-        public static string ConvertToAddress(this AddressDescriptor addressDescriptor)
+        public static string GetHostAddress(this AddressDescriptor addressDescriptor)
         {
             string address = String.Empty;
             switch (addressDescriptor.ServiceProtocol)

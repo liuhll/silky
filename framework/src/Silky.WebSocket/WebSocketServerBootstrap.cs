@@ -48,7 +48,7 @@ namespace Silky.WebSocket
             {
                 _socketServer.Start();
                 _logger.LogInformation(
-                    $"Ws service started successfully, service rpcAddress: {_socketServer.Address}:{_socketServer.Port}");
+                    $"Ws service started successfully, service rpcAddress: {_socketServer.Address}:{_socketServer.Port.ToString()}");
             }
             catch (Exception ex)
             {

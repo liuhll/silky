@@ -86,7 +86,8 @@ namespace Silky.Rpc.Runtime.Server
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
             if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
             {
-                throw new SilkyException("It is not allowed to specify multiple HashKey");
+                throw new SilkyException(
+                    $"It is not allowed to specify multiple HashKey,Method is {serviceType.FullName}.{method.Name}");
             }
 
             Debug.Assert(method.DeclaringType != null);

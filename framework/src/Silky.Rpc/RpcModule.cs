@@ -14,10 +14,8 @@ using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Configuration;
-using Silky.Core.DependencyInjection;
 using Silky.Core.Rpc;
 using Silky.Rpc.Extensions;
-using Silky.Rpc.Transport.Codec;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc
@@ -74,9 +72,7 @@ namespace Silky.Rpc
                 throw new SilkyException(
                     $"You did not specify the dependent {registryCenterType} service registry module");
             }
-
-            var serviceRouteProvider = applicationContext.ServiceProvider.GetRequiredService<IServiceRouteProvider>();
-            await serviceRouteProvider.EnterRoutes();
+            
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {

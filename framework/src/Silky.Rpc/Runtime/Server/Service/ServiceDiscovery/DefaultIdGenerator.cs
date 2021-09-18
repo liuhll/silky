@@ -45,7 +45,7 @@ namespace Silky.Rpc.Runtime.Server
 
             id += $"_{httpMethod.ToString()}";
 
-            Logger.LogDebug($"Generate ServiceEntry {id} for method {method.DeclaringType?.Name}.{method.Name}");
+            Logger.LogDebug($"Generate ServiceEntry [{id}] for the method {method.Name}");
             return id;
         }
 

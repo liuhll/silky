@@ -54,9 +54,10 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             Logger = NullLogger<ZookeeperServiceRouteManager>.Instance;
         }
 
-        public async Task CreateSubscribeServiceRouteDataChanges(IZookeeperClient zookeeperClient)
+        private async Task CreateSubscribeServiceRouteDataChanges(IZookeeperClient zookeeperClient,
+            ServiceProtocol serviceProtocol)
         {
-            var allServices = _serviceManager.GetAllService();
+            var allServices = _serviceManager.GetAllService(serviceProtocol);
             foreach (var service in allServices)
             {
                 var serviceRoutePath = CreateRoutePath(service.Id);
@@ -206,13 +207,13 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 });
             }
         }
-        
-        protected override async Task CreateSubscribeServiceRouteDataChanges()
+
+        protected override async Task CreateSubscribeServiceRouteDataChanges(ServiceProtocol serviceProtocol)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
-                await CreateSubscribeServiceRouteDataChanges(zookeeperClient);
+                await CreateSubscribeServiceRouteDataChanges(zookeeperClient, serviceProtocol);
             }
         }
 
@@ -336,6 +337,24 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
 
             routePath += child;
             return routePath;
+        }
+
+        public async Task CreateSubscribeServiceRouteDataChanges(IZookeeperClient zookeeperClient)
+        {
+            if (EngineContext.Current.IsContainHttpCoreModule())
+            {
+                await CreateSubscribeServiceRouteDataChanges(zookeeperClient, ServiceProtocol.Http);
+            }
+
+            if (EngineContext.Current.IsContainWebSocketModule())
+            {
+                await CreateSubscribeServiceRouteDataChanges(zookeeperClient, ServiceProtocol.Ws);
+            }
+
+            if (EngineContext.Current.IsContainDotNettyTcpModule())
+            {
+                await CreateSubscribeServiceRouteDataChanges(zookeeperClient, ServiceProtocol.Tcp);
+            }
         }
     }
 }

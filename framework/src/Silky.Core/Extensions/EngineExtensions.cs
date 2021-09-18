@@ -18,6 +18,18 @@ namespace Silky.Core.Extensions
             Check.NotNull(engine, nameof(engine));
             return engine.ContainModule("SilkyHttpCore");
         }
+        
+        public static bool IsContainWebSocketModule([NotNull] this IEngine engine)
+        {
+            Check.NotNull(engine, nameof(engine));
+            return engine.ContainModule("WebSocket");
+        }
+        
+        public static bool IsContainDotNettyTcpModule([NotNull] this IEngine engine)
+        {
+            Check.NotNull(engine, nameof(engine));
+            return engine.ContainModule("DotNettyTcp");
+        }
 
         public static bool IsEnvironment([NotNull] this IEngine engine, string environmentName)
         {

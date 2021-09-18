@@ -11,15 +11,10 @@ namespace Silky.Core.Convertible
     public class DefaultTypeConvertibleService : ITypeConvertibleService
     {
         private readonly IEnumerable<TypeConvertDelegate> _converters;
-        private readonly ILogger<DefaultTypeConvertibleService> _logger;
-
         public DefaultTypeConvertibleService(IEnumerable<ITypeConvertibleProvider> converterProviders,
             ILogger<DefaultTypeConvertibleService> logger)
         {
-            _logger = logger;
-            _logger.LogDebug($"The following type conversion providers were found:{string.Join(",", converterProviders.Select(p => p.ToString()))}.");
             _converters = converterProviders.SelectMany(p=> p.GetConverters());
-         
         }
 
         public object Convert(object instance, Type conversionType)

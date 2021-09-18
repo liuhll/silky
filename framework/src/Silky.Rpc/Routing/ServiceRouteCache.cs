@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,13 +59,18 @@ namespace Silky.Rpc.Routing
         public void UpdateCache([NotNull] ServiceRouteDescriptor serviceRouteDescriptor)
         {
             Check.NotNull(serviceRouteDescriptor, nameof(serviceRouteDescriptor));
-
-
             var serviceRoute = serviceRouteDescriptor.ConvertToServiceRoute();
-            _serviceRouteCache.AddOrUpdate(serviceRouteDescriptor.Service.Id,
-                serviceRoute, (id, _) => serviceRoute);
+            Debug.Assert(serviceRoute != null, "serviceRoute != null");
+            var cacheServiceRoute = _serviceRouteCache.GetValueOrDefault(serviceRouteDescriptor.Service.Id);
+            if (serviceRoute == cacheServiceRoute)
+            {
+                Logger.LogDebug(
+                    $"The cached routing data of [{serviceRoute.Service.Id}] is consistent with the routing data of the service registry, no need to update");
+                return;
+            }
 
-            Logger.LogDebug(
+            _serviceRouteCache[serviceRouteDescriptor.Service.Id] = serviceRoute;
+            Logger.LogInformation(
                 $"Update the service routing [{serviceRoute.Service.Id}] cache, the routing rpcAddress is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
 
             foreach (var address in serviceRoute.Addresses)

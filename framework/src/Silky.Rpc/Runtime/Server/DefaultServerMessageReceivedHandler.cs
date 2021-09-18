@@ -36,8 +36,8 @@ namespace Silky.Rpc.Runtime.Server
         {
             var sp = Stopwatch.StartNew();
             message.SetRpcAttachments();
-
             var clientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ClientAddress).ToString();
+            Logger.LogDebug($"Received a request from the client [{clientAddress}], and the messageId:[{messageId}]");
             var tracingTimestamp = TracingBefore(message, messageId);
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);

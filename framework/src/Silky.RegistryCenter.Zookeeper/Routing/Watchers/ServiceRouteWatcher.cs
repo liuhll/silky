@@ -15,7 +15,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
         internal string Path { get; }
         private readonly ServiceRouteCache _serviceRouteCache;
         private readonly ISerializer _serializer;
-
+        private readonly object locker = new();
         public ServiceRouteWatcher(
             string path,
             ServiceRouteCache serviceRouteCache,
@@ -42,16 +42,14 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
                     _serviceRouteCache.RemoveCache(serviceId);
                     break;
                 case Watcher.Event.EventType.NodeCreated:
-                    Check.NotNullOrEmpty(nodeData, nameof(nodeData));
-                    var createdJsonString = nodeData.GetString();
-                    var createdServiceRouteDescriptor = _serializer.Deserialize<ServiceRouteDescriptor>(createdJsonString);
-                    _serviceRouteCache.UpdateCache(createdServiceRouteDescriptor);
-                    break;
                 case Watcher.Event.EventType.NodeDataChanged:
-                    Check.NotNullOrEmpty(nodeData, nameof(nodeData));
-                    var updateJsonString = nodeData.GetString();
-                    var updateServiceRouteDescriptor = _serializer.Deserialize<ServiceRouteDescriptor>(updateJsonString);
-                    _serviceRouteCache.UpdateCache(updateServiceRouteDescriptor);
+                    lock (locker)
+                    {
+                        Check.NotNullOrEmpty(nodeData, nameof(nodeData));
+                        var jonString = nodeData.GetString();
+                        var serviceRouteDescriptor = _serializer.Deserialize<ServiceRouteDescriptor>(jonString);
+                        _serviceRouteCache.UpdateCache(serviceRouteDescriptor);
+                    }
                     break;
             }
         }

@@ -4,6 +4,7 @@ using Silky.DotNetty.Protocol.Tcp;
 using Silky.Validation.Fluent;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.CachingInterceptor;
+using Silky.Rpc.Modularity;
 using Silky.Rpc.Proxy;
 using Silky.Transaction.Repository.Redis;
 using Silky.Transaction.Tcc;
@@ -21,7 +22,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(RedisCachingModule),
         typeof(RedisTransactionRepositoryModule)
     )]
-    public abstract class GeneralHostModule : StartUpModule
+    public abstract class GeneralHostModule : StartUpWithRpcModule
     {
     }
 }
