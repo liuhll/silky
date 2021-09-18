@@ -5,11 +5,10 @@ using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core.Logging;
+using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Http.Core.Handlers;
-using Silky.Rpc.Extensions;
-using Silky.Rpc.MiniProfiler;
 using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace Silky.Http.Core.Middlewares

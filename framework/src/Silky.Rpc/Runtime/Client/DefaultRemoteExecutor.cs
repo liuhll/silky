@@ -2,9 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core.Logging;
+using Silky.Core.MiniProfiler;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
-using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
 

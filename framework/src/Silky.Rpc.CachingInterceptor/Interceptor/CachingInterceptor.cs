@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Caching;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Extensions;
+using Silky.Core.Logging;
+using Silky.Core.MiniProfiler;
 using Silky.Rpc.Extensions;
-using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.CachingInterceptor

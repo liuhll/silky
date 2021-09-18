@@ -9,13 +9,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silky.Core.Logging;
 using Silky.Core.Modularity;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc.Extensions;
-using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
-using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
 namespace Silky.Http.Core.Middlewares
 {

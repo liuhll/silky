@@ -4,6 +4,7 @@ using System.Text;
 using Silky.Core.Extensions.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Silky.Core.Exceptions;
+using Silky.Core.MiniProfiler;
 
 namespace Silky.Core.Logging
 {
@@ -67,6 +68,14 @@ namespace Silky.Core.Logging
             LogKnownProperties(logger, ex, selectedLevel);
             LogSelfLogging(logger, ex);
             LogData(logger, ex, selectedLevel);
+        }
+        
+        public static void LogWithMiniProfiler(this ILogger logger, string category, string state,
+            string message, bool isError = false, LogLevel? level = null)
+        {
+            level ??= isError ? LogLevel.Error : LogLevel.Debug;
+            logger.LogWithLevel(level.Value, message);
+            MiniProfilerPrinter.Print(category, state, message, isError);
         }
 
         private static void LogKnownProperties(ILogger logger, Exception exception, LogLevel logLevel)

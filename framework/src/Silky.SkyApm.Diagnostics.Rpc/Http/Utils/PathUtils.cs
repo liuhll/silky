@@ -1,5 +1,5 @@
 using System.Linq;
-using Silky.Rpc.MiniProfiler;
+using Silky.Core.MiniProfiler;
 
 namespace Silky.SkyApm.Diagnostics.Rpc.Http.Utils
 {

@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Rpc.MiniProfiler;
+using Silky.Core.MiniProfiler;
 
 namespace Silky.Http.MiniProfiler
 {

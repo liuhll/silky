@@ -11,10 +11,10 @@ using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
 using Silky.Core.Logging;
+using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Extensions;
-using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core.Handlers
