@@ -10,8 +10,9 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Rpc.Address;
-using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;
 
@@ -59,12 +60,12 @@ namespace Silky.Http.Core.Middlewares
 
             if (serviceRoute == null)
             {
-                throw new SilkyException($"The ws service with rpcAddress {path} does not exist.");
+                throw new SilkyException($"The ws service with rpcEndpoint {path} does not exist.");
             }
 
-            if (!serviceRoute.Addresses.Any())
+            if (!serviceRoute.Endpoints.Any())
             {
-                throw new SilkyException($"There is no available service with rpcAddress {path}.");
+                throw new SilkyException($"There is no available service with rpcEndpoint {path}.");
             }
 
             var client = new ClientWebSocket();
@@ -112,9 +113,9 @@ namespace Silky.Http.Core.Middlewares
 
 
             var addressSelector =
-                EngineContext.Current.ResolveNamed<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
-            var address = addressSelector.Select(new AddressSelectContext(serviceRoute.Service.Id,
-                serviceRoute.Addresses, hashKey));
+                EngineContext.Current.ResolveNamed<IRpcEndpointSelector>(ShuntStrategy.HashAlgorithm.ToString());
+            var address = addressSelector.Select(new RpcEndpointSelectContext(serviceRoute.Service.Id,
+                serviceRoute.Endpoints, hashKey));
 
             var destinationUri = CreateDestinationUri(address, path);
             await client.ConnectAsync(destinationUri, context.RequestAborted);
@@ -126,7 +127,7 @@ namespace Silky.Http.Core.Middlewares
             }
         }
 
-        private Uri CreateDestinationUri(IRpcAddress rpcAddress, string path)
+        private Uri CreateDestinationUri(IRpcEndpoint rpcEndpoint, string path)
         {
             var scheme = "ws";
             if (_webSocketOptions.IsSsl)
@@ -134,7 +135,7 @@ namespace Silky.Http.Core.Middlewares
                 scheme = "wss";
             }
 
-            var wsAddress = $"{scheme}://{rpcAddress.Address}:{rpcAddress.Port}{path}";
+            var wsAddress = $"{scheme}://{rpcEndpoint.Address}:{rpcEndpoint.Port}{path}";
             return new Uri(wsAddress);
         }
 

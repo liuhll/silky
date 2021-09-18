@@ -1,4 +1,5 @@
-﻿using Silky.Core.Extensions;
+﻿using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 
 namespace Silky.Core.Rpc
 {
@@ -27,6 +28,29 @@ namespace Silky.Core.Rpc
             return serverAddress?.ToString();
         }
         
+        public static int GetServerPort(this RpcContext rpcContext)
+        {
+            var serverPort = rpcContext.GetAttachment(AttachmentKeys.ServerPort);
+            if (serverPort == null)
+            {
+                throw new SilkyException("Failed to obtain server port");
+            }
+            return serverPort.To<int>();
+        }
+
+        public static string GetServerEndpoint(this RpcContext rpcContext)
+        {
+            var serverAddress = rpcContext.GetAttachment(AttachmentKeys.ServerAddress);
+            if (serverAddress == null)
+            {
+                throw new SilkyException("Failed to obtain server address");
+            }
+
+            var serverPort = rpcContext.GetAttachment(AttachmentKeys.ServerPort);
+
+            return $"{serverAddress.ToString()}:{serverPort}";
+        }
+
         public static string GetServiceKey(this RpcContext rpcContext)
         {
             var serviceKey = rpcContext.GetAttachment(AttachmentKeys.ServiceKey);

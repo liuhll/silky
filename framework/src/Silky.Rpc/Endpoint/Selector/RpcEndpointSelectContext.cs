@@ -1,11 +1,11 @@
 using JetBrains.Annotations;
 using Silky.Core;
 
-namespace Silky.Rpc.Address.Selector
+namespace Silky.Rpc.Endpoint.Selector
 {
-    public class AddressSelectContext
+    public class RpcEndpointSelectContext
     {
-        public AddressSelectContext([NotNull] string monitorId, [NotNull] IRpcAddress[] addressModels,string hash = null)
+        public RpcEndpointSelectContext([NotNull] string monitorId, [NotNull] IRpcEndpoint[] addressModels,string hash = null)
         {
             Check.NotNullOrEmpty(monitorId, nameof(monitorId));
             Check.NotNull(addressModels, nameof(addressModels));
@@ -18,6 +18,6 @@ namespace Silky.Rpc.Address.Selector
 
         public string Hash { get; }
 
-        [NotNull] public IRpcAddress[] AddressModels { get; }
+        [NotNull] public IRpcEndpoint[] AddressModels { get; }
     }
 }

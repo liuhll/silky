@@ -108,5 +108,11 @@ namespace Silky.Http.Core.Handlers
             Check.NotNull(_httpContext, nameof(_httpContext));
             return _parameterParser.Parser(serviceEntry);
         }
+
+        protected override string GetMessageId()
+        {
+            _httpContext.SetHttpMessageId();
+            return _httpContext.TraceIdentifier;
+        }
     }
 }

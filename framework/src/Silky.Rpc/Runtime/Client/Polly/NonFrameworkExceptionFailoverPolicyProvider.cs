@@ -39,7 +39,7 @@ namespace Silky.Rpc.Runtime.Client
 
         private async Task OnRetry(DelegateResult<object> outcome, int retryNumber, Context context)
         {
-            var selectedAddress = GetSelectedServerAddress();
+            var selectedAddress = GetSelectedServerEndpoint();
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover?.Invoke(outcome, retryNumber, context, selectedAddress, FailoverType);

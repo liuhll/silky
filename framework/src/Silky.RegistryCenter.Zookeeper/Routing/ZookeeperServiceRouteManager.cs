@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
-using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Descriptor;
@@ -22,6 +21,8 @@ using Silky.Core;
 using Silky.Lock.Extensions;
 using Silky.RegistryCenter.Zookeeper.Routing.Watchers;
 using Silky.Rpc.Address;
+using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.RegistryCenter.Zookeeper.Routing
 {
@@ -113,7 +114,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        protected override async Task RemoveServiceCenterExceptRoute(AddressDescriptor addressDescriptor)
+        protected override async Task RemoveServiceCenterExceptRoute(RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -129,7 +130,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 var applications = _serviceManager.GetLocalApplications();
 
                 var removeExceptRouteDescriptors = serviceRouteDescriptors.Where(p =>
-                    p.Addresses.Any(p => p.Equals(addressDescriptor))
+                    p.Addresses.Any(p => p.Equals(rpcEndpointDescriptor))
                     && !applications.Contains(p.Service.Application)
                 );
                 var lockProvider = zookeeperClient.GetSynchronizationProvider();
@@ -142,7 +143,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                         var routePath = CreateRoutePath(removeExceptRouteDescriptor.Service);
                         removeExceptRouteDescriptor.Addresses =
                             removeExceptRouteDescriptor.Addresses
-                                .Where(p => !p.Equals(addressDescriptor))
+                                .Where(p => !p.Equals(rpcEndpointDescriptor))
                                 .ToList();
                         var jsonString = _serializer.Serialize(removeExceptRouteDescriptor);
                         var data = jsonString.GetBytes();
@@ -181,7 +182,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        protected override async Task RemoveUnHealthServiceRoute(string serviceId, IRpcAddress rpcAddress)
+        protected override async Task RemoveUnHealthServiceRoute(string serviceId, IRpcEndpoint rpcEndpoint)
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -195,11 +196,11 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 {
                     var serviceCenterDescriptor = await GetRouteDescriptorAsync(routePath, zookeeperClient);
                     if (serviceCenterDescriptor != null &&
-                        serviceCenterDescriptor.Addresses.Any(p => p.Equals(rpcAddress.Descriptor)))
+                        serviceCenterDescriptor.Addresses.Any(p => p.Equals(rpcEndpoint.Descriptor)))
                     {
                         serviceCenterDescriptor.Addresses =
                             serviceCenterDescriptor.Addresses.Where(
-                                p => !p.Equals(rpcAddress.Descriptor));
+                                p => !p.Equals(rpcEndpoint.Descriptor));
                         var jsonString = _serializer.Serialize(serviceCenterDescriptor);
                         var data = jsonString.GetBytes();
                         await zookeeperClient.SetDataAsync(routePath, data);

@@ -7,8 +7,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Microsoft.Extensions.Options;
 using Silky.Rpc.Address;
-using Silky.Rpc.Address.Descriptor;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Runtime.Server;
 
@@ -50,34 +51,34 @@ namespace Silky.Rpc.Routing
             };
         }
 
-        public virtual async Task RegisterRpcRoutes(AddressDescriptor addressDescriptor,
+        public virtual async Task RegisterRpcRoutes(RpcEndpointDescriptor rpcEndpointDescriptor,
             ServiceProtocol serviceProtocol)
         {
             await CreateSubscribeServiceRouteDataChanges(serviceProtocol);
             var localServices = _serviceManager.GetLocalService()
                 .Where(p => p.ServiceProtocol == serviceProtocol);
             Logger.LogDebug(
-                $"Preparing to register routing data for the server [{addressDescriptor.GetHostAddress()}]," +
+                $"Preparing to register routing data for the server [{rpcEndpointDescriptor.GetHostAddress()}]," +
                 $"including the following services: {Environment.NewLine}" +
                 $"{string.Join($",", localServices.Select(p => p.ServiceDescriptor.ServiceName))}");
-            var serviceRouteDescriptors = localServices.Select(p => p.CreateLocalRouteDescriptor(addressDescriptor));
-            await RegisterRoutes(serviceRouteDescriptors, addressDescriptor);
+            var serviceRouteDescriptors = localServices.Select(p => p.CreateLocalRouteDescriptor(rpcEndpointDescriptor));
+            await RegisterRoutes(serviceRouteDescriptors, rpcEndpointDescriptor);
             Logger.LogDebug(
-                $"The the server [{addressDescriptor.GetHostAddress()}] routing data is successfully registered");
+                $"The the server [{rpcEndpointDescriptor.GetHostAddress()}] routing data is successfully registered");
         }
 
         protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
-            AddressDescriptor addressDescriptor)
+            RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
-            await RemoveServiceCenterExceptRoute(addressDescriptor);
+            await RemoveServiceCenterExceptRoute(rpcEndpointDescriptor);
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {
                 await RegisterRouteServiceCenter(serviceRouteDescriptor);
             }
         }
 
-        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IRpcAddress rpcAddress);
+        protected abstract Task RemoveUnHealthServiceRoute(string serviceId, IRpcEndpoint rpcEndpoint);
 
         protected abstract Task CreateSubscribeServiceRouteDataChanges(ServiceProtocol serviceProtocol);
 
@@ -90,11 +91,11 @@ namespace Silky.Rpc.Routing
         protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
 
         protected abstract Task RegisterRouteServiceCenter(ServiceRouteDescriptor serviceRouteDescriptor);
-        protected abstract Task RemoveServiceCenterExceptRoute(AddressDescriptor addressDescriptor);
+        protected abstract Task RemoveServiceCenterExceptRoute(RpcEndpointDescriptor rpcEndpointDescriptor);
 
-        private async Task RemoveServiceRoute(string serviceId, IRpcAddress selectedRpcAddress)
+        private async Task RemoveServiceRoute(string serviceId, IRpcEndpoint selectedRpcEndpoint)
         {
-            await RemoveUnHealthServiceRoute(serviceId, selectedRpcAddress);
+            await RemoveUnHealthServiceRoute(serviceId, selectedRpcEndpoint);
         }
     }
 }

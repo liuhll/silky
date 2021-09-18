@@ -1,4 +1,4 @@
-using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Configuration
@@ -9,7 +9,7 @@ namespace Silky.Rpc.Configuration
 
         public GovernanceOptions()
         {
-            ShuntStrategy = AddressSelectorMode.Polling;
+            ShuntStrategy = ShuntStrategy.Polling;
             TimeoutMillSeconds = 5000;
             EnableCachingInterceptor = true;
             EnableCircuitBreaker = true;
@@ -28,7 +28,7 @@ namespace Silky.Rpc.Configuration
         /// <summary>
         /// 负载分流策略
         /// </summary>
-        public AddressSelectorMode ShuntStrategy { get; set; }
+        public ShuntStrategy ShuntStrategy { get; set; }
 
 
         /// <summary>

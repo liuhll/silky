@@ -3,15 +3,15 @@ using System.Linq;
 using Silky.Core;
 using Silky.Rpc.Address.HealthCheck;
 
-namespace Silky.Rpc.Address.Selector
+namespace Silky.Rpc.Endpoint.Selector
 {
-    public class HashAlgorithmAddressSelector : AddressSelectorBase
+    public class HashAlgorithmRpcEndpointSelector : RpcEndpointSelectorBase
     {
-        private ConcurrentDictionary<string, ConsistentHash<IRpcAddress>> _consistentHashAddressPools = new();
+        private ConcurrentDictionary<string, ConsistentHash<IRpcEndpoint>> _consistentHashAddressPools = new();
 
         private readonly IHealthCheck _healthCheck;
 
-        public HashAlgorithmAddressSelector(IHealthCheck healthCheck)
+        public HashAlgorithmRpcEndpointSelector(IHealthCheck healthCheck)
         {
             _healthCheck = healthCheck;
             _healthCheck.OnRemveAddress += async addressModel =>
@@ -44,14 +44,14 @@ namespace Silky.Rpc.Address.Selector
             };
         }
 
-        public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.HashAlgorithm;
+        public override ShuntStrategy ShuntStrategy { get; } = ShuntStrategy.HashAlgorithm;
 
-        protected override IRpcAddress SelectAddressByAlgorithm(AddressSelectContext context)
+        protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
             Check.NotNullOrEmpty(context.Hash, nameof(context.Hash));
             var addressModels = _consistentHashAddressPools.GetOrAdd(context.MonitorId, v =>
             {
-                var consistentHash = new ConsistentHash<IRpcAddress>();
+                var consistentHash = new ConsistentHash<IRpcEndpoint>();
                 foreach (var address in context.AddressModels)
                 {
                     consistentHash.Add(address);

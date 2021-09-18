@@ -58,7 +58,7 @@ namespace Silky.DotNetty.Abstraction
         private async Task SetInvokeCurrentSeverUnHealth(DelegateResult<object> outcome, int retryNumber,
             Context context)
         {
-            var serviceAddressModel = GetSelectedServerAddress();
+            var serviceAddressModel = GetSelectedServerEndpoint();
             _healthCheck.ChangeHealthStatus(serviceAddressModel, false, _governanceOptions.RemovedUnHealthAddressTimes);
             if (OnInvokeFailover != null)
             {

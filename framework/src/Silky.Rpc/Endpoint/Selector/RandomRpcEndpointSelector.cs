@@ -1,21 +1,21 @@
 using System;
 
-namespace Silky.Rpc.Address.Selector
+namespace Silky.Rpc.Endpoint.Selector
 {
-    public class RandomAddressSelector : AddressSelectorBase
+    public class RandomRpcEndpointSelector : RpcEndpointSelectorBase
     {
         private readonly Func<int, int, int> _generate;
         private readonly Random _random;
 
-        public RandomAddressSelector()
+        public RandomRpcEndpointSelector()
         {
             _random = new Random((int)DateTime.Now.Ticks);
             _generate = (min, max) => _random.Next(min, max);
         }
 
-        public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.Random;
+        public override ShuntStrategy ShuntStrategy { get; } = ShuntStrategy.Random;
 
-        protected override IRpcAddress SelectAddressByAlgorithm(AddressSelectContext context)
+        protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
              var index = _generate(0, context.AddressModels.Length);
              return context.AddressModels[index];

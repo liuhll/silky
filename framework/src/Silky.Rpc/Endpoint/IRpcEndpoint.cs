@@ -1,11 +1,11 @@
 using System;
 using System.Net;
-using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Address
+namespace Silky.Rpc.Endpoint
 {
-    public interface IRpcAddress
+    public interface IRpcEndpoint
     {
         /// <summary>
         /// 地址(Ip或是域名)
@@ -49,6 +49,6 @@ namespace Silky.Rpc.Address
         /// <summary>
         /// 地址描述符
         /// </summary>
-        AddressDescriptor Descriptor { get; }
+        RpcEndpointDescriptor Descriptor { get; }
     }
 }

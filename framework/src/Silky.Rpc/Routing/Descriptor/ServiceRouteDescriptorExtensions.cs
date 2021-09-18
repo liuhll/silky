@@ -1,5 +1,5 @@
 using System.Linq;
-using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Routing.Descriptor
 {
@@ -10,7 +10,7 @@ namespace Silky.Rpc.Routing.Descriptor
             var serviceRoute = new ServiceRoute()
             {
                 Service = serviceRouteDescriptor.Service,
-                Addresses = serviceRouteDescriptor.Addresses.Select(p => p.ConvertToAddressModel()).ToArray()
+                Endpoints = serviceRouteDescriptor.Addresses.Select(p => p.ConvertToAddressModel()).ToArray()
             };
             return serviceRoute;
         }

@@ -1,4 +1,4 @@
-using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Endpoint.Selector;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -7,7 +7,7 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// 负载分流策略
         /// </summary>
-        AddressSelectorMode ShuntStrategy { get; set; }
+        ShuntStrategy ShuntStrategy { get; set; }
 
         /// <summary>
         /// 执行超时时间

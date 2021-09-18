@@ -8,7 +8,7 @@ namespace Silky.Rpc.Transport.Messages
         {
             foreach (var messageAttachment in message.Attachments)
             {
-                if (!messageAttachment.Key.Equals(AttachmentKeys.SelectedAddress))
+                if (!messageAttachment.Key.Equals(AttachmentKeys.SelectedServerEndpoint))
                 {
                     RpcContext.Context.SetAttachment(messageAttachment.Key,messageAttachment.Value);
                 }

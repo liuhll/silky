@@ -7,6 +7,7 @@ using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Modularity;
 using Silky.Rpc.Address;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Utils;
 using SkyApm.Config;
 
@@ -90,7 +91,7 @@ namespace Silky.Rpc.SkyApm.Configuration
             {
                 if (EngineContext.Current.ContainModule("DotNettyTcp"))
                 {
-                    var addressModel = AddressHelper.GetRpcAddressModel();
+                    var addressModel = AddressHelper.GetRpcEndpoint();
                     var ipAddress = $"{addressModel.Address}:{addressModel.Port}";
 
                     return $"{ipAddress}";

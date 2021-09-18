@@ -23,6 +23,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport;
 
@@ -30,7 +31,7 @@ namespace Silky.DotNetty
 {
     public class DotNettyTransportClientFactory : IDisposable, ITransportClientFactory
     {
-        private ConcurrentDictionary<IRpcAddress, Lazy<Task<ITransportClient>>> m_clients = new();
+        private ConcurrentDictionary<IRpcEndpoint, Lazy<Task<ITransportClient>>> m_clients = new();
 
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
         private readonly Bootstrap _bootstrap;
@@ -133,27 +134,27 @@ namespace Silky.DotNetty
             return bootstrap;
         }
 
-        public async Task<ITransportClient> GetClient(IRpcAddress rpcAddress)
+        public async Task<ITransportClient> GetClient(IRpcEndpoint rpcEndpoint)
         {
             try
             {
-                return await GetOrCreateClient(rpcAddress);
+                return await GetOrCreateClient(rpcEndpoint);
             }
             catch (Exception ex)
             {
-                m_clients.TryRemove(rpcAddress, out _);
+                m_clients.TryRemove(rpcEndpoint, out _);
                 Logger.LogException(ex);
                 throw;
             }
         }
 
-        private async Task<ITransportClient> GetOrCreateClient(IRpcAddress rpcAddress)
+        private async Task<ITransportClient> GetOrCreateClient(IRpcEndpoint rpcEndpoint)
         {
-            return await m_clients.GetOrAdd(rpcAddress
+            return await m_clients.GetOrAdd(rpcEndpoint
                 , k => new Lazy<Task<ITransportClient>>(async () =>
                     {
                         Logger.LogInformation(
-                            $"Ready to create a client for the server rpcAddress: {rpcAddress.IPEndPoint}" +
+                            $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}" +
                             $"");
                         var bootstrap = _bootstrap;
                         var channel = await bootstrap.ConnectAsync(k.IPEndPoint);

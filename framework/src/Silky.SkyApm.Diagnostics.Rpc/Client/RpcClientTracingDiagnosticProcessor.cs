@@ -32,7 +32,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
         public void BeginRequest([Object] RpcInvokeEventData eventData)
         {
             var clientAddress = RpcContext.Context.GetClientAddress();
-            var serverAddress = RpcContext.Context.GetServerAddress();
+            var serverEndpoint = RpcContext.Context.GetServerEndpoint();
             var serviceKey = RpcContext.Context.GetServiceKey();
             var context = _silkySegmentContextFactory.GetExitSContext(eventData.ServiceEntryId);
             context.Span.AddLog(
@@ -47,7 +47,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
             context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId.ToString());
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
             context.Span.AddTag(SilkyTags.RPC_CLIENT_ADDRESS, clientAddress);
-            context.Span.AddTag(SilkyTags.RPC_SERVER_ADDRESS, serverAddress);
+            context.Span.AddTag(SilkyTags.RPC_SERVER_ADDRESS, serverEndpoint);
             context.Span.AddTag(SilkyTags.ISGATEWAY, RpcContext.Context.IsGateway());
         }
 

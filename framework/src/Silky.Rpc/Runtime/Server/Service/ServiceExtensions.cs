@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Utils;
 
@@ -9,7 +9,7 @@ namespace Silky.Rpc.Runtime.Server
     public static class ServiceExtensions
     {
         public static ServiceRouteDescriptor CreateLocalRouteDescriptor(this Service service,
-            AddressDescriptor addressDescriptor)
+            RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             if (!service.IsLocal)
             {
@@ -20,7 +20,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 Service = service.ServiceDescriptor,
                 Addresses = new[]
-                    { addressDescriptor },
+                    { rpcEndpointDescriptor },
             };
         }
     }

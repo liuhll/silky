@@ -1,49 +1,48 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
-using Silky.Rpc.Address.Descriptor;
-using Silky.Rpc.Routing;
+using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
-namespace Silky.Rpc.Address.HealthCheck
+namespace Silky.Rpc.Endpoint.HealthCheck
 {
     public class DefaultHealthCheck : IHealthCheck
     {
-        private ConcurrentDictionary<IRpcAddress, HealthCheckModel> m_healthCheckAddresses = new();
+        private ConcurrentDictionary<IRpcEndpoint, HealthCheckModel> m_healthCheckEndpoints = new();
         public event HealthChangeEvent OnHealthChange;
         public event RemoveAddressEvent OnRemveAddress;
         public event UnhealthEvent OnUnhealth;
         public event AddMonitorEvent OnAddMonitor;
 
-        public void RemoveAddress(IRpcAddress rpcAddress)
+        public void RemoveRpcEndpoint(IRpcEndpoint rpcEndpoint)
         {
-            m_healthCheckAddresses.TryRemove(rpcAddress, out _);
-            OnRemveAddress?.Invoke(rpcAddress);
+            m_healthCheckEndpoints.TryRemove(rpcEndpoint, out _);
+            OnRemveAddress?.Invoke(rpcEndpoint);
         }
 
-        public void RemoveAddress(IPAddress ipAddress, int port)
+        public void RemoveRpcEndpoint(IPAddress ipAddress, int port)
         {
-            var key = m_healthCheckAddresses.Keys.FirstOrDefault(p =>
+            var key = m_healthCheckEndpoints.Keys.FirstOrDefault(p =>
                 p.IPEndPoint.Address.MapToIPv4().Equals(ipAddress) && p.Port == port);
             if (key != null)
             {
-                RemoveAddress(key);
+                RemoveRpcEndpoint(key);
             }
         }
 
-        public void Monitor(IRpcAddress rpcAddress)
+        public void Monitor(IRpcEndpoint rpcEndpoint)
         {
-            if (!m_healthCheckAddresses.ContainsKey(rpcAddress))
+            if (!m_healthCheckEndpoints.ContainsKey(rpcEndpoint))
             {
-                m_healthCheckAddresses.GetOrAdd(rpcAddress, new HealthCheckModel(true, 0));
-                OnAddMonitor?.Invoke(rpcAddress);
+                m_healthCheckEndpoints.GetOrAdd(rpcEndpoint, new HealthCheckModel(true, 0));
+                OnAddMonitor?.Invoke(rpcEndpoint);
             }
         }
 
         public bool IsHealth(IPEndPoint ipEndpoint)
         {
-            var key = m_healthCheckAddresses.Keys.FirstOrDefault(p => p.IPEndPoint.Equals(ipEndpoint));
+            var key = m_healthCheckEndpoints.Keys.FirstOrDefault(p => p.IPEndPoint.Equals(ipEndpoint));
             if (key != null)
             {
                 return IsHealth(key);
@@ -52,9 +51,9 @@ namespace Silky.Rpc.Address.HealthCheck
             return false;
         }
 
-        public bool IsHealth(AddressDescriptor addressDescriptor)
+        public bool IsHealth(RpcEndpointDescriptor rpcEndpointDescriptor)
         {
-            var key = m_healthCheckAddresses.Keys.FirstOrDefault(p => p.Descriptor == addressDescriptor);
+            var key = m_healthCheckEndpoints.Keys.FirstOrDefault(p => p.Descriptor == rpcEndpointDescriptor);
             if (key != null)
             {
                 return IsHealth(key);
@@ -63,9 +62,9 @@ namespace Silky.Rpc.Address.HealthCheck
             return false;
         }
 
-        public bool IsHealth(IRpcAddress rpcAddress)
+        public bool IsHealth(IRpcEndpoint rpcEndpoint)
         {
-            if (m_healthCheckAddresses.TryGetValue(rpcAddress, out var checkModel))
+            if (m_healthCheckEndpoints.TryGetValue(rpcEndpoint, out var checkModel))
             {
                 return checkModel.IsHealth;
             }
@@ -75,39 +74,39 @@ namespace Silky.Rpc.Address.HealthCheck
 
         public void ChangeHealthStatus(IPAddress ipAddress, int port, bool isHealth, int unHealthCeilingTimes = 0)
         {
-            var addressModel = AddressHelper.CreateAddressModel(ipAddress.ToString(), port, ServiceProtocol.Tcp);
-            ChangeHealthStatus(addressModel, isHealth, unHealthCeilingTimes);
+            var rpcEndpoint = AddressHelper.CreateRpcEndpoint(ipAddress.ToString(), port, ServiceProtocol.Tcp);
+            ChangeHealthStatus(rpcEndpoint, isHealth, unHealthCeilingTimes);
         }
 
-        public void ChangeHealthStatus(IRpcAddress rpcAddress, bool isHealth, int unHealthCeilingTimes = 0)
+        public void ChangeHealthStatus(IRpcEndpoint rpcEndpoint, bool isHealth, int unHealthCeilingTimes = 0)
         {
-            if (m_healthCheckAddresses.TryGetValue(rpcAddress, out var healthCheckModel))
+            if (m_healthCheckEndpoints.TryGetValue(rpcEndpoint, out var healthCheckModel))
             {
                 var newHealthCheckModel =
                     new HealthCheckModel(isHealth, isHealth ? 0 : healthCheckModel.UnHealthTimes + 1);
-                m_healthCheckAddresses.TryUpdate(rpcAddress, newHealthCheckModel, healthCheckModel);
+                m_healthCheckEndpoints.TryUpdate(rpcEndpoint, newHealthCheckModel, healthCheckModel);
                 healthCheckModel = newHealthCheckModel;
             }
             else
             {
                 healthCheckModel = new HealthCheckModel(isHealth, isHealth ? 0 : 1);
-                m_healthCheckAddresses.TryAdd(rpcAddress, healthCheckModel);
+                m_healthCheckEndpoints.TryAdd(rpcEndpoint, healthCheckModel);
             }
 
             if (!isHealth && healthCheckModel.UnHealthTimes >= unHealthCeilingTimes)
             {
-                OnRemveAddress?.Invoke(rpcAddress);
-                m_healthCheckAddresses.TryRemove(rpcAddress, out var value);
+                OnRemveAddress?.Invoke(rpcEndpoint);
+                m_healthCheckEndpoints.TryRemove(rpcEndpoint, out var value);
             }
 
             if (healthCheckModel.IsHealth != isHealth)
             {
-                OnHealthChange?.Invoke(rpcAddress, isHealth);
+                OnHealthChange?.Invoke(rpcEndpoint, isHealth);
             }
 
             if (!isHealth)
             {
-                OnUnhealth?.Invoke(rpcAddress);
+                OnUnhealth?.Invoke(rpcEndpoint);
             }
         }
 

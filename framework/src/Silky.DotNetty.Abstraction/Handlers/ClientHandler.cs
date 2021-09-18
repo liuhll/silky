@@ -30,7 +30,7 @@ namespace Silky.DotNetty.Handlers
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)
             {
-                _healthCheck.RemoveAddress(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
+                _healthCheck.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
             }
         }
 
@@ -39,7 +39,7 @@ namespace Silky.DotNetty.Handlers
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)
             {
-                _healthCheck.RemoveAddress(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
+                _healthCheck.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
             }
 
             await base.CloseAsync(context);

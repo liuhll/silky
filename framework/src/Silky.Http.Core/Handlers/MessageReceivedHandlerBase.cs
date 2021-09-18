@@ -44,6 +44,7 @@ namespace Silky.Http.Core.Handlers
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             var sp = Stopwatch.StartNew();
             var parameters = await ResolveParameters(serviceEntry);
+            var messageId = GetMessageId();
             var serviceKey = await ResolveServiceKey();
             if (!serviceKey.IsNullOrEmpty())
             {
@@ -54,18 +55,19 @@ namespace Silky.Http.Core.Handlers
             }
 
             RpcContext.Context.SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);
+
             var tracingTimestamp = TracingBefore(new RemoteInvokeMessage()
             {
                 ServiceId = serviceEntry.ServiceId,
                 ServiceEntryId = serviceEntry.Id,
                 Attachments = RpcContext.Context.GetContextAttachments(),
                 Parameters = parameters
-            }, serviceEntry);
+            }, messageId, serviceEntry);
             object executeResult = null;
             try
             {
                 executeResult = await _executor.Execute(serviceEntry, parameters, serviceKey);
-                TracingAfter(tracingTimestamp, serviceEntry, new RemoteResultMessage()
+                TracingAfter(tracingTimestamp, messageId, serviceEntry, new RemoteResultMessage()
                 {
                     ServiceEntryId = serviceEntry.Id,
                     StatusCode = StatusCode.Success,
@@ -74,7 +76,7 @@ namespace Silky.Http.Core.Handlers
             }
             catch (Exception ex)
             {
-                TracingError(tracingTimestamp, serviceEntry, ex.GetExceptionStatusCode(), ex);
+                TracingError(tracingTimestamp, messageId, serviceEntry, ex.GetExceptionStatusCode(), ex);
                 await HandleException(ex);
                 Logger.LogException(ex);
                 throw;
@@ -97,13 +99,13 @@ namespace Silky.Http.Core.Handlers
 
         protected abstract Task<object[]> ResolveParameters(ServiceEntry serviceEntry);
 
-        private long? TracingBefore(RemoteInvokeMessage message, ServiceEntry serviceEntry)
+        private long? TracingBefore(RemoteInvokeMessage message, string messageId, ServiceEntry serviceEntry)
         {
             if (serviceEntry.IsLocal && s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.BeginRpcRequest))
             {
                 var eventData = new RpcInvokeEventData()
                 {
-                    MessageId = RpcContext.Context.GetMessageId(),
+                    MessageId = messageId,
                     OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     ServiceEntryId = message.ServiceEntryId,
                     Message = message
@@ -117,7 +119,10 @@ namespace Silky.Http.Core.Handlers
             return null;
         }
 
-        private void TracingAfter(long? tracingTimestamp, ServiceEntry serviceEntry,
+        protected abstract string GetMessageId();
+
+
+        private void TracingAfter(long? tracingTimestamp, string messageId, ServiceEntry serviceEntry,
             RemoteResultMessage remoteResultMessage)
         {
             if (tracingTimestamp != null && serviceEntry.IsLocal &&
@@ -126,7 +131,7 @@ namespace Silky.Http.Core.Handlers
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 var eventData = new RpcInvokeResultEventData()
                 {
-                    MessageId = RpcContext.Context.GetMessageId(),
+                    MessageId = messageId,
                     ServiceEntryId = serviceEntry.Id,
                     Result = remoteResultMessage.Result,
                     StatusCode = remoteResultMessage.StatusCode,
@@ -137,7 +142,7 @@ namespace Silky.Http.Core.Handlers
             }
         }
 
-        private void TracingError(long? tracingTimestamp, ServiceEntry serviceEntry,
+        private void TracingError(long? tracingTimestamp, string messageId, ServiceEntry serviceEntry,
             StatusCode statusCode,
             Exception ex)
         {
@@ -147,7 +152,7 @@ namespace Silky.Http.Core.Handlers
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 var eventData = new RpcInvokeExceptionEventData()
                 {
-                    MessageId = RpcContext.Context.GetMessageId(),
+                    MessageId = messageId,
                     ServiceEntryId = serviceEntry.Id,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,

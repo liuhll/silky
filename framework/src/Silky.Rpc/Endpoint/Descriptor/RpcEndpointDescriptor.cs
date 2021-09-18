@@ -3,11 +3,11 @@ using System.Diagnostics;
 using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Address.Descriptor
+namespace Silky.Rpc.Endpoint.Descriptor
 {
-    public class AddressDescriptor
+    public class RpcEndpointDescriptor
     {
-        public AddressDescriptor()
+        public RpcEndpointDescriptor()
         {
             ProcessorTime = Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds;
             TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
@@ -25,7 +25,7 @@ namespace Silky.Rpc.Address.Descriptor
 
         public override bool Equals(object obj)
         {
-            var model = obj as AddressDescriptor;
+            var model = obj as RpcEndpointDescriptor;
             if (model == null)
                 return false;
 
@@ -46,12 +46,12 @@ namespace Silky.Rpc.Address.Descriptor
             return ToString().GetHashCode();
         }
 
-        public static bool operator ==(AddressDescriptor model1, AddressDescriptor model2)
+        public static bool operator ==(RpcEndpointDescriptor model1, RpcEndpointDescriptor model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(AddressDescriptor model1, AddressDescriptor model2)
+        public static bool operator !=(RpcEndpointDescriptor model1, RpcEndpointDescriptor model2)
         {
             return !Equals(model1, model2);
         }

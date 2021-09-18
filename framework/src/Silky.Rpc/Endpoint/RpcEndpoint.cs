@@ -2,16 +2,16 @@ using System;
 using System.Net;
 using JetBrains.Annotations;
 using Silky.Core;
-using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Address
+namespace Silky.Rpc.Endpoint
 {
-    public class RpcAddress : IRpcAddress
+    public class RpcEndpoint : IRpcEndpoint
     {
         private int m_fuseTimes;
 
-        public RpcAddress(
+        public RpcEndpoint(
             [NotNull] string address,
             [NotNull] int port,
             ServiceProtocol serviceProtocol = ServiceProtocol.Tcp
@@ -22,7 +22,7 @@ namespace Silky.Rpc.Address
             Port = port;
             ServiceProtocol = serviceProtocol;
             m_fuseTimes = 0;
-            Descriptor = new AddressDescriptor()
+            Descriptor = new RpcEndpointDescriptor()
                 {Address = Address, Port = Port, ServiceProtocol = ServiceProtocol};
         }
 
@@ -61,7 +61,7 @@ namespace Silky.Rpc.Address
 
         public int FuseTimes => m_fuseTimes;
 
-        public AddressDescriptor Descriptor { get; }
+        public RpcEndpointDescriptor Descriptor { get; }
 
         public override string ToString()
         {
@@ -74,7 +74,7 @@ namespace Silky.Rpc.Address
             if (endpoint != null)
                 return endpoint.Address.MapToIPv4() == IPEndPoint.Address && endpoint.Port == IPEndPoint.Port;
 
-            var model = obj as RpcAddress;
+            var model = obj as RpcEndpoint;
             if (model == null)
                 return false;
 
@@ -89,12 +89,12 @@ namespace Silky.Rpc.Address
             return ToString().GetHashCode();
         }
 
-        public static bool operator ==(RpcAddress model1, RpcAddress model2)
+        public static bool operator ==(RpcEndpoint model1, RpcEndpoint model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(RpcAddress model1, RpcAddress model2)
+        public static bool operator !=(RpcEndpoint model1, RpcEndpoint model2)
         {
             return !Equals(model1, model2);
         }

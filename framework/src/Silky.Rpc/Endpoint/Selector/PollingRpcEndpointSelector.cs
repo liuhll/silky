@@ -2,16 +2,16 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Silky.Rpc.Address.HealthCheck;
 
-namespace Silky.Rpc.Address.Selector
+namespace Silky.Rpc.Endpoint.Selector
 {
-    public class PollingAddressSelector : AddressSelectorBase
+    public class PollingRpcEndpointSelector : RpcEndpointSelectorBase
     {
-        private ConcurrentDictionary<string, (int, IRpcAddress[])> addressesPools =
+        private ConcurrentDictionary<string, (int, IRpcEndpoint[])> addressesPools =
             new();
 
         private readonly IHealthCheck _healthCheck;
 
-        public PollingAddressSelector(IHealthCheck healthCheck)
+        public PollingRpcEndpointSelector(IHealthCheck healthCheck)
         {
             _healthCheck = healthCheck;
             _healthCheck.OnRemveAddress += async addressModel =>
@@ -35,9 +35,9 @@ namespace Silky.Rpc.Address.Selector
             };
         }
 
-        public override AddressSelectorMode AddressSelectorMode { get; } = AddressSelectorMode.Polling;
+        public override ShuntStrategy ShuntStrategy { get; } = ShuntStrategy.Polling;
 
-        protected override IRpcAddress SelectAddressByAlgorithm(AddressSelectContext context)
+        protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
             var selectAdderessItem = (0, context.AddressModels);
             var index = 0;

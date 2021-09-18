@@ -1,5 +1,5 @@
 using System;
-using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Endpoint.Selector;
 
 
 namespace Silky.Rpc.Runtime.Server
@@ -9,7 +9,7 @@ namespace Silky.Rpc.Runtime.Server
     {
         public GovernanceAttribute()
         {
-            ShuntStrategy = AddressSelectorMode.Polling;
+            ShuntStrategy = ShuntStrategy.Polling;
             TimeoutMillSeconds = 5000;
             EnableCachingInterceptor = true;
             EnableCircuitBreaker = true;
@@ -23,7 +23,7 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// Shunt Strategy
         /// </summary>
-        public AddressSelectorMode ShuntStrategy { get; set; }
+        public ShuntStrategy ShuntStrategy { get; set; }
 
         /// <summary>
         /// Execution timeout

@@ -18,14 +18,15 @@ namespace Silky.Http.Core.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        public ILogger<SilkyMiddleware> Logger { get; set; }
+        private readonly ILogger<SilkyMiddleware> _logger;
 
         public SilkyMiddleware(RequestDelegate next,
-            IServiceEntryLocator serviceEntryLocator)
+            IServiceEntryLocator serviceEntryLocator, 
+            ILogger<SilkyMiddleware> logger)
         {
             _next = next;
             _serviceEntryLocator = serviceEntryLocator;
-            Logger = NullLogger<SilkyMiddleware>.Instance;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -41,7 +42,7 @@ namespace Silky.Http.Core.Middlewares
                         $"The ServiceEntry whose Id is {serviceEntry.Id} is not allowed to be accessed from the external network");
                 }
 
-                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
+                _logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceEntry,
                     $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
                 RpcContext.Context.SetAttachment(AttachmentKeys.Path, path.ToString());
@@ -53,8 +54,8 @@ namespace Silky.Http.Core.Middlewares
             else
             {
                 // todo Consider supporting RPC communication via http protocol
-                
-                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
+
+                _logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceEntry,
                     $"No ServiceEntry was found through {path}-{method}",
                     true);

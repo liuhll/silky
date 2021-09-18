@@ -39,7 +39,7 @@ namespace Silky.Rpc.MiniProfiler
 
                 public const string FindServiceRoute = "FindServiceRoute";
 
-                public const string SelectedAddress = "SelectedAddress";
+                public const string SelectedAddress = "SelectedServerEndpoint";
 
                 public const string Success = "Success";
 

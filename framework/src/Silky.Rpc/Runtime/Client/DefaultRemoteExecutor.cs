@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
@@ -33,11 +33,11 @@ namespace Silky.Rpc.Runtime.Client
                 Parameters = parameters,
             };
             string hashKey = null;
-            if (serviceEntry.GovernanceOptions.ShuntStrategy == AddressSelectorMode.HashAlgorithm)
+            if (serviceEntry.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
             {
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
-                    $"hashKey is :{hashKey}");
+                    $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
 
             var policy = _invokePolicyBuilder.Build(serviceEntry, parameters);

@@ -1,27 +1,28 @@
 ﻿using System.Net;
 using Silky.Core.DependencyInjection;
-using Silky.Rpc.Address.Descriptor;
+using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Address.HealthCheck
 {
     public interface IHealthCheck : ISingletonDependency
     {
-        void Monitor(IRpcAddress rpcAddress);
+        void Monitor(IRpcEndpoint rpcEndpoint);
 
         bool IsHealth(IPEndPoint ipEndPoint);
 
-        bool IsHealth(AddressDescriptor addressDescriptor);
+        bool IsHealth(RpcEndpointDescriptor rpcEndpointDescriptor);
 
-        bool IsHealth(IRpcAddress rpcAddress);
+        bool IsHealth(IRpcEndpoint rpcEndpoint);
 
-        void ChangeHealthStatus(IRpcAddress rpcAddress, bool isHealth, int unHealthCeilingTimes = 0);
+        void ChangeHealthStatus(IRpcEndpoint rpcEndpoint, bool isHealth, int unHealthCeilingTimes = 0);
 
         void ChangeHealthStatus(IPAddress mapToIPv4, int port, bool isHealth, int unHealthCeilingTimes = 0);
 
-        void RemoveAddress(IRpcAddress rpcAddress);
+        void RemoveRpcEndpoint(IRpcEndpoint rpcEndpoint);
         
-        void RemoveAddress(IPAddress ipAddress, int port);
+        void RemoveRpcEndpoint(IPAddress ipAddress, int port);
 
         event HealthChangeEvent OnHealthChange;
         event RemoveAddressEvent OnRemveAddress;

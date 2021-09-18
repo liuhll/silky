@@ -2,11 +2,11 @@ using System;
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
 using ITestApplication.Test.Fallback;
-using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.CachingInterceptor;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
 
 namespace ITestApplication.Test
@@ -41,12 +41,12 @@ namespace ITestApplication.Test
         string Form([FromForm] TestInput query);
 
         [HttpGet("{name:string}")]
-        [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
+        [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
         [GetCachingIntercept("name:{0}")]
         Task<TestOut> Get([HashKey] [CacheKey(0)] string name);
 
         [HttpGet("{id:long}")]
-        [Governance(ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
+        [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
         [GetCachingIntercept("id:{0}")]
         Task<TestOut> GetById([HashKey] [CacheKey(0)] long id);
 

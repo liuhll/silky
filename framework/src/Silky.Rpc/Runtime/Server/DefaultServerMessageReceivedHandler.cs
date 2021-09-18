@@ -18,6 +18,7 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IServerHandleSupervisor _serverHandleSupervisor;
+        private readonly ICurrentServiceKey _currentServiceKey;
         public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
 
         private static readonly DiagnosticListener s_diagnosticListener =
@@ -25,10 +26,12 @@ namespace Silky.Rpc.Runtime.Server
 
 
         public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
-            IServerHandleSupervisor serverHandleSupervisor)
+            IServerHandleSupervisor serverHandleSupervisor,
+            ICurrentServiceKey currentServiceKey)
         {
             _serviceEntryLocator = serviceEntryLocator;
             _serverHandleSupervisor = serverHandleSupervisor;
+            _currentServiceKey = currentServiceKey;
             Logger = NullLogger<DefaultServerMessageReceivedHandler>.Instance;
         }
 
@@ -37,7 +40,9 @@ namespace Silky.Rpc.Runtime.Server
             var sp = Stopwatch.StartNew();
             message.SetRpcAttachments();
             var clientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ClientAddress).ToString();
-            Logger.LogDebug($"Received a request from the client [{clientAddress}], and the messageId:[{messageId}]");
+            Logger.LogDebug(
+                $"Received a request from the client [{clientAddress}].{Environment.NewLine}" +
+                $"messageId:[{messageId}].{Environment.NewLine}serviceEntryId:[{message.ServiceEntryId}]");
             var tracingTimestamp = TracingBefore(message, messageId);
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
@@ -61,8 +66,7 @@ namespace Silky.Rpc.Runtime.Server
                 }
 
                 _serverHandleSupervisor.Monitor((serviceEntry.Id, clientAddress));
-                var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
-                var result = await serviceEntry.Executor(currentServiceKey.ServiceKey,
+                var result = await serviceEntry.Executor(_currentServiceKey.ServiceKey,
                     message.Parameters);
 
                 remoteResultMessage.Result = result;
@@ -90,6 +94,11 @@ namespace Silky.Rpc.Runtime.Server
                     _serverHandleSupervisor.ExecFail((serviceEntry?.Id, clientAddress),
                         !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds);
                 }
+
+                Logger.LogDebug($"Server processing completed.{Environment.NewLine}" +
+                                $"messageId:[{messageId}].{Environment.NewLine}" +
+                                $"serviceEntryId:[{message.ServiceEntryId}].{Environment.NewLine}" +
+                                $"handleSuccess:{isHandleSuccess.ToString()}");
             }
 
             var resultTransportMessage = new TransportMessage(remoteResultMessage, messageId);

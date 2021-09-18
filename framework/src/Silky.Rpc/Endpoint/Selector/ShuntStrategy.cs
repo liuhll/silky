@@ -1,6 +1,6 @@
-namespace Silky.Rpc.Address.Selector
+namespace Silky.Rpc.Endpoint.Selector
 {
-    public enum AddressSelectorMode
+    public enum ShuntStrategy
     {
         Polling,
         

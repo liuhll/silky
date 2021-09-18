@@ -20,6 +20,7 @@ using Silky.DotNetty.Handlers;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Codec;
@@ -33,7 +34,7 @@ namespace Silky.DotNetty.Protocol.Tcp
         public ILogger<DotNettyTcpServerMessageListener> Logger { get; set; }
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
-        private readonly IRpcAddress _hostRpcAddress;
+        private readonly IRpcEndpoint _hostRpcEndpoint;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private IChannel m_boundChannel;
         private IEventLoopGroup m_bossGroup;
@@ -46,7 +47,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
             _rpcOptions = rpcOptions.Value;
-            _hostRpcAddress = AddressHelper.GetRpcAddressModel();
+            _hostRpcEndpoint = AddressHelper.GetRpcEndpoint();
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
@@ -114,9 +115,9 @@ namespace Silky.DotNetty.Protocol.Tcp
                 }));
             try
             {
-                m_boundChannel = await bootstrap.BindAsync(_hostRpcAddress.IPEndPoint);
+                m_boundChannel = await bootstrap.BindAsync(_hostRpcEndpoint.IPEndPoint);
                 Logger.LogInformation(
-                    $"The service listener started successfully, the listening rpcAddress: {_hostRpcAddress}, the communication protocol: {_hostRpcAddress.ServiceProtocol}");
+                    $"The service listener started successfully, the listening rpcEndpoint: {_hostRpcEndpoint}, the communication protocol: {_hostRpcEndpoint.ServiceProtocol}");
             }
             catch (Exception ex)
             {

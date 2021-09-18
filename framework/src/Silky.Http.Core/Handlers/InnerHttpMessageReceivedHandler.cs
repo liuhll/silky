@@ -40,5 +40,10 @@ namespace Silky.Http.Core.Handlers
         {
             throw new NotImplementedException();
         }
+
+        protected override string GetMessageId()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
@@ -18,9 +19,9 @@ namespace Silky.Rpc.Transport
     public class DefaultTransportClient : ITransportClient
     {
         private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
-
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;
+
         protected static readonly DiagnosticListener s_diagnosticListener =
             new(RpcDiagnosticListenerNames.DiagnosticClientListenerName);
 
@@ -33,7 +34,8 @@ namespace Silky.Rpc.Transport
             _messageSender = messageSender;
             _messageListener = messageListener;
             _messageListener.Received += MessageListenerOnReceived;
-            Logger = NullLogger<DefaultTransportClient>.Instance;
+            Logger = EngineContext.Current.Resolve<ILogger<DefaultTransportClient>>() ??
+                     NullLogger<DefaultTransportClient>.Instance;
         }
 
         private async Task MessageListenerOnReceived(IMessageSender sender, TransportMessage message)
@@ -41,7 +43,7 @@ namespace Silky.Rpc.Transport
             TaskCompletionSource<TransportMessage> task;
             if (!m_resultDictionary.TryGetValue(message.Id, out task))
                 return;
-            Debug.Assert(message.IsResultMessage(), "服务消费者接受到的消息类型不正确");
+            Debug.Assert(message.IsResultMessage(), "The message type received by the service consumer is incorrect");
 
             var content = message.GetContent<RemoteResultMessage>();
             if (content.StatusCode != StatusCode.Success)
@@ -79,6 +81,9 @@ namespace Silky.Rpc.Transport
             var tracingTimestamp = TracingBefore(message, transportMessage.Id);
             var callbackTask =
                 RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, tracingTimestamp, timeout);
+            Logger.LogDebug(
+                $"Preparing to send RPC message.{Environment.NewLine}" +
+                $"messageId:[{transportMessage.Id}].{Environment.NewLine}serviceEntryId:[{message.ServiceEntryId}]");
             await _messageSender.SendMessageAsync(transportMessage);
             return await callbackTask;
         }
@@ -93,6 +98,8 @@ namespace Silky.Rpc.Transport
             {
                 var resultMessage = await tcs.WaitAsync(timeout);
                 var remoteResultMessage = resultMessage.GetContent<RemoteResultMessage>();
+                Logger.LogDebug(
+                    $"Received the message returned from server.{Environment.NewLine}messageId:[{id}].{Environment.NewLine}serviceEntryId:[{serviceEntryId}]");
                 TracingAfter(tracingTimestamp, id, serviceEntryId, remoteResultMessage);
                 return remoteResultMessage;
             }
@@ -128,7 +135,8 @@ namespace Silky.Rpc.Transport
             return null;
         }
 
-        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceEntryId, RemoteResultMessage remoteResultMessage)
+        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceEntryId,
+            RemoteResultMessage remoteResultMessage)
         {
             if (tracingTimestamp != null &&
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcRequest))
@@ -147,7 +155,8 @@ namespace Silky.Rpc.Transport
             }
         }
 
-        private void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId, StatusCode statusCode,
+        private void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId,
+            StatusCode statusCode,
             Exception ex)
         {
             if (tracingTimestamp != null &&

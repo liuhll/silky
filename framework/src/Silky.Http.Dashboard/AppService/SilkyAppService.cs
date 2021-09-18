@@ -166,7 +166,7 @@ namespace Silky.Http.Dashboard.AppService
             var hostAddresses = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.Service.GetHostName() == hostName)
                     .WhereIf(input.ServiceProtocol.HasValue, p => p.Service.ServiceProtocol == input.ServiceProtocol)
-                    .SelectMany(p => p.Addresses)
+                    .SelectMany(p => p.Endpoints)
                     .Distinct()
                 ;
             var hostInstances = new List<GetHostInstanceOutput>();
@@ -193,7 +193,7 @@ namespace Silky.Http.Dashboard.AppService
             var gatewayOutput = new GetGatewayOutput()
             {
                 HostName = gateway.Service.GetHostName(),
-                InstanceCount = gateway.Addresses.Select(p => new { p.Address, p.Port }).Distinct().Count(),
+                InstanceCount = gateway.Endpoints.Select(p => new { p.Address, p.Port }).Distinct().Count(),
                 SupportServiceCount = _serviceRouteCache.ServiceRoutes.Select(p => p.Service).Count(),
                 SupportServiceEntryCount = _serviceRouteCache.ServiceRoutes
                     .SelectMany(p => p.Service.ServiceEntries).Count(),
@@ -212,7 +212,7 @@ namespace Silky.Http.Dashboard.AppService
                 _serviceRouteCache.ServiceRoutes.First(p => p.Service.GetHostName() == EngineContext.Current.HostName);
 
             var gatewayInstances = new List<GetGatewayInstanceOutput>();
-            foreach (var addressDescriptor in gateway.Addresses)
+            foreach (var addressDescriptor in gateway.Endpoints)
             {
                 var gatewayInstance = new GetGatewayInstanceOutput()
                 {
@@ -245,8 +245,8 @@ namespace Silky.Http.Dashboard.AppService
                         Method = p.MethodInfo.Name,
                         MultipleServiceKey = serviceRoute?.MultiServiceKeys() == true,
                         IsEnable = serviceRoute != null &&
-                                   serviceRoute.Addresses.Any(am => SocketCheck.TestConnection(am.Address, am.Port)),
-                        ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0,
+                                   serviceRoute.Endpoints.Any(am => SocketCheck.TestConnection(am.Address, am.Port)),
+                        ServiceRouteCount = serviceRoute?.Endpoints.Length ?? 0,
                         IsDistributeTransaction = p.IsTransactionServiceEntry()
                     };
                     return serviceEntryOutput;
@@ -285,8 +285,8 @@ namespace Silky.Http.Dashboard.AppService
                 Method = serviceEntry.MethodInfo.Name,
                 MultipleServiceKey = serviceRoute?.MultiServiceKeys() == true,
                 IsEnable = serviceRoute != null &&
-                           serviceRoute.Addresses.Any(p => SocketCheck.TestConnection(p.Address, p.Port)),
-                ServiceRouteCount = serviceRoute?.Addresses.Length ?? 0,
+                           serviceRoute.Endpoints.Any(p => SocketCheck.TestConnection(p.Address, p.Port)),
+                ServiceRouteCount = serviceRoute?.Endpoints.Length ?? 0,
                 GovernanceOptions = serviceEntry.GovernanceOptions,
                 CacheTemplates = serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().Select(p =>
                     new ServiceEntryCacheTemplateOutput()
@@ -320,7 +320,7 @@ namespace Silky.Http.Dashboard.AppService
             var serviceRoute = serviceEntry.GetServiceRoute();
             if (serviceRoute != null)
             {
-                foreach (var address in serviceRoute.Addresses)
+                foreach (var address in serviceRoute.Endpoints)
                 {
                     var serviceEntryInstance = new GetServiceEntryRouteOutput()
                     {
@@ -344,7 +344,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
-                throw new BusinessException($"{address} incorrect rpcAddress format");
+                throw new BusinessException($"{address} incorrect rpcEndpoint format");
             }
 
             var addressInfo = address.Split(":");
@@ -353,7 +353,7 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} is unHealth");
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
+            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
 
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getInstanceSupervisorServiceEntryId);
             if (serviceEntry == null)
@@ -365,7 +365,7 @@ namespace Silky.Http.Dashboard.AppService
                 (await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
             if (result?.Address != address)
             {
-                throw new SilkyException("The rpcAddress of the routing instance is wrong");
+                throw new SilkyException("The rpcEndpoint of the routing instance is wrong");
             }
 
             return result;
@@ -376,7 +376,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
-                throw new BusinessException($"{address} incorrect rpcAddress format");
+                throw new BusinessException($"{address} incorrect rpcEndpoint format");
             }
 
             var addressInfo = address.Split(":");
@@ -385,7 +385,7 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} is unHealth");
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
+            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceHandle);
             if (serviceEntry == null)
             {
@@ -404,7 +404,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
-                throw new BusinessException($"{address} incorrect rpcAddress format");
+                throw new BusinessException($"{address} incorrect rpcEndpoint format");
             }
 
             var addressInfo = address.Split(":");
@@ -413,7 +413,7 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} is unHealth");
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedAddress, address);
+            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
 
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceInvoke);
             if (serviceEntry == null)
@@ -461,7 +461,7 @@ namespace Silky.Http.Dashboard.AppService
                 Title = "微服务应用实例",
                 Count = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Tcp)
-                    .SelectMany(p => p.Addresses)
+                    .SelectMany(p => p.Endpoints)
                     .Select(p => new { p.Address, p.Port }).Distinct().Count()
             });
 
@@ -471,7 +471,7 @@ namespace Silky.Http.Dashboard.AppService
                 Title = "支持WebSocket的应用实例",
                 Count = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Ws)
-                    .SelectMany(p => p.Addresses)
+                    .SelectMany(p => p.Endpoints)
                     .Select(p => new { p.Address, p.Port }).Distinct().Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()

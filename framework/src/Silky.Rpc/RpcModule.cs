@@ -7,7 +7,6 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Rpc.Address.Selector;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime;
@@ -15,6 +14,7 @@ using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Configuration;
 using Silky.Core.Rpc;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Transport.Messages;
 
@@ -95,18 +95,18 @@ namespace Silky.Rpc
 
         private void RegisterServicesForAddressSelector(ContainerBuilder builder)
         {
-            builder.RegisterType<PollingAddressSelector>()
+            builder.RegisterType<PollingRpcEndpointSelector>()
                 .SingleInstance()
                 .AsSelf()
-                .Named<IAddressSelector>(AddressSelectorMode.Polling.ToString());
-            builder.RegisterType<PollingAddressSelector>()
+                .Named<IRpcEndpointSelector>(ShuntStrategy.Polling.ToString());
+            builder.RegisterType<PollingRpcEndpointSelector>()
                 .SingleInstance()
                 .AsSelf()
-                .Named<IAddressSelector>(AddressSelectorMode.Random.ToString());
-            builder.RegisterType<HashAlgorithmAddressSelector>()
+                .Named<IRpcEndpointSelector>(ShuntStrategy.Random.ToString());
+            builder.RegisterType<HashAlgorithmRpcEndpointSelector>()
                 .SingleInstance()
                 .AsSelf()
-                .Named<IAddressSelector>(AddressSelectorMode.HashAlgorithm.ToString());
+                .Named<IRpcEndpointSelector>(ShuntStrategy.HashAlgorithm.ToString());
         }
 
         private void RegisterServicesExecutor(ContainerBuilder builder)

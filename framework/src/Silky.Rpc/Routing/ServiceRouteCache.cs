@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Routing.Descriptor;
 using Silky.Rpc.Runtime.Server;
 
@@ -37,16 +38,16 @@ namespace Silky.Rpc.Routing
             Logger = NullLogger<ServiceRouteCache>.Instance;
         }
 
-        private async Task OnRemoveAddressHandler(IRpcAddress addressmodel)
+        private async Task OnRemoveAddressHandler(IRpcEndpoint addressmodel)
         {
             addressmodel.InitFuseTimes();
             var removeAddressServiceRoutes =
-                ServiceRoutes.Where(p => p.Addresses.Any(q => q.Descriptor == addressmodel.Descriptor));
+                ServiceRoutes.Where(p => p.Endpoints.Any(q => q.Descriptor == addressmodel.Descriptor));
             var updateRegisterServiceRouteDescriptors = new List<ServiceRouteDescriptor>();
             foreach (var removeAddressServiceRoute in removeAddressServiceRoutes)
             {
-                removeAddressServiceRoute.Addresses =
-                    removeAddressServiceRoute.Addresses.Where(p => p.Descriptor != addressmodel.Descriptor).ToArray();
+                removeAddressServiceRoute.Endpoints =
+                    removeAddressServiceRoute.Endpoints.Where(p => p.Descriptor != addressmodel.Descriptor).ToArray();
                 _serviceRouteCache.AddOrUpdate(removeAddressServiceRoute.Service.Id,
                     removeAddressServiceRoute, (id, _) => removeAddressServiceRoute);
                 updateRegisterServiceRouteDescriptors.Add(removeAddressServiceRoute.ConvertToDescriptor());
@@ -71,9 +72,9 @@ namespace Silky.Rpc.Routing
 
             _serviceRouteCache[serviceRouteDescriptor.Service.Id] = serviceRoute;
             Logger.LogInformation(
-                $"Update the service routing [{serviceRoute.Service.Id}] cache, the routing rpcAddress is:[{string.Join(',', serviceRoute.Addresses.Select(p => p.ToString()))}]");
+                $"Update the service routing [{serviceRoute.Service.Id}] cache, the routing rpcEndpoint is:[{string.Join(',', serviceRoute.Endpoints.Select(p => p.ToString()))}]");
 
-            foreach (var address in serviceRoute.Addresses)
+            foreach (var address in serviceRoute.Endpoints)
             {
                 _healthCheck.Monitor(address);
             }
@@ -94,9 +95,9 @@ namespace Silky.Rpc.Routing
             _serviceRouteCache.TryRemove(serviceId, out ServiceRoute serviceRoute);
             if (serviceRoute != null)
             {
-                foreach (var routeAddress in serviceRoute.Addresses)
+                foreach (var routeAddress in serviceRoute.Endpoints)
                 {
-                    _healthCheck.RemoveAddress(routeAddress);
+                    _healthCheck.RemoveRpcEndpoint(routeAddress);
                 }
             }
         }

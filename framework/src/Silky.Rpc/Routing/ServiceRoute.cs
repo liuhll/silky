@@ -1,12 +1,13 @@
 using System.Linq;
 using Silky.Rpc.Address;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
 {
     public class ServiceRoute
     {
-        public IRpcAddress[] Addresses { get; set; }
+        public IRpcEndpoint[] Endpoints { get; set; }
         
         public ServiceDescriptor Service { get; set; }
         
@@ -21,7 +22,7 @@ namespace Silky.Rpc.Routing
             {
                 return false;
             }
-            return Addresses.All(p => model.Addresses.Any(q => p == q));
+            return Endpoints.All(p => model.Endpoints.Any(q => p == q));
         }
 
         public static bool operator ==(ServiceRoute model1, ServiceRoute model2)
@@ -36,7 +37,7 @@ namespace Silky.Rpc.Routing
 
         public override int GetHashCode()
         {
-            return (Service.ToString() + string.Join(",", Addresses.Select(p => p.ToString()))).GetHashCode();
+            return (Service.ToString() + string.Join(",", Endpoints.Select(p => p.ToString()))).GetHashCode();
         }
     }
 }
