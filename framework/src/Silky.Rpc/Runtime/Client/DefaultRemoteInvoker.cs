@@ -47,7 +47,8 @@ namespace Silky.Rpc.Runtime.Client
             ShuntStrategy shuntStrategy, string hashKey = null)
         {
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
-                $"The rpc request call start.{Environment.NewLine} serviceEntryId:[{remoteInvokeMessage.ServiceEntryId}]");
+                $"The rpc request call start{Environment.NewLine} " +
+                $"serviceEntryId:[{remoteInvokeMessage.ServiceEntryId}]");
             var serviceRoute = FindServiceRoute(remoteInvokeMessage);
             var selectedRpcEndpoint =
                 SelectedRpcEndpoint(serviceRoute, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey);
@@ -86,7 +87,7 @@ namespace Silky.Rpc.Runtime.Client
                     sp.Elapsed.TotalMilliseconds);
                 Logger.LogException(ex);
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
-                    $"The rpc request call failed.{Environment.NewLine}");
+                    $"The rpc request call failed");
                 throw;
             }
 
@@ -95,7 +96,7 @@ namespace Silky.Rpc.Runtime.Client
                 sp.Elapsed.TotalMilliseconds);
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.Success,
-                $"The rpc request call succeeded.{Environment.NewLine}");
+                $"The rpc request call succeeded");
             return invokeResult;
         }
 
@@ -146,7 +147,7 @@ namespace Silky.Rpc.Runtime.Client
 
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.SelectedAddress,
-                $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Endpoints.Where(p => p.Enabled).Select(p => p.ToString()))}.{Environment.NewLine}" +
+                $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Endpoints.Where(p => p.Enabled).Select(p => p.ToString()))}{Environment.NewLine}" +
                 $"The selected service provider rpcEndpoint is:[{selectedRpcEndpoint.ToString()}]");
             return selectedRpcEndpoint;
         }

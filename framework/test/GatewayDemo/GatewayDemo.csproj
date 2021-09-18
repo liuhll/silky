@@ -49,9 +49,6 @@
       </Content>
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="logs" />
-    </ItemGroup>
-    <ItemGroup>
       <None Include="apollo.properties" />
     </ItemGroup>
 
