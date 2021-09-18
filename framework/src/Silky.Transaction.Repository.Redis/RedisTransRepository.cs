@@ -205,9 +205,9 @@ namespace Silky.Transaction.Repository.Redis
                 await _participantDistributedCache.SetAsync(key, (SilkyParticipant) participant);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.LogWarning($"Lock participant occur a exception", e);
+                Logger.LogWarning($"Lock participant occur a exception", ex);
                 return false;
             }
         }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.DynamicProxy;
+using Silky.Core.Logging;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Handler;
@@ -17,6 +20,13 @@ namespace Silky.Transaction.Tcc.Handlers
 
         private static readonly DiagnosticListener s_diagnosticListener =
             new(TransactionDiagnosticListenerNames.DiagnosticGlobalTransactionListener);
+
+        public ILogger<StarterTccTransactionHandler> Logger { get; set; }
+
+        public StarterTccTransactionHandler()
+        {
+            Logger = NullLogger<StarterTccTransactionHandler>.Instance;
+        }
 
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
@@ -41,7 +51,7 @@ namespace Silky.Transaction.Tcc.Handlers
                     await executor.UpdateStartStatus(transaction);
                     WriteTracing(TransactionDiagnosticListenerNames.GlobalTryingHandle, transaction, serviceEntry);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     var errorCurrentTransaction = SilkyTransactionHolder.Instance.CurrentTransaction;
                     WriteTracing(TransactionDiagnosticListenerNames.GlobalCancelingHandle, errorCurrentTransaction,
@@ -49,6 +59,7 @@ namespace Silky.Transaction.Tcc.Handlers
                     await executor.GlobalCancel(errorCurrentTransaction);
                     WriteTracing(TransactionDiagnosticListenerNames.GlobalCancelingHandle, errorCurrentTransaction,
                         serviceEntry);
+                    Logger.LogException(ex);
                     throw;
                 }
 

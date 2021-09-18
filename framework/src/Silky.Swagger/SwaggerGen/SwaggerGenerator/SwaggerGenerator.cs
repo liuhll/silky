@@ -8,7 +8,10 @@ using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.OpenApi.Models;
+using Silky.Core.Logging;
 
 namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 {
@@ -17,6 +20,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly ISchemaGenerator _schemaGenerator;
         private readonly SwaggerGeneratorOptions _options;
+        public ILogger<SwaggerGenerator> Logger { get; set; }
 
         public SwaggerGenerator(
             SwaggerGeneratorOptions options,
@@ -26,6 +30,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             _options = options ?? new SwaggerGeneratorOptions();
             _schemaGenerator = schemaGenerator;
             _serviceEntryManager = serviceEntryManager;
+            Logger = NullLogger<SwaggerGenerator>.Instance;
         }
 
 
@@ -57,6 +62,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             {
                 filter.Apply(swaggerDoc, filterContext);
             }
+
             return swaggerDoc;
         }
 
@@ -142,6 +148,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             }
             catch (Exception ex)
             {
+                Logger.LogException(ex);
                 throw new SwaggerGeneratorException(
                     message:
                     $"Failed to generate ServiceEntryId for action - {serviceEntry.ServiceEntryDescriptor.Id}. See inner exception",
@@ -157,7 +164,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             // {
             //     responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(serviceEntry, schemaRepository, responseCode));
             // }
-            responses.Add(((int) ResponsesCode.Success).ToString(), GenerateResponse(serviceEntry, schemaRepository));
+            responses.Add(((int)ResponsesCode.Success).ToString(), GenerateResponse(serviceEntry, schemaRepository));
             return responses;
         }
 
@@ -265,7 +272,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             SchemaRepository schemaRepository, IEnumerable<ParameterDescriptor> formParameters)
         {
             var contentTypes = InferRequestContentTypes(serviceEntry);
-            contentTypes = contentTypes.Any() ? contentTypes : new[] {"multipart/form-data"};
+            contentTypes = contentTypes.Any() ? contentTypes : new[] { "multipart/form-data" };
             var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
             return new OpenApiRequestBody
             {
@@ -277,7 +284,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                             Schema = schema,
                             Encoding = schema.Properties.ToDictionary(
                                 entry => entry.Key,
-                                entry => new OpenApiEncoding {Style = ParameterStyle.Form}
+                                entry => new OpenApiEncoding { Style = ParameterStyle.Form }
                             )
                         }
                     )
@@ -505,6 +512,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             }
             catch (Exception ex)
             {
+                Logger.LogException(ex);
                 throw new SwaggerGeneratorException(
                     message: $"Failed to generate schema for type - {type}. See inner exception",
                     innerException: ex);
@@ -514,7 +522,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
         private IList<OpenApiTag> GenerateOperationTags(ServiceEntry serviceEntry)
         {
             return _options.TagsSelector(serviceEntry)
-                .Select(tagName => new OpenApiTag {Name = tagName})
+                .Select(tagName => new OpenApiTag { Name = tagName })
                 .ToList();
         }
 
@@ -528,28 +536,28 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 
             return (host == null && basePath == null)
                 ? new List<OpenApiServer>()
-                : new List<OpenApiServer> {new OpenApiServer {Url = $"{host}{basePath}"}};
+                : new List<OpenApiServer> { new OpenApiServer { Url = $"{host}{basePath}" } };
         }
 
         private static readonly Dictionary<string, OperationType> OperationTypeMap =
             new Dictionary<string, OperationType>
             {
-                {"GET", OperationType.Get},
-                {"PUT", OperationType.Put},
-                {"POST", OperationType.Post},
-                {"DELETE", OperationType.Delete},
-                {"OPTIONS", OperationType.Options},
-                {"HEAD", OperationType.Head},
-                {"PATCH", OperationType.Patch},
-                {"TRACE", OperationType.Trace}
+                { "GET", OperationType.Get },
+                { "PUT", OperationType.Put },
+                { "POST", OperationType.Post },
+                { "DELETE", OperationType.Delete },
+                { "OPTIONS", OperationType.Options },
+                { "HEAD", OperationType.Head },
+                { "PATCH", OperationType.Patch },
+                { "TRACE", OperationType.Trace }
             };
 
         private static readonly Dictionary<ParameterFrom, ParameterLocation> ParameterLocationMap =
             new Dictionary<ParameterFrom, ParameterLocation>
             {
-                {ParameterFrom.Query, ParameterLocation.Query},
-                {ParameterFrom.Header, ParameterLocation.Header},
-                {ParameterFrom.Path, ParameterLocation.Path}
+                { ParameterFrom.Query, ParameterLocation.Query },
+                { ParameterFrom.Header, ParameterLocation.Header },
+                { ParameterFrom.Path, ParameterLocation.Path }
             };
 
         private static readonly IEnumerable<Type> RequiredAttributeTypes = new[]

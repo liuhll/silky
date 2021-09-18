@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
+using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport;
@@ -141,6 +142,7 @@ namespace Silky.DotNetty
             catch (Exception ex)
             {
                 m_clients.TryRemove(addressModel, out _);
+                Logger.LogException(ex);
                 throw;
             }
         }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.DynamicProxy;
+using Silky.Core.Logging;
 using Silky.Rpc.Extensions;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Handler;
@@ -16,13 +19,19 @@ namespace Silky.Transaction.Tcc.Handlers
     public class ParticipantTccTransactionHandler : ITransactionHandler
     {
         private readonly TccTransactionExecutor _executor = TccTransactionExecutor.Executor;
-
+        
         private static readonly DiagnosticListener s_diagnosticListener =
             new(TransactionDiagnosticListenerNames.DiagnosticParticipantTransactionListener);
 
+        public ILogger<ParticipantTccTransactionHandler> Logger { get; set; }
+
+        public ParticipantTccTransactionHandler()
+        {
+            Logger = NullLogger<ParticipantTccTransactionHandler>.Instance;
+        }
+
         public async Task Handler(TransactionContext context, ISilkyMethodInvocation invocation)
         {
-           // var serviceEntry = invocation.GetServiceEntry();
             WriteTracing(TransactionDiagnosticListenerNames.ParticipantBeginHandle, context);
             switch (context.Action)
             {
@@ -44,14 +53,14 @@ namespace Silky.Transaction.Tcc.Handlers
                             await TransRepositoryStore.UpdateParticipantStatus(participant);
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
                         if (participant != null)
                         {
                             ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
                         }
-
                         await TransRepositoryStore.RemoveParticipant(participant);
+                        Logger.LogException(ex);
                         throw;
                     }
                     finally

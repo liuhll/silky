@@ -85,8 +85,6 @@ namespace Silky.Rpc.Runtime.Client
                 Logger.LogException(ex);
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
                     $"rpc remote call failed");
-
-
                 throw;
             }
 

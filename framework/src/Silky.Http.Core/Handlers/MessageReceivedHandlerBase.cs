@@ -10,6 +10,7 @@ using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
+using Silky.Core.Logging;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Extensions;
@@ -71,10 +72,11 @@ namespace Silky.Http.Core.Handlers
                     Result = executeResult,
                 });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                TracingError(tracingTimestamp, serviceEntry, e.GetExceptionStatusCode(), e);
-                await HandleException(e);
+                TracingError(tracingTimestamp, serviceEntry, ex.GetExceptionStatusCode(), ex);
+                await HandleException(ex);
+                Logger.LogException(ex);
                 throw;
             }
             finally

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
+using Silky.Core.Logging;
 using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;
@@ -117,14 +118,14 @@ namespace Silky.RegistryCenter.Zookeeper
                 _zookeeperClients.GetOrAdd(connStr, zookeeperClient);
                 m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(true, 0));
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.LogWarning($"Unable to link to the service registry {connStr}, reason: {e.Message}");
+               Logger.LogException(ex);
                 m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(false)
                 {
                     HealthType = HealthType.Disconnected,
                     UnHealthTimes = 1,
-                    UnHealthReason = e.Message
+                    UnHealthReason = ex.Message
                 });
             }
         }

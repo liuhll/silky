@@ -5,6 +5,7 @@ using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Logging;
+using Silky.Core.Logging;
 using WebSocketSharp.Server;
 
 namespace Silky.WebSocket
@@ -49,11 +50,12 @@ namespace Silky.WebSocket
                 _logger.LogInformation(
                     $"Ws service started successfully, service address: {_socketServer.Address}:{_socketServer.Port}");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 _logger.LogError(
-                    $"Ws service failed to start, service address: {_socketServer.Address}:{_socketServer.Port}, reason: {e.Message}",
-                    e);
+                    $"Ws service failed to start, service address: {_socketServer.Address}:{_socketServer.Port}, reason: {ex.Message}",
+                    ex);
+                _logger.LogException(ex);
                 throw;
             }
         }

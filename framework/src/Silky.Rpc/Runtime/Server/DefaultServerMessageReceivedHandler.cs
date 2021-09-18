@@ -2,8 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Logging;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Security;
@@ -15,6 +18,7 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IServerHandleSupervisor _serverHandleSupervisor;
+        public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
 
         private static readonly DiagnosticListener s_diagnosticListener =
             new(RpcDiagnosticListenerNames.DiagnosticServerListenerName);
@@ -25,6 +29,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             _serviceEntryLocator = serviceEntryLocator;
             _serverHandleSupervisor = serverHandleSupervisor;
+            Logger = NullLogger<DefaultServerMessageReceivedHandler>.Instance;
         }
 
         public async Task Handle(string messageId, IMessageSender sender, RemoteInvokeMessage message)
@@ -64,13 +69,14 @@ namespace Silky.Rpc.Runtime.Server
                 remoteResultMessage.StatusCode = StatusCode.Success;
                 TracingAfter(tracingTimestamp, messageId, message.ServiceEntryId, remoteResultMessage);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 isHandleSuccess = false;
-                remoteResultMessage.ExceptionMessage = e.GetExceptionMessage();
-                remoteResultMessage.StatusCode = e.GetExceptionStatusCode();
-                remoteResultMessage.ValidateErrors = e.GetValidateErrors().ToArray();
-                TracingError(tracingTimestamp, messageId, message.ServiceEntryId, e.GetExceptionStatusCode(), e);
+                remoteResultMessage.ExceptionMessage = ex.GetExceptionMessage();
+                remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
+                remoteResultMessage.ValidateErrors = ex.GetValidateErrors().ToArray();
+                Logger.LogException(ex);
+                TracingError(tracingTimestamp, messageId, message.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
             }
             finally
             {

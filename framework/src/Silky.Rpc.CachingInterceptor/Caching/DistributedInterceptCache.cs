@@ -10,9 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Caching;
 using Silky.Caching.Configuration;
+using Silky.Core.Logging;
 using Silky.Core.Threading;
 
 namespace Silky.Rpc.CachingInterceptor
@@ -75,7 +78,7 @@ namespace Silky.Rpc.CachingInterceptor
                     HandleException(ex);
                     return null;
                 }
-
+                Logger.LogException(ex);
                 throw;
             }
 
@@ -102,7 +105,7 @@ namespace Silky.Rpc.CachingInterceptor
                     await HandleExceptionAsync(ex);
                     return null;
                 }
-
+                Logger.LogException(ex);
                 throw;
             }
 

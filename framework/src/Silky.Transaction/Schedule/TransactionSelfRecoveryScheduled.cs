@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Logging;
 using Silky.Core.Serialization;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
@@ -87,9 +88,10 @@ namespace Silky.Transaction.Schedule
                         _logger.LogWarning($"Silky scheduled phyDeleted failed to acquire distributed lock");
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    _logger.LogError($"silky scheduled phyDeleted log is error{e.Message}", e);
+                    _logger.LogError($"silky scheduled phyDeleted log is error{ex.Message}", ex);
+                    _logger.LogException(ex);
                 }
             }
         }
@@ -133,9 +135,10 @@ namespace Silky.Transaction.Schedule
                     _logger.LogWarning($"Silky scheduled cleanRecovery failed to acquire distributed lock");
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError($"silky scheduled cleanRecovery log is error{e.Message}", e);
+                _logger.LogError($"silky scheduled cleanRecovery log is error{ex.Message}", ex);
+                _logger.LogException(ex);
             }
         }
 
@@ -203,9 +206,10 @@ namespace Silky.Transaction.Schedule
                     _logger.LogWarning($"Silky scheduled SelfTccRecovery failed to acquire distributed lock");
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError($"silky scheduled SelfTccRecovery log is error{e.Message}", e);
+                _logger.LogError($"silky scheduled SelfTccRecovery log is error{ex.Message}", ex);
+                _logger.LogException(ex);
             }
         }
 

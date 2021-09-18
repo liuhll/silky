@@ -96,7 +96,7 @@ namespace Silky.Rpc.Routing
                                 apiSegmentIsMatch.Add(true);
                                 continue;
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
                                 apiSegmentIsMatch.Add(false);
                                 break;

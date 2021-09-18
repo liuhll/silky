@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core.Logging;
 using Silky.Core.Serialization;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
@@ -32,10 +33,10 @@ namespace Silky.Transaction.Tcc.Schedule
                     $"The transaction participant {participant.ParticipantId} executes the Canceling method successfully");
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.LogError($"mily Recovery executor cancel exception param{_serializer.Serialize(participant)}",
-                    e);
+                Logger.LogError($"Recovery executor cancel exception param{_serializer.Serialize(participant)}",  ex);
+                Logger.LogException(ex);
                 return false;
             }
         }
@@ -51,10 +52,10 @@ namespace Silky.Transaction.Tcc.Schedule
                     $"The transaction participant {participant.ParticipantId} executes the Confirming method successfully");
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.LogError($"Recovery executor confirm exception param{_serializer.Serialize(participant)}",
-                    e);
+                Logger.LogError($"Recovery executor confirm exception param{_serializer.Serialize(participant)}",  ex);
+                Logger.LogException(ex);
                 return false;
             }
         }

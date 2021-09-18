@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Logging;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Runtime;
@@ -20,7 +21,6 @@ namespace Silky.Rpc.Transport
 
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;
-
         protected static readonly DiagnosticListener s_diagnosticListener =
             new(RpcDiagnosticListenerNames.DiagnosticClientListenerName);
 
@@ -98,6 +98,7 @@ namespace Silky.Rpc.Transport
             }
             catch (Exception ex)
             {
+                Logger.LogException(ex);
                 TracingError(tracingTimestamp, id, serviceEntryId, ex.GetExceptionStatusCode(), ex);
                 throw;
             }

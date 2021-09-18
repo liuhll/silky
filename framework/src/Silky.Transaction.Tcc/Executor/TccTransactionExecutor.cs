@@ -79,9 +79,9 @@ namespace Silky.Transaction.Tcc.Executor
                     await participant.Executor(ActionStage.Confirming);
                     successList.Add(true);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Logger.LogError("Participant confirm exception", e.Message);
+                    Logger.LogError("Participant confirm exception", ex.Message);
                     successList.Add(false);
                 }
             }

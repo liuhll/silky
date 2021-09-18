@@ -18,6 +18,7 @@ using Silky.Core.Configuration;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.Logging;
 using Silky.Core.Serialization;
 using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
@@ -59,6 +60,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
             {
                 if (ex != null && _appSettingsOptions.DisplayFullErrorStack)
                 {
+                    Logger.LogException(ex);
                     message += Environment.NewLine + ex.StackTrace;
                 }
 

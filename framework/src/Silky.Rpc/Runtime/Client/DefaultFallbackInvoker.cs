@@ -52,10 +52,10 @@ namespace Silky.Rpc.Runtime.Client
                     result = serviceEntry.FallbackMethodExecutor.Execute(instance, parameters);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.LogException(e);
-                throw new FallbackException(e.Message, e.InnerException);
+                Logger.LogException(ex);
+                throw new FallbackException(ex.Message, ex.InnerException);
             }
 
             return result;

@@ -118,9 +118,9 @@ namespace Silky.DotNetty.Protocol.Tcp
                 Logger.LogInformation(
                     $"The service listener started successfully, the listening address: {_hostAddress}, the communication protocol: {_hostAddress.ServiceProtocol}");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.LogException(e);
+                Logger.LogException(ex);
                 throw;
             }
         }
