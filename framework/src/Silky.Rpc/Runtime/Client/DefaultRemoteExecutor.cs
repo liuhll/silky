@@ -1,6 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Rpc.Address.Selector;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
@@ -11,12 +14,14 @@ namespace Silky.Rpc.Runtime.Client
     {
         private readonly IRemoteInvoker _remoteInvoker;
         private readonly IInvokePolicyBuilder _invokePolicyBuilder;
+        public ILogger<DefaultRemoteExecutor> Logger { get; set; }
 
         public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker,
             IInvokePolicyBuilder invokePolicyBuilder)
         {
             _remoteInvoker = remoteInvoker;
             _invokePolicyBuilder = invokePolicyBuilder;
+            Logger = NullLogger<DefaultRemoteExecutor>.Instance;
         }
 
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
@@ -31,7 +36,7 @@ namespace Silky.Rpc.Runtime.Client
             if (serviceEntry.GovernanceOptions.ShuntStrategy == AddressSelectorMode.HashAlgorithm)
             {
                 hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
-                MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"hashKey is :{hashKey}");
             }
 

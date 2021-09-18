@@ -4,8 +4,11 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Rpc;
 using Silky.Http.Core.Handlers;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
@@ -15,12 +18,14 @@ namespace Silky.Http.Core.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IServiceEntryLocator _serviceEntryLocator;
+        public ILogger<SilkyMiddleware> Logger { get; set; }
 
         public SilkyMiddleware(RequestDelegate next,
             IServiceEntryLocator serviceEntryLocator)
         {
             _next = next;
             _serviceEntryLocator = serviceEntryLocator;
+            Logger = NullLogger<SilkyMiddleware>.Instance;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -36,7 +41,7 @@ namespace Silky.Http.Core.Middlewares
                         $"The ServiceEntry whose Id is {serviceEntry.Id} is not allowed to be accessed from the external network");
                 }
 
-                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceEntry,
                     $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
                 RpcContext.Context.SetAttachment(AttachmentKeys.Path, path.ToString());
@@ -49,7 +54,7 @@ namespace Silky.Http.Core.Middlewares
             {
                 // todo Consider supporting RPC communication via http protocol
                 
-                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceEntry,
                     $"No ServiceEntry was found through {path}-{method}",
                     true);

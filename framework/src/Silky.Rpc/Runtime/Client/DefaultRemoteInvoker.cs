@@ -56,7 +56,8 @@ namespace Silky.Rpc.Runtime.Client
             try
             {
                 _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedAddress));
-                RpcContext.Context.SetRcpInvokeAddressInfo(selectedAddress.Descriptor, AddressUtil.GetLocalAddressDescriptor());
+                RpcContext.Context.SetRcpInvokeAddressInfo(selectedAddress.Descriptor,
+                    AddressUtil.GetLocalAddressDescriptor());
 
                 var client = await _transportClientFactory.GetClient(selectedAddress);
                 foreach (var filter in filters)
@@ -79,19 +80,20 @@ namespace Silky.Rpc.Runtime.Client
             catch (Exception ex)
             {
                 sp.Stop();
-                Logger.LogException(ex);
                 _requestServiceSupervisor.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedAddress),
                     sp.Elapsed.TotalMilliseconds);
-                MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
-                    MiniProfileConstant.Rpc.State.Fail,
+                Logger.LogException(ex);
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
                     $"rpc remote call failed");
+
+
                 throw;
             }
 
             sp.Stop();
             _requestServiceSupervisor.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedAddress),
                 sp.Elapsed.TotalMilliseconds);
-            MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
+            Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.Success,
                 $"rpc remote call succeeded");
             return invokeResult;
@@ -99,7 +101,7 @@ namespace Silky.Rpc.Runtime.Client
 
         private ServiceRoute FindServiceRoute(RemoteInvokeMessage remoteInvokeMessage)
         {
-            MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
+            Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
                 $"Remote call through Rpc framework");
             var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
             if (serviceRoute == null)
@@ -144,7 +146,7 @@ namespace Silky.Rpc.Runtime.Client
                     hashKey));
             }
 
-            MiniProfilerPrinter.Print(MiniProfileConstant.Rpc.Name,
+            Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.SelectedAddress,
                 $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Addresses.Where(p => p.Enabled).Select(p => p.ToString()))}," +
                 $"The selected service provider address is:{selectedAddress.ToString()}");

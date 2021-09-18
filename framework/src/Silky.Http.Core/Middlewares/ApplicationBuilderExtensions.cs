@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silky.Core.Modularity;
 using Silky.Http.Core.Configuration;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
@@ -28,7 +30,7 @@ namespace Silky.Http.Core.Middlewares
             });
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-
+            var logger = EngineContext.Current.Resolve<ILogger<HttpServerSilkyStartup>>();
             application.UseExceptionHandler(handler =>
             {
                 if (EngineContext.Current.Resolve<IModuleContainer>().Modules.Any(p => p.Name == "MiniProfiler"))
@@ -42,7 +44,7 @@ namespace Silky.Http.Core.Middlewares
                     if (exception == null)
                         return Task.CompletedTask;
                     context.Response.ContentType = context.GetResponseContentType(gatewayOptions);
-                    MiniProfilerPrinter.Print("Error", "Exception", exception.Message, true);
+                    logger.LogWithMiniProfiler("Error", "Exception", exception.Message, true);
 
                     if (gatewayOptions.WrapResult)
                     {
@@ -66,7 +68,7 @@ namespace Silky.Http.Core.Middlewares
                     {
                         context.Response.ContentType = "text/plain";
                         context.Response.SetResultCode(exception.GetExceptionStatusCode());
-                      
+
                         context.Response.SetExceptionResponseStatus(exception);
 
                         if (exception is IHasValidationErrors)

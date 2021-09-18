@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Configuration;
@@ -10,6 +12,7 @@ using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.MiniProfiler;
 using Silky.Rpc.Transport.Messages;
 
@@ -19,6 +22,7 @@ namespace Silky.Http.Core.Handlers
     {
         protected readonly IExecutor _executor;
         protected RpcOptions _rpcOptions;
+        public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
 
         private static readonly DiagnosticListener s_diagnosticListener =
@@ -31,6 +35,7 @@ namespace Silky.Http.Core.Handlers
             _executor = executor;
             _rpcOptions = rpcOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
+            Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
         }
 
         public virtual async Task Handle(ServiceEntry serviceEntry)
@@ -42,7 +47,7 @@ namespace Silky.Http.Core.Handlers
             if (!serviceKey.IsNullOrEmpty())
             {
                 RpcContext.Context.SetServiceKey(serviceKey);
-                MiniProfilerPrinter.Print(MiniProfileConstant.Route.Name,
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
                     MiniProfileConstant.Route.State.FindServiceKey,
                     $"serviceKey => {serviceKey}");
             }

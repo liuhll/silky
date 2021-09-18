@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Caching;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
@@ -13,10 +15,12 @@ namespace Silky.Rpc.CachingInterceptor
     public class CachingInterceptor : SilkyInterceptor, IScopedDependency
     {
         private readonly IDistributedInterceptCache _distributedCache;
+        private ILogger<CachingInterceptor> Logger { get; set; }
 
         public CachingInterceptor(IDistributedInterceptCache distributedCache)
         {
             _distributedCache = distributedCache;
+            Logger = NullLogger<CachingInterceptor>.Instance;
         }
 
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
@@ -45,7 +49,7 @@ namespace Silky.Rpc.CachingInterceptor
                             serviceEntry.GetCachingInterceptKey(parameters, removeCachingInterceptProvider);
                         await _distributedCache.RemoveAsync(removeCacheKey, removeCachingInterceptProvider.CacheName,
                             true);
-                        MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
+                        Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.RemoveCaching + index,
                             $"Remove the cache with key {removeCacheKey}");
                         index++;
@@ -56,7 +60,7 @@ namespace Silky.Rpc.CachingInterceptor
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
-                        MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
+                        Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
                             $"Cache interception is invalid in distributed transaction processing");
                         await invocation.ProceedAsync();
@@ -65,7 +69,7 @@ namespace Silky.Rpc.CachingInterceptor
                     {
                         var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
                             serviceEntry.GetCachingInterceptProvider());
-                        MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
+                        Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
                             $"Ready to get data from the cache service:[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{getCacheKey}]");
                         invocation.ReturnValue = await GetResultFirstFromCache(
@@ -78,7 +82,7 @@ namespace Silky.Rpc.CachingInterceptor
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
-                        MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
+                        Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.UpdateCaching,
                             $"Cache interception is invalid in distributed transaction processing");
                         await invocation.ProceedAsync();
@@ -87,7 +91,7 @@ namespace Silky.Rpc.CachingInterceptor
                     {
                         var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
                             serviceEntry.UpdateCachingInterceptProvider());
-                        MiniProfilerPrinter.Print(MiniProfileConstant.Caching.Name,
+                        Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.UpdateCaching,
                             $"The cacheKey for updating the cache data is[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{updateCacheKey}]");
                         await _distributedCache.RemoveAsync(updateCacheKey, serviceEntry.GetCacheName(),
