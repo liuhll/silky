@@ -75,7 +75,7 @@ namespace Silky.Rpc.Address.HealthCheck
 
         public void ChangeHealthStatus(IPAddress ipAddress, int port, bool isHealth, int unHealthCeilingTimes = 0)
         {
-            var addressModel = AddressUtil.CreateAddressModel(ipAddress.ToString(), port, ServiceProtocol.Tcp);
+            var addressModel = AddressHelper.CreateAddressModel(ipAddress.ToString(), port, ServiceProtocol.Tcp);
             ChangeHealthStatus(addressModel, isHealth, unHealthCeilingTimes);
         }
 

@@ -20,7 +20,7 @@ namespace Silky.Rpc.Runtime.Client
             }
             var serverServiceProtocol = RpcContext.Context.GetServerServiceProtocol();
             var serviceAddressModel =
-                AddressUtil.CreateAddressModel(serverAddress, serverServiceProtocol);
+                AddressHelper.CreateAddressModel(serverAddress, serverServiceProtocol);
             return serviceAddressModel;
         }
 
