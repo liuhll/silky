@@ -1,7 +1,7 @@
 using System;
 using System.Net;
+using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint.Descriptor;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Endpoint
 {
@@ -10,7 +10,7 @@ namespace Silky.Rpc.Endpoint
         /// <summary>
         /// 地址(Ip或是域名)
         /// </summary>
-        string Address { get; }
+        string Host { get; }
         
         /// <summary>
         /// 指定的端口号

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Runtime.Server

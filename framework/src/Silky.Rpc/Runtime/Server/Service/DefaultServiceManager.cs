@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Silky.Core.Exceptions;
+using Silky.Core.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
 {

@@ -2,15 +2,25 @@ namespace Silky.Core.Rpc
 {
     public static class AttachmentKeys
     {
-        public const string ServerAddress = "ServerAddress";
-        
-        public const string ServerPort = "ServerPort";
-        
-        public const string ServerServiceProtocol = "ServerServiceProtocol";
+        public const string SelectedServerHost = "SelectedServerHost";
 
-        public const string ClientAddress = "ClientAddress";
+        public const string SelectedServerPort = "SelectedServerPort";
+
+        public const string SelectedServerServiceProtocol = "SelectedServerServiceProtocol";
+
+        public const string LocalAddress = "LocalHost";
+
+        public const string LocalPort = "LocalPort";
+
+        public const string LocalServiceProtocol = "LocalServiceProtocol";
+
+        public const string ClientHost = "ClientHost";
 
         public const string ClientServiceProtocol = "ClientServiceProtocol";
+
+        public const string ClientPort = "ClientPort";
+
+        public const string RpcRequestPort = "RpcRequestPort";
 
         public const string RequestHeader = "RequestHeader";
 
@@ -27,7 +37,7 @@ namespace Silky.Core.Rpc
         public const string HttpMethod = "HttpMethod";
 
         public const string IsGateway = "IsGateway";
-        
+
         public const string ServiceMethodName = "ServiceMethodName";
 
         public const string SelectedServerEndpoint = "SelectedServerEndpoint";

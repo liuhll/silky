@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
+using Silky.Core.Rpc;
 using Silky.Core.Utils;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Endpoint.Descriptor
 {
@@ -13,7 +13,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
             TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
         }
 
-        public string Address { get; set; }
+        public string Host { get; set; }
 
         public int Port { get; set; }
 
@@ -38,7 +38,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
         public override string ToString()
         {
             return string.Concat(new[]
-                { AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString() });
+                { AddressHelper.GetIp(Host), ":", Port.ToString(), ":", ServiceProtocol.ToString() });
         }
 
         public override int GetHashCode()

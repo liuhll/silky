@@ -29,13 +29,13 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
             if (context == null)
             {
                 var carrierHeader = new SilkyCarrierHeaderCollection(RpcContext.Context);
-                var serverEndpoint = RpcContext.Context.GetServerEndpoint();
+                var localAddress = RpcContext.Context.Connection.LocalAddress;
                 context =
                     _tracingContext.CreateEntrySegmentContext($"[ServerHandle]{serviceEntryId}",
                         carrierHeader);
                 context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
                 context.Span.Component = SilkyComponents.SilkyRpc;
-                context.Span.Peer = serverEndpoint;
+                context.Span.Peer = localAddress;
             }
 
             return context;
@@ -46,7 +46,8 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
             var context = _exitSegmentContextAccessor.Context;
             if (context == null)
             {
-                var serverEndpoint = RpcContext.Context.GetServerEndpoint();
+                var serverEndpoint = RpcContext.Context.GetSelectedServerAddress();
+
                 context = _tracingContext.CreateExitSegmentContext($"[ClientInvoke]{serviceEntryId}",
                     serverEndpoint, new SilkyCarrierHeaderCollection(RpcContext.Context));
 

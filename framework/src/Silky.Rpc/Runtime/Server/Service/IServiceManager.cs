@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Silky.Core.DependencyInjection;
+using Silky.Core.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
 {

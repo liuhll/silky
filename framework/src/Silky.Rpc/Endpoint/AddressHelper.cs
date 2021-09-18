@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint.Descriptor;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Endpoint
 {
@@ -56,7 +56,7 @@ namespace Silky.Rpc.Endpoint
             var port = int.Parse(domainAndPort[1]);
             return new RpcEndpointDescriptor()
             {
-                Address = domain,
+                Host = domain,
                 Port = port,
                 ServiceProtocol = serviceProtocol
             };
@@ -126,13 +126,13 @@ namespace Silky.Rpc.Endpoint
             return address;
         }
         
-        public static string GetIp(string address)
+        public static string GetIp(string host)
         {
-            if (IsValidIp(address))
+            if (IsValidIp(host))
             {
-                return address;
+                return host;
             }
-            var ips = Dns.GetHostAddresses(address);
+            var ips = Dns.GetHostAddresses(host);
             return ips[0].ToString();
         }
 

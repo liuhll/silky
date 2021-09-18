@@ -193,7 +193,7 @@ namespace Silky.Http.Dashboard.AppService
             var gatewayOutput = new GetGatewayOutput()
             {
                 HostName = gateway.Service.GetHostName(),
-                InstanceCount = gateway.Endpoints.Select(p => new { p.Address, p.Port }).Distinct().Count(),
+                InstanceCount = gateway.Endpoints.Select(p => new { Address = p.Host, p.Port }).Distinct().Count(),
                 SupportServiceCount = _serviceRouteCache.ServiceRoutes.Select(p => p.Service).Count(),
                 SupportServiceEntryCount = _serviceRouteCache.ServiceRoutes
                     .SelectMany(p => p.Service.ServiceEntries).Count(),
@@ -217,7 +217,7 @@ namespace Silky.Http.Dashboard.AppService
                 var gatewayInstance = new GetGatewayInstanceOutput()
                 {
                     HostName = gateway.Service.GetHostName(),
-                    Address = addressDescriptor.Address,
+                    Address = addressDescriptor.Host,
                 };
                 gatewayInstances.Add(gatewayInstance);
             }
@@ -245,7 +245,7 @@ namespace Silky.Http.Dashboard.AppService
                         Method = p.MethodInfo.Name,
                         MultipleServiceKey = serviceRoute?.MultiServiceKeys() == true,
                         IsEnable = serviceRoute != null &&
-                                   serviceRoute.Endpoints.Any(am => SocketCheck.TestConnection(am.Address, am.Port)),
+                                   serviceRoute.Endpoints.Any(am => SocketCheck.TestConnection(am.Host, am.Port)),
                         ServiceRouteCount = serviceRoute?.Endpoints.Length ?? 0,
                         IsDistributeTransaction = p.IsTransactionServiceEntry()
                     };
@@ -285,7 +285,7 @@ namespace Silky.Http.Dashboard.AppService
                 Method = serviceEntry.MethodInfo.Name,
                 MultipleServiceKey = serviceRoute?.MultiServiceKeys() == true,
                 IsEnable = serviceRoute != null &&
-                           serviceRoute.Endpoints.Any(p => SocketCheck.TestConnection(p.Address, p.Port)),
+                           serviceRoute.Endpoints.Any(p => SocketCheck.TestConnection(p.Host, p.Port)),
                 ServiceRouteCount = serviceRoute?.Endpoints.Length ?? 0,
                 GovernanceOptions = serviceEntry.GovernanceOptions,
                 CacheTemplates = serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().Select(p =>
@@ -462,7 +462,7 @@ namespace Silky.Http.Dashboard.AppService
                 Count = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Tcp)
                     .SelectMany(p => p.Endpoints)
-                    .Select(p => new { p.Address, p.Port }).Distinct().Count()
+                    .Select(p => new { Address = p.Host, p.Port }).Distinct().Count()
             });
 
             getProfileOutputs.Add(new GetProfileOutput()
@@ -472,7 +472,7 @@ namespace Silky.Http.Dashboard.AppService
                 Count = _serviceRouteCache.ServiceRoutes
                     .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Ws)
                     .SelectMany(p => p.Endpoints)
-                    .Select(p => new { p.Address, p.Port }).Distinct().Count()
+                    .Select(p => new { Address = p.Host, p.Port }).Distinct().Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
             {

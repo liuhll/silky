@@ -14,7 +14,6 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
-using Silky.Rpc.Extensions;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core.Handlers
@@ -156,7 +155,7 @@ namespace Silky.Http.Core.Handlers
                     ServiceEntryId = serviceEntry.Id,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
-                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress).ToString(),
+                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerHost).ToString(),
                     Exception = ex
                 };
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);

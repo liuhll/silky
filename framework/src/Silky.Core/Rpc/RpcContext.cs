@@ -34,6 +34,30 @@ namespace Silky.Core.Rpc
             }
         }
 
+        public RpcConnection Connection => GetRpcConnection();
+
+        private RpcConnection GetRpcConnection()
+        {
+            var clientHost = this.GetClientHost();
+            var clientProtocol = this.GetClientServiceProtocol();
+            var clientPort = this.GetClientPort();
+            var remotePort = this.GetRpcRequestPort();
+            var localHost = this.GetLocalHost();
+            var localProtocol = this.GetLocalServiceProtocol();
+            var localPort = this.GetLocalPort();
+            var rpcConnection = new RpcConnection()
+            {
+                ClientHost = clientHost,
+                RemotePort = remotePort,
+                ClientServiceProtocol = clientProtocol,
+                ClientPort = clientPort,
+                LocalHost = localHost,
+                LocalPort = localPort,
+                LocalServiceProtocol = localProtocol
+            };
+            return rpcConnection;
+        }
+
         public IServiceProvider RpcServices { private set; get; }
 
         internal void SetServiceProvider(IServiceProvider serviceProvider)

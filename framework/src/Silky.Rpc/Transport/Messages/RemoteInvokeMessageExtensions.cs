@@ -1,4 +1,5 @@
 using Silky.Core.Rpc;
+using Silky.Rpc.Endpoint;
 
 namespace Silky.Rpc.Transport.Messages
 {
@@ -8,11 +9,22 @@ namespace Silky.Rpc.Transport.Messages
         {
             foreach (var messageAttachment in message.Attachments)
             {
-                if (!messageAttachment.Key.Equals(AttachmentKeys.SelectedServerEndpoint))
+                if (messageAttachment.Key.Equals(AttachmentKeys.SelectedServerEndpoint)
+                    || messageAttachment.Key.Equals(AttachmentKeys.SelectedServerHost)
+                    || messageAttachment.Key.Equals(AttachmentKeys.SelectedServerPort)
+                    || messageAttachment.Key.Equals(AttachmentKeys.SelectedServerServiceProtocol)
+                )
                 {
-                    RpcContext.Context.SetAttachment(messageAttachment.Key,messageAttachment.Value);
+                    continue;
                 }
+
+                RpcContext.Context.SetAttachment(messageAttachment.Key, messageAttachment.Value);
             }
+
+            var localRpcEndpoint = AddressHelper.GetLocalRpcEndpointDescriptor();
+            RpcContext.Context.SetAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
+            RpcContext.Context.SetAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
+            RpcContext.Context.SetAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol);
             RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, isGateway);
         }
     }

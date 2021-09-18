@@ -18,6 +18,7 @@ using Silky.Rpc.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
 using WebSocketSharp.Server;
 
@@ -61,14 +62,14 @@ namespace Silky.WebSocket
             WebSocketServer socketServer = null;
             if (webSocketOptions.IsSsl)
             {
-                socketServer = new WebSocketServer(IPAddress.Parse(wsAddressModel.Address), wsAddressModel.Port, true);
+                socketServer = new WebSocketServer(IPAddress.Parse(wsAddressModel.Host), wsAddressModel.Port, true);
                 socketServer.SslConfiguration.ServerCertificate = new X509Certificate2(
                     Path.Combine(hostEnvironment.ContentRootPath, webSocketOptions.SslCertificateName),
                     webSocketOptions.SslCertificatePassword);
             }
             else
             {
-                socketServer = new WebSocketServer(IPAddress.Parse(wsAddressModel.Address), wsAddressModel.Port);
+                socketServer = new WebSocketServer(IPAddress.Parse(wsAddressModel.Host), wsAddressModel.Port);
             }
 
             socketServer.KeepClean = webSocketOptions.KeepClean;

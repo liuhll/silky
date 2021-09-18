@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Microsoft.Extensions.Options;
-using Silky.Rpc.Address;
+using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;

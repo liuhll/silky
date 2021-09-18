@@ -24,12 +24,12 @@ namespace Silky.Core.Extensions
 
             if (typeof(T).IsEnum)
             {
-                return (T)Enum.Parse(typeof(T), obj as string, true);
+                return (T)Enum.Parse(typeof(T), obj?.ToString(), true);
             }
 
             return (T)Convert.ChangeType(obj, typeof(T), CultureInfo.InvariantCulture);
         }
-        
+
         public static T ConventTo<T>(this object instance)
         {
             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
@@ -115,7 +115,7 @@ namespace Silky.Core.Extensions
             if (obj == null) return default;
 
             var objType = obj.GetType();
-            
+
             if (obj is JsonElement jsonElement)
             {
                 return jsonElement.ValueKind switch
@@ -131,7 +131,5 @@ namespace Silky.Core.Extensions
 
             return objType;
         }
-
-     
     }
 }

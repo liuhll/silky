@@ -1,4 +1,5 @@
 using System;
+using Silky.Core.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
 {

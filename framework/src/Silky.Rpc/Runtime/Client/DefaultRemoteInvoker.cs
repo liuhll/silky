@@ -10,7 +10,6 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
-using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
@@ -18,7 +17,6 @@ using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
-using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Client
 {
@@ -59,8 +57,7 @@ namespace Silky.Rpc.Runtime.Client
             try
             {
                 _requestServiceSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
-                RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor,
-                    AddressHelper.GetLocalRpcEndpointDescriptor());
+                RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor);
 
                 var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 foreach (var filter in filters)

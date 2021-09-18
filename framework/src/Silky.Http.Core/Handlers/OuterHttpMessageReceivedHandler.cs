@@ -48,6 +48,7 @@ namespace Silky.Http.Core.Handlers
         {
             RpcContext.Context
                 .SetAttachment(AttachmentKeys.IsGateway, true);
+            _httpContext.SetHttpHandleAddressInfo();
             return base.Handle(serviceEntry);
         }
 

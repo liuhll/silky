@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
 {

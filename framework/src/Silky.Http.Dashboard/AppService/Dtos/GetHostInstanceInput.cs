@@ -1,4 +1,4 @@
-using Silky.Rpc.Runtime.Server;
+using Silky.Core.Rpc;
 
 namespace Silky.Http.Dashboard.AppService.Dtos
 {

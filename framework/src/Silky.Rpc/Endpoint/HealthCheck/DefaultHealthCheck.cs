@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
+using Silky.Core.Rpc;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Endpoint.Descriptor;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Endpoint.HealthCheck
 {

@@ -5,8 +5,7 @@ using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Core.Extensions;
-using Silky.Rpc.Extensions;
+using Silky.Core.Rpc;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;
 

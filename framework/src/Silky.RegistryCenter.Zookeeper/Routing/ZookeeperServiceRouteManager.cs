@@ -18,9 +18,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
 using Silky.Core;
+using Silky.Core.Rpc;
 using Silky.Lock.Extensions;
 using Silky.RegistryCenter.Zookeeper.Routing.Watchers;
-using Silky.Rpc.Address;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
 
@@ -236,7 +236,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
         {
             var serviceRouteDescriptors = _serviceRouteCache.ServiceRouteDescriptors
                 .Where(p => p.Addresses.Any(p =>
-                    p.Address == AddressHelper.GetHostIp(_rpcOptions.Host)));
+                    p.Host == AddressHelper.GetHostIp(_rpcOptions.Host)));
 
             foreach (var serviceRouteDescriptor in serviceRouteDescriptors)
             {

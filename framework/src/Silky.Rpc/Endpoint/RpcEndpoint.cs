@@ -2,8 +2,8 @@ using System;
 using System.Net;
 using JetBrains.Annotations;
 using Silky.Core;
+using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint.Descriptor;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Endpoint
 {
@@ -18,21 +18,21 @@ namespace Silky.Rpc.Endpoint
         )
         {
             Check.NotNull(address, nameof(address));
-            Address = address;
+            Host = address;
             Port = port;
             ServiceProtocol = serviceProtocol;
             m_fuseTimes = 0;
             Descriptor = new RpcEndpointDescriptor()
-                {Address = Address, Port = Port, ServiceProtocol = ServiceProtocol};
+                {Host = Host, Port = Port, ServiceProtocol = ServiceProtocol};
         }
 
-        public string Address { get; }
+        public string Host { get; }
 
         public int Port { get; }
 
         public ServiceProtocol ServiceProtocol { get; }
 
-        public IPEndPoint IPEndPoint => new(IPAddress.Parse(AddressHelper.GetIp(Address)), Port);
+        public IPEndPoint IPEndPoint => new(IPAddress.Parse(AddressHelper.GetIp(Host)), Port);
 
         public bool Enabled
         {
@@ -65,7 +65,7 @@ namespace Silky.Rpc.Endpoint
 
         public override string ToString()
         {
-            return string.Concat(AddressHelper.GetIp(Address), ":", Port.ToString(), ":", ServiceProtocol.ToString());
+            return string.Concat(AddressHelper.GetIp(Host), ":", Port.ToString(), ":", ServiceProtocol.ToString());
         }
 
         public override bool Equals([CanBeNull] object obj)

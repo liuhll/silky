@@ -1,11 +1,7 @@
-using Castle.Core.Internal;
 using Polly;
 using Silky.Core.Rpc;
-using Silky.Rpc.Address;
 using Silky.Rpc.Endpoint;
-using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Client
 {
@@ -13,14 +9,23 @@ namespace Silky.Rpc.Runtime.Client
     {
         protected virtual IRpcEndpoint GetSelectedServerEndpoint()
         {
-            var selectedServerEndpoint = RpcContext.Context.GetSelectedServerRpcEndpoint();
+            var selectedAddress = RpcContext.Context.GetSelectedServerAddress();
+            if (selectedAddress == null)
+            {
+                return null;
+            }
+
+            var selectedServerPort = RpcContext.Context.GetSelectedServerPort();
+            var selectedServerServiceProtocol = RpcContext.Context.GetSelectedServerServiceProtocol();
+            var selectedServerEndpoint =
+                AddressHelper.CreateRpcEndpoint(selectedAddress, selectedServerPort, selectedServerServiceProtocol);
             return selectedServerEndpoint;
         }
 
         public abstract IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters);
-        
+
         public abstract event RpcInvokeFailoverHandle OnInvokeFailover;
-        
+
         public abstract FailoverType FailoverType { get; }
     }
 }

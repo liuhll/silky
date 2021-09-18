@@ -39,9 +39,10 @@ namespace Silky.Rpc.Runtime.Server
         {
             var sp = Stopwatch.StartNew();
             message.SetRpcAttachments();
-            var clientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ClientAddress).ToString();
+            var rpcConnection = RpcContext.Context.Connection;
+            var clientRpcEndpoint = rpcConnection.ClientRpcEndpoint;
             Logger.LogDebug(
-                $"Received a request from the client [{clientAddress}].{Environment.NewLine}" +
+                $"Received a request from the client [{clientRpcEndpoint}].{Environment.NewLine}" +
                 $"messageId:[{messageId}].{Environment.NewLine}serviceEntryId:[{message.ServiceEntryId}]");
             var tracingTimestamp = TracingBefore(message, messageId);
             var serviceEntry =
@@ -65,7 +66,7 @@ namespace Silky.Rpc.Runtime.Server
                     throw new RpcAuthenticationException("rpc token is illegal");
                 }
 
-                _serverHandleSupervisor.Monitor((serviceEntry.Id, clientAddress));
+                _serverHandleSupervisor.Monitor((serviceEntry.Id, clientRpcEndpoint));
                 var result = await serviceEntry.Executor(_currentServiceKey.ServiceKey,
                     message.Parameters);
 
@@ -87,11 +88,11 @@ namespace Silky.Rpc.Runtime.Server
                 sp.Stop();
                 if (isHandleSuccess)
                 {
-                    _serverHandleSupervisor.ExecSuccess((serviceEntry?.Id, clientAddress), sp.ElapsedMilliseconds);
+                    _serverHandleSupervisor.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds);
                 }
                 else
                 {
-                    _serverHandleSupervisor.ExecFail((serviceEntry?.Id, clientAddress),
+                    _serverHandleSupervisor.ExecFail((serviceEntry?.Id, clientRpcEndpoint),
                         !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds);
                 }
 
@@ -159,7 +160,7 @@ namespace Silky.Rpc.Runtime.Server
                     ServiceEntryId = serviceEntryId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
-                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.ServerAddress).ToString(),
+                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerHost).ToString(),
                     Exception = ex
                 };
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcServerHandler, eventData);

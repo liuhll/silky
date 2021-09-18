@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
@@ -135,7 +134,7 @@ namespace Silky.Http.Core.Middlewares
                 scheme = "wss";
             }
 
-            var wsAddress = $"{scheme}://{rpcEndpoint.Address}:{rpcEndpoint.Port}{path}";
+            var wsAddress = $"{scheme}://{rpcEndpoint.Host}:{rpcEndpoint.Port}{path}";
             return new Uri(wsAddress);
         }
 
