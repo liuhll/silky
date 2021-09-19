@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Silky.Core;
@@ -13,6 +14,7 @@ using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Configuration;
+using Polly;
 using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
@@ -72,7 +74,7 @@ namespace Silky.Rpc
                 throw new SilkyException(
                     $"You did not specify the dependent {registryCenterType} service registry module");
             }
-            
+
             var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
@@ -85,8 +87,20 @@ namespace Silky.Rpc
                         Debug.Assert(message.IsInvokeMessage());
                         message.SetRpcMessageId();
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
-                        var messageReceivedHandler = EngineContext.Current.Resolve<IServerMessageReceivedHandler>();
-                        await messageReceivedHandler.Handle(message.Id, sender, remoteInvokeMessage);
+                        remoteInvokeMessage.SetRpcAttachments();
+                        var handlePolicyBuilder = EngineContext.Current.Resolve<IHandlePolicyBuilder>();
+                        var policy = handlePolicyBuilder.Build(remoteInvokeMessage);
+                        var context = new Context(PollyContextNames.ServerHandlerOperationKey);
+                        var result = await policy.ExecuteAsync(async ct =>
+                        {
+                            var messageReceivedHandler = EngineContext.Current.Resolve<IServerMessageReceivedHandler>();
+                            var remoteResultMessage =
+                                await messageReceivedHandler.Handle(remoteInvokeMessage, ct,
+                                    CancellationToken.None);
+                            return remoteResultMessage;
+                        }, context);
+                        var resultTransportMessage = new TransportMessage(result, message.Id);
+                        await sender.SendMessageAsync(resultTransportMessage);
                     };
                 }
             }

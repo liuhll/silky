@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Polly;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
@@ -19,32 +20,34 @@ namespace Silky.Rpc.Runtime.Server
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IServerHandleSupervisor _serverHandleSupervisor;
         private readonly ICurrentServiceKey _currentServiceKey;
+        private readonly IServerDiagnosticListener _serverDiagnosticListener;
         public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
-
-        private static readonly DiagnosticListener s_diagnosticListener =
-            new(RpcDiagnosticListenerNames.DiagnosticServerListenerName);
-
 
         public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
             IServerHandleSupervisor serverHandleSupervisor,
-            ICurrentServiceKey currentServiceKey)
+            ICurrentServiceKey currentServiceKey,
+            IServerDiagnosticListener serverDiagnosticListener)
         {
             _serviceEntryLocator = serviceEntryLocator;
             _serverHandleSupervisor = serverHandleSupervisor;
             _currentServiceKey = currentServiceKey;
+            _serverDiagnosticListener = serverDiagnosticListener;
             Logger = NullLogger<DefaultServerMessageReceivedHandler>.Instance;
         }
 
-        public async Task Handle(string messageId, IMessageSender sender, RemoteInvokeMessage message)
+        public async Task<RemoteResultMessage> Handle(RemoteInvokeMessage message, Context context,
+            CancellationToken cancellationToken)
+
         {
             var sp = Stopwatch.StartNew();
-            message.SetRpcAttachments();
+            var messageId = RpcContext.Context.GetMessageId();
             var rpcConnection = RpcContext.Context.Connection;
             var clientRpcEndpoint = rpcConnection.ClientRpcEndpoint;
             Logger.LogDebug(
                 $"Received a request from the client [{clientRpcEndpoint}].{Environment.NewLine}" +
                 $"messageId:[{messageId}].{Environment.NewLine}serviceEntryId:[{message.ServiceEntryId}]");
-            var tracingTimestamp = TracingBefore(message, messageId);
+            var tracingTimestamp = _serverDiagnosticListener.TracingBefore(message, messageId);
+            context[PollyContextNames.TracingTimestamp] = tracingTimestamp;
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
             var remoteResultMessage = new RemoteResultMessage()
@@ -66,26 +69,29 @@ namespace Silky.Rpc.Runtime.Server
                     throw new RpcAuthenticationException("rpc token is illegal");
                 }
 
+                context[PollyContextNames.ServiceEntry] = serviceEntry;
                 _serverHandleSupervisor.Monitor((serviceEntry.Id, clientRpcEndpoint));
                 var result = await serviceEntry.Executor(_currentServiceKey.ServiceKey,
                     message.Parameters);
 
                 remoteResultMessage.Result = result;
                 remoteResultMessage.StatusCode = StatusCode.Success;
-                TracingAfter(tracingTimestamp, messageId, message.ServiceEntryId, remoteResultMessage);
+                _serverDiagnosticListener.TracingAfter(tracingTimestamp, messageId, message.ServiceEntryId,
+                    remoteResultMessage);
             }
             catch (Exception ex)
             {
                 isHandleSuccess = false;
-                remoteResultMessage.ExceptionMessage = ex.GetExceptionMessage();
-                remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
-                remoteResultMessage.ValidateErrors = ex.GetValidateErrors().ToArray();
+                context[PollyContextNames.Exception] = ex;
                 Logger.LogException(ex);
-                TracingError(tracingTimestamp, messageId, message.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
+                _serverDiagnosticListener.TracingError(tracingTimestamp, messageId, message.ServiceEntryId,
+                    ex.GetExceptionStatusCode(), ex);
+                throw;
             }
             finally
             {
                 sp.Stop();
+                context[PollyContextNames.ElapsedTimeMs] = sp.ElapsedMilliseconds;
                 if (isHandleSuccess)
                 {
                     _serverHandleSupervisor.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds);
@@ -102,69 +108,7 @@ namespace Silky.Rpc.Runtime.Server
                                 $"handleSuccess:{isHandleSuccess.ToString()}");
             }
 
-            var resultTransportMessage = new TransportMessage(remoteResultMessage, messageId);
-            await sender.SendMessageAsync(resultTransportMessage);
-        }
-
-        private long? TracingBefore(RemoteInvokeMessage message, string messageId)
-        {
-            if (s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.BeginRpcServerHandler))
-            {
-                var eventData = new RpcInvokeEventData()
-                {
-                    MessageId = messageId,
-                    OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    ServiceEntryId = message.ServiceEntryId,
-                    Message = message
-                };
-
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcServerHandler, eventData);
-
-                return eventData.OperationTimestamp;
-            }
-
-            return null;
-        }
-
-        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceEntryId,
-            RemoteResultMessage remoteResultMessage)
-        {
-            if (tracingTimestamp != null &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcServerHandler))
-            {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcInvokeResultEventData()
-                {
-                    MessageId = messageId,
-                    ServiceEntryId = serviceEntryId,
-                    Result = remoteResultMessage.Result,
-                    StatusCode = remoteResultMessage.StatusCode,
-                    ElapsedTimeMs = now - tracingTimestamp.Value
-                };
-
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.EndRpcServerHandler, eventData);
-            }
-        }
-
-        private void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId,
-            StatusCode statusCode,
-            Exception ex)
-        {
-            if (tracingTimestamp != null &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcServerHandler))
-            {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcInvokeExceptionEventData()
-                {
-                    MessageId = messageId,
-                    ServiceEntryId = serviceEntryId,
-                    StatusCode = statusCode,
-                    ElapsedTimeMs = now - tracingTimestamp.Value,
-                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerHost).ToString(),
-                    Exception = ex
-                };
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcServerHandler, eventData);
-            }
+            return remoteResultMessage;
         }
     }
 }

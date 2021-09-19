@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Polly;
 using Silky.Core.DependencyInjection;
 using Silky.Rpc.Transport.Messages;
 
@@ -6,6 +8,6 @@ namespace Silky.Rpc.Runtime.Server
 {
     public interface IServerMessageReceivedHandler : IScopedDependency
     {
-        Task Handle(string messageId, IMessageSender sender, RemoteInvokeMessage message);
+        Task<RemoteResultMessage> Handle(RemoteInvokeMessage message, Context ctx, CancellationToken cancellationToken);
     }
 }

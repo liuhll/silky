@@ -8,14 +8,12 @@ namespace Silky.Rpc.Runtime.Server
         public FallbackAttribute(Type type)
         {
             Type = type;
-            ValidWhenBusinessException = true;
         }
 
         public Type Type { get; }
 
         public string MethodName { get; set; }
         public int Weight { get; set; }
-
-        public bool ValidWhenBusinessException { get; set; }
+        
     }
 }

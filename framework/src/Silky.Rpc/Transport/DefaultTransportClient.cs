@@ -172,7 +172,7 @@ namespace Silky.Rpc.Transport
                     ServiceEntryId = serviceEntryId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
-                    RemoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerHost).ToString(),
+                    ClientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerHost).ToString(),
                     Exception = ex
                 };
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);

@@ -25,11 +25,6 @@ namespace Silky.Rpc.Runtime.Client
                             return false;
                         }
 
-                        if (ex is BusinessException)
-                        {
-                            return serviceEntry.FallbackProvider?.ValidWhenBusinessException == true;
-                        }
-
                         return true;
                     })
                     .FallbackAsync(
