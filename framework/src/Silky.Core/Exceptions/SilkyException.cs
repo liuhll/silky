@@ -8,17 +8,13 @@ namespace Silky.Core.Exceptions
     public class SilkyException : Exception, IHasErrorCode, IHasLogLevel
     {
         protected StatusCode _statusCode;
-        protected LogLevel _logLevel;
 
-        private SilkyException()
-        {
-            _logLevel = LogLevel.Error;
-        }
 
         public SilkyException(string message, StatusCode status = StatusCode.FrameworkException)
             : base(message)
         {
             _statusCode = status;
+            LogLevel = LogLevel.Error;
         }
 
         public SilkyException(string message, Exception innerException,
@@ -26,6 +22,7 @@ namespace Silky.Core.Exceptions
             : base(message, innerException)
         {
             _statusCode = status;
+            LogLevel = LogLevel.Error;
         }
 
         public SilkyException(SerializationInfo serializationInfo, StreamingContext context,
@@ -33,6 +30,7 @@ namespace Silky.Core.Exceptions
             : base(serializationInfo, context)
         {
             _statusCode = status;
+            LogLevel = LogLevel.Error;
         }
 
         public StatusCode StatusCode
