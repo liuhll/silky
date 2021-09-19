@@ -5,7 +5,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public abstract class FailoverPolicyProviderBase : IFailoverPolicyProvider
+    public abstract class InvokeFailoverPolicyProviderBase : IInvokeFailoverPolicyProvider
     {
         protected virtual IRpcEndpoint GetSelectedServerEndpoint()
         {

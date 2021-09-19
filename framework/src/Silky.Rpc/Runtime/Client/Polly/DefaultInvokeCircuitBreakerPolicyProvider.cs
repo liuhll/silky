@@ -6,7 +6,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultCircuitBreakerPolicyProvider : ICircuitBreakerPolicyProvider
+    public class DefaultInvokeCircuitBreakerPolicyProvider : IInvokeCircuitBreakerPolicyProvider
     {
         public AsyncCircuitBreakerPolicy Create(ServiceEntry serviceEntry, object[] parameters)
         {

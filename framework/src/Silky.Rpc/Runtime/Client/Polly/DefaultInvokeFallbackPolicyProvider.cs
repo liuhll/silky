@@ -5,11 +5,11 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultFallbackPolicyProvider : IFallbackPolicyProvider
+    public class DefaultInvokeFallbackPolicyProvider : IInvokeFallbackPolicyProvider
     {
         private readonly IFallbackInvoker _fallbackInvoker;
 
-        public DefaultFallbackPolicyProvider(IFallbackInvoker fallbackInvoker)
+        public DefaultInvokeFallbackPolicyProvider(IFallbackInvoker fallbackInvoker)
         {
             _fallbackInvoker = fallbackInvoker;
         }

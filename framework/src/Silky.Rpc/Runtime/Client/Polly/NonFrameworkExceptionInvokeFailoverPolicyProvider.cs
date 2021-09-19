@@ -6,7 +6,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class NonFrameworkExceptionFailoverPolicyProvider : FailoverPolicyProviderBase
+    public class NonFrameworkExceptionInvokeFailoverPolicyProvider : InvokeFailoverPolicyProviderBase
     {
         public override IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters)
         {

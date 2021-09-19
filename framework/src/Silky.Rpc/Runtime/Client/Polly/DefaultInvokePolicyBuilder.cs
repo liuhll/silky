@@ -8,14 +8,14 @@ namespace Silky.Rpc.Runtime.Client
     {
         private readonly ICollection<IPolicyWithResultProvider> _policyWithResultProviders;
 
-        private readonly ICollection<IPolicyProvider> _policyProviders;
+        private readonly ICollection<IInvokePolicyProvider> _policyProviders;
 
-        private readonly ICollection<ICircuitBreakerPolicyProvider> _circuitBreakerPolicyProviders;
+        private readonly ICollection<IInvokeCircuitBreakerPolicyProvider> _circuitBreakerPolicyProviders;
 
         public DefaultInvokePolicyBuilder(
-            ICollection<IPolicyProvider> policyProviders,
+            ICollection<IInvokePolicyProvider> policyProviders,
             ICollection<IPolicyWithResultProvider> policyWithResultProviders,
-            ICollection<ICircuitBreakerPolicyProvider> circuitBreakerPolicyProviders)
+            ICollection<IInvokeCircuitBreakerPolicyProvider> circuitBreakerPolicyProviders)
         {
             _policyProviders = policyProviders;
             _policyWithResultProviders = policyWithResultProviders;

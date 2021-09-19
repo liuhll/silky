@@ -12,7 +12,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.DotNetty.Abstraction
 {
-    public class CommunicationFailoverPolicyProvider : FailoverPolicyProviderBase
+    public class CommunicationFailoverPolicyProvider : InvokeFailoverPolicyProviderBase
     {
         private readonly IHealthCheck _healthCheck;
         private GovernanceOptions _governanceOptions;
@@ -62,7 +62,7 @@ namespace Silky.DotNetty.Abstraction
             Context context)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();
-            _healthCheck.ChangeHealthStatus(serviceAddressModel, false, _governanceOptions.RemovedUnHealthAddressTimes);
+            _healthCheck.ChangeHealthStatus(serviceAddressModel, false, _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,

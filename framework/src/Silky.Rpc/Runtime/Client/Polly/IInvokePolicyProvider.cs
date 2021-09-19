@@ -4,7 +4,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IPolicyProvider : IScopedDependency
+    public interface IInvokePolicyProvider : IScopedDependency
     {
         IAsyncPolicy Create(ServiceEntry serviceEntry, object[] parameters);
     }

@@ -14,9 +14,9 @@ namespace Silky.Rpc.Configuration
             EnableCachingInterceptor = true;
             EnableCircuitBreaker = true;
             ExceptionsAllowedBeforeBreaking = 3;
-            BreakerSeconds = 1000;
+            BreakerSeconds = 60;
             AddressFuseSleepDurationSeconds = 600;
-            RemovedUnHealthAddressTimes = 0;
+            UnHealthAddressTimesAllowedBeforeRemoving = 0;
             RetryIntervalMillSeconds = 50;
             RetryTimes = 0;
             FailoverCountEqualInstanceCount = true;
@@ -49,7 +49,7 @@ namespace Silky.Rpc.Configuration
         /// <summary>
         /// 地址被标识不健康多少次后会被移除
         /// </summary>
-        public int RemovedUnHealthAddressTimes { get; set; }
+        public int UnHealthAddressTimesAllowedBeforeRemoving { get; set; }
 
         /// <summary>
         /// 是否开启熔断保护,用户友好类异常不会触发熔断保护
