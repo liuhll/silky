@@ -1,6 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Silky.Core.Exceptions;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 
@@ -18,6 +20,7 @@ namespace NormHostDemo.AppService
 
         public async Task<TestOut> Create(TestInput input)
         {
+            throw new BusinessException("无法执行v2的服务");
             return new()
             {
                 Address = input.Address,

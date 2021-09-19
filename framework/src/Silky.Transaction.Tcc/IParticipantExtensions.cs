@@ -4,6 +4,7 @@ using Castle.Core.Internal;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
+using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
@@ -33,11 +34,11 @@ namespace Silky.Transaction.Tcc
             {
                 if (localInvocation != null)
                 {
-                    await localInvocation.ExcuteTccMethod(methodType);
+                    await localInvocation.ExecuteTccMethod(methodType);
                 }
                 else if (localParticipant.Invocation != null)
                 {
-                    await localParticipant.Invocation.ExcuteTccMethod(methodType);
+                    await localParticipant.Invocation.ExecuteTccMethod(methodType);
                 }
                 else
                 {
@@ -55,7 +56,7 @@ namespace Silky.Transaction.Tcc
                             }
                         }
 
-                        await excutor?.ExecuteTccMethodAsync(instance, actualParameters.ToArray());
+                        await excutor?.ExecuteMethodWithDbContextAsync(instance, actualParameters.ToArray());
                     }
                 }
             }

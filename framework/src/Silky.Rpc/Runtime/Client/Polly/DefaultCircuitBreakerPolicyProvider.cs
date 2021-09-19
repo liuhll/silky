@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Client
                 var policy = Policy
                     .Handle<Exception>(ex => !ex.IsFriendlyException())
                     .CircuitBreakerAsync(
-                        exceptionsAllowedBeforeBreaking: 1,
+                        exceptionsAllowedBeforeBreaking: serviceEntry.GovernanceOptions.ExceptionsAllowedBeforeBreaking,
                         durationOfBreak: TimeSpan.FromSeconds(serviceEntry.GovernanceOptions.BreakerSeconds),
                         (ex, timespan) =>
                         {

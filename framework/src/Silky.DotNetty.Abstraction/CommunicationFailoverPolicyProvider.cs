@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Options;
 using Polly;
+using Silky.Core.Exceptions;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime.Client;
@@ -34,6 +35,7 @@ namespace Silky.DotNetty.Abstraction
                         .Handle<ChannelException>()
                         .Or<ConnectException>()
                         .Or<IOException>()
+                        .Or<CommunicationException>()
                         .WaitAndRetryAsync(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds,
                             retryAttempt =>
                                 TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds),
@@ -46,6 +48,7 @@ namespace Silky.DotNetty.Abstraction
                     policy = Policy<object>.Handle<ChannelException>()
                         .Or<ConnectException>()
                         .Or<IOException>()
+                        .Or<CommunicationException>()
                         .RetryAsync(serviceEntry.GovernanceOptions.RetryTimes,
                             onRetryAsync: async (outcome, retryNumber, context) =>
                                 await SetInvokeCurrentSeverUnHealth(outcome, retryNumber, context));

@@ -155,7 +155,7 @@ namespace Silky.Http.Core.Handlers
                     ServiceEntryId = serviceEntry.Id,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
-                    ClientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerHost).ToString(),
+                    ClientAddress = RpcContext.Context.Connection.ClientAddress,
                     Exception = ex
                 };
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);

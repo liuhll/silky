@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
+using Silky.Core.DbContext;
 using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
 using Silky.EntityFrameworkCore.MultiTenants.Entities;
-using Silky.Rpc.Runtime.Server.ContextPool;
 
 namespace Silky.EntityFrameworkCore.Repositories
 {

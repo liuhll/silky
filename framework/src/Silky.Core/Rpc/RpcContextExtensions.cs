@@ -26,7 +26,7 @@ namespace Silky.Core.Rpc
             var clientPort = rpcContext.GetAttachment(AttachmentKeys.ClientPort);
             return clientPort.To<int>();
         }
-        
+
         public static int GetRpcRequestPort(this RpcContext rpcContext)
         {
             var rpcRequestPort = rpcContext.GetAttachment(AttachmentKeys.RpcRequestPort);
@@ -65,21 +65,10 @@ namespace Silky.Core.Rpc
             return serviceKey?.ToString();
         }
 
-        
+
         public static void SetServiceKey(this RpcContext rpcContext, string serviceKey)
         {
             rpcContext.SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
-        }
-
-        public static string GetFallbackServiceKey(this RpcContext rpcContext)
-        {
-            var serviceKey = rpcContext.GetAttachment(AttachmentKeys.FallbackServiceKey);
-            return serviceKey?.ToString();
-        }
-
-        public static void SetFallbackServiceKey(this RpcContext rpcContext, string fallbackServiceKey)
-        {
-            rpcContext.SetAttachment(AttachmentKeys.FallbackServiceKey, fallbackServiceKey);
         }
 
         public static string GetSelectedServerAddress(this RpcContext rpcContext)
@@ -89,6 +78,7 @@ namespace Silky.Core.Rpc
             {
                 return null;
             }
+
             return $"{selectedServerHost}:{rpcContext.GetSelectedServerPort()}";
         }
 

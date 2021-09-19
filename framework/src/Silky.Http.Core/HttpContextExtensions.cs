@@ -42,6 +42,7 @@ namespace Silky.Http.Core
             RpcContext.Context.SetAttachment(AttachmentKeys.ClientServiceProtocol,
                 localWebEndpointDescriptor.ServiceProtocol.ToString());
             RpcContext.Context.SetAttachment(AttachmentKeys.RpcRequestPort, clientPort.ToString());
+            RpcContext.Context.SetAttachment(AttachmentKeys.ClientPort, clientPort.ToString());
 
             var localRpcEndpoint = AddressHelper.GetLocalWebEndpointDescriptor();
             RpcContext.Context.SetAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);

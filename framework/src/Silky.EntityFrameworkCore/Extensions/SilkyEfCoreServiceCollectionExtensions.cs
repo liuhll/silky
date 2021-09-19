@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Silky.Core.DbContext;
 using Silky.Core.DependencyInjection;
 using Silky.EntityFrameworkCore;
 using Silky.EntityFrameworkCore.ContextPool;
@@ -7,7 +8,6 @@ using Silky.EntityFrameworkCore.Contexts.Dynamic;
 using Silky.EntityFrameworkCore.Contexts.Enums;
 using Silky.EntityFrameworkCore.Extensions.DatabaseProvider;
 using Silky.EntityFrameworkCore.Repositories;
-using Silky.Rpc.Runtime.Server.ContextPool;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

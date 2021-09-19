@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
+using Silky.Core.DbContext;
 using Silky.Core.DependencyInjection;
 using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Locators;
-using Silky.Rpc.Runtime.Server.ContextPool;
 
 namespace Silky.EntityFrameworkCore.Repositories
 {

@@ -20,13 +20,21 @@ namespace Silky.DotNetty.Abstraction
 
         public virtual async Task SendMessageAsync(TransportMessage message, bool flush)
         {
-            if (flush)
+            try
             {
-                await SendAndFlushAsync(message);
+                if (flush)
+                {
+                    await SendAndFlushAsync(message);
+                }
+                else
+                {
+                    await SendAsync(message);
+                }
             }
-            else
+            catch (Exception e)
             {
-                await SendAsync(message);
+                Logger.LogException(e);
+                throw new CommunicationException(e.Message, e);
             }
         }
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Silky.Core;
+using Silky.Core.DbContext;
+using Silky.Core.DbContext.UnitOfWork;
 using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.ContextPool;
-using Silky.Rpc.Runtime.Server.UnitOfWork;
 
 namespace Silky.EntityFrameworkCore.UnitOfWork
 {
@@ -23,17 +23,11 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 
         public void OnActionExecuting(ServerExecutingContext context)
         {
+            var instanceMethod = context.InstanceType?.GetCompareMethod(context.ServiceEntry.MethodInfo,
+                context.ServiceEntry.MethodInfo.Name);
             _unitOfWorkAttribute =
-                context.ServiceEntry.CustomAttributes.OfType<UnitOfWorkAttribute>().FirstOrDefault();
-            if (_unitOfWorkAttribute == null)
-            {
-                var instanceMethod = context.InstanceType?.GetCompareMethod(context.ServiceEntry.MethodInfo,
-                    context.ServiceEntry.MethodInfo.Name);
-
-                _unitOfWorkAttribute = instanceMethod?.GetCustomAttributes(true).OfType<UnitOfWorkAttribute>()
-                    .FirstOrDefault();
-            }
-
+                instanceMethod?.GetCustomAttributes(true).OfType<UnitOfWorkAttribute>().FirstOrDefault();
+            
             _isManualSaveChanges = context.ServiceEntry.CustomAttributes.OfType<ManualCommitAttribute>().Any();
 
             if (_unitOfWorkAttribute != null)

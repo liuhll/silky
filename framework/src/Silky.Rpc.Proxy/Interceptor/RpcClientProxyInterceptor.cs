@@ -12,17 +12,17 @@ namespace Silky.Rpc.Proxy
     {
         private readonly IIdGenerator _idGenerator;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly ICurrentServiceKey _currentServiceKey;
+        private readonly IServiceKeyExecutor _serviceKeyExecutor;
         private readonly IExecutor _executor;
 
         public RpcClientProxyInterceptor(IIdGenerator idGenerator,
             IServiceEntryLocator serviceEntryLocator,
-            ICurrentServiceKey currentServiceKey,
+            IServiceKeyExecutor serviceKeyExecutor,
             IExecutor executor)
         {
             _idGenerator = idGenerator;
             _serviceEntryLocator = serviceEntryLocator;
-            _currentServiceKey = currentServiceKey;
+            _serviceKeyExecutor = serviceKeyExecutor;
             _executor = executor;
         }
 
@@ -33,7 +33,7 @@ namespace Silky.Rpc.Proxy
             try
             {
                 invocation.ReturnValue =
-                    await _executor.Execute(serviceEntry, invocation.Arguments, _currentServiceKey.ServiceKey);
+                    await _executor.Execute(serviceEntry, invocation.Arguments, _serviceKeyExecutor.ServiceKey);
             }
             catch (Exception)
             {

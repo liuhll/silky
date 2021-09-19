@@ -12,13 +12,13 @@ namespace Silky.Rpc.Endpoint
         private int m_fuseTimes;
 
         public RpcEndpoint(
-            [NotNull] string address,
+            [NotNull] string host,
             [NotNull] int port,
             ServiceProtocol serviceProtocol = ServiceProtocol.Tcp
         )
         {
-            Check.NotNull(address, nameof(address));
-            Host = address;
+            Check.NotNull(host, nameof(host));
+            Host = host;
             Port = port;
             ServiceProtocol = serviceProtocol;
             m_fuseTimes = 0;

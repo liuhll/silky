@@ -5,12 +5,12 @@ using ITestApplication.Test.Dtos;
 using Mapster;
 using NormHostDemo.Tests;
 using Silky.Caching;
+using Silky.Core.DbContext.UnitOfWork;
 using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.UnitOfWork;
 using Silky.Transaction.Tcc;
 
 namespace NormHostDemo.AppService
@@ -29,7 +29,7 @@ namespace NormHostDemo.AppService
             IDistributedCache<TestOut> distributedCache,
             IRepository<Test> testRepository,
             ISerializer serializer,
-             IRpcContextAccessor rpcContextAccessor)
+            IRpcContextAccessor rpcContextAccessor)
         {
             _anotherAppService = anotherAppService;
             _distributedCache = distributedCache;
@@ -69,7 +69,7 @@ namespace NormHostDemo.AppService
         {
             await _anotherAppService.DeleteOne(input.Name);
             await _anotherAppService.DeleteTwo(input.Address);
-           // throw new BusinessException("test exception");
+            // throw new BusinessException("test exception");
             return "trying" + _serializer.Serialize(input);
         }
 

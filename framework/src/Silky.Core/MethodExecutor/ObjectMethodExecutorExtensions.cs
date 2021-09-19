@@ -3,23 +3,24 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Silky.Core;
-using Silky.Core.MethodExecutor;
-using Silky.Rpc.Runtime.Server.ContextPool;
-using Silky.Rpc.Runtime.Server.UnitOfWork;
+using Silky.Core.DbContext;
+using Silky.Core.DbContext.UnitOfWork;
 
-namespace Silky.Transaction.Tcc
+namespace Silky.Core.MethodExecutor
 {
     public static class ObjectMethodExecutorExtensions
     {
         [CanBeNull]
-        public static async Task<object> ExecuteTccMethodAsync(this ObjectMethodExecutor executor, object target,
+        public static async Task<object> ExecuteMethodWithDbContextAsync([NotNull] this ObjectMethodExecutor executor,
+            object target,
             object?[]? parameters)
         {
+            Check.NotNull(executor, nameof(executor));
+            Check.NotNull(target, nameof(target));
             object execResult;
             var dbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>();
-            var unitOfWorkAttribute = executor.MethodInfo.GetCustomAttributes().OfType<UnitOfWorkAttribute>()
-                .FirstOrDefault();
+            var unitOfWorkAttribute =
+                executor.MethodInfo.GetCustomAttributes().OfType<UnitOfWorkAttribute>().FirstOrDefault();
             var isManualSaveChanges =
                 executor.MethodInfo.GetCustomAttributes().OfType<ManualCommitAttribute>().Any();
             dbContextPool?.EnsureDbContextAddToPools();
@@ -27,6 +28,7 @@ namespace Silky.Transaction.Tcc
             {
                 dbContextPool?.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
             }
+
             try
             {
                 if (executor.IsMethodAsync)
@@ -59,6 +61,7 @@ namespace Silky.Transaction.Tcc
             {
                 dbContextPool?.CloseAll();
             }
+
             return execResult;
         }
     }

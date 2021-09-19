@@ -65,6 +65,12 @@ namespace Silky.Core.Rpc
             RpcServices = serviceProvider;
         }
 
+
+        public void RemoveAttachment(string key)
+        {
+            contextAttachments.TryRemove(key, out _);
+        }
+
         public void SetAttachment(string key, object value)
         {
             if (AttachmentKeys.RequestHeader.Equals(key))
@@ -73,7 +79,7 @@ namespace Silky.Core.Rpc
                 value = convertibleService.Convert(value, typeof(IDictionary<string, object>));
             }
 
-            if (value.GetType().GetObjectDataType() == ObjectDataType.Complex
+            if (value?.GetType().GetObjectDataType() == ObjectDataType.Complex
                 && !(value is IDictionary<string, object>)
                 && !(value is JObject)
                 && !(value is JArray)

@@ -10,20 +10,21 @@ namespace GatewayDemo.AppService
     public class TestProxyAppService : ITestProxyAppService
     {
         private readonly ITestAppService _testAppService;
-        private readonly ICurrentServiceKey _currentServiceKey;
+        private readonly IServiceKeyExecutor _serviceKeyExecutor;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
         public TestProxyAppService(ITestAppService testAppService,
-            ICurrentServiceKey currentServiceKey, 
+            IServiceKeyExecutor serviceKeyExecutor,
             IHttpContextAccessor httpContextAccessor)
         {
             _testAppService = testAppService;
-            _currentServiceKey = currentServiceKey;
+            _serviceKeyExecutor = serviceKeyExecutor;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<TestOut> CreateProxy(TestInput testInput)
         {
-            // _currentServiceKey.Change("v2");
+            // _serviceKeyExecutor.ChangeServiceKey("v2");
             var result = await _testAppService.Create(testInput);
             return result;
         }
@@ -32,23 +33,21 @@ namespace GatewayDemo.AppService
         {
             var html = MiniProfiler.Current.RenderIncludes(_httpContextAccessor.HttpContext).ToString();
             return html;
-
         }
- 
+
         public async Task<TestOut> GetProxy(string name)
         {
             return await _testAppService.Get(name);
         }
 
-        public async Task<string> DeleteProxy(string name,string address)
+        public async Task<string> DeleteProxy(string name, string address)
         {
-            return await _testAppService.Delete(new TestInput(){ Name = name, Address = address});
+            return await _testAppService.Delete(new TestInput() { Name = name, Address = address });
         }
 
-        public Task<string> UpdatePart(TestInput input)
+        public async Task<string> UpdatePart(TestInput input)
         {
-            _currentServiceKey.Change("v2");
-            return _testAppService.UpdatePart(input);
+            return await _serviceKeyExecutor.Execute(() => _testAppService.UpdatePart(input), "v2");
         }
     }
 }

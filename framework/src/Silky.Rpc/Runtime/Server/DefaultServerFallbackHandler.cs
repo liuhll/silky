@@ -8,11 +8,11 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
+using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
-using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
 
-namespace Silky.Rpc.Runtime
+namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServerFallbackHandler : IServerFallbackHandler
     {
@@ -30,7 +30,11 @@ namespace Silky.Rpc.Runtime
 
         {
             var tracingTimestamp = ctx[PollyContextNames.TracingTimestamp]?.To<long>();
-            var remoteResultMessage = new RemoteResultMessage();
+            var remoteResultMessage = new RemoteResultMessage()
+            {
+                ServiceEntryId = message.ServiceEntryId,
+                StatusCode = StatusCode.Success,
+            };
             try
             {
                 var exception = ctx[PollyContextNames.Exception] as Exception;
@@ -46,33 +50,22 @@ namespace Silky.Rpc.Runtime
                 Check.NotNull(serviceEntry, nameof(serviceEntry));
                 if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
                 {
-                    object instance = null;
-                    var fallbackServiceKey = RpcContext.Context.GetFallbackServiceKey();
-                    instance = fallbackServiceKey.IsNullOrEmpty()
-                        ? EngineContext.Current.Resolve(serviceEntry.FallbackProvider.Type)
-                        : EngineContext.Current.ResolveNamed(fallbackServiceKey, serviceEntry.FallbackProvider.Type);
+                    object instance = EngineContext.Current.Resolve(serviceEntry.FallbackProvider.Type);
                     if (instance == null)
                     {
                         remoteResultMessage.StatusCode = StatusCode.NotFindFallbackInstance;
                         remoteResultMessage.ExceptionMessage =
                             $"Failed to instantiate the instance of the fallback service;{Environment.NewLine}" +
-                            $"Type:{serviceEntry.FallbackProvider.Type.FullName},fallbackServiceKey:{fallbackServiceKey}";
+                            $"Type:{serviceEntry.FallbackProvider.Type.FullName}";
                         return remoteResultMessage;
                     }
 
                     object result = null;
                     try
                     {
-                        if (serviceEntry.FallbackMethodExecutor.IsMethodAsync)
-                        {
-                            result = await serviceEntry.FallbackMethodExecutor.ExecuteAsync(instance,
-                                message.Parameters);
-                        }
-                        else
-                        {
-                            result = serviceEntry.FallbackMethodExecutor.Execute(instance, message.Parameters);
-                        }
-
+                        var parameters = serviceEntry.ConvertParameters(message.Parameters);
+                        result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithDbContextAsync(instance,
+                            parameters);
                         remoteResultMessage.StatusCode = StatusCode.Success;
                         remoteResultMessage.Result = result;
                         return remoteResultMessage;

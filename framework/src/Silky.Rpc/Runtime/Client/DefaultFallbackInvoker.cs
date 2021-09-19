@@ -7,6 +7,7 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
+using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Runtime.Server;
 
@@ -28,29 +29,18 @@ namespace Silky.Rpc.Runtime.Client
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             Check.NotNull(serviceEntry.FallbackMethodExecutor, nameof(serviceEntry.FallbackMethodExecutor));
             Check.NotNull(serviceEntry.FallbackProvider, nameof(serviceEntry.FallbackProvider));
-            object instance = null;
-            var fallbackServiceKey = RpcContext.Context.GetFallbackServiceKey();
-            instance = fallbackServiceKey.IsNullOrEmpty()
-                ? EngineContext.Current.Resolve(serviceEntry.FallbackProvider.Type)
-                : EngineContext.Current.ResolveNamed(fallbackServiceKey, serviceEntry.FallbackProvider.Type);
+            var instance = EngineContext.Current.Resolve(serviceEntry.FallbackProvider.Type);
             if (instance == null)
             {
                 throw new NotFindFallbackInstanceException(
                     $"The implementation class of the failed callback was not found;{Environment.NewLine}" +
-                    $"Type:{serviceEntry.FallbackProvider.Type.FullName},fallbackServiceKey:{fallbackServiceKey}");
+                    $"Type:{serviceEntry.FallbackProvider.Type.FullName}");
             }
 
             object result = null;
             try
             {
-                if (serviceEntry.FallbackMethodExecutor.IsMethodAsync)
-                {
-                    result = await serviceEntry.FallbackMethodExecutor.ExecuteAsync(instance, parameters);
-                }
-                else
-                {
-                    result = serviceEntry.FallbackMethodExecutor.Execute(instance, parameters);
-                }
+                result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithDbContextAsync(instance, parameters);
             }
             catch (Exception ex)
             {

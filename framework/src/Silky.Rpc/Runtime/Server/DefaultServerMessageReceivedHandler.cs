@@ -9,7 +9,6 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.Rpc;
-using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Security;
 using Silky.Rpc.Transport.Messages;
 
@@ -19,18 +18,18 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IServerHandleSupervisor _serverHandleSupervisor;
-        private readonly ICurrentServiceKey _currentServiceKey;
+        private readonly IServiceKeyExecutor _serviceKeyExecutor;
         private readonly IServerDiagnosticListener _serverDiagnosticListener;
         public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
 
         public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
             IServerHandleSupervisor serverHandleSupervisor,
-            ICurrentServiceKey currentServiceKey,
+            IServiceKeyExecutor serviceKeyExecutor,
             IServerDiagnosticListener serverDiagnosticListener)
         {
             _serviceEntryLocator = serviceEntryLocator;
             _serverHandleSupervisor = serverHandleSupervisor;
-            _currentServiceKey = currentServiceKey;
+            _serviceKeyExecutor = serviceKeyExecutor;
             _serverDiagnosticListener = serverDiagnosticListener;
             Logger = NullLogger<DefaultServerMessageReceivedHandler>.Instance;
         }
@@ -71,7 +70,7 @@ namespace Silky.Rpc.Runtime.Server
 
                 context[PollyContextNames.ServiceEntry] = serviceEntry;
                 _serverHandleSupervisor.Monitor((serviceEntry.Id, clientRpcEndpoint));
-                var result = await serviceEntry.Executor(_currentServiceKey.ServiceKey,
+                var result = await serviceEntry.Executor(_serviceKeyExecutor.ServiceKey,
                     message.Parameters);
 
                 remoteResultMessage.Result = result;

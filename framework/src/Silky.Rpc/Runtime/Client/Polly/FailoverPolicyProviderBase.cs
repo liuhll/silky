@@ -9,8 +9,8 @@ namespace Silky.Rpc.Runtime.Client
     {
         protected virtual IRpcEndpoint GetSelectedServerEndpoint()
         {
-            var selectedAddress = RpcContext.Context.GetSelectedServerAddress();
-            if (selectedAddress == null)
+            var selectedHost = RpcContext.Context.GetSelectedServerHost();
+            if (selectedHost == null)
             {
                 return null;
             }
@@ -18,7 +18,7 @@ namespace Silky.Rpc.Runtime.Client
             var selectedServerPort = RpcContext.Context.GetSelectedServerPort();
             var selectedServerServiceProtocol = RpcContext.Context.GetSelectedServerServiceProtocol();
             var selectedServerEndpoint =
-                AddressHelper.CreateRpcEndpoint(selectedAddress, selectedServerPort, selectedServerServiceProtocol);
+                AddressHelper.CreateRpcEndpoint(selectedHost, selectedServerPort, selectedServerServiceProtocol);
             return selectedServerEndpoint;
         }
 

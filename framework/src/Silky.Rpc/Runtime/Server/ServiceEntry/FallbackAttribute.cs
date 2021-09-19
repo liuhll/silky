@@ -11,9 +11,7 @@ namespace Silky.Rpc.Runtime.Server
         }
 
         public Type Type { get; }
-
         public string MethodName { get; set; }
         public int Weight { get; set; }
-        
     }
 }

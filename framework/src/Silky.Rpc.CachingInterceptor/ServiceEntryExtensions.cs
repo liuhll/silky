@@ -74,7 +74,7 @@ namespace Silky.Rpc.CachingInterceptor
 
             var templeteAgrs = cacheKeyProviders.OrderBy(p => p.Index).ToList().Select(ckp => ckp.Value).ToArray();
             cachingInterceptKey = string.Format(templete, templeteAgrs);
-            var currentServiceKey = EngineContext.Current.Resolve<ICurrentServiceKey>();
+            var currentServiceKey = EngineContext.Current.Resolve<IServiceKeyExecutor>();
             if (!currentServiceKey.ServiceKey.IsNullOrEmpty())
             {
                 cachingInterceptKey = $"serviceKey:{currentServiceKey.ServiceKey}:" + cachingInterceptKey;

@@ -1,3 +1,4 @@
+using System;
 using Polly;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime.Server;
@@ -17,14 +18,13 @@ namespace Silky.Rpc.Runtime.Client
         {
             if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
             {
-                var fallbackPolicy = Policy<object>.Handle<SilkyException>(ex =>
+                var fallbackPolicy = Policy<object>.Handle<Exception>(ex =>
                     {
                         var isNotNeedFallback = ex is INotNeedFallback;
                         if (isNotNeedFallback)
                         {
                             return false;
                         }
-
                         return true;
                     })
                     .FallbackAsync(

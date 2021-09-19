@@ -21,6 +21,7 @@ namespace ITestApplication.Test
         /// <returns></returns>
         //[GetCachingIntercept("name:{0}")]
         //[UnitOfWork]
+        [Fallback(typeof(ICreateFallback))]
         Task<TestOut> Create(TestInput input);
 
         Task<TestOut> Get(long id);
