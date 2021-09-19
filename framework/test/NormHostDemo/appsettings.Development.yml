@@ -15,5 +15,6 @@ jwtSettings:
   secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
 
 governance:
-  executionTimeout: -1
+  timeoutMillSeconds: 200
+  maxConcurrentInvokeCount: 3
   

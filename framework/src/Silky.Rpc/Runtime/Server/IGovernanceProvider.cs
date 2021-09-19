@@ -46,6 +46,6 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// 当个服务允许的最大处理
         /// </summary>
-        int ConcurrentProcessingtCount { get; set; }
+        int ConcurrentHandlingCount { get; set; }
     }
 }

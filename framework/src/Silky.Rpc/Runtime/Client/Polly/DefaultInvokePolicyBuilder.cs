@@ -11,7 +11,7 @@ namespace Silky.Rpc.Runtime.Client
         private readonly ICollection<IInvokePolicyProvider> _policyProviders;
 
         private readonly ICollection<IInvokeCircuitBreakerPolicyProvider> _circuitBreakerPolicyProviders;
-
+        
         public DefaultInvokePolicyBuilder(
             ICollection<IInvokePolicyProvider> policyProviders,
             ICollection<IPolicyWithResultProvider> policyWithResultProviders,
@@ -50,7 +50,7 @@ namespace Silky.Rpc.Runtime.Client
                 var policyItem = circuitBreakerPolicyProvider.Create(serviceEntry, parameters);
                 policy = policy.WrapAsync(policyItem);
             }
-
+            
             return policy;
         }
     }

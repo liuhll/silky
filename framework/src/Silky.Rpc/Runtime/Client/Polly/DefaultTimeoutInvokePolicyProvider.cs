@@ -1,5 +1,6 @@
 using System;
 using Polly;
+using Polly.Timeout;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
@@ -11,7 +12,8 @@ namespace Silky.Rpc.Runtime.Client
             if (serviceEntry.GovernanceOptions.TimeoutMillSeconds > 0)
             {
                 return Policy.TimeoutAsync(
-                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.TimeoutMillSeconds));
+                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.TimeoutMillSeconds),
+                    TimeoutStrategy.Pessimistic);
             }
 
             return null;

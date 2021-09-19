@@ -48,7 +48,7 @@ namespace Silky.Http.Core.Middlewares
                         var responseResultDto = new ResponseResultDto()
                         {
                             Status = exception.GetExceptionStatusCode(),
-                            ErrorMessage = exception.Message
+                            ErrorMessage = exception.GetExceptionMessage()
                         };
                         if (exception is IHasValidationErrors)
                         {
@@ -76,8 +76,9 @@ namespace Silky.Http.Core.Middlewares
                             return context.Response.WriteAsync(responseResultData);
                         }
 
+                        var exceptionMessage = exception.GetExceptionMessage();
                         context.Response.ContentLength = exception.Message.GetBytes().Length;
-                        return context.Response.WriteAsync(exception.Message);
+                        return context.Response.WriteAsync(exceptionMessage);
                     }
                 });
             });

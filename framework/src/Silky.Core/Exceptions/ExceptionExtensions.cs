@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
+using Silky.Core.Extensions;
 using Silky.Core.Logging;
 
 namespace Silky.Core.Exceptions
@@ -22,10 +23,10 @@ namespace Silky.Core.Exceptions
 
         public static string GetExceptionMessage(this Exception exception)
         {
-            var message = exception.Message;
+            var message = exception.IsTimeoutException() ? "Request execution timed out" : exception.Message;
             if (!exception.IsFriendlyException() && _appSettingsOptions.DisplayFullErrorStack)
             {
-                message += Environment.NewLine + " 堆栈信息:" + Environment.NewLine + exception.StackTrace;
+                message += Environment.NewLine + " Stack information:" + Environment.NewLine + exception.StackTrace;
                 if (exception.InnerException != null)
                 {
                     message += "|InnerException:" + GetExceptionMessage(exception.InnerException);
@@ -76,6 +77,27 @@ namespace Silky.Core.Exceptions
             return statusCode.IsUnauthorized();
         }
 
+        public static bool IsTimeoutException(this Exception exception)
+        {
+            if (exception is TimeoutException ||
+                exception.GetType().FullName == "Polly.Timeout.TimeoutRejectedException")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsPollyException(this Exception exception)
+        {
+            if (exception is TimeoutException || exception.GetType().FullName.Contains("Polly"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static StatusCode GetExceptionStatusCode(this Exception exception)
         {
             var statusCode = StatusCode.NonSilkyException;
@@ -86,9 +108,15 @@ namespace Silky.Core.Exceptions
                 return statusCode;
             }
 
-            if (exception is TimeoutException)
+            if (exception.IsTimeoutException())
             {
                 statusCode = StatusCode.Timeout;
+                return statusCode;
+            }
+
+            if (exception.IsPollyException())
+            {
+                statusCode = StatusCode.ServerError;
                 return statusCode;
             }
 

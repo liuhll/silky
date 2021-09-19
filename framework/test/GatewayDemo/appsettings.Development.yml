@@ -19,7 +19,8 @@ gateway:
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
   enableCors: true
 governance:
-  executionTimeout: -1
+  timeoutMillSeconds: 500
+  maxConcurrentInvokeCount: 1
 dashboard:
   displayWebApiInSwagger: true
   useAuth: false

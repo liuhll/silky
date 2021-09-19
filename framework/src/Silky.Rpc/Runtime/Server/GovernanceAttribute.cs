@@ -17,7 +17,7 @@ namespace Silky.Rpc.Runtime.Server
             BreakerSeconds = 60;
             RetryIntervalMillSeconds = 50;
             RetryTimes = 0;
-            ConcurrentProcessingtCount = 50;
+            ConcurrentHandlingCount = 50;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Silky.Rpc.Runtime.Server
         /// <summary>
         /// Maximum allowed concurrency
         /// </summary>
-        public int ConcurrentProcessingtCount { get; set; }
+        public int ConcurrentHandlingCount { get; set; }
 
 
         /// <summary>

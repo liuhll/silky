@@ -40,6 +40,8 @@ namespace Silky.Core.Exceptions
         [Description("缓存拦截存在异常")] CachingInterceptError = 517,
         
         [Description("执行超时")] Timeout = 518,
+        
+        [Description("服务器异常")] ServerError = 520,
 
         [Description("业务异常")] [IsBusinessException]
         BusinessError = 1000,
