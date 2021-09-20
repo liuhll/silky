@@ -16,7 +16,7 @@ namespace Silky.Http.Core
                 .Bind(configuration.GetSection(GatewayOptions.Gateway));
             services.AddHttpContextAccessor();
             services.AddResponseCaching();
-           
+            services.AddMvc();
         }
 
         public async void Configure(IApplicationBuilder application)

@@ -41,6 +41,17 @@ namespace Microsoft.Extensions.Hosting
                         .AddYamlFile("appsettings.yaml", optional: true, true)
                         .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true,
                             true);
+
+                    // add RateLimit configfile
+                    config.AddJsonFile("ratelimit.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile($"ratelimit.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true,
+                            true);
+                    config.AddYamlFile("ratelimit.yml", optional: true, reloadOnChange: true)
+                        .AddYamlFile($"ratelimit.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true,
+                            true)
+                        .AddYamlFile("ratelimit.yaml", optional: true, reloadOnChange: true)
+                        .AddYamlFile($"ratelimit.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true,
+                            true);
                 })
                 ;
 

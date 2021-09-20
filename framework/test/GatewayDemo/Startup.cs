@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using GatewayDemo.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,9 @@ namespace GatewayDemo
             services.AddSilkyIdentity();
             services.AddSilkySkyApm();
             services.AddMessagePackCodec();
+            var redisOptions = Configuration.GetRateLimitRedisOptions();
+            services.AddClientRateLimit(redisOptions);
+            services.AddIpRateLimit(redisOptions);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,11 +44,12 @@ namespace GatewayDemo
                 app.UseMiniProfiler();
             }
 
+            app.UseClientRateLimiting();
+            app.UseIpRateLimiting();
             app.UseSilkyIdentity();
             app.UseDashboard();
             app.ConfigureSilkyRequestPipeline();
             // app.UseEndpoints(endpoints=> endpoints.MapControllers());
         }
-        
     }
 }
