@@ -2,7 +2,7 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class ServiceEntryInvokeInfo
     {
-        public ServiceInvokeInfo ServiceInvokeInfo { get; set; }
+        public ClientInvokeInfo ClientInvokeInfo { get; set; }
 
         public string Address { get; set; }
 

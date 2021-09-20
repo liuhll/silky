@@ -12,15 +12,15 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultRequestServiceSupervisor : IRequestServiceSupervisor
+    public class DefaultInvokeSupervisor : IInvokeSupervisor
     {
-        private ConcurrentDictionary<(string, IRpcEndpoint), ServiceInvokeInfo> m_monitor = new();
+        private ConcurrentDictionary<(string, IRpcEndpoint), ClientInvokeInfo> m_monitor = new();
         private readonly IHealthCheck _healthCheck;
        
-        public ILogger<DefaultRequestServiceSupervisor> Logger { get; set; }
+        public ILogger<DefaultInvokeSupervisor> Logger { get; set; }
 
 
-        public DefaultRequestServiceSupervisor(IHealthCheck healthCheck,
+        public DefaultInvokeSupervisor(IHealthCheck healthCheck,
             IServiceEntryLocator serviceEntryLocator)
         {
             _healthCheck = healthCheck;
@@ -46,21 +46,21 @@ namespace Silky.Rpc.Runtime.Client
                 }
             };
 
-            Logger = NullLogger<DefaultRequestServiceSupervisor>.Instance;
+            Logger = NullLogger<DefaultInvokeSupervisor>.Instance;
         }
 
         public void Monitor((string, IRpcEndpoint) item)
         {
-            var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
-            serviceInvokeInfo.ConcurrentRequests++;
-            serviceInvokeInfo.TotalRequests++;
+            var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ClientInvokeInfo());
+            serviceInvokeInfo.ConcurrentInvokeCount++;
+            serviceInvokeInfo.TotalInvokeCount++;
             serviceInvokeInfo.FinalInvokeTime = DateTime.Now;
         }
 
         public void ExecSuccess((string, IRpcEndpoint) item, double elapsedTotalMilliseconds)
         {
-            var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
-            serviceInvokeInfo.ConcurrentRequests--;
+            var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ClientInvokeInfo());
+            serviceInvokeInfo.ConcurrentInvokeCount--;
             if (elapsedTotalMilliseconds > 0)
             {
                 serviceInvokeInfo.AET = serviceInvokeInfo.AET.HasValue
@@ -73,9 +73,9 @@ namespace Silky.Rpc.Runtime.Client
 
         public void ExecFail((string, IRpcEndpoint) item, double elapsedTotalMilliseconds)
         {
-            var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ServiceInvokeInfo());
-            serviceInvokeInfo.ConcurrentRequests--;
-            serviceInvokeInfo.FaultRequests++;
+            var serviceInvokeInfo = m_monitor.GetOrAdd(item, new ClientInvokeInfo());
+            serviceInvokeInfo.ConcurrentInvokeCount--;
+            serviceInvokeInfo.FaultInvokeCount++;
             serviceInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
             m_monitor.AddOrUpdate(item, serviceInvokeInfo, (key, _) => serviceInvokeInfo);
         }
@@ -93,9 +93,9 @@ namespace Silky.Rpc.Runtime.Client
                 serviceInstanceInvokeInfo = new ServiceInstanceInvokeInfo()
                 {
                     AET = m_monitor.Values.Sum(p => p.AET) / m_monitor.Count,
-                    MaxConcurrentRequests = m_monitor.Values.Max(p => p.ConcurrentRequests),
-                    FaultRequests = m_monitor.Values.Sum(p => p.FaultRequests),
-                    TotalRequests = m_monitor.Values.Sum(p => p.TotalRequests),
+                    MaxConcurrentRequests = m_monitor.Values.Max(p => p.ConcurrentInvokeCount),
+                    FaultRequests = m_monitor.Values.Sum(p => p.FaultInvokeCount),
+                    TotalRequests = m_monitor.Values.Sum(p => p.TotalInvokeCount),
                     FinalInvokeTime = m_monitor.Values.Max(p => p.FinalInvokeTime),
                     FinalFaultInvokeTime = m_monitor.Values.Max(p => p.FinalFaultInvokeTime),
                     FirstInvokeTime = m_monitor.Values.Min(p => p.FirstInvokeTime)
@@ -115,7 +115,7 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     ServiceEntryId = monitor.Key.Item1,
                     Address = monitor.Key.Item2.IPEndPoint.ToString(),
-                    ServiceInvokeInfo = monitor.Value,
+                    ClientInvokeInfo = monitor.Value,
                     IsEnable = _healthCheck.IsHealth(monitor.Key.Item2)
                 };
                 serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);

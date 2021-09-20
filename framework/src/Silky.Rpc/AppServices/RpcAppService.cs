@@ -13,12 +13,12 @@ namespace Silky.Rpc.AppServices
     public class RpcAppService : IRpcAppService
     {
         private readonly IServerHandleSupervisor _serverHandleSupervisor;
-        private readonly IRequestServiceSupervisor _requestServiceSupervisor;
+        private readonly IInvokeSupervisor _invokeSupervisor;
 
-        public RpcAppService(IServerHandleSupervisor serverHandleSupervisor, IRequestServiceSupervisor requestServiceSupervisor)
+        public RpcAppService(IServerHandleSupervisor serverHandleSupervisor, IInvokeSupervisor invokeSupervisor)
         {
             _serverHandleSupervisor = serverHandleSupervisor;
-            _requestServiceSupervisor = requestServiceSupervisor;
+            _invokeSupervisor = invokeSupervisor;
         }
 
         public GetInstanceDetailOutput GetInstanceDetail()
@@ -28,7 +28,7 @@ namespace Silky.Rpc.AppServices
                 HostName = EngineContext.Current.HostName,
                 Address = AddressHelper.GetRpcEndpoint().IPEndPoint.ToString(),
                 StartTime = Process.GetCurrentProcess().StartTime,
-                InvokeInfo = _requestServiceSupervisor.GetServiceInstanceInvokeInfo(),
+                InvokeInfo = _invokeSupervisor.GetServiceInstanceInvokeInfo(),
                 HandleInfo = _serverHandleSupervisor.GetServiceInstanceHandleInfo()
             };
             return instanceSupervisorOutput;
@@ -41,7 +41,7 @@ namespace Silky.Rpc.AppServices
 
         public IReadOnlyCollection<ServiceEntryInvokeInfo> GetServiceEntryInvokeInfos()
         {
-            return _requestServiceSupervisor.GetServiceEntryInvokeInfos();
+            return _invokeSupervisor.GetServiceEntryInvokeInfos();
         }
     }
 }

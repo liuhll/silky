@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using Silky.Core.DependencyInjection;
-using Silky.Rpc.Address;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IRequestServiceSupervisor : ISingletonDependency
+    public interface IInvokeSupervisor : ISingletonDependency
     {
         void Monitor((string, IRpcEndpoint) item);
 

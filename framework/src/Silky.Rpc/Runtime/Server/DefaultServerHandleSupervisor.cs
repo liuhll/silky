@@ -12,15 +12,15 @@ namespace Silky.Rpc.Runtime.Server
         public void Monitor((string, string) item)
         {
             var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServerHandleInfo());
-            serviceHandleInfo.ConcurrentHandles++;
-            serviceHandleInfo.TotalHandles++;
+            serviceHandleInfo.ConcurrentHandleCount++;
+            serviceHandleInfo.TotalHandleCount++;
             serviceHandleInfo.FinalHandleTime = DateTime.Now;
         }
 
         public void ExecSuccess((string, string) item, double elapsedTotalMilliseconds)
         {
             var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServerHandleInfo());
-            serviceHandleInfo.ConcurrentHandles--;
+            serviceHandleInfo.ConcurrentHandleCount--;
             if (elapsedTotalMilliseconds > 0)
             {
                 serviceHandleInfo.AET = serviceHandleInfo.AET.HasValue
@@ -34,15 +34,15 @@ namespace Silky.Rpc.Runtime.Server
         public void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds)
         {
             var serviceHandleInfo = m_monitor.GetOrAdd(item, new ServerHandleInfo());
-            serviceHandleInfo.ConcurrentHandles--;
-            serviceHandleInfo.FaultHandles++;
+            serviceHandleInfo.ConcurrentHandleCount--;
+            serviceHandleInfo.FaultHandleCount++;
             serviceHandleInfo.FinalHandleTime = DateTime.Now;
             if (isSeriousError)
             {
                 serviceHandleInfo.SeriousError++;
                 serviceHandleInfo.SeriousErrorTime = DateTime.Now;
             }
-            serviceHandleInfo.ConcurrentHandles--;
+            serviceHandleInfo.ConcurrentHandleCount--;
             if (elapsedTotalMilliseconds > 0)
             {
                 serviceHandleInfo.AET = serviceHandleInfo.AET.HasValue
@@ -65,9 +65,9 @@ namespace Silky.Rpc.Runtime.Server
                 serverInstanceHandleInfo = new ServerInstanceHandleInfo()
                 {
                     AET = m_monitor.Values.Sum(p => p.AET) / m_monitor.Count,
-                    MaxConcurrentHandles = m_monitor.Values.Max(p => p.ConcurrentHandles),
-                    FaultHandles = m_monitor.Values.Sum(p => p.FaultHandles),
-                    TotalHandles = m_monitor.Values.Sum(p => p.TotalHandles),
+                    MaxConcurrentHandles = m_monitor.Values.Max(p => p.ConcurrentHandleCount),
+                    FaultHandles = m_monitor.Values.Sum(p => p.FaultHandleCount),
+                    TotalHandles = m_monitor.Values.Sum(p => p.TotalHandleCount),
                     FirstHandleTime = m_monitor.Values.Max(p => p.FirstHandleTime),
                     FinalHandleTime = m_monitor.Values.Max(p => p.FinalHandleTime),
                     FinalFaultHandleTime = m_monitor.Values.Min(p => p.FinalFaultHandleTime),
