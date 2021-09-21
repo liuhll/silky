@@ -17,7 +17,6 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
-using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
@@ -25,7 +24,6 @@ using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Codec;
 using Silky.Rpc.Transport.Messages;
-using Silky.Rpc.Utils;
 
 namespace Silky.DotNetty.Protocol.Tcp
 {
@@ -47,7 +45,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
             _rpcOptions = rpcOptions.Value;
-            _hostRpcEndpoint = AddressHelper.GetRpcEndpoint();
+            _hostRpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));

@@ -58,7 +58,7 @@ namespace Silky.WebSocket
         {
             var webSocketOptions = privider.Resolve<IOptions<WebSocketOptions>>().Value;
             var hostEnvironment = privider.Resolve<IHostEnvironment>();
-            var wsAddressModel = AddressHelper.GetRpcEndpoint(webSocketOptions.Port, ServiceProtocol.Ws);
+            var wsAddressModel = RpcEndpointHelper.GetRpcEndpoint(webSocketOptions.Port, ServiceProtocol.Ws);
             WebSocketServer socketServer = null;
             if (webSocketOptions.IsSsl)
             {
@@ -86,9 +86,8 @@ namespace Silky.WebSocket
             webSocketServerBootstrap.Initialize(webSocketServices);
             var serviceRouteRegisterProvider =
                 applicationContext.ServiceProvider.GetRequiredService<IServerRegisterProvider>();
-            var webSocketOptions = applicationContext.ServiceProvider
-                .GetRequiredService<IOptions<WebSocketOptions>>().Value;
-            await serviceRouteRegisterProvider.RegisterWsRoutes(webSocketOptions.Port);
+            
+            serviceRouteRegisterProvider.AddWsServices();
         }
 
         private (Type, string)[] GetWebSocketServices(ITypeFinder typeFinder)

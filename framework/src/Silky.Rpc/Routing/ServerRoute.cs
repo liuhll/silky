@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
@@ -6,10 +7,17 @@ namespace Silky.Rpc.Routing
 {
     public class ServerRoute
     {
-        public IRpcEndpoint[] Endpoints { get; set; }
-        
-        public ServiceDescriptor Service { get; set; }
-        
+        public ServerRoute(string hostName)
+        {
+            HostName = hostName;
+            Endpoints = new List<IRpcEndpoint>();
+            Services = new List<ServiceDescriptor>();
+        }
+
+        public string HostName { get; }
+        public ICollection<IRpcEndpoint> Endpoints { get; set; }
+        public ICollection<ServiceDescriptor> Services { get; set; }
+
         public override bool Equals(object? obj)
         {
             var model = obj as ServerRoute;
@@ -17,11 +25,14 @@ namespace Silky.Rpc.Routing
             {
                 return false;
             }
-            if (!Service.Equals(model.Service))
+
+            if (!HostName.Equals(model.HostName))
             {
                 return false;
             }
-            return Endpoints.All(p => model.Endpoints.Any(q => p == q));
+
+            return Services.All(p => model.Services.Any(q => p == q))
+                   && Endpoints.All(p => model.Endpoints.Any(q => p == q));
         }
 
         public static bool operator ==(ServerRoute model1, ServerRoute model2)
@@ -36,7 +47,8 @@ namespace Silky.Rpc.Routing
 
         public override int GetHashCode()
         {
-            return (Service.ToString() + string.Join(",", Endpoints.Select(p => p.ToString()))).GetHashCode();
+            return (string.Join(",", Services.Select(p => p.ToString())) +
+                    string.Join(",", Endpoints.Select(p => p.ToString()))).GetHashCode();
         }
     }
 }

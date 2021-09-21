@@ -5,6 +5,6 @@ namespace Silky.RegistryCenter.Zookeeper
 {
     internal interface IZookeeperStatusChange
     {
-        Task CreateSubscribeServiceRouteDataChanges(IZookeeperClient zookeeperClient);
+        Task CreateSubscribeServersChange(IZookeeperClient zookeeperClient);
     }
 }

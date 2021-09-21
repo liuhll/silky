@@ -86,7 +86,11 @@ namespace Silky.Http.Core.Middlewares
         {
             var serverRegisterProvider =
                 application.ApplicationServices.GetRequiredService<IServerRegisterProvider>();
-            await serverRegisterProvider.RegisterHttpRoutes();
+            serverRegisterProvider.AddHttpServices();
+
+            var serverRouteRegister =
+                application.ApplicationServices.GetRequiredService<IServerRouteRegister>();
+            await serverRouteRegister.RegisterServer();
         }
     }
 }

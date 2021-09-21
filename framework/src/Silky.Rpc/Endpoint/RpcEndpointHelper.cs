@@ -14,7 +14,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Endpoint
 {
-    public static class AddressHelper
+    public static class RpcEndpointHelper
     {
         private const string ANYHOST = "0.0.0.0";
         private const string LOCAL_IP_PATTERN = "127(\\.\\d{1,3}){3}$";
@@ -34,19 +34,25 @@ namespace Silky.Rpc.Endpoint
 
         public static RpcEndpointDescriptor GetLocalWebEndpointDescriptor()
         {
+            return GetLocalWebEndpoint()?.Descriptor;
+        }
+        
+        public static IRpcEndpoint GetLocalWebEndpoint()
+        {
             var server = EngineContext.Current.Resolve<IServer>();
             Check.NotNull(server, nameof(server));
             var address = server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
             if (address.IsNullOrEmpty())
             {
-                throw new SilkyException("Failed to obtain http service rpcEndpoint");
+                //throw new SilkyException("Failed to obtain http service rpcEndpoint");
+                return null;
             }
 
             var addressDescriptor = ParseRpcEndpointDescriptor(address);
             return addressDescriptor;
         }
 
-        private static RpcEndpointDescriptor ParseRpcEndpointDescriptor(string address)
+        private static IRpcEndpoint ParseRpcEndpointDescriptor(string address)
         {
             var addressSegments = address.Split("://");
             var scheme = addressSegments.First();
@@ -54,12 +60,7 @@ namespace Silky.Rpc.Endpoint
             var domainAndPort = addressSegments.Last().Split(":");
             var domain = domainAndPort[0];
             var port = int.Parse(domainAndPort[1]);
-            return new RpcEndpointDescriptor()
-            {
-                Host = domain,
-                Port = port,
-                ServiceProtocol = serviceProtocol
-            };
+            return new RpcEndpoint(domain, port, serviceProtocol);
         }
 
         private static string GetAnyHostIp()
@@ -86,7 +87,7 @@ namespace Silky.Rpc.Endpoint
             return result;
         }
 
-        public static IRpcEndpoint GetRpcEndpoint()
+        public static IRpcEndpoint GetLocalTcpEndpoint()
         {
             var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
             string host = GetHostIp(rpcOptions.Host);
@@ -102,7 +103,7 @@ namespace Silky.Rpc.Endpoint
                 return GetLocalWebEndpointDescriptor();
             }
 
-            return GetRpcEndpoint().Descriptor;
+            return GetLocalTcpEndpoint().Descriptor;
 
         }
 
@@ -117,6 +118,14 @@ namespace Silky.Rpc.Endpoint
         {
             string host = GetHostIp(GetAnyHostIp());
             var address = new RpcEndpoint(host, port, serviceProtocol);
+            return address;
+        }
+        
+        public static IRpcEndpoint GetWsEndpoint()
+        {
+            var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
+            string host = GetHostIp(GetAnyHostIp());
+            var address = new RpcEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
             return address;
         }
 

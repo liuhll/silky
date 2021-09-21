@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Server
         public string Id { get; set; }
 
         public string ServiceId { get; set; }
-        
+
         public string ServiceName { get; set; }
 
         public string Application { get; set; }
@@ -65,7 +65,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             return Equals(model1, model2);
         }
-
+        
         public static bool operator !=(ServiceEntryDescriptor model1, ServiceEntryDescriptor model2)
         {
             return !Equals(model1, model2);
@@ -82,5 +82,6 @@ namespace Silky.Rpc.Runtime.Server
         }
 
         #endregion
+        
     }
 }

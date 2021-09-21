@@ -74,16 +74,16 @@ namespace Silky.Http.Dashboard.AppService
         {
             var serviceRoutes = _serverRouteCache.ServiceRoutes;
             var hosts = serviceRoutes
-                .Where(p => p.Service.GetHostName() != null)
-                .GroupBy(p => p.Service.GetHostName())
+                .Where(p => p.Services.GetHostName() != null)
+                .GroupBy(p => p.Services.GetHostName())
                 .Select(p => new GetHostOutput()
                 {
                     Host = p.Key,
-                    ApplicationCount = p.Select(sr => sr.Service.Application).Distinct().Count(),
-                    InstanceCount = p.FirstOrDefault(sr => !sr.Service.IsSilkyService())?.GetInstanceCount() ?? 0,
-                    LocalServiceEntriesCount = p.SelectMany(sr => sr.Service.ServiceEntries).Distinct().Count(),
-                    AppServiceCount = p.Select(sr => sr.Service.ServiceName).Distinct().Count(),
-                    HasWsService = p.Any(sr => sr.Service.ServiceProtocol == ServiceProtocol.Ws)
+                    ApplicationCount = p.Select(sr => sr.Services.Application).Distinct().Count(),
+                    InstanceCount = p.FirstOrDefault(sr => !sr.Services.IsSilkyService())?.GetInstanceCount() ?? 0,
+                    LocalServiceEntriesCount = p.SelectMany(sr => sr.Services.ServiceEntries).Distinct().Count(),
+                    AppServiceCount = p.Select(sr => sr.Services.ServiceName).Distinct().Count(),
+                    HasWsService = p.Any(sr => sr.Services.ServiceProtocol == ServiceProtocol.Ws)
                 });
             return hosts.ToArray();
         }
@@ -94,15 +94,15 @@ namespace Silky.Http.Dashboard.AppService
             {
                 HostName = hostName
             };
-            var appServices = _serverRouteCache.ServiceRoutes.Where(p => p.Service.GetHostName() == hostName)
-                .OrderBy(p => p.Service.ServiceName);
+            var appServices = _serverRouteCache.ServiceRoutes.Where(p => p.Services.GetHostName() == hostName)
+                .OrderBy(p => p.Services.ServiceName);
 
             detailHostOutput.AppServiceEntries = appServices
-                .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Tcp).SelectMany(
+                .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Tcp).SelectMany(
                     sr =>
                     {
                         var serviceEntryOutputs = new List<ServiceEntryOutput>();
-                        foreach (var sed in sr.Service.ServiceEntries)
+                        foreach (var sed in sr.Services.ServiceEntries)
                         {
                             var se = _serviceEntryManager.GetServiceEntry(sed.Id);
                             if (se != null)
@@ -110,7 +110,7 @@ namespace Silky.Http.Dashboard.AppService
                                 var seOutput = new ServiceEntryOutput()
                                 {
                                     ServiceProtocol = se.ServiceEntryDescriptor.ServiceProtocol,
-                                    HostName = sr.Service.GetHostName(),
+                                    HostName = sr.Services.GetHostName(),
                                     Application = se.ServiceEntryDescriptor.Application,
                                     ServiceName = se.ServiceEntryDescriptor.ServiceName,
                                     ServiceId = se.ServiceEntryDescriptor.ServiceId,
@@ -130,12 +130,12 @@ namespace Silky.Http.Dashboard.AppService
                     }).ToArray();
 
             detailHostOutput.WsServices = appServices
-                .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Ws).Select(
+                .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Ws).Select(
                     p => new WsAppServiceOutput()
                     {
-                        AppService = p.Service.ServiceName,
-                        WsPath = p.Service.GetWsPath(),
-                        ServiceProtocol = p.Service.ServiceProtocol
+                        AppService = p.Services.ServiceName,
+                        WsPath = p.Services.GetWsPath(),
+                        ServiceProtocol = p.Services.ServiceProtocol
                     }).ToArray();
             return detailHostOutput;
         }
@@ -143,10 +143,10 @@ namespace Silky.Http.Dashboard.AppService
         public IReadOnlyCollection<GetServiceOutput> GetServices(string hostName)
         {
             var appServiceGroups = _serverRouteCache.ServiceRoutes
-                .Where(p => !p.Service.GetHostName().IsNullOrEmpty())
-                .WhereIf(!hostName.IsNullOrEmpty(), p => p.Service.GetHostName() == hostName)
-                .OrderBy(p => p.Service.ServiceName).GroupBy(p =>
-                    p.Service);
+                .Where(p => !p.Services.GetHostName().IsNullOrEmpty())
+                .WhereIf(!hostName.IsNullOrEmpty(), p => p.Services.GetHostName() == hostName)
+                .OrderBy(p => p.Services.ServiceName).GroupBy(p =>
+                    p.Services);
             var services = new List<GetServiceOutput>();
             foreach (var appServiceGroup in appServiceGroups)
             {
@@ -167,8 +167,8 @@ namespace Silky.Http.Dashboard.AppService
             GetHostInstanceInput input)
         {
             var hostAddresses = _serverRouteCache.ServiceRoutes
-                    .Where(p => p.Service.GetHostName() == hostName)
-                    .WhereIf(input.ServiceProtocol.HasValue, p => p.Service.ServiceProtocol == input.ServiceProtocol)
+                    .Where(p => p.Services.GetHostName() == hostName)
+                    .WhereIf(input.ServiceProtocol.HasValue, p => p.Services.ServiceProtocol == input.ServiceProtocol)
                     .SelectMany(p => p.Endpoints)
                     .Distinct()
                 ;
@@ -192,18 +192,18 @@ namespace Silky.Http.Dashboard.AppService
         public GetGatewayOutput GetGateway()
         {
             var gateway =
-                _serverRouteCache.ServiceRoutes.First(p => p.Service.GetHostName() == EngineContext.Current.HostName);
+                _serverRouteCache.ServiceRoutes.First(p => p.Services.GetHostName() == EngineContext.Current.HostName);
             var gatewayOutput = new GetGatewayOutput()
             {
-                HostName = gateway.Service.GetHostName(),
+                HostName = gateway.Services.GetHostName(),
                 InstanceCount = gateway.Endpoints.Select(p => new { Address = p.Host, p.Port }).Distinct().Count(),
-                SupportServiceCount = _serverRouteCache.ServiceRoutes.Select(p => p.Service).Count(),
+                SupportServiceCount = _serverRouteCache.ServiceRoutes.Select(p => p.Services).Count(),
                 SupportServiceEntryCount = _serverRouteCache.ServiceRoutes
-                    .SelectMany(p => p.Service.ServiceEntries).Count(),
+                    .SelectMany(p => p.Services.ServiceEntries).Count(),
                 ExistWebSocketService =
                     _serverRouteCache.ServiceRoutes.Any(p =>
-                        p.Service.ServiceProtocol == ServiceProtocol.Ws),
-                SupportServices = _serverRouteCache.ServiceRoutes.Select(p => p.Service)
+                        p.Services.ServiceProtocol == ServiceProtocol.Ws),
+                SupportServices = _serverRouteCache.ServiceRoutes.Select(p => p.Services)
                     .Select(p => p.ServiceName)
             };
             return gatewayOutput;
@@ -212,14 +212,14 @@ namespace Silky.Http.Dashboard.AppService
         public PagedList<GetGatewayInstanceOutput> GetGatewayInstances(PagedRequestDto input)
         {
             var gateway =
-                _serverRouteCache.ServiceRoutes.First(p => p.Service.GetHostName() == EngineContext.Current.HostName);
+                _serverRouteCache.ServiceRoutes.First(p => p.Services.GetHostName() == EngineContext.Current.HostName);
 
             var gatewayInstances = new List<GetGatewayInstanceOutput>();
             foreach (var addressDescriptor in gateway.Endpoints)
             {
                 var gatewayInstance = new GetGatewayInstanceOutput()
                 {
-                    HostName = gateway.Service.GetHostName(),
+                    HostName = gateway.Services.GetHostName(),
                     Address = addressDescriptor.Host,
                 };
                 gatewayInstances.Add(gatewayInstance);
@@ -240,7 +240,7 @@ namespace Silky.Http.Dashboard.AppService
                         ServiceName = p.ServiceEntryDescriptor.ServiceName,
                         ServiceEntryId = p.Id,
                         Author = p.ServiceEntryDescriptor.GetAuthor(),
-                        HostName = serviceRoute?.Service.GetHostName(),
+                        HostName = serviceRoute?.Services.GetHostName(),
                         Application = p.ServiceEntryDescriptor.Application,
                         WebApi = p.GovernanceOptions.ProhibitExtranet ? "" : p.Router.RoutePath,
                         HttpMethod = p.GovernanceOptions.ProhibitExtranet ? null : p.Router.HttpMethod,
@@ -276,12 +276,12 @@ namespace Silky.Http.Dashboard.AppService
 
             var serviceEntryOutput = new GetServiceEntryDetailOutput()
             {
-                HostName = serviceRoute?.Service.GetHostName(),
+                HostName = serviceRoute?.Services.GetHostName(),
                 ServiceEntryId = serviceEntry.Id,
                 ServiceId = serviceEntry.ServiceEntryDescriptor.ServiceId,
                 ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
                 Author = serviceEntry.ServiceEntryDescriptor.GetAuthor(),
-                Application = serviceRoute?.Service.Application,
+                Application = serviceRoute?.Services.Application,
                 WebApi = serviceEntry.GovernanceOptions.ProhibitExtranet ? "" : serviceEntry.Router.RoutePath,
                 HttpMethod = serviceEntry.GovernanceOptions.ProhibitExtranet ? null : serviceEntry.Router.HttpMethod,
                 ProhibitExtranet = serviceEntry.GovernanceOptions.ProhibitExtranet,
@@ -298,7 +298,7 @@ namespace Silky.Http.Dashboard.AppService
                         OnlyCurrentUserData = p.OnlyCurrentUserData,
                         CachingMethod = p.CachingMethod
                     }).ToArray(),
-                ServiceKeys = serviceRoute?.Service.GetServiceKeys()?.Select(p => new ServiceKeyOutput()
+                ServiceKeys = serviceRoute?.Services.GetServiceKeys()?.Select(p => new ServiceKeyOutput()
                 {
                     Name = p.Key,
                     Weight = p.Value
@@ -475,9 +475,9 @@ namespace Silky.Http.Dashboard.AppService
                 Code = "Microservice",
                 Title = "微服务应用",
                 Count = _serverRouteCache.ServiceRoutes
-                    .Where(p => !p.Service.Application.IsNullOrEmpty() &&
-                                p.Service.Application != typeof(IRpcAppService).Name)
-                    .GroupBy(p => p.Service.Application).Select(p => p.Key)
+                    .Where(p => !p.Services.Application.IsNullOrEmpty() &&
+                                p.Services.Application != typeof(IRpcAppService).Name)
+                    .GroupBy(p => p.Services.Application).Select(p => p.Key)
                     .Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
@@ -485,7 +485,7 @@ namespace Silky.Http.Dashboard.AppService
                 Code = "ServiceInstance",
                 Title = "微服务应用实例",
                 Count = _serverRouteCache.ServiceRoutes
-                    .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Tcp)
+                    .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Tcp)
                     .SelectMany(p => p.Endpoints)
                     .Select(p => new { Address = p.Host, p.Port }).Distinct().Count()
             });
@@ -495,25 +495,25 @@ namespace Silky.Http.Dashboard.AppService
                 Code = "WebSocketServiceInstance",
                 Title = "支持WebSocket的应用实例",
                 Count = _serverRouteCache.ServiceRoutes
-                    .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Ws)
+                    .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Ws)
                     .SelectMany(p => p.Endpoints)
                     .Select(p => new { Address = p.Host, p.Port }).Distinct().Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
             {
-                Code = "Service",
+                Code = "Services",
                 Title = "应用服务",
                 Count = _serverRouteCache.ServiceRoutes
-                    .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Tcp)
-                    .Select(p => p.Service.ServiceName).Distinct().Count()
+                    .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Tcp)
+                    .Select(p => p.Services.ServiceName).Distinct().Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
             {
                 Code = "WebSocketService",
                 Title = "WebSocket服务",
                 Count = _serverRouteCache.ServiceRoutes
-                    .Where(p => p.Service.ServiceProtocol == ServiceProtocol.Ws)
-                    .Select(p => p.Service.Id).Distinct().Count()
+                    .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Ws)
+                    .Select(p => p.Services.Id).Distinct().Count()
             });
             getProfileOutputs.Add(new GetProfileOutput()
             {

@@ -93,11 +93,11 @@ namespace Silky.Rpc.Runtime.Server
                 p.GetType().GetTypeInfo().FullName == "Silky.Transaction.TransactionAttribute");
         }
 
-        public static ServerRoute GetServiceRoute(this ServiceEntry serviceEntry)
+        public static ServiceDescriptor GetServiceDescriptor(this ServiceEntry serviceEntry)
         {
             var serviceRouteCache = EngineContext.Current.Resolve<ServerRouteCache>();
-            var serviceRoute = serviceRouteCache.GetServiceRoute(serviceEntry.ServiceId);
-            return serviceRoute;
+            var serviceDescriptor = serviceRouteCache.GetServiceDescriptor(serviceEntry.ServiceId);
+            return serviceDescriptor;
         }
 
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,

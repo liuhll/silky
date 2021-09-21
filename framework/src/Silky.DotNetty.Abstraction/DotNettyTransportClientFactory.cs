@@ -70,7 +70,7 @@ namespace Silky.DotNetty
                     await GetOrCreateClient(addressModel);
                 }
             };
-            _healthCheck.OnRemveAddress += async addressModel =>
+            _healthCheck.OnRemoveRpcEndpoint += async addressModel =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 m_clients.TryRemove(addressModel, out _);

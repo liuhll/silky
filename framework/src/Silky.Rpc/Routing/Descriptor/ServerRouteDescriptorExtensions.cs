@@ -5,12 +5,12 @@ namespace Silky.Rpc.Routing.Descriptor
 {
     public static class ServerRouteDescriptorExtensions
     {
-        public static ServerRoute ConvertToServiceRoute(this ServerRouteDescriptor serverRouteDescriptor)
+        public static ServerRoute ConvertToServerRoute(this ServerRouteDescriptor serverRouteDescriptor)
         {
-            var serviceRoute = new ServerRoute()
+            var serviceRoute = new ServerRoute(serverRouteDescriptor.HostName)
             {
-                Service = serverRouteDescriptor.Service,
-                Endpoints = serverRouteDescriptor.Addresses.Select(p => p.ConvertToAddressModel()).ToArray()
+                Services = serverRouteDescriptor.Services.ToArray(),
+                Endpoints = serverRouteDescriptor.Endpoints.Select(p => p.ConvertToRpcEndpoint()).ToArray()
             };
             return serviceRoute;
         }

@@ -6,17 +6,18 @@
 
         public RegistryCenterType RegistryCenterType { get; set; } = RegistryCenterType.Zookeeper;
 
-        public double ConnectionTimeout { get; set; } = 5000;
+        public double ConnectionTimeout { get; set; } = 50000;
 
-        public double SessionTimeout { get; set; } = 8000;
+        public double SessionTimeout { get; set; } = 80000;
 
-        public double OperatingTimeout { get; set; } = 10000;
+        public double OperatingTimeout { get; set; } = 100000;
 
         public string ConnectionStrings { get; set; }
 
         public int FuseTimes { get; set; } = 10;
 
-        public string RoutePath { get; set; } = "/silky/serviceroutes";
+        public string RoutePath { get; set; } = "/silky/server";
+        
 
     }
 }

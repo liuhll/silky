@@ -30,7 +30,7 @@ namespace Silky.Rpc.Runtime.Server
                 Id = _idGenerator.GenerateServiceId(serviceTypeInfo.Item1),
                 ServiceType = serviceTypeInfo.Item1,
                 IsLocal = serviceTypeInfo.Item2,
-                ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceTypeInfo.Item1,serviceTypeInfo.Item2,true)
+                ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceTypeInfo.Item1, serviceTypeInfo.Item2, true)
             };
             serviceInfo.ServiceDescriptor = CreateServiceDescriptor(serviceInfo);
             return serviceInfo;
@@ -90,8 +90,6 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     serviceDescriptor.Metadatas.Add(ServiceConstant.ServiceKey, serviceKeys);
                 }
-
-                serviceDescriptor.Metadatas.Add(ServiceConstant.HostName, EngineContext.Current.HostName);
             }
 
             var metaDataList = service.ServiceType.GetCustomAttributes<MetadataAttribute>();

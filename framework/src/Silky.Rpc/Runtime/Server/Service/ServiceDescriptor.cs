@@ -57,7 +57,15 @@ namespace Silky.Rpc.Runtime.Server
                 return false;
 
             if (model.Id != Id)
+            {
                 return false;
+            }
+
+            if (model.Application != Application)
+            {
+                return false;
+            }
+
             if (model.ServiceProtocol != ServiceProtocol)
             {
                 return false;

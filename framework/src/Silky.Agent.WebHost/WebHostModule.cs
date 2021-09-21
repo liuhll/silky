@@ -5,7 +5,6 @@ using Silky.Validation.Fluent;
 using Silky.Http.Core;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.CachingInterceptor;
-using Silky.Rpc.Modularity;
 using Silky.Rpc.Proxy;
 using Silky.Validation;
 
@@ -20,7 +19,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(FluentValidationModule),
         typeof(RedisCachingModule)
     )]
-    public abstract class WebHostModule : StartUpWithRpcModule
+    public abstract class WebHostModule : StartUpModule
     {
     }
 }

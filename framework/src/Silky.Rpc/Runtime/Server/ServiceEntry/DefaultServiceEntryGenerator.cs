@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
 
@@ -99,11 +98,6 @@ namespace Silky.Rpc.Runtime.Server
                 ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceType, isLocal, false),
                 Application = routeTemplateProvider.Application
             };
-
-            if (isLocal)
-            {
-                serviceEntryDescriptor.Metadatas.Add(ServiceConstant.HostName, EngineContext.Current.HostName);
-            }
 
             var metaDataList = method.GetCustomAttributes<MetadataAttribute>();
 

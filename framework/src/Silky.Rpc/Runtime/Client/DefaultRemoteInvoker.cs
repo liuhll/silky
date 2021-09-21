@@ -10,7 +10,6 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
-using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
@@ -46,9 +45,9 @@ namespace Silky.Rpc.Runtime.Client
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
                 $"The rpc request call start{Environment.NewLine} " +
                 $"serviceEntryId:[{remoteInvokeMessage.ServiceEntryId}]");
-            var serviceRoute = FindServiceRoute(remoteInvokeMessage);
+            var rpcEndpoints = FindRpcEndpoint(remoteInvokeMessage);
             var selectedRpcEndpoint =
-                SelectedRpcEndpoint(serviceRoute, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey);
+                SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey);
 
             var sp = Stopwatch.StartNew();
             RemoteResultMessage invokeResult = null;
@@ -96,26 +95,26 @@ namespace Silky.Rpc.Runtime.Client
             return invokeResult;
         }
 
-        private ServerRoute FindServiceRoute(RemoteInvokeMessage remoteInvokeMessage)
+        private IRpcEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
         {
-            var serviceRoute = _serverRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
-            if (serviceRoute == null)
+            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(remoteInvokeMessage.ServiceId);
+            if (rpcEndpoints == null)
             {
                 throw new NotFindServiceRouteException(
                     $"The service routing could not be found via [{remoteInvokeMessage.ServiceEntryId}]",
                     StatusCode.NotFindServiceRoute);
             }
 
-            if (!serviceRoute.Endpoints.Any(p => p.Enabled))
+            if (!rpcEndpoints.Any(p => p.Enabled))
             {
                 throw new NotFindServiceRouteAddressException(
                     $"No available service provider can be found via [{remoteInvokeMessage.ServiceEntryId}]");
             }
 
-            return serviceRoute;
+            return rpcEndpoints;
         }
 
-        private IRpcEndpoint SelectedRpcEndpoint(ServerRoute serverRoute, ShuntStrategy shuntStrategy,
+        private IRpcEndpoint SelectedRpcEndpoint(IRpcEndpoint[] rpcEndpoints, ShuntStrategy shuntStrategy,
             string serviceEntryId, string hashKey)
         {
             var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerEndpoint)?.ToString();
@@ -123,12 +122,12 @@ namespace Silky.Rpc.Runtime.Client
             if (remoteAddress != null)
             {
                 selectedRpcEndpoint =
-                    serverRoute.Endpoints.FirstOrDefault(p =>
+                    rpcEndpoints.FirstOrDefault(p =>
                         p.IPEndPoint.ToString().Equals(remoteAddress) && p.Enabled);
                 if (selectedRpcEndpoint == null)
                 {
                     throw new NotFindServiceRouteAddressException(
-                        $"ServerRoute [{serverRoute.Service.Id}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
+                        $"ServerRoute [{serviceEntryId}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
                 }
             }
             else
@@ -137,13 +136,13 @@ namespace Silky.Rpc.Runtime.Client
                     EngineContext.Current.ResolveNamed<IRpcEndpointSelector>(shuntStrategy.ToString());
 
                 selectedRpcEndpoint = addressSelector.Select(new RpcEndpointSelectContext(serviceEntryId,
-                    serverRoute.Endpoints,
+                    rpcEndpoints,
                     hashKey));
             }
 
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.SelectedAddress,
-                $"There are currently available service provider addresses:{_serializer.Serialize(serverRoute.Endpoints.Where(p => p.Enabled).Select(p => p.ToString()))}{Environment.NewLine}" +
+                $"There are currently available service provider addresses:{_serializer.Serialize(rpcEndpoints.Where(p => p.Enabled).Select(p => p.ToString()))}{Environment.NewLine}" +
                 $"The selected service provider rpcEndpoint is:[{selectedRpcEndpoint.ToString()}]");
             return selectedRpcEndpoint;
         }

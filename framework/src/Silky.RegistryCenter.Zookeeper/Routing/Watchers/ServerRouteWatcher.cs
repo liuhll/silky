@@ -10,13 +10,14 @@ using Silky.Zookeeper;
 
 namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
 {
-    internal class ServiceRouteWatcher
+    internal class ServerRouteWatcher
     {
         internal string Path { get; }
         private readonly ServerRouteCache _serverRouteCache;
         private readonly ISerializer _serializer;
         private readonly object locker = new();
-        public ServiceRouteWatcher(
+
+        public ServerRouteWatcher(
             string path,
             ServerRouteCache serverRouteCache,
             ISerializer serializer)
@@ -24,7 +25,6 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
             Path = path;
             _serverRouteCache = serverRouteCache;
             _serializer = serializer;
-
         }
 
         internal async Task HandleNodeDataChange(IZookeeperClient client, NodeDataChangeArgs args)
@@ -35,11 +35,12 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
             {
                 nodeData = args.CurrentData.ToArray();
             }
+
             switch (eventType)
             {
                 case Watcher.Event.EventType.NodeDeleted:
-                    var serviceId = Path.Split("/").Last();
-                    _serverRouteCache.RemoveCache(serviceId);
+                    var hostName = Path.Split("/").Last();
+                    _serverRouteCache.RemoveCache(hostName);
                     break;
                 case Watcher.Event.EventType.NodeCreated:
                 case Watcher.Event.EventType.NodeDataChanged:
@@ -47,12 +48,12 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
                     {
                         Check.NotNullOrEmpty(nodeData, nameof(nodeData));
                         var jonString = nodeData.GetString();
-                        var serviceRouteDescriptor = _serializer.Deserialize<ServerRouteDescriptor>(jonString);
-                        _serverRouteCache.UpdateCache(serviceRouteDescriptor);
+                        var serverRouteDescriptor = _serializer.Deserialize<ServerRouteDescriptor>(jonString);
+                        _serverRouteCache.UpdateCache(serverRouteDescriptor);
                     }
+
                     break;
             }
         }
-
     }
 }

@@ -1,38 +1,61 @@
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core;
 using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
 {
     public class DefaultServerRegisterProvider : IServerRegisterProvider
     {
-        private readonly IServerRouteRegister _serverRouteRegister;
         public ILogger<DefaultServerRegisterProvider> Logger { get; set; }
+        private readonly ServerRoute _serverRoute;
+        private readonly IServiceManager _serviceManager;
 
-        public DefaultServerRegisterProvider(IServerRouteRegister serverRouteRegister)
+        public DefaultServerRegisterProvider(IServiceManager serviceManager)
         {
-            _serverRouteRegister = serverRouteRegister;
+            _serviceManager = serviceManager;
             Logger = NullLogger<DefaultServerRegisterProvider>.Instance;
+            _serverRoute = new ServerRoute(EngineContext.Current.HostName);
         }
 
-        public async Task RegisterTcpRoutes()
+        public void AddTcpServices()
         {
-            var hostAddress = AddressHelper.GetRpcEndpoint();
-            await _serverRouteRegister.RegisterRpcRoutes(hostAddress.Descriptor, ServiceProtocol.Tcp);
+            var rpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+            _serverRoute.Endpoints.Add(rpcEndpoint);
+            var tcpServices = _serviceManager.GetLocalService(ServiceProtocol.Tcp);
+            foreach (var tcpService in tcpServices)
+            {
+                _serverRoute.Services.Add(tcpService.ServiceDescriptor);
+            }
         }
 
-        public async Task RegisterHttpRoutes()
+        public void AddHttpServices()
         {
-            var webAddressDescriptor = AddressHelper.GetLocalWebEndpointDescriptor();
-            await _serverRouteRegister.RegisterRpcRoutes(webAddressDescriptor, ServiceProtocol.Http);
+            var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
+            _serverRoute.Endpoints.Add(webEndpoint);
+            var httpServices = _serviceManager.GetLocalService(ServiceProtocol.Http);
+            foreach (var httpService in httpServices)
+            {
+                _serverRoute.Services.Add(httpService.ServiceDescriptor);
+            }
         }
 
-        public async Task RegisterWsRoutes(int wsPort)
+        public void AddWsServices()
         {
-            var hostAddress = AddressHelper.GetRpcEndpoint(wsPort, ServiceProtocol.Ws);
-            await _serverRouteRegister.RegisterRpcRoutes(hostAddress.Descriptor, ServiceProtocol.Ws);
+            var wsEndpoint = RpcEndpointHelper.GetWsEndpoint();
+            _serverRoute.Endpoints.Add(wsEndpoint);
+            var wsServices = _serviceManager.GetLocalService(ServiceProtocol.Ws);
+            foreach (var wsService in wsServices)
+            {
+                _serverRoute.Services.Add(wsService.ServiceDescriptor);
+            }
+        }
+
+        public ServerRoute GetServerRoute()
+        {
+            return _serverRoute;
         }
     }
 }

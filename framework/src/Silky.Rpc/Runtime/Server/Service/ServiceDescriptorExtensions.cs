@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Silky.Core;
 using Silky.Rpc.Routing;
 
@@ -33,21 +34,12 @@ namespace Silky.Rpc.Runtime.Server
                    serviceDescriptor.GetMetadata<bool>(ServiceConstant.IsSilkyService);
         }
 
-        public static string GetHostName(this ServiceDescriptor serviceDescriptor)
+        public static bool MultiServiceKeys(this ServiceDescriptor serviceDescriptor)
         {
-            if (serviceDescriptor.Metadatas.ContainsKey(ServiceConstant.HostName))
-            {
-                return serviceDescriptor.GetMetadata<string>(ServiceConstant.HostName);
-            }
-
-            var serviceRouteCache = EngineContext.Current.Resolve<ServerRouteCache>();
-            var serviceRoute = serviceRouteCache.GetServiceRoute(serviceDescriptor.Id);
-            if (serviceRoute != null && serviceRoute.Service.Metadatas.ContainsKey(ServiceConstant.HostName))
-            {
-                return serviceRoute.Service.GetMetadata<string>(ServiceConstant.HostName);
-            }
-
-            return null;
+            var serviceKeys = serviceDescriptor.GetServiceKeys();
+            return serviceKeys != null && serviceKeys.Any();
         }
+
+
     }
 }

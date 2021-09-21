@@ -34,7 +34,7 @@ namespace Silky.Http.Core
 
         public static void SetHttpHandleAddressInfo(this HttpContext httpContext)
         {
-            var localWebEndpointDescriptor = AddressHelper.GetLocalRpcEndpointDescriptor();
+            var localWebEndpointDescriptor = RpcEndpointHelper.GetLocalRpcEndpointDescriptor();
             var clientHost = httpContext.Connection.RemoteIpAddress;
             var clientPort = httpContext.Connection.RemotePort;
 
@@ -44,7 +44,7 @@ namespace Silky.Http.Core
             RpcContext.Context.SetAttachment(AttachmentKeys.RpcRequestPort, clientPort.ToString());
             RpcContext.Context.SetAttachment(AttachmentKeys.ClientPort, clientPort.ToString());
 
-            var localRpcEndpoint = AddressHelper.GetLocalWebEndpointDescriptor();
+            var localRpcEndpoint = RpcEndpointHelper.GetLocalWebEndpointDescriptor();
             RpcContext.Context.SetAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
             RpcContext.Context.SetAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
             RpcContext.Context.SetAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol);
