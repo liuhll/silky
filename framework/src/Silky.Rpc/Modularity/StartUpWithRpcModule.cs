@@ -9,7 +9,7 @@ namespace Silky.Rpc.Modularity
     {
         public override Task Initialize(ApplicationContext applicationContext)
         {
-            var serviceRouteProvider = applicationContext.ServiceProvider.GetRequiredService<IServiceRouteProvider>();
+            var serviceRouteProvider = applicationContext.ServiceProvider.GetRequiredService<IServerRouteProvider>();
             return serviceRouteProvider.EnterRoutes();
         }
     }

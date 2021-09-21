@@ -15,20 +15,20 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
 {
-    public abstract class ServiceRouteManagerBase : IServiceRouteManager
+    public abstract class ServerRouteManagerBase : IServerRouteManager
     {
-        protected readonly ServiceRouteCache _serviceRouteCache;
+        protected readonly ServerRouteCache _serverRouteCache;
         protected readonly IServiceManager _serviceManager;
         protected RegistryCenterOptions _registryCenterOptions;
         protected RpcOptions _rpcOptions;
-        public ILogger<ServiceRouteManagerBase> Logger { get; set; }
+        public ILogger<ServerRouteManagerBase> Logger { get; set; }
 
-        protected ServiceRouteManagerBase(ServiceRouteCache serviceRouteCache,
+        protected ServerRouteManagerBase(ServerRouteCache serverRouteCache,
             IServiceManager serviceManager,
             IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
             IOptionsMonitor<RpcOptions> rpcOptions)
         {
-            _serviceRouteCache = serviceRouteCache;
+            _serverRouteCache = serverRouteCache;
             _serviceManager = serviceManager;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
 
@@ -37,15 +37,15 @@ namespace Silky.Rpc.Routing
 
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
             Check.NotNullOrEmpty(_rpcOptions.Token, nameof(_rpcOptions.Token));
-            Logger = NullLogger<ServiceRouteManagerBase>.Instance;
-            _serviceRouteCache.OnRemoveServiceRoutes += async (descriptors, addressModel) =>
+            Logger = NullLogger<ServerRouteManagerBase>.Instance;
+            _serverRouteCache.OnRemoveServiceRoutes += async (descriptors, addressModel) =>
             {
                 foreach (var descriptor in descriptors)
                 {
                     await RemoveUnHealthServiceRoute(descriptor.Service.Id, addressModel);
                 }
             };
-            _serviceRouteCache.OnRemoveServiceRoute += async (serviceId, addressModel) =>
+            _serverRouteCache.OnRemoveServiceRoute += async (serviceId, addressModel) =>
             {
                 await RemoveServiceRoute(serviceId, addressModel);
             };
@@ -67,7 +67,7 @@ namespace Silky.Rpc.Routing
                 $"The the server [{rpcEndpointDescriptor.GetHostAddress()}] routing data is successfully registered");
         }
 
-        protected virtual async Task RegisterRoutes(IEnumerable<ServiceRouteDescriptor> serviceRouteDescriptors,
+        protected virtual async Task RegisterRoutes(IEnumerable<ServerRouteDescriptor> serviceRouteDescriptors,
             RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             await CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
@@ -90,7 +90,7 @@ namespace Silky.Rpc.Routing
         protected abstract Task EnterRoutesFromServiceCenter();
         protected abstract Task CreateSubDirectoryIfNotExistAndSubscribeChildrenChange();
 
-        protected abstract Task RegisterRouteServiceCenter(ServiceRouteDescriptor serviceRouteDescriptor);
+        protected abstract Task RegisterRouteServiceCenter(ServerRouteDescriptor serverRouteDescriptor);
         protected abstract Task RemoveServiceCenterExceptRoute(RpcEndpointDescriptor rpcEndpointDescriptor);
 
         private async Task RemoveServiceRoute(string serviceId, IRpcEndpoint selectedRpcEndpoint)

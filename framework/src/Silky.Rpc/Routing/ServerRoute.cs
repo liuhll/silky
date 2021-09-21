@@ -1,11 +1,10 @@
 using System.Linq;
-using Silky.Rpc.Address;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
 {
-    public class ServiceRoute
+    public class ServerRoute
     {
         public IRpcEndpoint[] Endpoints { get; set; }
         
@@ -13,7 +12,7 @@ namespace Silky.Rpc.Routing
         
         public override bool Equals(object? obj)
         {
-            var model = obj as ServiceRoute;
+            var model = obj as ServerRoute;
             if (model == null)
             {
                 return false;
@@ -25,12 +24,12 @@ namespace Silky.Rpc.Routing
             return Endpoints.All(p => model.Endpoints.Any(q => p == q));
         }
 
-        public static bool operator ==(ServiceRoute model1, ServiceRoute model2)
+        public static bool operator ==(ServerRoute model1, ServerRoute model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(ServiceRoute model1, ServiceRoute model2)
+        public static bool operator !=(ServerRoute model1, ServerRoute model2)
         {
             return !Equals(model1, model2);
         }

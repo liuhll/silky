@@ -1,14 +1,12 @@
-using System.Diagnostics;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Routing.Descriptor;
-using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Runtime.Server
 {
     public static class ServiceExtensions
     {
-        public static ServiceRouteDescriptor CreateLocalRouteDescriptor(this Service service,
+        public static ServerRouteDescriptor CreateLocalRouteDescriptor(this Service service,
             RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             if (!service.IsLocal)
@@ -16,7 +14,7 @@ namespace Silky.Rpc.Runtime.Server
                 throw new SilkyException("Only allow local service to generate routing descriptors");
             }
 
-            return new ServiceRouteDescriptor()
+            return new ServerRouteDescriptor()
             {
                 Service = service.ServiceDescriptor,
                 Addresses = new[]

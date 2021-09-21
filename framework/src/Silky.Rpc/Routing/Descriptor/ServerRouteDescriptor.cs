@@ -7,9 +7,9 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing.Descriptor
 {
-    public class ServiceRouteDescriptor
+    public class ServerRouteDescriptor
     {
-        public ServiceRouteDescriptor()
+        public ServerRouteDescriptor()
         {
             TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
             Addresses = new List<RpcEndpointDescriptor>();
@@ -23,7 +23,7 @@ namespace Silky.Rpc.Routing.Descriptor
 
         public override bool Equals(object? obj)
         {
-            var model = obj as ServiceRouteDescriptor;
+            var model = obj as ServerRouteDescriptor;
             if (model == null)
             {
                 return false;
@@ -35,12 +35,12 @@ namespace Silky.Rpc.Routing.Descriptor
             return Addresses.All(p => model.Addresses.Any(q => p == q));
         }
 
-        public static bool operator ==(ServiceRouteDescriptor model1, ServiceRouteDescriptor model2)
+        public static bool operator ==(ServerRouteDescriptor model1, ServerRouteDescriptor model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(ServiceRouteDescriptor model1, ServiceRouteDescriptor model2)
+        public static bool operator !=(ServerRouteDescriptor model1, ServerRouteDescriptor model2)
         {
             return !Equals(model1, model2);
         }

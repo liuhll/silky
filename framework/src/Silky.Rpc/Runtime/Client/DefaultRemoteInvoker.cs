@@ -22,18 +22,18 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class DefaultRemoteInvoker : IRemoteInvoker
     {
-        private readonly ServiceRouteCache _serviceRouteCache;
+        private readonly ServerRouteCache _serverRouteCache;
         private readonly IInvokeSupervisor _invokeSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly ISerializer _serializer;
         public ILogger<DefaultRemoteInvoker> Logger { get; set; }
 
-        public DefaultRemoteInvoker(ServiceRouteCache serviceRouteCache,
+        public DefaultRemoteInvoker(ServerRouteCache serverRouteCache,
             IInvokeSupervisor invokeSupervisor,
             ITransportClientFactory transportClientFactory,
             ISerializer serializer)
         {
-            _serviceRouteCache = serviceRouteCache;
+            _serverRouteCache = serverRouteCache;
             _invokeSupervisor = invokeSupervisor;
             _transportClientFactory = transportClientFactory;
             _serializer = serializer;
@@ -96,9 +96,9 @@ namespace Silky.Rpc.Runtime.Client
             return invokeResult;
         }
 
-        private ServiceRoute FindServiceRoute(RemoteInvokeMessage remoteInvokeMessage)
+        private ServerRoute FindServiceRoute(RemoteInvokeMessage remoteInvokeMessage)
         {
-            var serviceRoute = _serviceRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
+            var serviceRoute = _serverRouteCache.GetServiceRoute(remoteInvokeMessage.ServiceId);
             if (serviceRoute == null)
             {
                 throw new NotFindServiceRouteException(
@@ -115,7 +115,7 @@ namespace Silky.Rpc.Runtime.Client
             return serviceRoute;
         }
 
-        private IRpcEndpoint SelectedRpcEndpoint(ServiceRoute serviceRoute, ShuntStrategy shuntStrategy,
+        private IRpcEndpoint SelectedRpcEndpoint(ServerRoute serverRoute, ShuntStrategy shuntStrategy,
             string serviceEntryId, string hashKey)
         {
             var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerEndpoint)?.ToString();
@@ -123,12 +123,12 @@ namespace Silky.Rpc.Runtime.Client
             if (remoteAddress != null)
             {
                 selectedRpcEndpoint =
-                    serviceRoute.Endpoints.FirstOrDefault(p =>
+                    serverRoute.Endpoints.FirstOrDefault(p =>
                         p.IPEndPoint.ToString().Equals(remoteAddress) && p.Enabled);
                 if (selectedRpcEndpoint == null)
                 {
                     throw new NotFindServiceRouteAddressException(
-                        $"ServiceRoute [{serviceRoute.Service.Id}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
+                        $"ServerRoute [{serverRoute.Service.Id}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
                 }
             }
             else
@@ -137,13 +137,13 @@ namespace Silky.Rpc.Runtime.Client
                     EngineContext.Current.ResolveNamed<IRpcEndpointSelector>(shuntStrategy.ToString());
 
                 selectedRpcEndpoint = addressSelector.Select(new RpcEndpointSelectContext(serviceEntryId,
-                    serviceRoute.Endpoints,
+                    serverRoute.Endpoints,
                     hashKey));
             }
 
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.SelectedAddress,
-                $"There are currently available service provider addresses:{_serializer.Serialize(serviceRoute.Endpoints.Where(p => p.Enabled).Select(p => p.ToString()))}{Environment.NewLine}" +
+                $"There are currently available service provider addresses:{_serializer.Serialize(serverRoute.Endpoints.Where(p => p.Enabled).Select(p => p.ToString()))}{Environment.NewLine}" +
                 $"The selected service provider rpcEndpoint is:[{selectedRpcEndpoint.ToString()}]");
             return selectedRpcEndpoint;
         }

@@ -6,12 +6,12 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
     public class ServiceRouteSubDirectoryWatcher
     {
         protected string SubDirectoryPath { get; }
-        private readonly ZookeeperServiceRouteManager _zookeeperServiceRouteManager;
+        private readonly ZookeeperServerRouteManager _zookeeperServerRouteManager;
 
-        public ServiceRouteSubDirectoryWatcher(string subDirectoryPath, ZookeeperServiceRouteManager zookeeperServiceRouteManager)
+        public ServiceRouteSubDirectoryWatcher(string subDirectoryPath, ZookeeperServerRouteManager zookeeperServerRouteManager)
         {
             SubDirectoryPath = subDirectoryPath;
-            _zookeeperServiceRouteManager = zookeeperServiceRouteManager;
+            _zookeeperServerRouteManager = zookeeperServerRouteManager;
         }
 
 
@@ -20,7 +20,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
             var currentChildrens = args.CurrentChildrens;
             foreach (var child in currentChildrens)
             {
-                await _zookeeperServiceRouteManager.CreateSubscribeDataChange(client, child);
+                await _zookeeperServerRouteManager.CreateSubscribeDataChange(client, child);
             }
         }
     }

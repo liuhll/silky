@@ -28,15 +28,15 @@ namespace Silky.Http.Core.Middlewares
         private const int DefaultWebSocketBufferSize = 4096;
         private const int StreamCopyBufferSize = 81920;
         private readonly RequestDelegate _next;
-        private readonly ServiceRouteCache _serviceRouteCache;
+        private readonly ServerRouteCache _serverRouteCache;
         private readonly WebSocketOptions _webSocketOptions;
 
         public WebSocketsProxyMiddleware(RequestDelegate next,
-            ServiceRouteCache serviceRouteCache,
+            ServerRouteCache serverRouteCache,
             IOptions<WebSocketOptions> webSocketOptions)
         {
             _next = next;
-            _serviceRouteCache = serviceRouteCache;
+            _serverRouteCache = serverRouteCache;
             _webSocketOptions = webSocketOptions.Value;
         }
 
@@ -55,7 +55,7 @@ namespace Silky.Http.Core.Middlewares
                 throw new InvalidOperationException();
             }
 
-            var serviceRoute = _serviceRouteCache.GetServiceRoute(WebSocketResolverHelper.Generator(path));
+            var serviceRoute = _serverRouteCache.GetServiceRoute(WebSocketResolverHelper.Generator(path));
 
             if (serviceRoute == null)
             {

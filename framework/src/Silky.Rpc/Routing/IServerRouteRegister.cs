@@ -4,7 +4,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Routing
 {
-    public interface IServiceRouteRegister
+    public interface IServerRouteRegister
     {
         Task RegisterRpcRoutes(RpcEndpointDescriptor rpcEndpointDescriptor, ServiceProtocol serviceProtocol);
     }

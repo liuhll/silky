@@ -30,7 +30,7 @@ namespace Silky.Rpc.Utils
 
             if (routeTemplateProvider == null)
             {
-                throw new SilkyException("The ws service must be annotated through the ServiceRoute feature");
+                throw new SilkyException("The ws service must be annotated through the ServerRoute feature");
             }
 
             return ParseWsPath(routeTemplateProvider.Template, wsAppServiceType.Name);

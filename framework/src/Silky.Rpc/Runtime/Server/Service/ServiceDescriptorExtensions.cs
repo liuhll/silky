@@ -40,7 +40,7 @@ namespace Silky.Rpc.Runtime.Server
                 return serviceDescriptor.GetMetadata<string>(ServiceConstant.HostName);
             }
 
-            var serviceRouteCache = EngineContext.Current.Resolve<ServiceRouteCache>();
+            var serviceRouteCache = EngineContext.Current.Resolve<ServerRouteCache>();
             var serviceRoute = serviceRouteCache.GetServiceRoute(serviceDescriptor.Id);
             if (serviceRoute != null && serviceRoute.Service.Metadatas.ContainsKey(ServiceConstant.HostName))
             {
