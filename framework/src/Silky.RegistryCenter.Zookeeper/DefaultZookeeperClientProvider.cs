@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
 using Silky.Core.Logging;
+using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;
@@ -27,7 +28,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         private ConcurrentDictionary<string, RegistryCenterHealthCheckModel> m_healthCheck = new();
 
-        private RegistryCenterOptions _registryCenterOptions;
+        private ZookeeperRegistryCenterOptions _registryCenterOptions;
         public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
 
         protected string[] ConnectionStrings
@@ -41,7 +42,7 @@ namespace Silky.RegistryCenter.Zookeeper
             }
         }
 
-        public DefaultZookeeperClientProvider(IOptions<RegistryCenterOptions> registryCenterOptions)
+        public DefaultZookeeperClientProvider(IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions)
         {
             _registryCenterOptions = registryCenterOptions.Value;
 

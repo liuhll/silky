@@ -11,6 +11,7 @@ using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Lock.Extensions;
+using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.RegistryCenter.Zookeeper.Server.Watchers;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
@@ -28,20 +29,22 @@ namespace Silky.RegistryCenter.Zookeeper.Server
 
         private ConcurrentDictionary<(string, IZookeeperClient), ServerRouteWatcher> m_serviceRouteWatchers = new();
         private ConcurrentDictionary<IZookeeperClient, ServerWatcher> m_serverWatchers = new();
+        private ZookeeperRegistryCenterOptions _registryCenterOptions;
 
         public ZookeeperServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
             IZookeeperClientProvider zookeeperClientProvider,
-            IOptionsMonitor<RegistryCenterOptions> registryCenterOptions,
+            IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions,
             IOptionsMonitor<RpcOptions> rpcOptions,
             ISerializer serializer)
             : base(serverManager,
                 serverProvider,
-                registryCenterOptions,
                 rpcOptions)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
             _serializer = serializer;
+            _registryCenterOptions = registryCenterOptions.CurrentValue;
+            Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
             Logger = NullLogger<ZookeeperServerRegister>.Instance;
         }
 

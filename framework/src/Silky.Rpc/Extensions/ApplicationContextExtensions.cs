@@ -1,19 +1,23 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
+using Silky.Core;
+using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Core.Modularity;
-using Silky.Rpc.Configuration;
 
 namespace Silky.Rpc.Extensions
 {
     public static class ApplicationContextExtensions
     {
         public static bool IsDependsOnRegistryCenterModule(this ApplicationContext applicationContext,
-            out RegistryCenterType registryCenterType)
+            out string registryCenterType)
         {
-            var registryCenterOptions =
-                applicationContext.ServiceProvider.GetRequiredService<IOptions<RegistryCenterOptions>>().Value;
-            registryCenterType = registryCenterOptions.RegistryCenterType;
-            return applicationContext.IsDependsOnModule(registryCenterOptions.RegistryCenterType.ToString());
+            registryCenterType = EngineContext.Current.Configuration.GetValue<string>("RegistryCenter:Type");
+            if (registryCenterType.IsNullOrEmpty())
+            {
+                throw new SilkyException("You must specify a service registry module");
+            }
+            
+            return applicationContext.IsDependsOnModule(registryCenterType);
         }
     }
 }

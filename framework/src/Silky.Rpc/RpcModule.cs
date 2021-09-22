@@ -28,8 +28,6 @@ namespace Silky.Rpc
         {
             services.AddOptions<RpcOptions>()
                 .Bind(configuration.GetSection(RpcOptions.Rpc));
-            services.AddOptions<RegistryCenterOptions>()
-                .Bind(configuration.GetSection(RegistryCenterOptions.RegistryCenter));
             services.AddOptions<GovernanceOptions>()
                 .Bind(configuration.GetSection(GovernanceOptions.Governance));
             services.AddOptions<WebSocketOptions>()

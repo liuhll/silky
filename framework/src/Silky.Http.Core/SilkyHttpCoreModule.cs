@@ -1,14 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Autofac;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 using Silky.Rpc;
-using Silky.Rpc.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Silky.Http.Core.Handlers;
+using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Core
 {
@@ -36,13 +32,10 @@ namespace Silky.Http.Core
 
         public override async Task Initialize(ApplicationContext applicationContext)
         {
-            var registryCenterOptions =
-                applicationContext.ServiceProvider.GetRequiredService<IOptions<RegistryCenterOptions>>().Value;
-            if (!applicationContext.ModuleContainer.Modules.Any(p =>
-                p.Name.Equals(registryCenterOptions.RegistryCenterType.ToString(), StringComparison.OrdinalIgnoreCase)))
+            if (!applicationContext.IsDependsOnRegistryCenterModule(out var registryCenterType))
             {
                 throw new SilkyException(
-                    $"You did not specify the dependent {registryCenterOptions.RegistryCenterType} service registry module");
+                    $"You did not specify the dependent {registryCenterType} service registry module");
             }
         }
     }
