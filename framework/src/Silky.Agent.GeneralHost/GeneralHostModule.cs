@@ -1,10 +1,13 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Caching.StackExchangeRedis;
+using Silky.Core.DependencyInjection;
+using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Core.Modularity;
 using Silky.DotNetty.Protocol.Tcp;
 using Silky.Validation.Fluent;
-using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Proxy;
 using Silky.Rpc.Runtime.Server;
@@ -14,7 +17,7 @@ using Silky.Validation;
 
 namespace Microsoft.Extensions.Hosting
 {
-    [DependsOn(typeof(ZookeeperModule),
+    [DependsOn(
         typeof(DotNettyTcpModule),
         typeof(RpcProxyModule),
         typeof(RpcCachingInterceptorModule),
@@ -26,11 +29,32 @@ namespace Microsoft.Extensions.Hosting
     )]
     public abstract class GeneralHostModule : StartUpModule
     {
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            if (!services.IsAdded(typeof(IServerRegister)))
+            {
+                var registerType = configuration.GetValue<string>("registrycenter:type");
+                if (registerType.IsNullOrEmpty())
+                {
+                    throw new SilkyException("You did not specify the service registry type");
+                }
+
+                services.AddDefaultRegistryCenter(registerType);
+            }
+        }
+
         public override async Task Initialize(ApplicationContext applicationContext)
         {
             var serverRouteRegister =
                 applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
             await serverRouteRegister.RegisterServer();
+        }
+
+        public override async Task Shutdown(ApplicationContext applicationContext)
+        {
+            var serverRegister =
+                applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
+            await serverRegister.RemoveSelfServer();
         }
     }
 }

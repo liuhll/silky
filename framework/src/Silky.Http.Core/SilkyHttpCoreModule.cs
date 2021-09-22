@@ -21,22 +21,12 @@ namespace Silky.Http.Core
                 .InstancePerLifetimeScope()
                 .AsSelf()
                 .Named<IMessageReceivedHandler>(HttpMessageType.Inner.ToString());
-            
-            
+
+
             builder.RegisterType<OuterHttpRequestParameterParser>()
                 .InstancePerLifetimeScope()
                 .AsSelf()
                 .Named<IParameterParser>(HttpMessageType.Outer.ToString());
-        }
-
-
-        public override async Task Initialize(ApplicationContext applicationContext)
-        {
-            if (!applicationContext.IsDependsOnRegistryCenterModule(out var registryCenterType))
-            {
-                throw new SilkyException(
-                    $"You did not specify the dependent {registryCenterType} service registry module");
-            }
         }
     }
 }

@@ -5,5 +5,7 @@ namespace Silky.Rpc.Runtime.Server
     public interface IServerRegister
     {
         Task RegisterServer();
+
+        Task RemoveSelfServer();
     }
 }

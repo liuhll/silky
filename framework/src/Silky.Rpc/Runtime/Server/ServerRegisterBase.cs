@@ -41,6 +41,8 @@ namespace Silky.Rpc.Runtime.Server
             await CacheServers();
         }
 
+        public abstract Task RemoveSelfServer();
+
         protected abstract Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint);
 
         protected abstract Task CacheServers();

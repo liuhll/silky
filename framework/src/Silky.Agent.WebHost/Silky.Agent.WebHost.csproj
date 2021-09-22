@@ -10,6 +10,7 @@
         <ProjectReference Include="..\Silky.DotNetty.Abstraction\Silky.DotNetty.Abstraction.csproj" />
         <ProjectReference Include="..\Silky.Http.Identity\Silky.Http.Identity.csproj" />
         <ProjectReference Include="..\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
+        <ProjectReference Include="..\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj" />
         <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
         <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
         <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />

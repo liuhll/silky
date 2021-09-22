@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  nacos:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    container_name: nacos-standalone
+    environment:
+    - PREFER_HOST_MODE=hostname
+    - MODE=standalone
+    volumes:
+    - ./.nacos/logs/:/home/nacos/logs
+    - ./.nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+    - "8848:8848"
+    - "9848:9848"
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./.nacos/prometheus/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - nacos
+    restart: on-failure
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    restart: on-failure

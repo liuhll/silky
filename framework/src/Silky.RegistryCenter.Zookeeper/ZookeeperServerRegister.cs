@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
 using Silky.Core;
-using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Lock.Extensions;
@@ -21,7 +20,7 @@ using static Silky.Rpc.Endpoint.RpcEndpointHelper;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
-    public class ZookeeperServerRegister : ServerRegisterBase, ISingletonDependency, IZookeeperStatusChange
+    public class ZookeeperServerRegister : ServerRegisterBase, IZookeeperStatusChange
     {
         private readonly IZookeeperClientProvider _zookeeperClientProvider;
         private readonly ISerializer _serializer;
@@ -206,7 +205,7 @@ namespace Silky.RegistryCenter.Zookeeper
             }
         }
 
-        internal async Task RemoveLocalHostServiceRoute()
+        public override async Task RemoveSelfServer()
         {
             var serviceRoute = _serverManager.GetSelfServer();
 

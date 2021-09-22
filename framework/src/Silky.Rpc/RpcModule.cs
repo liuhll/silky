@@ -67,7 +67,7 @@ namespace Silky.Rpc
 
         public override async Task Initialize(ApplicationContext applicationContext)
         {
-            if (!applicationContext.IsDependsOnRegistryCenterModule(out var registryCenterType))
+            if (!applicationContext.IsAddRegistryCenterService(out var registryCenterType))
             {
                 throw new SilkyException(
                     $"You did not specify the dependent {registryCenterType} service registry module");

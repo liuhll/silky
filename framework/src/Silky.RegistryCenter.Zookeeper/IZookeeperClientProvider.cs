@@ -5,7 +5,7 @@ using Silky.Zookeeper;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
-    public interface IZookeeperClientProvider : ISingletonDependency
+    public interface IZookeeperClientProvider
     {
         IZookeeperClient GetZooKeeperClient();
 

@@ -100,6 +100,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Rpc.CachingIntercepto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.RateLimit", "src\Silky.Http.RateLimit\Silky.Http.RateLimit.csproj", "{DAC11C0A-15DD-4D66-AE65-C2050122C03C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.RegistryCenter.Nacos", "src\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj", "{A11EDE77-EC83-4BD8-B2DB-85041010D61A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,7 @@ Global
 		{7FF90290-943C-4423-81D1-A15CE322DCF1} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{A4F5F364-0083-4827-B616-882538DDD50F} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{DAC11C0A-15DD-4D66-AE65-C2050122C03C} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{A11EDE77-EC83-4BD8-B2DB-85041010D61A} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -348,5 +351,9 @@ Global
 		{DAC11C0A-15DD-4D66-AE65-C2050122C03C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAC11C0A-15DD-4D66-AE65-C2050122C03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAC11C0A-15DD-4D66-AE65-C2050122C03C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A11EDE77-EC83-4BD8-B2DB-85041010D61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A11EDE77-EC83-4BD8-B2DB-85041010D61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A11EDE77-EC83-4BD8-B2DB-85041010D61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A11EDE77-EC83-4BD8-B2DB-85041010D61A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
