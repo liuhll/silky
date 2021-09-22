@@ -14,9 +14,9 @@ namespace Silky.Rpc.Endpoint.Selector
         public PollingRpcEndpointSelector(IHealthCheck healthCheck)
         {
             _healthCheck = healthCheck;
-            _healthCheck.OnRemveAddress += async addressModel =>
+            _healthCheck.OnRemoveRpcEndpoint += async rpcEndpoint =>
             {
-                var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(addressModel)))
+                var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(rpcEndpoint)))
                     .Select(p => p.Key);
                 foreach (var removeKey in removeKeys)
                 {
@@ -24,9 +24,9 @@ namespace Silky.Rpc.Endpoint.Selector
                 }
             };
 
-            _healthCheck.OnUnhealth += async addressMoel =>
+            _healthCheck.OnUnhealth += async rpcEndpoint =>
             {
-                var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(addressMoel)))
+                var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(rpcEndpoint)))
                     .Select(p => p.Key);
                 foreach (var removeKey in removeKeys)
                 {

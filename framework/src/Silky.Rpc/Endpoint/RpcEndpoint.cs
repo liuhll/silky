@@ -32,7 +32,7 @@ namespace Silky.Rpc.Endpoint
 
         public ServiceProtocol ServiceProtocol { get; }
 
-        public IPEndPoint IPEndPoint => new(IPAddress.Parse(AddressHelper.GetIp(Host)), Port);
+        public IPEndPoint IPEndPoint => new(IPAddress.Parse(RpcEndpointHelper.GetIp(Host)), Port);
 
         public bool Enabled
         {
@@ -65,7 +65,7 @@ namespace Silky.Rpc.Endpoint
 
         public override string ToString()
         {
-            return string.Concat(AddressHelper.GetIp(Host), ":", Port.ToString(), ":", ServiceProtocol.ToString());
+            return string.Concat(RpcEndpointHelper.GetIp(Host), ":", Port.ToString(), ":", ServiceProtocol.ToString());
         }
 
         public override bool Equals([CanBeNull] object obj)

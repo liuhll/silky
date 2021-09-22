@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
+using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Transport.Messages;
 

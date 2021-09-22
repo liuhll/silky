@@ -38,7 +38,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
         public override string ToString()
         {
             return string.Concat(new[]
-                { AddressHelper.GetIp(Host), ":", Port.ToString(), ":", ServiceProtocol.ToString() });
+                { RpcEndpointHelper.GetIp(Host), ":", Port.ToString(), ":", ServiceProtocol.ToString() });
         }
 
         public override int GetHashCode()

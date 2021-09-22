@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
@@ -28,15 +29,15 @@ namespace Silky.Http.Core.Middlewares
         private const int DefaultWebSocketBufferSize = 4096;
         private const int StreamCopyBufferSize = 81920;
         private readonly RequestDelegate _next;
-        private readonly ServiceRouteCache _serviceRouteCache;
+        private readonly ServerRouteCache _serverRouteCache;
         private readonly WebSocketOptions _webSocketOptions;
 
         public WebSocketsProxyMiddleware(RequestDelegate next,
-            ServiceRouteCache serviceRouteCache,
+            ServerRouteCache serverRouteCache,
             IOptions<WebSocketOptions> webSocketOptions)
         {
             _next = next;
-            _serviceRouteCache = serviceRouteCache;
+            _serverRouteCache = serverRouteCache;
             _webSocketOptions = webSocketOptions.Value;
         }
 
@@ -55,14 +56,15 @@ namespace Silky.Http.Core.Middlewares
                 throw new InvalidOperationException();
             }
 
-            var serviceRoute = _serviceRouteCache.GetServiceRoute(WebSocketResolverHelper.Generator(path));
+            var serviceId = WebSocketResolverHelper.Generator(path);
+            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(serviceId, ServiceProtocol.Ws);
 
-            if (serviceRoute == null)
+            if (rpcEndpoints == null)
             {
                 throw new SilkyException($"The ws service with rpcEndpoint {path} does not exist.");
             }
 
-            if (!serviceRoute.Endpoints.Any())
+            if (!rpcEndpoints.Any())
             {
                 throw new SilkyException($"There is no available service with rpcEndpoint {path}.");
             }
@@ -96,7 +98,7 @@ namespace Silky.Http.Core.Middlewares
             {
                 client.Options.SetRequestHeader("businessId", businessId);
             }
-            
+
             var hashKey = GetKeyValue(context, "hashKey");
             if (hashKey.IsNullOrEmpty())
             {
@@ -106,15 +108,16 @@ namespace Silky.Http.Core.Middlewares
                 }
                 else
                 {
-                     throw new SilkyException("When websocket establishes a session link, the hashkey or businessId must be specified through the header or qString");
+                    throw new SilkyException(
+                        "When websocket establishes a session link, the hashkey or businessId must be specified through the header or qString");
                 }
             }
 
 
             var addressSelector =
                 EngineContext.Current.ResolveNamed<IRpcEndpointSelector>(ShuntStrategy.HashAlgorithm.ToString());
-            var address = addressSelector.Select(new RpcEndpointSelectContext(serviceRoute.Service.Id,
-                serviceRoute.Endpoints, hashKey));
+            var address = addressSelector.Select(new RpcEndpointSelectContext(serviceId,
+                rpcEndpoints, hashKey));
 
             var destinationUri = CreateDestinationUri(address, path);
             await client.ConnectAsync(destinationUri, context.RequestAborted);
@@ -155,7 +158,8 @@ namespace Silky.Http.Core.Middlewares
         }
 
 
-        private static async Task PumpWebSocket(System.Net.WebSockets.WebSocket source, System.Net.WebSockets.WebSocket destination, int bufferSize,
+        private static async Task PumpWebSocket(System.Net.WebSockets.WebSocket source,
+            System.Net.WebSockets.WebSocket destination, int bufferSize,
             CancellationToken cancellationToken)
         {
             if (bufferSize <= 0)

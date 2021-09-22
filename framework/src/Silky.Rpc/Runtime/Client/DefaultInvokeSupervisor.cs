@@ -37,7 +37,7 @@ namespace Silky.Rpc.Runtime.Client
                     }
                 }
             };
-            _healthCheck.OnRemveAddress += async model =>
+            _healthCheck.OnRemoveRpcEndpoint += async model =>
             {
                 var keys = m_monitor.Keys.Where(p => p.Item2.Equals(model));
                 foreach (var key in keys)

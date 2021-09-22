@@ -20,7 +20,7 @@ namespace GatewayDemo.Authorization
             DefaultHttpContext httpContext)
         {
             // var serviceEntry = httpContext.GetServiceEntry();
-            // if (serviceEntry.Service.Id.Contains("ITestApplication"))
+            // if (serviceEntry.Services.Id.Contains("ITestApplication"))
             // {
             //     _logger.LogInformation($"{serviceEntry.Id} has permission");
             //     return true;

@@ -6,7 +6,7 @@ namespace Silky.Rpc.Endpoint
 
     public delegate Task UnhealthEvent(IRpcEndpoint rpcEndpoint);
 
-    public delegate Task RemoveAddressEvent(IRpcEndpoint rpcEndpoint);
+    public delegate Task RemoveRpcEndpointEvent(IRpcEndpoint rpcEndpoint);
 
     public delegate Task AddMonitorEvent(IRpcEndpoint rpcEndpoint);
     

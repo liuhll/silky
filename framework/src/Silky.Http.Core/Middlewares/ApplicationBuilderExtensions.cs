@@ -61,34 +61,36 @@ namespace Silky.Http.Core.Middlewares
                         context.Response.SetResultCode(exception.GetExceptionStatusCode());
                         return context.Response.WriteAsync(responseResultData);
                     }
-                    else
+
+                    context.Response.ContentType = "text/plain";
+                    context.Response.SetResultCode(exception.GetExceptionStatusCode());
+
+                    context.Response.SetExceptionResponseStatus(exception);
+
+                    if (exception is IHasValidationErrors)
                     {
-                        context.Response.ContentType = "text/plain";
-                        context.Response.SetResultCode(exception.GetExceptionStatusCode());
-
-                        context.Response.SetExceptionResponseStatus(exception);
-
-                        if (exception is IHasValidationErrors)
-                        {
-                            var validateErrors = exception.GetValidateErrors();
-                            var responseResultData = serializer.Serialize(validateErrors);
-                            context.Response.ContentLength = responseResultData.GetBytes().Length;
-                            return context.Response.WriteAsync(responseResultData);
-                        }
-
-                        var exceptionMessage = exception.GetExceptionMessage();
-                        context.Response.ContentLength = exception.Message.GetBytes().Length;
-                        return context.Response.WriteAsync(exceptionMessage);
+                        var validateErrors = exception.GetValidateErrors();
+                        var responseResultData = serializer.Serialize(validateErrors);
+                        context.Response.ContentLength = responseResultData.GetBytes().Length;
+                        return context.Response.WriteAsync(responseResultData);
                     }
+
+                    var exceptionMessage = exception.GetExceptionMessage();
+                    context.Response.ContentLength = exception.Message.GetBytes().Length;
+                    return context.Response.WriteAsync(exceptionMessage);
                 });
             });
         }
 
         public static async void RegisterHttpRoutes(this IApplicationBuilder application)
         {
-            var serviceRouteRegisterProvider =
-                application.ApplicationServices.GetRequiredService<IServiceRouteRegisterProvider>();
-            await serviceRouteRegisterProvider.RegisterHttpRoutes();
+            var serverRegisterProvider =
+                application.ApplicationServices.GetRequiredService<IServerRegisterProvider>();
+            serverRegisterProvider.AddHttpServices();
+
+            var serverRouteRegister =
+                application.ApplicationServices.GetRequiredService<IServerRouteRegister>();
+            await serverRouteRegister.RegisterServerRoute();
         }
     }
 }

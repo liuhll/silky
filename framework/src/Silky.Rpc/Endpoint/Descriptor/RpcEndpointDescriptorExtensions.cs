@@ -6,7 +6,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
 {
     public static class RpcEndpointDescriptorExtensions
     {
-        public static IRpcEndpoint ConvertToAddressModel(this RpcEndpointDescriptor rpcEndpointDescriptor)
+        public static IRpcEndpoint ConvertToRpcEndpoint(this RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             if (!SingletonDictionary<string, IRpcEndpoint>.Instance.ContainsKey(rpcEndpointDescriptor.ToString()))
             {

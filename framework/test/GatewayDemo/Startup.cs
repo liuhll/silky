@@ -25,7 +25,7 @@ namespace GatewayDemo
             services.AddTransient<IAuthorizationHandler, TestAuthorizationHandler>();
             services.AddSwaggerDocuments();
             services.AddSilkyMiniProfiler();
-            services.AddDashboard();
+           // services.AddDashboard();
             services.AddSilkyIdentity();
             services.AddSilkySkyApm();
             services.AddMessagePackCodec();
@@ -47,7 +47,7 @@ namespace GatewayDemo
             app.UseClientRateLimiting();
             app.UseIpRateLimiting();
             app.UseSilkyIdentity();
-            app.UseDashboard();
+          //  app.UseDashboard();
             app.ConfigureSilkyRequestPipeline();
             // app.UseEndpoints(endpoints=> endpoints.MapControllers());
         }

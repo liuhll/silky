@@ -8,7 +8,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.CorsAccessor\Silky.Http.CorsAccessor.csproj" />
-        <ProjectReference Include="..\..\src\Silky.Http.Dashboard\Silky.Http.Dashboard.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.Identity\Silky.Http.Identity.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.RateLimit\Silky.Http.RateLimit.csproj" />

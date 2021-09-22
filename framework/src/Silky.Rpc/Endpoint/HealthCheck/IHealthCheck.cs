@@ -25,7 +25,7 @@ namespace Silky.Rpc.Address.HealthCheck
         void RemoveRpcEndpoint(IPAddress ipAddress, int port);
 
         event HealthChangeEvent OnHealthChange;
-        event RemoveAddressEvent OnRemveAddress;
+        event RemoveRpcEndpointEvent OnRemoveRpcEndpoint;
         event UnhealthEvent OnUnhealth;
         event AddMonitorEvent OnAddMonitor;
     }

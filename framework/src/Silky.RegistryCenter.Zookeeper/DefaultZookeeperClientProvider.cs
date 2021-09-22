@@ -90,7 +90,7 @@ namespace Silky.RegistryCenter.Zookeeper
                                 if (healthCheckModel.HealthType == HealthType.Disconnected)
                                 {
                                     var zookeeperStatusChange = EngineContext.Current.Resolve<IZookeeperStatusChange>();
-                                    await zookeeperStatusChange.CreateSubscribeServiceRouteDataChanges(client);
+                                    await zookeeperStatusChange.CreateSubscribeServersChange(client);
                                 }
 
                                 healthCheckModel.SetHealth();
@@ -120,7 +120,7 @@ namespace Silky.RegistryCenter.Zookeeper
             }
             catch (Exception ex)
             {
-               Logger.LogException(ex);
+                Logger.LogException(ex);
                 m_healthCheck.GetOrAdd(connStr, new RegistryCenterHealthCheckModel(false)
                 {
                     HealthType = HealthType.Disconnected,

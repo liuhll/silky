@@ -14,31 +14,31 @@ namespace Silky.Rpc.Endpoint.Selector
         public HashAlgorithmRpcEndpointSelector(IHealthCheck healthCheck)
         {
             _healthCheck = healthCheck;
-            _healthCheck.OnRemveAddress += async addressModel =>
+            _healthCheck.OnRemoveRpcEndpoint += async rpcEndpoint =>
             {
                 var removeItems = _consistentHashAddressPools
-                    .Where(p => p.Value.ContainNode(addressModel))
+                    .Where(p => p.Value.ContainNode(rpcEndpoint))
                     .Select(p => p.Value);
                 foreach (var consistentHash in removeItems)
                 {
-                    consistentHash.Remove(addressModel);
+                    consistentHash.Remove(rpcEndpoint);
                 }
             };
-            
-            _healthCheck.OnHealthChange += async (addressModel, isHealth) =>
+
+            _healthCheck.OnHealthChange += async (rpcEndpoint, isHealth) =>
             {
                 var changeItems = _consistentHashAddressPools
-                    .Where(p => p.Value.ContainNode(addressModel))
+                    .Where(p => p.Value.ContainNode(rpcEndpoint))
                     .Select(p => p.Value);
                 foreach (var consistentHash in changeItems)
                 {
                     if (!isHealth)
                     {
-                        consistentHash.Remove(addressModel);
+                        consistentHash.Remove(rpcEndpoint);
                     }
                     else
                     {
-                        consistentHash.Add(addressModel);
+                        consistentHash.Add(rpcEndpoint);
                     }
                 }
             };

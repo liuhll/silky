@@ -11,14 +11,14 @@ namespace Silky.Rpc.Endpoint.HealthCheck
     {
         private ConcurrentDictionary<IRpcEndpoint, HealthCheckModel> m_healthCheckEndpoints = new();
         public event HealthChangeEvent OnHealthChange;
-        public event RemoveAddressEvent OnRemveAddress;
+        public event RemoveRpcEndpointEvent OnRemoveRpcEndpoint;
         public event UnhealthEvent OnUnhealth;
         public event AddMonitorEvent OnAddMonitor;
 
         public void RemoveRpcEndpoint(IRpcEndpoint rpcEndpoint)
         {
             m_healthCheckEndpoints.TryRemove(rpcEndpoint, out _);
-            OnRemveAddress?.Invoke(rpcEndpoint);
+            OnRemoveRpcEndpoint?.Invoke(rpcEndpoint);
         }
 
         public void RemoveRpcEndpoint(IPAddress ipAddress, int port)
@@ -74,7 +74,7 @@ namespace Silky.Rpc.Endpoint.HealthCheck
 
         public void ChangeHealthStatus(IPAddress ipAddress, int port, bool isHealth, int unHealthCeilingTimes = 0)
         {
-            var rpcEndpoint = AddressHelper.CreateRpcEndpoint(ipAddress.ToString(), port, ServiceProtocol.Tcp);
+            var rpcEndpoint = RpcEndpointHelper.CreateRpcEndpoint(ipAddress.ToString(), port, ServiceProtocol.Tcp);
             ChangeHealthStatus(rpcEndpoint, isHealth, unHealthCeilingTimes);
         }
 
@@ -95,7 +95,7 @@ namespace Silky.Rpc.Endpoint.HealthCheck
 
             if (!isHealth && healthCheckModel.UnHealthTimes >= unHealthCeilingTimes)
             {
-                OnRemveAddress?.Invoke(rpcEndpoint);
+                OnRemoveRpcEndpoint?.Invoke(rpcEndpoint);
                 m_healthCheckEndpoints.TryRemove(rpcEndpoint, out var value);
             }
 

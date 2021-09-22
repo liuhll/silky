@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using org.apache.zookeeper;
 using org.apache.zookeeper.data;
 #if !NET40
-
 using TaskEx = System.Threading.Tasks.Task;
 
 #endif
@@ -26,7 +25,7 @@ namespace Silky.Zookeeper.Implementation
         private ConnectionStateChangeHandler _connectionStateChangeHandler;
 
         private Event.KeeperState _currentState;
-        private readonly AutoResetEvent _stateChangedCondition = new AutoResetEvent(false);
+        private readonly AutoResetEvent _stateChangedCondition = new (false);
 
         private readonly object _zkEventLock = new object();
 
@@ -88,6 +87,7 @@ namespace Silky.Zookeeper.Implementation
 
                 stillWaiting = _stateChangedCondition.WaitOne(timeout);
             }
+
             return true;
         }
 
@@ -124,9 +124,11 @@ namespace Silky.Zookeeper.Implementation
 #endif
                     this.WaitForRetry();
                 }
+
                 if (DateTime.Now - operationStartTime > Options.OperatingTimeout)
                 {
-                    throw new TimeoutException($"Operation cannot be retried because of retry timeout ({Options.OperatingTimeout.TotalMilliseconds} milli seconds)");
+                    throw new TimeoutException(
+                        $"Operation cannot be retried because of retry timeout ({Options.OperatingTimeout.TotalMilliseconds} milli seconds)");
                 }
             }
         }
@@ -330,10 +332,8 @@ namespace Silky.Zookeeper.Implementation
 
             lock (_zkEventLock)
             {
-                TaskEx.Run(async () =>
-                {
-                    await ZooKeeper.closeAsync().ConfigureAwait(false);
-                }).ConfigureAwait(false).GetAwaiter().GetResult();
+                TaskEx.Run(async () => { await ZooKeeper.closeAsync().ConfigureAwait(false); }).ConfigureAwait(false)
+                    .GetAwaiter().GetResult();
             }
         }
 
@@ -386,7 +386,8 @@ namespace Silky.Zookeeper.Implementation
 
         private ZooKeeper CreateZooKeeper()
         {
-            return new ZooKeeper(Options.ConnectionString, (int)Options.SessionTimeout.TotalMilliseconds, this, Options.SessionId, Options.SessionPasswd, Options.ReadOnly);
+            return new ZooKeeper(Options.ConnectionString, (int)Options.SessionTimeout.TotalMilliseconds, this,
+                Options.SessionId, Options.SessionPasswd, Options.ReadOnly);
         }
 
         private async Task ReConnect()
@@ -406,6 +407,7 @@ namespace Silky.Zookeeper.Implementation
                         // ignored
                     }
                 }
+
                 ZooKeeper = CreateZooKeeper();
             }
             finally
