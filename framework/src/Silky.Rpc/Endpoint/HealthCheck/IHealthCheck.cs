@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Silky.Core.DependencyInjection;
+using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Routing;
@@ -18,7 +19,7 @@ namespace Silky.Rpc.Address.HealthCheck
 
         void ChangeHealthStatus(IRpcEndpoint rpcEndpoint, bool isHealth, int unHealthCeilingTimes = 0);
 
-        void ChangeHealthStatus(IPAddress mapToIPv4, int port, bool isHealth, int unHealthCeilingTimes = 0);
+        void ChangeHealthStatus(IPAddress mapToIPv4, int port, ServiceProtocol serviceProtocol, bool isHealth, int unHealthCeilingTimes = 0);
 
         void RemoveRpcEndpoint(IRpcEndpoint rpcEndpoint);
         

@@ -3,6 +3,7 @@ using DotNetty.Buffers;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Channels;
 using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 using Silky.DotNetty.Abstraction;
 using Silky.Rpc.Address.HealthCheck;
 
@@ -28,7 +29,10 @@ namespace Silky.DotNetty.Handlers
                 var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
                 if (remoteAddress != null)
                 {
-                    _healthCheck?.ChangeHealthStatus(remoteAddress.Address.MapToIPv4(), remoteAddress.Port, false);
+                    _healthCheck?.ChangeHealthStatus(remoteAddress.Address.MapToIPv4(),
+                        remoteAddress.Port,
+                        ServiceProtocol.Tcp,
+                        false);
                 }
             }
 
@@ -48,7 +52,10 @@ namespace Silky.DotNetty.Handlers
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)
             {
-                _healthCheck?.ChangeHealthStatus(remoteAddress.Address.MapToIPv4(), remoteAddress.Port, true);
+                _healthCheck?.ChangeHealthStatus(remoteAddress.Address.MapToIPv4(),
+                    remoteAddress.Port,
+                    ServiceProtocol.Tcp,
+                    true);
             }
 
             base.ChannelRead(context, message);

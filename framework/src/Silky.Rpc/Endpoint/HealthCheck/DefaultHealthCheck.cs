@@ -72,9 +72,10 @@ namespace Silky.Rpc.Endpoint.HealthCheck
             return false;
         }
 
-        public void ChangeHealthStatus(IPAddress ipAddress, int port, bool isHealth, int unHealthCeilingTimes = 0)
+        public void ChangeHealthStatus(IPAddress ipAddress, int port, ServiceProtocol serviceProtocol, bool isHealth,
+            int unHealthCeilingTimes = 0)
         {
-            var rpcEndpoint = RpcEndpointHelper.CreateRpcEndpoint(ipAddress.ToString(), port, ServiceProtocol.Tcp);
+            var rpcEndpoint = RpcEndpointHelper.CreateRpcEndpoint(ipAddress.ToString(), port, serviceProtocol);
             ChangeHealthStatus(rpcEndpoint, isHealth, unHealthCeilingTimes);
         }
 
