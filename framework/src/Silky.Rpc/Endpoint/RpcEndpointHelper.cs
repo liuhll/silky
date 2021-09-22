@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Silky.Core;
-using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;

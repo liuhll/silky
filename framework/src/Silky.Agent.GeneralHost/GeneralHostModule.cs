@@ -7,7 +7,6 @@ using Silky.Validation.Fluent;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Proxy;
-using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Repository.Redis;
 using Silky.Transaction.Tcc;

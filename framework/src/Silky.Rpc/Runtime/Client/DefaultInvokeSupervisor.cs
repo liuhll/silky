@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Rpc.Address;
 using Silky.Rpc.Address.HealthCheck;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
