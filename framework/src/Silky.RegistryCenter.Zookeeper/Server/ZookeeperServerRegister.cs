@@ -89,7 +89,7 @@ namespace Silky.RegistryCenter.Zookeeper.Server
                     else
                     {
                         await zookeeperClient.SetDataAsync(routePath, data);
-                        Logger.LogDebug($"The cached routing data of the {routePath} node has been updated");
+                        Logger.LogDebug($"The cached server data of the {routePath} node has been updated");
                     }
                 });
             }

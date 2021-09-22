@@ -5,7 +5,7 @@ namespace Silky.Rpc.Runtime.Server
 {
     public static class ServerDescriptorExtensions
     {
-        public static IServer ConvertToServerRoute(this ServerDescriptor serverDescriptor)
+        public static IServer ConvertToServer(this ServerDescriptor serverDescriptor)
         {
             var server = new Server(serverDescriptor.HostName)
             {

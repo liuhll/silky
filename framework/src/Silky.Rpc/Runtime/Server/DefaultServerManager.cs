@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -73,22 +74,22 @@ namespace Silky.Rpc.Runtime.Server
         public void Update([NotNull] ServerDescriptor serverDescriptor)
         {
             Check.NotNull(serverDescriptor, nameof(serverDescriptor));
-            var serverRoute = serverDescriptor.ConvertToServerRoute();
-            Debug.Assert(serverRoute != null, "serviceRoute != null");
-            var cacheServerRoute = _serverCache.GetValueOrDefault(serverDescriptor.HostName);
-            if (serverRoute == cacheServerRoute)
+            var server = serverDescriptor.ConvertToServer();
+            Debug.Assert(server != null, "serviceRoute != null");
+            var cacheServer = _serverCache.GetValueOrDefault(serverDescriptor.HostName);
+            if (server.Equals(cacheServer))
             {
                 Logger.LogDebug(
-                    $"The cached routing data of [{serverRoute.HostName}] is consistent with the routing data of the service registry, no need to update");
+                    $"The cached server data of [{server.HostName}] is consistent with the routing data of the service registry, no need to update");
                 return;
             }
 
-            _serverCache[serverDescriptor.HostName] = serverRoute;
+            _serverCache[serverDescriptor.HostName] = server;
             Logger.LogInformation(
-                $"Update the server routing [{serverRoute.HostName}] cache," +
-                $" the routing rpcEndpoint is:[{string.Join(',', serverRoute.Endpoints.Select(p => p.ToString()))}]");
+                $"Update the server [{server.HostName}] data cache," +
+                $"The instance address of the server provider is : {Environment.NewLine}[{string.Join(',', server.Endpoints.Select(p => p.ToString()))}]");
 
-            foreach (var rpcEndpoint in serverRoute.Endpoints)
+            foreach (var rpcEndpoint in server.Endpoints)
             {
                 _healthCheck.Monitor(rpcEndpoint);
             }
