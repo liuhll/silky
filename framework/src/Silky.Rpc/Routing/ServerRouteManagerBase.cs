@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Routing.Descriptor;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing
 {
@@ -39,7 +38,7 @@ namespace Silky.Rpc.Routing
             };
         }
 
-        public virtual async Task RegisterServer()
+        public virtual async Task RegisterServerRoute()
         {
             var serverRoute = _serverRegisterProvider.GetServerRoute();
             await RemoveServiceCenterExceptRpcEndpoint(serverRoute);

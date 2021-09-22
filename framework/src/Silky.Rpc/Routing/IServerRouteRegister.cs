@@ -4,6 +4,6 @@ namespace Silky.Rpc.Routing
 {
     public interface IServerRouteRegister
     {
-        Task RegisterServer();
+        Task RegisterServerRoute();
     }
 }

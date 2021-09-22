@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
@@ -56,7 +57,7 @@ namespace Silky.Http.Core.Middlewares
             }
 
             var serviceId = WebSocketResolverHelper.Generator(path);
-            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(serviceId);
+            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(serviceId, ServiceProtocol.Ws);
 
             if (rpcEndpoints == null)
             {

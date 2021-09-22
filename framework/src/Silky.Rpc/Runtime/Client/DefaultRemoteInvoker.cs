@@ -97,7 +97,7 @@ namespace Silky.Rpc.Runtime.Client
 
         private IRpcEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
         {
-            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(remoteInvokeMessage.ServiceId);
+            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(remoteInvokeMessage.ServiceId, ServiceProtocol.Tcp);
             if (rpcEndpoints == null)
             {
                 throw new NotFindServiceRouteException(

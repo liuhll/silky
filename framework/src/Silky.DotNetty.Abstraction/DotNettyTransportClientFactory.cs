@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Endpoint;
@@ -63,7 +64,6 @@ namespace Silky.DotNetty
                 if (!health)
                 {
                     m_clients.TryRemove(addressModel, out _);
-
                 }
                 else
                 {
@@ -74,7 +74,6 @@ namespace Silky.DotNetty
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 m_clients.TryRemove(addressModel, out _);
-                
             };
 
             _bootstrap = CreateBootstrap();
@@ -144,7 +143,7 @@ namespace Silky.DotNetty
             {
                 m_clients.TryRemove(rpcEndpoint, out _);
                 Logger.LogException(ex);
-                throw;
+                throw new CommunicationException(ex.Message, ex);
             }
         }
 

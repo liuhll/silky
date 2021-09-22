@@ -46,7 +46,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             Logger = NullLogger<ZookeeperServerRouteManager>.Instance;
         }
 
-        public override async Task RegisterServer()
+        public override async Task RegisterServerRoute()
         {
             var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -54,7 +54,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                 await CreateSubscribeServersChange(zookeeperClient);
             }
 
-            await base.RegisterServer();
+            await base.RegisterServerRoute();
         }
 
         protected override async Task RegisterServerRouteToServiceCenter(ServerRouteDescriptor serverRouteDescriptor)
@@ -74,12 +74,9 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                     if (centreServiceRoute != null)
                     {
                         serverRouteDescriptor.Endpoints = serverRouteDescriptor.Endpoints
-                            .Concat(centreServiceRoute.Endpoints).Distinct().OrderBy(p => p.ToString()).ToArray();
-                    }
-
-                    if (!m_serviceRouteWatchers.ContainsKey((routePath, zookeeperClient)))
-                    {
-                        await CreateSubscribeDataChange(zookeeperClient, routePath);
+                            .Concat(centreServiceRoute.Endpoints)
+                            .Distinct()
+                            .OrderBy(p => p.ToString()).ToArray();
                     }
 
                     var jsonString = _serializer.Serialize(serverRouteDescriptor);
@@ -87,6 +84,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                     if (!await zookeeperClient.ExistsAsync(routePath))
                     {
                         await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                        await RegisterServer(zookeeperClient);
                         Logger.LogDebug($"Node {routePath} does not exist and will be created");
                     }
                     else
@@ -95,6 +93,23 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
                         Logger.LogDebug($"The cached routing data of the {routePath} node has been updated");
                     }
                 });
+            }
+        }
+
+        private async Task RegisterServer(IZookeeperClient zookeeperClient)
+        {
+            var routePath = _registryCenterOptions.RoutePath;
+            var allServers = await GetAllServers(zookeeperClient, routePath);
+            allServers.Add(EngineContext.Current.HostName);
+            var jonString = _serializer.Serialize(allServers);
+            var data = jonString.GetBytes();
+            await zookeeperClient.SetDataAsync(routePath, data);
+            var serverRoutePath = CreateRoutePath(EngineContext.Current.HostName);
+            if (!m_serviceRouteWatchers.ContainsKey((serverRoutePath, zookeeperClient)))
+            {
+                var serverRouteWatcher = new ServerRouteWatcher(serverRoutePath, _serverRouteCache, _serializer);
+                await zookeeperClient.SubscribeDataChange(serverRoutePath, serverRouteWatcher.HandleNodeDataChange);
+                m_serviceRouteWatchers.GetOrAdd((serverRoutePath, zookeeperClient), serverRouteWatcher);
             }
         }
 
@@ -189,7 +204,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             }
         }
 
-        private async Task RemoveLocalHostServiceRoute()
+        internal async Task RemoveLocalHostServiceRoute()
         {
             var serviceRoute = _serverRouteCache.GetSelfServerRoute();
 
@@ -261,26 +276,16 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
             await zookeeperClient.SubscribeDataChange(serverPath, watcher.SubscribeServerChange);
             m_serverWatchers.AddOrUpdate(zookeeperClient, watcher, (k, v) => watcher);
             var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
-            var @lock = synchronizationProvider.CreateLock(LockName
-                .CreateDirectoryIfNotExistAndSubscribeServerRouteChange);
-
+            var @lock = synchronizationProvider.CreateLock(LockName.CreateSubscribeServersChange);
             await @lock.ExecForHandle(async () =>
             {
-                List<string> allServers;
                 if (!await zookeeperClient.ExistsAsync(serverPath))
                 {
                     await zookeeperClient.CreateRecursiveAsync(serverPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                    return;
                 }
 
-                allServers = await GetAllServers(zookeeperClient, serverPath);
-                if (!allServers.Contains(EngineContext.Current.HostName))
-                {
-                    allServers.Add(EngineContext.Current.HostName);
-                    var jsonString = _serializer.Serialize(allServers);
-                    var data = jsonString.GetBytes();
-                    await zookeeperClient.SetDataAsync(serverPath, data);
-                }
-
+                var allServers = await GetAllServers(zookeeperClient, serverPath);
                 foreach (var server in allServers)
                 {
                     await CreateSubscribeDataChange(zookeeperClient, server);
@@ -304,15 +309,20 @@ namespace Silky.RegistryCenter.Zookeeper.Routing
 
         internal async Task UpdateServerRouteCache(IZookeeperClient zookeeperClient, string path)
         {
-            var centerServiceServerRoute = await GetRouteDescriptorAsync(zookeeperClient, path);
-            _serverRouteCache.UpdateCache(centerServiceServerRoute);
+            var routePath = CreateRoutePath(path);
+            var centerServiceServerRoute = await GetRouteDescriptorAsync(zookeeperClient, routePath);
+            if (centerServiceServerRoute != null)
+            {
+                _serverRouteCache.UpdateCache(centerServiceServerRoute);
+            }
         }
 
         internal async Task CreateSubscribeDataChange(IZookeeperClient zookeeperClient, string path)
         {
-            var watcher = new ServerRouteWatcher(path, _serverRouteCache, _serializer);
-            await zookeeperClient.SubscribeDataChange(path, watcher.HandleNodeDataChange);
-            m_serviceRouteWatchers.AddOrUpdate((path, zookeeperClient), watcher, (k, v) => watcher);
+            var routePath = CreateRoutePath(path);
+            var watcher = new ServerRouteWatcher(routePath, _serverRouteCache, _serializer);
+            await zookeeperClient.SubscribeDataChange(routePath, watcher.HandleNodeDataChange);
+            m_serviceRouteWatchers.GetOrAdd((routePath, zookeeperClient), watcher);
         }
 
         private async Task<ServerRouteDescriptor> GetRouteDescriptorAsync(IZookeeperClient zookeeperClient,

@@ -4,7 +4,7 @@ namespace Silky.RegistryCenter.Zookeeper
     {
         public const string RegisterRoute = "RegisterRoute{0}";
 
-        public const string CreateDirectoryIfNotExistAndSubscribeServerRouteChange =
-            "CreateDirectoryIfNotExistAndSubscribeServerRouteChange";
+        public const string CreateSubscribeServersChange =
+            "CreateSubscribeServersChange";
     }
 }

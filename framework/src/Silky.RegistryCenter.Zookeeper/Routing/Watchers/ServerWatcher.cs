@@ -38,8 +38,15 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
             switch (eventType)
             {
                 case Watcher.Event.EventType.NodeCreated:
+                case Watcher.Event.EventType.NodeDeleted:
+                    break;
                 case Watcher.Event.EventType.NodeDataChanged:
-                    Check.NotNullOrEmpty(nodeData, nameof(nodeData));
+                    Check.NotNull(nodeData, nameof(nodeData));
+                    if (!nodeData.Any())
+                    {
+                        return;
+                    }
+
                     var jonString = nodeData.GetString();
                     var allServers = _serializer.Deserialize<List<string>>(jonString);
                     foreach (var server in allServers)
@@ -47,6 +54,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
                         await _zookeeperServerRouteManager.CreateSubscribeDataChange(client, server);
                         await _zookeeperServerRouteManager.UpdateServerRouteCache(client, server);
                     }
+
                     break;
             }
         }

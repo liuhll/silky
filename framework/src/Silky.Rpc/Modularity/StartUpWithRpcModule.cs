@@ -11,7 +11,7 @@ namespace Silky.Rpc.Modularity
         {
             var serverRouteRegister =
                 applicationContext.ServiceProvider.GetRequiredService<IServerRouteRegister>();
-            await serverRouteRegister.RegisterServer();
+            await serverRouteRegister.RegisterServerRoute();
         }
     }
 }
