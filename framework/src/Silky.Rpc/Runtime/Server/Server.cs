@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Silky.Rpc.Endpoint;
-using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Routing
+namespace Silky.Rpc.Runtime.Server
 {
-    public class ServerRoute
+    public class Server : IServer
     {
-        public ServerRoute(string hostName)
+        public Server(string hostName)
         {
             HostName = hostName;
             Endpoints = new List<IRpcEndpoint>();
@@ -20,7 +19,7 @@ namespace Silky.Rpc.Routing
 
         public override bool Equals(object? obj)
         {
-            var model = obj as ServerRoute;
+            var model = obj as Server;
             if (model == null)
             {
                 return false;
@@ -35,12 +34,12 @@ namespace Silky.Rpc.Routing
                    && Endpoints.All(p => model.Endpoints.Any(q => p == q));
         }
 
-        public static bool operator ==(ServerRoute model1, ServerRoute model2)
+        public static bool operator ==(Server model1, Server model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(ServerRoute model1, ServerRoute model2)
+        public static bool operator !=(Server model1, Server model2)
         {
             return !Equals(model1, model2);
         }

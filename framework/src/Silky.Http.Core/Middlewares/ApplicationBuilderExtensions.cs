@@ -13,6 +13,7 @@ using Silky.Core.Logging;
 using Silky.Core.Modularity;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc.Routing;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Middlewares
 {
@@ -85,12 +86,12 @@ namespace Silky.Http.Core.Middlewares
         public static async void RegisterHttpRoutes(this IApplicationBuilder application)
         {
             var serverRegisterProvider =
-                application.ApplicationServices.GetRequiredService<IServerRegisterProvider>();
+                application.ApplicationServices.GetRequiredService<IServerProvider>();
             serverRegisterProvider.AddHttpServices();
 
             var serverRouteRegister =
-                application.ApplicationServices.GetRequiredService<IServerRouteRegister>();
-            await serverRouteRegister.RegisterServerRoute();
+                application.ApplicationServices.GetRequiredService<IServerRegister>();
+            await serverRouteRegister.RegisterServer();
         }
     }
 }

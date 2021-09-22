@@ -3,59 +3,58 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
-using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Routing
+namespace Silky.Rpc.Runtime.Server
 {
-    public class DefaultServerRegisterProvider : IServerRegisterProvider
+    public class DefaultServerProvider : IServerProvider
     {
-        public ILogger<DefaultServerRegisterProvider> Logger { get; set; }
-        private readonly ServerRoute _serverRoute;
+        public ILogger<DefaultServerProvider> Logger { get; set; }
+        private readonly IServer _server;
         private readonly IServiceManager _serviceManager;
 
-        public DefaultServerRegisterProvider(IServiceManager serviceManager)
+        public DefaultServerProvider(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
-            Logger = NullLogger<DefaultServerRegisterProvider>.Instance;
-            _serverRoute = new ServerRoute(EngineContext.Current.HostName);
+            Logger = NullLogger<DefaultServerProvider>.Instance;
+            _server = new Server(EngineContext.Current.HostName);
         }
 
         public void AddTcpServices()
         {
             var rpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
-            _serverRoute.Endpoints.Add(rpcEndpoint);
+            _server.Endpoints.Add(rpcEndpoint);
             var tcpServices = _serviceManager.GetLocalService(ServiceProtocol.Tcp);
             foreach (var tcpService in tcpServices)
             {
-                _serverRoute.Services.Add(tcpService.ServiceDescriptor);
+                _server.Services.Add(tcpService.ServiceDescriptor);
             }
         }
 
         public void AddHttpServices()
         {
             var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
-            _serverRoute.Endpoints.Add(webEndpoint);
+            _server.Endpoints.Add(webEndpoint);
             var httpServices = _serviceManager.GetLocalService(ServiceProtocol.Http);
             foreach (var httpService in httpServices)
             {
-                _serverRoute.Services.Add(httpService.ServiceDescriptor);
+                _server.Services.Add(httpService.ServiceDescriptor);
             }
         }
 
         public void AddWsServices()
         {
             var wsEndpoint = RpcEndpointHelper.GetWsEndpoint();
-            _serverRoute.Endpoints.Add(wsEndpoint);
+            _server.Endpoints.Add(wsEndpoint);
             var wsServices = _serviceManager.GetLocalService(ServiceProtocol.Ws);
             foreach (var wsService in wsServices)
             {
-                _serverRoute.Services.Add(wsService.ServiceDescriptor);
+                _server.Services.Add(wsService.ServiceDescriptor);
             }
         }
 
-        public ServerRoute GetServerRoute()
+        public IServer GetServer()
         {
-            return _serverRoute;
+            return _server;
         }
     }
 }

@@ -14,6 +14,7 @@ using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
+using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
 
@@ -21,18 +22,18 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class DefaultRemoteInvoker : IRemoteInvoker
     {
-        private readonly ServerRouteCache _serverRouteCache;
+        private readonly IServerManager _serverManager;
         private readonly IInvokeSupervisor _invokeSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly ISerializer _serializer;
         public ILogger<DefaultRemoteInvoker> Logger { get; set; }
 
-        public DefaultRemoteInvoker(ServerRouteCache serverRouteCache,
+        public DefaultRemoteInvoker(IServerManager serverManager,
             IInvokeSupervisor invokeSupervisor,
             ITransportClientFactory transportClientFactory,
             ISerializer serializer)
         {
-            _serverRouteCache = serverRouteCache;
+            _serverManager = serverManager;
             _invokeSupervisor = invokeSupervisor;
             _transportClientFactory = transportClientFactory;
             _serializer = serializer;
@@ -97,7 +98,7 @@ namespace Silky.Rpc.Runtime.Client
 
         private IRpcEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
         {
-            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(remoteInvokeMessage.ServiceId, ServiceProtocol.Tcp);
+            var rpcEndpoints = _serverManager.GetRpcEndpoints(remoteInvokeMessage.ServiceId, ServiceProtocol.Tcp);
             if (rpcEndpoints == null)
             {
                 throw new NotFindServiceRouteException(
@@ -127,7 +128,7 @@ namespace Silky.Rpc.Runtime.Client
                 if (selectedRpcEndpoint == null)
                 {
                     throw new NotFindServiceRouteAddressException(
-                        $"ServerRoute [{serviceEntryId}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
+                        $"Server [{serviceEntryId}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
                 }
             }
             else

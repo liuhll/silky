@@ -7,21 +7,20 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Zookeeper;
 
-namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
+namespace Silky.RegistryCenter.Zookeeper.Server.Watchers
 {
     public class ServerWatcher
     {
         protected string SubDirectoryPath { get; }
-        private readonly ZookeeperServerRouteManager _zookeeperServerRouteManager;
-        private readonly object locker = new();
+        private readonly ZookeeperServerRegister _zookeeperServerRegister;
         private readonly ISerializer _serializer;
 
         public ServerWatcher(string subDirectoryPath,
-            ZookeeperServerRouteManager zookeeperServerRouteManager,
+            ZookeeperServerRegister zookeeperServerRegister,
             ISerializer serializer)
         {
             SubDirectoryPath = subDirectoryPath;
-            _zookeeperServerRouteManager = zookeeperServerRouteManager;
+            _zookeeperServerRegister = zookeeperServerRegister;
             _serializer = serializer;
         }
 
@@ -51,8 +50,8 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
                     var allServers = _serializer.Deserialize<List<string>>(jonString);
                     foreach (var server in allServers)
                     {
-                        await _zookeeperServerRouteManager.CreateSubscribeDataChange(client, server);
-                        await _zookeeperServerRouteManager.UpdateServerRouteCache(client, server);
+                        await _zookeeperServerRegister.CreateSubscribeDataChange(client, server);
+                        await _zookeeperServerRegister.UpdateServerRouteCache(client, server);
                     }
 
                     break;

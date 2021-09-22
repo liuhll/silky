@@ -1,42 +1,38 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Silky.Core;
-using Silky.Core.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core;
+using Silky.Core.DependencyInjection;
 using Silky.Core.Rpc;
 using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Endpoint;
-using Silky.Rpc.Endpoint.Descriptor;
-using Silky.Rpc.Routing.Descriptor;
-using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Routing
+namespace Silky.Rpc.Runtime.Server
 {
-    public class ServerRouteCache : ISingletonDependency
+    public class DefaultServerManager : IServerManager, ISingletonDependency
     {
-        private readonly ConcurrentDictionary<string, ServerRoute> _serverRouteCache = new();
+        private readonly ConcurrentDictionary<string, IServer> _serverCache = new();
 
         private readonly ConcurrentDictionary<string, IRpcEndpoint[]> _rpcRpcEndpointCache = new();
         private readonly IHealthCheck _healthCheck;
         private readonly IServiceEntryManager _serviceEntryManager;
-        public ILogger<ServerRouteCache> Logger { get; set; }
+        public ILogger<DefaultServerManager> Logger { get; set; }
 
         public event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
 
-        public ServerRouteCache(IHealthCheck healthCheck,
+        public DefaultServerManager(IHealthCheck healthCheck,
             IServiceEntryManager serviceEntryManager)
         {
             _healthCheck = healthCheck;
             _serviceEntryManager = serviceEntryManager;
             _healthCheck.OnRemoveRpcEndpoint += RemoveRpcEndpointHandler;
             _healthCheck.OnHealthChange += HealthChangeHandler;
-            Logger = NullLogger<ServerRouteCache>.Instance;
+            Logger = NullLogger<DefaultServerManager>.Instance;
         }
 
         private async Task HealthChangeHandler(IRpcEndpoint rpcEndpoint, bool isHealth)
@@ -61,7 +57,7 @@ namespace Silky.Rpc.Routing
         private async Task RemoveRpcEndpointHandler(IRpcEndpoint rpcEndpoint)
         {
             var needRemoveEndpointServerRoutes =
-                ServerRoutes.Where(p => p.Endpoints.Any(q => q.Descriptor == rpcEndpoint.Descriptor));
+                Servers.Where(p => p.Endpoints.Any(q => q.Descriptor == rpcEndpoint.Descriptor));
 
             foreach (var needRemoveEndpointServerRoute in needRemoveEndpointServerRoutes)
             {
@@ -74,12 +70,12 @@ namespace Silky.Rpc.Routing
         }
 
 
-        public void UpdateCache([NotNull] ServerRouteDescriptor serverRouteDescriptor)
+        public void Update([NotNull] ServerDescriptor serverDescriptor)
         {
-            Check.NotNull(serverRouteDescriptor, nameof(serverRouteDescriptor));
-            var serverRoute = serverRouteDescriptor.ConvertToServerRoute();
+            Check.NotNull(serverDescriptor, nameof(serverDescriptor));
+            var serverRoute = serverDescriptor.ConvertToServerRoute();
             Debug.Assert(serverRoute != null, "serviceRoute != null");
-            var cacheServerRoute = _serverRouteCache.GetValueOrDefault(serverRouteDescriptor.HostName);
+            var cacheServerRoute = _serverCache.GetValueOrDefault(serverDescriptor.HostName);
             if (serverRoute == cacheServerRoute)
             {
                 Logger.LogDebug(
@@ -87,7 +83,7 @@ namespace Silky.Rpc.Routing
                 return;
             }
 
-            _serverRouteCache[serverRouteDescriptor.HostName] = serverRoute;
+            _serverCache[serverDescriptor.HostName] = serverRoute;
             Logger.LogInformation(
                 $"Update the server routing [{serverRoute.HostName}] cache," +
                 $" the routing rpcEndpoint is:[{string.Join(',', serverRoute.Endpoints.Select(p => p.ToString()))}]");
@@ -97,46 +93,46 @@ namespace Silky.Rpc.Routing
                 _healthCheck.Monitor(rpcEndpoint);
             }
 
-            foreach (var serviceDescriptor in serverRouteDescriptor.Services)
+            foreach (var serviceDescriptor in serverDescriptor.Services)
             {
                 var serviceEntries = _serviceEntryManager.GetServiceEntries(serviceDescriptor.Id);
                 foreach (var serviceEntry in serviceEntries)
                 {
                     if (serviceEntry.FailoverCountIsDefaultValue)
                     {
-                        serviceEntry.GovernanceOptions.RetryTimes = serverRouteDescriptor.Endpoints.Count();
+                        serviceEntry.GovernanceOptions.RetryTimes = serverDescriptor.Endpoints.Count();
                         _serviceEntryManager.Update(serviceEntry);
                     }
                 }
             }
         }
 
-        public void RemoveCache(string hostName)
+        public void Remove(string hostName)
         {
-            _serverRouteCache.TryRemove(hostName, out ServerRoute serviceRoute);
-            if (serviceRoute != null)
+            _serverCache.TryRemove(hostName, out IServer server);
+            if (server != null)
             {
-                foreach (var routeAddress in serviceRoute.Endpoints)
+                foreach (var routeAddress in server.Endpoints)
                 {
                     _healthCheck.RemoveRpcEndpoint(routeAddress);
                 }
             }
         }
 
-        public IReadOnlyList<ServerRouteDescriptor> ServerRouteDescriptors =>
-            _serverRouteCache.Values.Select(p => p.ConvertToDescriptor()).ToArray();
+        public IReadOnlyList<ServerDescriptor> ServerDescriptors =>
+            _serverCache.Values.Select(p => p.ConvertToDescriptor()).ToArray();
 
-        public ServerRoute GetSelfServerRoute()
+        public IServer GetSelfServer()
         {
-            if (_serverRouteCache.TryGetValue(EngineContext.Current.HostName, out var serverRoute))
+            if (_serverCache.TryGetValue(EngineContext.Current.HostName, out var server))
             {
-                return serverRoute;
+                return server;
             }
 
-            return serverRoute;
+            return server;
         }
 
-        public IReadOnlyList<ServerRoute> ServerRoutes => _serverRouteCache.Values.ToArray();
+        public IReadOnlyList<IServer> Servers => _serverCache.Values.ToArray();
 
         public IRpcEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol)
         {
@@ -145,7 +141,7 @@ namespace Silky.Rpc.Routing
                 return endpoints;
             }
 
-            endpoints = ServerRoutes.Where(p =>
+            endpoints = Servers.Where(p =>
                     p.Services.Any(q => q.Id == serviceId))
                 .SelectMany(p => p.Endpoints.Where(e => e.ServiceProtocol == serviceProtocol))
                 .ToArray();
@@ -159,7 +155,7 @@ namespace Silky.Rpc.Routing
 
         public ServiceDescriptor GetServiceDescriptor(string serviceId)
         {
-            var serviceDescriptor = _serverRouteCache.Values.SelectMany(p => p.Services)
+            var serviceDescriptor = _serverCache.Values.SelectMany(p => p.Services)
                 .FirstOrDefault(p => p.Id == serviceId);
             return serviceDescriptor;
         }

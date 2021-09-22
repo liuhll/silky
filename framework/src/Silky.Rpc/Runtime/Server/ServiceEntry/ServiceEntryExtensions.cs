@@ -95,8 +95,8 @@ namespace Silky.Rpc.Runtime.Server
 
         public static ServiceDescriptor GetServiceDescriptor(this ServiceEntry serviceEntry)
         {
-            var serviceRouteCache = EngineContext.Current.Resolve<ServerRouteCache>();
-            var serviceDescriptor = serviceRouteCache.GetServiceDescriptor(serviceEntry.ServiceId);
+            var serverManager = EngineContext.Current.Resolve<IServerManager>();
+            var serviceDescriptor = serverManager.GetServiceDescriptor(serviceEntry.ServiceId);
             return serviceDescriptor;
         }
 

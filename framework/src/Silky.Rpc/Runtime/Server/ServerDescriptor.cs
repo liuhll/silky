@@ -2,13 +2,12 @@ using System;
 using System.Linq;
 using Silky.Core.Utils;
 using Silky.Rpc.Endpoint.Descriptor;
-using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Routing.Descriptor
+namespace Silky.Rpc.Runtime.Server
 {
-    public class ServerRouteDescriptor 
+    public class ServerDescriptor 
     {
-        public ServerRouteDescriptor()
+        public ServerDescriptor()
         {
             TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
             Services = Array.Empty<ServiceDescriptor>();
@@ -25,7 +24,7 @@ namespace Silky.Rpc.Routing.Descriptor
 
         public override bool Equals(object? obj)
         {
-            var model = obj as ServerRouteDescriptor;
+            var model = obj as ServerDescriptor;
             if (model == null)
             {
                 return false;
@@ -35,12 +34,12 @@ namespace Silky.Rpc.Routing.Descriptor
                    && Endpoints.All(p => model.Endpoints.Any(q => p == q));
         }
 
-        public static bool operator ==(ServerRouteDescriptor model1, ServerRouteDescriptor model2)
+        public static bool operator ==(ServerDescriptor model1, ServerDescriptor model2)
         {
             return Equals(model1, model2);
         }
         
-        public static bool operator !=(ServerRouteDescriptor model1, ServerRouteDescriptor model2)
+        public static bool operator !=(ServerDescriptor model1, ServerDescriptor model2)
         {
             return !Equals(model1, model2);
         }

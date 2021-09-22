@@ -14,6 +14,7 @@ using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
+using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Utils;
 
 namespace Silky.Http.Core.Middlewares
@@ -29,15 +30,15 @@ namespace Silky.Http.Core.Middlewares
         private const int DefaultWebSocketBufferSize = 4096;
         private const int StreamCopyBufferSize = 81920;
         private readonly RequestDelegate _next;
-        private readonly ServerRouteCache _serverRouteCache;
+        private readonly IServerManager _serverManager;
         private readonly WebSocketOptions _webSocketOptions;
 
         public WebSocketsProxyMiddleware(RequestDelegate next,
-            ServerRouteCache serverRouteCache,
+            IServerManager serverManager,
             IOptions<WebSocketOptions> webSocketOptions)
         {
             _next = next;
-            _serverRouteCache = serverRouteCache;
+            _serverManager = serverManager;
             _webSocketOptions = webSocketOptions.Value;
         }
 
@@ -57,7 +58,7 @@ namespace Silky.Http.Core.Middlewares
             }
 
             var serviceId = WebSocketResolverHelper.Generator(path);
-            var rpcEndpoints = _serverRouteCache.GetRpcEndpoints(serviceId, ServiceProtocol.Ws);
+            var rpcEndpoints = _serverManager.GetRpcEndpoints(serviceId, ServiceProtocol.Ws);
 
             if (rpcEndpoints == null)
             {

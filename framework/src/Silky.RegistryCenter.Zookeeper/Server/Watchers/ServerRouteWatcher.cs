@@ -4,26 +4,25 @@ using org.apache.zookeeper;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
-using Silky.Rpc.Routing;
-using Silky.Rpc.Routing.Descriptor;
+using Silky.Rpc.Runtime.Server;
 using Silky.Zookeeper;
 
-namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
+namespace Silky.RegistryCenter.Zookeeper.Server.Watchers
 {
     internal class ServerRouteWatcher
     {
         internal string Path { get; }
-        private readonly ServerRouteCache _serverRouteCache;
+        private readonly IServerManager _serverManager;
         private readonly ISerializer _serializer;
         private readonly object locker = new();
 
         public ServerRouteWatcher(
             string path,
-            ServerRouteCache serverRouteCache,
+            IServerManager serverManager,
             ISerializer serializer)
         {
             Path = path;
-            _serverRouteCache = serverRouteCache;
+            _serverManager = serverManager;
             _serializer = serializer;
         }
 
@@ -40,7 +39,7 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
             {
                 case Watcher.Event.EventType.NodeDeleted:
                     var hostName = Path.Split("/").Last();
-                    _serverRouteCache.RemoveCache(hostName);
+                    _serverManager.Remove(hostName);
                     break;
                 case Watcher.Event.EventType.NodeCreated:
                 case Watcher.Event.EventType.NodeDataChanged:
@@ -48,8 +47,8 @@ namespace Silky.RegistryCenter.Zookeeper.Routing.Watchers
                     {
                         Check.NotNullOrEmpty(nodeData, nameof(nodeData));
                         var jonString = nodeData.GetString();
-                        var serverRouteDescriptor = _serializer.Deserialize<ServerRouteDescriptor>(jonString);
-                        _serverRouteCache.UpdateCache(serverRouteDescriptor);
+                        var serverRouteDescriptor = _serializer.Deserialize<ServerDescriptor>(jonString);
+                        _serverManager.Update(serverRouteDescriptor);
                     }
 
                     break;

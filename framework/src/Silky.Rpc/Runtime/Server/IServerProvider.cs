@@ -1,8 +1,8 @@
 using Silky.Core.DependencyInjection;
 
-namespace Silky.Rpc.Routing
+namespace Silky.Rpc.Runtime.Server
 {
-    public interface IServerRegisterProvider : ISingletonDependency
+    public interface IServerProvider : ISingletonDependency
     {
         void AddTcpServices();
 
@@ -10,6 +10,6 @@ namespace Silky.Rpc.Routing
 
         void AddWsServices();
 
-        ServerRoute GetServerRoute();
+        IServer GetServer();
     }
 }
