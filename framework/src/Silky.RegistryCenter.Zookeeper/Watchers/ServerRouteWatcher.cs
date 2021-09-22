@@ -7,7 +7,7 @@ using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 using Silky.Zookeeper;
 
-namespace Silky.RegistryCenter.Zookeeper.Server.Watchers
+namespace Silky.RegistryCenter.Zookeeper.Watchers
 {
     internal class ServerRouteWatcher
     {

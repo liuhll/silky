@@ -5,7 +5,6 @@ using Silky.Core.Modularity;
 using Silky.Rpc;
 using Silky.Lock;
 using Silky.RegistryCenter.Zookeeper.Configuration;
-using Silky.RegistryCenter.Zookeeper.Server;
 
 namespace Silky.RegistryCenter.Zookeeper
 {

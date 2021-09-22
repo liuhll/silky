@@ -7,7 +7,7 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Zookeeper;
 
-namespace Silky.RegistryCenter.Zookeeper.Server.Watchers
+namespace Silky.RegistryCenter.Zookeeper.Watchers
 {
     public class ServerWatcher
     {

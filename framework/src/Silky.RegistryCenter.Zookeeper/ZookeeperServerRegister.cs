@@ -12,14 +12,14 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Lock.Extensions;
 using Silky.RegistryCenter.Zookeeper.Configuration;
-using Silky.RegistryCenter.Zookeeper.Server.Watchers;
+using Silky.RegistryCenter.Zookeeper.Watchers;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 using Silky.Zookeeper;
 using static Silky.Rpc.Endpoint.RpcEndpointHelper;
 
-namespace Silky.RegistryCenter.Zookeeper.Server
+namespace Silky.RegistryCenter.Zookeeper
 {
     public class ZookeeperServerRegister : ServerRegisterBase, ISingletonDependency, IZookeeperStatusChange
     {
