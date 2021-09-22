@@ -10,4 +10,4 @@ distributedCache:
         isEnabled: true
         configuration: 127.0.0.1:6379,defaultDatabase=0 
 governance:
-    executionTimeout: -1
+    timeoutMillSeconds: -1
