@@ -11,12 +11,12 @@ namespace Silky.Rpc.Runtime.Server
         private IEnumerable<ServiceEntry> m_localServiceEntries;
         private IEnumerable<ServiceEntry> m_allServiceEntries;
 
-        public DefaultServiceEntryManager(IEnumerable<IServiceProvider> providers)
+        public DefaultServiceEntryManager(IEnumerable<IServiceEntryProvider> providers)
         {
             UpdateEntries(providers);
         }
 
-        private void UpdateEntries(IEnumerable<IServiceProvider> providers)
+        private void UpdateEntries(IEnumerable<IServiceEntryProvider> providers)
         {
             var allServiceEntries = new List<ServiceEntry>();
             foreach (var provider in providers)
