@@ -12,7 +12,6 @@ using Silky.Core.Serialization;
 using Silky.Lock.Extensions;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.RegistryCenter.Zookeeper.Watchers;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 using Silky.Zookeeper;
@@ -34,11 +33,9 @@ namespace Silky.RegistryCenter.Zookeeper
             IServerProvider serverProvider,
             IZookeeperClientProvider zookeeperClientProvider,
             IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions,
-            IOptionsMonitor<RpcOptions> rpcOptions,
             ISerializer serializer)
             : base(serverManager,
-                serverProvider,
-                rpcOptions)
+                serverProvider)
         {
             _zookeeperClientProvider = zookeeperClientProvider;
             _serializer = serializer;

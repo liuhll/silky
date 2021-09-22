@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
 using Silky.Core;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
@@ -16,11 +14,9 @@ namespace Silky.RegistryCenter.Nacos
 
         public NacosServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
-            IOptionsMonitor<RpcOptions> rpcOptions,
             INacosNamingService nacosNamingService)
             : base(serverManager,
-                serverProvider,
-                rpcOptions)
+                serverProvider)
         {
             _nacosNamingService = nacosNamingService;
         }
