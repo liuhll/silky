@@ -21,7 +21,7 @@ namespace Silky.Transaction.Tcc
             }
 
             var instance =
-                EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
+                EngineContext.Current.ResolveServiceInstance(serviceKey, serviceEntry.ServiceType);
             var methods = instance.GetType().GetTypeInfo().GetMethods();
 
             var implementationMethod = methods.Single(p => p.AchievingEquality(serviceEntry.MethodInfo));
@@ -35,7 +35,7 @@ namespace Silky.Transaction.Tcc
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             Debug.Assert(serviceEntry.IsLocal);
             var instance =
-                EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
+                EngineContext.Current.ResolveServiceInstance(serviceKey, serviceEntry.ServiceType);
             if (instance == null)
             {
                 return (null, null);
@@ -80,7 +80,7 @@ namespace Silky.Transaction.Tcc
                 return false;
             }
 
-            var instance = EngineContext.Current.ResolveServiceEntryInstance(serviceKey, serviceEntry.ServiceType);
+            var instance = EngineContext.Current.ResolveServiceInstance(serviceKey, serviceEntry.ServiceType);
             if (instance == null)
             {
                 return false;

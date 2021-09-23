@@ -130,7 +130,7 @@ namespace Silky.Core
             return sp.GetAutofacRoot().ResolveNamed(name, type);
         }
 
-        public object ResolveServiceEntryInstance(string serviceKey, Type serviceType)
+        public object ResolveServiceInstance(string serviceKey, Type serviceType)
         {
             object instance = null;
             if (!serviceKey.IsNullOrEmpty())
@@ -138,7 +138,7 @@ namespace Silky.Core
                 if (!EngineContext.Current.IsRegisteredWithName(serviceKey, serviceType))
                 {
                     throw new UnServiceKeyImplementationException(
-                        $"系统中没有存在serviceKey为{serviceKey}的{serviceType.FullName}接口的实现类");
+                        $"There is no implementation class of the {serviceType.FullName} interface whose serviceKey is {serviceKey} in the system");
                 }
 
                 instance = EngineContext.Current.ResolveNamed(serviceKey, serviceType);
