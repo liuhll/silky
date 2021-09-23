@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
 using Silky.Core;
+using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
@@ -11,14 +13,17 @@ namespace Silky.RegistryCenter.Nacos
     public class NacosServerRegister : ServerRegisterBase
     {
         private readonly INacosNamingService _nacosNamingService;
+        private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
 
         public NacosServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
-            INacosNamingService nacosNamingService)
+            INacosNamingService nacosNamingService,
+            IOptionsMonitor<NacosRegistryCenterOptions> nacosRegistryCenterOptions)
             : base(serverManager,
                 serverProvider)
         {
             _nacosNamingService = nacosNamingService;
+            _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
 
         public async override Task RemoveSelfServer()
@@ -44,6 +49,7 @@ namespace Silky.RegistryCenter.Nacos
                     ServiceName = serverDescriptor.HostName,
                     Ephemeral = true,
                     Enabled = true,
+                    Healthy = true,
                     Ip = endpoint.Host,
                     Port = endpoint.Port,
                     Metadata = new Dictionary<string, string>()
@@ -53,7 +59,10 @@ namespace Silky.RegistryCenter.Nacos
                         { "ProcessorTime", endpoint.ProcessorTime.ToString() }
                     },
                 };
-                await _nacosNamingService.RegisterInstance(serverDescriptor.HostName, instance);
+                await _nacosNamingService.RegisterInstance(
+                    serverDescriptor.HostName,
+                    _nacosRegistryCenterOptions.GroupName,
+                    instance);
             }
         }
 

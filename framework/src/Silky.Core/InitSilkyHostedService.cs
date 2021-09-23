@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +24,19 @@ namespace Silky.Core
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine(@"                                              
+   _____  _  _  _           
+  / ____|(_)| || |          
+ | (___   _ | || | __ _   _ 
+  \___ \ | || || |/ /| | | |
+  ____) || || ||   < | |_| |
+ |_____/ |_||_||_|\_\ \__, |
+                       __/ |
+                      |___/
+            ");
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var ver = $"{version.Major}.{version.Major}.{version.Build}.{version.Revision.ToString("0000")}";
+            Console.WriteLine($" :: Silky ::        {ver}");
             await _moduleManager.InitializeModules();
         }
 

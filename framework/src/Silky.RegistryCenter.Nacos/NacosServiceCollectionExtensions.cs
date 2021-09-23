@@ -16,13 +16,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<NacosRegistryCenterOptions>(EngineContext.Current.Configuration.GetSection(section));
 
             services.AddNacosV2Naming(EngineContext.Current.Configuration, sectionName: section);
-            services.AddSingleton<IServerRegister,NacosServerRegister>();
-
+            services.AddNacosV2Config(EngineContext.Current.Configuration, sectionName: section);
+            services.AddSingleton<IServerRegister, NacosServerRegister>();
+            
             return services;
         }
 
         public static IServiceCollection AddNacosRegistryCenter(this IServiceCollection services,
-            Action<NacosSdkOptions> optionsAccs)
+            Action<NacosRegistryCenterOptions> optionsAccs)
         {
             services.Configure(optionsAccs);
 
@@ -30,7 +31,8 @@ namespace Microsoft.Extensions.DependencyInjection
             optionsAccs.Invoke(options);
 
             services.AddNacosV2Naming(options.BuildSdkOptions());
-
+            services.AddNacosV2Config(options.BuildSdkOptions());
+            services.AddSingleton<IServerRegister, NacosServerRegister>();
             return services;
         }
     }

@@ -7,11 +7,18 @@ rpc:
 #  type: Zookeeper
 registrycenter:
   type: Nacos
-  namespace: silky
+  namespace: public
   serverAddresses:
     - http://127.0.0.1:8848/
+    - http://127.0.0.1:8849/
+    - http://127.0.0.1:8850/
   userName: nacos
   password: nacos
+  groupName: DEFAULT_GROUP
+  clusterName: DEFAULT
+  registerEnabled: true
+  instanceEnabled: true
+  namingUseRpc: true
   
 distributedCache:
   redis:
