@@ -1,8 +1,10 @@
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Nacos.V2;
-using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.RegistryCenter.Nacos.Listeners;
@@ -14,51 +16,66 @@ namespace Silky.RegistryCenter.Nacos
     {
         private readonly ISerializer _serializer;
         private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
-        private readonly ServiceListener _serviceListener;
+
         private readonly INacosConfigService _nacosConfigService;
-        private ServiceDescriptor[] m_services = null;
+        private ConcurrentDictionary<string, ServiceDescriptor[]> m_services = new();
 
 
         public NacosServiceProvider(ISerializer serializer,
             IOptionsMonitor<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
-            ServiceListener serviceListener,
             INacosConfigService nacosConfigService)
         {
             _serializer = serializer;
-            _serviceListener = serviceListener;
+
             _nacosConfigService = nacosConfigService;
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
-            m_services = GetServices(EngineContext.Current.HostName, _nacosRegistryCenterOptions.GroupName).GetAwaiter()
-                .GetResult();
         }
 
-        public async Task<ServiceDescriptor[]> GetServices(string hostName, string group, long timeoutMs = 1000)
+        public async Task<ServiceDescriptor[]> GetServices(string hostName, long timeoutMs = 5000)
         {
-            if (m_services != null)
+            if (m_services.TryGetValue(hostName, out var serviceDescriptors))
             {
-                return m_services;
+                return serviceDescriptors;
             }
 
             var serviceConfigValue =
-                await _nacosConfigService.GetConfigAndSignListener(hostName, group, timeoutMs, _serviceListener);
-            var services = _serializer.Deserialize<ServiceDescriptor[]>(serviceConfigValue);
-            return services;
+                await _nacosConfigService.GetConfigAndSignListener(hostName, _nacosRegistryCenterOptions.GroupName,
+                    timeoutMs,
+                    new ServiceListener(hostName, this));
+            if (serviceConfigValue.IsNullOrEmpty())
+            {
+                throw new SilkyException($"Failed to obtain the serviceDescriptor information of {hostName}");
+            }
+
+            serviceDescriptors = _serializer.Deserialize<ServiceDescriptor[]>(serviceConfigValue);
+            m_services.TryAdd(hostName, serviceDescriptors);
+            return serviceDescriptors;
         }
 
-        public async Task PublishServices(string hostName, string @group, ServiceDescriptor[] serviceDescriptors,
-            long timeoutMs = 1000)
+        public async Task PublishServices(string hostName, ServiceDescriptor[] serviceDescriptors,
+            long timeoutMs = 5000)
         {
-            if (m_services == null)
+            if (m_services.TryGetValue(hostName, out var cacheServiceDescriptors))
             {
-                return;
+                if (serviceDescriptors.All(p => cacheServiceDescriptors.Any(q => p == q)))
+                {
+                    return;
+                }
             }
 
             var serviceConfigValue = _serializer.Serialize(serviceDescriptors);
-            var result = await _nacosConfigService.PublishConfig(hostName, group, serviceConfigValue);
-            if (!result)
-            {
-                throw new SilkyException("Failed to publish service description information");
-            }
+            var result = await _nacosConfigService.PublishConfig(hostName, _nacosRegistryCenterOptions.GroupName,
+                serviceConfigValue);
+            // if (!result)
+            // {
+            //     throw new SilkyException("Failed to publish service description information");
+            // }
+        }
+
+        public void UpdateService(string hostName, string configInfo)
+        {
+            var serviceDescriptors = _serializer.Deserialize<ServiceDescriptor[]>(configInfo);
+            m_services.TryAdd(hostName, serviceDescriptors);
         }
     }
 }

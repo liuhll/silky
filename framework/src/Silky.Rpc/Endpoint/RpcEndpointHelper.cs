@@ -127,6 +127,12 @@ namespace Silky.Rpc.Endpoint
             var address = new RpcEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
             return address;
         }
+        
+        public static int GetWsPort()
+        {
+            var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
+            return webSocketOptions.Port;
+        }
 
         public static IRpcEndpoint CreateRpcEndpoint(string host, int port, ServiceProtocol serviceProtocol)
         {

@@ -1,5 +1,4 @@
 using Silky.Core.Exceptions;
-using Silky.RegistryCenter.Zookeeper;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

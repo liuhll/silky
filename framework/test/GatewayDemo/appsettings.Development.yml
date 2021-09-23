@@ -1,9 +1,23 @@
 rpc:
   host: 0.0.0.0
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+#registrycenter:
+#  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+#  type: Zookeeper
 registrycenter:
-  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
-  type: Zookeeper
+  type: Nacos
+  namespace: public
+  serverAddresses:
+    - http://127.0.0.1:8848/
+    - http://127.0.0.1:8849/
+    - http://127.0.0.1:8850/
+  userName: nacos
+  password: nacos
+  groupName: DEFAULT_GROUP
+  clusterName: DEFAULT
+  registerEnabled: true
+  instanceEnabled: true
+  namingUseRpc: false
 distributedCache:
   redis:
     isEnabled: true
