@@ -20,7 +20,7 @@ namespace Silky.RegistryCenter.Zookeeper
 {
     public class ZookeeperServerRegister : ServerRegisterBase, IZookeeperStatusChange
     {
-        private readonly IZookeeperClientProvider _zookeeperClientProvider;
+        private readonly IZookeeperClientFactory _zookeeperClientFactory;
         private readonly ISerializer _serializer;
         public ILogger<ZookeeperServerRegister> Logger { get; set; }
 
@@ -30,13 +30,13 @@ namespace Silky.RegistryCenter.Zookeeper
 
         public ZookeeperServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
-            IZookeeperClientProvider zookeeperClientProvider,
+            IZookeeperClientFactory zookeeperClientFactory,
             IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions,
             ISerializer serializer)
             : base(serverManager,
                 serverProvider)
         {
-            _zookeeperClientProvider = zookeeperClientProvider;
+            _zookeeperClientFactory = zookeeperClientFactory;
             _serializer = serializer;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
@@ -45,7 +45,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         public override async Task RegisterServer()
         {
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
                 await CreateSubscribeServersChange(zookeeperClient);
@@ -56,7 +56,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         protected override async Task RegisterServerToServiceCenter(ServerDescriptor serverDescriptor)
         {
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
                 var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
@@ -112,7 +112,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         protected override async Task RemoveServiceCenterExceptRpcEndpoint(IServer server)
         {
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
                 var allServerRouteDescriptors =
@@ -155,7 +155,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         protected override async Task CacheServers()
         {
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
                 var serviceRouteDescriptors =
@@ -176,7 +176,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
         {
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
                 var routePath = CreateRoutePath(hostName);

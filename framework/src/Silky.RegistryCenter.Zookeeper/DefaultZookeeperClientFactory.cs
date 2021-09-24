@@ -3,11 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Net;
 using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Configuration;
 using Silky.Zookeeper;
 using Silky.Zookeeper.Implementation;
 using Microsoft.Extensions.Logging;
@@ -17,19 +15,17 @@ using org.apache.zookeeper;
 using Silky.Core.Logging;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Rpc.RegistryCenters;
-using Silky.Rpc.Routing;
-using Silky.Rpc.Utils;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
-    public class DefaultZookeeperClientProvider : IDisposable, IZookeeperClientProvider
+    public class DefaultZookeeperClientFactory : IDisposable, IZookeeperClientFactory
     {
         private ConcurrentDictionary<string, IZookeeperClient> _zookeeperClients = new();
 
         private ConcurrentDictionary<string, RegistryCenterHealthCheckModel> m_healthCheck = new();
 
         private ZookeeperRegistryCenterOptions _registryCenterOptions;
-        public ILogger<DefaultZookeeperClientProvider> Logger { get; set; }
+        public ILogger<DefaultZookeeperClientFactory> Logger { get; set; }
 
         protected string[] ConnectionStrings
         {
@@ -42,13 +38,13 @@ namespace Silky.RegistryCenter.Zookeeper
             }
         }
 
-        public DefaultZookeeperClientProvider(IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions)
+        public DefaultZookeeperClientFactory(IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions)
         {
             _registryCenterOptions = registryCenterOptions.Value;
 
             Check.NotNullOrEmpty(_registryCenterOptions.ConnectionStrings,
                 nameof(_registryCenterOptions.ConnectionStrings));
-            Logger = NullLogger<DefaultZookeeperClientProvider>.Instance;
+            Logger = NullLogger<DefaultZookeeperClientFactory>.Instance;
 
             CreateZookeeperClients();
         }

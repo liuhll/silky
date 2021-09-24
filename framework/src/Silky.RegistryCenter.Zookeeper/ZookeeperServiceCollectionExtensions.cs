@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddOptions<ZookeeperRegistryCenterOptions>()
                 .Bind(EngineContext.Current.Configuration.GetSection(section));
             services.AddSingleton<IServerRegister, ZookeeperServerRegister>();
-            services.AddSingleton<IZookeeperClientProvider, DefaultZookeeperClientProvider>();
+            services.AddSingleton<IZookeeperClientFactory, DefaultZookeeperClientFactory>();
             services.AddSingleton<IZookeeperStatusChange, ZookeeperServerRegister>();
             return services;
         }

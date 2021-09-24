@@ -6,21 +6,21 @@ namespace Silky.RegistryCenter.Zookeeper
 {
     public class ZookeeperRegisterCenterHealthProvider : IRegisterCenterHealthProvider, ITransientDependency
     {
-        private readonly IZookeeperClientProvider _zookeeperClientProvider;
+        private readonly IZookeeperClientFactory _zookeeperClientFactory;
 
-        public ZookeeperRegisterCenterHealthProvider(IZookeeperClientProvider zookeeperClientProvider)
+        public ZookeeperRegisterCenterHealthProvider(IZookeeperClientFactory zookeeperClientFactory)
         {
-            _zookeeperClientProvider = zookeeperClientProvider;
+            _zookeeperClientFactory = zookeeperClientFactory;
         }
 
         public IDictionary<string, RegistryCenterHealthCheckModel> GetRegistryCenterHealthInfo()
         {
             var registryCenterHealthDict = new Dictionary<string, RegistryCenterHealthCheckModel>();
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
+            var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
             {
                 registryCenterHealthDict.Add(zookeeperClient.Options.ConnectionString,
-                    _zookeeperClientProvider.GetHealthCheckInfo(zookeeperClient));
+                    _zookeeperClientFactory.GetHealthCheckInfo(zookeeperClient));
             }
 
             return registryCenterHealthDict;

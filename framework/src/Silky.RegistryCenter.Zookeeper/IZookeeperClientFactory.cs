@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using Silky.Core.DependencyInjection;
 using Silky.Rpc.RegistryCenters;
 using Silky.Zookeeper;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
-    public interface IZookeeperClientProvider
+    public interface IZookeeperClientFactory
     {
         IZookeeperClient GetZooKeeperClient();
 
