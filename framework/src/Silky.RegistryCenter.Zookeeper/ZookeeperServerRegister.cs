@@ -15,7 +15,6 @@ using Silky.RegistryCenter.Zookeeper.Watchers;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 using Silky.Zookeeper;
-using static Silky.Rpc.Endpoint.RpcEndpointHelper;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
@@ -201,53 +200,7 @@ namespace Silky.RegistryCenter.Zookeeper
                 });
             }
         }
-
-        public override async Task RemoveSelf()
-        {
-            var serviceRoute = _serverManager.GetSelfServer();
-
-            if (serviceRoute == null)
-            {
-                return;
-            }
-
-            if (EngineContext.Current.IsContainDotNettyTcpModule())
-            {
-                var tcpEndpoint = GetLocalTcpEndpoint();
-                serviceRoute.Endpoints = serviceRoute.Endpoints.Where(p => p != tcpEndpoint).ToArray();
-            }
-
-            if (EngineContext.Current.IsContainWebSocketModule())
-            {
-                var wsEndpoint = GetWsEndpoint();
-                serviceRoute.Endpoints = serviceRoute.Endpoints.Where(p => p != wsEndpoint).ToArray();
-            }
-
-            if (EngineContext.Current.IsContainHttpCoreModule())
-            {
-                var httpEndpoint = GetLocalWebEndpoint();
-                if (httpEndpoint != null)
-                {
-                    serviceRoute.Endpoints = serviceRoute.Endpoints.Where(p => p != httpEndpoint).ToArray();
-                }
-            }
-
-            var zookeeperClients = _zookeeperClientProvider.GetZooKeeperClients();
-            foreach (var zookeeperClient in zookeeperClients)
-            {
-                var lockProvider = zookeeperClient.GetSynchronizationProvider();
-                var routePath = CreateRoutePath(serviceRoute.HostName);
-                var @lock = lockProvider.CreateLock(
-                    string.Format(LockName.RegisterRoute, serviceRoute.HostName));
-                await using (await @lock.AcquireAsync())
-                {
-                    var jsonString = _serializer.Serialize(serviceRoute.ConvertToDescriptor());
-                    var data = jsonString.GetBytes();
-                    await zookeeperClient.SetDataAsync(routePath, data);
-                }
-            }
-        }
-
+        
         private async Task<IEnumerable<ServerDescriptor>> GetServerRouteDescriptors(
             IZookeeperClient zookeeperClient, string hostName)
         {
