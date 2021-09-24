@@ -202,7 +202,7 @@ namespace Silky.RegistryCenter.Zookeeper
             }
         }
 
-        public override async Task RemoveSelfServer()
+        public override async Task RemoveSelf()
         {
             var serviceRoute = _serverManager.GetSelfServer();
 

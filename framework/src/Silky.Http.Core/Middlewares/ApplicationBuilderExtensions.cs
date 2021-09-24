@@ -83,7 +83,7 @@ namespace Silky.Http.Core.Middlewares
             });
         }
 
-        public static async void RegisterHttpRoutes(this IApplicationBuilder application)
+        public static async void RegisterHttpServer(this IApplicationBuilder application)
         {
             var serverRegisterProvider =
                 application.ApplicationServices.GetRequiredService<IServerProvider>();

@@ -6,6 +6,6 @@ namespace Silky.Rpc.Runtime.Server
     {
         Task RegisterServer();
 
-        Task RemoveSelfServer();
+        Task RemoveSelf();
     }
 }

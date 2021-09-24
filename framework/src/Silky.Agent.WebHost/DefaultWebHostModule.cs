@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.Hosting
         {
             var serverRegister =
                 applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
-            await serverRegister.RemoveSelfServer();
+            await serverRegister.RemoveSelf();
         }
     }
 }

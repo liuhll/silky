@@ -40,7 +40,7 @@ namespace Silky.RegistryCenter.Nacos
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
 
-        public override async Task RemoveSelfServer()
+        public override async Task RemoveSelf()
         {
             if (EngineContext.Current.IsContainDotNettyTcpModule())
             {
