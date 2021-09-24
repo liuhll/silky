@@ -80,14 +80,16 @@ namespace Silky.Rpc.Runtime.Server
             if (server.Equals(cacheServer))
             {
                 Logger.LogDebug(
-                    $"The cached server data of [{server.HostName}] is consistent with the routing data of the service registry, no need to update");
+                    "The cached server data of [{0}] is consistent with the routing data of the service registry, no need to update",
+                    server.HostName);
                 return;
             }
 
             _serverCache[serverDescriptor.HostName] = server;
             Logger.LogInformation(
-                $"Update the server [{server.HostName}] data cache," +
-                $"The instance address of the server provider is : {Environment.NewLine}[{string.Join(',', server.Endpoints.Select(p => p.ToString()))}]");
+                "Update the server [{0}] data cache," +
+                "The instance endpoints of the server provider is: {1}[{2}]",
+                server.HostName, Environment.NewLine, string.Join(',', server.Endpoints.Select(p => p.ToString())));
 
             foreach (var rpcEndpoint in server.Endpoints)
             {

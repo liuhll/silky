@@ -8,29 +8,29 @@ using Silky.Core.MiniProfiler;
 
 namespace Silky.Core.Logging
 {
- public static class LoggerExtensions
+    public static class LoggerExtensions
     {
-        public static void LogWithLevel(this ILogger logger, LogLevel logLevel, string message)
+        public static void LogWithLevel(this ILogger logger, LogLevel logLevel, string message, params object[] agrs)
         {
             switch (logLevel)
             {
                 case LogLevel.Critical:
-                    logger.LogCritical(message);
+                    logger.LogCritical(message, agrs);
                     break;
                 case LogLevel.Error:
-                    logger.LogError(message);
+                    logger.LogError(message, agrs);
                     break;
                 case LogLevel.Warning:
-                    logger.LogWarning(message);
+                    logger.LogWarning(message, agrs);
                     break;
                 case LogLevel.Information:
-                    logger.LogInformation(message);
+                    logger.LogInformation(message, agrs);
                     break;
                 case LogLevel.Trace:
-                    logger.LogTrace(message);
+                    logger.LogTrace(message, agrs);
                     break;
                 default: // LogLevel.Debug || LogLevel.None
-                    logger.LogDebug(message);
+                    logger.LogDebug(message, agrs);
                     break;
             }
         }
@@ -69,12 +69,12 @@ namespace Silky.Core.Logging
             LogSelfLogging(logger, ex);
             LogData(logger, ex, selectedLevel);
         }
-        
+
         public static void LogWithMiniProfiler(this ILogger logger, string category, string state,
-            string message, bool isError = false, LogLevel? level = null)
+            string message, bool isError = false, LogLevel? level = null, params object[] args)
         {
             level ??= isError ? LogLevel.Error : LogLevel.Debug;
-            logger.LogWithLevel(level.Value, message);
+            logger.LogWithLevel(level.Value, message, args);
             MiniProfilerPrinter.Print(category, state, message, isError);
         }
 

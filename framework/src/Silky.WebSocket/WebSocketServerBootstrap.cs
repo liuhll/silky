@@ -48,13 +48,11 @@ namespace Silky.WebSocket
             {
                 _socketServer.Start();
                 _logger.LogInformation(
-                    $"Ws server started successfully, server rpcEndpoint: {_socketServer.Address}:{_socketServer.Port.ToString()}");
+                    "Ws server started successfully, server rpcEndpoint: {0}:{1}", _socketServer.Address,
+                    _socketServer.Port.ToString());
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    $"Ws server failed to start, server rpcEndpoint: {_socketServer.Address}:{_socketServer.Port}, reason: {ex.Message}",
-                    ex);
                 _logger.LogException(ex);
                 throw;
             }

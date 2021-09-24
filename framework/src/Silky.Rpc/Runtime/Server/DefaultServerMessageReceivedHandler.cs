@@ -43,8 +43,8 @@ namespace Silky.Rpc.Runtime.Server
             var rpcConnection = RpcContext.Context.Connection;
             var clientRpcEndpoint = rpcConnection.ClientRpcEndpoint;
             Logger.LogDebug(
-                $"Received a request from the client [{clientRpcEndpoint}].{Environment.NewLine}" +
-                $"messageId:[{messageId}].{Environment.NewLine}serviceEntryId:[{message.ServiceEntryId}]");
+                "Received a request from the client [{0}].{1}messageId:[{2}],serviceEntryId:[{3}]", clientRpcEndpoint,
+                Environment.NewLine, messageId, message.ServiceEntryId);
             var tracingTimestamp = _serverDiagnosticListener.TracingBefore(message, messageId);
             context[PollyContextNames.TracingTimestamp] = tracingTimestamp;
             var serviceEntry =
@@ -101,10 +101,9 @@ namespace Silky.Rpc.Runtime.Server
                         !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds);
                 }
 
-                Logger.LogDebug($"Server processing completed.{Environment.NewLine}" +
-                                $"messageId:[{messageId}].{Environment.NewLine}" +
-                                $"serviceEntryId:[{message.ServiceEntryId}].{Environment.NewLine}" +
-                                $"handleSuccess:{isHandleSuccess.ToString()}");
+                Logger.LogDebug("Server processing completed{0}" +
+                                "messageId:[{1}],serviceEntryId:[{2}],handleSuccess:{3}", Environment.NewLine, messageId,
+                    message.ServiceEntryId, isHandleSuccess);
             }
 
             return remoteResultMessage;

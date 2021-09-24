@@ -24,14 +24,11 @@ namespace Silky.Rpc.Runtime.Server
         public IReadOnlyList<ServiceEntry> GetEntries()
         {
             var serviceTypeInfos = ServiceHelper.FindAllServiceTypes(_typeFinder);
-            Logger.LogDebug(
-                $"The following Services were found:{Environment.NewLine}" +
-                $"{string.Join($",{Environment.NewLine}", serviceTypeInfos.Select(i => $"Type:{i.Item1.FullName}-->IsLocal:{i.Item2.ToString()}"))}.");
             var entries = new List<ServiceEntry>();
             foreach (var serviceTypeInfo in serviceTypeInfos)
             {
-                Logger.LogDebug(
-                    $"Prepare to generate the service entry for the service [{serviceTypeInfo.Item1.FullName}]");
+                Logger.LogDebug("The Service were be found,type:{0},IsLocal:{1}", serviceTypeInfo.Item1.FullName,
+                    serviceTypeInfo.Item2);
                 entries.AddRange(_serviceEntryGenerator.CreateServiceEntry(serviceTypeInfo));
             }
 

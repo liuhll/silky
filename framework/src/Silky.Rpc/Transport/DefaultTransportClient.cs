@@ -76,15 +76,17 @@ namespace Silky.Rpc.Transport
 
         public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout = Timeout.Infinite)
         {
-            message.Attachments = RpcContext.Context.GetContextAttachments();
             var transportMessage = new TransportMessage(message);
+            transportMessage.SetRpcMessageId();
+            message.Attachments = RpcContext.Context.GetContextAttachments();
             var tracingTimestamp = TracingBefore(message, transportMessage.Id);
             var callbackTask =
                 RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, tracingTimestamp, timeout);
             Logger.LogDebug(
-                $"Preparing to send RPC message{Environment.NewLine}" +
-                $"messageId:[{transportMessage.Id}]{Environment.NewLine}" +
-                $"serviceEntryId:[{message.ServiceEntryId}]");
+                "Preparing to send RPC message{0}" +
+                "messageId:[{1}],serviceEntryId:[{2}]", Environment.NewLine, transportMessage.Id,
+                message.ServiceEntryId);
+
             await _messageSender.SendMessageAsync(transportMessage);
             return await callbackTask;
         }
@@ -100,9 +102,8 @@ namespace Silky.Rpc.Transport
                 var resultMessage = await tcs.WaitAsync(timeout);
                 var remoteResultMessage = resultMessage.GetContent<RemoteResultMessage>();
                 Logger.LogDebug(
-                    $"Received the message returned from server{Environment.NewLine}" +
-                    $"messageId:[{id}].{Environment.NewLine}" +
-                    $"serviceEntryId:[{serviceEntryId}]");
+                    "Received the message returned from server{0}messageId:[{1}],serviceEntryId:[{2}]",
+                    Environment.NewLine, id, serviceEntryId);
                 TracingAfter(tracingTimestamp, id, serviceEntryId, remoteResultMessage);
                 return remoteResultMessage;
             }
