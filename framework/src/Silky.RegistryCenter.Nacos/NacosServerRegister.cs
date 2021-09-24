@@ -1,11 +1,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
-using Silky.Core.Rpc;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.RegistryCenter.Nacos.Listeners;
 using Silky.Rpc.Endpoint;
@@ -78,39 +76,12 @@ namespace Silky.RegistryCenter.Nacos
         protected override async Task RegisterServerToServiceCenter(ServerDescriptor serverDescriptor)
         {
             await _serviceProvider.PublishServices(serverDescriptor.HostName, serverDescriptor.Services);
-            foreach (var endpoint in serverDescriptor.Endpoints)
-            {
-                if (endpoint.ServiceProtocol == ServiceProtocol.Ws)
-                {
-                    continue;
-                }
-
-                var instance = new Instance()
-                {
-                    InstanceId = endpoint.ToString(),
-                    ServiceName = serverDescriptor.HostName,
-                    Ephemeral = true,
-                    Enabled = true,
-                    Healthy = true,
-                    Ip = endpoint.Host,
-                    Port = endpoint.Port,
-                    Metadata = new Dictionary<string, string>()
-                    {
-                        { "ServiceProtocol", endpoint.ServiceProtocol.ToString() },
-                        { "TimeStamp", serverDescriptor.TimeStamp.ToString() },
-                        { "ProcessorTime", endpoint.ProcessorTime.ToString() },
-                        {
-                            "SupportWebsocket",
-                            serverDescriptor.Endpoints.Any(p => p.ServiceProtocol == ServiceProtocol.Ws).ToString()
-                        }
-                    }
-                };
-                await _nacosNamingService.RegisterInstance(
-                    serverDescriptor.HostName,
-                    _nacosRegistryCenterOptions.GroupName,
-                    instance);
-                await _serverRegisterProvider.AddServer();
-            }
+            var instance = serverDescriptor.GetInstance();
+            await _nacosNamingService.RegisterInstance(
+                serverDescriptor.HostName,
+                _nacosRegistryCenterOptions.GroupName,
+                instance);
+            await _serverRegisterProvider.AddServer();
         }
 
 

@@ -17,7 +17,7 @@ registrycenter:
   clusterName: DEFAULT
   registerEnabled: true
   instanceEnabled: true
-  namingUseRpc: false
+  namingUseRpc: true
 distributedCache:
   redis:
     isEnabled: true

@@ -78,25 +78,8 @@ namespace Silky.RegistryCenter.Nacos
             var endpoints = new List<RpcEndpointDescriptor>();
             foreach (var instance in serverInstances)
             {
-                endpoints.Add(new RpcEndpointDescriptor()
-                {
-                    Host = instance.Ip,
-                    Port = instance.Port,
-                    ProcessorTime = instance.Metadata["ProcessorTime"].To<double>(),
-                    ServiceProtocol = instance.Metadata["ServiceProtocol"].To<ServiceProtocol>(),
-                    TimeStamp = instance.Metadata["TimeStamp"].To<long>(),
-                });
-                if (instance.Metadata["SupportWebsocket"].To<bool>())
-                {
-                    endpoints.Add(new RpcEndpointDescriptor()
-                    {
-                        Host = instance.Ip,
-                        Port = RpcEndpointHelper.GetWsPort(),
-                        ProcessorTime = instance.Metadata["ProcessorTime"].To<double>(),
-                        ServiceProtocol = ServiceProtocol.Ws,
-                        TimeStamp = instance.Metadata["TimeStamp"].To<long>(),
-                    });
-                }
+                var instanceEndpoints = instance.GetEndpoints();
+                endpoints.AddRange(instanceEndpoints);
             }
 
             serverDescriptor.Endpoints = endpoints.ToArray();

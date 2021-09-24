@@ -54,4 +54,27 @@ namespace Silky.Core.Rpc
             return serviceProtocol;
         }
     }
+
+    public static class ServiceProtocolExtensions
+    {
+        public static bool IsHttp(this ServiceProtocol serviceProtocol)
+        {
+            return serviceProtocol == ServiceProtocol.Http || serviceProtocol == ServiceProtocol.Https;
+        }
+
+        public static bool IsWs(this ServiceProtocol serviceProtocol)
+        {
+            return serviceProtocol == ServiceProtocol.Ws || serviceProtocol == ServiceProtocol.Wss;
+        }
+
+        public static bool IsTcp(this ServiceProtocol serviceProtocol)
+        {
+            return serviceProtocol == ServiceProtocol.Tcp;
+        }
+
+        public static bool IsMqtt(this ServiceProtocol serviceProtocol)
+        {
+            return serviceProtocol == ServiceProtocol.Mqtt;
+        }
+    }
 }
