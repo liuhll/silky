@@ -1,13 +1,17 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
+using Silky.Core;
+using Silky.Core.Extensions;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.RegistryCenter.Nacos.Listeners;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
+using static Silky.Rpc.Endpoint.RpcEndpointHelper;
 
 namespace Silky.RegistryCenter.Nacos
 {
@@ -36,12 +40,44 @@ namespace Silky.RegistryCenter.Nacos
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
 
-        public async override Task RemoveSelfServer()
+        public override async Task RemoveSelfServer()
         {
+            if (EngineContext.Current.IsContainDotNettyTcpModule())
+            {
+                var tcpEndpoint = GetLocalTcpEndpoint();
+                await RemoveRpcEndpoint(EngineContext.Current.HostName, tcpEndpoint);
+                return;
+            }
+
+            if (EngineContext.Current.IsContainWebSocketModule())
+            {
+                var wsEndpoint = GetWsEndpoint();
+                await RemoveRpcEndpoint(EngineContext.Current.HostName, wsEndpoint);
+                return;
+            }
+
+            if (EngineContext.Current.IsContainHttpCoreModule())
+            {
+                var httpEndpoint = GetLocalWebEndpoint();
+                if (httpEndpoint != null)
+                {
+                    await RemoveRpcEndpoint(EngineContext.Current.HostName, httpEndpoint);
+                }
+            }
         }
 
         protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
         {
+            var serverInstances = await _nacosNamingService.GetAllInstances(hostName);
+
+            var unHealthInstance = serverInstances.FirstOrDefault(p => p.ServiceName == hostName
+                                                                       && p.Ip == rpcEndpoint.Host
+                                                                       && p.GetServiceProtocolInfos()
+                                                                           .ContainsKey(rpcEndpoint.ServiceProtocol));
+            if (unHealthInstance != null)
+            {
+                await _nacosNamingService.DeregisterInstance(hostName, unHealthInstance);
+            }
         }
 
         protected override async Task CacheServers()

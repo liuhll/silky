@@ -30,5 +30,13 @@ namespace Silky.RegistryCenter.Nacos
 
             return endpoints;
         }
+
+        public static Dictionary<ServiceProtocol, int> GetServiceProtocolInfos(this Instance instance)
+        {
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            var serviceProtocolJsonString = instance.Metadata["ServiceProtocols"];
+            var serviceProtocolInfos = serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
+            return serviceProtocolInfos;
+        }
     }
 }
