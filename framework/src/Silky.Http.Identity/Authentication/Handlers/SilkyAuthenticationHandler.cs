@@ -10,7 +10,6 @@ using JWT.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Silky.Core;
@@ -99,18 +98,18 @@ namespace Silky.Http.Identity.Authentication.Handlers
                 {
                     return AuthenticateResult.NoResult();
                 }
-
+            
                 if (serviceEntry.GovernanceOptions.IsAllowAnonymous)
                 {
                     return AuthenticateResult.NoResult();
                 }
-
+            
                 var token = Context.Request.Headers["Authorization"];
                 if (token.IsNullOrEmpty())
                 {
                     return await WriteErrorAndReturnAuthenticateResult("You have not logged in to the system", null);
                 }
-
+            
                 try
                 {
                     if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
@@ -119,7 +118,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
                             "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified",
                             null);
                     }
-
+            
                     var payload = _jwtDecoder.DecodeToObject(token, _gatewayOptions.JwtSecret, true);
                     var ticket = CreateTicket(payload);
                     return AuthenticateResult.Success(ticket);

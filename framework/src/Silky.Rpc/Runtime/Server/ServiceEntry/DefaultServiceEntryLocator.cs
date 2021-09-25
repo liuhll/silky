@@ -1,5 +1,4 @@
 using System.Linq;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -13,24 +12,6 @@ namespace Silky.Rpc.Runtime.Server
         {
             _serviceEntryManager = serviceEntryManager;
             _serviceEntryCache = serviceEntryCache;
-        }
-
-        public ServiceEntry GetServiceEntryByApi(string path, HttpMethod httpMethod)
-        {
-            if (_serviceEntryCache.TryGetRequestServiceEntry((path, httpMethod), out ServiceEntry serviceEntry))
-            {
-                return serviceEntry;
-            }
-
-            serviceEntry = _serviceEntryManager.GetAllEntries()
-                .OrderByDescending(p => p.Router.RouteTemplate.Order)
-                .FirstOrDefault(p => p.Router.IsMatch(path, httpMethod));
-            if (serviceEntry != null && serviceEntry.ParameterDescriptors.All(p => p.From != ParameterFrom.Path))
-            {
-                _serviceEntryCache.UpdateRequestServiceEntryCache((path, httpMethod), serviceEntry);
-            }
-
-            return serviceEntry;
         }
 
         public ServiceEntry GetServiceEntryById(string id)

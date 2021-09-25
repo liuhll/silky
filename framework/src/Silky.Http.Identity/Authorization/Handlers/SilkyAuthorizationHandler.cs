@@ -47,7 +47,7 @@ namespace Silky.Http.Identity.Authorization.Handlers
                     {
                         RpcContext.Context.SetAttachment(userClaim.Type, userClaim.Value);
                     }
-
+            
                     await AuthorizeHandleAsync(context, httpContext);
                 }
                 else if (!serviceEntry.GovernanceOptions.IsAllowAnonymous)

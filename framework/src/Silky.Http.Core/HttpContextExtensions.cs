@@ -1,7 +1,5 @@
 using System;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
@@ -15,10 +13,7 @@ namespace Silky.Http.Core
     {
         public static ServiceEntry GetServiceEntry(this HttpContext context)
         {
-            var serviceEntryLocator = EngineContext.Current.Resolve<IServiceEntryLocator>();
-            var path = context.Request.Path;
-            var method = context.Request.Method.ToEnum<HttpMethod>();
-            var serviceEntry = serviceEntryLocator.GetServiceEntryByApi(path, method);
+            var serviceEntry = context.GetEndpoint()?.Metadata.GetMetadata<ServiceEntry>();
             return serviceEntry;
         }
 

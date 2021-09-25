@@ -44,6 +44,7 @@ namespace GatewayDemo
                 app.UseMiniProfiler();
             }
 
+            app.UseRouting();
             app.UseClientRateLimiting();
             app.UseIpRateLimiting();
             app.UseSilkyIdentity();
