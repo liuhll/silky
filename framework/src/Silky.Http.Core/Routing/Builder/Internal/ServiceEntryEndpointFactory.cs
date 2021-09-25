@@ -1,17 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Microsoft.Extensions.Logging;
 using Silky.Core;
-using Silky.Core.Extensions;
-using Silky.Core.Logging;
-using Silky.Core.MiniProfiler;
-using Silky.Core.Rpc;
 using Silky.Http.Core.Handlers;
 using Silky.Rpc.Runtime.Server;
 
@@ -23,17 +16,8 @@ namespace Silky.Http.Core.Routing.Builder.Internal
         {
             return async httpContext =>
             {
-                var path = httpContext.Request.Path;
-                var method = httpContext.Request.Method.ToEnum<HttpMethod>();
-                var logger = EngineContext.Current.Resolve<ILogger<ServiceEntryEndpointFactory>>();
-                logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
-                    MiniProfileConstant.Route.State.FindServiceEntry,
-                    $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
-                RpcContext.Context.SetAttachment(AttachmentKeys.Path, path.ToString());
-                RpcContext.Context.SetAttachment(AttachmentKeys.HttpMethod, method.ToString());
-                await EngineContext.Current
-                    .ResolveNamed<IMessageReceivedHandler>(HttpMessageType.Outer.ToString())
-                    .Handle(serviceEntry);
+                var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
+                await messageReceivedHandler.Handle(serviceEntry, httpContext);
             };
         }
 

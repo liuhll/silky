@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
 using Silky.Http.Core;
 using Silky.Http.Identity.Authorization.Extensions;
@@ -38,41 +39,40 @@ namespace Silky.Http.Identity.Authorization.Handlers
 
             var httpContext = context.GetCurrentHttpContext();
             var serviceEntry = httpContext.GetServiceEntry();
-            if (serviceEntry != null)
+            if (serviceEntry == null)
             {
-                var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-                if (isAuthenticated)
+                throw new NotFindServiceEntryException(
+                    $"No service entry found via {httpContext.Request.Path}-{httpContext.Request.Method}");
+            }
+
+            var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
+            if (isAuthenticated)
+            {
+                foreach (var userClaim in context.User.Claims)
                 {
-                    foreach (var userClaim in context.User.Claims)
-                    {
-                        RpcContext.Context.SetAttachment(userClaim.Type, userClaim.Value);
-                    }
-            
-                    await AuthorizeHandleAsync(context, httpContext);
+                    RpcContext.Context.SetAttachment(userClaim.Type, userClaim.Value);
                 }
-                else if (!serviceEntry.GovernanceOptions.IsAllowAnonymous)
+
+                await AuthorizeHandleAsync(context, httpContext);
+            }
+            else if (!serviceEntry.GovernanceOptions.IsAllowAnonymous)
+            {
+                if (serviceEntry.IsSilkyAppService())
                 {
-                    if (serviceEntry.IsSilkyAppService())
+                    var silkyAppServiceUseAuth =
+                        EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
+                    if (silkyAppServiceUseAuth)
                     {
-                        var silkyAppServiceUseAuth =
-                            EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
-                        if (silkyAppServiceUseAuth)
-                        {
-                            context.Fail();
-                        }
-                        else
-                        {
-                            await HttpContextPipelineAuthorize(httpContext);
-                        }
+                        context.Fail();
                     }
                     else
                     {
-                        context.Fail();
+                        await HttpContextPipelineAuthorize(httpContext);
                     }
                 }
                 else
                 {
-                    await HttpContextPipelineAuthorize(httpContext);
+                    context.Fail();
                 }
             }
             else

@@ -93,12 +93,6 @@ namespace Silky.Core
             var typeFinder = Resolve<ITypeFinder>();
             var startupConfigurations = typeFinder.FindClassesOfType<ISilkyStartup>();
 
-            var webSilkyModules = Modules.Where(p => p.Instance is HttpSilkyModule);
-            foreach (var webSilkyModule in webSilkyModules)
-            {
-                ((HttpSilkyModule)webSilkyModule.Instance).Configure(application);
-            }
-
             //create and sort instances of startup configurations
             var instances = startupConfigurations
                 .Select(startup => (ISilkyStartup)Activator.CreateInstance(startup))
@@ -107,6 +101,12 @@ namespace Silky.Core
             //configure request pipeline
             foreach (var instance in instances)
                 instance.Configure(application);
+
+            var webSilkyModules = Modules.Where(p => p.Instance is HttpSilkyModule);
+            foreach (var webSilkyModule in webSilkyModules)
+            {
+                ((HttpSilkyModule)webSilkyModule.Instance).Configure(application);
+            }
         }
 
         public T Resolve<T>() where T : class
@@ -267,7 +267,7 @@ namespace Silky.Core
         {
             Modules = moduleLoader.LoadModules(services, typeof(T));
         }
-        
+
         public IServiceProvider ServiceProvider { get; set; }
 
         public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; private set; }

@@ -29,6 +29,8 @@ namespace Silky.Http.Core
 
         public static void SetHttpHandleAddressInfo(this HttpContext httpContext)
         {
+            RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, true);
+
             var localWebEndpointDescriptor = RpcEndpointHelper.GetLocalRpcEndpointDescriptor();
             var clientHost = httpContext.Connection.RemoteIpAddress;
             var clientPort = httpContext.Connection.RemotePort;

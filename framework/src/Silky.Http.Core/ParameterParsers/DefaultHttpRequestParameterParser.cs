@@ -12,12 +12,12 @@ using Silky.Core.Rpc;
 
 namespace Silky.Http.Core
 {
-    internal class OuterHttpRequestParameterParser : IParameterParser
+    internal class DefaultHttpRequestParameterParser : IParameterParser
     {
         private readonly ISerializer _serializer;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public OuterHttpRequestParameterParser(ISerializer serializer,
+        public DefaultHttpRequestParameterParser(ISerializer serializer,
             IHttpContextAccessor httpContextAccessor)
         {
             _serializer = serializer;

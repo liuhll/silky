@@ -53,7 +53,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
             appSettingOptions.OnChange((options, s) => _appSettingsOptions = options);
         }
 
-        protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             async Task<AuthenticateResult> WriteErrorAndReturnAuthenticateResult(string message, Exception ex)
             {
@@ -90,56 +90,60 @@ namespace Silky.Http.Identity.Authentication.Handlers
             }
 
             var serviceEntry = Context.GetServiceEntry();
-            if (serviceEntry != null)
+            if (serviceEntry == null)
             {
-                var silkyAppServiceUseAuth =
-                    EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
-                if (serviceEntry.IsSilkyAppService() && !silkyAppServiceUseAuth)
+                if (serviceEntry == null)
                 {
-                    return AuthenticateResult.NoResult();
-                }
-            
-                if (serviceEntry.GovernanceOptions.IsAllowAnonymous)
-                {
-                    return AuthenticateResult.NoResult();
-                }
-            
-                var token = Context.Request.Headers["Authorization"];
-                if (token.IsNullOrEmpty())
-                {
-                    return await WriteErrorAndReturnAuthenticateResult("You have not logged in to the system", null);
-                }
-            
-                try
-                {
-                    if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
-                    {
-                        return await WriteErrorAndReturnAuthenticateResult(
-                            "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified",
-                            null);
-                    }
-            
-                    var payload = _jwtDecoder.DecodeToObject(token, _gatewayOptions.JwtSecret, true);
-                    var ticket = CreateTicket(payload);
-                    return AuthenticateResult.Success(ticket);
-                }
-                catch (TokenExpiredException ex)
-                {
-                    await WriteErrorAndReturnAuthenticateResult("Token has expired", ex);
-                    return AuthenticateResult.Fail("Token has expired");
-                }
-                catch (SignatureVerificationException ex)
-                {
-                    return await WriteErrorAndReturnAuthenticateResult("Token has invalid signature", ex);
-                }
-                catch (Exception ex)
-                {
-                    return await WriteErrorAndReturnAuthenticateResult(
-                        $"The token format is illegal, the reason: {ex.Message}", ex);
+                    throw new NotFindServiceEntryException(
+                        $"No service entry found via {Context.Request.Path}-{Context.Request.Method}");
                 }
             }
 
-            return AuthenticateResult.NoResult();
+            var silkyAppServiceUseAuth =
+                EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
+            if (serviceEntry.IsSilkyAppService() && !silkyAppServiceUseAuth)
+            {
+                return AuthenticateResult.NoResult();
+            }
+
+            if (serviceEntry.GovernanceOptions.IsAllowAnonymous)
+            {
+                return AuthenticateResult.NoResult();
+            }
+
+            var token = Context.Request.Headers["Authorization"];
+            if (token.IsNullOrEmpty())
+            {
+                return await WriteErrorAndReturnAuthenticateResult("You have not logged in to the system", null);
+            }
+
+            try
+            {
+                if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
+                {
+                    return await WriteErrorAndReturnAuthenticateResult(
+                        "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified",
+                        null);
+                }
+
+                var payload = _jwtDecoder.DecodeToObject(token, _gatewayOptions.JwtSecret, true);
+                var ticket = CreateTicket(payload);
+                return AuthenticateResult.Success(ticket);
+            }
+            catch (TokenExpiredException ex)
+            {
+                await WriteErrorAndReturnAuthenticateResult("Token has expired", ex);
+                return AuthenticateResult.Fail("Token has expired");
+            }
+            catch (SignatureVerificationException ex)
+            {
+                return await WriteErrorAndReturnAuthenticateResult("Token has invalid signature", ex);
+            }
+            catch (Exception ex)
+            {
+                return await WriteErrorAndReturnAuthenticateResult(
+                    $"The token format is illegal, the reason: {ex.Message}", ex);
+            }
         }
 
         private AuthenticationTicket CreateTicket(IDictionary<string, object> payload)
