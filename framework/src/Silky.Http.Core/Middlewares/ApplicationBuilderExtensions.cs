@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.Exceptions;
@@ -10,9 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silky.Core.Logging;
-using Silky.Core.Modularity;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Middlewares
@@ -28,10 +25,10 @@ namespace Silky.Http.Core.Middlewares
             });
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var logger = EngineContext.Current.Resolve<ILogger<HttpServerSilkyStartup>>();
+            var logger = EngineContext.Current.Resolve<ILogger<SilkyException>>();
             application.UseExceptionHandler(handler =>
             {
-                if (EngineContext.Current.Resolve<IModuleContainer>().Modules.Any(p => p.Name == "MiniProfiler"))
+                if (EngineContext.Current.ContainModule("MiniProfiler"))
                 {
                     handler.UseMiniProfiler();
                 }

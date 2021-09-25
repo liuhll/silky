@@ -1,15 +1,18 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
+using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
-using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Options;
+using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
@@ -21,6 +24,7 @@ namespace Silky.Http.Core.Handlers
     internal abstract class MessageReceivedHandlerBase : IMessageReceivedHandler
     {
         protected readonly IExecutor _executor;
+        private readonly IParameterParser _parameterParser;
         protected RpcOptions _rpcOptions;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
@@ -30,21 +34,31 @@ namespace Silky.Http.Core.Handlers
 
         protected MessageReceivedHandlerBase(
             IOptionsMonitor<RpcOptions> rpcOptions,
-            IExecutor executor)
+            IExecutor executor,
+            IParameterParser parameterParser)
         {
             _executor = executor;
+            _parameterParser = parameterParser;
             _rpcOptions = rpcOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
             Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
         }
 
-        public virtual async Task Handle(ServiceEntry serviceEntry)
+        public virtual async Task Handle([NotNull] ServiceEntry serviceEntry, [NotNull] HttpContext httpContext)
         {
-            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            Check.NotNull(serviceEntry, nameof(httpContext));
+            Check.NotNull(httpContext, nameof(httpContext));
+            var path = httpContext.Request.Path;
+            var method = httpContext.Request.Method.ToEnum<HttpMethod>();
+            Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
+                MiniProfileConstant.Route.State.FindServiceEntry,
+                $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
+
+            httpContext.SetHttpHandleAddressInfo();
             var sp = Stopwatch.StartNew();
-            var parameters = await ResolveParameters(serviceEntry);
-            var messageId = GetMessageId();
-            var serviceKey = await ResolveServiceKey();
+            var parameters = await _parameterParser.Parser(serviceEntry);
+            var messageId = GetMessageId(httpContext);
+            var serviceKey = await ResolveServiceKey(httpContext);
             if (!serviceKey.IsNullOrEmpty())
             {
                 RpcContext.Context.SetServiceKey(serviceKey);
@@ -85,18 +99,28 @@ namespace Silky.Http.Core.Handlers
                 sp.Stop();
             }
 
-            await HandleResult(executeResult);
+            await HandleResult(httpContext, executeResult);
         }
 
-        protected abstract Task HandleResult(object result);
+        protected abstract Task HandleResult(HttpContext httpContext, object result);
 
 
         protected abstract Task HandleException(Exception exception);
 
-        protected abstract Task<string> ResolveServiceKey();
+        protected virtual Task<string> ResolveServiceKey(HttpContext httpContext)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                string serviceKey = null;
+                if (httpContext.Request.Headers.ContainsKey("serviceKey"))
+                {
+                    serviceKey = httpContext.Request.Headers["serviceKey"].ToString();
+                }
 
+                return serviceKey;
+            });
+        }
 
-        protected abstract Task<object[]> ResolveParameters(ServiceEntry serviceEntry);
 
         private long? TracingBefore(RemoteInvokeMessage message, string messageId, ServiceEntry serviceEntry)
         {
@@ -118,7 +142,11 @@ namespace Silky.Http.Core.Handlers
             return null;
         }
 
-        protected abstract string GetMessageId();
+        private string GetMessageId(HttpContext httpContext)
+        {
+            httpContext.SetHttpMessageId();
+            return httpContext.TraceIdentifier;
+        }
 
 
         private void TracingAfter(long? tracingTimestamp, string messageId, ServiceEntry serviceEntry,

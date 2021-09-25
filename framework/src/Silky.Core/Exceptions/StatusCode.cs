@@ -28,7 +28,7 @@ namespace Silky.Core.Exceptions
 
         [Description("Tcc分布式事务异常")] TccTransactionError = 512,
 
-        [Description("不存在Tcc事务指定的方法")] NotExistMethod = 513,
+        [Description("不存在服务条目")] NotFindServiceEntry = 513,
         
         [Description("超过最大并发量")] OverflowMaxRequest = 514,
 
