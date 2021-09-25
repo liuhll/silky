@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
-using Silky.Core.Utils;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Rpc.Routing.Template;
 
@@ -51,71 +49,6 @@ namespace Silky.Rpc.Routing
 
         public string RoutePath => _routePath;
 
-        public bool IsMatch(string api, HttpMethod httpMethod)
-        {
-            if (HttpMethod != httpMethod)
-            {
-                return false;
-            }
-
-            api = TrimPrefix(api);
-            var apiSegments = api.Split(separator);
-            if (apiSegments.Length != RouteTemplate.Segments.Count())
-            {
-                return false;
-            }
-
-            var parameterIndex = 0;
-            var apiSegmentIsMatch = new List<bool>(apiSegments.Length);
-            for (var index = 0; index < apiSegments.Length; index++)
-            {
-                var apiSegment = apiSegments[index];
-                var routeSegment = RouteTemplate.Segments[index];
-                if (!routeSegment.IsParameter &&
-                    !routeSegment.Value.Equals(apiSegment, StringComparison.OrdinalIgnoreCase))
-                {
-                    apiSegmentIsMatch.Add(false);
-                    break;
-                }
-                if (routeSegment.IsParameter)
-                {
-                    if (parameterIndex >= RouteTemplate.Parameters.Count())
-                    {
-                        apiSegmentIsMatch.Add(false);
-                        break;
-                    }
-
-                    var routeParameter = RouteTemplate.Parameters[parameterIndex];
-                    if (!routeParameter.Constraint.IsNullOrEmpty())
-                    {
-                        if (TypeUtils.GetSampleType(routeParameter.Constraint, out var convertType))
-                        {
-                            try
-                            {
-                                var val = Convert.ChangeType(apiSegment, convertType);
-                                apiSegmentIsMatch.Add(true);
-                                continue;
-                            }
-                            catch (Exception ex)
-                            {
-                                apiSegmentIsMatch.Add(false);
-                                break;
-                            }
-                        }
-
-                        if (!Regex.IsMatch(apiSegment, routeParameter.Constraint))
-                        {
-                            apiSegmentIsMatch.Add(false);
-                        }
-                    }
-                }
-
-                apiSegmentIsMatch.Add(true);
-            }
-
-            return apiSegmentIsMatch.All(p => p);
-        }
-
         public IDictionary<string, object> ParserRouteParameters(string path)
         {
             var routeParameters = new Dictionary<string, object>();
@@ -139,7 +72,7 @@ namespace Silky.Rpc.Routing
         private void ParseRouteTemplate(string template, string serviceName, MethodInfo methodInfo)
         {
             template = TrimPrefix(template);
-            var segementLines = template.Split(separator).Where(p=> !p.IsNullOrEmpty());
+            var segementLines = template.Split(separator).Where(p => !p.IsNullOrEmpty());
 
             foreach (var segementLine in segementLines)
             {

@@ -17,6 +17,7 @@ namespace Silky.Http.Core
             services.AddHttpContextAccessor();
             services.AddResponseCaching();
             services.AddMvc();
+            services.AddRouting();
         }
 
         public async void Configure(IApplicationBuilder application)
@@ -27,8 +28,9 @@ namespace Silky.Http.Core
             application.MapWhen(httpContext => httpContext.WebSockets.IsWebSocketRequest,
                 wenSocketsApp => { wenSocketsApp.UseWebSocketsProxyMiddleware(); });
             application.UseSilkyExceptionHandler();
-            application.UseSilky();
+            // application.UseSilky();
             application.RegisterHttpServer();
+            application.UseEndpoints(endpoints => { endpoints.MapSilkyServices(); });
         }
 
         public int Order { get; } = Int32.MaxValue;

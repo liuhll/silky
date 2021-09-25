@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.Extensions.Primitives;
 using Silky.Core.Exceptions;
 
 namespace Silky.Rpc.Runtime.Server
@@ -10,7 +11,7 @@ namespace Silky.Rpc.Runtime.Server
     {
         private IEnumerable<ServiceEntry> m_localServiceEntries;
         private IEnumerable<ServiceEntry> m_allServiceEntries;
-
+        private IChangeToken? _changeToken;
         public DefaultServiceEntryManager(IEnumerable<IServiceEntryProvider> providers)
         {
             UpdateEntries(providers);
@@ -65,6 +66,7 @@ namespace Silky.Rpc.Runtime.Server
         }
 
         public event EventHandler<ServiceEntry> OnUpdate;
+
 
         public void Update(ServiceEntry serviceEntry)
         {

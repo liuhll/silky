@@ -41,7 +41,7 @@ namespace ITestApplication.Test
         [HttpPut]
         string Form([FromForm] TestInput query);
 
-        [HttpGet("{name:string}")]
+        [HttpGet("{name}")]
         [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
         [GetCachingIntercept("name:{0}")]
         Task<TestOut> Get([HashKey] [CacheKey(0)] string name);
