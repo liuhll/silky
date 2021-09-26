@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
-using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 
