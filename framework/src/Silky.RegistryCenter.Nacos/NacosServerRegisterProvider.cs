@@ -67,19 +67,19 @@ namespace Silky.RegistryCenter.Nacos
             return _serializer.Deserialize<string[]>(registerServersValue);
         }
 
-        public ServerDescriptor GetServerDescriptor(string serverName, List<Instance> serverInstances,
-            ServiceDescriptor[] serviceDescriptors)
+        public ServerDescriptor GetServerDescriptor(string serverName, List<Instance> serverInstances)
         {
             var serverDescriptor = new ServerDescriptor()
             {
                 HostName = serverName,
-                Services = serviceDescriptors,
             };
             var endpoints = new List<RpcEndpointDescriptor>();
             foreach (var instance in serverInstances)
             {
                 var instanceEndpoints = instance.GetEndpoints();
                 endpoints.AddRange(instanceEndpoints);
+                serverDescriptor.Services ??=
+                    _serializer.Deserialize<ServiceDescriptor[]>(instance.Metadata["Services"]);
             }
 
             serverDescriptor.Endpoints = endpoints.ToArray();

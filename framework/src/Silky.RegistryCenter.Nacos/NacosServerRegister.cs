@@ -37,7 +37,7 @@ namespace Silky.RegistryCenter.Nacos
             _serviceProvider = serviceProvider;
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
-        
+
         protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
         {
             var serverInstances = await _nacosNamingService.GetAllInstances(hostName);
@@ -75,15 +75,13 @@ namespace Silky.RegistryCenter.Nacos
 
         internal async Task UpdateServer(string serverName, List<Instance> instances)
         {
-            var services = await _serviceProvider.GetServices(serverName);
             var serverDescriptor =
-                _serverRegisterProvider.GetServerDescriptor(serverName, instances, services);
+                _serverRegisterProvider.GetServerDescriptor(serverName, instances);
             _serverManager.Update(serverDescriptor);
         }
 
         protected override async Task RegisterServerToServiceCenter(ServerDescriptor serverDescriptor)
         {
-            await _serviceProvider.PublishServices(serverDescriptor.HostName, serverDescriptor.Services);
             var instance = serverDescriptor.GetInstance();
             await _nacosNamingService.RegisterInstance(
                 serverDescriptor.HostName,

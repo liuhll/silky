@@ -21,6 +21,7 @@ namespace Silky.RegistryCenter.Nacos
             {
                 throw new SilkyException("RpcEndpoint does not exist");
             }
+
             var serviceProtocols = new Dictionary<ServiceProtocol, int>();
             foreach (var rpcEndpointDescriptor in serverDescriptor.Endpoints)
             {
@@ -29,6 +30,7 @@ namespace Silky.RegistryCenter.Nacos
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             var serviceProtocolJsonString = serializer.Serialize(serviceProtocols);
+            var servicesJsonString = serializer.Serialize(serverDescriptor.Services);
             var instance = new Instance()
             {
                 Ip = endpoint.Host,
@@ -39,7 +41,8 @@ namespace Silky.RegistryCenter.Nacos
                 {
                     { "ProcessorTime", endpoint.ProcessorTime.ToString() },
                     { "TimeStamp", endpoint.TimeStamp.ToString() },
-                    { "ServiceProtocols", serviceProtocolJsonString }
+                    { "ServiceProtocols", serviceProtocolJsonString },
+                    { "Services", servicesJsonString },
                 }
             };
             return instance;
