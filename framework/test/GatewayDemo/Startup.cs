@@ -56,14 +56,14 @@ namespace GatewayDemo
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseSilkyIdentity();
             app.UseSilkyExceptionHandler();
+            app.UseSilkyIdentity();
             app.ConfigureSilkyRequestPipeline();
             app.UseWebSockets();
             app.MapWhen(httpContext => httpContext.WebSockets.IsWebSocketRequest,
                 wenSocketsApp => { wenSocketsApp.UseWebSocketsProxyMiddleware(); });
-            app.RegisterHttpServer();
-            app.UseEndpoints(endpoints => { endpoints.MapSilkyServices(); });
+            app.UseSilkyHttpServer();
+            app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
         }
     }
 }

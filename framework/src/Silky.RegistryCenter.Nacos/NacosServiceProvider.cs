@@ -66,10 +66,10 @@ namespace Silky.RegistryCenter.Nacos
             var serviceConfigValue = _serializer.Serialize(serviceDescriptors);
             var result = await _nacosConfigService.PublishConfig(hostName, _nacosRegistryCenterOptions.GroupName,
                 serviceConfigValue);
-            // if (!result)
-            // {
-            //     throw new SilkyException("Failed to publish service description information");
-            // }
+            if (!result)
+            {
+                throw new SilkyException("Failed to publish service description information");
+            }
         }
 
         public void UpdateService(string hostName, string configInfo)

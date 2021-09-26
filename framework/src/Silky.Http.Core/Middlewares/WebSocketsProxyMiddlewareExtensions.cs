@@ -6,7 +6,7 @@ namespace Silky.Http.Core.Middlewares
     {
         public static IApplicationBuilder UseWebSocketsProxyMiddleware(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<Http.Core.Middlewares.WebSocketsProxyMiddleware>();
+            return builder.UseMiddleware<WebSocketsProxyMiddleware>();
         }
     }
 }

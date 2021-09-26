@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SilkyEndpointRouteBuilderExtensions
     {
-        public static ServiceEntryEndpointConventionBuilder MapSilkyServices(this IEndpointRouteBuilder endpoints)
+        public static ServiceEntryEndpointConventionBuilder MapSilkyRpcServices(this IEndpointRouteBuilder endpoints)
         {
             if (endpoints == null)
             {
