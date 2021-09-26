@@ -43,23 +43,25 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwaggerDocuments();
-                app.UseMiniProfiler();
-            }
-
-            app.UseSerilogRequestLogging();
-            app.UseRouting();
-            app.UseClientRateLimiting();
-            app.UseIpRateLimiting();
-            app.UseResponseCaching();
-            app.UseHttpsRedirection();
-            app.UseSilkyWebSocketsProxy();
-            app.UseSilkyExceptionHandler();
-            app.UseSilkyIdentity();
-            app.UseSilkyHttpServer();
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseDeveloperExceptionPage();
+            //     app.UseSwaggerDocuments();
+            //     app.UseMiniProfiler();
+            // }
+            //
+            // app.UseSerilogRequestLogging();
+            // app.UseRouting();
+            // app.UseClientRateLimiting();
+            // app.UseIpRateLimiting();
+            // app.UseResponseCaching();
+            // app.UseHttpsRedirection();
+            // app.UseSilkyWebSocketsProxy();
+            // app.UseSilkyExceptionHandler();
+            // app.UseSilkyIdentity();
+            // app.UseSilkyHttpServer();
+            // app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
+            app.ConfigureSilkyRequestPipeline();
             app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
         }
     }

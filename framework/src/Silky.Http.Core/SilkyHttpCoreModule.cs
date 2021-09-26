@@ -11,10 +11,14 @@ namespace Silky.Http.Core
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSilkyHttpCore();
         }
 
         public override void Configure(IApplicationBuilder application)
         {
+            application.UseSilkyExceptionHandler();
+            application.UseSilkyWebSocketsProxy();
+            application.UseSilkyHttpServer();
         }
     }
 }
