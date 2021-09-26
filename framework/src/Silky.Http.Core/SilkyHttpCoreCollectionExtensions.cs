@@ -8,7 +8,7 @@ namespace Silky.Http.Core
 {
     public static class SilkyHttpCoreCollectionExtensions
     {
-        public static IServiceCollection AddHttpSilkyService(this IServiceCollection services)
+        public static IServiceCollection AddSilkyHttpCore(this IServiceCollection services)
         {
             services.AddScoped<IMessageReceivedHandler, DefaultHttpMessageReceivedHandler>();
             services.AddScoped<IParameterParser, DefaultHttpRequestParameterParser>();

@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Silky.Http.Core;
-using Silky.Http.Core.Middlewares;
-using Silky.Http.MiniProfiler;
+using Serilog;
 
 namespace GatewayDemo
 {
@@ -24,20 +22,22 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // services.AddSwaggerDocuments();
+            // services.AddSilkyMiniProfiler();
+            // // services.AddDashboard();
+            // services.AddSilkyIdentity();
+            // services.AddSilkySkyApm();
+            // services.AddRouting();
+            // services.AddMessagePackCodec();
+            // var redisOptions = Configuration.GetRateLimitRedisOptions();
+            // services.AddClientRateLimit(redisOptions);
+            // services.AddIpRateLimit(redisOptions);
+            // services.AddResponseCaching();
+            // services.AddMvc();
+            // services.AddSilkyHttpCore();
             services.AddTransient<IAuthorizationHandler, TestAuthorizationHandler>();
-            services.AddSwaggerDocuments();
-            services.AddSilkyMiniProfiler();
-            // services.AddDashboard();
-            services.AddSilkyIdentity();
-            services.AddSilkySkyApm();
-            services.AddRouting();
+            services.AddSilkyHttpServices();
             services.AddMessagePackCodec();
-            var redisOptions = Configuration.GetRateLimitRedisOptions();
-            services.AddClientRateLimit(redisOptions);
-            services.AddIpRateLimit(redisOptions);
-            services.AddResponseCaching();
-            services.AddMvc();
-            services.AddHttpSilkyService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,18 +50,15 @@ namespace GatewayDemo
                 app.UseMiniProfiler();
             }
 
+            app.UseSerilogRequestLogging();
+            app.UseRouting();
             app.UseClientRateLimiting();
             app.UseIpRateLimiting();
             app.UseResponseCaching();
             app.UseHttpsRedirection();
-
-            app.UseRouting();
+            app.UseSilkyWebSocketsProxy();
             app.UseSilkyExceptionHandler();
             app.UseSilkyIdentity();
-            app.ConfigureSilkyRequestPipeline();
-            app.UseWebSockets();
-            app.MapWhen(httpContext => httpContext.WebSockets.IsWebSocketRequest,
-                wenSocketsApp => { wenSocketsApp.UseWebSocketsProxyMiddleware(); });
             app.UseSilkyHttpServer();
             app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
         }

@@ -3,16 +3,17 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silky.Core.Logging;
+using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
+using Silky.Http.Core.Middlewares;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Http.Core.Middlewares
+namespace  Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {
@@ -89,6 +90,19 @@ namespace Silky.Http.Core.Middlewares
             var serverRouteRegister =
                 application.ApplicationServices.GetRequiredService<IServerRegister>();
             await serverRouteRegister.RegisterServer();
+        }
+
+        public static IApplicationBuilder UseSilkyWebSocketsProxy(this IApplicationBuilder application)
+        {
+            application.UseWebSockets();
+            application.MapWhen(httpContext => httpContext.WebSockets.IsWebSocketRequest,
+                wenSocketsApp => { wenSocketsApp.UseWebSocketsProxyMiddleware(); });
+            return application;
+        }
+
+        private static IApplicationBuilder UseWebSocketsProxyMiddleware(this IApplicationBuilder application)
+        {
+            return application.UseMiddleware<WebSocketsProxyMiddleware>();
         }
     }
 }
