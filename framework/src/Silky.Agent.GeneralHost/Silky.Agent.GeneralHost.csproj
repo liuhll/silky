@@ -10,6 +10,7 @@
       <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
       <ProjectReference Include="..\Silky.Codec.ProtoBuf\Silky.Codec.ProtoBuf.csproj" />
       <ProjectReference Include="..\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
+      <ProjectReference Include="..\Silky.RegistryCenter.Consul\Silky.RegistryCenter.Consul.csproj" />
       <ProjectReference Include="..\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj" />
       <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
       <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />

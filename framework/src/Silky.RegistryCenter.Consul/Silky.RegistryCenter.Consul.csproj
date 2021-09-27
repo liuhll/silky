@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Description>Silky uses Consul as the service registry</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Consul" Version="1.6.10.3" />
+    </ItemGroup>
+</Project>

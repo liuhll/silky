@@ -3,6 +3,7 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Http.Core;
 using Silky.Http.MiniProfiler;
+using Silky.RegistryCenter.Consul;
 using Silky.Swagger.SwaggerGen.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -19,14 +20,15 @@ namespace Microsoft.Extensions.DependencyInjection
                 case "nacos":
                     services.AddNacosRegistryCenter();
                     break;
+                case "consul":
+                    services.AddConsulRegistryCenter();
+                    break;
                 default:
-                    throw new SilkyException(
-                        $"The system does not provide a service registration center of type {registerType}");
+                    throw new SilkyException($"The system does not provide a service registration center of type {registerType}");
             }
-
+            
             return services;
         }
-
         public static IServiceCollection AddSilkyHttpServices(this IServiceCollection services,
             Action<SwaggerGenOptions> setupAction = null)
         {

@@ -1,4 +1,5 @@
 using Silky.Core.Exceptions;
+using Silky.RegistryCenter.Consul;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -13,6 +14,9 @@ namespace Microsoft.Extensions.DependencyInjection
                     break;
                 case "nacos":
                     services.AddNacosRegistryCenter();
+                    break;
+                case "consul":
+                    services.AddConsulRegistryCenter();
                     break;
                 default:
                     throw new SilkyException($"The system does not provide a service registration center of type {registerType}");
