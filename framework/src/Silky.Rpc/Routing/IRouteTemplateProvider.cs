@@ -13,7 +13,6 @@ namespace Silky.Rpc.Routing
 
         string ServiceName { get; set; }
         
-        string Application { get; set; }
     }
 
     public static class RouteTemplateProviderExtensions

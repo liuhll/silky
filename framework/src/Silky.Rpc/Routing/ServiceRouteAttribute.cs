@@ -9,13 +9,11 @@ namespace Silky.Rpc.Routing
         public ServiceRouteAttribute(string template = "api/{appservice}")
         {
             Template = template;
-            Application = EngineContext.Current.HostName;
         }
 
         public string Template { get; }
 
         public string ServiceName { get; set; }
-
-        public string Application { get; set; }
+        
     }
 }

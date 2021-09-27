@@ -17,8 +17,6 @@ namespace Silky.Rpc.Runtime.Server
 
         [NotNull] public string Id { get; set; }
 
-        [NotNull] public string Application { get; set; }
-
         [NotNull] public string ServiceName { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
@@ -57,11 +55,6 @@ namespace Silky.Rpc.Runtime.Server
                 return false;
 
             if (model.Id != Id)
-            {
-                return false;
-            }
-
-            if (model.Application != Application)
             {
                 return false;
             }

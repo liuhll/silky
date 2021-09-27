@@ -17,7 +17,6 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly IIdGenerator _idGenerator;
         private readonly IParameterProvider _parameterProvider;
-        private readonly ITypeFinder _typeFinder;
         private GovernanceOptions _governanceOptions;
 
 
@@ -28,7 +27,6 @@ namespace Silky.Rpc.Runtime.Server
         {
             _idGenerator = idGenerator;
             _parameterProvider = parameterProvider;
-            _typeFinder = typeFinder;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange(GovernanceOptionsChangeListener);
         }
@@ -96,7 +94,6 @@ namespace Silky.Rpc.Runtime.Server
                 ServiceId = serviceId,
                 ServiceName = routeTemplateProvider.GetServiceName(serviceType),
                 ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceType, isLocal, false),
-                Application = routeTemplateProvider.Application
             };
 
             var metaDataList = method.GetCustomAttributes<MetadataAttribute>();

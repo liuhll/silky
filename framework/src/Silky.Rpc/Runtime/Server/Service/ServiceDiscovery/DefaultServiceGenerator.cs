@@ -59,7 +59,6 @@ namespace Silky.Rpc.Runtime.Server
                 ServiceProtocol = service.ServiceProtocol,
                 Id = service.Id,
                 ServiceName = serviceBundleProvider.GetServiceName(service.ServiceType),
-                Application = serviceBundleProvider.Application
             };
 
             serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(service.Id)
