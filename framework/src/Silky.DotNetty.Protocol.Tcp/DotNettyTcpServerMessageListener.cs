@@ -17,9 +17,9 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
-using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Codec;
@@ -97,7 +97,7 @@ namespace Silky.DotNetty.Protocol.Tcp
                     {
                         pipeline.AddLast(new IdleStateHandler(0, _rpcOptions.HealthCheckWatchInterval, 0));
                         pipeline.AddLast(
-                            new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IHealthCheck>()));
+                            new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }
 
                     pipeline.AddLast(new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));

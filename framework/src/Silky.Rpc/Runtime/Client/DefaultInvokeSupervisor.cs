@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
@@ -13,17 +13,17 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultInvokeSupervisor : IInvokeSupervisor
     {
         private ConcurrentDictionary<(string, IRpcEndpoint), ClientInvokeInfo> m_monitor = new();
-        private readonly IHealthCheck _healthCheck;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
        
         public ILogger<DefaultInvokeSupervisor> Logger { get; set; }
 
 
-        public DefaultInvokeSupervisor(IHealthCheck healthCheck,
+        public DefaultInvokeSupervisor(IRpcEndpointMonitor rpcEndpointMonitor,
             IServiceEntryLocator serviceEntryLocator)
         {
-            _healthCheck = healthCheck;
+            _rpcEndpointMonitor = rpcEndpointMonitor;
             
-            _healthCheck.OnHealthChange += async (model, health) =>
+            _rpcEndpointMonitor.OnStatusChange += async (model, health) =>
             {
                 if (!health)
                 {
@@ -35,7 +35,7 @@ namespace Silky.Rpc.Runtime.Client
                     }
                 }
             };
-            _healthCheck.OnRemoveRpcEndpoint += async model =>
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += async model =>
             {
                 var keys = m_monitor.Keys.Where(p => p.Item2.Equals(model));
                 foreach (var key in keys)
@@ -114,7 +114,7 @@ namespace Silky.Rpc.Runtime.Client
                     ServiceEntryId = monitor.Key.Item1,
                     Address = monitor.Key.Item2.IPEndPoint.ToString(),
                     ClientInvokeInfo = monitor.Value,
-                    IsEnable = _healthCheck.IsHealth(monitor.Key.Item2)
+                    IsEnable = _rpcEndpointMonitor.IsEnable(monitor.Key.Item2)
                 };
                 serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
             }

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
-using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Endpoint.Monitor;
 
 namespace Silky.Rpc.Endpoint.Selector
 {
@@ -9,12 +9,12 @@ namespace Silky.Rpc.Endpoint.Selector
         private ConcurrentDictionary<string, (int, IRpcEndpoint[])> addressesPools =
             new();
 
-        private readonly IHealthCheck _healthCheck;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
-        public PollingRpcEndpointSelector(IHealthCheck healthCheck)
+        public PollingRpcEndpointSelector(IRpcEndpointMonitor rpcEndpointMonitor)
         {
-            _healthCheck = healthCheck;
-            _healthCheck.OnRemoveRpcEndpoint += async rpcEndpoint =>
+            _rpcEndpointMonitor = rpcEndpointMonitor;
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += async rpcEndpoint =>
             {
                 var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(rpcEndpoint)))
                     .Select(p => p.Key);
@@ -24,7 +24,7 @@ namespace Silky.Rpc.Endpoint.Selector
                 }
             };
 
-            _healthCheck.OnUnhealth += async rpcEndpoint =>
+            _rpcEndpointMonitor.OnDisEnable += async rpcEndpoint =>
             {
                 var removeKeys = addressesPools.Where(p => p.Value.Item2.Any(q => q.Equals(rpcEndpoint)))
                     .Select(p => p.Key);

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Silky.Core;
-using Silky.Rpc.Address;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Client;

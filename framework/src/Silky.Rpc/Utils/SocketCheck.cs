@@ -4,13 +4,13 @@ using System.Net.Sockets;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Endpoint.Monitor;
 
 namespace Silky.Rpc.Utils
 {
     public static class SocketCheck
     {
-        private static ILogger<IHealthCheck> _logger = NullLogger<IHealthCheck>.Instance;
+        private static ILogger<IRpcEndpointMonitor> _logger = NullLogger<IRpcEndpointMonitor>.Instance;
 
         public static bool TestConnection(string host, int port, int millisecondsTimeout = 500)
         {

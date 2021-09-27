@@ -10,8 +10,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Rpc;
-using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Monitor;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -20,19 +20,19 @@ namespace Silky.Rpc.Runtime.Server
         private readonly ConcurrentDictionary<string, IServer> _serverCache = new();
 
         private readonly ConcurrentDictionary<string, IRpcEndpoint[]> _rpcRpcEndpointCache = new();
-        private readonly IHealthCheck _healthCheck;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
         private readonly IServiceEntryManager _serviceEntryManager;
         public ILogger<DefaultServerManager> Logger { get; set; }
 
         public event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
 
-        public DefaultServerManager(IHealthCheck healthCheck,
+        public DefaultServerManager(IRpcEndpointMonitor rpcEndpointMonitor,
             IServiceEntryManager serviceEntryManager)
         {
-            _healthCheck = healthCheck;
+            _rpcEndpointMonitor = rpcEndpointMonitor;
             _serviceEntryManager = serviceEntryManager;
-            _healthCheck.OnRemoveRpcEndpoint += RemoveRpcEndpointHandler;
-            _healthCheck.OnHealthChange += HealthChangeHandler;
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += RemoveRpcRpcEndpointHandler;
+            _rpcEndpointMonitor.OnStatusChange += HealthChangeHandler;
             Logger = NullLogger<DefaultServerManager>.Instance;
         }
 
@@ -55,7 +55,7 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        private async Task RemoveRpcEndpointHandler(IRpcEndpoint rpcEndpoint)
+        private async Task RemoveRpcRpcEndpointHandler(IRpcEndpoint rpcEndpoint)
         {
             var needRemoveEndpointServerRoutes =
                 Servers.Where(p => p.Endpoints.Any(q => q.Descriptor == rpcEndpoint.Descriptor));
@@ -93,7 +93,7 @@ namespace Silky.Rpc.Runtime.Server
 
             foreach (var rpcEndpoint in server.Endpoints)
             {
-                _healthCheck.Monitor(rpcEndpoint);
+                _rpcEndpointMonitor.Monitor(rpcEndpoint);
             }
 
             foreach (var serviceDescriptor in serverDescriptor.Services)
@@ -117,7 +117,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 foreach (var routeAddress in server.Endpoints)
                 {
-                    _healthCheck.RemoveRpcEndpoint(routeAddress);
+                    _rpcEndpointMonitor.RemoveRpcEndpoint(routeAddress);
                 }
             }
         }

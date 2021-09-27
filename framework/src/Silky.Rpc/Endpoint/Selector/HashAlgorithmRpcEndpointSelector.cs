@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using Silky.Core;
-using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Endpoint.Monitor;
 
 namespace Silky.Rpc.Endpoint.Selector
 {
@@ -9,12 +9,12 @@ namespace Silky.Rpc.Endpoint.Selector
     {
         private ConcurrentDictionary<string, ConsistentHash<IRpcEndpoint>> _consistentHashAddressPools = new();
 
-        private readonly IHealthCheck _healthCheck;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
-        public HashAlgorithmRpcEndpointSelector(IHealthCheck healthCheck)
+        public HashAlgorithmRpcEndpointSelector(IRpcEndpointMonitor rpcEndpointMonitor)
         {
-            _healthCheck = healthCheck;
-            _healthCheck.OnRemoveRpcEndpoint += async rpcEndpoint =>
+            _rpcEndpointMonitor = rpcEndpointMonitor;
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += async rpcEndpoint =>
             {
                 var removeItems = _consistentHashAddressPools
                     .Where(p => p.Value.ContainNode(rpcEndpoint))
@@ -25,7 +25,7 @@ namespace Silky.Rpc.Endpoint.Selector
                 }
             };
 
-            _healthCheck.OnHealthChange += async (rpcEndpoint, isHealth) =>
+            _rpcEndpointMonitor.OnStatusChange += async (rpcEndpoint, isHealth) =>
             {
                 var changeItems = _consistentHashAddressPools
                     .Where(p => p.Value.ContainNode(rpcEndpoint))

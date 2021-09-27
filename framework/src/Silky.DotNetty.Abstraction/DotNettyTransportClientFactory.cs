@@ -12,8 +12,6 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
-using Silky.Rpc.Address;
-using Silky.Rpc.Address.HealthCheck;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Transport.Codec;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +23,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport;
 
@@ -40,25 +39,25 @@ namespace Silky.DotNetty
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
 
-        private readonly IHealthCheck _healthCheck;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
         // private IEventLoopGroup m_group;
 
         public DotNettyTransportClientFactory(IOptionsMonitor<RpcOptions> rpcOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
-            IHealthCheck healthCheck)
+            IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _rpcOptions = rpcOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
-            _healthCheck = healthCheck;
-            _healthCheck.OnUnhealth += async addressModel =>
+            _rpcEndpointMonitor = rpcEndpointMonitor;
+            _rpcEndpointMonitor.OnDisEnable += async addressModel =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 m_clients.TryRemove(addressModel, out _);
             };
-            _healthCheck.OnHealthChange += async (addressModel, health) =>
+            _rpcEndpointMonitor.OnStatusChange += async (addressModel, health) =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 if (!health)
@@ -70,7 +69,7 @@ namespace Silky.DotNetty
                     await GetOrCreateClient(addressModel);
                 }
             };
-            _healthCheck.OnRemoveRpcEndpoint += async addressModel =>
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += async addressModel =>
             {
                 Check.NotNull(addressModel, nameof(addressModel));
                 m_clients.TryRemove(addressModel, out _);
@@ -160,7 +159,7 @@ namespace Silky.DotNetty
                         var pipeline = channel.Pipeline;
                         var messageListener = new ClientMessageListener();
                         var messageSender = new DotNettyClientMessageSender(channel);
-                        pipeline.AddLast(new ClientHandler(messageListener, _healthCheck));
+                        pipeline.AddLast(new ClientHandler(messageListener, _rpcEndpointMonitor));
                         var client = new DefaultTransportClient(messageSender, messageListener);
                         return client;
                     }

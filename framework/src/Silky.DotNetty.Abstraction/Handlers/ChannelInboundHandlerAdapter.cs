@@ -5,17 +5,17 @@ using DotNetty.Transport.Channels;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.DotNetty.Abstraction;
-using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Endpoint.Monitor;
 
 namespace Silky.DotNetty.Handlers
 {
     public class ChannelInboundHandlerAdapter : ChannelHandlerAdapter
     {
-        private readonly IHealthCheck _healthCheck;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
-        public ChannelInboundHandlerAdapter(IHealthCheck healthCheck)
+        public ChannelInboundHandlerAdapter(IRpcEndpointMonitor rpcEndpointMonitor)
         {
-            _healthCheck = healthCheck;
+            _rpcEndpointMonitor = rpcEndpointMonitor;
         }
 
         public ChannelInboundHandlerAdapter()
@@ -29,7 +29,7 @@ namespace Silky.DotNetty.Handlers
                 var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
                 if (remoteAddress != null)
                 {
-                    _healthCheck?.ChangeHealthStatus(remoteAddress.Address.MapToIPv4(),
+                    _rpcEndpointMonitor?.ChangeStatus(remoteAddress.Address.MapToIPv4(),
                         remoteAddress.Port,
                         ServiceProtocol.Tcp,
                         false);
@@ -52,7 +52,7 @@ namespace Silky.DotNetty.Handlers
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)
             {
-                _healthCheck?.ChangeHealthStatus(remoteAddress.Address.MapToIPv4(),
+                _rpcEndpointMonitor?.ChangeStatus(remoteAddress.Address.MapToIPv4(),
                     remoteAddress.Port,
                     ServiceProtocol.Tcp,
                     true);

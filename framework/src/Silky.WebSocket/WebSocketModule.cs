@@ -10,7 +10,6 @@ using Autofac;
 using Silky.Core;
 using Silky.Core.Modularity;
 using Silky.Rpc;
-using Silky.Rpc.Address;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;

@@ -2,9 +2,9 @@
 
 namespace Silky.Rpc.Endpoint
 {
-    public delegate Task HealthChangeEvent(IRpcEndpoint rpcEndpoint, bool isHealth);
+    public delegate Task StatusChangeEvent(IRpcEndpoint rpcEndpoint, bool isEnable);
 
-    public delegate Task UnhealthEvent(IRpcEndpoint rpcEndpoint);
+    public delegate Task DisEnableEvent(IRpcEndpoint rpcEndpoint);
 
     public delegate Task RemoveRpcEndpointEvent(IRpcEndpoint rpcEndpoint);
 

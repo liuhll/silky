@@ -1,9 +1,8 @@
 using System.Net;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
-using Silky.Rpc.Address.HealthCheck;
+using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
-using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Handlers
@@ -11,12 +10,12 @@ namespace Silky.DotNetty.Handlers
     public class ClientHandler : ChannelHandlerAdapter
     {
         private readonly IMessageListener _messageListener;
-        private readonly IHealthCheck _healthCheck;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
-        public ClientHandler(IMessageListener messageListener, IHealthCheck healthCheck)
+        public ClientHandler(IMessageListener messageListener, IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _messageListener = messageListener;
-            _healthCheck = healthCheck;
+            _rpcEndpointMonitor = rpcEndpointMonitor;
         }
 
         public async override void ChannelRead(IChannelHandlerContext context, object message)
@@ -30,7 +29,7 @@ namespace Silky.DotNetty.Handlers
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)
             {
-                _healthCheck.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
+                _rpcEndpointMonitor.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
             }
         }
 
@@ -39,7 +38,7 @@ namespace Silky.DotNetty.Handlers
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)
             {
-                _healthCheck.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
+                _rpcEndpointMonitor.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
             }
 
             await base.CloseAsync(context);

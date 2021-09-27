@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
-using Silky.Rpc.Address;
 using Silky.Rpc.Endpoint;
 
 namespace Silky.Rpc.Transport
