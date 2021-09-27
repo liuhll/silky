@@ -13,10 +13,11 @@ namespace Silky.RegistryCenter.Consul
             string section = "RegistryCenter")
         {
             services.Configure<ConsulRegistryCenterOptions>(EngineContext.Current.Configuration.GetSection(section));
-            services.AddSingleton<IServerRegister, ConsulServerRegister>();
+            services.TryAddSingleton<IServerRegister, ConsulServerRegister>();
             services.TryAddSingleton<IConsulClientFactory, ConsulClientFactory>();
             services.TryAddSingleton<IServiceProvider, ConsulServiceProvider>();
             services.TryAddSingleton<IServerConverter, ConsulServerConverter>();
+            services.TryAddSingleton<IHeartBeatService, ConsulHeartBeatService>();
 
             return services;
         }
@@ -28,10 +29,11 @@ namespace Silky.RegistryCenter.Consul
             services.Configure(configure);
             var options = new ConsulRegistryCenterOptions();
             configure.Invoke(options);
-            services.AddSingleton<IServerRegister, ConsulServerRegister>();
+            services.TryAddSingleton<IServerRegister, ConsulServerRegister>();
             services.TryAddSingleton<IConsulClientFactory, ConsulClientFactory>();
             services.TryAddSingleton<IServiceProvider, ConsulServiceProvider>();
             services.TryAddSingleton<IServerConverter, ConsulServerConverter>();
+            services.TryAddSingleton<IHeartBeatService, ConsulHeartBeatService>();
             return services;
         }
     }

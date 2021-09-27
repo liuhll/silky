@@ -13,24 +13,35 @@ namespace Silky.RegistryCenter.Consul
         private readonly IConsulClientFactory _consulClientFactory;
         private readonly IServerConverter _serverConverter;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IHeartBeatService _heartBeatService;
 
         public ConsulServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
             IConsulClientFactory consulClientFactory,
             IServerConverter serverConverter,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IHeartBeatService heartBeatService)
             : base(serverManager, serverProvider)
         {
             _consulClientFactory = consulClientFactory;
             _serverConverter = serverConverter;
             _serviceProvider = serviceProvider;
+            _heartBeatService = heartBeatService;
         }
 
         protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
         {
+            using var consulClient = _consulClientFactory.CreateClient();
+            await consulClient.Agent.ServiceDeregister(rpcEndpoint.ToString());
         }
 
         protected override async Task CacheServers()
+        {
+            await CacheServerFromConsul();
+            _heartBeatService.Start(CacheServerFromConsul);
+        }
+
+        private async Task CacheServerFromConsul()
         {
             using var consulClient = _consulClientFactory.CreateClient();
             var queryResult = await consulClient.Agent.Services();
@@ -66,6 +77,8 @@ namespace Silky.RegistryCenter.Consul
 
         protected override async Task RemoveServiceCenterExceptRpcEndpoint(IServer server)
         {
+            using var consulClient = _consulClientFactory.CreateClient();
+            await consulClient.Agent.ServiceDeregister(server.GetInstanceId());
         }
     }
 }

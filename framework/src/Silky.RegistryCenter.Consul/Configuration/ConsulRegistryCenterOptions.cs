@@ -8,11 +8,8 @@ namespace Silky.RegistryCenter.Consul.Configuration
         internal static string RegistryCenterSection = "RegistryCenter";
 
         internal const string SilkyServer = "SilkyServer";
-        
-        public string Type { get; } = "Consul";
 
-        public string HealthAddress { get; set; }
-        
-         
+        public string Type { get; } = "Consul";
+        public int HeartBeatInterval { get; set; } = 10;
     }
 }

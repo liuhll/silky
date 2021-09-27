@@ -31,11 +31,12 @@ namespace Silky.RegistryCenter.Consul
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             var serviceProtocolJsonString = serializer.Serialize(serviceProtocols);
+
             var agentServiceRegistration = new AgentServiceRegistration()
             {
-                ID = serverDescriptor.Endpoints.First().ToString(),
-                Address = serverDescriptor.Endpoints.First().Host,
-                Port = serverDescriptor.Endpoints.First().Port,
+                ID = endpoint.ToString(),
+                Address = endpoint.Host,
+                Port = endpoint.Port,
                 Name = serverDescriptor.HostName,
                 EnableTagOverride = false,
                 Meta = new Dictionary<string, string>()
@@ -49,16 +50,24 @@ namespace Silky.RegistryCenter.Consul
                 {
                     EngineContext.Current.HostName,
                     ConsulRegistryCenterOptions.SilkyServer
-                },
-                // Check = new AgentServiceCheck()
-                // {
-                //     HTTP = "",
-                //     Method = "Post",
-                //     Interval = TimeSpan.FromSeconds(5),
-                //     DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5)
-                // }
+                }
             };
+
             return agentServiceRegistration;
+        }
+
+
+        public static string GetInstanceId(this IServer server)
+        {
+            var endpoint = server.Endpoints.FirstOrDefault(p =>
+                p.ServiceProtocol == ServiceProtocol.Tcp || p.ServiceProtocol.IsHttp());
+
+            if (endpoint == null)
+            {
+                throw new SilkyException("RpcEndpoint does not exist");
+            }
+
+            return endpoint.Descriptor.ToString();
         }
     }
 }
