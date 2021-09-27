@@ -6,8 +6,6 @@ namespace Silky.Http.Dashboard.AppService.Dtos
     {
         public string HostName { get; set; }
         
-        public string Application { get; set; }
-        
         public string ServiceName { get; set; }
         public string ServiceId { get; set; }
         

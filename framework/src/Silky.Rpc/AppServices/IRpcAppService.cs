@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
@@ -18,5 +19,7 @@ namespace Silky.Rpc.AppServices
 
         [Governance(ProhibitExtranet = true)]
         IReadOnlyCollection<ServiceEntryInvokeInfo> GetServiceEntryInvokeInfos();
+
+        Task IsHealth();
     }
 }

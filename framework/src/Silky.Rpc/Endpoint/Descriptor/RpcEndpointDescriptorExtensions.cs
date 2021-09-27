@@ -40,5 +40,10 @@ namespace Silky.Rpc.Endpoint.Descriptor
 
             return address;
         }
+        
+        public static bool IsInstanceEndpoint(this RpcEndpointDescriptor rpcEndpointDescriptor)
+        {
+            return rpcEndpointDescriptor.ServiceProtocol != ServiceProtocol.Ws;
+        }
     }
 }

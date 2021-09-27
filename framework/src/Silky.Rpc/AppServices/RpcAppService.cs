@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.AppServices
 {
@@ -32,7 +32,7 @@ namespace Silky.Rpc.AppServices
             };
             return instanceSupervisorOutput;
         }
-        
+
         public IReadOnlyCollection<ServiceEntryHandleInfo> GetServiceEntryHandleInfos()
         {
             return _serverHandleSupervisor.GetServiceEntryHandleInfos();
@@ -41,6 +41,11 @@ namespace Silky.Rpc.AppServices
         public IReadOnlyCollection<ServiceEntryInvokeInfo> GetServiceEntryInvokeInfos()
         {
             return _invokeSupervisor.GetServiceEntryInvokeInfos();
+        }
+
+        public Task IsHealth()
+        {
+            return Task.CompletedTask;
         }
     }
 }

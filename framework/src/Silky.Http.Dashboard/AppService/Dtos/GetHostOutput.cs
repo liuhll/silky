@@ -4,8 +4,6 @@ namespace Silky.Http.Dashboard.AppService.Dtos
     {
         public string Host { get; set; }
 
-        public int ApplicationCount { get; set; }
-
         public int InstanceCount { get; set; }
 
         public int AppServiceCount { get; set; }

@@ -9,7 +9,7 @@ using GetInstanceDetailOutput = Silky.Rpc.AppServices.Dtos.GetInstanceDetailOutp
 
 namespace Silky.Http.Dashboard.AppService
 {
-    [ServiceRoute(Application = "Dashboard")]
+    [ServiceRoute]
     [Metadata(ServiceConstant.IsSilkyService,true)]
     public interface ISilkyAppService
     {
@@ -17,37 +17,37 @@ namespace Silky.Http.Dashboard.AppService
 
         IReadOnlyCollection<GetHostOutput> GetAllHosts();
 
-        [HttpGet("host/{hostName:string}/detail")]
-        GetDetailHostOutput GetHostDetail(string hostName);
+        [HttpGet("host/{hostName}/detail")]
+        ServerDescriptor GetHostDetail(string hostName);
 
-        IReadOnlyCollection<GetServiceOutput> GetServices(string hostName);
+        IReadOnlyCollection<ServiceDescriptor> GetServices(string hostName);
 
-        [HttpGet("host/{hostName:string}/instances")]
+        [HttpGet("host/{hostName}/instances")]
         PagedList<GetHostInstanceOutput> GetHostInstances(string hostName,
             GetHostInstanceInput input);
 
-        GetGatewayOutput GetGateway();
+        IReadOnlyCollection<GetGatewayOutput> GetGateways();
 
-        [HttpGet("gateway/instances")]
-        PagedList<GetGatewayInstanceOutput> GetGatewayInstances(PagedRequestDto input);
+        [HttpGet("gateway/{gatewayName}/instances")]
+        PagedList<GetGatewayInstanceOutput> GetGatewayInstances(string gatewayName, PagedRequestDto input);
 
         PagedList<GetServiceEntryOutput> GetServiceEntries(GetServiceEntryInput input);
 
-        [HttpGet("serviceentry/{serviceEntryId:string}/detail")]
+        [HttpGet("serviceentry/{serviceEntryId}/detail")]
         GetServiceEntryDetailOutput GetServiceEntryDetail(string serviceEntryId);
 
-        [HttpGet("serviceentry/{serviceEntryId:string}/routes")]
+        [HttpGet("serviceentry/{serviceEntryId}/routes")]
         PagedList<GetServiceEntryRouteOutput> GetServiceEntryRoutes(string serviceEntryId, int pageIndex = 1,
             int pageSize = 10);
 
 
-        [HttpGet("instance/{address:string}/detail")]
+        [HttpGet("instance/{address}/detail")]
         Task<GetInstanceDetailOutput> GetInstanceDetail(string address);
 
-        [HttpGet("instance/{address:string}/servicehandle")]
+        [HttpGet("instance/{address}/servicehandle")]
         Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address, PagedRequestDto input);
 
-        [HttpGet("instance/{address:string}/serviceinvoke")]
+        [HttpGet("instance/{address}/serviceinvoke")]
         Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address, PagedRequestDto input);
 
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
-using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
@@ -14,9 +13,8 @@ using Silky.Http.Dashboard.Configuration;
 using Silky.Rpc.AppServices;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.CachingInterceptor.Providers;
-using Silky.Rpc.Configuration;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.RegistryCenters;
-using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Utils;
@@ -25,13 +23,12 @@ namespace Silky.Http.Dashboard.AppService
 {
     public class SilkyAppService : ISilkyAppService
     {
-        private readonly ServerRouteCache _serverRouteCache;
+        private readonly IServerManager _serverManager;
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IRemoteExecutor _remoteExecutor;
         private readonly ILocalExecutor _localExecutor;
         private readonly IRegisterCenterHealthProvider _registerCenterHealthProvider;
-        private readonly RegistryCenterOptions _registryCenterOptions;
 
 
         private const string ipEndpointRegex =
@@ -47,22 +44,20 @@ namespace Silky.Http.Dashboard.AppService
             "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryInvokeInfos_Get";
 
         public SilkyAppService(
-            ServerRouteCache serverRouteCache,
+            IServerManager serverManager,
             IServiceEntryManager serviceEntryManager,
             IServiceEntryLocator serviceEntryLocator,
             IRemoteExecutor remoteExecutor,
             ILocalExecutor localExecutor,
-            IRegisterCenterHealthProvider registerCenterHealthProvider,
-            IOptions<RegistryCenterOptions> registryCenterOptions)
+            IRegisterCenterHealthProvider registerCenterHealthProvider)
         {
-            _serverRouteCache = serverRouteCache;
+            _serverManager = serverManager;
             _serviceEntryManager = serviceEntryManager;
 
             _remoteExecutor = remoteExecutor;
             _registerCenterHealthProvider = registerCenterHealthProvider;
             _localExecutor = localExecutor;
             _serviceEntryLocator = serviceEntryLocator;
-            _registryCenterOptions = registryCenterOptions.Value;
         }
 
         public PagedList<GetHostOutput> GetHosts(PagedRequestDto input)
@@ -72,155 +67,88 @@ namespace Silky.Http.Dashboard.AppService
 
         public IReadOnlyCollection<GetHostOutput> GetAllHosts()
         {
-            var serviceRoutes = _serverRouteCache.ServiceRoutes;
-            var hosts = serviceRoutes
-                .Where(p => p.Services.GetHostName() != null)
-                .GroupBy(p => p.Services.GetHostName())
+            var serverDescriptors = _serverManager
+                .ServerDescriptors
                 .Select(p => new GetHostOutput()
                 {
-                    Host = p.Key,
-                    ApplicationCount = p.Select(sr => sr.Services.Application).Distinct().Count(),
-                    InstanceCount = p.FirstOrDefault(sr => !sr.Services.IsSilkyService())?.GetInstanceCount() ?? 0,
-                    LocalServiceEntriesCount = p.SelectMany(sr => sr.Services.ServiceEntries).Distinct().Count(),
-                    AppServiceCount = p.Select(sr => sr.Services.ServiceName).Distinct().Count(),
-                    HasWsService = p.Any(sr => sr.Services.ServiceProtocol == ServiceProtocol.Ws)
+                    AppServiceCount = p.Services.Length,
+                    InstanceCount = p.Endpoints.Count(p => p.IsInstanceEndpoint()),
+                    Host = p.HostName,
+                    HasWsService = p.Endpoints.Any(p => p.ServiceProtocol == ServiceProtocol.Ws),
+                    LocalServiceEntriesCount = p.Services.SelectMany(p => p.ServiceEntries).Count()
                 });
-            return hosts.ToArray();
+            return serverDescriptors.ToArray();
         }
 
-        public GetDetailHostOutput GetHostDetail(string hostName)
+        public ServerDescriptor GetHostDetail(string hostName)
         {
-            var detailHostOutput = new GetDetailHostOutput()
+            var serverDescriptor = _serverManager.GetServerDescriptor(hostName);
+            if (serverDescriptor == null)
             {
-                HostName = hostName
-            };
-            var appServices = _serverRouteCache.ServiceRoutes.Where(p => p.Services.GetHostName() == hostName)
-                .OrderBy(p => p.Services.ServiceName);
-
-            detailHostOutput.AppServiceEntries = appServices
-                .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Tcp).SelectMany(
-                    sr =>
-                    {
-                        var serviceEntryOutputs = new List<ServiceEntryOutput>();
-                        foreach (var sed in sr.Services.ServiceEntries)
-                        {
-                            var se = _serviceEntryManager.GetServiceEntry(sed.Id);
-                            if (se != null)
-                            {
-                                var seOutput = new ServiceEntryOutput()
-                                {
-                                    ServiceProtocol = se.ServiceEntryDescriptor.ServiceProtocol,
-                                    HostName = sr.Services.GetHostName(),
-                                    Application = se.ServiceEntryDescriptor.Application,
-                                    ServiceName = se.ServiceEntryDescriptor.ServiceName,
-                                    ServiceId = se.ServiceEntryDescriptor.ServiceId,
-                                    ServiceEntryId = se.ServiceEntryDescriptor.Id,
-                                    MultipleServiceKey = sr.MultiServiceKeys(),
-                                    Author = se.ServiceEntryDescriptor.GetAuthor(),
-                                    WebApi = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.RoutePath,
-                                    HttpMethod = se.GovernanceOptions.ProhibitExtranet ? null : se.Router.HttpMethod,
-                                    ProhibitExtranet = se.GovernanceOptions.ProhibitExtranet,
-                                    Method = se.MethodInfo.Name
-                                };
-                                serviceEntryOutputs.Add(seOutput);
-                            }
-                        }
-
-                        return serviceEntryOutputs;
-                    }).ToArray();
-
-            detailHostOutput.WsServices = appServices
-                .Where(p => p.Services.ServiceProtocol == ServiceProtocol.Ws).Select(
-                    p => new WsAppServiceOutput()
-                    {
-                        AppService = p.Services.ServiceName,
-                        WsPath = p.Services.GetWsPath(),
-                        ServiceProtocol = p.Services.ServiceProtocol
-                    }).ToArray();
-            return detailHostOutput;
-        }
-
-        public IReadOnlyCollection<GetServiceOutput> GetServices(string hostName)
-        {
-            var appServiceGroups = _serverRouteCache.ServiceRoutes
-                .Where(p => !p.Services.GetHostName().IsNullOrEmpty())
-                .WhereIf(!hostName.IsNullOrEmpty(), p => p.Services.GetHostName() == hostName)
-                .OrderBy(p => p.Services.ServiceName).GroupBy(p =>
-                    p.Services);
-            var services = new List<GetServiceOutput>();
-            foreach (var appServiceGroup in appServiceGroups)
-            {
-                services.Add(new GetServiceOutput()
-                {
-                    HostName = appServiceGroup.Key.GetHostName(),
-                    ServiceId = appServiceGroup.Key.Id,
-                    ServiceName = appServiceGroup.Key.ServiceName,
-                    Application = appServiceGroup.Key.Application,
-                    InstanceCount = _serverRouteCache.GetServiceRoute(appServiceGroup.Key.Id).GetInstanceCount()
-                });
+                throw new BusinessException($"There is no server for {hostName}");
             }
 
-            return services.ToArray();
+            return serverDescriptor;
+        }
+
+        public IReadOnlyCollection<ServiceDescriptor> GetServices(string hostName)
+        {
+            return GetHostDetail(hostName).Services;
         }
 
         public PagedList<GetHostInstanceOutput> GetHostInstances(string hostName,
             GetHostInstanceInput input)
         {
-            var hostAddresses = _serverRouteCache.ServiceRoutes
-                    .Where(p => p.Services.GetHostName() == hostName)
-                    .WhereIf(input.ServiceProtocol.HasValue, p => p.Services.ServiceProtocol == input.ServiceProtocol)
-                    .SelectMany(p => p.Endpoints)
-                    .Distinct()
-                ;
-            var hostInstances = new List<GetHostInstanceOutput>();
-            foreach (var address in hostAddresses)
+            var server = _serverManager.GetServer(hostName);
+            if (server == null)
             {
-                var hostInstance = new GetHostInstanceOutput()
-                {
-                    HostName = hostName,
-                    Address = address.IPEndPoint.ToString(),
-                    IsEnable = address.Enabled,
-                    IsHealth = SocketCheck.TestConnection(address.IPEndPoint),
-                    ServiceProtocol = address.ServiceProtocol
-                };
-                hostInstances.Add(hostInstance);
+                throw new BusinessException($"There is no server for {hostName}");
             }
+
+            var hostInstances = server.Endpoints
+                .WhereIf(input.ServiceProtocol.HasValue, p => p.ServiceProtocol == input.ServiceProtocol)
+                .WhereIf(!input.ServiceProtocol.HasValue, p => p.Descriptor.IsInstanceEndpoint())
+                .Select(p => new GetHostInstanceOutput()
+                {
+                    HostName = server.HostName,
+                    IsHealth = SocketCheck.TestConnection(p.Host, p.Port),
+                    Address = p.Host,
+                    IsEnable = p.Enabled,
+                    ServiceProtocol = p.ServiceProtocol,
+                });
 
             return hostInstances.ToPagedList(input.PageIndex, input.PageSize);
         }
 
-        public GetGatewayOutput GetGateway()
+        public IReadOnlyCollection<GetGatewayOutput> GetGateways()
         {
-            var gateway =
-                _serverRouteCache.ServiceRoutes.First(p => p.Services.GetHostName() == EngineContext.Current.HostName);
-            var gatewayOutput = new GetGatewayOutput()
+            var gateways =
+                _serverManager.ServerDescriptors.Where(p => p.Endpoints.Any(p => p.ServiceProtocol.IsHttp()));
+            return gateways.Select(p => new GetGatewayOutput()
             {
-                HostName = gateway.Services.GetHostName(),
-                InstanceCount = gateway.Endpoints.Select(p => new { Address = p.Host, p.Port }).Distinct().Count(),
-                SupportServiceCount = _serverRouteCache.ServiceRoutes.Select(p => p.Services).Count(),
-                SupportServiceEntryCount = _serverRouteCache.ServiceRoutes
-                    .SelectMany(p => p.Services.ServiceEntries).Count(),
-                ExistWebSocketService =
-                    _serverRouteCache.ServiceRoutes.Any(p =>
-                        p.Services.ServiceProtocol == ServiceProtocol.Ws),
-                SupportServices = _serverRouteCache.ServiceRoutes.Select(p => p.Services)
-                    .Select(p => p.ServiceName)
-            };
-            return gatewayOutput;
+                HostName = p.HostName,
+                InstanceCount = p.Endpoints.Count(p => p.ServiceProtocol.IsHttp())
+            }).ToArray();
         }
 
-        public PagedList<GetGatewayInstanceOutput> GetGatewayInstances(PagedRequestDto input)
+        public PagedList<GetGatewayInstanceOutput> GetGatewayInstances(string gatewayName, PagedRequestDto input)
         {
-            var gateway =
-                _serverRouteCache.ServiceRoutes.First(p => p.Services.GetHostName() == EngineContext.Current.HostName);
+            var gateway = _serverManager.ServerDescriptors
+                .FirstOrDefault(p => p.HostName == gatewayName && p.Endpoints.Any(q => q.ServiceProtocol.IsHttp()));
+            if (gateway == null)
+            {
+                throw new BusinessException($"There is no gateway for {gatewayName}");
+            }
 
             var gatewayInstances = new List<GetGatewayInstanceOutput>();
-            foreach (var addressDescriptor in gateway.Endpoints)
+            var gatewayEndpoints = gateway.Endpoints.Where(p => p.ServiceProtocol.IsHttp());
+            foreach (var addressDescriptor in gatewayEndpoints)
             {
                 var gatewayInstance = new GetGatewayInstanceOutput()
                 {
-                    HostName = gateway.Services.GetHostName(),
+                    HostName = gateway.HostName,
                     Address = addressDescriptor.Host,
+                    Port = addressDescriptor.Port,
                 };
                 gatewayInstances.Add(gatewayInstance);
             }
@@ -230,36 +158,31 @@ namespace Silky.Http.Dashboard.AppService
 
         public PagedList<GetServiceEntryOutput> GetServiceEntries(GetServiceEntryInput input)
         {
-            var serviceEntryOutputs = _serviceEntryManager.GetAllEntries()
-                .Select(p =>
+            var serviceEntries =
+                _serverManager.ServerDescriptors.SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries));
+            var serviceEntryOutputs = serviceEntries.Select(p => new GetServiceEntryOutput()
                 {
-                    var serviceRoute = p.GetServiceRoute();
-                    var serviceEntryOutput = new GetServiceEntryOutput()
-                    {
-                        ServiceId = p.ServiceId,
-                        ServiceName = p.ServiceEntryDescriptor.ServiceName,
-                        ServiceEntryId = p.Id,
-                        Author = p.ServiceEntryDescriptor.GetAuthor(),
-                        HostName = serviceRoute?.Services.GetHostName(),
-                        Application = p.ServiceEntryDescriptor.Application,
-                        WebApi = p.GovernanceOptions.ProhibitExtranet ? "" : p.Router.RoutePath,
-                        HttpMethod = p.GovernanceOptions.ProhibitExtranet ? null : p.Router.HttpMethod,
-                        ProhibitExtranet = p.GovernanceOptions.ProhibitExtranet,
-                        Method = p.MethodInfo.Name,
-                        MultipleServiceKey = serviceRoute?.MultiServiceKeys() == true,
-                        IsEnable = serviceRoute != null &&
-                                   serviceRoute.Endpoints.Any(am => SocketCheck.TestConnection(am.Host, am.Port)),
-                        ServiceRouteCount = serviceRoute?.Endpoints.Length ?? 0,
-                        IsDistributeTransaction = p.IsTransactionServiceEntry()
-                    };
-                    return serviceEntryOutput;
-                }).Where(p => !p.Application.IsNullOrEmpty())
-                .WhereIf(!input.Application.IsNullOrEmpty(), p => input.Application.Equals(p.Application))
+                    ServiceId = p.ServiceId,
+                    ServiceName = p.ServiceName,
+                    ServiceEntryId = p.Id,
+                    Author = p.GetAuthor(),
+                   // HostName = p.Metadatas,
+                    WebApi = p.GovernanceOptions.ProhibitExtranet ? "" : p.Router.RoutePath,
+                    HttpMethod = p.GovernanceOptions.ProhibitExtranet ? null : p.Router.HttpMethod,
+                    ProhibitExtranet = p.GovernanceOptions.ProhibitExtranet,
+                    Method = p.MethodInfo.Name,
+                    MultipleServiceKey = serviceRoute?.MultiServiceKeys() == true,
+                    // IsEnable = serviceRoute != null &&
+                    //            serviceRoute.Endpoints.Any(am => SocketCheck.TestConnection(am.Host, am.Port)),
+                    ServiceRouteCount = serviceRoute?.Endpoints.Length ?? 0,
+                    IsDistributeTransaction = p.IsTransactionServiceEntry()
+                })
                 .WhereIf(!input.ServiceId.IsNullOrEmpty(), p => input.ServiceId.Equals(p.ServiceId))
                 .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => input.ServiceEntryId.Equals(p.ServiceEntryId))
                 .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceEntryId.Contains(input.Name))
                 .WhereIf(input.IsEnable.HasValue, p => p.IsEnable == input.IsEnable)
-                .OrderBy(p => p.Application).ThenBy(p => p.ServiceId);
+                .OrderBy(p => p.HostName)
+                .ThenBy(p => p.ServiceId);
 
             return serviceEntryOutputs.ToPagedList(input.PageIndex, input.PageSize);
         }
@@ -281,7 +204,6 @@ namespace Silky.Http.Dashboard.AppService
                 ServiceId = serviceEntry.ServiceEntryDescriptor.ServiceId,
                 ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
                 Author = serviceEntry.ServiceEntryDescriptor.GetAuthor(),
-                Application = serviceRoute?.Services.Application,
                 WebApi = serviceEntry.GovernanceOptions.ProhibitExtranet ? "" : serviceEntry.Router.RoutePath,
                 HttpMethod = serviceEntry.GovernanceOptions.ProhibitExtranet ? null : serviceEntry.Router.HttpMethod,
                 ProhibitExtranet = serviceEntry.GovernanceOptions.ProhibitExtranet,

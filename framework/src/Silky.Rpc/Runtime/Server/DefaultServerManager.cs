@@ -122,6 +122,16 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
+        public ServerDescriptor GetServerDescriptor(string hostName)
+        {
+            return _serverCache.GetValueOrDefault(hostName)?.ConvertToDescriptor();
+        }
+
+        public IServer GetServer(string hostName)
+        {
+            return _serverCache.GetValueOrDefault(hostName);
+        }
+
         public IReadOnlyList<ServerDescriptor> ServerDescriptors =>
             _serverCache.Values.Select(p => p.ConvertToDescriptor()).ToArray();
 
