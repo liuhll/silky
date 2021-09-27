@@ -160,11 +160,11 @@ namespace Silky.RegistryCenter.Zookeeper
             {
                 var serviceRouteDescriptors =
                     await GetServerRouteDescriptors(zookeeperClient, EngineContext.Current.HostName);
-                var routeDescriptors = serviceRouteDescriptors as ServerDescriptor[] ??
+                var serverDescriptors = serviceRouteDescriptors as ServerDescriptor[] ??
                                        serviceRouteDescriptors.ToArray();
-                if (routeDescriptors.Any())
+                if (serverDescriptors.Any())
                 {
-                    foreach (var serviceRouteDescriptor in routeDescriptors)
+                    foreach (var serviceRouteDescriptor in serverDescriptors)
                     {
                         _serverManager.Update(serviceRouteDescriptor);
                     }

@@ -15,6 +15,8 @@ namespace Silky.RegistryCenter.Consul
             services.Configure<ConsulRegistryCenterOptions>(EngineContext.Current.Configuration.GetSection(section));
             services.AddSingleton<IServerRegister, ConsulServerRegister>();
             services.TryAddSingleton<IConsulClientFactory, ConsulClientFactory>();
+            services.TryAddSingleton<IServiceProvider, ConsulServiceProvider>();
+            services.TryAddSingleton<IServerConverter, ConsulServerConverter>();
 
             return services;
         }
@@ -28,6 +30,8 @@ namespace Silky.RegistryCenter.Consul
             configure.Invoke(options);
             services.AddSingleton<IServerRegister, ConsulServerRegister>();
             services.TryAddSingleton<IConsulClientFactory, ConsulClientFactory>();
+            services.TryAddSingleton<IServiceProvider, ConsulServiceProvider>();
+            services.TryAddSingleton<IServerConverter, ConsulServerConverter>();
             return services;
         }
     }

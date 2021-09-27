@@ -1,16 +1,35 @@
+using System.Collections.Generic;
 using Consul;
-using Silky.Rpc.Runtime.Server;
+using Silky.Core;
+using Silky.Core.Extensions;
+using Silky.Core.Rpc;
+using Silky.Core.Serialization;
+using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.RegistryCenter.Consul
 {
     public static class AgentServiceExtensions
     {
-        public static ServerDescriptor GetServerDescriptor(this AgentService agentService)
+        public static RpcEndpointDescriptor[] GetEndpointDescriptors(this AgentService agentService)
         {
-            var serverDescriptor = new ServerDescriptor()
+            var serviceProtocols = agentService.Meta["ServiceProtocols"];
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            var serviceProtocolInfos = serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocols);
+            var rpcEndpointDescriptors = new List<RpcEndpointDescriptor>();
+            foreach (var serviceProtocolInfo in serviceProtocolInfos)
             {
-            };
-            return serverDescriptor;
+                var rpcEndpointDescriptor = new RpcEndpointDescriptor()
+                {
+                    Host = agentService.Address,
+                    Port = serviceProtocolInfo.Value,
+                    ServiceProtocol = serviceProtocolInfo.Key,
+                    TimeStamp = agentService.Meta["TimeStamp"].To<long>(),
+                    ProcessorTime = agentService.Meta["ProcessorTime"].To<double>(),
+                };
+                rpcEndpointDescriptors.Add(rpcEndpointDescriptor);
+            }
+
+            return rpcEndpointDescriptors.ToArray();
         }
 
         public static string GetServerName(this AgentService agentService)

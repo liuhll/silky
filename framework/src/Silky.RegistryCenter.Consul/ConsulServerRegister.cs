@@ -1,11 +1,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Consul;
-using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Core.Extensions;
-using Silky.Core.Serialization;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
@@ -15,16 +11,19 @@ namespace Silky.RegistryCenter.Consul
     public class ConsulServerRegister : ServerRegisterBase
     {
         private readonly IConsulClientFactory _consulClientFactory;
-        private readonly ISerializer _serializer;
+        private readonly IServerConverter _serverConverter;
+        private readonly IServiceProvider _serviceProvider;
 
         public ConsulServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
             IConsulClientFactory consulClientFactory,
-            ISerializer serializer)
+            IServerConverter serverConverter,
+            IServiceProvider serviceProvider)
             : base(serverManager, serverProvider)
         {
             _consulClientFactory = consulClientFactory;
-            _serializer = serializer;
+            _serverConverter = serverConverter;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
@@ -45,15 +44,10 @@ namespace Silky.RegistryCenter.Consul
 
             var allServerInfos = allServerInstances.GroupBy(p => p.GetServerName());
 
-            foreach (var allServerInfo in allServerInfos)
+            foreach (var serverInfo in allServerInfos)
             {
-                // if (!serverInfo.Value.Tags.Contains(ConsulRegistryCenterOptions.SilkyServer))
-                // {
-                //     continue;
-                // }
-                //
-                // var serverDescriptor = serverInfo.Value.GetServerDescriptor();
-                // _serverManager.Update(serverDescriptor);
+                var serverDescriptor = await _serverConverter.Convert(serverInfo.Key, serverInfo.ToArray());
+                _serverManager.Update(serverDescriptor);
             }
         }
 
@@ -67,16 +61,7 @@ namespace Silky.RegistryCenter.Consul
                 throw new SilkyException("Register Server To ServiceCenter Consul Error");
             }
 
-            var servicesJsonString = _serializer.Serialize(serverDescriptor.Services);
-            var servicesPutResult = await consulClient.KV.Put(new KVPair($"services/{EngineContext.Current.HostName}")
-            {
-                Value = servicesJsonString.GetBytes()
-            });
-            if (servicesPutResult.StatusCode != HttpStatusCode.OK)
-            {
-                throw new SilkyException("Register Server To ServiceCenter Consul Error");
-            }
-
+            await _serviceProvider.PublishAsync(serverDescriptor.HostName, serverDescriptor.Services);
         }
 
         protected override async Task RemoveServiceCenterExceptRpcEndpoint(IServer server)
