@@ -44,6 +44,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSilkyMiniProfiler()
                 .AddSilkyCaching()
                 .AddSilkySkyApm()
+                .AddDashboard()
                 .AddSwaggerDocuments(setupAction);
             services.AddMvc();
 

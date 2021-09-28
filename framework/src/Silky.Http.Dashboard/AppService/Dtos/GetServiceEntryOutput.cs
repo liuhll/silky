@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Silky.Http.Dashboard.AppService.Dtos
@@ -13,7 +14,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public bool IsEnable { get; set; }
 
-        public int ServiceRouteCount { get; set; }
+        public int ServerInstanceCount { get; set; }
 
         public string Method { get; set; }
 
@@ -29,6 +30,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public bool IsDistributeTransaction { get; set; }
         
-        
+        public ICollection<ServiceKeyOutput> ServiceKeys { get; set; }
+
     }
 }

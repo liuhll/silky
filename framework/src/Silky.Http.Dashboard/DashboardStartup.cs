@@ -1,22 +1,21 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Silky.Http.Core
+namespace Silky.Http.Dashboard
 {
-    public class RoutingStartup : ISilkyStartup
+    public class DashboardStartup : ISilkyStartup
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddRouting();
+            services.AddDashboard();
         }
 
         public void Configure(IApplicationBuilder application)
         {
-            application.UseRouting();
+            application.UseDashboard();
         }
 
-        public int Order { get; } = 0;
+        public int Order { get; } = -1;
     }
 }

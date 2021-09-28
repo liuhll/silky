@@ -9,6 +9,7 @@
         <ProjectReference Include="..\Silky.Codec.ProtoBuf\Silky.Codec.ProtoBuf.csproj" />
         <ProjectReference Include="..\Silky.DotNetty.Abstraction\Silky.DotNetty.Abstraction.csproj" />
         <ProjectReference Include="..\Silky.Http.CorsAccessor\Silky.Http.CorsAccessor.csproj" />
+        <ProjectReference Include="..\Silky.Http.Dashboard\Silky.Http.Dashboard.csproj" />
         <ProjectReference Include="..\Silky.Http.Identity\Silky.Http.Identity.csproj" />
         <ProjectReference Include="..\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj" />
         <ProjectReference Include="..\Silky.Http.RateLimit\Silky.Http.RateLimit.csproj" />

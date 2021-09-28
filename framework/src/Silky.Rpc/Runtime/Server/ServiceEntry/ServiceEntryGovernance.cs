@@ -8,6 +8,5 @@ namespace Silky.Rpc.Runtime.Server
 
         public bool IsAllowAnonymous { get; set; } = false;
         
-        public int CurrentLimit { get; set; }
     }
 }

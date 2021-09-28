@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
@@ -13,15 +14,16 @@ namespace Silky.Rpc.Runtime.Server
         }
 
         public string Id { get; set; }
-
         public string ServiceId { get; set; }
-
         public string ServiceName { get; set; }
+        public string Method { get; set; }
+        public bool ProhibitExtranet { get; set; }
+        public string WebApi { get; set; }
 
+        public HttpMethod HttpMethod { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public IDictionary<string, object> Metadatas { get; set; }
-
 
         public T GetMetadata<T>(string name, T def = default(T))
         {

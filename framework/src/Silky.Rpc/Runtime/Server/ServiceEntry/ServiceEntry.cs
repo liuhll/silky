@@ -82,7 +82,6 @@ namespace Silky.Rpc.Runtime.Server
                 GovernanceOptions.EnableCircuitBreaker = governanceProvider.EnableCircuitBreaker;
                 GovernanceOptions.BreakerSeconds = governanceProvider.BreakerSeconds;
                 GovernanceOptions.ExceptionsAllowedBeforeBreaking = governanceProvider.ExceptionsAllowedBeforeBreaking;
-                GovernanceOptions.CurrentLimit = governanceProvider.ConcurrentHandlingCount;
                 GovernanceOptions.ShuntStrategy = governanceProvider.ShuntStrategy;
                 GovernanceOptions.RetryTimes = governanceProvider.RetryTimes;
 
@@ -99,7 +98,7 @@ namespace Silky.Rpc.Runtime.Server
 
             GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;
         }
-
+        
         private void CreateFallBackExecutor()
         {
             var fallbackProviders = CustomAttributes
