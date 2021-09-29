@@ -73,9 +73,9 @@ namespace Silky.Http.Dashboard.AppService
                 {
                     AppServiceCount = p.Services.Length,
                     InstanceCount = p.Endpoints.Count(p => p.IsInstanceEndpoint()),
-                    Host = p.HostName,
-                    HasWsService = p.Endpoints.Any(p => p.ServiceProtocol == ServiceProtocol.Ws),
-                    LocalServiceEntriesCount = p.Services.SelectMany(p => p.ServiceEntries).Count()
+                    HostName = p.HostName,
+                    ServiceProtocols = p.Endpoints.Select(p => p.ServiceProtocol).Distinct().ToArray(),
+                    ServiceEntriesCount = p.Services.SelectMany(p => p.ServiceEntries).Count()
                 });
             return serverDescriptors.ToArray();
         }
@@ -106,16 +106,18 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             var hostInstances = server.Endpoints
-                .WhereIf(input.ServiceProtocol.HasValue, p => p.ServiceProtocol == input.ServiceProtocol)
-                .WhereIf(!input.ServiceProtocol.HasValue, p => p.Descriptor.IsInstanceEndpoint())
-                .Select(p => new GetHostInstanceOutput()
-                {
-                    HostName = server.HostName,
-                    IsHealth = SocketCheck.TestConnection(p.Host, p.Port),
-                    Address = p.Host,
-                    IsEnable = p.Enabled,
-                    ServiceProtocol = p.ServiceProtocol,
-                });
+                    .Select(p => new GetHostInstanceOutput()
+                    {
+                        HostName = server.HostName,
+                        IsHealth = SocketCheck.TestConnection(p.Host, p.Port),
+                        Address = p.Host,
+                        Port = p.Port,
+                        IsEnable = p.Enabled,
+                        LastDisableTime = p.LastDisableTime,
+                        ServiceProtocol = p.ServiceProtocol,
+                    })
+                    .WhereIf(input.ServiceProtocol.HasValue, p => p.ServiceProtocol == input.ServiceProtocol)
+                ;
 
             return hostInstances.ToPagedList(input.PageIndex, input.PageSize);
         }
