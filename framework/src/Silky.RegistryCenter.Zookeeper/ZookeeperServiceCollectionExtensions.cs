@@ -1,6 +1,7 @@
 using Silky.Core;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
+using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Runtime.Server;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -15,6 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IServerRegister, ZookeeperServerRegister>();
             services.AddSingleton<IZookeeperClientFactory, DefaultZookeeperClientFactory>();
             services.AddSingleton<IZookeeperStatusChange, ZookeeperServerRegister>();
+            services.AddSingleton<IRegisterCenterHealthProvider, ZookeeperRegisterCenterHealthProvider>();
             return services;
         }
     }

@@ -4,6 +4,7 @@ using Nacos.V2.DependencyInjection;
 using Silky.Core;
 using Silky.RegistryCenter.Nacos;
 using Silky.RegistryCenter.Nacos.Configuration;
+using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Runtime.Server;
 using IServiceProvider = Silky.RegistryCenter.Nacos.IServiceProvider;
 
@@ -21,6 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IServerRegister, NacosServerRegister>();
             services.AddSingleton<IServiceProvider, NacosServiceProvider>();
             services.AddSingleton<IServerRegisterProvider, NacosServerRegisterProvider>();
+            services.AddSingleton<IRegisterCenterHealthProvider, NocasRegisterCenterHealthProvider>();
 
             return services;
         }
@@ -38,6 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IServerRegister, NacosServerRegister>();
             services.AddSingleton<IServiceProvider, NacosServiceProvider>();
             services.AddSingleton<IServerRegisterProvider, NacosServerRegisterProvider>();
+            services.AddSingleton<IRegisterCenterHealthProvider, NocasRegisterCenterHealthProvider>();
             return services;
         }
     }

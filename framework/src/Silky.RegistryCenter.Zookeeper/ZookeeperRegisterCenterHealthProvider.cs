@@ -4,7 +4,7 @@ using Silky.Rpc.RegistryCenters;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
-    public class ZookeeperRegisterCenterHealthProvider : IRegisterCenterHealthProvider, ITransientDependency
+    public class ZookeeperRegisterCenterHealthProvider : IRegisterCenterHealthProvider
     {
         private readonly IZookeeperClientFactory _zookeeperClientFactory;
 
