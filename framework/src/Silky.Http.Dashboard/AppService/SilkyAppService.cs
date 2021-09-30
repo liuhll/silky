@@ -90,12 +90,7 @@ namespace Silky.Http.Dashboard.AppService
 
             return serverDescriptor;
         }
-
-        public IReadOnlyCollection<ServiceDescriptor> GetServices(string hostName)
-        {
-            return GetHostDetail(hostName).Services;
-        }
-
+        
         public PagedList<GetHostInstanceOutput> GetHostInstances(string hostName,
             GetHostInstanceInput input)
         {
@@ -241,7 +236,7 @@ namespace Silky.Http.Dashboard.AppService
             return serviceEntryDetailOutput;
         }
 
-        public PagedList<GetServiceEntryInstanceOutput> GetServiceEntryRoutes(string serviceEntryId, int pageIndex = 1,
+        public PagedList<GetServiceEntryInstanceOutput> GetServiceEntryInstances(string serviceEntryId, int pageIndex = 1,
             int pageSize = 10)
         {
             var serviceEntry = _serviceEntryManager.GetAllEntries().FirstOrDefault(p => p.Id == serviceEntryId);
@@ -250,7 +245,7 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"There is no service entry with id {serviceEntryId}");
             }
 
-            var serverInstances = _serverManager.ServerDescriptors.Where(p => p
+            var serverInstances = _serverManager.Servers.Where(p => p
                     .Services.Any(q => q.ServiceEntries.Any(e => e.Id == serviceEntryId)))
                 .SelectMany(p => p.Endpoints);
 
@@ -259,7 +254,9 @@ namespace Silky.Http.Dashboard.AppService
                 ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
                 ServiceId = serviceEntry.ServiceId,
                 ServiceEntryId = serviceEntry.Id,
-                Address = p.GetHostAddress(),
+                Address = p.Descriptor.GetHostAddress(),
+                Enabled = p.Enabled,
+                IsHealth = SocketCheck.TestConnection(p.Host,p.Port),
                 ServiceProtocol = p.ServiceProtocol
             });
 
@@ -466,7 +463,11 @@ namespace Silky.Http.Dashboard.AppService
                     externalRouteChild.Meta["ShowLink"] = true;
                     externalRouteChild.Meta["ExternalLink"] = true;
                     externalRoute.Meta["SavedPosition"] = false;
-                    externalRoute.Children.Add(externalRouteChild);
+                    if (externalRoute.Children.All(p => p.Path != externalRouteChild.Path))
+                    {
+                        externalRoute.Children.Add(externalRouteChild);
+                    }
+                   
                 }
 
                 externalRoutes.Add(externalRoute);

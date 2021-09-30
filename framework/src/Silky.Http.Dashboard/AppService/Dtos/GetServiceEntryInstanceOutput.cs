@@ -13,8 +13,10 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public string Address { get; set; }
 
         public bool IsHealth { get; set; }
-
-
+        
+        public bool Enabled { get; set; }
+        
         public ServiceProtocol ServiceProtocol { get; set; }
+        
     }
 }

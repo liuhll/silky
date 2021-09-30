@@ -19,12 +19,10 @@ namespace Silky.Http.Dashboard.AppService
 
         [HttpGet("host/{hostName}/detail")]
         ServerDescriptor GetHostDetail(string hostName);
-
-        IReadOnlyCollection<ServiceDescriptor> GetServices(string hostName);
+        
 
         [HttpGet("host/{hostName}/instances")]
-        PagedList<GetHostInstanceOutput> GetHostInstances(string hostName,
-            GetHostInstanceInput input);
+        PagedList<GetHostInstanceOutput> GetHostInstances(string hostName, GetHostInstanceInput input);
 
         GetGatewayOutput GetGateway();
 
@@ -36,8 +34,8 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("serviceentry/{serviceEntryId}/detail")]
         GetServiceEntryDetailOutput GetServiceEntryDetail(string serviceEntryId);
 
-        [HttpGet("serviceentry/{serviceEntryId}/routes")]
-        PagedList<GetServiceEntryInstanceOutput> GetServiceEntryRoutes(string serviceEntryId, int pageIndex = 1,
+        [HttpGet("serviceentry/{serviceEntryId}/instances")]
+        PagedList<GetServiceEntryInstanceOutput> GetServiceEntryInstances(string serviceEntryId, int pageIndex = 1,
             int pageSize = 10);
 
 

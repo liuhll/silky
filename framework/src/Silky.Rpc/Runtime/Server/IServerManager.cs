@@ -18,6 +18,8 @@ namespace Silky.Rpc.Runtime.Server
         IServer GetServer(string hostName);
 
         IReadOnlyList<ServerDescriptor> ServerDescriptors { get; }
+        
+        IReadOnlyList<IServer> Servers { get; }
 
         IRpcEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
 
