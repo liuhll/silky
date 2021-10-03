@@ -38,12 +38,20 @@ gateway:
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
   enableCors: true
 governance:
-  timeoutMillSeconds: 5000
+  timeoutMillSeconds: -1
 dashboard:
   displayWebApiInSwagger: true
-  useAuth: false
+  useAuth: true
+  loginWebApi: /api/account/login
   externalLinks:
     - title: "message.swagger"
       path: "http://localhost:5002"
-    - title: "WkyWalking"
+      icon: "iconfont icon-swagger"
+    - title: "SkyWalking"
       path: "http://localhost:8180"
+    - title: "Github"
+      path: "https://github.com/liuhll/silky"
+      icon: "iconfont icon-github"
+    - title: "Gitee"
+      path: "https://gitee.com/liuhll2/silky"
+      icon: "iconfont icon-gitee2"
