@@ -24,6 +24,9 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("host/{hostName}/instances")]
         PagedList<GetHostInstanceOutput> GetHostInstances(string hostName, GetHostInstanceInput input);
 
+        [HttpGet("host/{hostName}/wsservices")]
+        PagedList<GetWebSocketServiceOutput> GetWebSocketServices(string hostName, PagedRequestDto input);
+
         [HttpGet("services")]
         IReadOnlyCollection<GetServiceOutput> GetServices(string hostName);
 

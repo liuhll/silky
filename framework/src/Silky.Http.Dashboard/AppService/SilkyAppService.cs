@@ -120,6 +120,32 @@ namespace Silky.Http.Dashboard.AppService
             return hostInstances.ToPagedList(input.PageIndex, input.PageSize);
         }
 
+        public PagedList<GetWebSocketServiceOutput> GetWebSocketServices(string hostName, PagedRequestDto input)
+        {
+            var webSocketServiceOutputs = new List<GetWebSocketServiceOutput>();
+
+            var server = _serverManager.GetServer(hostName);
+            var wsServices = server.Services.Where(p => p.ServiceProtocol == ServiceProtocol.Ws);
+            var endpoints = server.Endpoints.Where(p => p.ServiceProtocol == ServiceProtocol.Ws);
+            foreach (var wsService in wsServices)
+            {
+                foreach (var endpoint in endpoints)
+                {
+                    var webSocketServiceOutput = new GetWebSocketServiceOutput()
+                    {
+                        HostName = server.HostName,
+                        ServiceId = wsService.Id,
+                        ServiceName = wsService.ServiceName,
+                        Address = endpoint.GetAddress(),
+                        Path = wsService.GetWsPath()
+                    };
+                    webSocketServiceOutputs.Add(webSocketServiceOutput);
+                }
+            }
+            
+            return webSocketServiceOutputs.ToPagedList(input.PageIndex,input.PageSize);
+        }
+
         public IReadOnlyCollection<GetServiceOutput> GetServices(string hostName)
         {
             return _serverManager.ServerDescriptors.SelectMany(p => p.Services.Select(s => new GetServiceOutput()

@@ -49,8 +49,9 @@ namespace GatewayDemo
                 app.UseSwaggerDocuments();
                 app.UseMiniProfiler();
             }
-            
+
             app.UseSerilogRequestLogging();
+            app.UseDashboard();
             app.UseRouting();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
