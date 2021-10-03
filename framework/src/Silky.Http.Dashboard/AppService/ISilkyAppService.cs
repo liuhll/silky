@@ -34,6 +34,12 @@ namespace Silky.Http.Dashboard.AppService
 
         [HttpGet("gateway/instances")]
         PagedList<GetGatewayInstanceOutput> GetGatewayInstances(PagedRequestDto input);
+        
+        [HttpGet("gateway/serviceentries")]
+        PagedList<ServiceEntryDescriptor> GetGatewayServiceEntries(GetGatewayServiceEntryInput input);
+        
+        [HttpGet("gateway/services")]
+        ICollection<GetServiceOutput> GetGatewayServices();
 
         PagedList<GetServiceEntryOutput> GetServiceEntries(GetServiceEntryInput input);
 
@@ -43,8 +49,7 @@ namespace Silky.Http.Dashboard.AppService
         [HttpGet("serviceentry/{serviceEntryId}/instances")]
         PagedList<GetServiceEntryInstanceOutput> GetServiceEntryInstances(string serviceEntryId, int pageIndex = 1,
             int pageSize = 10);
-
-
+        
         [HttpGet("instance/{address}/detail")]
         Task<GetInstanceDetailOutput> GetInstanceDetail(string address);
 

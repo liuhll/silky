@@ -1,12 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Rpc;
 using Silky.Http.Dashboard.AppService.Dtos;
@@ -25,6 +26,7 @@ namespace Silky.Http.Dashboard.AppService
     public class SilkyAppService : ISilkyAppService
     {
         private readonly IServerManager _serverManager;
+        private readonly IServiceManager _serviceManager;
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IRemoteExecutor _remoteExecutor;
@@ -46,6 +48,7 @@ namespace Silky.Http.Dashboard.AppService
 
         public SilkyAppService(
             IServerManager serverManager,
+            IServiceManager serviceManager,
             IServiceEntryManager serviceEntryManager,
             IServiceEntryLocator serviceEntryLocator,
             IRemoteExecutor remoteExecutor,
@@ -57,6 +60,7 @@ namespace Silky.Http.Dashboard.AppService
 
             _remoteExecutor = remoteExecutor;
             _registerCenterHealthProvider = registerCenterHealthProvider;
+            _serviceManager = serviceManager;
             _localExecutor = localExecutor;
             _serviceEntryLocator = serviceEntryLocator;
         }
@@ -142,21 +146,21 @@ namespace Silky.Http.Dashboard.AppService
                     webSocketServiceOutputs.Add(webSocketServiceOutput);
                 }
             }
-            
-            return webSocketServiceOutputs.ToPagedList(input.PageIndex,input.PageSize);
+
+            return webSocketServiceOutputs.ToPagedList(input.PageIndex, input.PageSize);
         }
 
         public IReadOnlyCollection<GetServiceOutput> GetServices(string hostName)
         {
-            return _serverManager.ServerDescriptors.SelectMany(p => p.Services.Select(s => new GetServiceOutput()
+            return _serverManager.ServerDescriptors
+                .WhereIf(!hostName.IsNullOrEmpty(), p => p.HostName.Equals(hostName))
+                .SelectMany(p => p.Services.Select(s => new GetServiceOutput()
                 {
-                    HostName = p.HostName,
                     ServiceName = s.ServiceName,
                     ServiceId = s.Id,
                     ServiceProtocol = s.ServiceProtocol
                 }))
                 .Distinct()
-                .WhereIf(!hostName.IsNullOrEmpty(), p => p.HostName.Equals(hostName))
                 .ToArray();
         }
 
@@ -166,7 +170,10 @@ namespace Silky.Http.Dashboard.AppService
             return new GetGatewayOutput()
             {
                 HostName = gateway.HostName,
-                InstanceCount = gateway.Endpoints.Count(p => p.ServiceProtocol.IsHttp())
+                InstanceCount = gateway.Endpoints.Count(p => p.ServiceProtocol.IsHttp()),
+                SupportWebSocketProxy = EngineContext.Current.IsContainWebSocketModule(),
+                SupportServiceCount = _serviceManager.GetAllService().Count,
+                SupportServiceEntryCount = _serviceEntryManager.GetAllEntries().Count
             };
         }
 
@@ -181,8 +188,11 @@ namespace Silky.Http.Dashboard.AppService
                 var gatewayInstance = new GetGatewayInstanceOutput()
                 {
                     HostName = gateway.HostName,
-                    Address = addressDescriptor.Host,
+                    Address =
+                        $"{addressDescriptor.ServiceProtocol}://{addressDescriptor.Host}:{addressDescriptor.Port}"
+                            .ToLower(),
                     Port = addressDescriptor.Port,
+                    ServiceProtocol = addressDescriptor.ServiceProtocol
                 };
                 gatewayInstances.Add(gatewayInstance);
             }
@@ -190,16 +200,62 @@ namespace Silky.Http.Dashboard.AppService
             return gatewayInstances.ToPagedList(input.PageIndex, input.PageSize);
         }
 
+
+        public PagedList<ServiceEntryDescriptor> GetGatewayServiceEntries(GetGatewayServiceEntryInput input)
+        {
+            var serviceEntries = _serviceEntryManager
+                    .GetAllEntries()
+                    .Select(p => p.ServiceEntryDescriptor)
+                    .Where(p => !p.ProhibitExtranet)
+                    .WhereIf(!input.ServiceId.IsNullOrEmpty(), p => p.ServiceId.Equals(input.ServiceId))
+                    .WhereIf(!input.SearchKey.IsNullOrEmpty(), p =>
+                        p.ServiceId.Contains(input.SearchKey) ||
+                        p.ServiceName.Contains(input.SearchKey) ||
+                        p.Id.Contains(input.SearchKey) ||
+                        p.WebApi.Contains(input.SearchKey)
+                    )
+                ;
+            return serviceEntries.ToPagedList(input.PageIndex, input.PageSize);
+        }
+
+        public ICollection<GetServiceOutput> GetGatewayServices()
+        {
+            var services = _serviceManager.GetAllService()
+                .Where(p => !p.ServiceDescriptor.IsSilkyService())
+                .Select(p => new GetServiceOutput()
+                {
+                    ServiceId = p.Id,
+                    ServiceName = p.ServiceDescriptor.ServiceName,
+                    ServiceProtocol = p.ServiceProtocol
+                }).Distinct().ToList();
+            return services;
+        }
+
         public PagedList<GetServiceEntryOutput> GetServiceEntries(GetServiceEntryInput input)
         {
             var serviceEntryOutputs = GetAllServiceEntryFromCache();
 
             serviceEntryOutputs = serviceEntryOutputs
-                .WhereIf(!input.HostName.IsNullOrEmpty(), p => input.HostName.Equals(p.HostName))
-                .WhereIf(!input.ServiceId.IsNullOrEmpty(), p => input.ServiceId.Equals(p.ServiceId))
-                .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => input.ServiceEntryId.Equals(p.ServiceEntryId))
-                .WhereIf(!input.Name.IsNullOrEmpty(), p => p.ServiceEntryId.Contains(input.Name))
+                .WhereIf(!input.HostName.IsNullOrEmpty(),
+                    p => input.HostName.Equals(p.HostName))
+                .WhereIf(!input.ServiceId.IsNullOrEmpty(),
+                    p => input.ServiceId.Equals(p.ServiceId))
+                .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(),
+                    p => input.ServiceEntryId.Equals(p.ServiceEntryId))
+                .WhereIf(!input.SearchKey.IsNullOrEmpty(),
+                    p =>
+                        p.ServiceEntryId.Contains(input.SearchKey) ||
+                        p.Author?.Contains(input.SearchKey) == true ||
+                        p.WebApi?.Contains(input.SearchKey) == true ||
+                        p.Method.Contains(input.SearchKey)
+                )
                 .WhereIf(input.IsEnable.HasValue, p => p.IsEnable == input.IsEnable)
+                .WhereIf(input.IsAllowAnonymous.HasValue, p => p.IsAllowAnonymous == input.IsAllowAnonymous)
+                .WhereIf(input.ProhibitExtranet.HasValue, p => p.ProhibitExtranet == input.ProhibitExtranet)
+                .WhereIf(input.IsDistributeTransaction.HasValue,
+                    p => p.IsDistributeTransaction == input.IsDistributeTransaction)
+                .WhereIf(input.MultipleServiceKey.HasValue, p=> p.MultipleServiceKey == input.MultipleServiceKey)
+                .WhereIf(input.IsSystem.HasValue, p=> p.IsSystem == input.IsSystem)
                 .OrderBy(p => p.HostName)
                 .ThenBy(p => p.ServiceId)
                 .ToList();
@@ -232,6 +288,7 @@ namespace Silky.Http.Dashboard.AppService
                             WebApi = p.WebApi,
                             HttpMethod = p.HttpMethod,
                             Method = p.Method,
+                            IsSystem = service.IsSilkyService(),
                             IsDistributeTransaction = p.IsDistributeTransaction,
                             ServiceKeys = service.GetServiceKeys()?.Select(p => new ServiceKeyOutput()
                             {

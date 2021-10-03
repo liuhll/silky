@@ -36,6 +36,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public ICollection<ServiceKeyOutput> ServiceKeys { get; set; }
-       
+        
+        public bool IsSystem { get; set; }
     }
 }
