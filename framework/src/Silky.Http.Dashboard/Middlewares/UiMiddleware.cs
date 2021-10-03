@@ -72,11 +72,11 @@ namespace Silky.Http.Dashboard.Middlewares
                         var loginWebApi = _options.LoginWebApi.StartsWith("/")
                             ? _options.LoginWebApi
                             : "/" + _options.LoginWebApi;
-                        htmlBuilder.Replace("%(loginWebApi)", _options.PathBase + loginWebApi);
+                        htmlBuilder.Replace("%(authApi)", _options.PathBase + loginWebApi);
                     }
                     else
                     {
-                        htmlBuilder.Replace("%(loginWebApi)", "");
+                        htmlBuilder.Replace("%(authApi)", "");
                     }
 
                     htmlBuilder.Replace("%(pollingInterval)", _options.StatsPollingInterval.ToString());
