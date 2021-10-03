@@ -42,10 +42,6 @@ namespace Silky.Rpc.Runtime.Server
         int RetryTimes { get; set; }
 
         int RetryIntervalMillSeconds { get; set; }
-
-        /// <summary>
-        /// 当个服务允许的最大处理
-        /// </summary>
-        int ConcurrentHandlingCount { get; set; }
+        
     }
 }

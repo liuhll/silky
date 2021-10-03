@@ -17,13 +17,16 @@ namespace Silky.Rpc.Runtime.Server
         public string ServiceId { get; set; }
         public string ServiceName { get; set; }
         public string Method { get; set; }
-        public bool ProhibitExtranet { get; set; }
         public string WebApi { get; set; }
-
         public HttpMethod HttpMethod { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public IDictionary<string, object> Metadatas { get; set; }
+        
+        public bool ProhibitExtranet { get; set; }
+        
+        public bool IsAllowAnonymous { get; set; }
+        public bool IsDistributeTransaction { get; set; }
 
         public T GetMetadata<T>(string name, T def = default(T))
         {

@@ -13,6 +13,7 @@ using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Http.Dashboard.Configuration;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.CachingInterceptor.Providers;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Runtime.Client;
@@ -90,7 +91,7 @@ namespace Silky.Http.Dashboard.AppService
 
             return serverDescriptor;
         }
-        
+
         public PagedList<GetHostInstanceOutput> GetHostInstances(string hostName,
             GetHostInstanceInput input)
         {
@@ -101,11 +102,13 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             var hostInstances = server.Endpoints
+                    .Where(p => p.Descriptor.IsInstanceEndpoint())
                     .Select(p => new GetHostInstanceOutput()
                     {
                         HostName = server.HostName,
                         IsHealth = SocketCheck.TestConnection(p.Host, p.Port),
-                        Address = p.Host,
+                        Address = p.GetAddress(),
+                        Host = p.Host,
                         Port = p.Port,
                         IsEnable = p.Enabled,
                         LastDisableTime = p.LastDisableTime,
@@ -115,6 +118,20 @@ namespace Silky.Http.Dashboard.AppService
                 ;
 
             return hostInstances.ToPagedList(input.PageIndex, input.PageSize);
+        }
+
+        public IReadOnlyCollection<GetServiceOutput> GetServices(string hostName)
+        {
+            return _serverManager.ServerDescriptors.SelectMany(p => p.Services.Select(s => new GetServiceOutput()
+                {
+                    HostName = p.HostName,
+                    ServiceName = s.ServiceName,
+                    ServiceId = s.Id,
+                    ServiceProtocol = s.ServiceProtocol
+                }))
+                .Distinct()
+                .WhereIf(!hostName.IsNullOrEmpty(), p => p.HostName.Equals(hostName))
+                .ToArray();
         }
 
         public GetGatewayOutput GetGateway()
@@ -166,7 +183,7 @@ namespace Silky.Http.Dashboard.AppService
         private List<GetServiceEntryOutput> GetAllServiceEntryFromCache()
         {
             var serviceEntryOutputs = new List<GetServiceEntryOutput>();
-            var servers = _serverManager.ServerDescriptors;
+            var servers = _serverManager.Servers;
             foreach (var server in servers)
             {
                 foreach (var service in server.Services)
@@ -178,13 +195,18 @@ namespace Silky.Http.Dashboard.AppService
                             ServiceId = service.Id,
                             ServiceEntryId = p.Id,
                             HostName = server.HostName,
-                            IsEnable = server.Endpoints.Any(),
+                            IsEnable = server.Endpoints.Any(p => p.Enabled),
+                            ServerInstanceCount = server.Endpoints.Count(p =>
+                                p.ServiceProtocol == service.ServiceProtocol && p.Enabled),
+                            ServiceProtocol = p.ServiceProtocol,
                             MultipleServiceKey = service.MultiServiceKeys(),
                             Author = p.GetAuthor(),
                             ProhibitExtranet = p.ProhibitExtranet,
+                            IsAllowAnonymous = p.IsAllowAnonymous,
                             WebApi = p.WebApi,
                             HttpMethod = p.HttpMethod,
                             Method = p.Method,
+                            IsDistributeTransaction = p.IsDistributeTransaction,
                             ServiceKeys = service.GetServiceKeys()?.Select(p => new ServiceKeyOutput()
                             {
                                 Name = p.Key,
@@ -200,29 +222,31 @@ namespace Silky.Http.Dashboard.AppService
 
         public GetServiceEntryDetailOutput GetServiceEntryDetail(string serviceEntryId)
         {
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
-            if (serviceEntry == null)
+            var serviceEntryOutput =
+                GetAllServiceEntryFromCache().FirstOrDefault(p => p.ServiceEntryId == serviceEntryId);
+            if (serviceEntryOutput == null)
             {
                 throw new BusinessException($"There is no service entry with id {serviceEntryId}");
             }
 
-            var serviceEntryOutput = GetAllServiceEntryFromCache().First(p => p.ServiceEntryId == serviceEntryId);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryOutput.ServiceEntryId);
             var serviceEntryDetailOutput = new GetServiceEntryDetailOutput()
             {
                 HostName = serviceEntryOutput.HostName,
-                ServiceEntryId = serviceEntry.Id,
-                ServiceId = serviceEntry.ServiceEntryDescriptor.ServiceId,
-                ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
-                Author = serviceEntry.ServiceEntryDescriptor.GetAuthor(),
-                WebApi = serviceEntry.GovernanceOptions.ProhibitExtranet ? "" : serviceEntry.Router.RoutePath,
-                HttpMethod = serviceEntry.GovernanceOptions.ProhibitExtranet ? null : serviceEntry.Router.HttpMethod,
-                ProhibitExtranet = serviceEntry.GovernanceOptions.ProhibitExtranet,
-                Method = serviceEntry.MethodInfo.Name,
+                ServiceEntryId = serviceEntryOutput.ServiceEntryId,
+                ServiceId = serviceEntryOutput.ServiceId,
+                ServiceName = serviceEntryOutput.ServiceName,
+                ServiceProtocol = serviceEntryOutput.ServiceProtocol,
+                Author = serviceEntryOutput.Author,
+                WebApi = serviceEntryOutput.WebApi,
+                HttpMethod = serviceEntryOutput.HttpMethod,
+                ProhibitExtranet = serviceEntryOutput.ProhibitExtranet,
+                Method = serviceEntryOutput.Method,
                 MultipleServiceKey = serviceEntryOutput.MultipleServiceKey,
                 IsEnable = serviceEntryOutput.IsEnable,
                 ServerInstanceCount = serviceEntryOutput.ServerInstanceCount,
-                GovernanceOptions = serviceEntry.GovernanceOptions,
-                CacheTemplates = serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().Select(p =>
+                Governance = serviceEntry?.GovernanceOptions,
+                CacheTemplates = serviceEntry?.CustomAttributes.OfType<ICachingInterceptProvider>().Select(p =>
                     new ServiceEntryCacheTemplateOutput()
                     {
                         KeyTemplete = p.KeyTemplete,
@@ -230,33 +254,40 @@ namespace Silky.Http.Dashboard.AppService
                         CachingMethod = p.CachingMethod
                     }).ToArray(),
                 ServiceKeys = serviceEntryOutput.ServiceKeys,
-                IsDistributeTransaction = serviceEntry.IsTransactionServiceEntry()
+                IsDistributeTransaction = serviceEntryOutput.IsDistributeTransaction,
+                Fallbacks = serviceEntry?.CustomAttributes.OfType<FallbackAttribute>().Select(p => new FallbackOutput()
+                {
+                    TypeName = p.Type.FullName,
+                    MethodName = p.MethodName ?? serviceEntry?.MethodInfo.Name,
+                    Weight = p.Weight
+                }).ToArray()
             };
 
             return serviceEntryDetailOutput;
         }
 
-        public PagedList<GetServiceEntryInstanceOutput> GetServiceEntryInstances(string serviceEntryId, int pageIndex = 1,
+        public PagedList<GetServiceEntryInstanceOutput> GetServiceEntryInstances(string serviceEntryId,
+            int pageIndex = 1,
             int pageSize = 10)
         {
-            var serviceEntry = _serviceEntryManager.GetAllEntries().FirstOrDefault(p => p.Id == serviceEntryId);
-            if (serviceEntry == null)
+            var serviceEntryDescriptor = _serverManager.ServerDescriptors
+                .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
+                .FirstOrDefault(p => p.Id == serviceEntryId);
+            if (serviceEntryDescriptor == null)
             {
                 throw new BusinessException($"There is no service entry with id {serviceEntryId}");
             }
 
             var serverInstances = _serverManager.Servers.Where(p => p
                     .Services.Any(q => q.ServiceEntries.Any(e => e.Id == serviceEntryId)))
-                .SelectMany(p => p.Endpoints);
+                .SelectMany(p => p.Endpoints).Where(p => p.ServiceProtocol == serviceEntryDescriptor.ServiceProtocol);
 
             var serviceEntryInstances = serverInstances.Select(p => new GetServiceEntryInstanceOutput()
             {
-                ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
-                ServiceId = serviceEntry.ServiceId,
-                ServiceEntryId = serviceEntry.Id,
+                ServiceEntryId = serviceEntryId,
                 Address = p.Descriptor.GetHostAddress(),
                 Enabled = p.Enabled,
-                IsHealth = SocketCheck.TestConnection(p.Host,p.Port),
+                IsHealth = SocketCheck.TestConnection(p.Host, p.Port),
                 ServiceProtocol = p.ServiceProtocol
             });
 
@@ -276,16 +307,13 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} is unHealth");
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
-
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getInstanceSupervisorServiceEntryId);
             if (serviceEntry == null)
             {
                 throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceEntryId}");
             }
 
-            var result =
-                (await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null)) as GetInstanceDetailOutput;
+            var result = await ServiceEntryExec<GetInstanceDetailOutput>(address, serviceEntry);
             if (result?.Address != address)
             {
                 throw new SilkyException("The rpc address of the routing instance is wrong");
@@ -308,28 +336,22 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} is unHealth");
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
+
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceHandle);
             if (serviceEntry == null)
             {
                 throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceHandle}");
             }
 
-            IReadOnlyCollection<ServiceEntryHandleInfo> result;
-            if (serviceEntry.IsLocal)
-            {
-                result =
-                    await _localExecutor.Execute(serviceEntry, Array.Empty<object>()) as
-                        IReadOnlyCollection<ServiceEntryHandleInfo>;
-            }
-            else
-            {
-                result =
-                    await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
-                        IReadOnlyCollection<ServiceEntryHandleInfo>;
-            }
+            var result = await ServiceEntryExec<IReadOnlyCollection<ServiceEntryHandleInfo>>(address, serviceEntry);
 
             return result.ToPagedList(input.PageIndex, input.PageSize);
+        }
+
+        private bool IsLocalAddress(string address)
+        {
+            var localAddress = RpcEndpointHelper.GetLocalRpcEndpointDescriptor().GetHostAddress();
+            return localAddress.Equals(address);
         }
 
 
@@ -347,27 +369,13 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} is unHealth");
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
-
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceInvoke);
             if (serviceEntry == null)
             {
                 throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceInvoke}");
             }
 
-            IReadOnlyCollection<ServiceEntryInvokeInfo> result;
-            if (serviceEntry.IsLocal)
-            {
-                result =
-                    await _localExecutor.Execute(serviceEntry, Array.Empty<object>()) as
-                        IReadOnlyCollection<ServiceEntryInvokeInfo>;
-            }
-            else
-            {
-                result =
-                    await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null) as
-                        IReadOnlyCollection<ServiceEntryInvokeInfo>;
-            }
+            var result = await ServiceEntryExec<IReadOnlyCollection<ServiceEntryInvokeInfo>>(address, serviceEntry);
 
             return result.ToPagedList(input.PageIndex, input.PageSize);
         }
@@ -467,7 +475,6 @@ namespace Silky.Http.Dashboard.AppService
                     {
                         externalRoute.Children.Add(externalRouteChild);
                     }
-                   
                 }
 
                 externalRoutes.Add(externalRoute);
@@ -485,6 +492,24 @@ namespace Silky.Http.Dashboard.AppService
                 Meta = new Dictionary<string, object>()
             };
             return externalRoute;
+        }
+
+        private async Task<T> ServiceEntryExec<T>(string address, ServiceEntry serviceEntry)
+        {
+            T result = default(T);
+            if (IsLocalAddress(address))
+            {
+                result =
+                    (T)await _localExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
+            }
+            else
+            {
+                RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
+                result =
+                    (T)await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
+            }
+
+            return result;
         }
     }
 }

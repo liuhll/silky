@@ -94,7 +94,7 @@ namespace Silky.Rpc.Runtime.Server
                 ServiceId = serviceId,
                 ServiceName = routeTemplateProvider.GetServiceName(serviceType),
                 ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceType, isLocal, false),
-                Method = method.Name
+                Method = method.Name,
             };
 
             var metaDataList = method.GetCustomAttributes<MetadataAttribute>();

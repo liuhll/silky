@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 
@@ -25,7 +26,7 @@ namespace Silky.Rpc.AppServices
             var instanceSupervisorOutput = new GetInstanceDetailOutput()
             {
                 HostName = EngineContext.Current.HostName,
-                Address = RpcEndpointHelper.GetLocalTcpEndpoint().Descriptor.ToString(),
+                Address = RpcEndpointHelper.GetLocalRpcEndpointDescriptor().GetHostAddress(),
                 StartTime = Process.GetCurrentProcess().StartTime,
                 InvokeInfo = _invokeSupervisor.GetServiceInstanceInvokeInfo(),
                 HandleInfo = _serverHandleSupervisor.GetServiceInstanceHandleInfo()

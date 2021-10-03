@@ -4,8 +4,6 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class ServerInstanceHandleInfo
     {
-        public int MaxConcurrentHandles { get; set; } = 0;
-
         public DateTime? FirstHandleTime { get; set; }
 
         public DateTime? FinalHandleTime { get; set; }
@@ -13,9 +11,9 @@ namespace Silky.Rpc.Runtime.Server
         public double? AET { get; set; }
 
         public DateTime? FinalFaultHandleTime { get; set; }
-        public int FaultHandles { get; set; } = 0;
-        public int TotalSeriousError { get; set; } = 0;
-        public int TotalHandles { get; set; } = 0;
+        public int FaultHandleCount { get; set; } = 0;
+        public int TotalSeriousErrorCount { get; set; } = 0;
+        public int TotalHandleCount { get; set; } = 0;
 
         public DateTime? FinalSeriousErrorTime { get; set; }
     }

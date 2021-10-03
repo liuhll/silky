@@ -9,5 +9,6 @@ namespace Silky.Rpc.Runtime.Client
         public bool IsEnable { get; set; }
 
         public string ServiceEntryId { get; set; }
+        
     }
 }

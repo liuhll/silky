@@ -21,26 +21,10 @@ namespace Silky.Rpc.Endpoint.Descriptor
 
         public static string GetHostAddress(this RpcEndpointDescriptor rpcEndpointDescriptor)
         {
-            string address = String.Empty;
-            switch (rpcEndpointDescriptor.ServiceProtocol)
-            {
-                case ServiceProtocol.Http:
-                case ServiceProtocol.Https:
-                case ServiceProtocol.Ws:
-                case ServiceProtocol.Wss:
-                case ServiceProtocol.Mqtt:
-                    address =
-                        $"{rpcEndpointDescriptor.ServiceProtocol.ToString().ToLower()}://{rpcEndpointDescriptor.Host}:{rpcEndpointDescriptor.Port}";
-                    break;
-                case ServiceProtocol.Tcp:
-                    address =
-                        $"{rpcEndpointDescriptor.Host}:{rpcEndpointDescriptor.Port}";
-                    break;
-            }
-
+            var address = $"{rpcEndpointDescriptor.Host}:{rpcEndpointDescriptor.Port}";
             return address;
         }
-        
+
         public static bool IsInstanceEndpoint(this RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             return rpcEndpointDescriptor.ServiceProtocol != ServiceProtocol.Ws;

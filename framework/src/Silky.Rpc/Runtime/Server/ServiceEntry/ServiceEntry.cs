@@ -95,10 +95,22 @@ namespace Silky.Rpc.Runtime.Server
             var allowAnonymous = CustomAttributes.OfType<IAllowAnonymous>().FirstOrDefault() ?? MethodInfo
                 .DeclaringType
                 .GetCustomAttributes().OfType<IAllowAnonymous>().FirstOrDefault();
-
             GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;
+            UpdateServiceEntryDescriptor(GovernanceOptions);
         }
-        
+
+        private void UpdateServiceEntryDescriptor(ServiceEntryGovernance serviceEntryGovernance)
+        {
+            ServiceEntryDescriptor.IsAllowAnonymous = serviceEntryGovernance.IsAllowAnonymous;
+            ServiceEntryDescriptor.ProhibitExtranet = serviceEntryGovernance.ProhibitExtranet;
+            ServiceEntryDescriptor.IsDistributeTransaction = this.IsTransactionServiceEntry();
+            if (!serviceEntryGovernance.ProhibitExtranet)
+            {
+                ServiceEntryDescriptor.WebApi = Router.RoutePath;
+                ServiceEntryDescriptor.HttpMethod = Router.HttpMethod;
+            }
+        }
+
         private void CreateFallBackExecutor()
         {
             var fallbackProviders = CustomAttributes

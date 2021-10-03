@@ -1,3 +1,5 @@
+using Silky.Core.Rpc;
+
 namespace Silky.Http.Dashboard.AppService.Dtos
 {
     public class GetServiceOutput
@@ -7,7 +9,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public string ServiceId { get; set; }
 
         public string ServiceName { get; set; }
-
-        public int InstanceCount { get; set; }
+        
+        public ServiceProtocol ServiceProtocol { get; set; }
     }
 }

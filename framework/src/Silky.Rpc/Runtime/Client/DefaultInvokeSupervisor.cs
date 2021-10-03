@@ -14,15 +14,15 @@ namespace Silky.Rpc.Runtime.Client
     {
         private ConcurrentDictionary<(string, IRpcEndpoint), ClientInvokeInfo> m_monitor = new();
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-       
+        private readonly IServiceEntryLocator _serviceEntryLocator;
         public ILogger<DefaultInvokeSupervisor> Logger { get; set; }
-
-
+        
         public DefaultInvokeSupervisor(IRpcEndpointMonitor rpcEndpointMonitor,
             IServiceEntryLocator serviceEntryLocator)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
-            
+            _serviceEntryLocator = serviceEntryLocator;
+
             _rpcEndpointMonitor.OnStatusChange += async (model, health) =>
             {
                 if (!health)
@@ -91,9 +91,8 @@ namespace Silky.Rpc.Runtime.Client
                 serviceInstanceInvokeInfo = new ServiceInstanceInvokeInfo()
                 {
                     AET = m_monitor.Values.Sum(p => p.AET) / m_monitor.Count,
-                    MaxConcurrentRequests = m_monitor.Values.Max(p => p.ConcurrentInvokeCount),
-                    FaultRequests = m_monitor.Values.Sum(p => p.FaultInvokeCount),
-                    TotalRequests = m_monitor.Values.Sum(p => p.TotalInvokeCount),
+                    FaultInvokeCount = m_monitor.Values.Sum(p => p.FaultInvokeCount),
+                    TotalInvokeCount = m_monitor.Values.Sum(p => p.TotalInvokeCount),
                     FinalInvokeTime = m_monitor.Values.Max(p => p.FinalInvokeTime),
                     FinalFaultInvokeTime = m_monitor.Values.Max(p => p.FinalFaultInvokeTime),
                     FirstInvokeTime = m_monitor.Values.Min(p => p.FirstInvokeTime)

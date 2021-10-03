@@ -65,13 +65,12 @@ namespace Silky.Rpc.Runtime.Server
                 serverInstanceHandleInfo = new ServerInstanceHandleInfo()
                 {
                     AET = m_monitor.Values.Sum(p => p.AET) / m_monitor.Count,
-                    MaxConcurrentHandles = m_monitor.Values.Max(p => p.ConcurrentHandleCount),
-                    FaultHandles = m_monitor.Values.Sum(p => p.FaultHandleCount),
-                    TotalHandles = m_monitor.Values.Sum(p => p.TotalHandleCount),
+                    FaultHandleCount = m_monitor.Values.Sum(p => p.FaultHandleCount),
+                    TotalHandleCount = m_monitor.Values.Sum(p => p.TotalHandleCount),
                     FirstHandleTime = m_monitor.Values.Max(p => p.FirstHandleTime),
                     FinalHandleTime = m_monitor.Values.Max(p => p.FinalHandleTime),
                     FinalFaultHandleTime = m_monitor.Values.Min(p => p.FinalFaultHandleTime),
-                    TotalSeriousError = m_monitor.Values.Sum(p => p.SeriousError),
+                    TotalSeriousErrorCount = m_monitor.Values.Sum(p => p.SeriousError),
                     FinalSeriousErrorTime = m_monitor.Values.Max(p => p.SeriousErrorTime),
                 };
             }

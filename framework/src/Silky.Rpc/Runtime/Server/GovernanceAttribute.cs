@@ -17,7 +17,6 @@ namespace Silky.Rpc.Runtime.Server
             BreakerSeconds = 60;
             RetryIntervalMillSeconds = 50;
             RetryTimes = 0;
-            ConcurrentHandlingCount = 50;
         }
 
         /// <summary>
@@ -34,12 +33,7 @@ namespace Silky.Rpc.Runtime.Server
         /// Whether to enable cache interception
         /// </summary>
         public bool EnableCachingInterceptor { get; set; }
-
-        /// <summary>
-        /// Maximum allowed concurrency
-        /// </summary>
-        public int ConcurrentHandlingCount { get; set; }
-
+        
 
         /// <summary>
         /// Whether to open the circuit breaker
