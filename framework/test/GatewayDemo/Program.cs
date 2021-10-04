@@ -6,17 +6,15 @@ namespace GatewayDemo
 {
     public class Program
     {
-        public async static Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            // LogManager.UseConsoleLogging(LogLevel.Debug);
             await CreateHostBuilder(args).Build().RunAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyWebHostDefaults()
-                .ConfigureWebHostDefaults(webBuilder =>
+                .ConfigureSilkyWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
                         .UseSerilogDefault();
