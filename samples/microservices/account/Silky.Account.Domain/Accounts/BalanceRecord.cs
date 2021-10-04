@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Silky.Account.Domain.Shared.Accounts;
 using Silky.EntityFrameworkCore.Entities;
-using Silky.Rpc.Runtime.Session;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Account.Domain.Accounts
 {

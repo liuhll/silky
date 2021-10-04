@@ -4,7 +4,7 @@ governance:
   executionTimeout: -1
 registrycenter:
   connectionStrings: silky.zoo1:2181,silky.zoo2:2181,silky.zoo3:2181;silky.zoo4:2181,silky.zoo5:2181,silky.zoo6:2181
-  registryCenterType: Zookeeper
+  type: Zookeeper
 distributedCache:
   redis:
     isEnabled: true

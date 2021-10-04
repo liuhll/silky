@@ -15,5 +15,6 @@ namespace Silky.Account.Domain.Accounts
         Task<long?> DeductBalance(DeductBalanceInput input, TccMethodType tccMethodType);
         Task<string> Login(LoginInput input);
         Task<GetAccountOutput> GetLoginUserInfo();
+        Task<string> DashboardLogin(DashboardLoginInput input);
     }
 }

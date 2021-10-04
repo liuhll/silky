@@ -41,7 +41,7 @@ governance:
   timeoutMillSeconds: -1
 dashboard:
   displayWebApiInSwagger: true
-  useAuth: true
+  useAuth: false
   loginWebApi: /api/account/login
   externalLinks:
     - title: "message.swagger"

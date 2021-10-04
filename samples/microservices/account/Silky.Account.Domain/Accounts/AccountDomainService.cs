@@ -11,7 +11,7 @@ using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Jwt;
-using Silky.Rpc.Runtime.Session;
+using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
 using Silky.Transaction.Tcc;
 
@@ -209,6 +209,17 @@ namespace Silky.Account.Domain.Accounts
             }
 
             return userInfo.Adapt<GetAccountOutput>();
+        }
+
+        public async Task<string> DashboardLogin(DashboardLoginInput input)
+        {
+
+            var payload = new Dictionary<string, object>()
+            {
+                { ClaimTypes.UserId, 1 },
+                { ClaimTypes.UserName, "admin" },
+            };
+            return _jwtTokenGenerator.Generate(payload);
         }
     }
 }

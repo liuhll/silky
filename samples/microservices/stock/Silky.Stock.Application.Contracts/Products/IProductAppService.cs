@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Silky.Stock.Application.Contracts.Products.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Rpc.CachingInterceptor;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
-using Silky.Rpc.Transport.CachingIntercept;
 using Silky.Transaction;
 
 namespace Silky.Stock.Application.Contracts.Products

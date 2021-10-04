@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Silky.Core;
+using Silky.Core.Extensions;
 
 namespace Silky.GatewayHost
 {
@@ -15,12 +16,12 @@ namespace Silky.GatewayHost
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                .RegisterSilkyServices<GatewayHostModule>()
+                .ConfigureSilkyWebHostDefaults()
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
                 .UseSerilogDefault();
             if (EngineContext.Current.IsEnvironment("Apollo"))
             {
-                hostBuilder.AddApollo();
+               // hostBuilder.AddApollo();
             }
 
             return hostBuilder;

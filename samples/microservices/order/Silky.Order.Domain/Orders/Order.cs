@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.Order.Domain.Shared.Orders;
-using Silky.Rpc.Runtime.Session;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Order.Domain.Orders
 {

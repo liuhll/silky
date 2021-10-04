@@ -6,7 +6,7 @@ governance:
   executionTimeout: -1
 registrycenter:
   connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
-  registryCenterType: Zookeeper
+  type: Zookeeper
 distributedCache:
   redis:
     isEnabled: true

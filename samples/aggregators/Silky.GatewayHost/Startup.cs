@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Silky.GatewayHost
 {
@@ -18,7 +19,9 @@ namespace Silky.GatewayHost
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddSilkyHttpServices();
+            services.AddSilkySkyApm();
+            services.AddMessagePackCodec();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -26,9 +29,24 @@ namespace Silky.GatewayHost
         {
             if (env.IsDevelopment() || env.EnvironmentName == "ContainerDev")
             {
+               
                 app.UseDeveloperExceptionPage();
+                app.UseSwaggerDocuments();
+                app.UseMiniProfiler();
             }
-            app.ConfigureSilkyRequestPipeline();
+            app.UseSerilogRequestLogging();
+            app.UseDashboard();
+            app.UseRouting();
+            // app.UseClientRateLimiting();
+            // app.UseIpRateLimiting();
+            app.UseResponseCaching();
+            app.UseHttpsRedirection();
+            app.UseSilkyWebSocketsProxy();
+            app.UseSilkyExceptionHandler();
+            app.UseSilkyIdentity();
+            app.UseSilkyHttpServer();
+            // app.ConfigureSilkyRequestPipeline();
+            app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
         }
     }
 }

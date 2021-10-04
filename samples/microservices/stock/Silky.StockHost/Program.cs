@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Silky.Core;
 
 namespace Silky.StockHost
 {
@@ -14,12 +13,12 @@ namespace Silky.StockHost
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                .RegisterSilkyServices<StockHostModule>()
+                .ConfigureSilkyGeneralHostDefaults()
                 .UseSerilogDefault();
-            if (EngineContext.Current.IsEnvironment("Apollo"))
-            {
-                hostBuilder.AddApollo();
-            }
+            // if (EngineContext.Current.IsEnvironment("Apollo"))
+            // {
+            //     hostBuilder.AddApollo();
+            // }
 
             return hostBuilder;
         }

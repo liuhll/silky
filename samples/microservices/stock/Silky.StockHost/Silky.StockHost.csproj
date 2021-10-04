@@ -7,7 +7,6 @@
 
     <ItemGroup>
         <PackageReference Include="Silky.Agent.GeneralHost" Version="$(SilkyVersion)" />
-        <PackageReference Include="Silky.Apollo" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.SkyApm.Agent" Version="$(SilkyVersion)" />
         <PackageReference Include="DotNetCore.CAP.MySql" Version="5.1.0" />
         <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="5.1.0" />

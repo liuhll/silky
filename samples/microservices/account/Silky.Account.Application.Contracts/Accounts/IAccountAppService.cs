@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Silky.Rpc.CachingInterceptor;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
 using Silky.Rpc.Security;
-using Silky.Rpc.Transport.CachingIntercept;
 using Silky.Transaction;
 
 namespace Silky.Account.Application.Contracts.Accounts
@@ -29,6 +29,10 @@ namespace Silky.Account.Application.Contracts.Accounts
         /// <returns></returns>
         [AllowAnonymous]
         Task<string> Login(LoginInput input);
+        
+        [AllowAnonymous]
+        [HttpPost("dashboard/login")]
+        Task<string> DashboardLogin(DashboardLoginInput input);
 
         /// <summary>
         /// 获取当前登陆用户
@@ -44,7 +48,7 @@ namespace Silky.Account.Application.Contracts.Accounts
         /// <param name="name">账号名称</param>
         /// <returns></returns>
         [GetCachingIntercept("Account:UserName:{0}")]
-        [HttpGet("{name:string}")]
+        [HttpGet("{name}")]
         Task<GetAccountOutput> GetAccountByName([CacheKey(0)] string name);
 
         /// <summary>

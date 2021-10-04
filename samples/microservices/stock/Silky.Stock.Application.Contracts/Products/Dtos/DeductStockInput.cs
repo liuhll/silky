@@ -1,4 +1,5 @@
-using Silky.Rpc.Transport.CachingIntercept;
+
+using Silky.Rpc.CachingInterceptor;
 
 namespace Silky.Stock.Application.Contracts.Products.Dtos
 {

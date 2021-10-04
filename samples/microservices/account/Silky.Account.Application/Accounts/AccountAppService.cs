@@ -4,8 +4,8 @@ using Mapster;
 using Silky.Account.Application.Contracts.Accounts;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Silky.Account.Domain.Accounts;
+using Silky.Core.DbContext.UnitOfWork;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Runtime.Server.UnitOfWork;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Application.Accounts
@@ -30,6 +30,11 @@ namespace Silky.Account.Application.Accounts
         public Task<string> Login(LoginInput input)
         {
             return _accountDomainService.Login(input);
+        }
+
+        public Task<string> DashboardLogin(DashboardLoginInput input)
+        {
+            return _accountDomainService.DashboardLogin(input);
         }
 
         public Task<GetAccountOutput> GetLoginUserInfo()

@@ -1,6 +1,4 @@
-﻿
-
-using Silky.Rpc.Transport.CachingIntercept;
+﻿using Silky.Rpc.CachingInterceptor;
 
 namespace Silky.Account.Application.Contracts.Accounts.Dtos
 {
