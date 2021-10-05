@@ -69,9 +69,9 @@ namespace Silky.Http.Dashboard.Middlewares
                     htmlBuilder.Replace("%(useAuth)", _options.UseAuth.ToString());
                     if (_options.UseAuth)
                     {
-                        var loginWebApi = _options.LoginWebApi.StartsWith("/")
-                            ? _options.LoginWebApi
-                            : "/" + _options.LoginWebApi;
+                        var loginWebApi = _options.DashboardLoginApi.StartsWith("/")
+                            ? _options.DashboardLoginApi
+                            : "/" + _options.DashboardLoginApi;
                         htmlBuilder.Replace("%(authApi)", _options.PathBase + loginWebApi);
                     }
                     else

@@ -148,12 +148,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 return ServiceProtocol.Ws;
             }
-
-            if (EngineContext.Current.IsContainHttpCoreModule())
-            {
-                return ServiceProtocol.Http;
-            }
-
+            
             return ServiceProtocol.Tcp;
         }
     }

@@ -18,6 +18,8 @@ namespace Microsoft.Extensions.Hosting
         public static IHostBuilder ConfigureSilkyWebHost<T>(this IHostBuilder hostBuilder,
             Action<IWebHostBuilder> configure) where T : WebHostModule
         {
+            if (configure == null)
+                throw new ArgumentNullException(nameof(configure));
             hostBuilder.RegisterSilkyServices<T>();
             return hostBuilder.ConfigureWebHostDefaults(configure);
         }

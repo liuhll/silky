@@ -18,7 +18,7 @@ namespace Silky.Rpc.Runtime.Server
         public string ServiceName { get; set; }
         public string Method { get; set; }
         public string WebApi { get; set; }
-        public HttpMethod HttpMethod { get; set; }
+        public HttpMethod? HttpMethod { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public IDictionary<string, object> Metadatas { get; set; }

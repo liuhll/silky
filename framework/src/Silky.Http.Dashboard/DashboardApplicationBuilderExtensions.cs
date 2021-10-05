@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Builder
         public static IApplicationBuilder UseDashboard(this IApplicationBuilder application)
         {
             var dashboardOptions = EngineContext.Current.GetOptions<DashboardOptions>();
-            if (dashboardOptions.UseAuth && dashboardOptions.LoginWebApi.IsNullOrEmpty())
+            if (dashboardOptions.UseAuth && dashboardOptions.DashboardLoginApi.IsNullOrEmpty())
             {
                 throw new SilkyException("Dashboard requires authentication, please set the login webapi");
             }

@@ -16,7 +16,7 @@ namespace Silky.Http.Dashboard.Configuration
 
         public bool UseAuth { get; set; }
 
-        public string LoginWebApi { get; set; }
+        public string DashboardLoginApi { get; set; }
 
         public bool DisplayWebApiInSwagger { get; set; }
 
