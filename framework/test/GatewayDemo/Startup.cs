@@ -35,7 +35,7 @@ namespace GatewayDemo
             // services.AddResponseCaching();
             // services.AddMvc();
             // services.AddSilkyHttpCore();
-            services.AddTransient<IAuthorizationHandler, TestAuthorizationHandler>();
+            services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
             services.AddSilkyHttpServices();
             services.AddMessagePackCodec();
         }

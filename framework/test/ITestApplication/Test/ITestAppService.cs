@@ -8,10 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
+using Silky.Rpc.Security;
 
 namespace ITestApplication.Test
 {
     [ServiceRoute]
+   // [Authorize(Roles = "Administrator, PowerUser")]
+   [Authorize]
     public interface ITestAppService
     {
         /// <summary>
@@ -22,8 +25,10 @@ namespace ITestApplication.Test
         //[GetCachingIntercept("name:{0}")]
         //[UnitOfWork]
         [Fallback(typeof(ICreateFallback))]
+        [Authorize(Roles = "Administrator, PowerUser")]
         Task<TestOut> Create(TestInput input);
 
+        [AllowAnonymous]
         Task<TestOut> Get(long id);
 
         [Obsolete]

@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
@@ -9,7 +8,6 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
-using Silky.Http.Identity.Authorization.Requirements;
 
 namespace Silky.Http.Identity.Authorization
 {

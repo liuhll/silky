@@ -68,9 +68,20 @@ namespace Silky.Rpc.Runtime.Server
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
+            AuthorizeData = CreateAuthorizeData();
             CreateFallBackExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
+        }
+
+        private IReadOnlyCollection<IAuthorizeData> CreateAuthorizeData()
+        {
+            var authorizeData = new List<IAuthorizeData>();
+            var serviceEntryAuthorizeData = CustomAttributes.OfType<IAuthorizeData>();
+            authorizeData.AddRange(serviceEntryAuthorizeData);
+            var serviceAuthorizeData = ServiceType.GetCustomAttributes().OfType<IAuthorizeData>();
+            authorizeData.AddRange(serviceAuthorizeData);
+            return authorizeData;
         }
 
         private void ReConfiguration(IGovernanceProvider governanceProvider)
@@ -180,6 +191,8 @@ namespace Silky.Rpc.Runtime.Server
         public IReadOnlyList<ParameterDescriptor> ParameterDescriptors { get; }
 
         public IReadOnlyCollection<object> CustomAttributes { get; }
+
+        public IReadOnlyCollection<IAuthorizeData> AuthorizeData { get; }
 
         public ServiceEntryGovernance GovernanceOptions { get; }
 

@@ -27,6 +27,18 @@ namespace Silky.Http.Core
             RpcContext.Context.SetAttachment(AttachmentKeys.MessageId, httpContext.TraceIdentifier);
         }
 
+        public static void SetUserClaims(this HttpContext httpContext)
+        {
+            var isAuthenticated = httpContext.User.Identity?.IsAuthenticated;
+            if (isAuthenticated == true)
+            {
+                foreach (var userClaim in httpContext.User.Claims)
+                {
+                    RpcContext.Context.SetAttachment(userClaim.Type, userClaim.Value);
+                }
+            }
+        }
+
         public static void SetHttpHandleAddressInfo(this HttpContext httpContext)
         {
             RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, true);

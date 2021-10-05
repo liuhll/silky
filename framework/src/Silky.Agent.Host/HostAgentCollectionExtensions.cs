@@ -24,11 +24,13 @@ namespace Microsoft.Extensions.DependencyInjection
                     services.AddConsulRegistryCenter();
                     break;
                 default:
-                    throw new SilkyException($"The system does not provide a service registration center of type {registerType}");
+                    throw new SilkyException(
+                        $"The system does not provide a service registration center of type {registerType}");
             }
-            
+
             return services;
         }
+
         public static IServiceCollection AddSilkyHttpServices(this IServiceCollection services,
             Action<SwaggerGenOptions> setupAction = null)
         {

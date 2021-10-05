@@ -54,7 +54,7 @@ namespace Silky.Http.Core.Handlers
             Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
                 MiniProfileConstant.Route.State.FindServiceEntry,
                 $"Find the ServiceEntry {serviceEntry.Id} through {path}-{method}");
-
+            httpContext.SetUserClaims();
             httpContext.SetHttpHandleAddressInfo();
             var sp = Stopwatch.StartNew();
             var parameters = await _parameterParser.Parser(serviceEntry);
