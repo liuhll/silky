@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Autofac;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Castle;
 using Silky.Core.Modularity;
+using Silky.Http.Core.Executor;
 using Silky.Rpc;
+using Silky.Transaction.Interceptor;
 
 namespace Silky.Http.Core
 {
@@ -19,6 +23,18 @@ namespace Silky.Http.Core
             application.UseSilkyExceptionHandler();
             application.UseSilkyWebSocketsProxy();
             application.UseSilkyHttpServer();
+        }
+
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<DefaultHttpExecutor>()
+                .As<IHttpExecutor>()
+                .InstancePerLifetimeScope()
+                .AddInterceptors(
+                    typeof(TransactionInterceptor)
+                    
+                )
+                ;
         }
     }
 }

@@ -9,5 +9,6 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+      <ProjectReference Include="..\Silky.Transaction\Silky.Transaction.csproj" />
     </ItemGroup>
 </Project>

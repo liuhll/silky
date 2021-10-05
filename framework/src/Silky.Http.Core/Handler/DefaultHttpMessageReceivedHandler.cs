@@ -9,9 +9,8 @@ using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
+using Silky.Http.Core.Executor;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Runtime;
-
 
 namespace Silky.Http.Core.Handlers
 {
@@ -27,7 +26,7 @@ namespace Silky.Http.Core.Handlers
         public DefaultHttpMessageReceivedHandler(
             IOptionsMonitor<RpcOptions> rpcOptions,
             IOptionsMonitor<GatewayOptions> gatewayOptions,
-            IExecutor executor,
+            IHttpExecutor executor,
             ISerializer serializer,
             IParameterParser parameterParser)
             : base(rpcOptions, executor,parameterParser)

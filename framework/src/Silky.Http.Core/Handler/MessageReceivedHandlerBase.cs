@@ -16,6 +16,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
+using Silky.Http.Core.Executor;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Transport.Messages;
 
@@ -23,7 +24,7 @@ namespace Silky.Http.Core.Handlers
 {
     internal abstract class MessageReceivedHandlerBase : IMessageReceivedHandler
     {
-        protected readonly IExecutor _executor;
+        protected readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
         protected RpcOptions _rpcOptions;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
@@ -34,7 +35,7 @@ namespace Silky.Http.Core.Handlers
 
         protected MessageReceivedHandlerBase(
             IOptionsMonitor<RpcOptions> rpcOptions,
-            IExecutor executor,
+            IHttpExecutor executor,
             IParameterParser parameterParser)
         {
             _executor = executor;
