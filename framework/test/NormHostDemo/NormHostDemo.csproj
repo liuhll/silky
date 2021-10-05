@@ -8,7 +8,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
       <ProjectReference Include="..\..\src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
-      <ProjectReference Include="..\..\src\Silky.Agent.GeneralHost\Silky.Agent.GeneralHost.csproj" />
+      <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
       <ProjectReference Include="..\..\src\Silky.Jwt\Silky.Jwt.csproj" />
       <ProjectReference Include="..\..\src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
       <ProjectReference Include="..\..\src\Silky.ObjectMapper.Mapster\Silky.ObjectMapper.Mapster.csproj" />

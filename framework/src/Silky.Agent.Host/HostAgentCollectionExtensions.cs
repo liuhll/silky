@@ -8,7 +8,7 @@ using Silky.Swagger.SwaggerGen.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class WebHostCollectionExtensions
+    public static class HostAgentCollectionExtensions
     {
         public static IServiceCollection AddDefaultRegistryCenter(this IServiceCollection services, string registerType)
         {

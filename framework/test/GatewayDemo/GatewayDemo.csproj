@@ -14,7 +14,7 @@
         <ProjectReference Include="..\..\src\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj" />
-        <ProjectReference Include="..\..\src\Silky.Agent.WebHost\Silky.Agent.WebHost.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
         <ProjectReference Include="..\..\src\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
         <ProjectReference Include="..\..\src\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj" />
         <ProjectReference Include="..\..\src\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj" />

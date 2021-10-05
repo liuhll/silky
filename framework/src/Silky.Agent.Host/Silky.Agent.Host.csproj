@@ -2,7 +2,7 @@
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
        <TargetFramework>net5.0</TargetFramework>
-        <Description>The package contains the component package for building Silky microservice web host</Description>
+        <Description>The package contains the component package for building Silky microservice host</Description>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
@@ -19,11 +19,13 @@
         <ProjectReference Include="..\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj" />
         <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
         <ProjectReference Include="..\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
+        <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
         <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
         <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />
         <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
         <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
         <ProjectReference Include="..\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj" />
         <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj" />
+        <ProjectReference Include="..\Silky.WebSocket\Silky.WebSocket.csproj" />
     </ItemGroup>
 </Project>

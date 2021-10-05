@@ -60,9 +60,7 @@ namespace GatewayDemo
             app.UseSilkyWebSocketsProxy();
             app.UseSilkyExceptionHandler();
             app.UseSilkyIdentity();
-          //  app.UseSilkyHttpServer();
-            // app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
-            // app.ConfigureSilkyRequestPipeline();
+            app.UseSilkyHttpServer();
             app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
         }
     }

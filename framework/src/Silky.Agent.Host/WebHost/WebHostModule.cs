@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Silky.Caching.StackExchangeRedis;
+﻿using Silky.Caching.StackExchangeRedis;
 using Silky.Core.Modularity;
 using Silky.DotNetty;
 using Silky.DotNetty.Protocol.Tcp;
@@ -13,7 +11,8 @@ using Silky.Http.RateLimit;
 using Silky.Http.Swagger;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Proxy;
-using Silky.Rpc.Runtime.Server;
+using Silky.Transaction.Repository.Redis;
+using Silky.Transaction.Tcc;
 using Silky.Validation;
 
 namespace Microsoft.Extensions.Hosting
@@ -31,22 +30,11 @@ namespace Microsoft.Extensions.Hosting
         typeof(DotNettyModule),
         typeof(ValidationModule),
         typeof(FluentValidationModule),
-        typeof(RedisCachingModule)
+        typeof(RedisCachingModule),
+        typeof(TransactionTccModule),
+        typeof(RedisTransactionRepositoryModule)
     )]
     public abstract class WebHostModule : StartUpModule
     {
-        public override async Task Initialize(ApplicationContext applicationContext)
-        {
-            var serverRouteRegister =
-                applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
-            await serverRouteRegister.RegisterServer();
-        }
-
-        public override async Task Shutdown(ApplicationContext applicationContext)
-        {
-            var serverRegister =
-                applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
-            await serverRegister.RemoveSelf();
-        }
     }
 }
