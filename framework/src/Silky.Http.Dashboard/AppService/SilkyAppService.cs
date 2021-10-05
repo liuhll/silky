@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -74,13 +73,14 @@ namespace Silky.Http.Dashboard.AppService
         {
             var serverDescriptors = _serverManager
                 .ServerDescriptors
+                .Where(p => p.Endpoints.Any(e => e.IsInstanceEndpoint()))
                 .Select(p => new GetHostOutput()
                 {
                     AppServiceCount = p.Services.Length,
-                    InstanceCount = p.Endpoints.Count(p => p.IsInstanceEndpoint()),
+                    InstanceCount = p.Endpoints.Count(e => e.IsInstanceEndpoint()),
                     HostName = p.HostName,
-                    ServiceProtocols = p.Endpoints.Select(p => p.ServiceProtocol).Distinct().ToArray(),
-                    ServiceEntriesCount = p.Services.SelectMany(p => p.ServiceEntries).Count()
+                    ServiceProtocols = p.Endpoints.Select(e => e.ServiceProtocol).Distinct().ToArray(),
+                    ServiceEntriesCount = p.Services.SelectMany(s => s.ServiceEntries).Count()
                 });
             return serverDescriptors.ToArray();
         }
@@ -106,7 +106,6 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             var hostInstances = server.Endpoints
-                    .Where(p => p.Descriptor.IsInstanceEndpoint())
                     .Select(p => new GetHostInstanceOutput()
                     {
                         HostName = server.HostName,
@@ -254,8 +253,8 @@ namespace Silky.Http.Dashboard.AppService
                 .WhereIf(input.ProhibitExtranet.HasValue, p => p.ProhibitExtranet == input.ProhibitExtranet)
                 .WhereIf(input.IsDistributeTransaction.HasValue,
                     p => p.IsDistributeTransaction == input.IsDistributeTransaction)
-                .WhereIf(input.MultipleServiceKey.HasValue, p=> p.MultipleServiceKey == input.MultipleServiceKey)
-                .WhereIf(input.IsSystem.HasValue, p=> p.IsSystem == input.IsSystem)
+                .WhereIf(input.MultipleServiceKey.HasValue, p => p.MultipleServiceKey == input.MultipleServiceKey)
+                .WhereIf(input.IsSystem.HasValue, p => p.IsSystem == input.IsSystem)
                 .OrderBy(p => p.HostName)
                 .ThenBy(p => p.ServiceId)
                 .ToList();
@@ -485,7 +484,7 @@ namespace Silky.Http.Dashboard.AppService
             {
                 Code = "Microservice",
                 Title = "微服务应用",
-                Count = _serverManager.ServerDescriptors.Count
+                Count = _serverManager.ServerDescriptors.Count(p => p.Endpoints.Any(e => e.IsInstanceEndpoint()))
             });
             getProfileOutputs.Add(new GetProfileOutput()
             {
@@ -496,8 +495,23 @@ namespace Silky.Http.Dashboard.AppService
 
             getProfileOutputs.Add(new GetProfileOutput()
             {
+                Code = "GatewayInstance",
+                Title = "网关实例",
+                Count = _serverManager.GetSelfServer().Endpoints.Count(e => e.ServiceProtocol.IsHttp())
+            });
+
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
+                Code = "WebSocketService",
+                Title = "支持WebSocket的微服务",
+                Count = _serverManager.ServerDescriptors
+                    .Count(p => p.Endpoints.Any(e => e.ServiceProtocol == ServiceProtocol.Ws))
+            });
+
+            getProfileOutputs.Add(new GetProfileOutput()
+            {
                 Code = "WebSocketServiceInstance",
-                Title = "支持WebSocket的应用实例",
+                Title = "支持WebSocket的实例",
                 Count = _serverManager.ServerDescriptors.SelectMany(p => p.Endpoints)
                     .Count(p => p.ServiceProtocol == ServiceProtocol.Ws)
             });
