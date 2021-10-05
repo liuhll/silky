@@ -14,7 +14,7 @@ namespace GatewayDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyWebHostDefaults(webBuilder =>
+                .ConfigureSilkyGatewayDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
                         .UseSerilogDefault();

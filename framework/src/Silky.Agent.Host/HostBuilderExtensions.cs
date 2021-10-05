@@ -23,6 +23,24 @@ namespace Microsoft.Extensions.Hosting
             return hostBuilder.ConfigureWebHostDefaults(configure);
         }
         
+        public static IHostBuilder ConfigureSilkyGatewayDefaults(this IHostBuilder hostBuilder,
+            Action<IWebHostBuilder> configure)
+        {
+            if (configure == null)
+                throw new ArgumentNullException(nameof(configure));
+            hostBuilder.RegisterSilkyServices<DefaultGatewayHostModule>();
+            return hostBuilder.ConfigureWebHostDefaults(configure);
+        }
+
+        public static IHostBuilder  ConfigureSilkyGateway<T>(this IHostBuilder hostBuilder,
+            Action<IWebHostBuilder> configure) where T : GatewayHostModule
+        {
+            if (configure == null)
+                throw new ArgumentNullException(nameof(configure));
+            hostBuilder.RegisterSilkyServices<T>();
+            return hostBuilder.ConfigureWebHostDefaults(configure);
+        }        
+        
         public static IHostBuilder ConfigureSilkyGeneralHostDefaults(this IHostBuilder hostBuilder)
         {
             hostBuilder.RegisterSilkyServices<DefaultGeneralHostModule>();
