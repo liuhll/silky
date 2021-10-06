@@ -69,9 +69,35 @@ namespace Silky.Rpc.Runtime.Server
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
             AuthorizeData = CreateAuthorizeData();
+            ClientFilters = CreateClientFilters();
+            ServerFilters = CreateServerFilters();
             CreateFallBackExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
+        }
+
+        private IReadOnlyCollection<IServerFilter> CreateServerFilters()
+        {
+            var serviceEntryServerFilters = CustomAttributes.OfType<IServerFilter>()
+                .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
+            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<IServerFilter>()
+                .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
+            var serverFilters = new List<IServerFilter>();
+            serverFilters.AddRange(serviceEntryServerFilters);
+            serverFilters.AddRange(serviceServerFilters);
+            return serverFilters.ToArray();
+        }
+
+        private IReadOnlyCollection<IClientFilter> CreateClientFilters()
+        {
+            var serviceEntryClientFilters = CustomAttributes.OfType<IClientFilter>()
+                .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
+            var serviceClientFilters = ServiceType.GetCustomAttributes().OfType<IClientFilter>()
+                .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
+            var clientFilters = new List<IClientFilter>();
+            clientFilters.AddRange(serviceEntryClientFilters);
+            clientFilters.AddRange(serviceClientFilters);
+            return clientFilters.ToArray();
         }
 
         private IReadOnlyCollection<IAuthorizeData> CreateAuthorizeData()
@@ -191,6 +217,10 @@ namespace Silky.Rpc.Runtime.Server
         public IReadOnlyList<ParameterDescriptor> ParameterDescriptors { get; }
 
         public IReadOnlyCollection<object> CustomAttributes { get; }
+
+        public IReadOnlyCollection<IClientFilter> ClientFilters { get; private set; }
+
+        public IReadOnlyCollection<IServerFilter> ServerFilters { get; private set; }
 
         public IReadOnlyCollection<IAuthorizeData> AuthorizeData { get; }
 

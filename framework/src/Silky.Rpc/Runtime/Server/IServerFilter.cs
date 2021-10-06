@@ -1,8 +1,6 @@
-using Silky.Core.DependencyInjection;
-
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IServerFilter : IScopedDependency
+    public interface IServerFilter
     {
         int Order { get; }
 
@@ -10,5 +8,4 @@ namespace Silky.Rpc.Runtime.Server
 
         void OnActionExecuted(ServerExecutedContext context);
     }
-    
 }

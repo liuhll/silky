@@ -1,9 +1,8 @@
-using Silky.Core.DependencyInjection;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IClientFilter : IScopedDependency
+    public interface IClientFilter
     {
         int Order { get; }
 

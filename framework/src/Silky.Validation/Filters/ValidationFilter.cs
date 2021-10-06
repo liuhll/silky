@@ -1,14 +1,14 @@
 using System;
 using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
-using Silky.Rpc.Runtime;
+using Silky.Core.DependencyInjection;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Validation.Filters
 {
-    public class ValidationFilter : IClientFilter
+    public class ValidationFilter : IClientFilter, IScopedDependency
     {
         public int Order { get; } = Int32.MaxValue;
 

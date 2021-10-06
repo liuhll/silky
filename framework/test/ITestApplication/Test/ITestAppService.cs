@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using ITestApplication.Filters;
 using ITestApplication.Test.Dtos;
 using ITestApplication.Test.Fallback;
 using Silky.Rpc.Runtime.Server;
@@ -26,6 +27,7 @@ namespace ITestApplication.Test
         //[UnitOfWork]
         [Fallback(typeof(ICreateFallback))]
         [Authorize(Roles = "Administrator, PowerUser")]
+        [TestClientFilter(1)]
         Task<TestOut> Create(TestInput input);
 
         [AllowAnonymous]

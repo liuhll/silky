@@ -25,17 +25,21 @@ namespace Silky.Rpc.Runtime.Client
         private readonly IInvokeSupervisor _invokeSupervisor;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly ISerializer _serializer;
+        private readonly ClientFilterProvider _clientFilterProvider;
         public ILogger<DefaultRemoteInvoker> Logger { get; set; }
 
         public DefaultRemoteInvoker(IServerManager serverManager,
             IInvokeSupervisor invokeSupervisor,
             ITransportClientFactory transportClientFactory,
-            ISerializer serializer)
+            ISerializer serializer,
+            ClientFilterProvider clientFilterProvider)
         {
             _serverManager = serverManager;
             _invokeSupervisor = invokeSupervisor;
             _transportClientFactory = transportClientFactory;
             _serializer = serializer;
+            _clientFilterProvider = clientFilterProvider;
+
             Logger = NullLogger<DefaultRemoteInvoker>.Instance;
         }
 
@@ -51,7 +55,7 @@ namespace Silky.Rpc.Runtime.Client
 
             var sp = Stopwatch.StartNew();
             RemoteResultMessage invokeResult = null;
-            var filters = EngineContext.Current.ResolveAll<IClientFilter>().OrderBy(p => p.Order).ToArray();
+            var filters = _clientFilterProvider.GetClientFilters(remoteInvokeMessage.ServiceEntryId);
             try
             {
                 _invokeSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));

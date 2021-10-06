@@ -1,6 +1,6 @@
+using Silky.Core.DependencyInjection;
 using Silky.Core.Rpc;
 using Silky.Core.Utils;
-using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
@@ -9,7 +9,7 @@ using Silky.Transaction.Abstraction.Participant;
 
 namespace Silky.Transaction.Filters
 {
-    public class TransactionFilter : IClientFilter
+    public class TransactionFilter : IClientFilter, IScopedDependency
     {
         public int Order { get; } = 1;
 

@@ -3,12 +3,13 @@ using System.Linq;
 using Silky.Core;
 using Silky.Core.DbContext;
 using Silky.Core.DbContext.UnitOfWork;
+using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.EntityFrameworkCore.UnitOfWork
 {
-    public class EfCoreUnitOfWorkServerFilter : IServerFilter
+    public class EfCoreUnitOfWorkServerFilter : IServerFilter, IScopedDependency
     {
         private readonly ISilkyDbContextPool _silkyDbContextPool;
         private UnitOfWorkAttribute _unitOfWorkAttribute;

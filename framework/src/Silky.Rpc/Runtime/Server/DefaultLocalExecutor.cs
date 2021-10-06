@@ -6,12 +6,19 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultLocalExecutor : ILocalExecutor
     {
+        private readonly ServerFilterProvider _serverFilterProvider;
+
+        public DefaultLocalExecutor(ServerFilterProvider serverFilterProvider)
+        {
+            _serverFilterProvider = serverFilterProvider;
+        }
+
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
             var instance = EngineContext.Current.ResolveServiceInstance(serviceKey, serviceEntry.ServiceType);
             parameters = serviceEntry.ConvertParameters(parameters);
 
-            var filters = EngineContext.Current.ResolveAll<IServerFilter>().OrderBy(p => p.Order).ToArray();
+            var filters = _serverFilterProvider.GetServerFilters(serviceEntry, instance.GetType());
             var rpcActionExecutingContext = new ServerExecutingContext()
             {
                 ServiceEntry = serviceEntry,
