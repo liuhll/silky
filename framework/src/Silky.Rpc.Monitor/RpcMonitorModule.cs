@@ -6,7 +6,7 @@ using Silky.Core.Modularity;
 namespace Silky.Rpc.Monitor
 {
     [DependsOn(typeof(RpcModule), typeof(CachingModule))]
-    public class RpcSupervisorModule : SilkyModule
+    public class RpcMonitorModule : SilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {

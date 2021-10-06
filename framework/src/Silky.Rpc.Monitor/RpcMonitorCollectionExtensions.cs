@@ -6,7 +6,7 @@ using Silky.Rpc.Monitor.Invoke;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class RpcSupervisorCollectionExtensions
+    public static class RpcMonitorCollectionExtensions
     {
         public static IServiceCollection AddRpcSupervisor(this IServiceCollection services)
         {

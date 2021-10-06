@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.Hosting
 {
     [DependsOn(
         typeof(RpcProxyModule),
-        typeof(RpcSupervisorModule),
+        typeof(RpcMonitorModule),
         typeof(SilkyHttpCoreModule),
         typeof(SwaggerModule),
         typeof(MiniProfilerModule),
