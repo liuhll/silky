@@ -35,7 +35,7 @@ namespace Silky.Rpc.Endpoint
         {
             return GetLocalWebEndpoint()?.Descriptor;
         }
-        
+
         public static IRpcEndpoint GetLocalWebEndpoint()
         {
             var server = EngineContext.Current.Resolve<IServer>();
@@ -95,17 +95,6 @@ namespace Silky.Rpc.Endpoint
             return address;
         }
 
-        public static RpcEndpointDescriptor GetLocalRpcEndpointDescriptor()
-        {
-            if (EngineContext.Current.IsContainHttpCoreModule())
-            {
-                return GetLocalWebEndpointDescriptor();
-            }
-
-            return GetLocalTcpEndpoint().Descriptor;
-
-        }
-
         public static string GetLocalAddress()
         {
             string host = GetAnyHostIp();
@@ -119,7 +108,7 @@ namespace Silky.Rpc.Endpoint
             var address = new RpcEndpoint(host, port, serviceProtocol);
             return address;
         }
-        
+
         public static IRpcEndpoint GetWsEndpoint()
         {
             var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
@@ -127,7 +116,7 @@ namespace Silky.Rpc.Endpoint
             var address = new RpcEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
             return address;
         }
-        
+
         public static int GetWsPort()
         {
             var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
@@ -139,13 +128,14 @@ namespace Silky.Rpc.Endpoint
             var address = new RpcEndpoint(host, port, serviceProtocol);
             return address;
         }
-        
+
         public static string GetIp(string host)
         {
             if (IsValidIp(host))
             {
                 return host;
             }
+
             var ips = Dns.GetHostAddresses(host);
             return ips[0].ToString();
         }
@@ -157,13 +147,16 @@ namespace Silky.Rpc.Endpoint
                 string[] ips = address.Split('.');
                 if (ips.Length == 4 || ips.Length == 6)
                 {
-                    if (int.Parse(ips[0]) < 256 && int.Parse(ips[1]) < 256 && int.Parse(ips[2]) < 256 && int.Parse(ips[3]) < 256)
+                    if (int.Parse(ips[0]) < 256 && int.Parse(ips[1]) < 256 && int.Parse(ips[2]) < 256 &&
+                        int.Parse(ips[3]) < 256)
                     {
                         return true;
                     }
                 }
+
                 return false;
             }
+
             return false;
         }
 
@@ -178,13 +171,12 @@ namespace Silky.Rpc.Endpoint
         {
             return ANYHOST.Equals(host);
         }
-        
+
         private static bool IsLocalHost(string host)
         {
             return host != null
                    && (host.IsMatch(LOCAL_IP_PATTERN)
                        || host.Equals(LOCAL_HOSTADRRESS, StringComparison.OrdinalIgnoreCase));
         }
-        
     }
 }

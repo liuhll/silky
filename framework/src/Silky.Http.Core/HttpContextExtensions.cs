@@ -43,7 +43,7 @@ namespace Silky.Http.Core
         {
             RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, true);
 
-            var localWebEndpointDescriptor = RpcEndpointHelper.GetLocalRpcEndpointDescriptor();
+            var localWebEndpointDescriptor = RpcEndpointHelper.GetLocalWebEndpoint();
             var clientHost = httpContext.Connection.RemoteIpAddress;
             var clientPort = httpContext.Connection.RemotePort;
 

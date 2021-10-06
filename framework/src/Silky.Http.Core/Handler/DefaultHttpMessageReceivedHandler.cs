@@ -11,14 +11,14 @@ using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Handlers
 {
     internal class DefaultHttpMessageReceivedHandler : MessageReceivedHandlerBase
     {
-
         private readonly ISerializer _serializer;
-        
+
         private GatewayOptions _gatewayOptions;
 
         public ILogger<DefaultHttpMessageReceivedHandler> Logger { get; set; }
@@ -28,15 +28,16 @@ namespace Silky.Http.Core.Handlers
             IOptionsMonitor<GatewayOptions> gatewayOptions,
             IHttpExecutor executor,
             ISerializer serializer,
-            IParameterParser parameterParser)
-            : base(rpcOptions, executor,parameterParser)
+            IParameterParser parameterParser,
+            IServerHandleSupervisor serverHandleSupervisor)
+            : base(rpcOptions, executor, parameterParser, serverHandleSupervisor)
         {
             _serializer = serializer;
             _gatewayOptions = gatewayOptions.CurrentValue;
             gatewayOptions.OnChange((options, s) => _gatewayOptions = options);
             Logger = NullLogger<DefaultHttpMessageReceivedHandler>.Instance;
         }
-        
+
 
         protected override async Task HandleResult(HttpContext httpContext, object result)
         {
@@ -75,6 +76,5 @@ namespace Silky.Http.Core.Handlers
         {
             Logger.LogException(exception);
         }
-        
     }
 }

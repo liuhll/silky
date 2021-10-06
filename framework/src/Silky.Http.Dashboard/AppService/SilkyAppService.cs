@@ -423,7 +423,7 @@ namespace Silky.Http.Dashboard.AppService
 
         private bool IsLocalAddress(string address)
         {
-            var localAddress = RpcEndpointHelper.GetLocalRpcEndpointDescriptor().GetHostAddress();
+            var localAddress = RpcEndpointHelper.GetLocalTcpEndpoint().GetAddress();
             return localAddress.Equals(address);
         }
 

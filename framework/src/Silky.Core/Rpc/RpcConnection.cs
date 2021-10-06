@@ -2,7 +2,7 @@ namespace Silky.Core.Rpc
 {
     public class RpcConnection
     {
-        internal string ClientHost { get; set; }
+        public string ClientHost { get; internal set; }
 
         public int RemotePort { get; internal set; }
 

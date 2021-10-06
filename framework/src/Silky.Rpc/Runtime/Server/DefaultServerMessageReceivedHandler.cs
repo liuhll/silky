@@ -41,7 +41,7 @@ namespace Silky.Rpc.Runtime.Server
             var sp = Stopwatch.StartNew();
             var messageId = RpcContext.Context.GetMessageId();
             var rpcConnection = RpcContext.Context.Connection;
-            var clientRpcEndpoint = rpcConnection.ClientRpcEndpoint;
+            var clientRpcEndpoint = rpcConnection.ClientAddress;
             Logger.LogDebug(
                 "Received a request from the client [{0}].{1}messageId:[{2}],serviceEntryId:[{3}]", clientRpcEndpoint,
                 Environment.NewLine, messageId, message.ServiceEntryId);

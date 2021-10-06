@@ -26,6 +26,7 @@ namespace Silky.Http.Core.Handlers
     {
         protected readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
+        private readonly IServerHandleSupervisor _serverHandleSupervisor;
         protected RpcOptions _rpcOptions;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
@@ -36,10 +37,12 @@ namespace Silky.Http.Core.Handlers
         protected MessageReceivedHandlerBase(
             IOptionsMonitor<RpcOptions> rpcOptions,
             IHttpExecutor executor,
-            IParameterParser parameterParser)
+            IParameterParser parameterParser,
+            IServerHandleSupervisor serverHandleSupervisor)
         {
             _executor = executor;
             _parameterParser = parameterParser;
+            _serverHandleSupervisor = serverHandleSupervisor;
             _rpcOptions = rpcOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
             Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
@@ -60,6 +63,9 @@ namespace Silky.Http.Core.Handlers
             var parameters = await _parameterParser.Parser(serviceEntry);
             var messageId = GetMessageId(httpContext);
             var serviceKey = await ResolveServiceKey(httpContext);
+            var rpcConnection = RpcContext.Context.Connection;
+            var clientRpcEndpoint = rpcConnection.ClientHost;
+            _serverHandleSupervisor.Monitor((serviceEntry.Id, clientRpcEndpoint));
             if (!serviceKey.IsNullOrEmpty())
             {
                 RpcContext.Context.SetServiceKey(serviceKey);
@@ -78,6 +84,8 @@ namespace Silky.Http.Core.Handlers
                 Parameters = parameters
             }, messageId, serviceEntry);
             object executeResult = null;
+            var isHandleSuccess = true;
+            var isFriendlyStatus = false;
             try
             {
                 executeResult = await _executor.Execute(serviceEntry, parameters, serviceKey);
@@ -90,6 +98,8 @@ namespace Silky.Http.Core.Handlers
             }
             catch (Exception ex)
             {
+                isHandleSuccess = false;
+                isFriendlyStatus = ex.IsFriendlyException();
                 TracingError(tracingTimestamp, messageId, serviceEntry, ex.GetExceptionStatusCode(), ex);
                 await HandleException(ex);
                 Logger.LogException(ex);
@@ -98,6 +108,15 @@ namespace Silky.Http.Core.Handlers
             finally
             {
                 sp.Stop();
+                if (isHandleSuccess)
+                {
+                    _serverHandleSupervisor.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds);
+                }
+                else
+                {
+                    _serverHandleSupervisor.ExecFail((serviceEntry?.Id, clientRpcEndpoint), !isFriendlyStatus,
+                        sp.ElapsedMilliseconds);
+                }
             }
 
             await HandleResult(httpContext, executeResult);
