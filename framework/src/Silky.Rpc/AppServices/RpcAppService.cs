@@ -44,9 +44,9 @@ namespace Silky.Rpc.AppServices
             return _invokeSupervisor.GetServiceEntryInvokeInfos();
         }
 
-        public Task IsHealth()
+        public Task<bool> IsHealth()
         {
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 }

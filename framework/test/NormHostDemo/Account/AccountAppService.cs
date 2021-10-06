@@ -31,7 +31,7 @@ namespace NormHostDemo.Account
             {
                 { ClaimTypes.NameIdentifier, userId },
                 { ClaimTypes.Name, input.UserName },
-                { ClaimTypes.Role, "PowerUser, Dashboard" }
+                { ClaimTypes.Role, "PowerUser,Dashboard" }
             };
             return _jwtTokenGenerator.Generate(payload);
         }

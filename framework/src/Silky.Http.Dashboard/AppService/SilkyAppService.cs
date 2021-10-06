@@ -15,10 +15,10 @@ using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
+using Silky.Rpc.HealthCheck;
 using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Utils;
 
 namespace Silky.Http.Dashboard.AppService
 {
@@ -31,6 +31,7 @@ namespace Silky.Http.Dashboard.AppService
         private readonly IRemoteExecutor _remoteExecutor;
         private readonly ILocalExecutor _localExecutor;
         private readonly IRegisterCenterHealthProvider _registerCenterHealthProvider;
+        private readonly IServerHealthCheck _serverHealthCheck;
 
 
         private const string ipEndpointRegex =
@@ -52,13 +53,15 @@ namespace Silky.Http.Dashboard.AppService
             IServiceEntryLocator serviceEntryLocator,
             IRemoteExecutor remoteExecutor,
             ILocalExecutor localExecutor,
-            IRegisterCenterHealthProvider registerCenterHealthProvider)
+            IRegisterCenterHealthProvider registerCenterHealthProvider,
+            IServerHealthCheck serverHealthCheck)
         {
             _serverManager = serverManager;
             _serviceEntryManager = serviceEntryManager;
 
             _remoteExecutor = remoteExecutor;
             _registerCenterHealthProvider = registerCenterHealthProvider;
+            _serverHealthCheck = serverHealthCheck;
             _serviceManager = serviceManager;
             _localExecutor = localExecutor;
             _serviceEntryLocator = serviceEntryLocator;
@@ -109,7 +112,7 @@ namespace Silky.Http.Dashboard.AppService
                     .Select(p => new GetHostInstanceOutput()
                     {
                         HostName = server.HostName,
-                        IsHealth = SocketCheck.TestConnection(p.Host, p.Port),
+                        IsHealth = _serverHealthCheck.IsHealth(p).GetAwaiter().GetResult(),
                         Address = p.GetAddress(),
                         Host = p.Host,
                         Port = p.Port,
@@ -170,7 +173,6 @@ namespace Silky.Http.Dashboard.AppService
             {
                 HostName = gateway.HostName,
                 InstanceCount = gateway.Endpoints.Count(p => p.ServiceProtocol.IsHttp()),
-                SupportWebSocketProxy = EngineContext.Current.IsContainWebSocketModule(),
                 SupportServiceCount = _serviceManager.GetAllService().Count,
                 SupportServiceEntryCount = _serviceEntryManager.GetAllEntries().Count
             };
@@ -364,14 +366,16 @@ namespace Silky.Http.Dashboard.AppService
                     .Services.Any(q => q.ServiceEntries.Any(e => e.Id == serviceEntryId)))
                 .SelectMany(p => p.Endpoints).Where(p => p.ServiceProtocol == serviceEntryDescriptor.ServiceProtocol);
 
-            var serviceEntryInstances = serverInstances.Select(p => new GetServiceEntryInstanceOutput()
-            {
-                ServiceEntryId = serviceEntryId,
-                Address = p.Descriptor.GetHostAddress(),
-                Enabled = p.Enabled,
-                IsHealth = SocketCheck.TestConnection(p.Host, p.Port),
-                ServiceProtocol = p.ServiceProtocol
-            });
+            var serviceEntryInstances = serverInstances
+                .Where(p => p.ServiceProtocol == ServiceProtocol.Tcp).Select(p =>
+                    new GetServiceEntryInstanceOutput()
+                    {
+                        ServiceEntryId = serviceEntryId,
+                        Address = p.Descriptor.GetHostAddress(),
+                        Enabled = p.Enabled,
+                        IsHealth = _serverHealthCheck.IsHealth(p).GetAwaiter().GetResult(),
+                        ServiceProtocol = p.ServiceProtocol
+                    });
 
             return serviceEntryInstances.ToPagedList(pageIndex, pageSize);
         }
@@ -381,12 +385,6 @@ namespace Silky.Http.Dashboard.AppService
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
                 throw new BusinessException($"{address} incorrect rpc address format");
-            }
-
-            var addressInfo = address.Split(":");
-            if (!SocketCheck.TestConnection(addressInfo[0], int.Parse(addressInfo[1])))
-            {
-                throw new BusinessException($"{address} is unHealth");
             }
 
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getInstanceSupervisorServiceEntryId);
@@ -412,13 +410,6 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} incorrect rpcAddress format");
             }
 
-            var addressInfo = address.Split(":");
-            if (!SocketCheck.TestConnection(addressInfo[0], int.Parse(addressInfo[1])))
-            {
-                throw new BusinessException($"{address} is unHealth");
-            }
-
-
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceHandle);
             if (serviceEntry == null)
             {
@@ -443,12 +434,6 @@ namespace Silky.Http.Dashboard.AppService
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
                 throw new BusinessException($"{address} incorrect rpc address format");
-            }
-
-            var addressInfo = address.Split(":");
-            if (!SocketCheck.TestConnection(addressInfo[0], int.Parse(addressInfo[1])))
-            {
-                throw new BusinessException($"{address} is unHealth");
             }
 
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceInvoke);
@@ -601,6 +586,11 @@ namespace Silky.Http.Dashboard.AppService
             }
             else
             {
+                if (!await _serverHealthCheck.IsHealth(address))
+                {
+                    throw new BusinessException($"{address} is unHealth");
+                }
+
                 RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
                 result =
                     (T)await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
