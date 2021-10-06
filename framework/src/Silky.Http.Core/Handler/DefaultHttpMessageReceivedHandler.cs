@@ -28,9 +28,8 @@ namespace Silky.Http.Core.Handlers
             IOptionsMonitor<GatewayOptions> gatewayOptions,
             IHttpExecutor executor,
             ISerializer serializer,
-            IParameterParser parameterParser,
-            IServerHandleSupervisor serverHandleSupervisor)
-            : base(rpcOptions, executor, parameterParser, serverHandleSupervisor)
+            IParameterParser parameterParser)
+            : base(rpcOptions, executor, parameterParser)
         {
             _serializer = serializer;
             _gatewayOptions = gatewayOptions.CurrentValue;

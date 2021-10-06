@@ -18,6 +18,7 @@
         <ProjectReference Include="..\Silky.RegistryCenter.Consul\Silky.RegistryCenter.Consul.csproj" />
         <ProjectReference Include="..\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj" />
         <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
+        <ProjectReference Include="..\Silky.Rpc.Monitor\Silky.Rpc.Monitor.csproj" />
         <ProjectReference Include="..\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
         <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />

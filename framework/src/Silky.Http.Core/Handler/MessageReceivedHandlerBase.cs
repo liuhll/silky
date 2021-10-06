@@ -26,7 +26,7 @@ namespace Silky.Http.Core.Handlers
     {
         protected readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
-        private readonly IServerHandleSupervisor _serverHandleSupervisor;
+
         protected RpcOptions _rpcOptions;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
@@ -37,12 +37,10 @@ namespace Silky.Http.Core.Handlers
         protected MessageReceivedHandlerBase(
             IOptionsMonitor<RpcOptions> rpcOptions,
             IHttpExecutor executor,
-            IParameterParser parameterParser,
-            IServerHandleSupervisor serverHandleSupervisor)
+            IParameterParser parameterParser)
         {
             _executor = executor;
             _parameterParser = parameterParser;
-            _serverHandleSupervisor = serverHandleSupervisor;
             _rpcOptions = rpcOptions.CurrentValue;
             rpcOptions.OnChange((options, s) => _rpcOptions = options);
             Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
@@ -65,7 +63,8 @@ namespace Silky.Http.Core.Handlers
             var serviceKey = await ResolveServiceKey(httpContext);
             var rpcConnection = RpcContext.Context.Connection;
             var clientRpcEndpoint = rpcConnection.ClientHost;
-            _serverHandleSupervisor.Monitor((serviceEntry.Id, clientRpcEndpoint));
+            var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
+            var serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientRpcEndpoint));
             if (!serviceKey.IsNullOrEmpty())
             {
                 RpcContext.Context.SetServiceKey(serviceKey);
@@ -110,12 +109,13 @@ namespace Silky.Http.Core.Handlers
                 sp.Stop();
                 if (isHandleSuccess)
                 {
-                    _serverHandleSupervisor.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds);
+                    serverHandleMonitor?.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds,
+                        serverHandleInfo);
                 }
                 else
                 {
-                    _serverHandleSupervisor.ExecFail((serviceEntry?.Id, clientRpcEndpoint), !isFriendlyStatus,
-                        sp.ElapsedMilliseconds);
+                    serverHandleMonitor?.ExecFail((serviceEntry?.Id, clientRpcEndpoint), !isFriendlyStatus,
+                        sp.ElapsedMilliseconds, serverHandleInfo);
                 }
             }
 

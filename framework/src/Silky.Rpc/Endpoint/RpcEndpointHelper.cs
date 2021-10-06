@@ -125,8 +125,15 @@ namespace Silky.Rpc.Endpoint
 
         public static IRpcEndpoint CreateRpcEndpoint(string host, int port, ServiceProtocol serviceProtocol)
         {
-            var address = new RpcEndpoint(host, port, serviceProtocol);
-            return address;
+            var rpcEndpoint = new RpcEndpoint(host, port, serviceProtocol);
+            return rpcEndpoint;
+        }
+
+        public static IRpcEndpoint CreateRpcEndpoint(string address, ServiceProtocol serviceProtocol)
+        {
+            var addressInfo = address.Split(":");
+            // var address = new RpcEndpoint(host, port, serviceProtocol);
+            return CreateRpcEndpoint(addressInfo[0], addressInfo[1].To<int>(), serviceProtocol);
         }
 
         public static string GetIp(string host)

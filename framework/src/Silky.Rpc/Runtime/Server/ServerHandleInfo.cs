@@ -18,5 +18,7 @@ namespace Silky.Rpc.Runtime.Server
         public int TotalHandleCount { get; set; } = 0;
 
         public DateTime? SeriousErrorTime { get; set; }
+        public string ServiceEntryId { get; set; }
+        public string Address { get; set; }
     }
 }

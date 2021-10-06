@@ -56,7 +56,7 @@ namespace Silky.Http.Dashboard.AppService
         Task<GetInstanceDetailOutput> GetInstanceDetail(string address);
 
         [HttpGet("instance/{address}/servicehandle")]
-        Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address, PagedRequestDto input);
+        Task<PagedList<ServerHandleInfo>> GetServiceEntryHandleInfos(string address, PagedRequestDto input);
 
         [HttpGet("instance/{address}/serviceinvoke")]
         Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address, PagedRequestDto input);

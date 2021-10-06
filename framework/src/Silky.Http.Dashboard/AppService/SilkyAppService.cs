@@ -402,7 +402,7 @@ namespace Silky.Http.Dashboard.AppService
             return result;
         }
 
-        public async Task<PagedList<ServiceEntryHandleInfo>> GetServiceEntryHandleInfos(string address,
+        public async Task<PagedList<ServerHandleInfo>> GetServiceEntryHandleInfos(string address,
             PagedRequestDto input)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
@@ -416,7 +416,7 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceHandle}");
             }
 
-            var result = await ServiceEntryExec<IReadOnlyCollection<ServiceEntryHandleInfo>>(address, serviceEntry);
+            var result = await ServiceEntryExec<IReadOnlyCollection<ServerHandleInfo>>(address, serviceEntry);
 
             return result.ToPagedList(input.PageIndex, input.PageSize);
         }

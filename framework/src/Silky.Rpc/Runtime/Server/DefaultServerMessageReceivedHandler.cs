@@ -17,18 +17,17 @@ namespace Silky.Rpc.Runtime.Server
     public class DefaultServerMessageReceivedHandler : IServerMessageReceivedHandler
     {
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly IServerHandleSupervisor _serverHandleSupervisor;
+
         private readonly IServiceKeyExecutor _serviceKeyExecutor;
         private readonly IServerDiagnosticListener _serverDiagnosticListener;
         public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
 
         public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
-            IServerHandleSupervisor serverHandleSupervisor,
             IServiceKeyExecutor serviceKeyExecutor,
             IServerDiagnosticListener serverDiagnosticListener)
         {
             _serviceEntryLocator = serviceEntryLocator;
-            _serverHandleSupervisor = serverHandleSupervisor;
+
             _serviceKeyExecutor = serviceKeyExecutor;
             _serverDiagnosticListener = serverDiagnosticListener;
             Logger = NullLogger<DefaultServerMessageReceivedHandler>.Instance;
@@ -49,6 +48,8 @@ namespace Silky.Rpc.Runtime.Server
             context[PollyContextNames.TracingTimestamp] = tracingTimestamp;
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
+            var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
+            ServerHandleInfo serverHandleInfo = null;
             var remoteResultMessage = new RemoteResultMessage()
             {
                 ServiceEntryId = serviceEntry?.Id
@@ -69,7 +70,9 @@ namespace Silky.Rpc.Runtime.Server
                 }
 
                 context[PollyContextNames.ServiceEntry] = serviceEntry;
-                _serverHandleSupervisor.Monitor((serviceEntry.Id, clientRpcEndpoint));
+
+                serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientRpcEndpoint));
+
                 var result = await serviceEntry.Executor(_serviceKeyExecutor.ServiceKey,
                     message.Parameters);
 
@@ -93,16 +96,18 @@ namespace Silky.Rpc.Runtime.Server
                 context[PollyContextNames.ElapsedTimeMs] = sp.ElapsedMilliseconds;
                 if (isHandleSuccess)
                 {
-                    _serverHandleSupervisor.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds);
+                    serverHandleMonitor?.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds,
+                        serverHandleInfo);
                 }
                 else
                 {
-                    _serverHandleSupervisor.ExecFail((serviceEntry?.Id, clientRpcEndpoint),
-                        !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds);
+                    serverHandleMonitor?.ExecFail((serviceEntry?.Id, clientRpcEndpoint),
+                        !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds, null);
                 }
 
                 Logger.LogDebug("Server processing completed{0}" +
-                                "messageId:[{1}],serviceEntryId:[{2}],handleSuccess:{3}", Environment.NewLine, messageId,
+                                "messageId:[{1}],serviceEntryId:[{2}],handleSuccess:{3}", Environment.NewLine,
+                    messageId,
                     message.ServiceEntryId, isHandleSuccess);
             }
 

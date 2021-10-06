@@ -22,20 +22,19 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultRemoteInvoker : IRemoteInvoker
     {
         private readonly IServerManager _serverManager;
-        private readonly IInvokeSupervisor _invokeSupervisor;
+
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly ISerializer _serializer;
         private readonly ClientFilterProvider _clientFilterProvider;
         public ILogger<DefaultRemoteInvoker> Logger { get; set; }
 
         public DefaultRemoteInvoker(IServerManager serverManager,
-            IInvokeSupervisor invokeSupervisor,
             ITransportClientFactory transportClientFactory,
             ISerializer serializer,
             ClientFilterProvider clientFilterProvider)
         {
             _serverManager = serverManager;
-            _invokeSupervisor = invokeSupervisor;
+
             _transportClientFactory = transportClientFactory;
             _serializer = serializer;
             _clientFilterProvider = clientFilterProvider;
@@ -55,10 +54,13 @@ namespace Silky.Rpc.Runtime.Client
 
             var sp = Stopwatch.StartNew();
             RemoteResultMessage invokeResult = null;
+            var invokeMonitor = EngineContext.Current.Resolve<IInvokeMonitor>();
             var filters = _clientFilterProvider.GetClientFilters(remoteInvokeMessage.ServiceEntryId);
+            ClientInvokeInfo clientInvokeInfo = null;
             try
             {
-                _invokeSupervisor.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
+                clientInvokeInfo =
+                    invokeMonitor?.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
                 RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor);
 
                 var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
@@ -82,8 +84,8 @@ namespace Silky.Rpc.Runtime.Client
             catch (Exception ex)
             {
                 sp.Stop();
-                _invokeSupervisor.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
-                    sp.Elapsed.TotalMilliseconds);
+                invokeMonitor?.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
+                    sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
                 Logger.LogException(ex);
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
                     $"The rpc request call failed");
@@ -91,8 +93,8 @@ namespace Silky.Rpc.Runtime.Client
             }
 
             sp.Stop();
-            _invokeSupervisor.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
-                sp.Elapsed.TotalMilliseconds);
+            invokeMonitor?.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
+                sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.Success,
                 $"The rpc request call succeeded");

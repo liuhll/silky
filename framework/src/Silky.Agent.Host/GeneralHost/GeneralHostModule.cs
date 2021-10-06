@@ -11,6 +11,7 @@ using Silky.Validation.Fluent;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Proxy;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Monitor;
 using Silky.Transaction.Repository.Redis;
 using Silky.Transaction.Tcc;
 using Silky.Validation;
@@ -20,6 +21,7 @@ namespace Microsoft.Extensions.Hosting
     [DependsOn(
         typeof(DotNettyTcpModule),
         typeof(RpcProxyModule),
+        typeof(RpcSupervisorModule),
         typeof(RpcCachingInterceptorModule),
         typeof(TransactionTccModule),
         typeof(ValidationModule),
