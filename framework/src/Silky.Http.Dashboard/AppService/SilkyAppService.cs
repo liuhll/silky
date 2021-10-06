@@ -278,9 +278,10 @@ namespace Silky.Http.Dashboard.AppService
                             ServiceId = service.Id,
                             ServiceEntryId = p.Id,
                             HostName = server.HostName,
-                            IsEnable = server.Endpoints.Any(p => p.Enabled),
-                            ServerInstanceCount = server.Endpoints.Count(p =>
-                                p.ServiceProtocol == service.ServiceProtocol && p.Enabled),
+                            IsEnable = server.Endpoints.Any(e =>
+                                e.Enabled && e.ServiceProtocol == service.ServiceProtocol),
+                            ServerInstanceCount = server.Endpoints.Count(e =>
+                                e.ServiceProtocol == service.ServiceProtocol && e.Enabled),
                             ServiceProtocol = p.ServiceProtocol,
                             MultipleServiceKey = service.MultiServiceKeys(),
                             Author = p.GetAuthor(),
@@ -291,10 +292,10 @@ namespace Silky.Http.Dashboard.AppService
                             Method = p.Method,
                             IsSystem = service.IsSilkyService(),
                             IsDistributeTransaction = p.IsDistributeTransaction,
-                            ServiceKeys = service.GetServiceKeys()?.Select(p => new ServiceKeyOutput()
+                            ServiceKeys = service.GetServiceKeys()?.Select(sk => new ServiceKeyOutput()
                             {
-                                Name = p.Key,
-                                Weight = p.Value
+                                Name = sk.Key,
+                                Weight = sk.Value
                             }).ToArray(),
                         });
                     serviceEntryOutputs.AddRange(serviceEntries);
