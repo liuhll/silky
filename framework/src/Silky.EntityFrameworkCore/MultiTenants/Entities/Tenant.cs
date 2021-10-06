@@ -23,7 +23,7 @@ namespace Silky.EntityFrameworkCore.MultiTenants.Entities
         /// </summary>
         [Key]
         [ScaffoldColumn(false)]
-        public virtual long TenantId { get; set; }
+        public virtual string TenantId { get; set; }
 
         /// <summary>
         /// 租户名

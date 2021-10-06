@@ -148,8 +148,20 @@ namespace Silky.Http.Identity.Authentication.Handlers
 
         private AuthenticationTicket CreateTicket(IDictionary<string, object> payload)
         {
-            var claimsIdentity = new ClaimsIdentity(payload.Select(p => new Claim(p.Key, p.Value.ToString())),
-                JwtBearerDefaults.AuthenticationType);
+            var claimsIdentity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationType);
+            foreach (var item in payload)
+            {
+                if (item.Key.Equals(ClaimTypes.Role))
+                {
+                    var roles = item.Value.ToString().Split(",");
+                    var roleClaims = roles.Select(p => new Claim(item.Key, p));
+                    claimsIdentity.AddClaims(roleClaims);
+                }
+                else
+                {
+                    claimsIdentity.AddClaim(new Claim(item.Key, item.Value.ToString()));
+                }
+            }
 
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var ticket = new AuthenticationTicket(claimsPrincipal, JwtBearerDefaults.AuthenticationScheme);

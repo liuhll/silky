@@ -1,4 +1,5 @@
 using System;
+using System.Security.Claims;
 using Silky.Core.Rpc;
 using Silky.Rpc.Security;
 
@@ -10,17 +11,12 @@ namespace Silky.Rpc.Runtime.Server
         {
         }
 
-        public override long? UserId
+        public override object? UserId
         {
             get
             {
-                var userId = RpcContext.Context.GetAttachment(ClaimTypes.UserId);
-                if (userId != null)
-                {
-                    return Convert.ToInt64(userId);
-                }
-
-                return null;
+                var userId = RpcContext.Context.GetAttachment(ClaimTypes.NameIdentifier);
+                return userId;
             }
         }
 
@@ -28,7 +24,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             get
             {
-                var userName = RpcContext.Context.GetAttachment(ClaimTypes.UserName);
+                var userName = RpcContext.Context.GetAttachment(ClaimTypes.Name);
                 if (userName != null)
                 {
                     return userName.ToString();
@@ -38,17 +34,12 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
         
-        public override long? TenantId
+        public override object TenantId
         {
             get
             {
-                var tenantId = RpcContext.Context.GetAttachment(ClaimTypes.TenantId);
-                if (tenantId != null)
-                {
-                    return Convert.ToInt64(tenantId);
-                }
-
-                return null;
+                var tenantId = RpcContext.Context.GetAttachment(SilkyClaimTypes.TenantId);
+                return tenantId;
             }
         }
     }

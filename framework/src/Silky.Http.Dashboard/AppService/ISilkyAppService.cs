@@ -5,12 +5,14 @@ using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 using GetInstanceDetailOutput = Silky.Rpc.AppServices.Dtos.GetInstanceDetailOutput;
 
 namespace Silky.Http.Dashboard.AppService
 {
     [ServiceRoute]
     [Metadata(ServiceConstant.IsSilkyService, true)]
+    [Authorize(Roles = "Dashboard")]
     public interface ISilkyAppService
     {
         PagedList<GetHostOutput> GetHosts(PagedRequestDto input);

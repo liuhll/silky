@@ -8,7 +8,7 @@
             {
                 return false;
             }
-            return session.UserId.HasValue;
+            return session.UserId != null;
         }
     }
 }

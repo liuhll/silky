@@ -2,10 +2,10 @@ namespace Silky.Rpc.Runtime.Server
 {
     public interface ISession
     {
-        long? UserId { get; }
+        object UserId { get; }
         
         string UserName { get; }
         
-        long?  TenantId { get; }
+        object  TenantId { get; }
     }
 }

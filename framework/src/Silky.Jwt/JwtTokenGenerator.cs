@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.Extensions.Options;
-using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;

@@ -32,7 +32,7 @@ namespace Silky.EntityFrameworkCore.Contexts
         /// 构造函数
         /// </summary>
         /// <param name="options"></param>
-        public SilkyDbContext(DbContextOptions<TDbContext> options) : base(options)
+        protected SilkyDbContext(DbContextOptions<TDbContext> options) : base(options)
         {
         }
     }
@@ -124,7 +124,7 @@ namespace Silky.EntityFrameworkCore.Contexts
 
                 var session = NullSession.Instance;
 
-                if (!session.TenantId.HasValue)
+                if (session.TenantId == null)
                 {
                     return default;
                 }
@@ -142,7 +142,7 @@ namespace Silky.EntityFrameworkCore.Contexts
 
                     var tenantDbContext = dbContextResolve(typeof(MultiTenantDbContextLocator), default);
                     currentTenant = tenantDbContext.Set<Tenant>().AsNoTracking()
-                        .FirstOrDefault(u => u.TenantId == session.TenantId);
+                        .FirstOrDefault(u => u.TenantId == session.TenantId.ToString());
                     if (currentTenant != null)
                     {
                         distributedCache?.SetString(tenantCachedKey, serializer.Serialize(currentTenant));

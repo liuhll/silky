@@ -8,9 +8,9 @@ namespace Silky.Rpc.Runtime.Server
 
         public static ISession Instance { get; } = new RpcContextSession();
 
-        public override long? UserId { get; } = Instance.UserId;
+        public override object? UserId { get; } = Instance.UserId;
         public override string UserName { get; } = Instance.UserName;
 
-        public override long? TenantId { get; } = Instance.TenantId;
+        public override object? TenantId { get; } = Instance.TenantId;
     }
 }
