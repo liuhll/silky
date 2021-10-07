@@ -129,9 +129,25 @@ namespace Silky.Rpc.Runtime.Server
                 GovernanceOptions.ProhibitExtranet = governanceAttribute?.ProhibitExtranet ?? false;
             }
 
-            var allowAnonymous = CustomAttributes.OfType<IAllowAnonymous>().FirstOrDefault() ?? MethodInfo
-                .DeclaringType
-                .GetCustomAttributes().OfType<IAllowAnonymous>().FirstOrDefault();
+            var allowAnonymous = CustomAttributes.OfType<IAllowAnonymous>().FirstOrDefault();
+
+            if (allowAnonymous != null)
+            {
+                GovernanceOptions.IsAllowAnonymous = true;
+            }
+            else
+            {
+                var authorizeData = CustomAttributes.OfType<IAuthorizeData>();
+                if (!authorizeData.Any())
+                {
+                    allowAnonymous = _serviceType.GetCustomAttributes().OfType<IAllowAnonymous>().FirstOrDefault();
+                    if (allowAnonymous != null)
+                    {
+                        GovernanceOptions.IsAllowAnonymous = true;
+                    }
+                }
+            }
+
             GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;
             UpdateServiceEntryDescriptor(GovernanceOptions);
         }
