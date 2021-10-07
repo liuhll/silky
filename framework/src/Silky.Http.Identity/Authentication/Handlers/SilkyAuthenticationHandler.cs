@@ -90,23 +90,14 @@ namespace Silky.Http.Identity.Authentication.Handlers
             }
 
             var serviceEntry = Context.GetServiceEntry();
-            if (serviceEntry == null)
-            {
-                if (serviceEntry == null)
-                {
-                    throw new NotFindServiceEntryException(
-                        $"No service entry found via {Context.Request.Path}-{Context.Request.Method}");
-                }
-            }
-
             var silkyAppServiceUseAuth =
                 EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
-            if (serviceEntry.IsSilkyAppService() && !silkyAppServiceUseAuth)
+            if (serviceEntry?.IsSilkyAppService() == true && !silkyAppServiceUseAuth)
             {
                 return AuthenticateResult.NoResult();
             }
 
-            if (serviceEntry.GovernanceOptions.IsAllowAnonymous)
+            if (serviceEntry?.GovernanceOptions.IsAllowAnonymous == true)
             {
                 return AuthenticateResult.NoResult();
             }

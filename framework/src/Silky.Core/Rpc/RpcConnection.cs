@@ -4,7 +4,7 @@ namespace Silky.Core.Rpc
     {
         public string ClientHost { get; internal set; }
 
-        public int RemotePort { get; internal set; }
+        public int? RemotePort { get; internal set; }
 
         internal int ClientPort { get; set; }
 

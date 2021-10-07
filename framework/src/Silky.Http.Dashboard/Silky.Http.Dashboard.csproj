@@ -5,6 +5,7 @@
         <Description>Silky Dashboard Project</Description>
     </PropertyGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Silky.HealthChecks.Rpc\Silky.HealthChecks.Rpc.csproj" />
       <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
       <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
     </ItemGroup>

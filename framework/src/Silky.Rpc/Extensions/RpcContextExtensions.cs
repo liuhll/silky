@@ -21,7 +21,10 @@ namespace Silky.Rpc.Extensions
             rpcContext.SetAttachment(AttachmentKeys.ClientHost, localRpcEndpointDescriptor.Host);
             rpcContext.SetAttachment(AttachmentKeys.ClientServiceProtocol, localRpcEndpointDescriptor.ServiceProtocol);
             rpcContext.SetAttachment(AttachmentKeys.ClientPort, localRpcEndpointDescriptor.Port);
+            RpcContext.Context.SetAttachment(AttachmentKeys.LocalAddress, localRpcEndpointDescriptor.Host);
+            RpcContext.Context.SetAttachment(AttachmentKeys.LocalPort, localRpcEndpointDescriptor.Port);
+            RpcContext.Context.SetAttachment(AttachmentKeys.LocalServiceProtocol,
+                localRpcEndpointDescriptor.ServiceProtocol);
         }
-        
     }
 }

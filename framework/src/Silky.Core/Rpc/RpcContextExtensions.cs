@@ -27,10 +27,15 @@ namespace Silky.Core.Rpc
             return clientPort.To<int>();
         }
 
-        public static int GetRpcRequestPort(this RpcContext rpcContext)
+        public static int? GetRpcRequestPort(this RpcContext rpcContext)
         {
             var rpcRequestPort = rpcContext.GetAttachment(AttachmentKeys.RpcRequestPort);
-            return rpcRequestPort.To<int>();
+            if (rpcRequestPort != null)
+            {
+                return rpcRequestPort.To<int>();
+            }
+
+            return null;
         }
 
         public static ServiceProtocol GetClientServiceProtocol(this RpcContext rpcContext)

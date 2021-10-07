@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddOptions<DashboardOptions>()
                 .Bind(EngineContext.Current.Configuration.GetSection(DashboardOptions.Dashboard));
+            services.AddSilkyServerHealthCheck();
             return services;
         }
     }

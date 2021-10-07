@@ -61,8 +61,6 @@ namespace Silky.Rpc.Runtime.Client
             {
                 clientInvokeInfo =
                     invokeMonitor?.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
-                RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor);
-
                 var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 foreach (var filter in filters)
                 {
@@ -156,6 +154,7 @@ namespace Silky.Rpc.Runtime.Client
                     Environment.NewLine,
                     selectedRpcEndpoint.ToString()
                 });
+            RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor);
             return selectedRpcEndpoint;
         }
     }

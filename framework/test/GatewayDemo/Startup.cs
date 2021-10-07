@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Silky.HealthChecks.Rpc;
 
 namespace GatewayDemo
 {
@@ -38,6 +39,8 @@ namespace GatewayDemo
             services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
             services.AddSilkyHttpServices();
             services.AddMessagePackCodec();
+            services.AddHealthChecks()
+                .AddSilkyRpc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +64,11 @@ namespace GatewayDemo
             app.UseSilkyExceptionHandler();
             app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
-            app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapSilkyRpcHealthChecks();
+                endpoints.MapSilkyRpcServices();
+            });
         }
     }
 }

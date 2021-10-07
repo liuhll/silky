@@ -9,13 +9,13 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Rpc;
+using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Http.Dashboard.Configuration;
 using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
-using Silky.Rpc.HealthCheck;
 using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
@@ -40,10 +40,10 @@ namespace Silky.Http.Dashboard.AppService
         private const string getInstanceSupervisorServiceEntryId =
             "Silky.Rpc.AppServices.IRpcAppService.GetInstanceDetail_Get";
 
-        private const string getGetServiceEntrySupervisorServiceHandle =
+        private const string getGetServiceEntrySupervisorServiceHandleServiceEntryId =
             "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryHandleInfos_Get";
 
-        private const string getGetServiceEntrySupervisorServiceInvoke =
+        private const string getGetServiceEntrySupervisorServiceInvokeServiceEntryId =
             "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryInvokeInfos_Get";
 
         public SilkyAppService(
@@ -411,10 +411,12 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} incorrect rpcAddress format");
             }
 
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceHandle);
+            var serviceEntry =
+                _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceHandleServiceEntryId);
             if (serviceEntry == null)
             {
-                throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceHandle}");
+                throw new BusinessException(
+                    $"Not find serviceEntry by {getGetServiceEntrySupervisorServiceHandleServiceEntryId}");
             }
 
             var result = await ServiceEntryExec<IReadOnlyCollection<ServerHandleInfo>>(address, serviceEntry);
@@ -437,10 +439,12 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} incorrect rpc address format");
             }
 
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceInvoke);
+            var serviceEntry =
+                _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceInvokeServiceEntryId);
             if (serviceEntry == null)
             {
-                throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceInvoke}");
+                throw new BusinessException(
+                    $"Not find serviceEntry by {getGetServiceEntrySupervisorServiceInvokeServiceEntryId}");
             }
 
             var result = await ServiceEntryExec<IReadOnlyCollection<ClientInvokeInfo>>(address, serviceEntry);
@@ -579,7 +583,7 @@ namespace Silky.Http.Dashboard.AppService
 
         private async Task<T> ServiceEntryExec<T>(string address, ServiceEntry serviceEntry)
         {
-            T result = default(T);
+            T result;
             if (IsLocalAddress(address))
             {
                 result =
@@ -587,14 +591,8 @@ namespace Silky.Http.Dashboard.AppService
             }
             else
             {
-                if (!await _serverHealthCheck.IsHealth(address))
-                {
-                    throw new BusinessException($"{address} is unHealth");
-                }
-
                 RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
-                result =
-                    (T)await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
+                result = (T)await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
             }
 
             return result;
