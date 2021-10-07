@@ -86,6 +86,7 @@ namespace Silky.Rpc.Runtime.Client
                 sp.Stop();
                 invokeMonitor?.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
                     sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
+
                 Logger.LogException(ex);
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
                     $"The rpc request call failed");

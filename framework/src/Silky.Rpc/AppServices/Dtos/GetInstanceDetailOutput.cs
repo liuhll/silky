@@ -14,6 +14,6 @@ namespace Silky.Rpc.AppServices.Dtos
 
         public ServerInstanceHandleInfo HandleInfo { get; set; }
 
-        public ServiceInstanceInvokeInfo InvokeInfo { get; set; }
+        public ServerInstanceInvokeInfo InvokeInfo { get; set; }
     }
 }

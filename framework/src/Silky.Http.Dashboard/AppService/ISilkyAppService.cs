@@ -59,7 +59,7 @@ namespace Silky.Http.Dashboard.AppService
         Task<PagedList<ServerHandleInfo>> GetServiceEntryHandleInfos(string address, PagedRequestDto input);
 
         [HttpGet("instance/{address}/serviceinvoke")]
-        Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address, PagedRequestDto input);
+        Task<PagedList<ClientInvokeInfo>> GetServiceEntryInvokeInfos(string address, PagedRequestDto input);
 
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
 

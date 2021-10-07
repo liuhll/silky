@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Caching;
+using Silky.Core;
+using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
@@ -16,6 +18,7 @@ namespace Silky.Rpc.Monitor.Invoke
     {
         private readonly IDistributedCache<ClientInvokeInfo> _distributedCache;
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
+        private ServerInstanceInvokeInfo _serverInstanceInvokeInfo = new();
         public ILogger<DefaultInvokeMonitor> Logger { get; set; }
 
         public DefaultInvokeMonitor(IDistributedCache<ClientInvokeInfo> distributedCache,
@@ -28,101 +31,94 @@ namespace Silky.Rpc.Monitor.Invoke
 
         public ClientInvokeInfo Monitor((string, IRpcEndpoint) item)
         {
-            var cacheKey = GetCacheKey(item);
-            var clientInvokeInfo = _distributedCache.Get(cacheKey);
-            if (clientInvokeInfo == null)
+            lock (_serverInstanceInvokeInfo)
             {
-                clientInvokeInfo = new ClientInvokeInfo();
-            }
+                _serverInstanceInvokeInfo.ConcurrentCount++;
+                if (_serverInstanceInvokeInfo.ConcurrentCount > _serverInstanceInvokeInfo.MaxConcurrentCount)
+                {
+                    _serverInstanceInvokeInfo.MaxConcurrentCount = _serverInstanceInvokeInfo.ConcurrentCount;
+                }
 
-            clientInvokeInfo.Address = item.Item2.GetAddress();
-            clientInvokeInfo.ServiceEntryId = item.Item1;
-            clientInvokeInfo.ConcurrentInvokeCount++;
-            clientInvokeInfo.TotalInvokeCount++;
-            clientInvokeInfo.FinalInvokeTime = DateTime.Now;
-            return clientInvokeInfo;
+                _serverInstanceInvokeInfo.FirstInvokeTime ??= DateTime.Now;
+                _serverInstanceInvokeInfo.FinalInvokeTime = DateTime.Now;
+                _serverInstanceInvokeInfo.TotalInvokeCount += 1;
+                var cacheKey = GetCacheKey(item);
+                var clientInvokeInfo = _distributedCache.Get(cacheKey) ?? new ClientInvokeInfo();
+                clientInvokeInfo.IsEnable = true;
+                clientInvokeInfo.Address = item.Item2.GetAddress();
+                clientInvokeInfo.ServiceEntryId = item.Item1;
+                clientInvokeInfo.TotalInvokeCount++;
+                clientInvokeInfo.FinalInvokeTime = DateTime.Now;
+                return clientInvokeInfo;
+            }
         }
+        
 
         public void ExecSuccess((string, IRpcEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
-            clientInvokeInfo.ConcurrentInvokeCount--;
-            if (elapsedTotalMilliseconds > 0)
+            lock (_serverInstanceInvokeInfo)
             {
-                clientInvokeInfo.AET = clientInvokeInfo.AET.HasValue
-                    ? (clientInvokeInfo.AET + elapsedTotalMilliseconds) / 2
-                    : elapsedTotalMilliseconds;
-            }
+                _serverInstanceInvokeInfo.ConcurrentCount--;
+                if (elapsedTotalMilliseconds > 0)
+                {
+                    clientInvokeInfo.AET = clientInvokeInfo.AET.HasValue
+                        ? (clientInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                        : elapsedTotalMilliseconds;
+                    _serverInstanceInvokeInfo.AET = _serverInstanceInvokeInfo.AET.HasValue
+                        ? (_serverInstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                        : elapsedTotalMilliseconds;
+                }
 
-            _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
+                _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
+            }
         }
 
         public void ExecFail((string, IRpcEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
-            clientInvokeInfo.ConcurrentInvokeCount--;
-            clientInvokeInfo.FaultInvokeCount++;
-            clientInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
-            _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
+            lock (_serverInstanceInvokeInfo)
+            {
+                _serverInstanceInvokeInfo.ConcurrentCount--;
+                _serverInstanceInvokeInfo.FaultInvokeCount++;
+                _serverInstanceInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
+                clientInvokeInfo.IsEnable = _rpcEndpointMonitor.IsEnable(item.Item2);
+                clientInvokeInfo.FaultInvokeCount++;
+                clientInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
+                if (elapsedTotalMilliseconds > 0)
+                {
+                    clientInvokeInfo.AET = clientInvokeInfo.AET.HasValue
+                        ? (clientInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                        : elapsedTotalMilliseconds;
+                    _serverInstanceInvokeInfo.AET = _serverInstanceInvokeInfo.AET.HasValue
+                        ? (_serverInstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                        : elapsedTotalMilliseconds;
+                }
+
+                _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
+            }
         }
 
-        public async Task<ServiceInstanceInvokeInfo> GetServiceInstanceInvokeInfo()
+        public Task<ServerInstanceInvokeInfo> GetServerInstanceInvokeInfo()
         {
-            ServiceInstanceInvokeInfo serviceInstanceInvokeInfo = null;
+            return Task.FromResult(_serverInstanceInvokeInfo);
+        }
 
+        public async Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos()
+        {
+            var clientInvokeInfos = new List<ClientInvokeInfo>();
             var cacheKeys =
                 await _distributedCache.SearchKeys(
                     $"*:InvokeSupervisor:{RpcContext.Context.Connection.LocalAddress}:*");
             if (cacheKeys.Count <= 0)
             {
-                serviceInstanceInvokeInfo = new ServiceInstanceInvokeInfo();
-            }
-            else
-            {
-                var clientInvokeInfos =
-                    (await _distributedCache.GetManyAsync(cacheKeys)).Select(p => p.Value).ToArray();
-                serviceInstanceInvokeInfo = new ServiceInstanceInvokeInfo()
-                {
-                    AET = clientInvokeInfos.Sum(p => p.AET) / clientInvokeInfos.Length,
-                    FaultInvokeCount = clientInvokeInfos.Sum(p => p.FaultInvokeCount),
-                    TotalInvokeCount = clientInvokeInfos.Sum(p => p.TotalInvokeCount),
-                    FinalInvokeTime = clientInvokeInfos.Max(p => p.FinalInvokeTime),
-                    FinalFaultInvokeTime = clientInvokeInfos.Max(p => p.FinalFaultInvokeTime),
-                    FirstInvokeTime = clientInvokeInfos.Min(p => p.FirstInvokeTime)
-                };
+                return clientInvokeInfos;
             }
 
-
-            return serviceInstanceInvokeInfo;
-        }
-
-        public async Task<IReadOnlyCollection<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos()
-        {
-            var serviceEntryInvokeInfos = new List<ServiceEntryInvokeInfo>();
-            var cacheKeys =
-                await _distributedCache.SearchKeys(
-                    $"*:InvokeSupervisor:{RpcContext.Context.Connection.LocalAddress}:*");
-            if (cacheKeys.Count <= 0)
-            {
-                return serviceEntryInvokeInfos;
-            }
-
-            var clientInvokeInfos =
-                (await _distributedCache.GetManyAsync(cacheKeys)).Select(p => p.Value).ToArray();
-            foreach (var clientInvokeInfo in clientInvokeInfos)
-            {
-                var serviceEntryInvokeInfo = new ServiceEntryInvokeInfo()
-                {
-                    ServiceEntryId = clientInvokeInfo.ServiceEntryId,
-                    Address = clientInvokeInfo.Address,
-                    ClientInvokeInfo = clientInvokeInfo,
-                    IsEnable = _rpcEndpointMonitor.IsEnable(
-                        RpcEndpointHelper.CreateRpcEndpoint(clientInvokeInfo.Address, ServiceProtocol.Tcp))
-                };
-                serviceEntryInvokeInfos.Add(serviceEntryInvokeInfo);
-            }
-
-            return serviceEntryInvokeInfos.OrderBy(p => p.ServiceEntryId).ToArray();
+            clientInvokeInfos =
+                (await _distributedCache.GetManyAsync(cacheKeys)).Select(p => p.Value).OrderBy(p => p.ServiceEntryId)
+                .ToList();
+            return clientInvokeInfos;
         }
 
         private string GetCacheKey((string, IRpcEndpoint) item)
@@ -130,6 +126,35 @@ namespace Silky.Rpc.Monitor.Invoke
             var cacheKey =
                 $"InvokeSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2.GetAddress()}";
             return cacheKey;
+        }
+
+        public async Task ClearCache()
+        {
+            if (EngineContext.Current.IsContainDotNettyTcpModule())
+            {
+                var localTcpEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+                await RemoveCache(localTcpEndpoint.GetAddress());
+            }
+
+            if (EngineContext.Current.IsContainHttpCoreModule())
+            {
+                var localWebEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
+                if (localWebEndpoint != null)
+                {
+                    await RemoveCache(localWebEndpoint.GetAddress());
+                }
+            }
+        }
+
+        private async Task RemoveCache(string address)
+        {
+            var cacheKeys =
+                await _distributedCache.SearchKeys(
+                    $"*:InvokeSupervisor:{address}:*");
+            foreach (var cacheKey in cacheKeys)
+            {
+                await _distributedCache.RemoveAsync(cacheKey);
+            }
         }
     }
 }

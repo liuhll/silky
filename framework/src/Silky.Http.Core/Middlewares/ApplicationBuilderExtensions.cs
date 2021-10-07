@@ -11,9 +11,10 @@ using Silky.Core.Logging;
 using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Middlewares;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 
-namespace  Microsoft.AspNetCore.Builder
+namespace Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {
@@ -90,6 +91,20 @@ namespace  Microsoft.AspNetCore.Builder
             var serverRouteRegister =
                 application.ApplicationServices.GetRequiredService<IServerRegister>();
             await serverRouteRegister.RegisterServer();
+
+            var invokeMonitor =
+                application.ApplicationServices.GetService<IInvokeMonitor>();
+            if (invokeMonitor != null)
+            {
+                await invokeMonitor.ClearCache();
+            }
+
+            var serverHandleMonitor =
+                application.ApplicationServices.GetService<IServerHandleMonitor>();
+            if (serverHandleMonitor != null)
+            {
+                await serverHandleMonitor.ClearCache();
+            }
         }
 
         public static IApplicationBuilder UseSilkyWebSocketsProxy(this IApplicationBuilder application)

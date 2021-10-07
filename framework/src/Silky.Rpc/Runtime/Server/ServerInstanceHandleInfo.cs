@@ -16,5 +16,7 @@ namespace Silky.Rpc.Runtime.Server
         public int TotalHandleCount { get; set; } = 0;
 
         public DateTime? FinalSeriousErrorTime { get; set; }
+        public int ConcurrentCount { get; set; } = 0;
+        public int MaxConcurrentCount { get; set; } = 0;
     }
 }

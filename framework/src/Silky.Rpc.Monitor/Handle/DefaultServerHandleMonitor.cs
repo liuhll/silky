@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silky.Caching;
+using Silky.Core;
+using Silky.Core.Extensions;
 using Silky.Core.Rpc;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Monitor.Handle
@@ -11,6 +14,7 @@ namespace Silky.Rpc.Monitor.Handle
     public class DefaultServerHandleMonitor : IServerHandleMonitor
     {
         private readonly IDistributedCache<ServerHandleInfo> _distributedCache;
+        private ServerInstanceHandleInfo _serverInstanceHandleInfo = new();
 
         public DefaultServerHandleMonitor(IDistributedCache<ServerHandleInfo> distributedCache)
         {
@@ -19,24 +23,42 @@ namespace Silky.Rpc.Monitor.Handle
 
         public ServerHandleInfo Monitor((string, string) item)
         {
-            var serverHandleInfo = _distributedCache.Get(GetCacheKey(item));
-            if (serverHandleInfo == null)
+            lock (_serverInstanceHandleInfo)
             {
-                serverHandleInfo = new ServerHandleInfo();
+                _serverInstanceHandleInfo.ConcurrentCount++;
+                if (_serverInstanceHandleInfo.ConcurrentCount > _serverInstanceHandleInfo.MaxConcurrentCount)
+                {
+                    _serverInstanceHandleInfo.MaxConcurrentCount = _serverInstanceHandleInfo.ConcurrentCount;
+                }
+
+                _serverInstanceHandleInfo.FirstHandleTime ??= DateTime.Now;
+                _serverInstanceHandleInfo.FinalHandleTime = DateTime.Now;
+                _serverInstanceHandleInfo.TotalHandleCount += 1;
             }
 
+            var serverHandleInfo = _distributedCache.Get(GetCacheKey(item)) ?? new ServerHandleInfo();
             serverHandleInfo.ServiceEntryId = item.Item1;
             serverHandleInfo.Address = item.Item2;
-            serverHandleInfo.ConcurrentHandleCount++;
             serverHandleInfo.TotalHandleCount++;
             serverHandleInfo.FinalHandleTime = DateTime.Now;
             return serverHandleInfo;
         }
 
+
         public void ExecSuccess((string, string) item, double elapsedTotalMilliseconds,
             ServerHandleInfo serverHandleInfo)
         {
-            serverHandleInfo.ConcurrentHandleCount--;
+            lock (_serverInstanceHandleInfo)
+            {
+                _serverInstanceHandleInfo.ConcurrentCount--;
+                if (elapsedTotalMilliseconds > 0)
+                {
+                    _serverInstanceHandleInfo.AET = _serverInstanceHandleInfo.AET.HasValue
+                        ? (_serverInstanceHandleInfo.AET + elapsedTotalMilliseconds) / 2
+                        : elapsedTotalMilliseconds;
+                }
+            }
+
             if (elapsedTotalMilliseconds > 0)
             {
                 serverHandleInfo.AET = serverHandleInfo.AET.HasValue
@@ -50,16 +72,36 @@ namespace Silky.Rpc.Monitor.Handle
         public void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds,
             ServerHandleInfo serverHandleInfo)
         {
-            serverHandleInfo.ConcurrentHandleCount--;
+            lock (_serverInstanceHandleInfo)
+            {
+                _serverInstanceHandleInfo.ConcurrentCount--;
+                _serverInstanceHandleInfo.FaultHandleCount++;
+                _serverInstanceHandleInfo.FinalFaultHandleTime = DateTime.Now;
+
+                if (isSeriousError)
+                {
+                    _serverInstanceHandleInfo.TotalSeriousErrorCount++;
+                    _serverInstanceHandleInfo.FinalSeriousErrorTime = DateTime.Now;
+                }
+
+                if (elapsedTotalMilliseconds > 0)
+                {
+                    _serverInstanceHandleInfo.AET = _serverInstanceHandleInfo.AET.HasValue
+                        ? (_serverInstanceHandleInfo.AET + elapsedTotalMilliseconds) / 2
+                        : elapsedTotalMilliseconds;
+                }
+
+                _distributedCache.Set(GetCacheKey(item), serverHandleInfo);
+            }
+
             serverHandleInfo.FaultHandleCount++;
-            serverHandleInfo.FinalHandleTime = DateTime.Now;
+            serverHandleInfo.FinalSeriousErrorTime = DateTime.Now;
             if (isSeriousError)
             {
-                serverHandleInfo.SeriousError++;
+                serverHandleInfo.SeriousErrorCount++;
                 serverHandleInfo.SeriousErrorTime = DateTime.Now;
             }
 
-            serverHandleInfo.ConcurrentHandleCount--;
             if (elapsedTotalMilliseconds > 0)
             {
                 serverHandleInfo.AET = serverHandleInfo.AET.HasValue
@@ -70,37 +112,9 @@ namespace Silky.Rpc.Monitor.Handle
             _distributedCache.Set(GetCacheKey(item), serverHandleInfo);
         }
 
-        public async Task<ServerInstanceHandleInfo> GetServiceInstanceHandleInfo()
+        public Task<ServerInstanceHandleInfo> GetServerInstanceHandleInfo()
         {
-            ServerInstanceHandleInfo serverInstanceHandleInfo = null;
-
-            var cacheKeys =
-                await _distributedCache.SearchKeys(
-                    $"*:ServerHandleSupervisor:{RpcContext.Context.Connection.LocalAddress}:*");
-
-            if (cacheKeys.Count <= 0)
-            {
-                serverInstanceHandleInfo = new ServerInstanceHandleInfo();
-            }
-            else
-            {
-                var serverInstanceHandleInfos =
-                    (await _distributedCache.GetManyAsync(cacheKeys)).Select(p => p.Value).ToArray();
-                serverInstanceHandleInfo = new ServerInstanceHandleInfo()
-                {
-                    AET = serverInstanceHandleInfos.Sum(p => p.AET) / serverInstanceHandleInfos.Length,
-                    FaultHandleCount = serverInstanceHandleInfos.Sum(p => p.FaultHandleCount),
-                    TotalHandleCount = serverInstanceHandleInfos.Sum(p => p.TotalHandleCount),
-                    FirstHandleTime = serverInstanceHandleInfos.Min(p => p.FirstHandleTime),
-                    FinalHandleTime = serverInstanceHandleInfos.Max(p => p.FinalHandleTime),
-                    FinalFaultHandleTime = serverInstanceHandleInfos.Min(p => p.FinalFaultHandleTime),
-                    TotalSeriousErrorCount = serverInstanceHandleInfos.Sum(p => p.SeriousError),
-                    FinalSeriousErrorTime = serverInstanceHandleInfos.Max(p => p.SeriousErrorTime),
-                };
-            }
-
-
-            return serverInstanceHandleInfo;
+            return Task.FromResult(_serverInstanceHandleInfo);
         }
 
         public async Task<IReadOnlyCollection<ServerHandleInfo>> GetServiceEntryHandleInfos()
@@ -130,6 +144,35 @@ namespace Silky.Rpc.Monitor.Handle
             var cacheKey =
                 $"ServerHandleSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2}";
             return cacheKey;
+        }
+
+        public async Task ClearCache()
+        {
+            if (EngineContext.Current.IsContainDotNettyTcpModule())
+            {
+                var localTcpEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+                await RemoveCache(localTcpEndpoint.GetAddress());
+            }
+
+            if (EngineContext.Current.IsContainHttpCoreModule())
+            {
+                var localWebEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
+                if (localWebEndpoint != null)
+                {
+                    await RemoveCache(localWebEndpoint.GetAddress());
+                }
+            }
+        }
+
+        private async Task RemoveCache(string address)
+        {
+            var cacheKeys =
+                await _distributedCache.SearchKeys(
+                    $"*:ServerHandleSupervisor:{address}:*");
+            foreach (var cacheKey in cacheKeys)
+            {
+                await _distributedCache.RemoveAsync(cacheKey);
+            }
         }
     }
 }

@@ -112,7 +112,7 @@ namespace Silky.Rpc.CachingInterceptor
             return ToCacheItem(cachedBytes, type);
         }
 
-        public async override Task RemoveAsync(string key, bool? hideErrors = null, CancellationToken token = default)
+        public override async Task RemoveAsync(string key, bool? hideErrors = null, CancellationToken token = default)
         {
             if (key.Contains("*") || key.Contains("^") || key.Contains("$") || key.Contains("?"))
             {

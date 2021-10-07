@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -23,8 +24,8 @@ namespace Silky.Rpc.AppServices
             };
             if (serverHandleSupervisor != null && invokeSupervisor != null)
             {
-                instanceSupervisorOutput.InvokeInfo = await invokeSupervisor.GetServiceInstanceInvokeInfo();
-                instanceSupervisorOutput.HandleInfo = await serverHandleSupervisor.GetServiceInstanceHandleInfo();
+                instanceSupervisorOutput.InvokeInfo = await invokeSupervisor.GetServerInstanceInvokeInfo();
+                instanceSupervisorOutput.HandleInfo = await serverHandleSupervisor.GetServerInstanceHandleInfo();
             }
 
             return instanceSupervisorOutput;
@@ -38,18 +39,18 @@ namespace Silky.Rpc.AppServices
                 return await serverHandleSupervisor.GetServiceEntryHandleInfos();
             }
 
-            return null;
+            return Array.Empty<ServerHandleInfo>();
         }
 
-        public Task<IReadOnlyCollection<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos()
+        public async Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos()
         {
             var invokeSupervisor = EngineContext.Current.Resolve<IInvokeMonitor>();
             if (invokeSupervisor != null)
             {
-                return invokeSupervisor.GetServiceEntryInvokeInfos();
+                return await invokeSupervisor.GetServiceEntryInvokeInfos();
             }
 
-            return null;
+            return Array.Empty<ClientInvokeInfo>();
         }
 
         public Task<bool> IsHealth()

@@ -429,7 +429,7 @@ namespace Silky.Http.Dashboard.AppService
         }
 
 
-        public async Task<PagedList<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos(string address,
+        public async Task<PagedList<ClientInvokeInfo>> GetServiceEntryInvokeInfos(string address,
             PagedRequestDto input)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
@@ -443,7 +443,7 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"Not find serviceEntry by {getGetServiceEntrySupervisorServiceInvoke}");
             }
 
-            var result = await ServiceEntryExec<IReadOnlyCollection<ServiceEntryInvokeInfo>>(address, serviceEntry);
+            var result = await ServiceEntryExec<IReadOnlyCollection<ClientInvokeInfo>>(address, serviceEntry);
 
             return result.ToPagedList(input.PageIndex, input.PageSize);
         }

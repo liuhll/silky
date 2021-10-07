@@ -7,7 +7,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.AppServices
 {
-    [ServiceRoute(ServiceName = "Rpc")]
+    [ServiceRoute]
     [Metadata(ServiceConstant.IsSilkyService, true)]
     public interface IRpcAppService
     {
@@ -18,7 +18,7 @@ namespace Silky.Rpc.AppServices
         Task<IReadOnlyCollection<ServerHandleInfo>>  GetServiceEntryHandleInfos();
 
         [Governance(ProhibitExtranet = true)]
-        Task<IReadOnlyCollection<ServiceEntryInvokeInfo>> GetServiceEntryInvokeInfos();
+        Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos();
 
         [Governance(ProhibitExtranet = true, TimeoutMillSeconds = 1000)]
         Task<bool> IsHealth();

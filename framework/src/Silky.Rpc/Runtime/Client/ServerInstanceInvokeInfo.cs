@@ -2,7 +2,7 @@ using System;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class ServiceInstanceInvokeInfo
+    public class ServerInstanceInvokeInfo
     {
         public DateTime? FirstInvokeTime { get; set; }
 
@@ -15,5 +15,9 @@ namespace Silky.Rpc.Runtime.Client
         public int FaultInvokeCount { get; set; } = 0;
 
         public int TotalInvokeCount { get; set; } = 0;
+        
+        public int MaxConcurrentCount { get; set; } = 0;
+
+        public int ConcurrentCount { get; set; } = 0;
     }
 }
