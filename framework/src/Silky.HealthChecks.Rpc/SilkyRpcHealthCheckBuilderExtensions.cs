@@ -4,6 +4,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Silky.HealthChecks.Rpc;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -19,8 +20,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             return builder.Add(new HealthCheckRegistration(
                 SILKYRPC_NAME,
-                sp => new SilkyRpcHealthCheck(sp.GetRequiredService<IServerManager>(),
-                    sp.GetRequiredService<IServerHealthCheck>()),
+                sp => new SilkyRpcHealthCheck(
+                    sp.GetRequiredService<IServerManager>(),
+                    sp.GetRequiredService<IServerHealthCheck>(),
+                    sp.GetRequiredService<ICurrentRpcToken>()),
                 failureStatus,
                 tags,
                 timeout));

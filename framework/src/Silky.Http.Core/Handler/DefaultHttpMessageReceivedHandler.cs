@@ -12,6 +12,7 @@ using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 
 namespace Silky.Http.Core.Handlers
 {
@@ -20,16 +21,16 @@ namespace Silky.Http.Core.Handlers
         private readonly ISerializer _serializer;
 
         private GatewayOptions _gatewayOptions;
-
+        
         public ILogger<DefaultHttpMessageReceivedHandler> Logger { get; set; }
 
         public DefaultHttpMessageReceivedHandler(
-            IOptionsMonitor<RpcOptions> rpcOptions,
             IOptionsMonitor<GatewayOptions> gatewayOptions,
             IHttpExecutor executor,
             ISerializer serializer,
-            IParameterParser parameterParser)
-            : base(rpcOptions, executor, parameterParser)
+            IParameterParser parameterParser,
+            ICurrentRpcToken currentRpcToken)
+            : base(executor, parameterParser, currentRpcToken)
         {
             _serializer = serializer;
             _gatewayOptions = gatewayOptions.CurrentValue;

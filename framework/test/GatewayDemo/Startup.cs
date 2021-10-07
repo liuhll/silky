@@ -1,7 +1,9 @@
 using AspNetCoreRateLimit;
 using GatewayDemo.Authorization;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,6 +43,12 @@ namespace GatewayDemo
             services.AddMessagePackCodec();
             services.AddHealthChecks()
                 .AddSilkyRpc();
+            services
+                .AddHealthChecksUI(setupSettings: setup =>
+                {
+                    setup.AddHealthCheckEndpoint("endpoint1", "http://127.0.0.1:5002/healthz");
+                })
+                .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +63,16 @@ namespace GatewayDemo
 
             app.UseSerilogRequestLogging();
             app.UseDashboard();
+            app.UseHealthChecks("/health", new HealthCheckOptions
+                {
+                    Predicate = _ => true
+                })
+                .UseHealthChecks("/healthz", new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                })
+                .UseHealthChecksPrometheusExporter("/metrics");
             app.UseRouting();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
@@ -66,7 +84,12 @@ namespace GatewayDemo
             app.UseSilkyHttpServer();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapSilkyRpcHealthChecks();
+                endpoints.MapHealthChecksUI();
+                // endpoints.MapSilkyRpcHealthChecks();
+                // endpoints.MapHealthChecks("/healthchecks-api", new HealthCheckOptions
+                // {
+                //     Predicate = _ => true,
+                // });
                 endpoints.MapSilkyRpcServices();
             });
         }

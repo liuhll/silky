@@ -8,16 +8,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Rpc.Configuration;
-using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
-using Microsoft.Extensions.Options;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Diagnostics;
+using Silky.Rpc.Security;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core.Handlers
@@ -26,8 +24,7 @@ namespace Silky.Http.Core.Handlers
     {
         protected readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
-
-        protected RpcOptions _rpcOptions;
+        protected readonly ICurrentRpcToken _currentRpcToken;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
 
@@ -35,14 +32,13 @@ namespace Silky.Http.Core.Handlers
             new(RpcDiagnosticListenerNames.DiagnosticClientListenerName);
 
         protected MessageReceivedHandlerBase(
-            IOptionsMonitor<RpcOptions> rpcOptions,
             IHttpExecutor executor,
-            IParameterParser parameterParser)
+            IParameterParser parameterParser,
+            ICurrentRpcToken currentRpcToken)
         {
             _executor = executor;
             _parameterParser = parameterParser;
-            _rpcOptions = rpcOptions.CurrentValue;
-            rpcOptions.OnChange((options, s) => _rpcOptions = options);
+            _currentRpcToken = currentRpcToken;
             Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
         }
 
@@ -73,8 +69,8 @@ namespace Silky.Http.Core.Handlers
                     $"serviceKey => {serviceKey}");
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);
-
+            // RpcContext.Context.SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);
+            _currentRpcToken.SetRpcToken();
             var tracingTimestamp = TracingBefore(new RemoteInvokeMessage()
             {
                 ServiceId = serviceEntry.ServiceId,

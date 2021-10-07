@@ -90,14 +90,19 @@ namespace Silky.Http.Identity.Authentication.Handlers
             }
 
             var serviceEntry = Context.GetServiceEntry();
-            var silkyAppServiceUseAuth =
-                EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
-            if (serviceEntry?.IsSilkyAppService() == true && !silkyAppServiceUseAuth)
+            if (serviceEntry == null)
             {
                 return AuthenticateResult.NoResult();
             }
 
-            if (serviceEntry?.GovernanceOptions.IsAllowAnonymous == true)
+            var silkyAppServiceUseAuth =
+                EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
+            if (serviceEntry.IsSilkyAppService() && !silkyAppServiceUseAuth)
+            {
+                return AuthenticateResult.NoResult();
+            }
+
+            if (serviceEntry.GovernanceOptions.IsAllowAnonymous)
             {
                 return AuthenticateResult.NoResult();
             }
