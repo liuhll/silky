@@ -142,7 +142,7 @@ namespace Silky.Http.Dashboard.AppService
                         ServiceId = wsService.Id,
                         ServiceName = wsService.ServiceName,
                         Address = endpoint.GetAddress(),
-                        ProxyAddress = $"{GetWebSocketProxyAddress()}://{wsService.GetWsPath()}",
+                        ProxyAddress = $"{GetWebSocketProxyAddress()}{wsService.GetWsPath()}",
                         Path = wsService.GetWsPath()
                     };
                     webSocketServiceOutputs.Add(webSocketServiceOutput);
@@ -158,7 +158,7 @@ namespace Silky.Http.Dashboard.AppService
             var wsServiceProtocol = webEndpoint.ServiceProtocol == ServiceProtocol.Https
                 ? ServiceProtocol.Wss
                 : ServiceProtocol.Ws;
-            return $"{wsServiceProtocol}://{webEndpoint.GetAddress()}";
+            return $"{wsServiceProtocol.ToString().ToLower()}://{webEndpoint.GetAddress()}";
         }
 
         public IReadOnlyCollection<GetServiceOutput> GetServices(string hostName)
@@ -376,8 +376,10 @@ namespace Silky.Http.Dashboard.AppService
                     .Services.Any(q => q.ServiceEntries.Any(e => e.Id == serviceEntryId)))
                 .SelectMany(p => p.Endpoints).Where(p => p.ServiceProtocol == serviceEntryDescriptor.ServiceProtocol);
 
+
             var serviceEntryInstances = serverInstances
-                .Where(p => p.ServiceProtocol == ServiceProtocol.Tcp).Select(p =>
+                .Where(p => p.ServiceProtocol == ServiceProtocol.Tcp)
+                .Select(p =>
                     new GetServiceEntryInstanceOutput()
                     {
                         ServiceEntryId = serviceEntryId,
@@ -413,7 +415,7 @@ namespace Silky.Http.Dashboard.AppService
         }
 
         public async Task<PagedList<ServerHandleInfo>> GetServiceEntryHandleInfos(string address,
-            PagedRequestDto input)
+            GetServerHandlePagedRequestDto input)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -430,7 +432,12 @@ namespace Silky.Http.Dashboard.AppService
 
             var result = await ServiceEntryExec<IReadOnlyCollection<ServerHandleInfo>>(address, serviceEntry);
 
-            return result.ToPagedList(input.PageIndex, input.PageSize);
+            return result
+                .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => p.ServiceEntryId.Equals(input.ServiceEntryId))
+                .WhereIf(!input.SearchKey.IsNullOrEmpty(), p =>
+                    p.ServiceEntryId.Contains(input.SearchKey, StringComparison.OrdinalIgnoreCase)
+                    || p.Address.Contains(input.SearchKey))
+                .ToPagedList(input.PageIndex, input.PageSize);
         }
 
         private bool IsLocalAddress(string address)
@@ -441,7 +448,7 @@ namespace Silky.Http.Dashboard.AppService
 
 
         public async Task<PagedList<ClientInvokeInfo>> GetServiceEntryInvokeInfos(string address,
-            PagedRequestDto input)
+            GetClientInvokePagedRequestDto input)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -458,7 +465,12 @@ namespace Silky.Http.Dashboard.AppService
 
             var result = await ServiceEntryExec<IReadOnlyCollection<ClientInvokeInfo>>(address, serviceEntry);
 
-            return result.ToPagedList(input.PageIndex, input.PageSize);
+            return result
+                .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => p.ServiceEntryId.Equals(input.ServiceEntryId))
+                .WhereIf(!input.SearchKey.IsNullOrEmpty(), p =>
+                    p.ServiceEntryId.Contains(input.SearchKey, StringComparison.OrdinalIgnoreCase)
+                    || p.Address.Contains(input.SearchKey))
+                .ToPagedList(input.PageIndex, input.PageSize);
         }
 
 
