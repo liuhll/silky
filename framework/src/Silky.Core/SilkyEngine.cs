@@ -241,7 +241,7 @@ namespace Silky.Core
                 return assembly;
 
             //get assembly from TypeFinder
-            var tf = Resolve<ITypeFinder>();
+            var tf = _typeFinder;
             if (tf == null)
                 return null;
             assembly = tf.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
