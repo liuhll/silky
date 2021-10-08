@@ -93,9 +93,9 @@ namespace Silky.DotNetty.Protocol.Tcp
 
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
-                    if (_rpcOptions.EnableHealthCheck && _rpcOptions.HealthCheckWatchInterval > 0)
+                    if (_rpcOptions.EnableHeartbeat && _rpcOptions.HeartbeatWatchInterval > 0)
                     {
-                        pipeline.AddLast(new IdleStateHandler(0, _rpcOptions.HealthCheckWatchInterval, 0));
+                        pipeline.AddLast(new IdleStateHandler(0, _rpcOptions.HeartbeatWatchInterval, 0));
                         pipeline.AddLast(
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }

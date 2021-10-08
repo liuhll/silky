@@ -13,10 +13,9 @@ namespace Silky.Rpc.Configuration
             UseLibuv = true;
             IsSsl = false;
             SoBacklog = 8192;
-            RemoveUnHealthServer = true;
-            EnableHealthCheck = true;
+            EnableHeartbeat = true;
             ConnectTimeout = 500;
-            _healthCheckWatchInterval = 300;
+            _heartbeatWatchInterval = 300;
         }
 
         public string Host { get; set; }
@@ -26,18 +25,17 @@ namespace Silky.Rpc.Configuration
         public string SslCertificateName { get; set; }
         public string SslCertificatePassword { get; set; }
         public int SoBacklog { get; set; }
-        public bool RemoveUnHealthServer { get; set; }
-
-        public bool EnableHealthCheck { get; set; }
+        
+        public bool EnableHeartbeat { get; set; }
         [NotNull] public string Token { get; set; }
         public double ConnectTimeout { get; set; }
 
-        private int _healthCheckWatchInterval;
+        private int _heartbeatWatchInterval;
 
-        public int HealthCheckWatchInterval
+        public int HeartbeatWatchInterval
         {
-            get => _healthCheckWatchInterval;
-            set => _healthCheckWatchInterval = value <= 60 ? 60 : value;
+            get => _heartbeatWatchInterval;
+            set => _heartbeatWatchInterval = value <= 60 ? 60 : value;
         }
     }
 }
