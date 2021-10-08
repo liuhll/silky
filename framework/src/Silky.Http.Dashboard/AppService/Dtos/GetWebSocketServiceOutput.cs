@@ -11,5 +11,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public string Address { get; set; }
         
         public string Path { get; set; }
+        
+        public string ProxyAddress { get; set; }
     }
 }

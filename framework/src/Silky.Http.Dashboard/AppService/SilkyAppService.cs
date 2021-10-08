@@ -143,6 +143,7 @@ namespace Silky.Http.Dashboard.AppService
                         ServiceId = wsService.Id,
                         ServiceName = wsService.ServiceName,
                         Address = endpoint.GetAddress(),
+                        ProxyAddress = $"{GetWebSocketProxyAddress()}://{wsService.GetWsPath()}",
                         Path = wsService.GetWsPath()
                     };
                     webSocketServiceOutputs.Add(webSocketServiceOutput);
@@ -150,6 +151,15 @@ namespace Silky.Http.Dashboard.AppService
             }
 
             return webSocketServiceOutputs.ToPagedList(input.PageIndex, input.PageSize);
+        }
+
+        private string GetWebSocketProxyAddress()
+        {
+            var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
+            var wsServiceProtocol = webEndpoint.ServiceProtocol == ServiceProtocol.Https
+                ? ServiceProtocol.Wss
+                : ServiceProtocol.Ws;
+            return $"{wsServiceProtocol}://{webEndpoint.GetAddress()}";
         }
 
         public IReadOnlyCollection<GetServiceOutput> GetServices(string hostName)

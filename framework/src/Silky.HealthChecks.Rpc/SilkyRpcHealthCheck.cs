@@ -53,7 +53,6 @@ namespace Silky.HealthChecks.Rpc
                         catch (Exception e)
                         {
                             isHealth = false;
-                            endpointHealthData.ExceptionMessage = e.Message;
                         }
 
                         endpointHealthData.Health = isHealth;
