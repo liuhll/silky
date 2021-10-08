@@ -75,11 +75,14 @@ namespace Silky.HealthChecks.Rpc
                     null, healthData);
             }
 
+            var unHealthData = healthData.Values.Where(p => !((ServerHealthData)p).Health)
+                .Select(p => (ServerHealthData)p).ToArray();
+
             return HealthCheckResult.Degraded(
                 $"There are a total of {healthData.Count}  Rpc server provider instances," +
-                $" of which {healthData.Values.Count(p => !((ServerHealthData)p).Health)}" +
+                $" of which {unHealthData.Count()}" +
                 $" server instances are unhealthy{Environment.NewLine}." +
-                $"unhealthy instances:{string.Join(",", healthData.Values.Select(p => ((ServerHealthData)p).Address))}",
+                $"unhealthy instances:{string.Join(",", unHealthData.Select(p => p.Address))}",
                 null, healthData);
         }
     }
