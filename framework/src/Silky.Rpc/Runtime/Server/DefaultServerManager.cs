@@ -48,7 +48,7 @@ namespace Silky.Rpc.Runtime.Server
         private void RemoveRpcEndpointCache(IRpcEndpoint rpcEndpoint)
         {
             var needRemoveRpcEndpointKvs =
-                _rpcRpcEndpointCache.Where(p => p.Value.Any(q => q.Descriptor == rpcEndpoint.Descriptor));
+                _rpcRpcEndpointCache.Where(p => p.Value.Any(q => q.Host == rpcEndpoint.Host));
             foreach (var needRemoveRpcEndpointKv in needRemoveRpcEndpointKvs)
             {
                 _rpcRpcEndpointCache.TryRemove(needRemoveRpcEndpointKv.Key, out _);
@@ -84,8 +84,7 @@ namespace Silky.Rpc.Runtime.Server
                     server.HostName);
                 return;
             }
-
-            _serverCache[serverDescriptor.HostName] = server;
+            _serverCache.AddOrUpdate(serverDescriptor.HostName, server, (k, v) => server);
             Logger.LogInformation(
                 "Update the server [{0}] data cache," +
                 "The instance endpoints of the server provider is: {1}[{2}]",
@@ -94,6 +93,7 @@ namespace Silky.Rpc.Runtime.Server
             foreach (var rpcEndpoint in server.Endpoints)
             {
                 _rpcEndpointMonitor.Monitor(rpcEndpoint);
+                RemoveRpcEndpointCache(rpcEndpoint);
             }
 
             foreach (var serviceDescriptor in serverDescriptor.Services)
