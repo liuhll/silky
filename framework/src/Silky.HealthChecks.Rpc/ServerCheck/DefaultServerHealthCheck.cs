@@ -46,12 +46,7 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
             {
                 return IsHealth(address);
             }
-
-            if (rpcEndpoint.ServiceProtocol.IsHttp())
-            {
-                return Task.FromResult<bool>(UrlCheck.UrlIsValid($"{rpcEndpoint.ServiceProtocol}://{address}", out _));
-            }
-
+            
             return Task.FromResult<bool>(SocketCheck.TestConnection(rpcEndpoint.Host, rpcEndpoint.Port));
         }
 

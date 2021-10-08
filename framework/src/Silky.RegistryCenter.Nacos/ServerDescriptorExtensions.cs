@@ -42,6 +42,13 @@ namespace Silky.RegistryCenter.Nacos
                     { "ServiceProtocols", serviceProtocolJsonString }
                 }
             };
+
+            var httpEndpoint = serverDescriptor.Endpoints.FirstOrDefault(p => p.ServiceProtocol.IsHttp());
+            if (httpEndpoint != null)
+            {
+                instance.Metadata["HttpHost"] = httpEndpoint.Host;
+            }
+
             return instance;
         }
     }

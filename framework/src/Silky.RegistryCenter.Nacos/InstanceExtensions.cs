@@ -15,17 +15,24 @@ namespace Silky.RegistryCenter.Nacos
             var endpoints = new List<RpcEndpointDescriptor>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             var serviceProtocolJsonString = instance.Metadata["ServiceProtocols"];
-            var serviceProtocolInfos = serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
+            var serviceProtocolInfos =
+                serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
             foreach (var serviceProtocolInfo in serviceProtocolInfos)
             {
-                endpoints.Add(new RpcEndpointDescriptor()
+                var rpcEndpointDescriptor = new RpcEndpointDescriptor()
                 {
                     Host = instance.Ip,
                     Port = serviceProtocolInfo.Value,
                     ServiceProtocol = serviceProtocolInfo.Key,
                     TimeStamp = instance.Metadata["TimeStamp"].To<long>(),
                     ProcessorTime = instance.Metadata["ProcessorTime"].To<double>(),
-                });
+                };
+                if (serviceProtocolInfo.Key.IsHttp() && instance.Metadata["HttpHost"] != null)
+                {
+                    rpcEndpointDescriptor.Host = instance.Metadata["HttpHost"];
+                }
+
+                endpoints.Add(rpcEndpointDescriptor);
             }
 
             return endpoints;
@@ -35,7 +42,8 @@ namespace Silky.RegistryCenter.Nacos
         {
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             var serviceProtocolJsonString = instance.Metadata["ServiceProtocols"];
-            var serviceProtocolInfos = serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
+            var serviceProtocolInfos =
+                serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
             return serviceProtocolInfos;
         }
     }

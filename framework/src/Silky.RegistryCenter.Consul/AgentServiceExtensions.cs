@@ -26,6 +26,11 @@ namespace Silky.RegistryCenter.Consul
                     TimeStamp = agentService.Meta["TimeStamp"].To<long>(),
                     ProcessorTime = agentService.Meta["ProcessorTime"].To<double>(),
                 };
+                if (serviceProtocolInfo.Key.IsHttp() && agentService.Meta["HttpHost"] != null)
+                {
+                    rpcEndpointDescriptor.Host = agentService.Meta["HttpHost"];
+                }
+
                 rpcEndpointDescriptors.Add(rpcEndpointDescriptor);
             }
 

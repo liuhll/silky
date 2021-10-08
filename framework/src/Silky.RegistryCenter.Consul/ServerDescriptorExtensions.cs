@@ -53,6 +53,12 @@ namespace Silky.RegistryCenter.Consul
                 }
             };
 
+            var httpEndpoint = serverDescriptor.Endpoints.FirstOrDefault(p => p.ServiceProtocol.IsHttp());
+            if (httpEndpoint != null)
+            {
+                agentServiceRegistration.Meta["HttpHost"] = httpEndpoint.Host;
+            }
+
             return agentServiceRegistration;
         }
 
