@@ -47,6 +47,7 @@ namespace GatewayDemo
                 .AddHealthChecksUI(setupSettings: setup =>
                 {
                     setup.AddHealthCheckEndpoint("silkyrpc", "http://127.0.0.1:5002/healthz");
+                    setup.SetEvaluationTimeInSeconds(60);
                 })
                 .AddInMemoryStorage();
         }
@@ -63,11 +64,7 @@ namespace GatewayDemo
 
             app.UseSerilogRequestLogging();
             app.UseDashboard();
-            app.UseHealthChecks("/health", new HealthCheckOptions
-                {
-                    Predicate = _ => true
-                })
-                .UseHealthChecks("/healthz", new HealthCheckOptions
+            app.UseHealthChecks("/healthz", new HealthCheckOptions
                 {
                     Predicate = _ => true,
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
