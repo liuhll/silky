@@ -1,10 +1,9 @@
 using System;
 using Silky.Rpc.Runtime.Client;
-using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.AppServices.Dtos
+namespace Silky.Rpc.Runtime.Server
 {
-    public class GetInstanceDetailOutput
+    public class ServerInstanceDetailInfo
     {
         public string Address { get; set; }
 

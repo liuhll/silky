@@ -12,7 +12,6 @@ using Silky.Core.Rpc;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Http.Dashboard.Configuration;
-using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
@@ -38,13 +37,13 @@ namespace Silky.Http.Dashboard.AppService
             @"([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])";
 
         private const string getInstanceSupervisorServiceEntryId =
-            "Silky.Rpc.AppServices.IRpcAppService.GetInstanceDetail_Get";
+            "Silky.Rpc.AppService.IRpcAppService.GetInstanceDetail_Get";
 
         private const string getGetServiceEntrySupervisorServiceHandleServiceEntryId =
-            "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryHandleInfos_Get";
+            "Silky.Rpc.AppService.IRpcAppService.GetServiceEntryHandleInfos_Get";
 
         private const string getGetServiceEntrySupervisorServiceInvokeServiceEntryId =
-            "Silky.Rpc.AppServices.IRpcAppService.GetServiceEntryInvokeInfos_Get";
+            "Silky.Rpc.AppService.IRpcAppService.GetServiceEntryInvokeInfos_Get";
 
         public SilkyAppService(
             IServerManager serverManager,
@@ -391,7 +390,7 @@ namespace Silky.Http.Dashboard.AppService
             return serviceEntryInstances.ToPagedList(pageIndex, pageSize);
         }
 
-        public async Task<GetInstanceDetailOutput> GetInstanceDetail(string address)
+        public async Task<ServerInstanceDetailInfo> GetInstanceDetail(string address)
         {
             if (!Regex.IsMatch(address, ipEndpointRegex))
             {
@@ -404,7 +403,7 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceEntryId}");
             }
 
-            var result = await ServiceEntryExec<GetInstanceDetailOutput>(address, serviceEntry);
+            var result = await ServiceEntryExec<ServerInstanceDetailInfo>(address, serviceEntry);
             if (result?.Address != address)
             {
                 throw new SilkyException("The rpc address of the routing instance is wrong");

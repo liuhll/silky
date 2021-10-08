@@ -90,8 +90,6 @@ namespace Silky.Rpc.Monitor.Handle
                         ? (_serverInstanceHandleInfo.AET + elapsedTotalMilliseconds) / 2
                         : elapsedTotalMilliseconds;
                 }
-
-                _distributedCache.Set(GetCacheKey(item), serverHandleInfo);
             }
 
             serverHandleInfo.FaultHandleCount++;

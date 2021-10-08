@@ -42,17 +42,18 @@ namespace Silky.Rpc.Monitor.Invoke
                 _serverInstanceInvokeInfo.FirstInvokeTime ??= DateTime.Now;
                 _serverInstanceInvokeInfo.FinalInvokeTime = DateTime.Now;
                 _serverInstanceInvokeInfo.TotalInvokeCount += 1;
-                var cacheKey = GetCacheKey(item);
-                var clientInvokeInfo = _distributedCache.Get(cacheKey) ?? new ClientInvokeInfo();
-                clientInvokeInfo.IsEnable = true;
-                clientInvokeInfo.Address = item.Item2.GetAddress();
-                clientInvokeInfo.ServiceEntryId = item.Item1;
-                clientInvokeInfo.TotalInvokeCount++;
-                clientInvokeInfo.FinalInvokeTime = DateTime.Now;
-                return clientInvokeInfo;
             }
+
+            var cacheKey = GetCacheKey(item);
+            var clientInvokeInfo = _distributedCache.Get(cacheKey) ?? new ClientInvokeInfo();
+            clientInvokeInfo.IsEnable = true;
+            clientInvokeInfo.Address = item.Item2.GetAddress();
+            clientInvokeInfo.ServiceEntryId = item.Item1;
+            clientInvokeInfo.TotalInvokeCount++;
+            clientInvokeInfo.FinalInvokeTime = DateTime.Now;
+            return clientInvokeInfo;
         }
-        
+
 
         public void ExecSuccess((string, IRpcEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
@@ -62,16 +63,20 @@ namespace Silky.Rpc.Monitor.Invoke
                 _serverInstanceInvokeInfo.ConcurrentCount--;
                 if (elapsedTotalMilliseconds > 0)
                 {
-                    clientInvokeInfo.AET = clientInvokeInfo.AET.HasValue
-                        ? (clientInvokeInfo.AET + elapsedTotalMilliseconds) / 2
-                        : elapsedTotalMilliseconds;
                     _serverInstanceInvokeInfo.AET = _serverInstanceInvokeInfo.AET.HasValue
                         ? (_serverInstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
                         : elapsedTotalMilliseconds;
                 }
-
-                _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
             }
+
+            if (elapsedTotalMilliseconds > 0)
+            {
+                clientInvokeInfo.AET = clientInvokeInfo.AET.HasValue
+                    ? (clientInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                    : elapsedTotalMilliseconds;
+            }
+
+            _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
         }
 
         public void ExecFail((string, IRpcEndpoint) item, double elapsedTotalMilliseconds,
@@ -82,21 +87,25 @@ namespace Silky.Rpc.Monitor.Invoke
                 _serverInstanceInvokeInfo.ConcurrentCount--;
                 _serverInstanceInvokeInfo.FaultInvokeCount++;
                 _serverInstanceInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
-                clientInvokeInfo.IsEnable = _rpcEndpointMonitor.IsEnable(item.Item2);
-                clientInvokeInfo.FaultInvokeCount++;
-                clientInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
                 if (elapsedTotalMilliseconds > 0)
                 {
-                    clientInvokeInfo.AET = clientInvokeInfo.AET.HasValue
-                        ? (clientInvokeInfo.AET + elapsedTotalMilliseconds) / 2
-                        : elapsedTotalMilliseconds;
                     _serverInstanceInvokeInfo.AET = _serverInstanceInvokeInfo.AET.HasValue
                         ? (_serverInstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
                         : elapsedTotalMilliseconds;
                 }
-
-                _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
             }
+
+            clientInvokeInfo.IsEnable = _rpcEndpointMonitor.IsEnable(item.Item2);
+            clientInvokeInfo.FaultInvokeCount++;
+            clientInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
+            if (elapsedTotalMilliseconds > 0)
+            {
+                clientInvokeInfo.AET = clientInvokeInfo.AET.HasValue
+                    ? (clientInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                    : elapsedTotalMilliseconds;
+            }
+
+            _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
         }
 
         public Task<ServerInstanceInvokeInfo> GetServerInstanceInvokeInfo()

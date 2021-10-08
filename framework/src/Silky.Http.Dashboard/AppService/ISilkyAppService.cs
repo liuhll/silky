@@ -6,7 +6,6 @@ using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
-using GetInstanceDetailOutput = Silky.Rpc.AppServices.Dtos.GetInstanceDetailOutput;
 
 namespace Silky.Http.Dashboard.AppService
 {
@@ -53,7 +52,7 @@ namespace Silky.Http.Dashboard.AppService
             int pageSize = 10);
 
         [HttpGet("instance/{address}/detail")]
-        Task<GetInstanceDetailOutput> GetInstanceDetail(string address);
+        Task<ServerInstanceDetailInfo> GetInstanceDetail(string address);
 
         [HttpGet("instance/{address}/servicehandle")]
         Task<PagedList<ServerHandleInfo>> GetServiceEntryHandleInfos(string address, PagedRequestDto input);

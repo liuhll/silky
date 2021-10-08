@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Silky.Core;
-using Silky.Rpc.AppServices.Dtos;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.AppServices
+namespace Silky.Rpc.AppService
 {
     public class RpcAppService : IRpcAppService
     {
-        public async Task<GetInstanceDetailOutput> GetInstanceDetail()
+        public async Task<ServerInstanceDetailInfo> GetInstanceDetail()
         {
             var serverHandleSupervisor = EngineContext.Current.Resolve<IServerHandleMonitor>();
             var invokeSupervisor = EngineContext.Current.Resolve<IInvokeMonitor>();
-            var instanceSupervisorOutput = new GetInstanceDetailOutput()
+            var instanceSupervisorOutput = new ServerInstanceDetailInfo()
             {
                 HostName = EngineContext.Current.HostName,
                 Address = RpcEndpointHelper.GetLocalTcpEndpoint().GetAddress(),

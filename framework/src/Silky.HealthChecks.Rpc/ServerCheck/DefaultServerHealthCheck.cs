@@ -5,14 +5,13 @@ using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Security;
 using Silky.Rpc.Utils;
 
 namespace Silky.HealthChecks.Rpc.ServerCheck
 {
     public class DefaultServerHealthCheck : IServerHealthCheck
     {
-        private const string healthCheckServiceEntryId = "Silky.Rpc.AppServices.IRpcAppService.IsHealth_Get";
+        private const string healthCheckServiceEntryId = "Silky.Rpc.AppService.IRpcAppService.IsHealth_Get";
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly ILocalExecutor _localExecutor;
         private readonly IRemoteExecutor _remoteExecutor;

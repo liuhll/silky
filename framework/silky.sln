@@ -106,6 +106,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Rpc.Monitor", "src\Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.HealthChecks.Rpc", "src\Silky.HealthChecks.Rpc\Silky.HealthChecks.Rpc.csproj", "{7F1393A4-F5F6-4575-9386-00E3D0FF265A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Rpc.AppService", "src\Silky.Rpc.AppService\Silky.Rpc.AppService.csproj", "{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +165,7 @@ Global
 		{CCABF454-456D-4800-ABED-865ED0A0B9C5} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{A9CE020D-E1BC-47DE-893D-1D96E52A7DA3} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{7F1393A4-F5F6-4575-9386-00E3D0FF265A} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -369,5 +372,9 @@ Global
 		{7F1393A4-F5F6-4575-9386-00E3D0FF265A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F1393A4-F5F6-4575-9386-00E3D0FF265A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F1393A4-F5F6-4575-9386-00E3D0FF265A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
