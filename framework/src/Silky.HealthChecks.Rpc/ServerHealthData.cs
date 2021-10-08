@@ -11,6 +11,5 @@ namespace Silky.HealthChecks.Rpc
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public bool Health { get; set; }
-        public string ExceptionMessage { get; set; }
     }
 }
