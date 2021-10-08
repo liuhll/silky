@@ -58,13 +58,7 @@ namespace Silky.Core.Rpc
             return rpcConnection;
         }
 
-        public IServiceProvider RpcServices { private set; get; }
-
-        internal void SetServiceProvider(IServiceProvider serviceProvider)
-        {
-            RpcServices = serviceProvider;
-        }
-
+        public IServiceProvider RpcServices { set; get; }
 
         public void RemoveAttachment(string key)
         {

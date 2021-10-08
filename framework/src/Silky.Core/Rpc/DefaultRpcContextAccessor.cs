@@ -1,6 +1,5 @@
 using System.Threading;
 using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.DependencyInjection;
 
 namespace Silky.Core.Rpc
@@ -8,9 +7,6 @@ namespace Silky.Core.Rpc
     public class DefaultRpcContextAccessor : IRpcContextAccessor, ISingletonDependency
     {
         private static AsyncLocal<RpcContextHolder> _rpcContextCurrent = new();
-
-
-        private IServiceScope _serviceScope;
 
         [CanBeNull]
         public RpcContext RpcContext
@@ -27,15 +23,7 @@ namespace Silky.Core.Rpc
                 {
                     RpcContext = value
                 };
-                _serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
-                _rpcContextCurrent.Value?.RpcContext.SetServiceProvider(_serviceScope.ServiceProvider);
             }
-        }
-
-        
-        public void Dispose()
-        {
-            _serviceScope?.Dispose();
         }
 
         private class RpcContextHolder
