@@ -10,8 +10,9 @@ namespace Silky.Rpc.Runtime.Server
         
         public const string HostName = "HostName";
 
-        public const string IsSilkyService = "IsSilkyService";
+        public const string IsSilkyService = "SilkyService";
 
         public const string WebSocketBaseTypeName = "Silky.WebSocket.WsAppServiceBase";
+        public static string IsSilkyDashboardService { get; set; } = "DashboardService";
     }
 }

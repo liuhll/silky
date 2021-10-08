@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 using Silky.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -27,6 +27,10 @@ namespace Silky.Rpc.Runtime.Server
         public IReadOnlyCollection<Service> GetServices()
         {
             var serviceTypes = ServiceHelper.FindAllServiceTypes(_typeFinder);
+            if (!EngineContext.Current.IsContainHttpCoreModule())
+            {
+                serviceTypes = serviceTypes.Where(p => p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
+            }
             var services = new List<Service>();
             foreach (var serviceTypeInfo in serviceTypes)
             {

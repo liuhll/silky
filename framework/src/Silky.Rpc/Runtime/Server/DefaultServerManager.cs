@@ -58,7 +58,7 @@ namespace Silky.Rpc.Runtime.Server
         private async Task RemoveRpcRpcEndpointHandler(IRpcEndpoint rpcEndpoint)
         {
             var needRemoveEndpointServerRoutes =
-                Servers.Where(p => p.Endpoints.Any(q => q.Descriptor == rpcEndpoint.Descriptor));
+                Servers.Where(p => p.Endpoints.Any(q => q.Host == rpcEndpoint.Host));
 
             foreach (var needRemoveEndpointServerRoute in needRemoveEndpointServerRoutes)
             {

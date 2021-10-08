@@ -10,7 +10,8 @@ using Silky.Rpc.Security;
 namespace Silky.Http.Dashboard.AppService
 {
     [ServiceRoute]
-    [Metadata(ServiceConstant.IsSilkyService, true)]
+    [SilkyAppService]
+    [DashboardAppService]
     [Authorize(Roles = "Dashboard")]
     public interface ISilkyAppService
     {
@@ -55,10 +56,12 @@ namespace Silky.Http.Dashboard.AppService
         Task<ServerInstanceDetailInfo> GetInstanceDetail(string address);
 
         [HttpGet("instance/{address}/servicehandle")]
-        Task<PagedList<ServerHandleInfo>> GetServiceEntryHandleInfos(string address, GetServerHandlePagedRequestDto input);
+        Task<PagedList<ServerHandleInfo>> GetServiceEntryHandleInfos(string address,
+            GetServerHandlePagedRequestDto input);
 
         [HttpGet("instance/{address}/serviceinvoke")]
-        Task<PagedList<ClientInvokeInfo>> GetServiceEntryInvokeInfos(string address, GetClientInvokePagedRequestDto input);
+        Task<PagedList<ClientInvokeInfo>> GetServiceEntryInvokeInfos(string address,
+            GetClientInvokePagedRequestDto input);
 
         IReadOnlyCollection<GetRegistryCenterOutput> GetRegistryCenters();
 
