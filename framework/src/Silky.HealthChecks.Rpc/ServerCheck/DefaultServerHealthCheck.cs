@@ -30,14 +30,7 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
         public Task<bool> IsHealth(string address)
         {
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(healthCheckServiceEntryId);
-            try
-            {
-                return ServiceEntryExec<bool>(address, serviceEntry);
-            }
-            catch (Exception e)
-            {
-                return Task.FromResult(false);
-            }
+            return ServiceEntryExec<bool>(address, serviceEntry);
         }
 
         public Task<bool> IsHealth(IRpcEndpoint rpcEndpoint)

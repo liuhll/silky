@@ -126,8 +126,8 @@ namespace Silky.Rpc.Runtime.Client
             if (remoteAddress != null)
             {
                 selectedRpcEndpoint =
-                    rpcEndpoints.FirstOrDefault(p =>
-                        p.IPEndPoint.ToString().Equals(remoteAddress) && p.Enabled);
+                    rpcEndpoints.FirstOrDefault(p => p.GetAddress().Equals(remoteAddress) && p.Enabled);
+
                 if (selectedRpcEndpoint == null)
                 {
                     throw new NotFindServiceRouteAddressException(

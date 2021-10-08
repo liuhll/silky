@@ -46,7 +46,7 @@ namespace GatewayDemo
             services
                 .AddHealthChecksUI(setupSettings: setup =>
                 {
-                    setup.AddHealthCheckEndpoint("endpoint1", "http://127.0.0.1:5002/healthz");
+                    setup.AddHealthCheckEndpoint("silkyrpc", "http://127.0.0.1:5002/healthz");
                 })
                 .AddInMemoryStorage();
         }
@@ -86,10 +86,7 @@ namespace GatewayDemo
             {
                 endpoints.MapHealthChecksUI();
                 // endpoints.MapSilkyRpcHealthChecks();
-                // endpoints.MapHealthChecks("/healthchecks-api", new HealthCheckOptions
-                // {
-                //     Predicate = _ => true,
-                // });
+
                 endpoints.MapSilkyRpcServices();
             });
         }
