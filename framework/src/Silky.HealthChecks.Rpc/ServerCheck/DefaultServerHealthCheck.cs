@@ -4,7 +4,6 @@ using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Client;
-using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Utils;
 
 namespace Silky.HealthChecks.Rpc.ServerCheck
@@ -12,30 +11,23 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
     public class DefaultServerHealthCheck : IServerHealthCheck
     {
         private const string healthCheckServiceEntryId = "Silky.Rpc.AppService.IRpcAppService.IsHealth_Get";
-        private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly ILocalExecutor _localExecutor;
-        private readonly IRemoteExecutor _remoteExecutor;
-   
+        private readonly IAppointAddressInvoker _appointAddressInvoker;
 
-        public DefaultServerHealthCheck(IServiceEntryLocator serviceEntryLocator,
-            ILocalExecutor localExecutor,
-            IRemoteExecutor remoteExecutor)
+        public DefaultServerHealthCheck(IAppointAddressInvoker appointAddressInvoker)
         {
-            _serviceEntryLocator = serviceEntryLocator;
-            _localExecutor = localExecutor;
-            _remoteExecutor = remoteExecutor;
+            _appointAddressInvoker = appointAddressInvoker;
         }
 
         private Task<bool> IsHealth(string address)
         {
             try
             {
-                var serviceEntry = _serviceEntryLocator.GetServiceEntryById(healthCheckServiceEntryId);
-                return ServiceEntryExec<bool>(address, serviceEntry);
+                return
+                    _appointAddressInvoker.Invoke<bool>(address, healthCheckServiceEntryId, Array.Empty<object>());
             }
             catch (Exception e)
             {
-               return Task.FromResult<bool>(false);
+                return Task.FromResult<bool>(false);
             }
         }
 
@@ -46,7 +38,7 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
             {
                 return IsHealth(address);
             }
-            
+
             return Task.FromResult<bool>(SocketCheck.TestConnection(rpcEndpoint.Host, rpcEndpoint.Port));
         }
 
@@ -66,30 +58,6 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
 
             return Task.FromResult<bool>(SocketCheck.TestConnection(rpcEndpointDescriptor.Host,
                 rpcEndpointDescriptor.Port));
-        }
-
-        private bool IsLocalAddress(string address)
-        {
-            var localAddress = RpcEndpointHelper.GetLocalTcpEndpoint().GetAddress();
-            return localAddress.Equals(address);
-        }
-
-        private async Task<T> ServiceEntryExec<T>(string address, ServiceEntry serviceEntry)
-        {
-            T result = default(T);
-            if (IsLocalAddress(address))
-            {
-                result =
-                    (T)await _localExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
-            }
-            else
-            {
-                RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
-                result =
-                    (T)await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
-            }
-
-            return result;
         }
     }
 }

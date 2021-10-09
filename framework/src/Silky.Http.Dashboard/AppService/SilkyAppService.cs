@@ -27,10 +27,9 @@ namespace Silky.Http.Dashboard.AppService
         private readonly IServiceManager _serviceManager;
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly IServiceEntryLocator _serviceEntryLocator;
-        private readonly IRemoteExecutor _remoteExecutor;
-        private readonly ILocalExecutor _localExecutor;
         private readonly IRegisterCenterHealthProvider _registerCenterHealthProvider;
         private readonly IServerHealthCheck _serverHealthCheck;
+        private readonly IAppointAddressInvoker _appointAddressInvoker;
 
 
         private const string ipEndpointRegex =
@@ -50,19 +49,17 @@ namespace Silky.Http.Dashboard.AppService
             IServiceManager serviceManager,
             IServiceEntryManager serviceEntryManager,
             IServiceEntryLocator serviceEntryLocator,
-            IRemoteExecutor remoteExecutor,
-            ILocalExecutor localExecutor,
             IRegisterCenterHealthProvider registerCenterHealthProvider,
-            IServerHealthCheck serverHealthCheck)
+            IServerHealthCheck serverHealthCheck,
+            IAppointAddressInvoker appointAddressInvoker)
         {
             _serverManager = serverManager;
             _serviceEntryManager = serviceEntryManager;
 
-            _remoteExecutor = remoteExecutor;
             _registerCenterHealthProvider = registerCenterHealthProvider;
             _serverHealthCheck = serverHealthCheck;
+            _appointAddressInvoker = appointAddressInvoker;
             _serviceManager = serviceManager;
-            _localExecutor = localExecutor;
             _serviceEntryLocator = serviceEntryLocator;
         }
 
@@ -399,13 +396,8 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"{address} incorrect rpc address format");
             }
 
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(getInstanceSupervisorServiceEntryId);
-            if (serviceEntry == null)
-            {
-                throw new BusinessException($"Not find serviceEntry by {getInstanceSupervisorServiceEntryId}");
-            }
-
-            var result = await ServiceEntryExec<ServerInstanceDetailInfo>(address, serviceEntry);
+            var result = await _appointAddressInvoker.Invoke<ServerInstanceDetailInfo>(address,
+                getInstanceSupervisorServiceEntryId, Array.Empty<object>());
             if (result?.Address != address)
             {
                 throw new SilkyException("The rpc address of the routing instance is wrong");
@@ -421,16 +413,9 @@ namespace Silky.Http.Dashboard.AppService
             {
                 throw new BusinessException($"{address} incorrect rpcAddress format");
             }
-
-            var serviceEntry =
-                _serviceEntryLocator.GetServiceEntryById(getGetServiceEntrySupervisorServiceHandleServiceEntryId);
-            if (serviceEntry == null)
-            {
-                throw new BusinessException(
-                    $"Not find serviceEntry by {getGetServiceEntrySupervisorServiceHandleServiceEntryId}");
-            }
-
-            var result = await ServiceEntryExec<IReadOnlyCollection<ServerHandleInfo>>(address, serviceEntry);
+            
+            var result = await _appointAddressInvoker.Invoke<IReadOnlyCollection<ServerHandleInfo>>(address,
+                getGetServiceEntrySupervisorServiceHandleServiceEntryId, Array.Empty<object>());
 
             return result
                 .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => p.ServiceEntryId.Equals(input.ServiceEntryId))
@@ -463,7 +448,8 @@ namespace Silky.Http.Dashboard.AppService
                     $"Not find serviceEntry by {getGetServiceEntrySupervisorServiceInvokeServiceEntryId}");
             }
 
-            var result = await ServiceEntryExec<IReadOnlyCollection<ClientInvokeInfo>>(address, serviceEntry);
+            var result = await _appointAddressInvoker.Invoke<IReadOnlyCollection<ClientInvokeInfo>>(address,
+                getGetServiceEntrySupervisorServiceInvokeServiceEntryId, Array.Empty<object>());
 
             return result
                 .WhereIf(!input.ServiceEntryId.IsNullOrEmpty(), p => p.ServiceEntryId.Equals(input.ServiceEntryId))
@@ -600,23 +586,6 @@ namespace Silky.Http.Dashboard.AppService
                 Meta = new Dictionary<string, object>()
             };
             return externalRoute;
-        }
-
-        private async Task<T> ServiceEntryExec<T>(string address, ServiceEntry serviceEntry)
-        {
-            T result;
-            if (IsLocalAddress(address))
-            {
-                result =
-                    (T)await _localExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
-            }
-            else
-            {
-                RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
-                result = (T)await _remoteExecutor.Execute(serviceEntry, Array.Empty<object>(), null);
-            }
-
-            return result;
         }
     }
 }

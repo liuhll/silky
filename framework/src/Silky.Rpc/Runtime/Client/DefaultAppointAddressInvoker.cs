@@ -1,0 +1,81 @@
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+using Silky.Core;
+using Silky.Core.Exceptions;
+using Silky.Core.Rpc;
+using Silky.Rpc.Endpoint;
+using Silky.Rpc.Runtime.Server;
+
+namespace Silky.Rpc.Runtime.Client
+{
+    public class DefaultAppointAddressInvoker : IAppointAddressInvoker
+    {
+        private readonly ILocalExecutor _localExecutor;
+        private readonly IRemoteExecutor _remoteExecutor;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
+
+        public DefaultAppointAddressInvoker(ILocalExecutor localExecutor,
+            IRemoteExecutor remoteExecutor,
+            IServiceEntryLocator serviceEntryLocator)
+        {
+            _localExecutor = localExecutor;
+            _remoteExecutor = remoteExecutor;
+            _serviceEntryLocator = serviceEntryLocator;
+        }
+
+
+        public Task<object> Invoke([NotNull] string address, [NotNull] ServiceEntry serviceEntry, object[] parameters,
+            string serviceKey = null)
+        {
+            Check.NotNull(address, nameof(address));
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            if (RpcEndpointHelper.IsLocalRpcAddress(address))
+            {
+                return _localExecutor.Execute(serviceEntry, parameters, serviceKey);
+            }
+
+            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
+            return _remoteExecutor.Execute(serviceEntry, parameters, serviceKey);
+        }
+
+        public async Task<T> Invoke<T>([NotNull] string address, [NotNull] ServiceEntry serviceEntry,
+            object[] parameters,
+            string serviceKey = null)
+        {
+            var result = await Invoke(address, serviceEntry, parameters, serviceKey);
+            if (result != null)
+            {
+                return (T)result;
+            }
+
+            return default(T);
+        }
+
+        public Task<object> Invoke([NotNull] string address, [NotNull] string serviceEntryId, object[] parameters,
+            string serviceKey = null)
+        {
+            Check.NotNull(address, nameof(address));
+            Check.NotNull(serviceEntryId, nameof(serviceEntryId));
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
+            if (serviceEntry == null)
+            {
+                throw new NotFindServiceEntryException(
+                    $"There is no service entry with id {serviceEntryId} in the system");
+            }
+
+            return Invoke(address, serviceEntry, parameters, serviceKey);
+        }
+
+        public async Task<T> Invoke<T>([NotNull] string address, [NotNull] string serviceEntryId, object[] parameters,
+            string serviceKey = null)
+        {
+            var result = await Invoke(address, serviceEntryId, parameters, serviceKey);
+            if (result != null)
+            {
+                return (T)result;
+            }
+
+            return default(T);
+        }
+    }
+}

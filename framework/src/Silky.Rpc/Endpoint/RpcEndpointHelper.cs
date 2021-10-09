@@ -95,6 +95,12 @@ namespace Silky.Rpc.Endpoint
             return address;
         }
 
+        public static bool IsLocalRpcAddress(string address)
+        {
+            var localAddress = RpcEndpointHelper.GetLocalTcpEndpoint().GetAddress();
+            return localAddress.Equals(address);
+        }
+
         public static string GetLocalAddress()
         {
             string host = GetAnyHostIp();
