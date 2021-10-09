@@ -31,7 +31,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
             _serviceEntryManager = serviceEntryManager;
-            _rpcEndpointMonitor.OnRemoveRpcEndpoint += RemoveRpcRpcEndpointHandler;
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += RemoveRpcEndpointHandler;
             _rpcEndpointMonitor.OnStatusChange += HealthChangeHandler;
             Logger = NullLogger<DefaultServerManager>.Instance;
         }
@@ -55,7 +55,7 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        private async Task RemoveRpcRpcEndpointHandler(IRpcEndpoint rpcEndpoint)
+        private async Task RemoveRpcEndpointHandler(IRpcEndpoint rpcEndpoint)
         {
             var needRemoveEndpointServerRoutes =
                 Servers.Where(p => p.Endpoints.Any(q => q.Host == rpcEndpoint.Host));
