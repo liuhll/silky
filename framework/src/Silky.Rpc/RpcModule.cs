@@ -88,9 +88,12 @@ namespace Silky.Rpc
                         message.SetRpcMessageId();
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
                         remoteInvokeMessage.SetRpcAttachments();
+                        var serverDiagnosticListener = EngineContext.Current.Resolve<IServerDiagnosticListener>();
+                        var tracingTimestamp = serverDiagnosticListener.TracingBefore(remoteInvokeMessage, message.Id);
                         var handlePolicyBuilder = EngineContext.Current.Resolve<IHandlePolicyBuilder>();
                         var policy = handlePolicyBuilder.Build(remoteInvokeMessage);
                         var context = new Context(PollyContextNames.ServerHandlerOperationKey);
+                        context[PollyContextNames.TracingTimestamp] = tracingTimestamp;
                         var result = await policy.ExecuteAsync(async ct =>
                         {
                             var messageReceivedHandler = EngineContext.Current.Resolve<IServerMessageReceivedHandler>();
@@ -101,6 +104,8 @@ namespace Silky.Rpc
                         }, context);
                         var resultTransportMessage = new TransportMessage(result, message.Id);
                         await sender.SendMessageAsync(resultTransportMessage);
+                        serverDiagnosticListener.TracingAfter(tracingTimestamp, message.Id,
+                            remoteInvokeMessage.ServiceEntryId, result);
                     };
                 }
             }

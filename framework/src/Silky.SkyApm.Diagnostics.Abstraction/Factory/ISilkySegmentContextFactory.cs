@@ -6,7 +6,7 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
     {
         SegmentContext GetEntryContext(string serviceEntryId);
 
-        SegmentContext GetExitSContext(string serviceEntryId);
+        SegmentContext GetExitContext(string serviceEntryId);
 
         SegmentContext GetCurrentContext(string operationName);
 

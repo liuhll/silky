@@ -21,14 +21,13 @@ namespace Silky.Rpc.Transport
         private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;
-        private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
+
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
         public DefaultTransportClient(IMessageSender messageSender, IMessageListener messageListener)
         {
             _messageSender = messageSender;
             _messageListener = messageListener;
-            _clientInvokeDiagnosticListener = new DefaultClientDiagnosticListener();
             _messageListener.Received += MessageListenerOnReceived;
             Logger = EngineContext.Current.Resolve<ILogger<DefaultTransportClient>>() ??
                      NullLogger<DefaultTransportClient>.Instance;
@@ -70,14 +69,14 @@ namespace Silky.Rpc.Transport
             }
         }
 
-        public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout = Timeout.Infinite)
+        public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
+            int timeout = Timeout.Infinite)
         {
-            var transportMessage = new TransportMessage(message);
+            var transportMessage = new TransportMessage(message, messageId);
             transportMessage.SetRpcMessageId();
             message.Attachments = RpcContext.Context.GetContextAttachments();
-            var tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(message, transportMessage.Id);
             var callbackTask =
-                RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, tracingTimestamp, timeout);
+                RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, timeout);
             Logger.LogDebug(
                 "Preparing to send RPC message{0}" +
                 "messageId:[{1}],serviceEntryId:[{2}]", Environment.NewLine, transportMessage.Id,
@@ -88,7 +87,7 @@ namespace Silky.Rpc.Transport
         }
 
         private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id, string serviceEntryId,
-            long? tracingTimestamp, int timeout = Timeout.Infinite)
+            int timeout = Timeout.Infinite)
         {
             var tcs = new TaskCompletionSource<TransportMessage>();
 
@@ -100,14 +99,12 @@ namespace Silky.Rpc.Transport
                 Logger.LogDebug(
                     "Received the message returned from server{0}messageId:[{1}],serviceEntryId:[{2}]",
                     Environment.NewLine, id, serviceEntryId);
-                _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, id, serviceEntryId, remoteResultMessage);
+
                 return remoteResultMessage;
             }
             catch (Exception ex)
             {
                 Logger.LogException(ex);
-                _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, id, serviceEntryId,
-                    ex.GetExceptionStatusCode(), ex);
                 throw;
             }
             finally

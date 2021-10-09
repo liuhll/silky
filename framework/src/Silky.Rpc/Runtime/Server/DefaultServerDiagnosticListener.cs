@@ -53,7 +53,8 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        public void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId, StatusCode statusCode, Exception ex)
+        public void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId, StatusCode statusCode,
+            Exception ex)
         {
             if (tracingTimestamp != null &&
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcServerHandler))
@@ -83,7 +84,8 @@ namespace Silky.Rpc.Runtime.Server
             throw new NotImplementedException();
         }
 
-        public void TracingFallbackError(long? tracingTimestamp, string messageId, string serviceEntryId, StatusCode statusCode,
+        public void TracingFallbackError(long? tracingTimestamp, string messageId, string serviceEntryId,
+            StatusCode statusCode,
             Exception ex)
         {
             throw new NotImplementedException();

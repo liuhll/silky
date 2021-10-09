@@ -22,6 +22,7 @@ using Silky.Core.Serialization;
 using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Identity.Extensions;
+using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Identity.Authentication.Handlers
 {

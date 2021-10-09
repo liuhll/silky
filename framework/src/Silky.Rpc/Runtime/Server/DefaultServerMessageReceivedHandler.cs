@@ -19,17 +19,14 @@ namespace Silky.Rpc.Runtime.Server
         private readonly IServiceEntryLocator _serviceEntryLocator;
 
         private readonly IServiceKeyExecutor _serviceKeyExecutor;
-        private readonly IServerDiagnosticListener _serverDiagnosticListener;
         public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
 
         public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
-            IServiceKeyExecutor serviceKeyExecutor,
-            IServerDiagnosticListener serverDiagnosticListener)
+            IServiceKeyExecutor serviceKeyExecutor)
         {
             _serviceEntryLocator = serviceEntryLocator;
 
             _serviceKeyExecutor = serviceKeyExecutor;
-            _serverDiagnosticListener = serverDiagnosticListener;
             Logger = NullLogger<DefaultServerMessageReceivedHandler>.Instance;
         }
 
@@ -44,8 +41,6 @@ namespace Silky.Rpc.Runtime.Server
             Logger.LogDebug(
                 "Received a request from the client [{0}].{1}messageId:[{2}],serviceEntryId:[{3}]", clientRpcEndpoint,
                 Environment.NewLine, messageId, message.ServiceEntryId);
-            var tracingTimestamp = _serverDiagnosticListener.TracingBefore(message, messageId);
-            context[PollyContextNames.TracingTimestamp] = tracingTimestamp;
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
             var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
@@ -78,16 +73,12 @@ namespace Silky.Rpc.Runtime.Server
 
                 remoteResultMessage.Result = result;
                 remoteResultMessage.StatusCode = StatusCode.Success;
-                _serverDiagnosticListener.TracingAfter(tracingTimestamp, messageId, message.ServiceEntryId,
-                    remoteResultMessage);
             }
             catch (Exception ex)
             {
                 isHandleSuccess = false;
                 context[PollyContextNames.Exception] = ex;
                 Logger.LogException(ex);
-                _serverDiagnosticListener.TracingError(tracingTimestamp, messageId, message.ServiceEntryId,
-                    ex.GetExceptionStatusCode(), ex);
                 throw;
             }
             finally

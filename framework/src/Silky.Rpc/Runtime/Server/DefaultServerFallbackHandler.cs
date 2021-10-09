@@ -27,7 +27,6 @@ namespace Silky.Rpc.Runtime.Server
 
         public async Task<RemoteResultMessage> Handle(RemoteInvokeMessage message, Context ctx,
             CancellationToken cancellationToken)
-
         {
             var tracingTimestamp = ctx[PollyContextNames.TracingTimestamp]?.To<long>();
             var remoteResultMessage = new RemoteResultMessage()
@@ -35,62 +34,55 @@ namespace Silky.Rpc.Runtime.Server
                 ServiceEntryId = message.ServiceEntryId,
                 StatusCode = StatusCode.Success,
             };
-            try
+
+            var exception = ctx[PollyContextNames.Exception] as Exception;
+            Check.NotNull(exception, nameof(exception));
+            _serverDiagnosticListener.TracingError(tracingTimestamp, RpcContext.Context.GetMessageId(),
+                message.ServiceEntryId, exception.GetExceptionStatusCode(), exception);
+            if (exception is RpcAuthenticationException || exception is NotFindLocalServiceEntryException)
             {
-                var exception = ctx[PollyContextNames.Exception] as Exception;
-                Check.NotNull(exception, nameof(exception));
-                if (exception is RpcAuthenticationException || exception is NotFindLocalServiceEntryException)
+                remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
+                remoteResultMessage.ExceptionMessage = exception.Message;
+                return remoteResultMessage;
+            }
+
+            var serviceEntry = ctx[PollyContextNames.ServiceEntry] as ServiceEntry;
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
+            {
+                object instance = EngineContext.Current.Resolve(serviceEntry.FallbackProvider.Type);
+                if (instance == null)
                 {
-                    remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
-                    remoteResultMessage.ExceptionMessage = exception.Message;
+                    remoteResultMessage.StatusCode = StatusCode.NotFindFallbackInstance;
+                    remoteResultMessage.ExceptionMessage =
+                        $"Failed to instantiate the instance of the fallback service;{Environment.NewLine}" +
+                        $"Type:{serviceEntry.FallbackProvider.Type.FullName}";
                     return remoteResultMessage;
                 }
 
-                var serviceEntry = ctx[PollyContextNames.ServiceEntry] as ServiceEntry;
-                Check.NotNull(serviceEntry, nameof(serviceEntry));
-                if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
+                object result = null;
+                try
                 {
-                    object instance = EngineContext.Current.Resolve(serviceEntry.FallbackProvider.Type);
-                    if (instance == null)
-                    {
-                        remoteResultMessage.StatusCode = StatusCode.NotFindFallbackInstance;
-                        remoteResultMessage.ExceptionMessage =
-                            $"Failed to instantiate the instance of the fallback service;{Environment.NewLine}" +
-                            $"Type:{serviceEntry.FallbackProvider.Type.FullName}";
-                        return remoteResultMessage;
-                    }
-
-                    object result = null;
-                    try
-                    {
-                        var parameters = serviceEntry.ConvertParameters(message.Parameters);
-                        result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithDbContextAsync(instance,
-                            parameters);
-                        remoteResultMessage.StatusCode = StatusCode.Success;
-                        remoteResultMessage.Result = result;
-                        return remoteResultMessage;
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogException(ex);
-                        remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
-                        remoteResultMessage.ExceptionMessage = ex.GetExceptionMessage();
-                        return remoteResultMessage;
-                    }
+                    var parameters = serviceEntry.ConvertParameters(message.Parameters);
+                    result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithDbContextAsync(instance,
+                        parameters);
+                    remoteResultMessage.StatusCode = StatusCode.Success;
+                    remoteResultMessage.Result = result;
+                    return remoteResultMessage;
                 }
-                else
+                catch (Exception ex)
                 {
-                    remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
-                    remoteResultMessage.ExceptionMessage = exception.GetExceptionMessage();
+                    Logger.LogException(ex);
+                    remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
+                    remoteResultMessage.ExceptionMessage = ex.GetExceptionMessage();
+                    return remoteResultMessage;
                 }
+            }
 
-                return remoteResultMessage;
-            }
-            finally
-            {
-                _serverDiagnosticListener.TracingAfter(tracingTimestamp, RpcContext.Context.GetMessageId(),
-                    message.ServiceEntryId, remoteResultMessage);
-            }
+            remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
+            remoteResultMessage.ExceptionMessage = exception.GetExceptionMessage();
+
+            return remoteResultMessage;
         }
     }
 }

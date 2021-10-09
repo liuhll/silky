@@ -1,10 +1,11 @@
 using System;
+using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IClientInvokeDiagnosticListener
+    public interface IClientInvokeDiagnosticListener : IScopedDependency
     {
         long? TracingBefore(RemoteInvokeMessage message, string messageId);
 

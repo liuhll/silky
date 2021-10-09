@@ -10,7 +10,6 @@ namespace Silky.Rpc.Runtime.Server
         private readonly IServerFallbackHandler _serverFallbackHandler;
 
         public DefaultServerHandleFallbackPolicyProvider(IServerFallbackHandler serverFallbackHandler)
-
         {
             _serverFallbackHandler = serverFallbackHandler;
         }

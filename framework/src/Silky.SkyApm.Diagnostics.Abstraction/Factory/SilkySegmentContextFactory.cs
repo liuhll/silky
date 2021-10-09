@@ -41,7 +41,7 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
             return context;
         }
 
-        public SegmentContext GetExitSContext(string serviceEntryId)
+        public SegmentContext GetExitContext(string serviceEntryId)
         {
             var context = _exitSegmentContextAccessor.Context;
             if (context == null)

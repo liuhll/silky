@@ -6,6 +6,7 @@ namespace Silky.Rpc.Transport
 {
     public interface ITransportClient
     {
-        Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, int timeout = Timeout.Infinite);
+        Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
+            int timeout = Timeout.Infinite);
     }
 }

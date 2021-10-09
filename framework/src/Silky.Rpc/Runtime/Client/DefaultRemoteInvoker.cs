@@ -10,6 +10,7 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
+using Silky.Core.Utils;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
@@ -26,18 +27,21 @@ namespace Silky.Rpc.Runtime.Client
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly ISerializer _serializer;
         private readonly ClientFilterProvider _clientFilterProvider;
+        private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
         public ILogger<DefaultRemoteInvoker> Logger { get; set; }
 
         public DefaultRemoteInvoker(IServerManager serverManager,
             ITransportClientFactory transportClientFactory,
             ISerializer serializer,
-            ClientFilterProvider clientFilterProvider)
+            ClientFilterProvider clientFilterProvider,
+            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener)
         {
             _serverManager = serverManager;
 
             _transportClientFactory = transportClientFactory;
             _serializer = serializer;
             _clientFilterProvider = clientFilterProvider;
+            _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
 
             Logger = NullLogger<DefaultRemoteInvoker>.Instance;
         }
@@ -48,6 +52,8 @@ namespace Silky.Rpc.Runtime.Client
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
                 "The rpc request call start{0} serviceEntryId:[{1}]",
                 args: new[] { Environment.NewLine, remoteInvokeMessage.ServiceEntryId });
+            var messageId = GuidGenerator.CreateGuidStrWithNoUnderline();
+            var tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(remoteInvokeMessage, messageId);
             var rpcEndpoints = FindRpcEndpoint(remoteInvokeMessage);
             var selectedRpcEndpoint =
                 SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey);
@@ -67,7 +73,7 @@ namespace Silky.Rpc.Runtime.Client
                     filter.OnActionExecuting(remoteInvokeMessage);
                 }
 
-                invokeResult = await client.SendAsync(remoteInvokeMessage);
+                invokeResult = await client.SendAsync(remoteInvokeMessage, messageId);
 
                 foreach (var filter in filters)
                 {
@@ -88,6 +94,8 @@ namespace Silky.Rpc.Runtime.Client
                 Logger.LogException(ex);
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
                     $"The rpc request call failed");
+                _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, messageId,
+                    remoteInvokeMessage.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
                 throw;
             }
 
@@ -97,6 +105,8 @@ namespace Silky.Rpc.Runtime.Client
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
                 MiniProfileConstant.Rpc.State.Success,
                 $"The rpc request call succeeded");
+            _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
+                remoteInvokeMessage.ServiceEntryId, invokeResult);
             return invokeResult;
         }
 

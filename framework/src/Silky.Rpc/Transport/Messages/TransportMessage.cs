@@ -13,23 +13,23 @@ namespace Silky.Rpc.Transport.Messages
         {
         }
 
+        //  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public TransportMessage([NotNull] object content)
+        // {
+        //     if (content == null)
+        //         throw new ArgumentNullException(nameof(content));
+        //     Id = GuidGenerator.CreateGuidStrWithNoUnderline();
+        //     Content = content;
+        //     ContentType = content.GetType().FullName;
+        //     if (ContentType != TransportMessageType.RemoteInvokeMessage &&
+        //         ContentType != TransportMessageType.RemoteResultMessage)
+        //     {
+        //         throw new ArgumentException(nameof(content));
+        //     }
+        // }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TransportMessage([NotNull] object content)
-        {
-            if (content == null)
-                throw new ArgumentNullException(nameof(content));
-            Id = GuidGenerator.CreateGuidStrWithNoUnderline();
-            Content = content;
-            ContentType = content.GetType().FullName;
-            if (ContentType != TransportMessageType.RemoteInvokeMessage &&
-                ContentType != TransportMessageType.RemoteResultMessage)
-            {
-                throw new ArgumentException(nameof(content));
-            }
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TransportMessage([NotNull] object content, [NotNull]string id)
+        public TransportMessage([NotNull] object content, [NotNull] string id)
         {
             Content = content ?? throw new ArgumentNullException(nameof(content));
             Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -55,7 +55,7 @@ namespace Silky.Rpc.Transport.Messages
                 throw new SilkyException("The specified message data type is incorrect");
             }
 
-            return (T) Content;
+            return (T)Content;
         }
     }
 }

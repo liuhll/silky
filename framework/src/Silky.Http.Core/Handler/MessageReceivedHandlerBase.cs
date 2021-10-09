@@ -14,7 +14,8 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
 using Silky.Http.Core.Executor;
-using Silky.Rpc.Diagnostics;
+using Silky.Rpc.Extensions;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Security;
 using Silky.Rpc.Transport.Messages;
 
@@ -25,20 +26,20 @@ namespace Silky.Http.Core.Handlers
         protected readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
         protected readonly ICurrentRpcToken _currentRpcToken;
+        private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
-
-
-        private static readonly DiagnosticListener s_diagnosticListener =
-            new(RpcDiagnosticListenerNames.DiagnosticClientListenerName);
 
         protected MessageReceivedHandlerBase(
             IHttpExecutor executor,
             IParameterParser parameterParser,
-            ICurrentRpcToken currentRpcToken)
+            ICurrentRpcToken currentRpcToken,
+            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener)
         {
             _executor = executor;
             _parameterParser = parameterParser;
             _currentRpcToken = currentRpcToken;
+            _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
+
             Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
         }
 
@@ -69,7 +70,6 @@ namespace Silky.Http.Core.Handlers
                     $"serviceKey => {serviceKey}");
             }
 
-            // RpcContext.Context.SetAttachment(AttachmentKeys.RpcToken, _rpcOptions.Token);
             _currentRpcToken.SetRpcToken();
             var tracingTimestamp = TracingBefore(new RemoteInvokeMessage()
             {
@@ -140,22 +140,7 @@ namespace Silky.Http.Core.Handlers
 
         private long? TracingBefore(RemoteInvokeMessage message, string messageId, ServiceEntry serviceEntry)
         {
-            if (serviceEntry.IsLocal && s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.BeginRpcRequest))
-            {
-                var eventData = new RpcInvokeEventData()
-                {
-                    MessageId = messageId,
-                    OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    ServiceEntryId = message.ServiceEntryId,
-                    Message = message
-                };
-
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcRequest, eventData);
-
-                return eventData.OperationTimestamp;
-            }
-
-            return null;
+            return serviceEntry.IsLocal ? _clientInvokeDiagnosticListener.TracingBefore(message, messageId) : null;
         }
 
         private string GetMessageId(HttpContext httpContext)
@@ -168,20 +153,10 @@ namespace Silky.Http.Core.Handlers
         private void TracingAfter(long? tracingTimestamp, string messageId, ServiceEntry serviceEntry,
             RemoteResultMessage remoteResultMessage)
         {
-            if (tracingTimestamp != null && serviceEntry.IsLocal &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcRequest))
+            if (tracingTimestamp != null && serviceEntry.IsLocal)
             {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcInvokeResultEventData()
-                {
-                    MessageId = messageId,
-                    ServiceEntryId = serviceEntry.Id,
-                    Result = remoteResultMessage.Result,
-                    StatusCode = remoteResultMessage.StatusCode,
-                    ElapsedTimeMs = now - tracingTimestamp.Value
-                };
-
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.EndRpcRequest, eventData);
+                _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serviceEntry.Id,
+                    remoteResultMessage);
             }
         }
 
@@ -189,20 +164,10 @@ namespace Silky.Http.Core.Handlers
             StatusCode statusCode,
             Exception ex)
         {
-            if (tracingTimestamp != null && serviceEntry.IsLocal &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcRequest))
+            if (tracingTimestamp != null && serviceEntry.IsLocal)
             {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcInvokeExceptionEventData()
-                {
-                    MessageId = messageId,
-                    ServiceEntryId = serviceEntry.Id,
-                    StatusCode = statusCode,
-                    ElapsedTimeMs = now - tracingTimestamp.Value,
-                    ClientAddress = RpcContext.Context.Connection.ClientAddress,
-                    Exception = ex
-                };
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);
+                _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, messageId, serviceEntry.Id, statusCode,
+                    ex);
             }
         }
     }

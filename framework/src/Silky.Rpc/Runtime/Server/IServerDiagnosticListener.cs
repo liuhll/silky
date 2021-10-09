@@ -13,9 +13,7 @@ namespace Silky.Rpc.Runtime.Server
             RemoteResultMessage remoteResultMessage);
 
         void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId,
-            StatusCode statusCode,
-            Exception ex);
-
+            StatusCode statusCode, Exception ex);
 
         long? TracingFallbackBefore(RemoteInvokeMessage message, string messageId);
 

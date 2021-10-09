@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
@@ -13,20 +15,29 @@ namespace Silky.Rpc.Runtime.Client
         private readonly ILocalExecutor _localExecutor;
         private readonly IRemoteExecutor _remoteExecutor;
         private readonly IServiceEntryLocator _serviceEntryLocator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public DefaultAppointAddressInvoker(ILocalExecutor localExecutor,
             IRemoteExecutor remoteExecutor,
-            IServiceEntryLocator serviceEntryLocator)
+            IServiceEntryLocator serviceEntryLocator,
+            IHttpContextAccessor httpContextAccessor)
         {
             _localExecutor = localExecutor;
             _remoteExecutor = remoteExecutor;
             _serviceEntryLocator = serviceEntryLocator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
         public Task<object> Invoke([NotNull] string address, [NotNull] ServiceEntry serviceEntry, object[] parameters,
             string serviceKey = null)
         {
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                httpContext.SetHttpMessageId();
+                httpContext.SetHttpHandleAddressInfo();
+            }
             Check.NotNull(address, nameof(address));
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             if (RpcEndpointHelper.IsLocalRpcAddress(address))
