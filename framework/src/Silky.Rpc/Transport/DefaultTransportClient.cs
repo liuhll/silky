@@ -10,8 +10,8 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
 using Silky.Core.Rpc;
-using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Runtime;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport
@@ -21,18 +21,14 @@ namespace Silky.Rpc.Transport
         private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
         private readonly IMessageSender _messageSender;
         private readonly IMessageListener _messageListener;
-
-        protected static readonly DiagnosticListener s_diagnosticListener =
-            new(RpcDiagnosticListenerNames.DiagnosticClientListenerName);
-
-
+        private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
-        public DefaultTransportClient(IMessageSender messageSender,
-            IMessageListener messageListener)
+        public DefaultTransportClient(IMessageSender messageSender, IMessageListener messageListener)
         {
             _messageSender = messageSender;
             _messageListener = messageListener;
+            _clientInvokeDiagnosticListener = new DefaultClientDiagnosticListener();
             _messageListener.Received += MessageListenerOnReceived;
             Logger = EngineContext.Current.Resolve<ILogger<DefaultTransportClient>>() ??
                      NullLogger<DefaultTransportClient>.Instance;
@@ -79,7 +75,7 @@ namespace Silky.Rpc.Transport
             var transportMessage = new TransportMessage(message);
             transportMessage.SetRpcMessageId();
             message.Attachments = RpcContext.Context.GetContextAttachments();
-            var tracingTimestamp = TracingBefore(message, transportMessage.Id);
+            var tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(message, transportMessage.Id);
             var callbackTask =
                 RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, tracingTimestamp, timeout);
             Logger.LogDebug(
@@ -104,79 +100,19 @@ namespace Silky.Rpc.Transport
                 Logger.LogDebug(
                     "Received the message returned from server{0}messageId:[{1}],serviceEntryId:[{2}]",
                     Environment.NewLine, id, serviceEntryId);
-                TracingAfter(tracingTimestamp, id, serviceEntryId, remoteResultMessage);
+                _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, id, serviceEntryId, remoteResultMessage);
                 return remoteResultMessage;
             }
             catch (Exception ex)
             {
                 Logger.LogException(ex);
-                TracingError(tracingTimestamp, id, serviceEntryId, ex.GetExceptionStatusCode(), ex);
+                _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, id, serviceEntryId,
+                    ex.GetExceptionStatusCode(), ex);
                 throw;
             }
             finally
             {
                 m_resultDictionary.TryRemove(id, out tcs);
-            }
-        }
-
-        private long? TracingBefore(RemoteInvokeMessage message, string messageId)
-        {
-            if (s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.BeginRpcRequest))
-            {
-                var eventData = new RpcInvokeEventData()
-                {
-                    MessageId = messageId,
-                    OperationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    ServiceEntryId = message.ServiceEntryId,
-                    Message = message
-                };
-
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.BeginRpcRequest, eventData);
-
-                return eventData.OperationTimestamp;
-            }
-
-            return null;
-        }
-
-        private void TracingAfter(long? tracingTimestamp, string messageId, string serviceEntryId,
-            RemoteResultMessage remoteResultMessage)
-        {
-            if (tracingTimestamp != null &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.EndRpcRequest))
-            {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcInvokeResultEventData()
-                {
-                    MessageId = messageId,
-                    ServiceEntryId = serviceEntryId,
-                    Result = remoteResultMessage.Result,
-                    StatusCode = remoteResultMessage.StatusCode,
-                    ElapsedTimeMs = now - tracingTimestamp.Value
-                };
-
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.EndRpcRequest, eventData);
-            }
-        }
-
-        private void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId,
-            StatusCode statusCode,
-            Exception ex)
-        {
-            if (tracingTimestamp != null &&
-                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.ErrorRpcRequest))
-            {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var eventData = new RpcInvokeExceptionEventData()
-                {
-                    MessageId = messageId,
-                    ServiceEntryId = serviceEntryId,
-                    StatusCode = statusCode,
-                    ElapsedTimeMs = now - tracingTimestamp.Value,
-                    ClientAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerHost).ToString(),
-                    Exception = ex
-                };
-                s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);
             }
         }
     }
