@@ -72,23 +72,6 @@ namespace Silky.Rpc.Runtime.Server
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcServerHandler, eventData);
             }
         }
-
-        public long? TracingFallbackBefore(RemoteInvokeMessage message, string messageId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void TracingFallbackAfter(long? tracingTimestamp, string messageId, string serviceEntryId,
-            RemoteResultMessage remoteResultMessage)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void TracingFallbackError(long? tracingTimestamp, string messageId, string serviceEntryId,
-            StatusCode statusCode,
-            Exception ex)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

@@ -22,5 +22,8 @@ namespace Silky.SkyApm.Diagnostics.Abstraction
         public static readonly string RPC_SHUNTSTRATEGY = "ShuntStrategy";
         
         public static readonly string RPC_SELECTEDADDRESS = "SelectedAddress";
+        public static readonly string FALLBACK_EXEC_TYPE = "FallbackExecType";
+        public static readonly string FALLBACK_TYPE = "FallbackType";
+        public static readonly string FALLBACK_METHOD = "FallbackMethod";
     }
 }
