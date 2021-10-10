@@ -25,7 +25,7 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Participant
         public void TccParticipantBeginHandle([Object] ParticipantTransactionEventData eventData)
         {
             var context =
-                _segmentContextFactory.GetCurrentContext(GetOperationName(eventData));
+                _segmentContextFactory.GetTransactionContext(GetOperationName(eventData));
             context.Span.AddLog(LogEvent.Event($"Tcc Participant Transaction Action {eventData.Context.Action}Begin"),
                 LogEvent.Message($"--> transactionContext:{_serializer.Serialize(eventData.Context)}"));
             context.Span.AddTag("TransId", eventData.Context.TransId);
@@ -38,7 +38,7 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Participant
         public void TccParticipantEndHandle([Object] ParticipantTransactionEventData eventData)
         {
             var context =
-                _segmentContextFactory.GetCurrentContext(GetOperationName(eventData));
+                _segmentContextFactory.GetTransactionContext(GetOperationName(eventData));
             context.Span.AddLog(LogEvent.Event($"Tcc Participant Transaction Action {eventData.Context.Action}End"));
             _segmentContextFactory.ReleaseContext(context);
         }

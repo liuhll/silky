@@ -10,7 +10,11 @@ using Microsoft.Extensions.Primitives;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
+using Silky.Core.Serialization;
+using Silky.Http.Core.Diagnostics;
+using Silky.SkyApm.Diagnostics.Abstraction;
 using Silky.SkyApm.Diagnostics.Abstraction.Collections;
+using Silky.SkyApm.Diagnostics.Abstraction.Factory;
 using Silky.SkyApm.Diagnostics.Rpc.Http.Configs;
 using Silky.SkyApm.Diagnostics.Rpc.Http.Utils;
 using Silky.SkyApm.Diagnostics.Rpc.Http.Extensions;
@@ -29,14 +33,20 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
 
         private readonly ITracingContext _tracingContext;
         private readonly IEntrySegmentContextAccessor _entrySegmentContextAccessor;
+        private readonly ISilkySegmentContextFactory _silkySegmentContextFactory;
+        private readonly ISerializer _serializer;
         private readonly HostingDiagnosticConfig _config;
         private readonly TracingConfig _tracingConfig;
 
         public HttpTracingDiagnosticProcessor(IEntrySegmentContextAccessor entrySegmentContextAccessor,
+            ISilkySegmentContextFactory silkySegmentContextFactory,
             ITracingContext tracingContext,
-            IConfigAccessor configAccessor)
+            IConfigAccessor configAccessor,
+            ISerializer serializer)
         {
             _tracingContext = tracingContext;
+            _serializer = serializer;
+            _silkySegmentContextFactory = silkySegmentContextFactory;
             _entrySegmentContextAccessor = entrySegmentContextAccessor;
             _config = configAccessor.Get<HostingDiagnosticConfig>();
             _tracingConfig = configAccessor.Get<TracingConfig>();
@@ -51,7 +61,6 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
                 return;
             }
 
-            //var host = RpcEndpointHelper.GetRpcEndpoint().IPEndPoint.ToString();
             var context = _tracingContext.CreateEntrySegmentContext(
                 $"{HttpContext.Request.Path}-{HttpContext.Request.Method}",
                 new SilkyCarrierHeaderCollection(RpcContext.Context));
@@ -114,7 +123,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
                     context.Span.ErrorOccurred();
                 }
             }
-            
+
             context.Span.AddLog(
                 LogEvent.Event("Http Request End"),
                 LogEvent.Message($"Http Request End"));
@@ -131,6 +140,67 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
         public void HostingUnhandledException([Property] HttpContext httpContext, [Property] Exception exception)
         {
             _entrySegmentContextAccessor.Context?.Span?.ErrorOccurred(exception, _tracingConfig);
+        }
+
+        [DiagnosticName(HttpDiagnosticListenerNames.BeginHttpHandle)]
+        public void BeginHttpHandle([Object] HttpHandleEventData eventData)
+        {
+            SegmentContext context;
+            var localAddress = RpcContext.Context.Connection.LocalAddress;
+            var clientAddress = RpcContext.Context.Connection.ClientAddress;
+            var serviceKey = RpcContext.Context.GetServiceKey();
+            context = eventData.ServiceEntry.IsLocal
+                ? _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id)
+                : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
+
+            context.Span.AddLog(
+                LogEvent.Event("Http Handle Begin"),
+                LogEvent.Message($"Http Handle {Environment.NewLine}" +
+                                 $"--> ServiceEntryId:{eventData.ServiceEntry.Id}.{Environment.NewLine}" +
+                                 $"--> IsLocal:{eventData.ServiceEntry.IsLocal}.{Environment.NewLine}" +
+                                 $"--> ServiceKey:{serviceKey}{Environment.NewLine}" +
+                                 $"--> MessageId:{eventData.MessageId}.{Environment.NewLine}" +
+                                 $"--> Parameters:{_serializer.Serialize(eventData.Parameters)}.{Environment.NewLine}" +
+                                 $"--> Attachments:{_serializer.Serialize(RpcContext.Context.GetContextAttachments())}"));
+
+            context.Span.AddTag(SilkyTags.WEBAPI, eventData.HttpContext.Request.Path);
+            context.Span.AddTag(SilkyTags.HTTPMETHOD, eventData.HttpContext.Request.Method);
+            context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntry.Id);
+            context.Span.AddTag(SilkyTags.IS_LOCAL_SERVICEENTRY, eventData.ServiceEntry.IsLocal);
+            context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
+            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientAddress);
+            context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localAddress);
+            context.Span.AddTag(SilkyTags.ISGATEWAY, RpcContext.Context.IsGateway());
+        }
+
+        [DiagnosticName(HttpDiagnosticListenerNames.EndHttpHandle)]
+        public void EndHttpHandle([Object] HttpHandleResultEventData eventData)
+        {
+            var context = eventData.ServiceEntry.IsLocal
+                ? _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id)
+                : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
+            context.Span.AddLog(LogEvent.Event("Http Handle End"),
+                LogEvent.Message(
+                    $"Http Handle Succeeded!{Environment.NewLine}" +
+                    $"--> Spend Time: {eventData.ElapsedTimeMs}ms.{Environment.NewLine}" +
+                    $"--> ServiceEntryId: {eventData.ServiceEntry.Id}.{Environment.NewLine}" +
+                    $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
+                    $"--> Result: {_serializer.Serialize(eventData.Result)}"));
+
+            context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
+            context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
+            _silkySegmentContextFactory.ReleaseContext(context);
+        }
+
+        [DiagnosticName(HttpDiagnosticListenerNames.ErrorHttpHandle)]
+        public void ErrorHttpHandle([Object] HttpHandleExceptionEventData eventData)
+        {
+            var context = eventData.ServiceEntry.IsLocal
+                ? _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id)
+                : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
+            context.Span?.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
+            context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
+            _silkySegmentContextFactory.ReleaseContext(context);
         }
 
         private string CollectCookies(HttpContext httpContext, IEnumerable<string> keys)

@@ -22,6 +22,7 @@
         <ProjectReference Include="..\Silky.Rpc.Monitor\Silky.Rpc.Monitor.csproj" />
         <ProjectReference Include="..\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
+        <ProjectReference Include="..\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj" />
         <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
         <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />
         <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />

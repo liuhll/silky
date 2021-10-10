@@ -1,4 +1,4 @@
-namespace Silky.SkyApm.Diagnostics.Rpc
+namespace Silky.SkyApm.Diagnostics.Abstraction
 {
     public class SilkyTags
     {
@@ -6,12 +6,16 @@ namespace Silky.SkyApm.Diagnostics.Rpc
         public static readonly string RPC_CLIENT_ENDPOINT = "Rpc.ClientAddress";
         public static readonly string RPC_LOCAL_RPCENDPOINT = "Rpc.LocalAddress";
         public static readonly string RPC_REMOTE_PORT = "Rpc.RequestPort";
-        
+
         public static readonly string ELAPSED_TIME = "ElapsedTime";
-        
+
         public static readonly string RPC_STATUSCODE = "Rpc.StatusCode";
 
         public static readonly string ISGATEWAY = "IsGateway";
         public static readonly string SERVICEKEY = "ServiceKey";
+
+        public static string IS_LOCAL_SERVICEENTRY = "IsLocalServiceEntry";
+        public static string WEBAPI = "Webapi";
+        public static string HTTPMETHOD = "HttpMethod";
     }
 }

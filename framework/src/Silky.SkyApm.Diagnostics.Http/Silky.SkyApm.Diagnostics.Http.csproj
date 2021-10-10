@@ -1,13 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
-        <Description>Rpc SkyApm Diagnostics</Description>
+        <TargetFramework>net5.0</TargetFramework>
+        <Description>Http SkyApm Diagnostics</Description>
     </PropertyGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+      <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
       <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Abstraction\Silky.SkyApm.Diagnostics.Abstraction.csproj" />
     </ItemGroup>
 

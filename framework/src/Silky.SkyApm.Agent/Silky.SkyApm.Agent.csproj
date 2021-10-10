@@ -6,6 +6,7 @@
         <Description>Rpc SkyApm Agent</Description>
     </PropertyGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Http\Silky.SkyApm.Diagnostics.Http.csproj" />
       <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj" />
       <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Transaction\Silky.SkyApm.Diagnostics.Transaction.csproj" />
     </ItemGroup>

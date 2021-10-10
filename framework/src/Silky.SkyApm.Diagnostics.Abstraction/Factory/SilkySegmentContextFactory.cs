@@ -58,7 +58,36 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
             return context;
         }
 
+        public SegmentContext GetHttpHandleExitContext(string serviceEntryId)
+        {
+            var context = _exitSegmentContextAccessor.Context;
+            if (context == null)
+            {
+                var serverEndpoint = RpcContext.Context.Connection.LocalAddress;
+                context = _tracingContext.CreateExitSegmentContext($"[ServerHandle]{serviceEntryId}",
+                    serverEndpoint, new SilkyCarrierHeaderCollection(RpcContext.Context));
+
+                context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
+                context.Span.Component = SilkyComponents.SilkyRpc;
+            }
+
+            return context;
+        }
+
         public SegmentContext GetCurrentContext(string operationName)
+        {
+            var context = _localSegmentContextAccessor.Context;
+            if (context == null)
+            {
+                context = _tracingContext.CreateLocalSegmentContext(operationName);
+                context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
+                context.Span.Component = SilkyComponents.SilkyRpc;
+            }
+
+            return context;
+        }
+
+        public SegmentContext GetTransactionContext(string operationName)
         {
             var context = _localSegmentContextAccessor.Context;
             if (context == null)

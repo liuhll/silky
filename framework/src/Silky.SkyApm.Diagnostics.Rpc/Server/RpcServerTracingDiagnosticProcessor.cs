@@ -2,6 +2,7 @@
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Diagnostics;
+using Silky.SkyApm.Diagnostics.Abstraction;
 using Silky.SkyApm.Diagnostics.Abstraction.Factory;
 using SkyApm;
 using SkyApm.Config;
@@ -76,7 +77,6 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
             var context = _silkySegmentContextFactory.GetEntryContext(eventData.ServiceEntryId);
             context.Span?.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
             context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
-            _silkySegmentContextFactory.ReleaseContext(context);
         }
 
         #endregion

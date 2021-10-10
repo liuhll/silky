@@ -2,6 +2,7 @@ using System;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Diagnostics;
+using Silky.SkyApm.Diagnostics.Abstraction;
 using Silky.SkyApm.Diagnostics.Abstraction.Factory;
 using SkyApm;
 using SkyApm.Config;
@@ -42,7 +43,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
                                  $"--> ServiceKey:{serviceKey}{Environment.NewLine}" +
                                  $"--> MessageId:{eventData.MessageId}.{Environment.NewLine}" +
                                  $"--> Parameters:{_serializer.Serialize(eventData.Message.Parameters)}.{Environment.NewLine}" +
-                                 $"--> Attachments:{_serializer.Serialize(eventData.Message.Attachments)}"));
+                                 $"--> Attachments:{_serializer.Serialize(RpcContext.Context.GetContextAttachments())}"));
 
             context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId.ToString());
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);

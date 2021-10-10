@@ -32,8 +32,9 @@ namespace Silky.Http.Core.Handlers
             ISerializer serializer,
             IParameterParser parameterParser,
             ICurrentRpcToken currentRpcToken,
-            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener)
-            : base(executor, parameterParser, currentRpcToken, clientInvokeDiagnosticListener)
+            IHttpHandleDiagnosticListener httpHandleDiagnosticListener)
+            : base(executor, parameterParser, currentRpcToken, 
+                httpHandleDiagnosticListener)
         {
             _serializer = serializer;
             _gatewayOptions = gatewayOptions.CurrentValue;

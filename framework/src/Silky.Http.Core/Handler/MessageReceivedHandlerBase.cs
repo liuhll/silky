@@ -13,32 +13,31 @@ using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
+using Silky.Http.Core.Diagnostics;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Extensions;
-using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Security;
-using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core.Handlers
 {
     internal abstract class MessageReceivedHandlerBase : IMessageReceivedHandler
     {
-        protected readonly IHttpExecutor _executor;
+        private readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
-        protected readonly ICurrentRpcToken _currentRpcToken;
-        private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
+        private readonly ICurrentRpcToken _currentRpcToken;
+        private readonly IHttpHandleDiagnosticListener _httpHandleDiagnosticListener;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
         protected MessageReceivedHandlerBase(
             IHttpExecutor executor,
             IParameterParser parameterParser,
             ICurrentRpcToken currentRpcToken,
-            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener)
+            IHttpHandleDiagnosticListener httpHandleDiagnosticListener)
         {
             _executor = executor;
             _parameterParser = parameterParser;
             _currentRpcToken = currentRpcToken;
-            _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
+            _httpHandleDiagnosticListener = httpHandleDiagnosticListener;
 
             Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
         }
@@ -71,31 +70,23 @@ namespace Silky.Http.Core.Handlers
             }
 
             _currentRpcToken.SetRpcToken();
-            var tracingTimestamp = TracingBefore(new RemoteInvokeMessage()
-            {
-                ServiceId = serviceEntry.ServiceId,
-                ServiceEntryId = serviceEntry.Id,
-                Attachments = RpcContext.Context.GetContextAttachments(),
-                Parameters = parameters
-            }, messageId, serviceEntry);
+            var tracingTimestamp =
+                _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry, httpContext, parameters);
             object executeResult = null;
             var isHandleSuccess = true;
             var isFriendlyStatus = false;
             try
             {
                 executeResult = await _executor.Execute(serviceEntry, parameters, serviceKey);
-                TracingAfter(tracingTimestamp, messageId, serviceEntry, new RemoteResultMessage()
-                {
-                    ServiceEntryId = serviceEntry.Id,
-                    StatusCode = StatusCode.Success,
-                    Result = executeResult,
-                });
+                _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serviceEntry, httpContext,
+                    executeResult);
             }
             catch (Exception ex)
             {
                 isHandleSuccess = false;
                 isFriendlyStatus = ex.IsFriendlyException();
-                TracingError(tracingTimestamp, messageId, serviceEntry, ex.GetExceptionStatusCode(), ex);
+                _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId, serviceEntry, httpContext, ex,
+                    ex.GetExceptionStatusCode());
                 await HandleException(ex);
                 Logger.LogException(ex);
                 throw;
@@ -138,37 +129,10 @@ namespace Silky.Http.Core.Handlers
         }
 
 
-        private long? TracingBefore(RemoteInvokeMessage message, string messageId, ServiceEntry serviceEntry)
-        {
-            return serviceEntry.IsLocal ? _clientInvokeDiagnosticListener.TracingBefore(message, messageId) : null;
-        }
-
         private string GetMessageId(HttpContext httpContext)
         {
             httpContext.SetHttpMessageId();
             return httpContext.TraceIdentifier;
-        }
-
-
-        private void TracingAfter(long? tracingTimestamp, string messageId, ServiceEntry serviceEntry,
-            RemoteResultMessage remoteResultMessage)
-        {
-            if (tracingTimestamp != null && serviceEntry.IsLocal)
-            {
-                _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serviceEntry.Id,
-                    remoteResultMessage);
-            }
-        }
-
-        private void TracingError(long? tracingTimestamp, string messageId, ServiceEntry serviceEntry,
-            StatusCode statusCode,
-            Exception ex)
-        {
-            if (tracingTimestamp != null && serviceEntry.IsLocal)
-            {
-                _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, messageId, serviceEntry.Id, statusCode,
-                    ex);
-            }
         }
     }
 }
