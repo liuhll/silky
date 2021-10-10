@@ -84,6 +84,7 @@ namespace Silky.Rpc.Runtime.Server
                     server.HostName);
                 return;
             }
+
             _serverCache.AddOrUpdate(serverDescriptor.HostName, server, (k, v) => server);
             Logger.LogInformation(
                 "Update the server [{0}] data cache," +
@@ -157,6 +158,7 @@ namespace Silky.Rpc.Runtime.Server
             endpoints = Servers.Where(p =>
                     p.Services.Any(q => q.Id == serviceId))
                 .SelectMany(p => p.Endpoints.Where(e => e.ServiceProtocol == serviceProtocol))
+                .Where(p => p.Enabled)
                 .ToArray();
             if (endpoints.Any())
             {

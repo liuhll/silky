@@ -8,5 +8,7 @@ namespace Silky.Rpc.Endpoint.Selector
         
         HashAlgorithm,
         
+        Appoint,
+        
     }
 }

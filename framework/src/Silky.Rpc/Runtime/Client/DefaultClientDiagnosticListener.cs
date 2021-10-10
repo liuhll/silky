@@ -3,6 +3,8 @@ using System.Diagnostics;
 using Silky.Core.Exceptions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
+using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
@@ -70,6 +72,25 @@ namespace Silky.Rpc.Runtime.Client
                     Exception = ex
                 };
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcRequest, eventData);
+            }
+        }
+
+        public void TracingSelectInvokeAddress(long? tracingTimestamp, string serviceEntryId,
+            ShuntStrategy shuntStrategy,
+            IRpcEndpoint[] rpcEndpoints,
+            IRpcEndpoint selectedRpcEndpoint)
+        {
+            if (tracingTimestamp != null &&
+                s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.SelectInvokeAddress))
+            {
+                s_diagnosticListener.Write(RpcDiagnosticListenerNames.SelectInvokeAddress,
+                    new SelectInvokeAddressEventData()
+                    {
+                        ServiceEntryId = serviceEntryId,
+                        EnableRpcEndpoints = rpcEndpoints,
+                        SelectedRpcEndpoint = selectedRpcEndpoint,
+                        ShuntStrategy = shuntStrategy
+                    });
             }
         }
     }

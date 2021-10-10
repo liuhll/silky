@@ -56,7 +56,11 @@ namespace Silky.Rpc.Runtime.Client
             var tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(remoteInvokeMessage, messageId);
             var rpcEndpoints = FindRpcEndpoint(remoteInvokeMessage);
             var selectedRpcEndpoint =
-                SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey);
+                SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey,
+                    out var confirmedShuntStrategy);
+            _clientInvokeDiagnosticListener.TracingSelectInvokeAddress(tracingTimestamp,
+                remoteInvokeMessage.ServiceEntryId, confirmedShuntStrategy,
+                rpcEndpoints, selectedRpcEndpoint);
 
             var sp = Stopwatch.StartNew();
             RemoteResultMessage invokeResult = null;
@@ -129,7 +133,7 @@ namespace Silky.Rpc.Runtime.Client
         }
 
         private IRpcEndpoint SelectedRpcEndpoint(IRpcEndpoint[] rpcEndpoints, ShuntStrategy shuntStrategy,
-            string serviceEntryId, string hashKey)
+            string serviceEntryId, string hashKey, out ShuntStrategy confirmedShuntStrategy)
         {
             var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerEndpoint)?.ToString();
             IRpcEndpoint selectedRpcEndpoint;
@@ -143,6 +147,8 @@ namespace Silky.Rpc.Runtime.Client
                     throw new NotFindServiceRouteAddressException(
                         $"Server [{serviceEntryId}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
                 }
+
+                confirmedShuntStrategy = ShuntStrategy.Appoint;
             }
             else
             {
@@ -165,6 +171,7 @@ namespace Silky.Rpc.Runtime.Client
                     selectedRpcEndpoint.ToString()
                 });
             RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor);
+            confirmedShuntStrategy = shuntStrategy;
             return selectedRpcEndpoint;
         }
     }

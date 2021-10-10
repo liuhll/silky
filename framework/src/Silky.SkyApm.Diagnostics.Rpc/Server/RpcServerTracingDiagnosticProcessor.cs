@@ -47,7 +47,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
                                  $"--> Parameters:{_serializer.Serialize(eventData.Message.Parameters)}.{Environment.NewLine}" +
                                  $"--> Attachments:{_serializer.Serialize(eventData.Message.Attachments)}"));
 
-            context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId);
+            context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
             context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientAddress);
             context.Span.AddTag(SilkyTags.RPC_REMOTE_PORT, rpcConnection.RemotePort?.ToString());

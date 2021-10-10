@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Diagnostics;
+using Silky.Rpc.Endpoint;
 using Silky.SkyApm.Diagnostics.Abstraction;
 using Silky.SkyApm.Diagnostics.Abstraction.Factory;
 using SkyApm;
@@ -33,7 +35,6 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
         public void BeginRequest([Object] RpcInvokeEventData eventData)
         {
             var localAddress = RpcContext.Context.Connection.LocalAddress;
-            var serverEndpoint = RpcContext.Context.GetSelectedServerAddress();
             var serviceKey = RpcContext.Context.GetServiceKey();
             var context = _silkySegmentContextFactory.GetExitContext(eventData.ServiceEntryId);
             context.Span.AddLog(
@@ -45,11 +46,25 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
                                  $"--> Parameters:{_serializer.Serialize(eventData.Message.Parameters)}.{Environment.NewLine}" +
                                  $"--> Attachments:{_serializer.Serialize(RpcContext.Context.GetContextAttachments())}"));
 
-            context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntryId.ToString());
+            context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
-            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, serverEndpoint);
             context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localAddress);
             context.Span.AddTag(SilkyTags.ISGATEWAY, RpcContext.Context.IsGateway());
+        }
+
+
+        [DiagnosticName(RpcDiagnosticListenerNames.SelectInvokeAddress)]
+        public void SelectInvokeAddress([Object] SelectInvokeAddressEventData eventData)
+        {
+            var context = _silkySegmentContextFactory.GetExitContext(eventData.ServiceEntryId);
+            context.Span.AddTag(SilkyTags.RPC_SHUNTSTRATEGY, eventData.ShuntStrategy.ToString());
+            context.Span.AddTag(SilkyTags.RPC_SELECTEDADDRESS, eventData.SelectedRpcEndpoint.GetAddress());
+            context.Span.AddLog(
+                LogEvent.Event("Rpc Client Invoke Select Address"),
+                LogEvent.Message($"Rpc Select Address  {Environment.NewLine}" +
+                                 $"--> ServiceEntryId:{eventData.ServiceEntryId}.{Environment.NewLine}" +
+                                 $"--> Enable Addresses:{_serializer.Serialize(eventData.EnableRpcEndpoints.Select(p => p.GetAddress()))}.{Environment.NewLine}" +
+                                 $"--> SelectedAddress:{eventData.SelectedRpcEndpoint.GetAddress()}"));
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.EndRpcRequest)]

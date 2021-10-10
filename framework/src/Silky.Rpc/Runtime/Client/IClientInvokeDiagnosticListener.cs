@@ -1,6 +1,8 @@
 using System;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
+using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
@@ -15,5 +17,8 @@ namespace Silky.Rpc.Runtime.Client
         void TracingError(long? tracingTimestamp, string messageId, string serviceEntryId,
             StatusCode statusCode,
             Exception ex);
+
+        void TracingSelectInvokeAddress(long? tracingTimestamp, string serviceEntryId, ShuntStrategy shuntStrategy,
+            IRpcEndpoint[] rpcEndpoints, IRpcEndpoint selectedRpcEndpoint);
     }
 }

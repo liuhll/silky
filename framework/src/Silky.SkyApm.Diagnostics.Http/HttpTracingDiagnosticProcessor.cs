@@ -154,18 +154,11 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
                 : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
 
             context.Span.AddLog(
-                LogEvent.Event("Http Handle Begin"),
-                LogEvent.Message($"Http Handle {Environment.NewLine}" +
-                                 $"--> ServiceEntryId:{eventData.ServiceEntry.Id}.{Environment.NewLine}" +
-                                 $"--> IsLocal:{eventData.ServiceEntry.IsLocal}.{Environment.NewLine}" +
-                                 $"--> ServiceKey:{serviceKey}{Environment.NewLine}" +
-                                 $"--> MessageId:{eventData.MessageId}.{Environment.NewLine}" +
-                                 $"--> Parameters:{_serializer.Serialize(eventData.Parameters)}.{Environment.NewLine}" +
-                                 $"--> Attachments:{_serializer.Serialize(RpcContext.Context.GetContextAttachments())}"));
-
+                LogEvent.Event("Http Handle Begin"));
+            
             context.Span.AddTag(SilkyTags.WEBAPI, eventData.HttpContext.Request.Path);
             context.Span.AddTag(SilkyTags.HTTPMETHOD, eventData.HttpContext.Request.Method);
-            context.Span.AddTag(SilkyTags.RPC_SERVICEENTRYID, eventData.ServiceEntry.Id);
+            context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntry.Id);
             context.Span.AddTag(SilkyTags.IS_LOCAL_SERVICEENTRY, eventData.ServiceEntry.IsLocal);
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
             context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientAddress);
@@ -179,13 +172,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
             var context = eventData.ServiceEntry.IsLocal
                 ? _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id)
                 : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
-            context.Span.AddLog(LogEvent.Event("Http Handle End"),
-                LogEvent.Message(
-                    $"Http Handle Succeeded!{Environment.NewLine}" +
-                    $"--> Spend Time: {eventData.ElapsedTimeMs}ms.{Environment.NewLine}" +
-                    $"--> ServiceEntryId: {eventData.ServiceEntry.Id}.{Environment.NewLine}" +
-                    $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
-                    $"--> Result: {_serializer.Serialize(eventData.Result)}"));
+            context.Span.AddLog(LogEvent.Event("Http Handle End"));
 
             context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
             context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");

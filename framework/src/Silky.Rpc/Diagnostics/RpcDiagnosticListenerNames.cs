@@ -15,5 +15,6 @@ namespace Silky.Rpc.Diagnostics
         public const string BeginRpcServerHandler = RpcPrefix + "WriteBeginRpcServerHandler";
         public const string EndRpcServerHandler = RpcPrefix + "WriteEndRpcServerHandler";
         public const string ErrorRpcServerHandler = RpcPrefix + "WriteErrorRpcServerHandler";
+        public const string SelectInvokeAddress = RpcPrefix + "SelectInvokeAddress";
     }
 }
