@@ -61,7 +61,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreNullValues"></param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>代理的实体</returns>
-        Task<EntityEntry<TEntity>> InsertAsync(TEntity entity, bool? ignoreNullValues = null, CancellationToken cancellationToken = default);
+        Task<EntityEntry<TEntity>> InsertAsync(TEntity entity, bool? ignoreNullValues = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 新增多条记录
@@ -128,7 +129,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <param name="ignoreNullValues"></param>
         /// <returns>数据库中返回的实体</returns>
-        Task<EntityEntry<TEntity>> InsertNowAsync(TEntity entity, bool? ignoreNullValues = null, CancellationToken cancellationToken = default);
+        Task<EntityEntry<TEntity>> InsertNowAsync(TEntity entity, bool? ignoreNullValues = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 新增一条记录并立即提交
@@ -138,7 +140,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreNullValues"></param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>数据库中返回的实体</returns>
-        Task<EntityEntry<TEntity>> InsertNowAsync(TEntity entity, bool acceptAllChangesOnSuccess, bool? ignoreNullValues = null, CancellationToken cancellationToken = default);
+        Task<EntityEntry<TEntity>> InsertNowAsync(TEntity entity, bool acceptAllChangesOnSuccess,
+            bool? ignoreNullValues = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 新增多条记录并立即提交
@@ -162,7 +165,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>Task</returns>
-        Task InsertNowAsync(TEntity[] entities, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        Task InsertNowAsync(TEntity[] entities, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 新增多条记录并立即提交
@@ -179,6 +183,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>Task</returns>
-        Task InsertNowAsync(IEnumerable<TEntity> entities, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        Task InsertNowAsync(IEnumerable<TEntity> entities, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default);
     }
 }

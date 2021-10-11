@@ -25,7 +25,8 @@ namespace Silky.EntityFrameworkCore.Entities.Attributes
         /// <param name="name">函数名</param>
         /// <param name="schema">架构名</param>
         /// <param name="dbContextLocators">数据库上下文定位器</param>
-        public QueryableFunctionAttribute(string name, string schema = null, params Type[] dbContextLocators) : base(name, schema)
+        public QueryableFunctionAttribute(string name, string schema = null, params Type[] dbContextLocators) : base(
+            name, schema)
         {
             DbContextLocators = dbContextLocators ?? Array.Empty<Type>();
         }

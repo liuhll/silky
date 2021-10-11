@@ -15,12 +15,13 @@ namespace Silky.Core.Modularity
             Check.NotNull(services, nameof(services));
             Check.NotNull(startupModuleType, nameof(startupModuleType));
             var modules = GetDescriptors(services, startupModuleType);
-            
+
             modules = SortByDependency(modules, startupModuleType);
             return modules.ToArray();
         }
-        
-        private List<ISilkyModuleDescriptor> SortByDependency(List<ISilkyModuleDescriptor> modules, Type startupModuleType)
+
+        private List<ISilkyModuleDescriptor> SortByDependency(List<ISilkyModuleDescriptor> modules,
+            Type startupModuleType)
         {
             var sortedModules = modules.SortByDependencies(m => m.Dependencies);
             sortedModules.MoveItem(m => m.Type == startupModuleType, modules.Count - 1);
@@ -32,7 +33,7 @@ namespace Silky.Core.Modularity
             var modules = new List<SilkyModuleDescriptor>();
             FillModules(modules, services, startupModuleType);
             SetDependencies(modules);
-            
+
             return modules.Cast<ISilkyModuleDescriptor>().ToList();
         }
 
@@ -51,14 +52,17 @@ namespace Silky.Core.Modularity
                 var dependedModule = modules.FirstOrDefault(m => m.Type == dependedModuleType);
                 if (dependedModule == null)
                 {
-                    throw new SilkyException("Could not find a depended module " + dependedModuleType.AssemblyQualifiedName + " for " + module.Type.AssemblyQualifiedName);
+                    throw new SilkyException("Could not find a depended module " +
+                                             dependedModuleType.AssemblyQualifiedName + " for " +
+                                             module.Type.AssemblyQualifiedName);
                 }
 
                 module.AddDependency(dependedModule);
             }
         }
 
-        private void FillModules(List<SilkyModuleDescriptor> modules, IServiceCollection services, Type startupModuleType)
+        private void FillModules(List<SilkyModuleDescriptor> modules, IServiceCollection services,
+            Type startupModuleType)
         {
             foreach (var moduleType in SilkyModuleHelper.FindAllModuleTypes(startupModuleType))
             {

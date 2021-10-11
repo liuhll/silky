@@ -13,7 +13,6 @@ namespace Silky.Transaction.Interceptor
     {
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {
-            
             var serviceEntry = invocation.GetServiceEntry();
             Debug.Assert(serviceEntry != null);
             if (!serviceEntry.IsTransactionServiceEntry())

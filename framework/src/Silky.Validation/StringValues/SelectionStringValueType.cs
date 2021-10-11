@@ -10,13 +10,11 @@ namespace Silky.Validation.StringValues
 
         public SelectionStringValueType()
         {
-
         }
 
         public SelectionStringValueType(IValueValidator validator)
             : base(validator)
         {
-
         }
     }
 }

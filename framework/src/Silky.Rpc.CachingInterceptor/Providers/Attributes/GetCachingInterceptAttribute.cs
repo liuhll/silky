@@ -15,9 +15,9 @@ namespace Silky.Rpc.CachingInterceptor
             CachingMethod = CachingMethod.Get;
             OnlyCurrentUserData = false;
         }
-        
+
         public string KeyTemplete { get; }
-        
+
         public bool OnlyCurrentUserData { get; set; }
 
         public CachingMethod CachingMethod { get; }

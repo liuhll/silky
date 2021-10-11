@@ -20,7 +20,7 @@ namespace Silky.EntityFrameworkCore.Repositories
     public interface ISqlRepository<TDbContextLocator> : IPrivateSqlRepository
         , ISqlExecutableRepository<TDbContextLocator>
         , ISqlReaderRepository<TDbContextLocator>
-       where TDbContextLocator : class, IDbContextLocator
+        where TDbContextLocator : class, IDbContextLocator
     {
     }
 

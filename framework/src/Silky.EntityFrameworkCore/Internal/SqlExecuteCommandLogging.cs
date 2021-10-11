@@ -1,5 +1,4 @@
-﻿
-namespace Microsoft.EntityFrameworkCore.Database
+﻿namespace Microsoft.EntityFrameworkCore.Database
 {
     /// <summary>
     /// EFCore 执行 Sql 命令日志内部类

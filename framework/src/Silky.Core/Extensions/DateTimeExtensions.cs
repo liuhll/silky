@@ -13,7 +13,7 @@ namespace Silky.Core.Extensions
         {
             return DateTime.SpecifyKind(dateTime, DateTimeKind.Local);
         }
-        
+
         /// <summary>
         /// 将 DateTimeOffset 转换成本地 DateTime
         /// </summary>

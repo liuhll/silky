@@ -8,7 +8,6 @@ using Silky.Core.Serialization;
 
 namespace NormHostDemo.AppService.Fallback
 {
-    
     public class CreateFallbackService : ICreateFallback, IScopedDependency
     {
         private readonly ISerializer _serializer;

@@ -28,7 +28,6 @@ namespace Silky.RegistryCenter.Nacos.Configuration
                 x.SecretKey = this.SecretKey;
                 x.ServerAddresses = this.ServerAddresses;
                 x.UserName = this.UserName;
-
             };
         }
     }

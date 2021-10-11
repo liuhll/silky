@@ -12,6 +12,7 @@ namespace Silky.Rpc.Runtime.Server
         private IEnumerable<ServiceEntry> m_localServiceEntries;
         private IEnumerable<ServiceEntry> m_allServiceEntries;
         private IChangeToken? _changeToken;
+
         public DefaultServiceEntryManager(IEnumerable<IServiceEntryProvider> providers)
         {
             UpdateEntries(providers);
@@ -59,7 +60,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             return m_allServiceEntries.Where(p => p.ServiceId == serviceId).ToArray();
         }
-        
+
         public ServiceEntry GetServiceEntry(string serviceEntryId)
         {
             return m_allServiceEntries.FirstOrDefault(p => p.Id == serviceEntryId);

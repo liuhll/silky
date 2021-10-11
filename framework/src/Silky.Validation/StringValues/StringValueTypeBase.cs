@@ -22,7 +22,6 @@ namespace Silky.Validation.StringValues
         protected StringValueTypeBase()
             : this(new AlwaysValidValueValidator())
         {
-
         }
 
         protected StringValueTypeBase(IValueValidator validator)

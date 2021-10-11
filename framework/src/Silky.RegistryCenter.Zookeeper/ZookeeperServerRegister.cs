@@ -161,7 +161,7 @@ namespace Silky.RegistryCenter.Zookeeper
                 var serviceRouteDescriptors =
                     await GetServerRouteDescriptors(zookeeperClient, EngineContext.Current.HostName);
                 var serverDescriptors = serviceRouteDescriptors as ServerDescriptor[] ??
-                                       serviceRouteDescriptors.ToArray();
+                                        serviceRouteDescriptors.ToArray();
                 if (serverDescriptors.Any())
                 {
                     foreach (var serviceRouteDescriptor in serverDescriptors)
@@ -200,7 +200,7 @@ namespace Silky.RegistryCenter.Zookeeper
                 });
             }
         }
-        
+
         private async Task<IEnumerable<ServerDescriptor>> GetServerRouteDescriptors(
             IZookeeperClient zookeeperClient, string hostName)
         {

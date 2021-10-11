@@ -22,13 +22,14 @@ namespace Silky.Core.Modularity
             {
                 return;
             }
+
             moduleTypes.Add(moduleType);
             foreach (var dependedModuleType in FindDependedModuleTypes(moduleType))
             {
                 AddModuleAndDependenciesResursively(moduleTypes, dependedModuleType);
             }
         }
-        
+
         public static List<Type> FindDependedModuleTypes(Type moduleType)
         {
             SilkyModule.CheckSilkyModuleType(moduleType);

@@ -16,7 +16,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public bool? ProhibitExtranet { get; set; }
         public bool? IsDistributeTransaction { get; set; }
         public bool? MultipleServiceKey { get; set; }
-        
+
         public bool? IsSystem { get; set; }
     }
 }

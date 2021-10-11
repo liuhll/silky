@@ -38,7 +38,7 @@ namespace Silky.Codec.Message
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
                 Result = Result?.Get(),
-                ValidateErrors = ValidateErrors.Select(p => (ValidError) p.Get()).ToArray()
+                ValidateErrors = ValidateErrors.Select(p => (ValidError)p.Get()).ToArray()
             };
         }
     }

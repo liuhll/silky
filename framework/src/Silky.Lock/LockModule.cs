@@ -4,6 +4,5 @@ namespace Silky.Lock
 {
     public class LockModule : SilkyModule
     {
-        
     }
 }

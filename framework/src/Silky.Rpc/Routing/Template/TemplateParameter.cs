@@ -16,7 +16,5 @@
         public string Name { get; }
 
         public string Constraint { get; }
-
-      
     }
 }

@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
             services.TryAddTransient<IOperationFilter, AddServiceKeyOperationFilter>();
-         
+
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 
             if (setupAction != null) services.ConfigureSwaggerGen(setupAction);

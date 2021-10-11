@@ -10,6 +10,7 @@ namespace Silky.Transaction
     public class TransactionAspectInvoker
     {
         private static TransactionAspectInvoker invoker = new();
+
         private TransactionAspectInvoker()
         {
         }
@@ -43,6 +44,5 @@ namespace Silky.Transaction
                 await invocation.ProceedAsync();
             }
         }
-        
     }
 }

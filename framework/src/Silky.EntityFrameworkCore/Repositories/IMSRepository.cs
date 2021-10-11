@@ -58,7 +58,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TEntity">实体类型</typeparam>
         /// <returns></returns>
         IRepository<TEntity, TMasterDbContextLocator> Master<TEntity>()
-             where TEntity : class, IPrivateEntity, new();
+            where TEntity : class, IPrivateEntity, new();
 
         /// <summary>
         /// 获取从库仓储
@@ -97,7 +97,8 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator1">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator2">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator3">从库</typeparam>
-    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3>
+    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3>
         : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
@@ -121,8 +122,10 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator2">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator3">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator4">从库</typeparam>
-    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4>
-        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3>
+    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4>
+        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -147,8 +150,10 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator3">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator4">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator5">从库</typeparam>
-    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
-        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4>
+    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
+        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -175,8 +180,10 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator4">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator5">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator6">从库</typeparam>
-    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
-        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
+    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
+        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -205,8 +212,11 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator5">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator6">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator7">从库</typeparam>
-    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6, TSlaveDbContextLocator7>
-        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
+    public partial interface IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6,
+            TSlaveDbContextLocator7>
+        : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator

@@ -18,7 +18,8 @@ namespace Silky.Validation.StringValues
         {
             if (type.IsDefined(typeof(ValueValidatorAttribute)))
             {
-                return type.GetCustomAttributes(typeof(ValueValidatorAttribute)).Cast<ValueValidatorAttribute>().First().Name;
+                return type.GetCustomAttributes(typeof(ValueValidatorAttribute)).Cast<ValueValidatorAttribute>().First()
+                    .Name;
             }
 
             return type.Name;

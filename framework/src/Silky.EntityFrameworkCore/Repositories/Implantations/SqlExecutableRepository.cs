@@ -56,9 +56,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataTable</returns>
-        public virtual Task<DataTable> SqlProcedureQueryAsync(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<DataTable> SqlProcedureQueryAsync(string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return Database.ExecuteReaderAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            return Database.ExecuteReaderAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -68,9 +70,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataTable</returns>
-        public virtual async Task<DataTable> SqlProcedureQueryAsync(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<DataTable> SqlProcedureQueryAsync(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            var (dataTable, _) = await Database.ExecuteReaderAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataTable, _) = await Database.ExecuteReaderAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataTable;
         }
 
@@ -115,9 +119,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>List{T}</returns>
-        public virtual async Task<List<T>> SqlProcedureQueryAsync<T>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<List<T>> SqlProcedureQueryAsync<T>(string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            var dataTable = await Database.ExecuteReaderAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataTable = await Database.ExecuteReaderAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataTable.ToList<T>();
         }
 
@@ -128,9 +134,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>List{T}</returns>
-        public virtual async Task<List<T>> SqlProcedureQueryAsync<T>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<List<T>> SqlProcedureQueryAsync<T>(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            var (dataTable, _) = await Database.ExecuteReaderAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataTable, _) = await Database.ExecuteReaderAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataTable.ToList<T>();
         }
 
@@ -174,9 +182,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataSet</returns>
-        public virtual Task<DataSet> SqlProcedureQueriesAsync(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<DataSet> SqlProcedureQueriesAsync(string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            return Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -186,9 +196,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataSet</returns>
-        public virtual async Task<DataSet> SqlProcedureQueriesAsync(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<DataSet> SqlProcedureQueriesAsync(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            var (dataSet, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataSet, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataSet;
         }
 
@@ -212,7 +224,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2) SqlProcedureQueries<T1, T2>(string procName, params DbParameter[] parameters)
+        public virtual (List<T1> list1, List<T2> list2) SqlProcedureQueries<T1, T2>(string procName,
+            params DbParameter[] parameters)
         {
             return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure).ToList<T1, T2>();
         }
@@ -226,7 +239,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(string procName, params DbParameter[] parameters)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(string procName,
+            params DbParameter[] parameters)
         {
             return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure).ToList<T1, T2, T3>();
         }
@@ -241,7 +255,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlProcedureQueries<T1, T2, T3, T4>(string procName, params DbParameter[] parameters)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)
+            SqlProcedureQueries<T1, T2, T3, T4>(string procName, params DbParameter[] parameters)
         {
             return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure).ToList<T1, T2, T3, T4>();
         }
@@ -257,9 +272,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) SqlProcedureQueries<T1, T2, T3, T4, T5>(string procName, params DbParameter[] parameters)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)
+            SqlProcedureQueries<T1, T2, T3, T4, T5>(string procName, params DbParameter[] parameters)
         {
-            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure).ToList<T1, T2, T3, T4, T5>();
+            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure)
+                .ToList<T1, T2, T3, T4, T5>();
         }
 
         /// <summary>
@@ -274,9 +291,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6) SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(string procName, params DbParameter[] parameters)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)
+            SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(string procName, params DbParameter[] parameters)
         {
-            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure).ToList<T1, T2, T3, T4, T5, T6>();
+            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure)
+                .ToList<T1, T2, T3, T4, T5, T6>();
         }
 
         /// <summary>
@@ -292,9 +311,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(string procName, params DbParameter[] parameters)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(string procName,
+                params DbParameter[] parameters)
         {
-            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure).ToList<T1, T2, T3, T4, T5, T6, T7>();
+            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure)
+                .ToList<T1, T2, T3, T4, T5, T6, T7>();
         }
 
         /// <summary>
@@ -311,9 +333,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(string procName, params DbParameter[] parameters)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(string procName,
+                params DbParameter[] parameters)
         {
-            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure).ToList<T1, T2, T3, T4, T5, T6, T7, T8>();
+            return Database.DataAdapterFill(procName, parameters, CommandType.StoredProcedure)
+                .ToList<T1, T2, T3, T4, T5, T6, T7, T8>();
         }
 
         /// <summary>
@@ -350,7 +375,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(string procName, object model)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(string procName,
+            object model)
         {
             return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet.ToList<T1, T2, T3>();
         }
@@ -365,9 +391,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlProcedureQueries<T1, T2, T3, T4>(string procName, object model)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlProcedureQueries<T1, T2, T3,
+            T4>(string procName, object model)
         {
-            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet.ToList<T1, T2, T3, T4>();
+            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet
+                .ToList<T1, T2, T3, T4>();
         }
 
         /// <summary>
@@ -381,9 +409,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) SqlProcedureQueries<T1, T2, T3, T4, T5>(string procName, object model)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)
+            SqlProcedureQueries<T1, T2, T3, T4, T5>(string procName, object model)
         {
-            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet.ToList<T1, T2, T3, T4, T5>();
+            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet
+                .ToList<T1, T2, T3, T4, T5>();
         }
 
         /// <summary>
@@ -398,9 +428,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6) SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(string procName, object model)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)
+            SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(string procName, object model)
         {
-            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet.ToList<T1, T2, T3, T4, T5, T6>();
+            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet
+                .ToList<T1, T2, T3, T4, T5, T6>();
         }
 
         /// <summary>
@@ -416,9 +448,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(string procName, object model)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(string procName, object model)
         {
-            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet.ToList<T1, T2, T3, T4, T5, T6, T7>();
+            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet
+                .ToList<T1, T2, T3, T4, T5, T6, T7>();
         }
 
         /// <summary>
@@ -435,9 +469,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(string procName, object model)
+        public virtual (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(string procName,
+                object model)
         {
-            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet.ToList<T1, T2, T3, T4, T5, T6, T7, T8>();
+            return Database.DataAdapterFill(procName, model, CommandType.StoredProcedure).dataSet
+                .ToList<T1, T2, T3, T4, T5, T6, T7, T8>();
         }
 
         /// <summary>
@@ -447,7 +484,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>Task{List{T1}}</returns>
-        public virtual async Task<List<T1>> SqlProcedureQueriesAsync<T1>(string procName, params DbParameter[] parameters)
+        public virtual async Task<List<T1>> SqlProcedureQueriesAsync<T1>(string procName,
+            params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1>();
@@ -461,9 +499,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T1}}</returns>
-        public virtual async Task<List<T1>> SqlProcedureQueriesAsync<T1>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<List<T1>> SqlProcedureQueriesAsync<T1>(string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1>();
         }
 
@@ -475,7 +515,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(string procName, params DbParameter[] parameters)
+        public virtual async Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(string procName,
+            params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1, T2>();
@@ -490,9 +531,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(string procName,
+            DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2>();
         }
 
@@ -505,7 +548,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(string procName, params DbParameter[] parameters)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3)>
+            SqlProcedureQueriesAsync<T1, T2, T3>(string procName, params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1, T2, T3>();
@@ -521,9 +565,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3)>
+            SqlProcedureQueriesAsync<T1, T2, T3>(string procName, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3>();
         }
 
@@ -537,7 +584,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlProcedureQueriesAsync<T1, T2, T3, T4>(string procName, params DbParameter[] parameters)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4>(string procName, params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1, T2, T3, T4>();
@@ -554,9 +602,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlProcedureQueriesAsync<T1, T2, T3, T4>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4>(string procName, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4>();
         }
 
@@ -571,7 +622,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(string procName, params DbParameter[] parameters)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(string procName, params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1, T2, T3, T4, T5>();
@@ -589,9 +641,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(string procName, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5>();
         }
 
@@ -607,7 +662,9 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(string procName, params DbParameter[] parameters)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(string procName, params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1, T2, T3, T4, T5, T6>();
@@ -626,9 +683,13 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(string procName, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5, T6>();
         }
 
@@ -645,7 +706,10 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(string procName, params DbParameter[] parameters)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(string procName,
+                params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1, T2, T3, T4, T5, T6, T7>();
@@ -665,9 +729,13 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(string procName,
+                DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5, T6, T7>();
         }
 
@@ -685,7 +753,10 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(string procName, params DbParameter[] parameters)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(
+                string procName, params DbParameter[] parameters)
         {
             var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure);
             return dataset.ToList<T1, T2, T3, T4, T5, T6, T7, T8>();
@@ -706,9 +777,13 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(
+                string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataset = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5, T6, T7, T8>();
         }
 
@@ -720,9 +795,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>List{T1}</returns>
-        public virtual async Task<List<T1>> SqlProcedureQueriesAsync<T1>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<List<T1>> SqlProcedureQueriesAsync<T1>(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1>();
         }
 
@@ -735,9 +812,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(string procName,
+            object model, CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2>();
         }
 
@@ -751,9 +830,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3)>
+            SqlProcedureQueriesAsync<T1, T2, T3>(string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3>();
         }
 
@@ -768,9 +850,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlProcedureQueriesAsync<T1, T2, T3, T4>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4>(string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4>();
         }
 
@@ -786,9 +871,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5>();
         }
 
@@ -805,9 +893,13 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5, T6>();
         }
 
@@ -825,9 +917,13 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5, T6, T7>();
         }
 
@@ -846,9 +942,13 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public virtual async Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(
+                string procName, object model, CancellationToken cancellationToken = default)
         {
-            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataset, _) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return dataset.ToList<T1, T2, T3, T4, T5, T6, T7, T8>();
         }
 
@@ -892,9 +992,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public virtual Task<object> SqlProcedureScalarAsync(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<object> SqlProcedureScalarAsync(string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return Database.ExecuteScalarAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            return Database.ExecuteScalarAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -904,9 +1006,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public virtual async Task<object> SqlProcedureScalarAsync(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<object> SqlProcedureScalarAsync(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            var (result, _) = await Database.ExecuteScalarAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (result, _) = await Database.ExecuteScalarAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return result;
         }
 
@@ -938,7 +1042,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>TResult</returns>
-        public virtual async Task<TResult> SqlProcedureScalarAsync<TResult>(string procName, params DbParameter[] parameters)
+        public virtual async Task<TResult> SqlProcedureScalarAsync<TResult>(string procName,
+            params DbParameter[] parameters)
         {
             var result = await Database.ExecuteScalarAsync(procName, parameters, CommandType.StoredProcedure);
             return result.ChangeType<TResult>();
@@ -951,9 +1056,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public virtual async Task<TResult> SqlProcedureScalarAsync<TResult>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult> SqlProcedureScalarAsync<TResult>(string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            var result = await Database.ExecuteScalarAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var result = await Database.ExecuteScalarAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return result.ChangeType<TResult>();
         }
 
@@ -964,9 +1071,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public virtual async Task<TResult> SqlProcedureScalarAsync<TResult>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult> SqlProcedureScalarAsync<TResult>(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            var (result, _) = await Database.ExecuteScalarAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (result, _) = await Database.ExecuteScalarAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return result.ChangeType<TResult>();
         }
 
@@ -1010,9 +1119,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public virtual Task<int> SqlProcedureNonQueryAsync(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<int> SqlProcedureNonQueryAsync(string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return Database.ExecuteNonQueryAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            return Database.ExecuteNonQueryAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -1022,9 +1133,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public virtual async Task<int> SqlProcedureNonQueryAsync(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<int> SqlProcedureNonQueryAsync(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            var (rowEffects, _) = await Database.ExecuteNonQueryAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (rowEffects, _) = await Database.ExecuteNonQueryAsync(procName, model, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
             return rowEffects;
         }
 
@@ -1068,7 +1181,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public virtual Task<int> SqlNonQueryAsync(string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<int> SqlNonQueryAsync(string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return Database.ExecuteNonQueryAsync(sql, parameters, cancellationToken: cancellationToken);
         }
@@ -1080,7 +1194,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public virtual async Task<int> SqlNonQueryAsync(string sql, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<int> SqlNonQueryAsync(string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             var (rowEffects, _) = await Database.ExecuteNonQueryAsync(sql, model, cancellationToken: cancellationToken);
             return rowEffects;
@@ -1126,7 +1241,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public virtual Task<object> SqlScalarAsync(string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<object> SqlScalarAsync(string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return Database.ExecuteScalarAsync(sql, parameters, cancellationToken: cancellationToken);
         }
@@ -1138,7 +1254,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public virtual async Task<object> SqlScalarAsync(string sql, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<object> SqlScalarAsync(string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             var (result, _) = await Database.ExecuteScalarAsync(sql, model, cancellationToken: cancellationToken);
             return result;
@@ -1185,7 +1302,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public virtual async Task<TResult> SqlScalarAsync<TResult>(string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult> SqlScalarAsync<TResult>(string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             var result = await Database.ExecuteScalarAsync(sql, parameters, cancellationToken: cancellationToken);
             return result.ChangeType<TResult>();
@@ -1198,7 +1316,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public virtual async Task<TResult> SqlScalarAsync<TResult>(string sql, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult> SqlScalarAsync<TResult>(string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             var (result, _) = await Database.ExecuteScalarAsync(sql, model, cancellationToken: cancellationToken);
             return result.ChangeType<TResult>();
@@ -1228,12 +1347,14 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public virtual async Task<ProcedureOutputResult> SqlProcedureOutputAsync(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<ProcedureOutputResult> SqlProcedureOutputAsync(string procName,
+            DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
             parameters ??= Array.Empty<DbParameter>();
 
             // 执行存储过程
-            var dataSet = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataSet = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
 
             // 包装结果集
             return DbHelpers.WrapperProcedureOutput(Database.ProviderName, parameters, dataSet);
@@ -1261,10 +1382,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">命令模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public virtual async Task<ProcedureOutputResult> SqlProcedureOutputAsync(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<ProcedureOutputResult> SqlProcedureOutputAsync(string procName, object model,
+            CancellationToken cancellationToken = default)
         {
             // 执行存储过程
-            var (dataSet, parameters) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataSet, parameters) = await Database.DataAdapterFillAsync(procName, model,
+                CommandType.StoredProcedure, cancellationToken: cancellationToken);
 
             // 包装结果集
             return DbHelpers.WrapperProcedureOutput(Database.ProviderName, parameters, dataSet);
@@ -1277,7 +1400,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="procName">存储过程名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>ProcedureOutput</returns>
-        public virtual ProcedureOutputResult<TResult> SqlProcedureOutput<TResult>(string procName, DbParameter[] parameters)
+        public virtual ProcedureOutputResult<TResult> SqlProcedureOutput<TResult>(string procName,
+            DbParameter[] parameters)
         {
             parameters ??= Array.Empty<DbParameter>();
 
@@ -1296,12 +1420,14 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public virtual async Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(string procName,
+            DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
             parameters ??= Array.Empty<DbParameter>();
 
             // 执行存储过程
-            var dataSet = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var dataSet = await Database.DataAdapterFillAsync(procName, parameters, CommandType.StoredProcedure,
+                cancellationToken: cancellationToken);
 
             // 包装结果集
             return DbHelpers.WrapperProcedureOutput<TResult>(Database.ProviderName, parameters, dataSet);
@@ -1331,10 +1457,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">命令模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public virtual async Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(string procName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(string procName,
+            object model, CancellationToken cancellationToken = default)
         {
             // 执行存储过程
-            var (dataSet, parameters) = await Database.DataAdapterFillAsync(procName, model, CommandType.StoredProcedure, cancellationToken: cancellationToken);
+            var (dataSet, parameters) = await Database.DataAdapterFillAsync(procName, model,
+                CommandType.StoredProcedure, cancellationToken: cancellationToken);
 
             // 包装结果集
             return DbHelpers.WrapperProcedureOutput<TResult>(Database.ProviderName, parameters, dataSet);
@@ -1383,7 +1511,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public virtual Task<object> SqlFunctionScalarAsync(string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<object> SqlFunctionScalarAsync(string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Scalar, funcName, parameters);
             return Database.ExecuteScalarAsync(sql, parameters, cancellationToken: cancellationToken);
@@ -1396,7 +1525,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public virtual async Task<object> SqlFunctionScalarAsync(string funcName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<object> SqlFunctionScalarAsync(string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Scalar, funcName, model);
             var (result, _) = await Database.ExecuteScalarAsync(sql, model, cancellationToken: cancellationToken);
@@ -1436,7 +1566,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="funcName">函数名</param>
         /// <param name="parameters">命令参数</param>
         /// <returns>TResult</returns>
-        public virtual async Task<TResult> SqlFunctionScalarAsync<TResult>(string funcName, params DbParameter[] parameters)
+        public virtual async Task<TResult> SqlFunctionScalarAsync<TResult>(string funcName,
+            params DbParameter[] parameters)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Scalar, funcName, parameters);
             var result = await Database.ExecuteScalarAsync(sql, parameters);
@@ -1451,7 +1582,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public virtual async Task<TResult> SqlFunctionScalarAsync<TResult>(string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult> SqlFunctionScalarAsync<TResult>(string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Scalar, funcName, parameters);
             var result = await Database.ExecuteScalarAsync(sql, parameters, cancellationToken: cancellationToken);
@@ -1466,7 +1598,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public virtual async Task<TResult> SqlFunctionScalarAsync<TResult>(string funcName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<TResult> SqlFunctionScalarAsync<TResult>(string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Scalar, funcName, model);
             var (result, _) = await Database.ExecuteScalarAsync(sql, model, cancellationToken: cancellationToken);
@@ -1516,7 +1649,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataTable}</returns>
-        public virtual Task<DataTable> SqlFunctionQueryAsync(string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual Task<DataTable> SqlFunctionQueryAsync(string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Table, funcName, parameters);
             return Database.ExecuteReaderAsync(sql, parameters, cancellationToken: cancellationToken);
@@ -1529,7 +1663,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataTable}</returns>
-        public virtual async Task<DataTable> SqlFunctionQueryAsync(string funcName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<DataTable> SqlFunctionQueryAsync(string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Table, funcName, model);
             var (dataTable, _) = await Database.ExecuteReaderAsync(sql, model, cancellationToken: cancellationToken);
@@ -1584,7 +1719,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T}}</returns>
-        public virtual async Task<List<T>> SqlFunctionQueryAsync<T>(string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public virtual async Task<List<T>> SqlFunctionQueryAsync<T>(string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Table, funcName, parameters);
             var dataTable = await Database.ExecuteReaderAsync(sql, parameters, cancellationToken: cancellationToken);
@@ -1599,7 +1735,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T}}</returns>
-        public virtual async Task<List<T>> SqlFunctionQueryAsync<T>(string funcName, object model, CancellationToken cancellationToken = default)
+        public virtual async Task<List<T>> SqlFunctionQueryAsync<T>(string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
             var sql = DbHelpers.GenerateFunctionSql(Database.ProviderName, DbFunctionType.Table, funcName, model);
             var (dataTable, _) = await Database.ExecuteReaderAsync(sql, model, cancellationToken: cancellationToken);

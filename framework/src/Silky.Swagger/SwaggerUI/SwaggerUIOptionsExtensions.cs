@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore.Builder
         public static void SwaggerEndpoint(this SwaggerUIOptions options, string url, string name)
         {
             var urls = new List<UrlDescriptor>(options.ConfigObject.Urls ?? Enumerable.Empty<UrlDescriptor>());
-            urls.Add(new UrlDescriptor { Url = url, Name = name} );
+            urls.Add(new UrlDescriptor { Url = url, Name = name });
             options.ConfigObject.Urls = urls;
         }
 
@@ -189,7 +189,8 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         /// <param name="options"></param>
         /// <param name="url"></param>
-        public static void EnableValidator(this SwaggerUIOptions options, string url = "https://online.swagger.io/validator")
+        public static void EnableValidator(this SwaggerUIOptions options,
+            string url = "https://online.swagger.io/validator")
         {
             options.ConfigObject.ValidatorUrl = url;
         }

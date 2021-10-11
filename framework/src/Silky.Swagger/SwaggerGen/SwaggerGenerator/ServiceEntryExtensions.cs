@@ -11,8 +11,8 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
     {
         public static bool TryGetMethodInfo(this ServiceEntry serviceEntry, out MethodInfo methodInfo)
         {
-           methodInfo = serviceEntry.MethodInfo;
-           return true;
+            methodInfo = serviceEntry.MethodInfo;
+            return true;
         }
 
         public static IEnumerable<object> CustomAttributes(this ServiceEntry serviceEntry)

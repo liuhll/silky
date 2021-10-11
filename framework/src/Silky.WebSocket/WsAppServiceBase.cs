@@ -36,6 +36,7 @@ namespace Silky.WebSocket
                     Context.WebSocket.Send($"系统中已经存在{businessId}的会话");
                     Context.WebSocket.Close();
                 }
+
                 businessSessionId.Add(ID);
                 BusinessSessionIds.AddOrUpdate(businessId, businessSessionId, (key, val) => businessSessionId);
             }
@@ -47,7 +48,8 @@ namespace Silky.WebSocket
             if (wsToken == null)
             {
                 Context.WebSocket.Close();
-                throw new SilkyException("You did not specify wsToken, please link with ws service through gateway", StatusCode.RpcUnAuthentication);
+                throw new SilkyException("You did not specify wsToken, please link with ws service through gateway",
+                    StatusCode.RpcUnAuthentication);
             }
 
             var webSocketOptions = EngineContext.Current.Resolve<IOptions<WebSocketOptions>>().Value;

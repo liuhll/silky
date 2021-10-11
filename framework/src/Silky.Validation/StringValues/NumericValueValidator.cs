@@ -21,7 +21,6 @@ namespace Silky.Validation.StringValues
 
         public NumericValueValidator()
         {
-
         }
 
         public NumericValueValidator(int minValue = int.MinValue, int maxValue = int.MaxValue)

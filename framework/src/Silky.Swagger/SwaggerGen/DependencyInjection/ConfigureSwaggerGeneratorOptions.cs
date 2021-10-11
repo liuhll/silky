@@ -46,7 +46,8 @@ namespace Silky.Swagger.SwaggerGen.DependencyInjection
 
             if (!options.SwaggerDocs.Any())
             {
-                options.SwaggerDocs.Add("v1", new OpenApiInfo { Title = _hostingEnvironment.ApplicationName, Version = "1.0" });
+                options.SwaggerDocs.Add("v1",
+                    new OpenApiInfo { Title = _hostingEnvironment.ApplicationName, Version = "1.0" });
             }
         }
 

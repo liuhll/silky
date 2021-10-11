@@ -8,6 +8,7 @@
             {
                 return false;
             }
+
             return session.UserId != null;
         }
     }

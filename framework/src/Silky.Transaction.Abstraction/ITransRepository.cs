@@ -21,7 +21,7 @@ namespace Silky.Transaction.Abstraction
         Task CreateParticipant([NotNull] IParticipant participant);
 
         Task<IReadOnlyCollection<IParticipant>> FindParticipant(string transId, string participantId);
-        
+
         Task<bool> ExistParticipantByTransId(string transId);
 
         Task UpdateParticipantStatus(string transId, string participantId, ActionStage status);
@@ -31,9 +31,10 @@ namespace Silky.Transaction.Abstraction
         Task<int> RemoveParticipantByDate(DateTime date);
 
         Task<bool> LockParticipant(IParticipant participant);
-        
-        Task<IReadOnlyCollection<IParticipant>> ListParticipant(DateTime dateTime, TransactionType transactionType, int limit);
-        
+
+        Task<IReadOnlyCollection<IParticipant>> ListParticipant(DateTime dateTime, TransactionType transactionType,
+            int limit);
+
         Task<IReadOnlyCollection<ITransaction>> ListLimitByDelay(DateTime dateTime, int limit);
 
         Task<IReadOnlyCollection<IParticipant>> ListParticipantByTransId(string transId);

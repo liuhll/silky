@@ -5,9 +5,8 @@ namespace Silky.Core.Collections
 {
     public interface ITypeList : ITypeList<object>
     {
-
     }
-    
+
     public interface ITypeList<in TBaseType> : IList<Type>
     {
         /// <summary>

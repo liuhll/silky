@@ -93,7 +93,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public virtual Task<int> SaveNowAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public virtual Task<int> SaveNowAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
         {
             return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }

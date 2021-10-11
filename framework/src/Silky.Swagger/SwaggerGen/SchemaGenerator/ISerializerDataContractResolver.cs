@@ -132,8 +132,7 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
         public string ObjectTypeNameValue { get; }
         public Func<object, string> JsonConverter { get; }
 
-        [Obsolete("Use JsonConverter")]
-        public IEnumerable<object> EnumValues { get; }
+        [Obsolete("Use JsonConverter")] public IEnumerable<object> EnumValues { get; }
     }
 
     public enum DataType
@@ -168,7 +167,7 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
             MemberInfo = memberInfo;
         }
 
-        public string Name { get; } 
+        public string Name { get; }
         public bool IsRequired { get; }
         public bool IsNullable { get; }
         public bool IsReadOnly { get; }

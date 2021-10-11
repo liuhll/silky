@@ -16,11 +16,11 @@ namespace Silky.Core.DynamicProxy
         object TargetObject { get; }
 
         MethodInfo Method { get; }
-        
+
         bool IsAsyncMethod { get; }
 
         object ReturnValue { get; set; }
-        
+
         Task ProceedAsync();
     }
 }

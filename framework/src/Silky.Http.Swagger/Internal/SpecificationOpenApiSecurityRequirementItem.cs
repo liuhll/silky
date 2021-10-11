@@ -2,7 +2,6 @@
 
 namespace Silky.Http.Swagger.Internal
 {
-
     public sealed class SpecificationOpenApiSecurityRequirementItem
     {
         /// <summary>

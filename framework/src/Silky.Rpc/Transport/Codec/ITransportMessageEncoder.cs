@@ -5,6 +5,6 @@ namespace Silky.Rpc.Transport.Codec
 {
     public interface ITransportMessageEncoder
     {
-        byte[] Encode([NotNull]TransportMessage message);
+        byte[] Encode([NotNull] TransportMessage message);
     }
 }

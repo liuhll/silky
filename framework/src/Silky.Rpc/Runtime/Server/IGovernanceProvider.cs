@@ -42,6 +42,5 @@ namespace Silky.Rpc.Runtime.Server
         int RetryTimes { get; set; }
 
         int RetryIntervalMillSeconds { get; set; }
-        
     }
 }

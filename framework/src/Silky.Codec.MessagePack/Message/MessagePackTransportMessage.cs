@@ -20,7 +20,7 @@ namespace Silky.Codec.Message
                 Content = SerializerUtilitys.Serialize(
                     new MessagePackRemoteInvokeMessage(transportMessage.GetContent<RemoteInvokeMessage>()));
             }
-            
+
             if (transportMessage.IsResultMessage())
             {
                 Content = SerializerUtilitys.Serialize(

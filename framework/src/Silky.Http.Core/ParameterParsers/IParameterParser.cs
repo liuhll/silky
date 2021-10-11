@@ -7,6 +7,6 @@ namespace Silky.Http.Core
 {
     internal interface IParameterParser : ITransientDependency
     {
-        Task<object[]> Parser([NotNull]ServiceEntry serviceEntry);
+        Task<object[]> Parser([NotNull] ServiceEntry serviceEntry);
     }
 }

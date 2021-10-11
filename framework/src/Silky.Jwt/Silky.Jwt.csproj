@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Silky is used to generate or verify tokens in jwt format</Description>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="JWT" Version="8.2.3" />
+        <PackageReference Include="JWT" Version="8.2.3"/>
     </ItemGroup>
 
 </Project>

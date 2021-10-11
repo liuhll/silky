@@ -25,7 +25,7 @@ namespace Silky.Zookeeper.Implementation
         private ConnectionStateChangeHandler _connectionStateChangeHandler;
 
         private Event.KeeperState _currentState;
-        private readonly AutoResetEvent _stateChangedCondition = new (false);
+        private readonly AutoResetEvent _stateChangedCondition = new(false);
 
         private readonly object _zkEventLock = new object();
 

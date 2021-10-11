@@ -12,19 +12,19 @@ namespace Silky.Rpc.Runtime.Server
         void Remove(string hostName);
 
         ServiceDescriptor GetServiceDescriptor(string serviceId);
-        
+
         ServerDescriptor GetServerDescriptor(string hostName);
-        
+
         IServer GetServer(string hostName);
 
         IReadOnlyList<ServerDescriptor> ServerDescriptors { get; }
-        
+
         IReadOnlyList<IServer> Servers { get; }
 
         IRpcEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
 
         IServer GetSelfServer();
-        
+
         event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
     }
 }

@@ -27,7 +27,7 @@ namespace Silky.RegistryCenter.Consul
         {
             using var consulClient = _consulClientFactory.CreateClient();
             var serviceJsonString = _serializer.Serialize(serviceDescriptors);
-            var servicesPutResult = await consulClient.KV.Put(new KVPair(string.Format(servicePath,serverName))
+            var servicesPutResult = await consulClient.KV.Put(new KVPair(string.Format(servicePath, serverName))
             {
                 Value = serviceJsonString.GetBytes()
             });
@@ -39,10 +39,11 @@ namespace Silky.RegistryCenter.Consul
 
         public async Task<ServiceDescriptor[]> GetServices(string serverName)
         {
-            if (servicesCache.TryGetValue(serverName,out var serverDescriptors))
+            if (servicesCache.TryGetValue(serverName, out var serverDescriptors))
             {
                 return serverDescriptors;
             }
+
             using var consulClient = _consulClientFactory.CreateClient();
             var getKvResult = await consulClient.KV.Get(string.Format(servicePath, serverName));
             if (getKvResult.StatusCode != HttpStatusCode.OK)

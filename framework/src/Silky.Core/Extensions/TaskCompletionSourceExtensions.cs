@@ -118,7 +118,7 @@ namespace Silky.Core.Extensions
                     {
                         /* ignore */
                     }
-                    
+
                     if (tcs.Task.IsCompleted)
                     {
                         // We do another await here so that if the tcs.Task has faulted or has been canceled we won't wrap those exceptions

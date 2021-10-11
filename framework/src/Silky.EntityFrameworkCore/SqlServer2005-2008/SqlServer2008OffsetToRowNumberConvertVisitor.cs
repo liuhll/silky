@@ -14,7 +14,8 @@ namespace Microsoft.EntityFrameworkCore.Query
         /// <summary>
         /// 筛选列访问器
         /// </summary>
-        private static readonly Func<SelectExpression, SqlExpression, string, ColumnExpression> GenerateOuterColumnAccessor;
+        private static readonly Func<SelectExpression, SqlExpression, string, ColumnExpression>
+            GenerateOuterColumnAccessor;
 
         /// <summary>
         /// 表达式根节点
@@ -31,12 +32,16 @@ namespace Microsoft.EntityFrameworkCore.Query
         /// </summary>
         static SqlServer2008OffsetToRowNumberConvertVisitor()
         {
-            var method = typeof(SelectExpression).GetMethod("GenerateOuterColumn", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, new Type[] { typeof(SqlExpression), typeof(string) }, null);
+            var method = typeof(SelectExpression).GetMethod("GenerateOuterColumn",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null,
+                new Type[] { typeof(SqlExpression), typeof(string) }, null);
 
             if (method?.ReturnType != typeof(ColumnExpression))
                 throw new InvalidOperationException("SelectExpression.GenerateOuterColumn() is not found.");
 
-            GenerateOuterColumnAccessor = (Func<SelectExpression, SqlExpression, string, ColumnExpression>)method.CreateDelegate(typeof(Func<SelectExpression, SqlExpression, string, ColumnExpression>));
+            GenerateOuterColumnAccessor =
+                (Func<SelectExpression, SqlExpression, string, ColumnExpression>)method.CreateDelegate(
+                    typeof(Func<SelectExpression, SqlExpression, string, ColumnExpression>));
         }
 
         /// <summary>
@@ -59,8 +64,10 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
             if (node is ShapedQueryExpression shapedQueryExpression)
             {
-                return shapedQueryExpression.Update(Visit(shapedQueryExpression.QueryExpression), shapedQueryExpression.ShaperExpression);
+                return shapedQueryExpression.Update(Visit(shapedQueryExpression.QueryExpression),
+                    shapedQueryExpression.ShaperExpression);
             }
+
             if (node is SelectExpression se)
                 node = VisitSelect(se);
             return base.VisitExtension(node);
@@ -87,18 +94,19 @@ namespace Microsoft.EntityFrameworkCore.Query
 
             // 更新表达式
             selectExpression = selectExpression.Update(selectExpression.Projection.ToList(),
-                                                       selectExpression.Tables.ToList(),
-                                                       selectExpression.Predicate,
-                                                       selectExpression.GroupBy.ToList(),
-                                                       selectExpression.Having,
-                                                       orderings: newOrderings,
-                                                       limit: null,
-                                                       offset: null);
-            var rowOrderings = oldOrderings.Count != 0 ? oldOrderings
+                selectExpression.Tables.ToList(),
+                selectExpression.Predicate,
+                selectExpression.GroupBy.ToList(),
+                selectExpression.Having,
+                orderings: newOrderings,
+                limit: null,
+                offset: null);
+            var rowOrderings = oldOrderings.Count != 0
+                ? oldOrderings
                 : new[] { new OrderingExpression(new SqlFragmentExpression("(SELECT 1)"), true) };
 
 #if NET5_0
-            _ = selectExpression.PushdownIntoSubquery();    // .NET 6 该方法已无返回值
+            _ = selectExpression.PushdownIntoSubquery(); // .NET 6 该方法已无返回值
 #else
             selectExpression.PushdownIntoSubquery();
 #endif
@@ -113,7 +121,8 @@ namespace Microsoft.EntityFrameworkCore.Query
             {
                 if (oldOrderings.Count == 0)
                 {
-                    selectExpression.ApplyPredicate(sqlExpressionFactory.LessThanOrEqual(left, sqlExpressionFactory.Add(oldOffset, oldLimit)));
+                    selectExpression.ApplyPredicate(
+                        sqlExpressionFactory.LessThanOrEqual(left, sqlExpressionFactory.Add(oldOffset, oldLimit)));
                 }
                 else
                 {
@@ -121,6 +130,7 @@ namespace Microsoft.EntityFrameworkCore.Query
                     selectExpression.ApplyLimit(oldLimit);
                 }
             }
+
             return selectExpression;
         }
     }

@@ -56,7 +56,7 @@ namespace Silky.Core
         {
             return _ring.ContainsValue(node);
         }
-        
+
 
         private void AddNode(T node)
         {

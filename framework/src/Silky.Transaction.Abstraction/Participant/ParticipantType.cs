@@ -3,7 +3,7 @@
     public enum ParticipantType
     {
         Local,
-        
+
         Inline
     }
 }

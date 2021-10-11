@@ -16,11 +16,11 @@ namespace Silky.Core
         ITypeFinder TypeFinder { get; }
 
         IConfiguration Configuration { get; }
-        
+
         IHostEnvironment HostEnvironment { get; }
-        
+
         string HostName { get; }
-        
+
         void ConfigureServices(IServiceCollection services, IConfiguration configuration,
             IHostEnvironment hostEnvironment);
 
@@ -29,13 +29,13 @@ namespace Silky.Core
 
         TOptions GetOptionsMonitor<TOptions>()
             where TOptions : class, new();
-        
-        TOptions GetOptionsMonitor<TOptions>(Action<TOptions,string> listener)
+
+        TOptions GetOptionsMonitor<TOptions>(Action<TOptions, string> listener)
             where TOptions : class, new();
 
         TOptions GetOptionsSnapshot<TOptions>()
             where TOptions : class, new();
-        
+
         void ConfigureRequestPipeline(IApplicationBuilder application);
 
         T Resolve<T>() where T : class;
@@ -60,6 +60,5 @@ namespace Silky.Core
         void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
 
         void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule;
-        
     }
 }

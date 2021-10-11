@@ -14,7 +14,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton(typeof(IDistributedCache<>), typeof(DistributedCache<>));
             services.AddSingleton(typeof(IDistributedCache<,>), typeof(DistributedCache<,>));
             services.AddOptions<SilkyDistributedCacheOptions>()
-                .Bind(EngineContext.Current.Configuration.GetSection(SilkyDistributedCacheOptions.SilkyDistributedCache));
+                .Bind(
+                    EngineContext.Current.Configuration.GetSection(SilkyDistributedCacheOptions.SilkyDistributedCache));
             return services;
         }
     }

@@ -37,7 +37,7 @@ namespace Silky.Rpc.Endpoint.Monitor
                 OnAddMonitor?.Invoke(rpcEndpoint);
             }
         }
-        
+
 
         public bool IsEnable(IRpcEndpoint rpcEndpoint)
         {

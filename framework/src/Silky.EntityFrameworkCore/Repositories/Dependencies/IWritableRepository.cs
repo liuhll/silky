@@ -34,9 +34,9 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TEntity">实体类型</typeparam>
     public partial interface IPrivateWritableRepository<TEntity>
         : IPrivateInsertableRepository<TEntity>
-        , IPrivateUpdateableRepository<TEntity>
-        , IPrivateDeletableRepository<TEntity>
-        , IPrivateRootRepository
+            , IPrivateUpdateableRepository<TEntity>
+            , IPrivateDeletableRepository<TEntity>
+            , IPrivateRootRepository
         where TEntity : class, IPrivateEntity, new()
     {
         /// <summary>

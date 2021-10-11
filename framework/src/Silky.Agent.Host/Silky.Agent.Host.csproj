@@ -1,34 +1,34 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>The package contains the component package for building Silky microservice host</Description>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
-        <ProjectReference Include="..\Silky.Codec.ProtoBuf\Silky.Codec.ProtoBuf.csproj" />
-        <ProjectReference Include="..\Silky.DotNetty.Abstraction\Silky.DotNetty.Abstraction.csproj" />
-        <ProjectReference Include="..\Silky.DotNetty.Protocol.Tcp\Silky.DotNetty.Protocol.Tcp.csproj" />
-        <ProjectReference Include="..\Silky.Http.CorsAccessor\Silky.Http.CorsAccessor.csproj" />
-        <ProjectReference Include="..\Silky.Http.Dashboard\Silky.Http.Dashboard.csproj" />
-        <ProjectReference Include="..\Silky.Http.Identity\Silky.Http.Identity.csproj" />
-        <ProjectReference Include="..\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj" />
-        <ProjectReference Include="..\Silky.Http.RateLimit\Silky.Http.RateLimit.csproj" />
-        <ProjectReference Include="..\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj" />
-        <ProjectReference Include="..\Silky.RegistryCenter.Consul\Silky.RegistryCenter.Consul.csproj" />
-        <ProjectReference Include="..\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj" />
-        <ProjectReference Include="..\Silky.Rpc.AppService\Silky.Rpc.AppService.csproj" />
-        <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
-        <ProjectReference Include="..\Silky.Rpc.Monitor\Silky.Rpc.Monitor.csproj" />
-        <ProjectReference Include="..\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
-        <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj" />
-        <ProjectReference Include="..\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj" />
-        <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
-        <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />
-        <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
-        <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
-        <ProjectReference Include="..\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj" />
-        <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj" />
-        <ProjectReference Include="..\Silky.WebSocket\Silky.WebSocket.csproj" />
+        <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj"/>
+        <ProjectReference Include="..\Silky.Codec.ProtoBuf\Silky.Codec.ProtoBuf.csproj"/>
+        <ProjectReference Include="..\Silky.DotNetty.Abstraction\Silky.DotNetty.Abstraction.csproj"/>
+        <ProjectReference Include="..\Silky.DotNetty.Protocol.Tcp\Silky.DotNetty.Protocol.Tcp.csproj"/>
+        <ProjectReference Include="..\Silky.Http.CorsAccessor\Silky.Http.CorsAccessor.csproj"/>
+        <ProjectReference Include="..\Silky.Http.Dashboard\Silky.Http.Dashboard.csproj"/>
+        <ProjectReference Include="..\Silky.Http.Identity\Silky.Http.Identity.csproj"/>
+        <ProjectReference Include="..\Silky.Http.MiniProfiler\Silky.Http.MiniProfiler.csproj"/>
+        <ProjectReference Include="..\Silky.Http.RateLimit\Silky.Http.RateLimit.csproj"/>
+        <ProjectReference Include="..\Silky.Logging.Serilog\Silky.Logging.Serilog.csproj"/>
+        <ProjectReference Include="..\Silky.RegistryCenter.Consul\Silky.RegistryCenter.Consul.csproj"/>
+        <ProjectReference Include="..\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc.AppService\Silky.Rpc.AppService.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc.Monitor\Silky.Rpc.Monitor.csproj"/>
+        <ProjectReference Include="..\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj"/>
+        <ProjectReference Include="..\Silky.Transaction.Repository.Redis\Silky.Transaction.Repository.Redis.csproj"/>
+        <ProjectReference Include="..\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj"/>
+        <ProjectReference Include="..\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj"/>
+        <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj"/>
+        <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj"/>
+        <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj"/>
+        <ProjectReference Include="..\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj"/>
+        <ProjectReference Include="..\Silky.WebSocket\Silky.WebSocket.csproj"/>
     </ItemGroup>
 </Project>

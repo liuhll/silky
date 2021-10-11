@@ -9,12 +9,11 @@ namespace Silky.Http.Dashboard.AppService.Dtos
             Children = new List<GetExternalRouteOutput>();
             Meta = new Dictionary<string, object>();
         }
-        
+
         public string Path { get; set; }
         public string Name { get; set; }
-        public IDictionary<string,object> Meta { get; set; }
+        public IDictionary<string, object> Meta { get; set; }
 
         public ICollection<GetExternalRouteOutput> Children { get; set; }
-
     }
 }

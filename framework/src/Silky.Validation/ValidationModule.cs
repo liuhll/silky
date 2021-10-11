@@ -11,7 +11,8 @@ namespace Silky.Validation
         {
             services.Configure<SilkyValidationOptions>(options =>
             {
-                options.ObjectValidationContributors.AddIfNotContains(typeof(DataAnnotationObjectValidationContributor));
+                options.ObjectValidationContributors.AddIfNotContains(
+                    typeof(DataAnnotationObjectValidationContributor));
             });
         }
     }

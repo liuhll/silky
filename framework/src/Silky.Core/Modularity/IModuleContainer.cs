@@ -5,7 +5,6 @@ namespace Silky.Core.Modularity
 {
     public interface IModuleContainer
     {
-        [NotNull]
-        IReadOnlyList<ISilkyModuleDescriptor> Modules { get; }
+        [NotNull] IReadOnlyList<ISilkyModuleDescriptor> Modules { get; }
     }
 }

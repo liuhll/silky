@@ -19,7 +19,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly ISerializerDataContractResolver _serializerDataContractResolver;
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver)
+        public SchemaGenerator(SchemaGeneratorOptions generatorOptions,
+            ISerializerDataContractResolver serializerDataContractResolver)
         {
             _generatorOptions = generatorOptions;
             _serializerDataContractResolver = serializerDataContractResolver;
@@ -51,7 +52,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
 
             var dataContract = GetDataContractFor(memberType);
 
-            var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
+            var schema = _generatorOptions.UseOneOfForPolymorphism &&
+                         IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
                 ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
@@ -69,7 +71,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
                 if (dataProperty != null)
                 {
                     schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                        ? dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any() && !memberInfo.IsNonNullable()
+                        ? dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any() &&
+                          !memberInfo.IsNonNullable()
                         : dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any();
 
                     schema.ReadOnly = dataProperty.IsReadOnly;
@@ -101,7 +104,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
         {
             var dataContract = GetDataContractFor(parameterInfo.ParameterType);
 
-            var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
+            var schema = _generatorOptions.UseOneOfForPolymorphism &&
+                         IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
                 ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
@@ -131,7 +135,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
         {
             var dataContract = GetDataContractFor(type);
 
-            var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
+            var schema = _generatorOptions.UseOneOfForPolymorphism &&
+                         IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
                 ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
@@ -149,7 +154,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
             return _serializerDataContractResolver.GetDataContractForType(effectiveType);
         }
 
-        private bool IsBaseTypeWithKnownTypesDefined(DataContract dataContract, out IEnumerable<DataContract> knownTypesDataContracts)
+        private bool IsBaseTypeWithKnownTypesDefined(DataContract dataContract,
+            out IEnumerable<DataContract> knownTypesDataContracts)
         {
             knownTypesDataContracts = null;
 
@@ -175,7 +181,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
             return new OpenApiSchema
             {
                 OneOf = knownTypesDataContracts
-                    .Select(allowedTypeDataContract => GenerateConcreteSchema(allowedTypeDataContract, schemaRepository))
+                    .Select(allowedTypeDataContract =>
+                        GenerateConcreteSchema(allowedTypeDataContract, schemaRepository))
                     .ToList()
             };
         }
@@ -201,39 +208,40 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
                 case DataType.Integer:
                 case DataType.Number:
                 case DataType.String:
-                    {
-                        schemaFactory = () => CreatePrimitiveSchema(dataContract);
-                        returnAsReference = dataContract.UnderlyingType.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
-                        break;
-                    }
+                {
+                    schemaFactory = () => CreatePrimitiveSchema(dataContract);
+                    returnAsReference = dataContract.UnderlyingType.IsEnum &&
+                                        !_generatorOptions.UseInlineDefinitionsForEnums;
+                    break;
+                }
 
                 case DataType.Array:
-                    {
-                        schemaFactory = () => CreateArraySchema(dataContract, schemaRepository);
-                        returnAsReference = dataContract.UnderlyingType == dataContract.ArrayItemType;
-                        break;
-                    }
+                {
+                    schemaFactory = () => CreateArraySchema(dataContract, schemaRepository);
+                    returnAsReference = dataContract.UnderlyingType == dataContract.ArrayItemType;
+                    break;
+                }
 
                 case DataType.Dictionary:
-                    {
-                        schemaFactory = () => CreateDictionarySchema(dataContract, schemaRepository);
-                        returnAsReference = dataContract.UnderlyingType == dataContract.DictionaryValueType;
-                        break;
-                    }
+                {
+                    schemaFactory = () => CreateDictionarySchema(dataContract, schemaRepository);
+                    returnAsReference = dataContract.UnderlyingType == dataContract.DictionaryValueType;
+                    break;
+                }
 
                 case DataType.Object:
-                    {
-                        schemaFactory = () => CreateObjectSchema(dataContract, schemaRepository);
-                        returnAsReference = true;
-                        break;
-                    }
+                {
+                    schemaFactory = () => CreateObjectSchema(dataContract, schemaRepository);
+                    returnAsReference = true;
+                    break;
+                }
 
                 default:
-                    {
-                        schemaFactory = () => new OpenApiSchema();
-                        returnAsReference = false;
-                        break;
-                    }
+                {
+                    schemaFactory = () => new OpenApiSchema();
+                    returnAsReference = false;
+                    break;
+                }
             }
 
             return returnAsReference
@@ -244,7 +252,9 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
         private bool TryGetCustomTypeMapping(Type type, out Func<OpenApiSchema> schemaFactory)
         {
             return _generatorOptions.CustomTypeMappings.TryGetValue(type, out schemaFactory)
-                || (type.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(type.GetGenericTypeDefinition(), out schemaFactory));
+                   || (type.IsConstructedGenericType &&
+                       _generatorOptions.CustomTypeMappings.TryGetValue(type.GetGenericTypeDefinition(),
+                           out schemaFactory));
         }
 
         private OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
@@ -282,7 +292,7 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
         private OpenApiSchema CreateArraySchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
             var hasUniqueItems = dataContract.UnderlyingType.IsConstructedFrom(typeof(ISet<>), out _)
-                || dataContract.UnderlyingType.IsConstructedFrom(typeof(KeyedCollection<,>), out _);
+                                 || dataContract.UnderlyingType.IsConstructedFrom(typeof(KeyedCollection<,>), out _);
 
             return new OpenApiSchema
             {
@@ -349,7 +359,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
                         GenerateConcreteSchema(knownTypeDataContract, schemaRepository);
                     }
 
-                    if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
+                    if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts,
+                        out var discriminator))
                     {
                         schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
                         schema.Required.Add(discriminator.PropertyName);
@@ -360,7 +371,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
 
             foreach (var dataProperty in applicableDataProperties)
             {
-                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ?? Enumerable.Empty<object>();
+                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ??
+                                       Enumerable.Empty<object>();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
@@ -391,7 +403,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
 
             var baseType = dataContract.UnderlyingType.BaseType;
 
-            if (baseType == null || baseType == typeof(object) || !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
+            if (baseType == null || baseType == typeof(object) ||
+                !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
                 return false;
 
             baseTypeDataContract = GetDataContractFor(baseType);
@@ -407,7 +420,7 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
             discriminator = null;
 
             var discriminatorName = _generatorOptions.DiscriminatorNameSelector(dataContract.UnderlyingType)
-                ?? dataContract.ObjectTypeNameProperty;
+                                    ?? dataContract.ObjectTypeNameProperty;
 
             if (discriminatorName == null) return false;
 
@@ -418,12 +431,14 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
 
             foreach (var knownTypeDataContract in knownTypesDataContracts)
             {
-                var discriminatorValue = _generatorOptions.DiscriminatorValueSelector(knownTypeDataContract.UnderlyingType)
+                var discriminatorValue =
+                    _generatorOptions.DiscriminatorValueSelector(knownTypeDataContract.UnderlyingType)
                     ?? knownTypeDataContract.ObjectTypeNameValue;
 
                 if (discriminatorValue == null) continue;
 
-                discriminator.Mapping.Add(discriminatorValue, GenerateConcreteSchema(knownTypeDataContract, schemaRepository).Reference.ReferenceV3);
+                discriminator.Mapping.Add(discriminatorValue,
+                    GenerateConcreteSchema(knownTypeDataContract, schemaRepository).Reference.ReferenceV3);
             }
 
             return true;

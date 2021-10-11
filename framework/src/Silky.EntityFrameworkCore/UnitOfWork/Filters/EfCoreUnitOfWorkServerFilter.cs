@@ -28,7 +28,7 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
                 context.ServiceEntry.MethodInfo.Name);
             _unitOfWorkAttribute =
                 instanceMethod?.GetCustomAttributes(true).OfType<UnitOfWorkAttribute>().FirstOrDefault();
-            
+
             _isManualSaveChanges = context.ServiceEntry.CustomAttributes.OfType<ManualCommitAttribute>().Any();
 
             if (_unitOfWorkAttribute != null)

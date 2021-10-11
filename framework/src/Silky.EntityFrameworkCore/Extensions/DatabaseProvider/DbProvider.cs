@@ -65,6 +65,7 @@ namespace Microsoft.EntityFrameworkCore
         /// Dm 提供器程序集
         /// </summary>
         public const string Dm = "Microsoft.EntityFrameworkCore.Dm";
+
         /// <summary>
         /// 不支持存储过程的数据库
         /// </summary>
@@ -111,7 +112,7 @@ namespace Microsoft.EntityFrameworkCore
 
             DbContextAppDbContextAttributes = new ConcurrentDictionary<Type, AppDbContextAttribute>();
         }
-        
+
         /// <summary>
         /// 获取数据库上下文连接字符串
         /// </summary>
@@ -123,23 +124,23 @@ namespace Microsoft.EntityFrameworkCore
         {
             // 支持读取配置渲染
             var realConnectionString = connectionString.Render();
-            
+
             if (!string.IsNullOrWhiteSpace(realConnectionString)) return realConnectionString;
-            
+
             // 如果没有配置数据库连接字符串，那么查找特性
             var dbContextAttribute = GetAppDbContextAttribute(typeof(TDbContext));
             if (dbContextAttribute == null) return default;
-            
+
             // 获取特性连接字符串（渲染配置模板）
             var connStr = dbContextAttribute.ConnectionString.Render();
-            
+
             if (string.IsNullOrWhiteSpace(connStr)) return default;
             // 如果包含 = 符号，那么认为是连接字符串
             if (connStr.Contains("=")) return connStr;
             else
             {
                 var configuration = EngineContext.Current.Configuration;
-            
+
                 // 如果包含 : 符号，那么认为是一个 Key 路径
                 if (connStr.Contains(":")) return configuration[connStr];
                 else
@@ -155,7 +156,7 @@ namespace Microsoft.EntityFrameworkCore
         /// 数据库上下文 [AppDbContext] 特性缓存
         /// </summary>
         private static readonly ConcurrentDictionary<Type, AppDbContextAttribute> DbContextAppDbContextAttributes;
-        
+
         internal static AppDbContextAttribute GetAppDbContextAttribute(Type dbContexType)
         {
             return DbContextAppDbContextAttributes.GetOrAdd(dbContexType, Function);
@@ -178,11 +179,11 @@ namespace Microsoft.EntityFrameworkCore
 
         public static List<IInterceptor> GetDefaultInterceptors()
         {
-            return new() 
+            return new()
             {
-               new SqlConnectionProfilerInterceptor(),
-               new SqlCommandProfilerInterceptor(),
-               new DbContextSaveChangesInterceptor()
+                new SqlConnectionProfilerInterceptor(),
+                new SqlCommandProfilerInterceptor(),
+                new DbContextSaveChangesInterceptor()
             };
         }
 
@@ -191,7 +192,7 @@ namespace Microsoft.EntityFrameworkCore
         /// </summary>
         private const string NotSupportException = "The database provider does not support {0} operations.";
 
-        
+
         /// <summary>
         /// 检查是否支持函数
         /// </summary>

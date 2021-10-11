@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Silky.EntityFrameworkCore.LinqBuilder.Visitors
@@ -18,9 +17,11 @@ namespace Silky.EntityFrameworkCore.LinqBuilder.Visitors
         /// 构造函数
         /// </summary>
         /// <param name="parameterExpressionSetter">参数表达式映射集合</param>
-        public ParameterReplaceExpressionVisitor(Dictionary<ParameterExpression, ParameterExpression> parameterExpressionSetter)
+        public ParameterReplaceExpressionVisitor(
+            Dictionary<ParameterExpression, ParameterExpression> parameterExpressionSetter)
         {
-            this.parameterExpressionSetter = parameterExpressionSetter ?? new Dictionary<ParameterExpression, ParameterExpression>();
+            this.parameterExpressionSetter =
+                parameterExpressionSetter ?? new Dictionary<ParameterExpression, ParameterExpression>();
         }
 
         /// <summary>
@@ -29,7 +30,8 @@ namespace Silky.EntityFrameworkCore.LinqBuilder.Visitors
         /// <param name="parameterExpressionSetter">参数表达式映射集合</param>
         /// <param name="expression">表达式</param>
         /// <returns>新的表达式</returns>
-        public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> parameterExpressionSetter, Expression expression)
+        public static Expression ReplaceParameters(
+            Dictionary<ParameterExpression, ParameterExpression> parameterExpressionSetter, Expression expression)
         {
             return new ParameterReplaceExpressionVisitor(parameterExpressionSetter).Visit(expression);
         }

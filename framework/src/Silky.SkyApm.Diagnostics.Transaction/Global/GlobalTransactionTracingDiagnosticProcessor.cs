@@ -43,7 +43,8 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Global
         [DiagnosticName(TransactionDiagnosticListenerNames.GlobalConfirmingHandle)]
         public void GlobalConfirmingHandle([Object] GlobalTransactionEventData eventData)
         {
-            var context = _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Confirming));
+            var context =
+                _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Confirming));
             context.Span.AddLog(LogEvent.Event($"{eventData.Type}-{eventData.Role}-Confirming"));
         }
 
@@ -59,14 +60,16 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Global
         [DiagnosticName(TransactionDiagnosticListenerNames.GlobalCancelingHandle)]
         public void GlobalCancelingHandle([Object] GlobalTransactionEventData eventData)
         {
-            var context = _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Canceling));
+            var context =
+                _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Canceling));
             context.Span.AddLog(LogEvent.Event($"{eventData.Type}-{eventData.Role}-Canceling"));
         }
 
         [DiagnosticName(TransactionDiagnosticListenerNames.GlobalCanceledHandle)]
         public void GlobalCanceledHandle([Object] GlobalTransactionEventData eventData)
         {
-            var context = _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Canceling));
+            var context =
+                _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Canceling));
             context.Span.AddLog(LogEvent.Event($"{eventData.Type}-{eventData.Role}-Canceled"));
             _segmentContextFactory.ReleaseContext(context);
         }

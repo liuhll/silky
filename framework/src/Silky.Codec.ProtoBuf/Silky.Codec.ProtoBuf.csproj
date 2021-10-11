@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>Using protobuf as the component of Silky framework RPC codec</Description>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="protobuf-net" Version="3.0.73" />
-        <PackageReference Include="protobuf-net.Core" Version="3.0.73" />
+        <PackageReference Include="protobuf-net" Version="3.0.73"/>
+        <PackageReference Include="protobuf-net.Core" Version="3.0.73"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
     </ItemGroup>
 
 </Project>

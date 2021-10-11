@@ -12,7 +12,5 @@ namespace Silky.Rpc.Routing
         string Template { get; }
 
         string ServiceName { get; set; }
-        
     }
-    
 }

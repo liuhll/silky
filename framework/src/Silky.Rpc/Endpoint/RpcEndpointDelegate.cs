@@ -9,5 +9,4 @@ namespace Silky.Rpc.Endpoint
     public delegate Task RemoveRpcEndpointEvent(IRpcEndpoint rpcEndpoint);
 
     public delegate Task AddMonitorEvent(IRpcEndpoint rpcEndpoint);
-    
 }

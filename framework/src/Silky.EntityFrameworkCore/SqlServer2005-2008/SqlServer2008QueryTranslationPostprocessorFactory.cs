@@ -20,7 +20,8 @@
         /// </summary>
         /// <param name="dependencies"></param>
         /// <param name="relationalDependencies"></param>
-        public SqlServer2008QueryTranslationPostprocessorFactory(QueryTranslationPostprocessorDependencies dependencies, RelationalQueryTranslationPostprocessorDependencies relationalDependencies)
+        public SqlServer2008QueryTranslationPostprocessorFactory(QueryTranslationPostprocessorDependencies dependencies,
+            RelationalQueryTranslationPostprocessorDependencies relationalDependencies)
         {
             _dependencies = dependencies;
             _relationalDependencies = relationalDependencies;
@@ -34,9 +35,9 @@
         public virtual QueryTranslationPostprocessor Create(QueryCompilationContext queryCompilationContext)
         {
             return new SqlServer2008QueryTranslationPostprocessor(
-                  _dependencies,
-                  _relationalDependencies,
-                  queryCompilationContext);
+                _dependencies,
+                _relationalDependencies,
+                queryCompilationContext);
         }
     }
 }

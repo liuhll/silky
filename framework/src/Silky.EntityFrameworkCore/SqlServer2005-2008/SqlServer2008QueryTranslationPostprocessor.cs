@@ -13,7 +13,9 @@ namespace Microsoft.EntityFrameworkCore.Query
         /// <param name="dependencies"></param>
         /// <param name="relationalDependencies"></param>
         /// <param name="queryCompilationContext"></param>
-        public SqlServer2008QueryTranslationPostprocessor(QueryTranslationPostprocessorDependencies dependencies, RelationalQueryTranslationPostprocessorDependencies relationalDependencies, QueryCompilationContext queryCompilationContext)
+        public SqlServer2008QueryTranslationPostprocessor(QueryTranslationPostprocessorDependencies dependencies,
+            RelationalQueryTranslationPostprocessorDependencies relationalDependencies,
+            QueryCompilationContext queryCompilationContext)
             : base(dependencies, relationalDependencies, queryCompilationContext)
         {
         }
@@ -26,7 +28,8 @@ namespace Microsoft.EntityFrameworkCore.Query
         public override Expression Process(Expression query)
         {
             query = base.Process(query);
-            query = new SqlServer2008OffsetToRowNumberConvertVisitor(query, RelationalDependencies.SqlExpressionFactory).Visit(query);
+            query = new SqlServer2008OffsetToRowNumberConvertVisitor(query, RelationalDependencies.SqlExpressionFactory)
+                .Visit(query);
             return query;
         }
     }

@@ -54,7 +54,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TEntity">实体类型</typeparam>
         /// <typeparam name="TDbContextLocator">数据库上下文定位器</typeparam>
         /// <returns>仓储</returns>
-        (IRepository<TEntity, TDbContextLocator> Repository, IServiceScope Scoped) BuildChange<TEntity, TDbContextLocator>()
+        (IRepository<TEntity, TDbContextLocator> Repository, IServiceScope Scoped) BuildChange<TEntity,
+            TDbContextLocator>()
             where TEntity : class, IPrivateEntity, new()
             where TDbContextLocator : class, IDbContextLocator;
 
@@ -69,8 +70,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <returns>ISqlRepository{TDbContextLocator}</returns>
         ISqlRepository<TDbContextLocator> Sql<TDbContextLocator>()
-             where TDbContextLocator : class, IDbContextLocator;
-        
+            where TDbContextLocator : class, IDbContextLocator;
     }
 
     /// <summary>
@@ -105,8 +105,8 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TEntity"></typeparam>
     public interface IPrivateRepository<TEntity>
         : IPrivateWritableRepository<TEntity>
-        , IPrivateReadableRepository<TEntity>
-        , IPrivateSqlRepository
+            , IPrivateReadableRepository<TEntity>
+            , IPrivateSqlRepository
         where TEntity : class, IPrivateEntity, new()
     {
         /// <summary>
@@ -216,7 +216,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="entity">实体</param>
         /// <param name="propertyPredicate">属性表达式</param>
         /// <returns>PropertyEntry</returns>
-        PropertyEntry<TEntity, TProperty> EntityPropertyEntry<TProperty>(TEntity entity, Expression<Func<TEntity, TProperty>> propertyPredicate);
+        PropertyEntry<TEntity, TProperty> EntityPropertyEntry<TProperty>(TEntity entity,
+            Expression<Func<TEntity, TProperty>> propertyPredicate);
 
         /// <summary>
         /// 改变实体状态
@@ -268,7 +269,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="keyName"></param>
         /// <returns></returns>
         bool CheckTrackState<TTrackEntity>(object id, out EntityEntry entityEntry, string keyName = default)
-             where TTrackEntity : class, IPrivateEntity, new();
+            where TTrackEntity : class, IPrivateEntity, new();
 
         /// <summary>
         /// 判断是否被附加
@@ -459,7 +460,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TChangeEntity">实体类型</typeparam>
         /// <returns>仓储</returns>
         new IRepository<TChangeEntity> Change<TChangeEntity>()
-                where TChangeEntity : class, IPrivateEntity, new();
+            where TChangeEntity : class, IPrivateEntity, new();
 
         /// <summary>
         /// 切换多数据库上下文仓储
@@ -487,7 +488,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TChangeEntity">实体类型</typeparam>
         /// <typeparam name="TChangeDbContextLocator">数据库上下文定位器</typeparam>
         /// <returns>仓储</returns>
-        (IRepository<TChangeEntity, TChangeDbContextLocator> Repository, IServiceScope Scoped) BuildChange<TChangeEntity, TChangeDbContextLocator>()
+        (IRepository<TChangeEntity, TChangeDbContextLocator> Repository, IServiceScope Scoped) BuildChange<
+            TChangeEntity, TChangeDbContextLocator>()
             where TChangeEntity : class, IPrivateEntity, new()
             where TChangeDbContextLocator : class, IDbContextLocator;
     }

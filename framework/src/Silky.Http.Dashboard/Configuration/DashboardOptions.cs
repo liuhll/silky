@@ -11,7 +11,7 @@ namespace Silky.Http.Dashboard.Configuration
             StatsPollingInterval = 2000;
             ExternalLinks = new List<ExternalLinkOptions>();
         }
-        
+
         public int StatsPollingInterval { get; set; }
 
         public bool UseAuth { get; set; }

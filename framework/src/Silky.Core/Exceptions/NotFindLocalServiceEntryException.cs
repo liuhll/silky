@@ -4,7 +4,6 @@ namespace Silky.Core.Exceptions
     {
         public NotFindLocalServiceEntryException(string message) : base(message, StatusCode.NotFindLocalServiceEntry)
         {
-
         }
     }
 }

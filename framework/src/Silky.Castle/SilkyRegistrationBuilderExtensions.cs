@@ -10,13 +10,14 @@ namespace Silky.Castle
 {
     public static class SilkyRegistrationBuilderExtensions
     {
-
-        public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> AddInterceptors<TLimit, TActivatorData, TRegistrationStyle>(
+        public static IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> AddInterceptors<TLimit,
+            TActivatorData, TRegistrationStyle>(
             this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> registrationBuilder,
             params Type[] interceptors)
             where TActivatorData : ReflectionActivatorData
         {
-            var serviceType = registrationBuilder.RegistrationData.Services.OfType<IServiceWithType>().FirstOrDefault()?.ServiceType;
+            var serviceType = registrationBuilder.RegistrationData.Services.OfType<IServiceWithType>().FirstOrDefault()
+                ?.ServiceType;
             if (serviceType == null)
             {
                 throw new SilkyException("Failed to get the specified registration type");
@@ -28,17 +29,19 @@ namespace Silky.Castle
             }
             else
             {
-                (registrationBuilder as IRegistrationBuilder<TLimit, ConcreteReflectionActivatorData, TRegistrationStyle>)?.EnableClassInterceptors();
+                (registrationBuilder as
+                        IRegistrationBuilder<TLimit, ConcreteReflectionActivatorData, TRegistrationStyle>)
+                    ?.EnableClassInterceptors();
             }
+
             foreach (var interceptor in interceptors)
             {
                 registrationBuilder.InterceptedBy(
                     typeof(SilkyAsyncDeterminationInterceptor<>).MakeGenericType(interceptor)
                 );
             }
+
             return registrationBuilder;
         }
-
-       
     }
 }

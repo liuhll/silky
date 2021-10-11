@@ -14,17 +14,20 @@ namespace Silky.Rpc.Transport.Codec
             _serializer = serializer;
         }
 
-        public TransportMessage Decode([NotNull]byte[] data)
+        public TransportMessage Decode([NotNull] byte[] data)
         {
             var jsonString = data.GetString();
             var transportMessage = _serializer.Deserialize<TransportMessage>(jsonString);
             if (transportMessage.IsInvokeMessage())
             {
-                transportMessage.Content = _serializer.Deserialize<RemoteInvokeMessage>(transportMessage.Content.ToString());
+                transportMessage.Content =
+                    _serializer.Deserialize<RemoteInvokeMessage>(transportMessage.Content.ToString());
             }
+
             if (transportMessage.IsResultMessage())
             {
-                transportMessage.Content = _serializer.Deserialize<RemoteResultMessage>(transportMessage.Content.ToString());
+                transportMessage.Content =
+                    _serializer.Deserialize<RemoteResultMessage>(transportMessage.Content.ToString());
             }
 
             return transportMessage;

@@ -9,7 +9,6 @@ namespace Silky.Castle.Adapter
         public SilkyAsyncDeterminationInterceptor(TInterceptor abpInterceptor)
             : base(new CastleAsyncSilkyInterceptorAdapter<TInterceptor>(abpInterceptor))
         {
-
         }
     }
 }

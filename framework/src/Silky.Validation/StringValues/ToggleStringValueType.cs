@@ -9,13 +9,11 @@ namespace Silky.Validation.StringValues
         public ToggleStringValueType()
             : this(new BooleanValueValidator())
         {
-
         }
 
         public ToggleStringValueType(IValueValidator validator)
             : base(validator)
         {
-
         }
     }
 }

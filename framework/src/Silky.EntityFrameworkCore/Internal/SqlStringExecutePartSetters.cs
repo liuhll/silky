@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Silky.EntityFrameworkCore.Locators;
 
 namespace Silky.EntityFrameworkCore
@@ -30,7 +29,6 @@ namespace Silky.EntityFrameworkCore
             Timeout = timeout;
             return this;
         }
-
 
 
         /// <summary>

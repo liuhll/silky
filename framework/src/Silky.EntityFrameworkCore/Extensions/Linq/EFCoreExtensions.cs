@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
@@ -20,7 +19,9 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="condition">布尔条件</param>
         /// <param name="expression">新的集合对象表达式</param>
         /// <returns></returns>
-        public static IIncludableQueryable<TSource, TProperty> Include<TSource, TProperty>(this IQueryable<TSource> sources, bool condition, Expression<Func<TSource, TProperty>> expression) where TSource : class
+        public static IIncludableQueryable<TSource, TProperty> Include<TSource, TProperty>(
+            this IQueryable<TSource> sources, bool condition, Expression<Func<TSource, TProperty>> expression)
+            where TSource : class
         {
             return condition ? sources.Include(expression) : (IIncludableQueryable<TSource, TProperty>)sources;
         }

@@ -1,5 +1,4 @@
-﻿
-namespace Silky.EntityFrameworkCore.MultiTenants.Dependencies
+﻿namespace Silky.EntityFrameworkCore.MultiTenants.Dependencies
 {
     /// <summary>
     /// 基于数据库架构的多租户模式

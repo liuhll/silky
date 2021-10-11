@@ -17,7 +17,8 @@ namespace Silky.Transaction.Abstraction
             }
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var transactionContext = serializer.Deserialize<TransactionContext>(transactionContextAttachment.ToString());
+            var transactionContext =
+                serializer.Deserialize<TransactionContext>(transactionContextAttachment.ToString());
             return transactionContext;
         }
 

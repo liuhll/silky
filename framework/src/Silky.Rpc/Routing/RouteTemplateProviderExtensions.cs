@@ -7,7 +7,7 @@ using Silky.Rpc.Routing.Template;
 
 namespace Silky.Rpc.Routing
 {
- public static class RouteTemplateProviderExtensions
+    public static class RouteTemplateProviderExtensions
     {
         private const string separator = "/";
 
@@ -38,7 +38,9 @@ namespace Silky.Rpc.Routing
         public static string GetServiceName([NotNull] this IRouteTemplateProvider routeTemplateProvider,
             Type serviceType)
         {
-            return routeTemplateProvider.ServiceName.IsNullOrEmpty() ? serviceType.Name.TrimStart('I') : routeTemplateProvider.ServiceName;
+            return routeTemplateProvider.ServiceName.IsNullOrEmpty()
+                ? serviceType.Name.TrimStart('I')
+                : routeTemplateProvider.ServiceName;
         }
 
         private static string ParseAppServiceName(string segemnetVal, string serviceName)
@@ -63,7 +65,8 @@ namespace Silky.Rpc.Routing
             }
             else if (template.StartsWith("~", StringComparison.Ordinal))
             {
-                throw new SilkyException($"{template} The format of the route template set is incorrect", StatusCode.RouteParseError);
+                throw new SilkyException($"{template} The format of the route template set is incorrect",
+                    StatusCode.RouteParseError);
             }
 
             return template;

@@ -52,7 +52,7 @@ namespace Silky.Transaction.Repository.Redis
             transaction.UpdateTime = DateTime.Now;
 
             await _transactionDistributedCache.SetAsync(GetTransactionKey(transaction.TransId),
-                (SilkyTransaction) transaction);
+                (SilkyTransaction)transaction);
         }
 
 
@@ -92,7 +92,8 @@ namespace Silky.Transaction.Repository.Redis
 
             var transactions = (await _transactionDistributedCache.GetManyAsync(transactionKeys)).Select(p => p.Value);
 
-            var removeTransactions = transactions.Where(p => p.UpdateTime < date && p.Status == ActionStage.Delete).ToArray();
+            var removeTransactions = transactions.Where(p => p.UpdateTime < date && p.Status == ActionStage.Delete)
+                .ToArray();
 
             foreach (var removeTransaction in removeTransactions)
             {
@@ -118,7 +119,7 @@ namespace Silky.Transaction.Repository.Redis
             }
 
             participant.UpdateTime = DateTime.Now;
-            await _participantDistributedCache.SetAsync(participantKey, (SilkyParticipant) participant);
+            await _participantDistributedCache.SetAsync(participantKey, (SilkyParticipant)participant);
         }
 
         public async Task<IReadOnlyCollection<IParticipant>> FindParticipant(string transId, string participantId)
@@ -158,7 +159,7 @@ namespace Silky.Transaction.Repository.Redis
             participant.Version += 1;
             participant.Status = status;
             participant.UpdateTime = DateTime.Now;
-            await _participantDistributedCache.SetAsync(participantKey, (SilkyParticipant) participant);
+            await _participantDistributedCache.SetAsync(participantKey, (SilkyParticipant)participant);
         }
 
         public async Task RemoveParticipant(string transId, string participantId)
@@ -174,6 +175,7 @@ namespace Silky.Transaction.Repository.Redis
             {
                 return 0;
             }
+
             var participants = (await _participantDistributedCache.GetManyAsync(participantKeys)).Select(p => p.Value);
             var removeParticipants = participants.Where(p => p.UpdateTime < date && p.Status == ActionStage.Delete)
                 .ToArray();
@@ -202,7 +204,7 @@ namespace Silky.Transaction.Repository.Redis
                 participant.Version = currentVersion + 1;
                 participant.ReTry += 1;
                 participant.UpdateTime = DateTime.Now;
-                await _participantDistributedCache.SetAsync(key, (SilkyParticipant) participant);
+                await _participantDistributedCache.SetAsync(key, (SilkyParticipant)participant);
                 return true;
             }
             catch (Exception ex)
@@ -244,7 +246,7 @@ namespace Silky.Transaction.Repository.Redis
                 .Take(limit)
                 .ToArray();
         }
-        
+
         private async Task<IReadOnlyCollection<string>> GetParticipantKeys(string transId)
         {
             var participantsCacheKeyPattern = "*" + GetParticipantKey(transId, "*");

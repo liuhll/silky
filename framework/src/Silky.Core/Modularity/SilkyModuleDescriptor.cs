@@ -13,14 +13,14 @@ namespace Silky.Core.Modularity
         public Assembly Assembly { get; }
         public ISilkyModule Instance { get; }
 
-        public string Name { get; } 
+        public string Name { get; }
 
-        public IReadOnlyList<ISilkyModuleDescriptor>  Dependencies => _dependencies.ToImmutableList();
-        
+        public IReadOnlyList<ISilkyModuleDescriptor> Dependencies => _dependencies.ToImmutableList();
+
         private readonly List<ISilkyModuleDescriptor> _dependencies;
-        
+
         public SilkyModuleDescriptor(
-            [NotNull] Type type, 
+            [NotNull] Type type,
             [NotNull] ISilkyModule instance)
         {
             Check.NotNull(type, nameof(type));
@@ -28,7 +28,8 @@ namespace Silky.Core.Modularity
 
             if (!type.GetTypeInfo().IsAssignableFrom(instance.GetType()))
             {
-                throw new ArgumentException($"Given module instance ({instance.GetType().AssemblyQualifiedName}) is not an instance of given module type: {type.AssemblyQualifiedName}");
+                throw new ArgumentException(
+                    $"Given module instance ({instance.GetType().AssemblyQualifiedName}) is not an instance of given module type: {type.AssemblyQualifiedName}");
             }
 
             Type = type;
@@ -38,7 +39,7 @@ namespace Silky.Core.Modularity
 
             _dependencies = new List<ISilkyModuleDescriptor>();
         }
-        
+
         public void AddDependency(ISilkyModuleDescriptor descriptor)
         {
             _dependencies.AddIfNotContains(descriptor);

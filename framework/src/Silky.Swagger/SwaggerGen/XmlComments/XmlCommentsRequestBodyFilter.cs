@@ -37,7 +37,8 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
         private void ApplyPropertyTags(OpenApiRequestBody requestBody, PropertyInfo propertyInfo)
         {
             var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
-            var propertySummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/summary");
+            var propertySummaryNode =
+                _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/summary");
 
             if (propertySummaryNode != null)
                 requestBody.Description = XmlCommentsTextHelper.Humanize(propertySummaryNode.InnerXml);

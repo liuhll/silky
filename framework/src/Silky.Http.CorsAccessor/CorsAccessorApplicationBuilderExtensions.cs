@@ -8,7 +8,8 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class CorsAccessorApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseCorsAccessor(this IApplicationBuilder app, Action<CorsPolicyBuilder> corsPolicyBuilderHandler = default)
+        public static IApplicationBuilder UseCorsAccessor(this IApplicationBuilder app,
+            Action<CorsPolicyBuilder> corsPolicyBuilderHandler = default)
         {
             var corsAccessorSettings = app.ApplicationServices.GetService<IOptions<CorsAccessorOptions>>().Value;
             _ = corsPolicyBuilderHandler == null

@@ -10,7 +10,6 @@ namespace Silky.Core.Threading
 
         private NullCancellationTokenProvider()
         {
-            
         }
     }
 }

@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
@@ -9,11 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
-        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Consul" Version="1.6.10.3" />
+        <PackageReference Include="Consul" Version="1.6.10.3"/>
     </ItemGroup>
 </Project>

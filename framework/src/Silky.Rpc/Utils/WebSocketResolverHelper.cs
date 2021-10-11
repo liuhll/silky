@@ -54,7 +54,8 @@ namespace Silky.Rpc.Utils
             }
             else if (template.StartsWith("~", StringComparison.Ordinal))
             {
-                throw new SilkyException($"{template}The format of the set routing template is incorrect", StatusCode.RouteParseError);
+                throw new SilkyException($"{template}The format of the set routing template is incorrect",
+                    StatusCode.RouteParseError);
             }
 
             return template;

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Silky.EntityFrameworkCore.Locators;
 
 namespace Silky.EntityFrameworkCore

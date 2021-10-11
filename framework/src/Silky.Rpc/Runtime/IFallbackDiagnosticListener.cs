@@ -18,7 +18,5 @@ namespace Silky.Rpc.Runtime
         void TracingFallbackError(long? tracingTimestamp, string messageId, string serviceEntryId,
             StatusCode statusCode,
             Exception ex, IFallbackProvider serviceEntryFallbackProvider);
-
-        
     }
 }

@@ -15,7 +15,7 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
                 .Where(m =>
                 {
                     return (m.Name == constructedTypeMethod.Name)
-                        && (m.GetParameters().Length == constructedTypeMethod.GetParameters().Length);
+                           && (m.GetParameters().Length == constructedTypeMethod.GetParameters().Length);
                 });
 
 

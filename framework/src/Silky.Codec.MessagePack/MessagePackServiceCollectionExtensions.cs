@@ -15,15 +15,18 @@ namespace Microsoft.Extensions.DependencyInjection
             }
             else
             {
-                services.Replace(ServiceDescriptor.Scoped<ITransportMessageDecoder, MessagePackTransportMessageDecoder>());
+                services.Replace(
+                    ServiceDescriptor.Scoped<ITransportMessageDecoder, MessagePackTransportMessageDecoder>());
             }
+
             if (!services.IsAdded(typeof(ITransportMessageEncoder)))
             {
                 services.AddScoped<ITransportMessageEncoder, MessagePackTransportMessageEncoder>();
             }
             else
             {
-                services.Replace(ServiceDescriptor.Scoped<ITransportMessageEncoder, MessagePackTransportMessageEncoder>());
+                services.Replace(
+                    ServiceDescriptor.Scoped<ITransportMessageEncoder, MessagePackTransportMessageEncoder>());
             }
 
             return services;

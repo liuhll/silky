@@ -33,7 +33,7 @@ namespace Silky.Swagger.SwaggerUI
         /// <summary>
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the SwaggerUI
         /// </summary>
-        public ConfigObject ConfigObject  { get; set; } = new ConfigObject();
+        public ConfigObject ConfigObject { get; set; } = new ConfigObject();
 
         /// <summary>
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the initOAuth method
@@ -122,7 +122,8 @@ namespace Silky.Swagger.SwaggerUI
         /// List of HTTP methods that have the Try it out feature enabled.
         /// An empty array disables Try it out for all operations. This does not filter the operations from the display
         /// </summary>
-        public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } = Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
+        public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } =
+            Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
 
         /// <summary>
         /// By default, Swagger-UI attempts to validate specs against swagger.io's online validator.

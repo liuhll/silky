@@ -18,7 +18,7 @@ namespace Silky.Rpc.Extensions
             {
                 throw new SilkyException("You must specify a service registry module");
             }
-            
+
             return applicationContext.ServiceProvider.GetService<IServerRegister>() != null;
         }
     }

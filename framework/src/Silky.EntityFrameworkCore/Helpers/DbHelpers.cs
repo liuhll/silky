@@ -26,7 +26,8 @@ namespace Silky.EntityFrameworkCore.Helpers
             var modelType = model?.GetType();
 
             // 处理字典类型参数
-            if (modelType == typeof(Dictionary<string, object>)) return ConvertToDbParameters((Dictionary<string, object>)model, dbCommand);
+            if (modelType == typeof(Dictionary<string, object>))
+                return ConvertToDbParameters((Dictionary<string, object>)model, dbCommand);
 
             var dbParameters = new List<DbParameter>();
             if (model == null || !modelType.IsClass) return dbParameters.ToArray();
@@ -47,12 +48,13 @@ namespace Silky.EntityFrameworkCore.Helpers
                 if (property.IsDefined(typeof(DbParameterAttribute), true))
                 {
                     var dbParameterAttribute = property.GetCustomAttribute<DbParameterAttribute>(true);
-                    dbParameters.Add(ConfigureDbParameter(property.Name, propertyValue, dbParameterAttribute, dbParameter));
+                    dbParameters.Add(ConfigureDbParameter(property.Name, propertyValue, dbParameterAttribute,
+                        dbParameter));
                     continue;
                 }
 
                 dbParameter.ParameterName = property.Name;
-                dbParameter.Value = propertyValue.ChangeType(propertyValue.GetActualType());    // 解决 object/json 类型值
+                dbParameter.Value = propertyValue.ChangeType(propertyValue.GetActualType()); // 解决 object/json 类型值
                 dbParameters.Add(dbParameter);
             }
 
@@ -92,7 +94,8 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="dbParameterAttribute">参数特性</param>
         /// <param name="dbParameter">数据库命令参数</param>
         /// <returns>DbParameter</returns>
-        internal static DbParameter ConfigureDbParameter(string name, object value, DbParameterAttribute dbParameterAttribute, DbParameter dbParameter)
+        internal static DbParameter ConfigureDbParameter(string name, object value,
+            DbParameterAttribute dbParameterAttribute, DbParameter dbParameter)
         {
             // 设置参数方向
             dbParameter.ParameterName = name;
@@ -109,9 +112,11 @@ namespace Silky.EntityFrameworkCore.Helpers
                     if (typeof(DbType).IsAssignableFrom(type)) dbParameter.DbType = (DbType)dbParameterAttribute.DbType;
 
                     // 解决 Oracle 数据库游标类型参数
-                    if (type.FullName.Equals("Oracle.ManagedDataAccess.Client.OracleDbType", StringComparison.OrdinalIgnoreCase))
+                    if (type.FullName.Equals("Oracle.ManagedDataAccess.Client.OracleDbType",
+                        StringComparison.OrdinalIgnoreCase))
                     {
-                        dbParameter.GetType().GetProperty("OracleDbType")?.SetValue(dbParameter, dbParameterAttribute.DbType);
+                        dbParameter.GetType().GetProperty("OracleDbType")
+                            ?.SetValue(dbParameter, dbParameterAttribute.DbType);
                     }
                 }
             }
@@ -133,7 +138,8 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="funcName">函数名词</param>
         /// <param name="parameters">函数参数</param>
         /// <returns>sql 语句</returns>
-        internal static string GenerateFunctionSql(string providerName, DbFunctionType dbFunctionType, string funcName, params DbParameter[] parameters)
+        internal static string GenerateFunctionSql(string providerName, DbFunctionType dbFunctionType, string funcName,
+            params DbParameter[] parameters)
         {
             // 检查是否支持函数
             DbProvider.CheckFunctionSupported(providerName, dbFunctionType);
@@ -157,6 +163,7 @@ namespace Silky.EntityFrameworkCore.Helpers
                     stringBuilder.Append(", ");
                 }
             }
+
             stringBuilder.Append("); ");
 
             return stringBuilder.ToString();
@@ -170,14 +177,16 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="funcName">函数名词</param>
         /// <param name="model">参数模型</param>
         /// <returns>(string sql, DbParameter[] parameters)</returns>
-        internal static string GenerateFunctionSql(string providerName, DbFunctionType dbFunctionType, string funcName, object model)
+        internal static string GenerateFunctionSql(string providerName, DbFunctionType dbFunctionType, string funcName,
+            object model)
         {
             // 检查是否支持函数
             DbProvider.CheckFunctionSupported(providerName, dbFunctionType);
 
             var modelType = model?.GetType();
             // 处理字典类型参数
-            if (modelType == typeof(Dictionary<string, object>)) return GenerateFunctionSql(providerName, dbFunctionType, funcName, (Dictionary<string, object>)model);
+            if (modelType == typeof(Dictionary<string, object>))
+                return GenerateFunctionSql(providerName, dbFunctionType, funcName, (Dictionary<string, object>)model);
 
             // 获取模型所有公开的属性
             var properities = model == null
@@ -214,7 +223,8 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="funcName">函数名词</param>
         /// <param name="keyValues">字典类型参数</param>
         /// <returns></returns>
-        internal static string GenerateFunctionSql(string providerName, DbFunctionType dbFunctionType, string funcName, Dictionary<string, object> keyValues)
+        internal static string GenerateFunctionSql(string providerName, DbFunctionType dbFunctionType, string funcName,
+            Dictionary<string, object> keyValues)
         {
             // 检查是否支持函数
             DbProvider.CheckFunctionSupported(providerName, dbFunctionType);
@@ -234,6 +244,7 @@ namespace Silky.EntityFrameworkCore.Helpers
                     {
                         stringBuilder.Append(", ");
                     }
+
                     i++;
                 }
             }
@@ -250,7 +261,8 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="parameters">命令参数</param>
         /// <param name="dataSet">数据集</param>
         /// <returns>ProcedureOutput</returns>
-        internal static ProcedureOutputResult WrapperProcedureOutput(string providerName, DbParameter[] parameters, DataSet dataSet)
+        internal static ProcedureOutputResult WrapperProcedureOutput(string providerName, DbParameter[] parameters,
+            DataSet dataSet)
         {
             // 读取输出返回值
             ReadOuputValue(providerName, parameters, out var outputValues, out var returnValue);
@@ -271,7 +283,8 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="parameters">命令参数</param>
         /// <param name="dataSet">数据集</param>
         /// <returns>ProcedureOutput</returns>
-        internal static ProcedureOutputResult<TResult> WrapperProcedureOutput<TResult>(string providerName, DbParameter[] parameters, DataSet dataSet)
+        internal static ProcedureOutputResult<TResult> WrapperProcedureOutput<TResult>(string providerName,
+            DbParameter[] parameters, DataSet dataSet)
         {
             // 读取输出返回值
             ReadOuputValue(providerName, parameters, out var outputValues, out var returnValue);
@@ -292,12 +305,13 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="dataSet">数据集</param>
         /// <param name="type">返回类型</param>
         /// <returns>ProcedureOutput</returns>
-        internal static object WrapperProcedureOutput(string providerName, DbParameter[] parameters, DataSet dataSet, Type type)
+        internal static object WrapperProcedureOutput(string providerName, DbParameter[] parameters, DataSet dataSet,
+            Type type)
         {
             var wrapperProcedureOutputMethod = typeof(DbHelpers)
-                    .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-                    .First(u => u.Name == "WrapperProcedureOutput" && u.IsGenericMethod)
-                    .MakeGenericMethod(type);
+                .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
+                .First(u => u.Name == "WrapperProcedureOutput" && u.IsGenericMethod)
+                .MakeGenericMethod(type);
 
             return wrapperProcedureOutputMethod.Invoke(null, new object[] { providerName, parameters, dataSet });
         }
@@ -318,7 +332,8 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="parameterName"></param>
         /// <param name="isFixed"></param>
         /// <returns></returns>
-        internal static string FixSqlParameterPlaceholder(string providerName, string parameterName, bool isFixed = true)
+        internal static string FixSqlParameterPlaceholder(string providerName, string parameterName,
+            bool isFixed = true)
         {
             var placeholder = !DbProvider.IsDatabaseFor(providerName, DbProvider.Oracle) ? "@" : ":";
             if (parameterName.StartsWith("@") || parameterName.StartsWith(":"))
@@ -336,16 +351,17 @@ namespace Silky.EntityFrameworkCore.Helpers
         /// <param name="parameters">参数</param>
         /// <param name="outputValues">输出参数</param>
         /// <param name="returnValue">返回值</param>
-        private static void ReadOuputValue(string providerName, DbParameter[] parameters, out IEnumerable<ProcedureOutputValue> outputValues, out object returnValue)
+        private static void ReadOuputValue(string providerName, DbParameter[] parameters,
+            out IEnumerable<ProcedureOutputValue> outputValues, out object returnValue)
         {
             // 查询所有OUTPUT值
             outputValues = parameters
-               .Where(u => u.Direction == ParameterDirection.Output)
-               .Select(u => new ProcedureOutputValue
-               {
-                   Name = FixSqlParameterPlaceholder(providerName, u.ParameterName, false),
-                   Value = u.Value
-               });
+                .Where(u => u.Direction == ParameterDirection.Output)
+                .Select(u => new ProcedureOutputValue
+                {
+                    Name = FixSqlParameterPlaceholder(providerName, u.ParameterName, false),
+                    Value = u.Value
+                });
 
             // 查询返回值
             returnValue = parameters.FirstOrDefault(u => u.Direction == ParameterDirection.ReturnValue)?.Value;

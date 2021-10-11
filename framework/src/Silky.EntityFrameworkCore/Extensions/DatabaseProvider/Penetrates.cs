@@ -38,16 +38,17 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseProvider
         /// <param name="optionBuilder">数据库上下文选项构建器</param>
         /// <param name="interceptors">拦截器</param>
         /// <returns></returns>
-        internal static Action<IServiceProvider, DbContextOptionsBuilder> ConfigureDbContext(Action<DbContextOptionsBuilder> optionBuilder, params IInterceptor[] interceptors)
+        internal static Action<IServiceProvider, DbContextOptionsBuilder> ConfigureDbContext(
+            Action<DbContextOptionsBuilder> optionBuilder, params IInterceptor[] interceptors)
         {
             return (serviceProvider, options) =>
             {
                 // 只有开发环境开启
                 if (EngineContext.Current.HostEnvironment.IsDevelopment())
                 {
-                    options/*.UseLazyLoadingProxies()*/
-                             .EnableDetailedErrors()
-                             .EnableSensitiveDataLogging();
+                    options /*.UseLazyLoadingProxies()*/
+                        .EnableDetailedErrors()
+                        .EnableSensitiveDataLogging();
                 }
 
                 optionBuilder.Invoke(options);
@@ -69,13 +70,13 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseProvider
         {
             // 添加拦截器
             var interceptorList = DbProvider.GetDefaultInterceptors();
-            
+
             if (interceptors != null || interceptors.Length > 0)
             {
                 interceptorList.AddRange(interceptors);
             }
+
             options.AddInterceptors(interceptorList.ToArray());
-            
         }
     }
 }

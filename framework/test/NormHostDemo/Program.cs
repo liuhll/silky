@@ -21,6 +21,7 @@ namespace NormHostDemo
             {
                 hostBuilder.AddApollo();
             }
+
             return hostBuilder;
         }
     }

@@ -34,7 +34,8 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
 
         public static string ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
         {
-            if (schema.Reference != null && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out OpenApiSchema definitionSchema))
+            if (schema.Reference != null &&
+                schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out OpenApiSchema definitionSchema))
                 return definitionSchema.ResolveType(schemaRepository);
 
             foreach (var subSchema in schema.AllOf)
@@ -100,12 +101,14 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
                 : schema.Minimum;
         }
 
-        private static void ApplyRegularExpressionAttribute(OpenApiSchema schema, RegularExpressionAttribute regularExpressionAttribute)
+        private static void ApplyRegularExpressionAttribute(OpenApiSchema schema,
+            RegularExpressionAttribute regularExpressionAttribute)
         {
             schema.Pattern = regularExpressionAttribute.Pattern;
         }
 
-        private static void ApplyStringLengthAttribute(OpenApiSchema schema, StringLengthAttribute stringLengthAttribute)
+        private static void ApplyStringLengthAttribute(OpenApiSchema schema,
+            StringLengthAttribute stringLengthAttribute)
         {
             schema.MinLength = stringLengthAttribute.MinimumLength;
             schema.MaxLength = stringLengthAttribute.MaximumLength;

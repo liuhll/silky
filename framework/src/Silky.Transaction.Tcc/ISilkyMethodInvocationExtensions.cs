@@ -29,9 +29,11 @@ namespace Silky.Transaction.Tcc
                         actualParameters.Add(parameterDescriptor.GetActualParameter(parameters[i]));
                     }
                 }
+
                 Debug.Assert(excutor != null);
                 Debug.Assert(instance != null);
-                invocation.ReturnValue = await excutor.ExecuteMethodWithDbContextAsync(instance, actualParameters.ToArray());
+                invocation.ReturnValue =
+                    await excutor.ExecuteMethodWithDbContextAsync(instance, actualParameters.ToArray());
             }
             else
             {

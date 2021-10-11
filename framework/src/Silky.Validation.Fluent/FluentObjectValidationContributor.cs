@@ -26,7 +26,7 @@ namespace Silky.Validation.Fluent
                 return;
             }
 
-            var result = validator.Validate((IValidationContext) Activator.CreateInstance(
+            var result = validator.Validate((IValidationContext)Activator.CreateInstance(
                 typeof(ValidationContext<>).MakeGenericType(context.ValidatingObject.GetType()),
                 context.ValidatingObject));
 

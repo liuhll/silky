@@ -7,13 +7,13 @@ namespace Silky.Core
     public class SilkyAppTypeFinder : AppDomainTypeFinder
     {
         private bool _binFolderAssembliesLoaded;
-        
+
         public SilkyAppTypeFinder(ISilkyFileProvider fileProvider = null) : base(fileProvider)
         {
         }
-        
+
         public bool EnsureBinFolderAssembliesLoaded { get; set; } = true;
-        
+
         public virtual string GetBinDirectory()
         {
             return AppContext.BaseDirectory;
@@ -21,7 +21,7 @@ namespace Silky.Core
 
         public override IList<Assembly> GetAssemblies()
         {
-            if (!EnsureBinFolderAssembliesLoaded || _binFolderAssembliesLoaded) 
+            if (!EnsureBinFolderAssembliesLoaded || _binFolderAssembliesLoaded)
                 return base.GetAssemblies();
 
             _binFolderAssembliesLoaded = true;

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Furion.DatabaseAccessor;
 using Microsoft.EntityFrameworkCore;
 using Silky.EntityFrameworkCore.Locators;
@@ -32,7 +31,8 @@ namespace Silky.EntityFrameworkCore.Entities.Configures
     /// <typeparam name="TEntity">实体类型</typeparam>
     /// <typeparam name="TDbContextLocator1">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator2">数据库上下文定位器</typeparam>
-    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2> : IPrivateEntityMutableTable<TEntity>
+    public interface
+        IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2> : IPrivateEntityMutableTable<TEntity>
         where TEntity : class, IPrivateEntity, new()
         where TDbContextLocator1 : class, IDbContextLocator
         where TDbContextLocator2 : class, IDbContextLocator
@@ -46,7 +46,9 @@ namespace Silky.EntityFrameworkCore.Entities.Configures
     /// <typeparam name="TDbContextLocator1">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator2">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator3">数据库上下文定位器</typeparam>
-    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3> : IPrivateEntityMutableTable<TEntity>
+    public interface
+        IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2,
+            TDbContextLocator3> : IPrivateEntityMutableTable<TEntity>
         where TEntity : class, IPrivateEntity, new()
         where TDbContextLocator1 : class, IDbContextLocator
         where TDbContextLocator2 : class, IDbContextLocator
@@ -62,7 +64,8 @@ namespace Silky.EntityFrameworkCore.Entities.Configures
     /// <typeparam name="TDbContextLocator2">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator3">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator4">数据库上下文定位器</typeparam>
-    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3, TDbContextLocator4> : IPrivateEntityMutableTable<TEntity>
+    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3,
+        TDbContextLocator4> : IPrivateEntityMutableTable<TEntity>
         where TEntity : class, IPrivateEntity, new()
         where TDbContextLocator1 : class, IDbContextLocator
         where TDbContextLocator2 : class, IDbContextLocator
@@ -80,7 +83,8 @@ namespace Silky.EntityFrameworkCore.Entities.Configures
     /// <typeparam name="TDbContextLocator3">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator4">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator5">数据库上下文定位器</typeparam>
-    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3, TDbContextLocator4, TDbContextLocator5> : IPrivateEntityMutableTable<TEntity>
+    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3,
+        TDbContextLocator4, TDbContextLocator5> : IPrivateEntityMutableTable<TEntity>
         where TEntity : class, IPrivateEntity, new()
         where TDbContextLocator1 : class, IDbContextLocator
         where TDbContextLocator2 : class, IDbContextLocator
@@ -100,7 +104,8 @@ namespace Silky.EntityFrameworkCore.Entities.Configures
     /// <typeparam name="TDbContextLocator4">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator5">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator6">数据库上下文定位器</typeparam>
-    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3, TDbContextLocator4, TDbContextLocator5, TDbContextLocator6> : IPrivateEntityMutableTable<TEntity>
+    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3,
+        TDbContextLocator4, TDbContextLocator5, TDbContextLocator6> : IPrivateEntityMutableTable<TEntity>
         where TEntity : class, IPrivateEntity, new()
         where TDbContextLocator1 : class, IDbContextLocator
         where TDbContextLocator2 : class, IDbContextLocator
@@ -122,7 +127,9 @@ namespace Silky.EntityFrameworkCore.Entities.Configures
     /// <typeparam name="TDbContextLocator5">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator6">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator7">数据库上下文定位器</typeparam>
-    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3, TDbContextLocator4, TDbContextLocator5, TDbContextLocator6, TDbContextLocator7> : IPrivateEntityMutableTable<TEntity>
+    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3,
+        TDbContextLocator4, TDbContextLocator5, TDbContextLocator6,
+        TDbContextLocator7> : IPrivateEntityMutableTable<TEntity>
         where TEntity : class, IPrivateEntity, new()
         where TDbContextLocator1 : class, IDbContextLocator
         where TDbContextLocator2 : class, IDbContextLocator
@@ -146,7 +153,9 @@ namespace Silky.EntityFrameworkCore.Entities.Configures
     /// <typeparam name="TDbContextLocator6">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator7">数据库上下文定位器</typeparam>
     /// <typeparam name="TDbContextLocator8">数据库上下文定位器</typeparam>
-    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3, TDbContextLocator4, TDbContextLocator5, TDbContextLocator6, TDbContextLocator7, TDbContextLocator8> : IPrivateEntityMutableTable<TEntity>
+    public interface IEntityMutableTable<TEntity, TDbContextLocator1, TDbContextLocator2, TDbContextLocator3,
+        TDbContextLocator4, TDbContextLocator5, TDbContextLocator6, TDbContextLocator7,
+        TDbContextLocator8> : IPrivateEntityMutableTable<TEntity>
         where TEntity : class, IPrivateEntity, new()
         where TDbContextLocator1 : class, IDbContextLocator
         where TDbContextLocator2 : class, IDbContextLocator

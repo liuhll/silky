@@ -20,8 +20,6 @@ namespace Silky.Logging.Serilog
             {
                 application.UseSerilogRequestLogging();
             }
-
-           
         }
     }
 }

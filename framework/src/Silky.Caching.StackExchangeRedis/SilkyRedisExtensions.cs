@@ -12,12 +12,12 @@ namespace Silky.Caching.StackExchangeRedis
             params string[] members)
         {
             var tasks = new Task<RedisValue[]>[keys.Length];
-            var fields = members.Select(member => (RedisValue) member).ToArray();
+            var fields = members.Select(member => (RedisValue)member).ToArray();
             var results = new RedisValue[keys.Length][];
 
             for (var i = 0; i < keys.Length; i++)
             {
-                tasks[i] = cache.HashGetAsync((RedisKey) keys[i], fields);
+                tasks[i] = cache.HashGetAsync((RedisKey)keys[i], fields);
             }
 
             for (var i = 0; i < tasks.Length; i++)
@@ -34,11 +34,11 @@ namespace Silky.Caching.StackExchangeRedis
             params string[] members)
         {
             var tasks = new Task<RedisValue[]>[keys.Length];
-            var fields = members.Select(member => (RedisValue) member).ToArray();
+            var fields = members.Select(member => (RedisValue)member).ToArray();
 
             for (var i = 0; i < keys.Length; i++)
             {
-                tasks[i] = cache.HashGetAsync((RedisKey) keys[i], fields);
+                tasks[i] = cache.HashGetAsync((RedisKey)keys[i], fields);
             }
 
             return await Task.WhenAll(tasks);

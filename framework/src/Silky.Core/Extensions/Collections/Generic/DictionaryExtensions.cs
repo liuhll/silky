@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Silky.Core.Extensions.Collections.Generic
 {
- public static class DictionaryExtensions
+    public static class DictionaryExtensions
     {
         /// <summary>
         /// This method is used to try to get a value in a dictionary if it does exists.
@@ -66,7 +66,7 @@ namespace Silky.Core.Extensions.Collections.Generic
         {
             return dictionary.TryGetValue(key, out var obj) ? obj : default;
         }
-        
+
         /// <summary>
         /// Gets a value from the dictionary with given key. Returns default value if can not find.
         /// </summary>
@@ -89,7 +89,8 @@ namespace Silky.Core.Extensions.Collections.Generic
         /// <typeparam name="TKey">Type of the key</typeparam>
         /// <typeparam name="TValue">Type of the value</typeparam>
         /// <returns>Value if found, default if can not found.</returns>
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> factory)
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key,
+            Func<TKey, TValue> factory)
         {
             TValue obj;
             if (dictionary.TryGetValue(key, out obj))
@@ -99,7 +100,7 @@ namespace Silky.Core.Extensions.Collections.Generic
 
             return dictionary[key] = factory(key);
         }
-        
+
         /// <summary>
         /// Gets a value from the dictionary with given key. Returns default value if can not find.
         /// </summary>
@@ -109,7 +110,8 @@ namespace Silky.Core.Extensions.Collections.Generic
         /// <typeparam name="TKey">Type of the key</typeparam>
         /// <typeparam name="TValue">Type of the value</typeparam>
         /// <returns>Value if found, default if can not found.</returns>
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> factory)
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key,
+            Func<TValue> factory)
         {
             return dictionary.GetOrAdd(key, k => factory());
         }

@@ -8,7 +8,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public string HostName { get; set; }
 
         public string Host { get; set; }
-        
+
         public string Address { get; set; }
 
         public int Port { get; set; }
@@ -18,7 +18,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public bool IsEnable { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
-        
+
         public DateTime? LastDisableTime { get; set; }
     }
 }

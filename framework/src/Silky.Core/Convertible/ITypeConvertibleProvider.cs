@@ -3,7 +3,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Core.Convertible
 {
-    public interface ITypeConvertibleProvider: ISingletonDependency
+    public interface ITypeConvertibleProvider : ISingletonDependency
     {
         IEnumerable<TypeConvertDelegate> GetConverters();
     }

@@ -62,7 +62,8 @@ namespace Silky.DotNetty.Abstraction
             Context context)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();
-            _rpcEndpointMonitor.ChangeStatus(serviceAddressModel, false, _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+            _rpcEndpointMonitor.ChangeStatus(serviceAddressModel, false,
+                _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,

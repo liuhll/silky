@@ -7,8 +7,7 @@ namespace Silky.Validation
 {
     public class ObjectValidationContext
     {
-        [NotNull]
-        public object ValidatingObject { get; }
+        [NotNull] public object ValidatingObject { get; }
 
         public List<ValidationResult> Errors { get; }
 

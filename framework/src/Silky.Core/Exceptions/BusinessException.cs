@@ -4,7 +4,6 @@
     {
         public BusinessException(string message) : base(message, StatusCode.BusinessError)
         {
-
         }
     }
 }

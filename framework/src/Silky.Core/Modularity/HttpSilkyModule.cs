@@ -6,7 +6,6 @@ namespace Silky.Core.Modularity
     {
         public virtual void Configure(IApplicationBuilder application)
         {
-            
         }
     }
 }

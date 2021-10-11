@@ -19,7 +19,7 @@ namespace Silky.Transaction.Tcc.Handlers
     public class ParticipantTccTransactionHandler : ITransactionHandler
     {
         private readonly TccTransactionExecutor _executor = TccTransactionExecutor.Executor;
-        
+
         private static readonly DiagnosticListener s_diagnosticListener =
             new(TransactionDiagnosticListenerNames.DiagnosticParticipantTransactionListener);
 
@@ -59,6 +59,7 @@ namespace Silky.Transaction.Tcc.Handlers
                         {
                             ParticipantCacheManager.Instance.RemoveByKey(participant.ParticipantId);
                         }
+
                         await TransRepositoryStore.RemoveParticipant(participant);
                         Logger.LogException(ex);
                         throw;

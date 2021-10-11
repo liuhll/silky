@@ -19,6 +19,7 @@ namespace Silky.Swagger
             : base(string.Format("Unknown Swagger document - \"{0}\". Known Swagger documents: {1}",
                 documentName,
                 string.Join(",", knownDocuments?.Select(x => $"\"{x}\""))))
-        {}
+        {
+        }
     }
 }

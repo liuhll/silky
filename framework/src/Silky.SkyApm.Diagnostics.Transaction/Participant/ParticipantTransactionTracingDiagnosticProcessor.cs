@@ -9,7 +9,8 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Participant
 {
     public class ParticipantTransactionTracingDiagnosticProcessor : ITracingDiagnosticProcessor
     {
-        public string ListenerName { get; } = TransactionDiagnosticListenerNames.DiagnosticParticipantTransactionListener;
+        public string ListenerName { get; } =
+            TransactionDiagnosticListenerNames.DiagnosticParticipantTransactionListener;
 
         private readonly ISilkySegmentContextFactory _segmentContextFactory;
         private readonly ISerializer _serializer;
@@ -42,7 +43,7 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Participant
             context.Span.AddLog(LogEvent.Event($"Tcc Participant Transaction Action {eventData.Context.Action}End"));
             _segmentContextFactory.ReleaseContext(context);
         }
-        
+
         private string GetOperationName(ParticipantTransactionEventData eventData)
         {
             return $"{eventData.Type}.{eventData.Role}.{eventData.Context.Action}";

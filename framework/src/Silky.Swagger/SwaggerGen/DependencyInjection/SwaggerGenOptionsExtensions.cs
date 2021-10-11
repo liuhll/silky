@@ -82,7 +82,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this SwaggerGenOptions swaggerGenOptions,
             Func<ServiceEntry, string> tagSelector)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] {tagSelector(apiDesc)};
+            swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] { tagSelector(apiDesc) };
         }
 
         /// <summary>

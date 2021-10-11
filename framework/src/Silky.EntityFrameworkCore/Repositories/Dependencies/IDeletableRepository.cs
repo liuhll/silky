@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -131,7 +130,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>代理中的实体</returns>
-        Task<EntityEntry<TEntity>> DeleteNowAsync(TEntity entity, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        Task<EntityEntry<TEntity>> DeleteNowAsync(TEntity entity, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 删除多条记录并立即提交
@@ -155,7 +155,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>Task</returns>
-        Task DeleteNowAsync(TEntity[] entities, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        Task DeleteNowAsync(TEntity[] entities, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 删除多条记录并立即提交
@@ -172,7 +173,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>Task</returns>
-        Task DeleteNowAsync(IEnumerable<TEntity> entities, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        Task DeleteNowAsync(IEnumerable<TEntity> entities, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 根据主键删除一条记录

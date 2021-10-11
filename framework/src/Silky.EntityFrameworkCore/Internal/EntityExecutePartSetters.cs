@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
 
@@ -21,7 +20,7 @@ namespace Silky.EntityFrameworkCore
             Entity = entity;
             return this;
         }
-        
+
         /// <summary>
         /// Set the database context locator
         /// </summary>

@@ -6,7 +6,7 @@ namespace Silky.Rpc.Runtime.Server
     {
         public static object DefaultValue(this ParameterFrom @form)
         {
-            var defaultValue =  new Dictionary<string, object>();
+            var defaultValue = new Dictionary<string, object>();
             return defaultValue;
         }
     }

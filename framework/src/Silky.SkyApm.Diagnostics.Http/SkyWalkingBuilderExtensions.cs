@@ -16,9 +16,10 @@ namespace Silky.SkyApm.Diagnostics.Http
             {
                 throw new ArgumentNullException(nameof(extensions));
             }
-            
+
             extensions.Services.AddSingleton<ITracingDiagnosticProcessor, HttpTracingDiagnosticProcessor>();
-            extensions.Services.TryAdd(ServiceDescriptor.Singleton<ISilkySegmentContextFactory, SilkySegmentContextFactory>());
+            extensions.Services.TryAdd(ServiceDescriptor
+                .Singleton<ISilkySegmentContextFactory, SilkySegmentContextFactory>());
             return extensions;
         }
     }

@@ -9,6 +9,7 @@ using Silky.Transaction.Abstraction.Participant;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Schedule;
+
 namespace Silky.Transaction.Tcc.Schedule
 {
     public class TccTransactionRecoveryService : ITransactionRecoveryService
@@ -35,7 +36,7 @@ namespace Silky.Transaction.Tcc.Schedule
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Recovery executor cancel exception param{_serializer.Serialize(participant)}",  ex);
+                Logger.LogError($"Recovery executor cancel exception param{_serializer.Serialize(participant)}", ex);
                 Logger.LogException(ex);
                 return false;
             }
@@ -54,7 +55,7 @@ namespace Silky.Transaction.Tcc.Schedule
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Recovery executor confirm exception param{_serializer.Serialize(participant)}",  ex);
+                Logger.LogError($"Recovery executor confirm exception param{_serializer.Serialize(participant)}", ex);
                 Logger.LogException(ex);
                 return false;
             }

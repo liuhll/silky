@@ -7,6 +7,7 @@ namespace Silky.Core.DynamicProxy
     public static class ProxyHelper
     {
         private const string ProxyNamespace = "Castle.Proxies";
+
         public static object UnProxy(object obj)
         {
             if (obj.GetType().Namespace != ProxyNamespace)

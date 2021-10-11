@@ -18,7 +18,7 @@ namespace Silky.Swagger
         /// </summary>
         public string RouteTemplate { get; set; } = "swagger/{documentName}/swagger.{json|yaml}";
 
-        
+
         /// <summary>
         /// Return Swagger JSON in the V2 format rather than V3
         /// </summary>

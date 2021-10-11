@@ -14,13 +14,14 @@ namespace Silky.Core.MethodExecutor
         private readonly MethodExecutor? _executor;
 
         private static readonly ConstructorInfo _objectMethodExecutorAwaitableConstructor =
-            typeof(ObjectMethodExecutorAwaitable).GetConstructor(new[] {
-                typeof(object),                 // customAwaitable
-                typeof(Func<object, object>),   // getAwaiterMethod
-                typeof(Func<object, bool>),     // isCompletedMethod
-                typeof(Func<object, object>),   // getResultMethod
+            typeof(ObjectMethodExecutorAwaitable).GetConstructor(new[]
+            {
+                typeof(object), // customAwaitable
+                typeof(Func<object, object>), // getAwaiterMethod
+                typeof(Func<object, bool>), // isCompletedMethod
+                typeof(Func<object, object>), // getResultMethod
                 typeof(Action<object, Action>), // onCompletedMethod
-                typeof(Action<object, Action>)  // unsafeOnCompletedMethod
+                typeof(Action<object, Action>) // unsafeOnCompletedMethod
             })!;
 
         private ObjectMethodExecutor(MethodInfo methodInfo, TypeInfo targetTypeInfo, object?[]? parameterDefaultValues)
@@ -77,7 +78,8 @@ namespace Silky.Core.MethodExecutor
             return new ObjectMethodExecutor(methodInfo, targetTypeInfo, null);
         }
 
-        public static ObjectMethodExecutor Create(MethodInfo methodInfo, TypeInfo targetTypeInfo, object?[] parameterDefaultValues)
+        public static ObjectMethodExecutor Create(MethodInfo methodInfo, TypeInfo targetTypeInfo,
+            object?[] parameterDefaultValues)
         {
             if (parameterDefaultValues == null)
             {
@@ -138,7 +140,8 @@ namespace Silky.Core.MethodExecutor
         {
             if (_parameterDefaultValues == null)
             {
-                throw new InvalidOperationException($"Cannot call {nameof(GetDefaultValueForParameter)}, because no parameter default values were supplied.");
+                throw new InvalidOperationException(
+                    $"Cannot call {nameof(GetDefaultValueForParameter)}, because no parameter default values were supplied.");
             }
 
             if (index < 0 || index > MethodParameters.Length - 1)
@@ -191,7 +194,7 @@ namespace Silky.Core.MethodExecutor
 
         private static MethodExecutor WrapVoidMethod(VoidMethodExecutor executor)
         {
-            return delegate (object target, object?[]? parameters)
+            return delegate(object target, object?[]? parameters)
             {
                 executor(target, parameters);
                 return null;
@@ -334,7 +337,8 @@ namespace Silky.Core.MethodExecutor
                 Expression.Constant(onCompletedFunc),
                 Expression.Constant(unsafeOnCompletedFunc, typeof(Action<object, Action>)));
 
-            var lambda = Expression.Lambda<MethodExecutorAsync>(returnValueExpression, targetParameter, parametersParameter);
+            var lambda =
+                Expression.Lambda<MethodExecutorAsync>(returnValueExpression, targetParameter, parametersParameter);
             return lambda.Compile();
         }
     }

@@ -4,7 +4,6 @@ namespace Silky.Core.Exceptions
     {
         public AuthorizationException(string message) : base(message, StatusCode.UnAuthorization)
         {
-
         }
     }
 }

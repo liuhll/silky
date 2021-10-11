@@ -16,7 +16,8 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
 
         public string DocumentName { get; }
 
-        public IDictionary<string, OpenApiSchema> Schemas { get; private set; } = new SortedDictionary<string, OpenApiSchema>();
+        public IDictionary<string, OpenApiSchema> Schemas { get; private set; } =
+            new SortedDictionary<string, OpenApiSchema>();
 
         public void RegisterType(Type type, string schemaId)
         {

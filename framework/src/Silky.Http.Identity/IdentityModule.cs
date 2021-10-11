@@ -7,7 +7,7 @@ using Silky.Jwt;
 
 namespace Silky.Http.Identity
 {
-    [DependsOn(typeof(JwtModule),typeof(SilkyHttpCoreModule))]
+    [DependsOn(typeof(JwtModule), typeof(SilkyHttpCoreModule))]
     public class IdentityModule : HttpSilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)

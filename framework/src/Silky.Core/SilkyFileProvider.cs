@@ -10,13 +10,13 @@ using Microsoft.Extensions.Hosting;
 
 namespace Silky.Core
 {
-   public class SilkyFileProvider : PhysicalFileProvider, ISilkyFileProvider
+    public class SilkyFileProvider : PhysicalFileProvider, ISilkyFileProvider
     {
-  
         public SilkyFileProvider(IHostEnvironment hostEnvironment)
-            : base(File.Exists(hostEnvironment.ContentRootPath) ? Path.GetDirectoryName(hostEnvironment.ContentRootPath) : hostEnvironment.ContentRootPath)
+            : base(File.Exists(hostEnvironment.ContentRootPath)
+                ? Path.GetDirectoryName(hostEnvironment.ContentRootPath)
+                : hostEnvironment.ContentRootPath)
         {
-          
         }
 
         #region Utilities
@@ -40,7 +40,7 @@ namespace Silky.Core
             }
         }
 
-       
+
         protected static bool IsUncPath(string path)
         {
             return Uri.TryCreate(path, UriKind.Absolute, out var uri) && uri.IsUnc;
@@ -49,8 +49,7 @@ namespace Silky.Core
         #endregion
 
         #region Methods
-        
-        
+
         public virtual string Combine(params string[] paths)
         {
             var path = Path.Combine(paths.SelectMany(p => IsUncPath(p) ? new[] { p } : p.Split('\\', '/')).ToArray());
@@ -62,14 +61,14 @@ namespace Silky.Core
             return path;
         }
 
-      
+
         public virtual void CreateDirectory(string path)
         {
             if (!DirectoryExists(path))
                 Directory.CreateDirectory(path);
         }
 
-     
+
         public virtual void CreateFile(string path)
         {
             if (FileExists(path))
@@ -84,7 +83,7 @@ namespace Silky.Core
             }
         }
 
-      
+
         public void DeleteDirectory(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -112,7 +111,7 @@ namespace Silky.Core
             }
         }
 
-       
+
         public virtual void DeleteFile(string filePath)
         {
             if (!FileExists(filePath))
@@ -121,38 +120,38 @@ namespace Silky.Core
             File.Delete(filePath);
         }
 
-      
+
         public virtual bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
         }
 
-       
+
         public virtual void DirectoryMove(string sourceDirName, string destDirName)
         {
             Directory.Move(sourceDirName, destDirName);
         }
 
-       
+
         public virtual IEnumerable<string> EnumerateFiles(string directoryPath, string searchPattern,
             bool topDirectoryOnly = true)
         {
             return Directory.EnumerateFiles(directoryPath, searchPattern,
                 topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
         }
-        
+
         public virtual void FileCopy(string sourceFileName, string destFileName, bool overwrite = false)
         {
             File.Copy(sourceFileName, destFileName, overwrite);
         }
 
-        
+
         public virtual bool FileExists(string filePath)
         {
             return File.Exists(filePath);
         }
 
-        
+
         public virtual long FileLength(string path)
         {
             if (!FileExists(path))
@@ -161,18 +160,18 @@ namespace Silky.Core
             return new FileInfo(path).Length;
         }
 
-        
+
         public virtual void FileMove(string sourceFileName, string destFileName)
         {
             File.Move(sourceFileName, destFileName);
         }
 
-    
+
         public virtual string GetAbsolutePath(params string[] paths)
         {
             var allPaths = new List<string>();
 
-            if(paths.Any() && !paths[0].Contains(Root, StringComparison.InvariantCulture))
+            if (paths.Any() && !paths[0].Contains(Root, StringComparison.InvariantCulture))
                 allPaths.Add(Root);
 
             allPaths.AddRange(paths);
@@ -180,18 +179,18 @@ namespace Silky.Core
             return Combine(allPaths.ToArray());
         }
 
-        
+
         // [SupportedOSPlatform("windows")]
         // public virtual DirectorySecurity GetAccessControl(string path)
         // {
         //     return new DirectoryInfo(path).GetAccessControl();
         // }
-        
+
         public virtual DateTime GetCreationTime(string path)
         {
             return File.GetCreationTime(path);
         }
-        
+
         public virtual string[] GetDirectories(string path, string searchPattern = "", bool topDirectoryOnly = true)
         {
             if (string.IsNullOrEmpty(searchPattern))
@@ -200,7 +199,7 @@ namespace Silky.Core
             return Directory.GetDirectories(path, searchPattern,
                 topDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
         }
-        
+
         public virtual string GetDirectoryName(string path)
         {
             return Path.GetDirectoryName(path);
@@ -211,7 +210,7 @@ namespace Silky.Core
         {
             return new DirectoryInfo(path).Name;
         }
-        
+
         public virtual string GetFileExtension(string filePath)
         {
             return Path.GetExtension(filePath);
@@ -250,17 +249,17 @@ namespace Silky.Core
         {
             return File.GetLastWriteTime(path);
         }
-        
+
         public virtual DateTime GetLastWriteTimeUtc(string path)
         {
             return File.GetLastWriteTimeUtc(path);
         }
-        
+
         public virtual string GetParentDirectory(string directoryPath)
         {
             return Directory.GetParent(directoryPath).FullName;
         }
-        
+
         public virtual string GetVirtualPath(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -273,12 +272,12 @@ namespace Silky.Core
 
             return $"~/{path ?? string.Empty}";
         }
-        
+
         public virtual bool IsDirectory(string path)
         {
             return DirectoryExists(path);
         }
-        
+
         public virtual string MapPath(string path)
         {
             path = path.Replace("~/", string.Empty).TrimStart('/');
@@ -288,20 +287,20 @@ namespace Silky.Core
 
             return Combine(Root ?? string.Empty, path) + pathEnd;
         }
-        
+
         public virtual async Task<byte[]> ReadAllBytesAsync(string filePath)
         {
             return File.Exists(filePath) ? await File.ReadAllBytesAsync(filePath) : Array.Empty<byte>();
         }
-        
+
         public virtual async Task<string> ReadAllTextAsync(string path, Encoding encoding)
         {
             await using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var streamReader = new StreamReader(fileStream, encoding);
-            
+
             return await streamReader.ReadToEndAsync();
         }
-        
+
         public virtual string ReadAllText(string path, Encoding encoding)
         {
             using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -309,12 +308,12 @@ namespace Silky.Core
 
             return streamReader.ReadToEnd();
         }
-        
+
         public virtual async Task WriteAllBytesAsync(string filePath, byte[] bytes)
         {
             await File.WriteAllBytesAsync(filePath, bytes);
         }
-        
+
         public virtual async Task WriteAllTextAsync(string path, string contents, Encoding encoding)
         {
             await File.WriteAllTextAsync(path, contents, encoding);
@@ -325,7 +324,7 @@ namespace Silky.Core
         {
             File.WriteAllText(path, contents, encoding);
         }
-        
+
         public new IFileInfo GetFileInfo(string subpath)
         {
             subpath = subpath.Replace(Root, string.Empty);
@@ -334,7 +333,5 @@ namespace Silky.Core
         }
 
         #endregion
-
-        
     }
 }

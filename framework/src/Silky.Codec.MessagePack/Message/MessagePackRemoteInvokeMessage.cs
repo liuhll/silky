@@ -19,17 +19,13 @@ namespace Silky.Codec.Message
         {
         }
 
-        [Key(1)]
-        public string ServiceEntryId { get; set; }
-        
-        [Key(2)]
-        public string ServiceId { get; set; }
+        [Key(1)] public string ServiceEntryId { get; set; }
 
-        [Key(3)]
-        public object[] Parameters { get; set; }
+        [Key(2)] public string ServiceId { get; set; }
 
-        [Key(4)]
-        public IDictionary<string, object> Attachments { get; set; }
+        [Key(3)] public object[] Parameters { get; set; }
+
+        [Key(4)] public IDictionary<string, object> Attachments { get; set; }
 
         public RemoteInvokeMessage GetMessage()
         {

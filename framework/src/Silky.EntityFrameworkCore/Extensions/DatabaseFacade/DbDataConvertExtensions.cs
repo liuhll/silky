@@ -86,7 +86,8 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <typeparam name="T4">元组元素类型</typeparam>
         /// <param name="dataSet">DataSet</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) ToList<T1, T2, T3, T4>(this DataSet dataSet)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) ToList<T1, T2, T3, T4>(
+            this DataSet dataSet)
         {
             var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>));
             return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>);
@@ -102,10 +103,13 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <typeparam name="T5">元组元素类型</typeparam>
         /// <param name="dataSet">DataSet</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) ToList<T1, T2, T3, T4, T5>(this DataSet dataSet)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) ToList<T1, T2,
+            T3, T4, T5>(this DataSet dataSet)
         {
-            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>), typeof(List<T5>));
-            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>, tuple[4] as List<T5>);
+            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>),
+                typeof(List<T5>));
+            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>,
+                tuple[4] as List<T5>);
         }
 
         /// <summary>
@@ -119,10 +123,13 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <typeparam name="T6">元组元素类型</typeparam>
         /// <param name="dataSet">DataSet</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6) ToList<T1, T2, T3, T4, T5, T6>(this DataSet dataSet)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)
+            ToList<T1, T2, T3, T4, T5, T6>(this DataSet dataSet)
         {
-            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>), typeof(List<T5>), typeof(List<T6>));
-            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>, tuple[4] as List<T5>, tuple[5] as List<T6>);
+            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>),
+                typeof(List<T5>), typeof(List<T6>));
+            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>,
+                tuple[4] as List<T5>, tuple[5] as List<T6>);
         }
 
         /// <summary>
@@ -137,10 +144,13 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <typeparam name="T7">元组元素类型</typeparam>
         /// <param name="dataSet">DataSet</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7) ToList<T1, T2, T3, T4, T5, T6, T7>(this DataSet dataSet)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7) ToList<T1, T2, T3, T4, T5, T6, T7>(this DataSet dataSet)
         {
-            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>), typeof(List<T5>), typeof(List<T6>), typeof(List<T7>));
-            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>, tuple[4] as List<T5>, tuple[5] as List<T6>, tuple[6] as List<T7>);
+            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>),
+                typeof(List<T5>), typeof(List<T6>), typeof(List<T7>));
+            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>,
+                tuple[4] as List<T5>, tuple[5] as List<T6>, tuple[6] as List<T7>);
         }
 
         /// <summary>
@@ -156,10 +166,13 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <typeparam name="T8">元组元素类型</typeparam>
         /// <param name="dataSet">DataSet</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8) ToList<T1, T2, T3, T4, T5, T6, T7, T8>(this DataSet dataSet)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7, List<T8> list8) ToList<T1, T2, T3, T4, T5, T6, T7, T8>(this DataSet dataSet)
         {
-            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>), typeof(List<T5>), typeof(List<T6>), typeof(List<T7>), typeof(List<T8>));
-            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>, tuple[4] as List<T5>, tuple[5] as List<T6>, tuple[6] as List<T7>, tuple[7] as List<T8>);
+            var tuple = dataSet.ToList(typeof(List<T1>), typeof(List<T2>), typeof(List<T3>), typeof(List<T4>),
+                typeof(List<T5>), typeof(List<T6>), typeof(List<T7>), typeof(List<T8>));
+            return (tuple[0] as List<T1>, tuple[1] as List<T2>, tuple[2] as List<T3>, tuple[3] as List<T4>,
+                tuple[4] as List<T5>, tuple[5] as List<T6>, tuple[6] as List<T7>, tuple[7] as List<T8>);
         }
 
         /// <summary>
@@ -337,6 +350,7 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
                     {
                         dic.Add(column.ColumnName, dataRow[column]);
                     }
+
                     _ = addMethod.Invoke(list, new[] { dic });
                 }
             }
@@ -500,11 +514,13 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         internal static object ToValueTuple(this DataSet dataSet, Type tupleType)
         {
             // 获取元组最底层类型
-            var underlyingTypes = tupleType.GetGenericArguments().Select(u => u.IsGenericType ? u.GetGenericArguments().First() : u);
+            var underlyingTypes = tupleType.GetGenericArguments()
+                .Select(u => u.IsGenericType ? u.GetGenericArguments().First() : u);
 
             var toListMethod = typeof(DbDataConvertExtensions)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .First(u => u.Name == "ToList" && u.IsGenericMethod && u.GetGenericArguments().Length == tupleType.GetGenericArguments().Length)
+                .First(u => u.Name == "ToList" && u.IsGenericMethod &&
+                            u.GetGenericArguments().Length == tupleType.GetGenericArguments().Length)
                 .MakeGenericMethod(underlyingTypes.ToArray());
 
             return toListMethod.Invoke(null, new[] { dataSet });

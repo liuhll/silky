@@ -1,5 +1,4 @@
-﻿
-using Silky.EntityFrameworkCore.Locators;
+﻿using Silky.EntityFrameworkCore.Locators;
 
 namespace Silky.EntityFrameworkCore.MultiTenants.Locators
 {

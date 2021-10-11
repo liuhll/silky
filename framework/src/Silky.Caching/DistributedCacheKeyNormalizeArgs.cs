@@ -7,10 +7,10 @@ namespace Silky.Caching
         public string CacheName { get; }
 
         public bool IgnoreMultiTenancy { get; }
-        
+
         public DistributedCacheKeyNormalizeArgs(
-            string key, 
-            string cacheName, 
+            string key,
+            string cacheName,
             bool ignoreMultiTenancy)
         {
             Key = key;

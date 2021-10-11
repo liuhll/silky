@@ -15,6 +15,7 @@ namespace Microsoft.AspNetCore.Builder
             {
                 throw new SilkyException("Dashboard requires authentication, please set the login webapi");
             }
+
             application.UseMiddleware<UiMiddleware>();
             return application;
         }

@@ -1,4 +1,9 @@
-﻿<script async="async" id="mini-profiler" src="/index-mini-profiler/includes.min.js?v=4.2.22+4563a9e1ab" data-version="4.2.22+4563a9e1ab" data-path="/index-mini-profiler/" data-current-id="8d0247ad-a0e5-41d3-bbc5-d7850f6f9907" data-ids="8d0247ad-a0e5-41d3-bbc5-d7850f6f9907" data-position="Left" data-scheme="Light" data-authorized="true" data-max-traces="15" data-toggle-shortcut="Alt+P" data-trivial-milliseconds="2.0" data-ignored-duplicate-execute-types="Open,OpenAsync,Close,CloseAsync"></script>
+﻿<script async="async" id="mini-profiler" src="/index-mini-profiler/includes.min.js?v=4.2.22+4563a9e1ab"
+        data-version="4.2.22+4563a9e1ab" data-path="/index-mini-profiler/"
+        data-current-id="8d0247ad-a0e5-41d3-bbc5-d7850f6f9907" data-ids="8d0247ad-a0e5-41d3-bbc5-d7850f6f9907"
+        data-position="Left" data-scheme="Light" data-authorized="true" data-max-traces="15"
+        data-toggle-shortcut="Alt+P" data-trivial-milliseconds="2.0"
+        data-ignored-duplicate-execute-types="Open,OpenAsync,Close,CloseAsync"></script>
 
 <!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
@@ -7,8 +12,8 @@
     <meta charset="UTF-8">
     <title>%(DocumentTitle)</title>
     <link rel="stylesheet" type="text/css" href="./swagger-ui.css">
-    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32"/>
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16"/>
     <style>
 
         html {
@@ -69,6 +74,7 @@
         function Fn() {
             return Function.apply(this, args);
         }
+
         Fn.prototype = Function.prototype;
 
         return new Fn();
@@ -106,8 +112,7 @@
         var separator = uri.indexOf('?') !== -1 ? '&' : '?';
         if (uri.match(re)) {
             return uri.replace(re, !value ? '' : ('$1' + key + '=' + value + '$2'));
-        }
-        else {
+        } else {
             return !value ? '' : (uri + separator + key + '=' + value);
         }
     }
@@ -147,8 +152,7 @@
         if (accessToken && accessToken != "invalid_token") {
             window.localStorage.setItem(tokenKey, accessToken);
             ui.preauthorizeApiKey("Bearer", accessToken);
-        }
-        else if (accessToken == "invalid_token") {
+        } else if (accessToken == "invalid_token") {
             window.localStorage.removeItem(tokenKey);
         }
 
@@ -168,8 +172,7 @@
                 var queryKey = getQueryVariable(key, url);
                 if (queryKey) {
                     url = updateQueryVariable(url.replace(temp, queryKey), key);
-                }
-                else url = url.replace(temp, '');
+                } else url = url.replace(temp, '');
             }
             request.url = url;
         }

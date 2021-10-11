@@ -10,7 +10,10 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
     {
         private const string NullableAttributeFullTypeName = "System.Runtime.CompilerServices.NullableAttribute";
         private const string NullableFlagsFieldName = "NullableFlags";
-        private const string NullableContextAttributeFullTypeName = "System.Runtime.CompilerServices.NullableContextAttribute";
+
+        private const string NullableContextAttributeFullTypeName =
+            "System.Runtime.CompilerServices.NullableContextAttribute";
+
         private const string FlagFieldName = "Flag";
 
         public static IEnumerable<object> GetInlineAndMetadataAttributes(this MemberInfo memberInfo)

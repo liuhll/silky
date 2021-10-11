@@ -3,6 +3,7 @@ namespace Silky.Core.MiniProfiler
     public static class MiniProfileConstant
     {
         public const string MiniProfilerRouteBasePath = "/index-mini-profiler";
+
         public static class Route
         {
             public const string Name = "Route";

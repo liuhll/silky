@@ -28,8 +28,10 @@ namespace Silky.Rpc.Runtime.Server
             var serviceTypeInfos = ServiceHelper.FindAllServiceTypes(_typeFinder);
             if (!EngineContext.Current.IsContainHttpCoreModule())
             {
-                serviceTypeInfos = serviceTypeInfos.Where(p => p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
+                serviceTypeInfos = serviceTypeInfos.Where(p =>
+                    p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
             }
+
             var entries = new List<ServiceEntry>();
             foreach (var serviceTypeInfo in serviceTypeInfos)
             {

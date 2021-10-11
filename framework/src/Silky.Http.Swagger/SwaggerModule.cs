@@ -12,12 +12,11 @@ namespace Silky.Http.Swagger
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSwaggerDocuments();
-
         }
+
         public override void Configure(IApplicationBuilder application)
         {
             application.UseSwaggerDocuments();
-           
         }
     }
 }

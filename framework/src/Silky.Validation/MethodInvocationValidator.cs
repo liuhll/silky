@@ -63,8 +63,9 @@ namespace Silky.Validation
             {
                 return false;
             }
-            
-            if (ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableValidationAttribute>(context.Method) != null)
+
+            if (ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableValidationAttribute>(
+                context.Method) != null)
             {
                 return true;
             }
@@ -81,7 +82,7 @@ namespace Silky.Validation
         {
             throw new ValidationException(
                 "Input parameter is invalid",
-                context.Errors         
+                context.Errors
             );
         }
 
@@ -94,7 +95,8 @@ namespace Silky.Validation
             }
         }
 
-        protected virtual void AddMethodParameterValidationErrors(ISilkyValidationResult context, ParameterInfo parameterInfo, object parameterValue)
+        protected virtual void AddMethodParameterValidationErrors(ISilkyValidationResult context,
+            ParameterInfo parameterInfo, object parameterValue)
         {
             var allowNulls = parameterInfo.IsOptional ||
                              parameterInfo.IsOut ||

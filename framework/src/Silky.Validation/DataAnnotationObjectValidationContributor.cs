@@ -32,7 +32,8 @@ namespace Silky.Validation
             ValidateObjectRecursively(context.Errors, context.ValidatingObject, currentDepth: 1);
         }
 
-        protected virtual void ValidateObjectRecursively(List<ValidationResult> errors, object validatingObject, int currentDepth)
+        protected virtual void ValidateObjectRecursively(List<ValidationResult> errors, object validatingObject,
+            int currentDepth)
         {
             if (currentDepth > MaxRecursiveParameterValidationDepth)
             {
@@ -108,7 +109,8 @@ namespace Silky.Validation
             }
         }
 
-        protected virtual void AddPropertyErrors(object validatingObject, PropertyDescriptor property, List<ValidationResult> errors)
+        protected virtual void AddPropertyErrors(object validatingObject, PropertyDescriptor property,
+            List<ValidationResult> errors)
         {
             var validationAttributes = property.Attributes.OfType<ValidationAttribute>().ToArray();
             if (validationAttributes.IsNullOrEmpty())

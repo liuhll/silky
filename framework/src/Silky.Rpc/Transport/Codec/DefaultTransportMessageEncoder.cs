@@ -15,7 +15,7 @@ namespace Silky.Rpc.Transport.Codec
             _serializer = serializer;
         }
 
-        public byte[] Encode([NotNull]TransportMessage message)
+        public byte[] Encode([NotNull] TransportMessage message)
         {
             Check.NotNull(message, nameof(message));
             var jsonString = _serializer.Serialize(message);

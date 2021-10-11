@@ -10,6 +10,5 @@ namespace Silky.Jwt
         {
             services.AddJwt();
         }
-        
     }
 }

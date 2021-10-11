@@ -11,7 +11,7 @@ using Silky.Core.Extensions.Collections.Generic;
 
 namespace Silky.Core.Utils
 {
-     public static class TypeHelper
+    public static class TypeHelper
     {
         private static readonly HashSet<Type> FloatingTypes = new HashSet<Type>
         {
@@ -195,7 +195,8 @@ namespace Silky.Core.Utils
             if (type.IsGenericType)
             {
                 var genericType = type.GetGenericTypeDefinition();
-                return $"{genericType.FullName.Left(genericType.FullName.IndexOf('`'))}<{type.GenericTypeArguments.Select(GetFullNameHandlingNullableAndGenerics).JoinAsString(",")}>";
+                return
+                    $"{genericType.FullName.Left(genericType.FullName.IndexOf('`'))}<{type.GenericTypeArguments.Select(GetFullNameHandlingNullableAndGenerics).JoinAsString(",")}>";
             }
 
             return type.FullName ?? type.Name;
@@ -213,7 +214,8 @@ namespace Silky.Core.Utils
             if (type.IsGenericType)
             {
                 var genericType = type.GetGenericTypeDefinition();
-                return $"{genericType.FullName.Left(genericType.FullName.IndexOf('`'))}<{type.GenericTypeArguments.Select(GetSimplifiedName).JoinAsString(",")}>";
+                return
+                    $"{genericType.FullName.Left(genericType.FullName.IndexOf('`'))}<{type.GenericTypeArguments.Select(GetSimplifiedName).JoinAsString(",")}>";
             }
 
             if (type == typeof(string))

@@ -11,7 +11,7 @@ namespace Silky.Http.RateLimit.Configuration
         internal const string IpRateLimit = "RateLimiting:Ip";
 
         internal const string IpRateLimitPolicies = "RateLimiting:Ip:Policies";
-        
+
         public ConfigurationOptions RedisConfiguration { get; set; }
     }
 }

@@ -5,7 +5,7 @@ namespace Silky.Http.CorsAccessor.Configuration
     public class CorsAccessorOptions
     {
         internal const string CorsAccessor = "CorsAccessor";
-        
+
         /// <summary>
         /// 策略名称
         /// </summary>
@@ -40,7 +40,7 @@ namespace Silky.Http.CorsAccessor.Configuration
         /// 设置预检过期时间
         /// </summary>
         public int? SetPreflightMaxAge { get; set; }
-        
+
         public CorsAccessorOptions()
         {
             PolicyName ??= "App.CorsAccessor.Policy";

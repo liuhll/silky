@@ -9,15 +9,15 @@ namespace Silky.Core.Extensions
         {
             return bytes.GetString(Encoding.UTF8);
         }
-        
-        public static string GetString([NotNull]this byte[] bytes,[NotNull]Encoding encoding)
+
+        public static string GetString([NotNull] this byte[] bytes, [NotNull] Encoding encoding)
         {
             Check.NotNull(bytes, nameof(bytes));
             Check.NotNull(encoding, nameof(encoding));
             return encoding.GetString(bytes);
         }
 
-        public static bool Equals([NotNull] this byte[] data1, [NotNull]byte[] data2)
+        public static bool Equals([NotNull] this byte[] data1, [NotNull] byte[] data2)
         {
             Check.NotNull(data1, nameof(data1));
             Check.NotNull(data2, nameof(data2));
@@ -30,8 +30,8 @@ namespace Silky.Core.Extensions
                 if (b1 != b2)
                     return false;
             }
+
             return true;
         }
-
     }
 }

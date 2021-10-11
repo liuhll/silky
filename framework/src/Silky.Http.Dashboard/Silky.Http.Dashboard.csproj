@@ -1,25 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Silky Dashboard Project</Description>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Silky.HealthChecks.Rpc\Silky.HealthChecks.Rpc.csproj" />
-      <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
-      <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
+        <ProjectReference Include="..\Silky.HealthChecks.Rpc\Silky.HealthChecks.Rpc.csproj"/>
+        <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <SupportedPlatform Include="browser" />
+        <SupportedPlatform Include="browser"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="node_modules/silky-dashboard-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.md" />
+        <EmbeddedResource Include="node_modules/silky-dashboard-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.md"/>
     </ItemGroup>
     <Target Name="NpmInstall" BeforeTargets="Build">
         <Exec Command="npm install" EnvironmentVariables="PATH=$(Path.Replace(';', '%3B'))" ContinueOnError="true">
-            <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+            <Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
         </Exec>
-        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project. To continue, please install Node.js from https://nodejs.org/ or Visual Studio Installer, and then restart your command prompt or IDE." />
-    </Target>    
+        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project. To continue, please install Node.js from https://nodejs.org/ or Visual Studio Installer, and then restart your command prompt or IDE."/>
+    </Target>
 </Project>

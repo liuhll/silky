@@ -6,7 +6,7 @@ using Silky.Core.ClayObject.Extensions;
 
 namespace Silky.Core.Extensions
 {
- public static class StringTemplateExtensions
+    public static class StringTemplateExtensions
     {
         /// <summary>
         /// 模板正则表达式
@@ -50,15 +50,17 @@ namespace Silky.Core.Extensions
 
             // 获取所有匹配的模板
             var templateValues = Regex.Matches(template, commonTemplatePattern)
-                                                       .Select(u => new {
-                                                           Template = u.Groups["p"].Value,
-                                                           Value = MatchTemplateValue(u.Groups["p"].Value, templateData)
-                                                       });
+                .Select(u => new
+                {
+                    Template = u.Groups["p"].Value,
+                    Value = MatchTemplateValue(u.Groups["p"].Value, templateData)
+                });
 
             // 循环替换模板
             foreach (var item in templateValues)
             {
-                template = template.Replace($"{{{item.Template}}}", encode ? Uri.EscapeDataString(item.Value?.ToString() ?? string.Empty) : item.Value?.ToString());
+                template = template.Replace($"{{{item.Template}}}",
+                    encode ? Uri.EscapeDataString(item.Value?.ToString() ?? string.Empty) : item.Value?.ToString());
             }
 
             return template;
@@ -79,15 +81,17 @@ namespace Silky.Core.Extensions
 
             // 获取所有匹配的模板
             var templateValues = Regex.Matches(template, configTemplatePattern)
-                                                       .Select(u => new {
-                                                           Template = u.Groups["p"].Value,
-                                                           Value = EngineContext.Current.Configuration[u.Groups["p"].Value]
-                                                       });
+                .Select(u => new
+                {
+                    Template = u.Groups["p"].Value,
+                    Value = EngineContext.Current.Configuration[u.Groups["p"].Value]
+                });
 
             // 循环替换模板
             foreach (var item in templateValues)
             {
-                template = template.Replace($"#({item.Template})", encode ? Uri.EscapeDataString(item.Value?.ToString() ?? string.Empty) : item.Value?.ToString());
+                template = template.Replace($"#({item.Template})",
+                    encode ? Uri.EscapeDataString(item.Value?.ToString() ?? string.Empty) : item.Value?.ToString());
             }
 
             return template;

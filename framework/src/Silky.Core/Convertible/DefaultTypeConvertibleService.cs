@@ -11,10 +11,11 @@ namespace Silky.Core.Convertible
     public class DefaultTypeConvertibleService : ITypeConvertibleService
     {
         private readonly IEnumerable<TypeConvertDelegate> _converters;
+
         public DefaultTypeConvertibleService(IEnumerable<ITypeConvertibleProvider> converterProviders,
             ILogger<DefaultTypeConvertibleService> logger)
         {
-            _converters = converterProviders.SelectMany(p=> p.GetConverters());
+            _converters = converterProviders.SelectMany(p => p.GetConverters());
         }
 
         public object Convert(object instance, Type conversionType)
@@ -32,10 +33,10 @@ namespace Silky.Core.Convertible
                 if (result != null)
                     break;
             }
+
             if (result == null)
                 throw new SilkyException($"Unable to convert instance: {instance} to {conversionType}");
             return result;
         }
-        
     }
 }

@@ -95,7 +95,8 @@ namespace Silky.Core.ClayObject
         /// <returns></returns>
         public static dynamic Parse(string json, Encoding encoding)
         {
-            using var reader = JsonReaderWriterFactory.CreateJsonReader(encoding.GetBytes(json), XmlDictionaryReaderQuotas.Max);
+            using var reader =
+                JsonReaderWriterFactory.CreateJsonReader(encoding.GetBytes(json), XmlDictionaryReaderQuotas.Max);
             return ToValue(XElement.Load(reader));
         }
 
@@ -118,7 +119,8 @@ namespace Silky.Core.ClayObject
         /// <returns></returns>
         public static dynamic Parse(Stream stream, Encoding encoding)
         {
-            using var reader = JsonReaderWriterFactory.CreateJsonReader(stream, encoding, XmlDictionaryReaderQuotas.Max, _ => { });
+            using var reader =
+                JsonReaderWriterFactory.CreateJsonReader(stream, encoding, XmlDictionaryReaderQuotas.Max, _ => { });
             return ToValue(XElement.Load(reader));
         }
 
@@ -129,7 +131,8 @@ namespace Silky.Core.ClayObject
         /// <returns></returns>
         public static string Serialize(object obj)
         {
-            return CreateJsonString(new XStreamingElement("root", CreateTypeAttr(GetJsonType(obj)), CreateJsonNode(obj)));
+            return CreateJsonString(
+                new XStreamingElement("root", CreateTypeAttr(GetJsonType(obj)), CreateJsonNode(obj)));
         }
 
         /// <summary>
@@ -240,13 +243,15 @@ namespace Silky.Core.ClayObject
             {
                 var ie = (IsArray)
                     ? XmlElement.Elements().Select(x => ToValue(x))
-                    : XmlElement.Elements().Select(x => (dynamic)new KeyValuePair<string, object>(x.Name.LocalName, ToValue(x)));
+                    : XmlElement.Elements().Select(x =>
+                        (dynamic)new KeyValuePair<string, object>(x.Name.LocalName, ToValue(x)));
                 result = (binder.Type == typeof(object[])) ? ie.ToArray() : ie;
             }
             else
             {
                 result = Deserialize(binder.Type);
             }
+
             return true;
         }
 
@@ -326,6 +331,7 @@ namespace Silky.Core.ClayObject
             {
                 elem.RemoveNodes();
             }
+
             return CreateJsonString(new XStreamingElement("root", CreateTypeAttr(jsonType), XmlElement.Elements()));
         }
 
@@ -354,7 +360,12 @@ namespace Silky.Core.ClayObject
         /// </summary>
         private enum JsonType
         {
-            @string, number, boolean, @object, array, @null
+            @string,
+            number,
+            boolean,
+            @object,
+            array,
+            @null
         }
 
         /// <summary>
@@ -396,7 +407,9 @@ namespace Silky.Core.ClayObject
             {
                 TypeCode.Boolean => JsonType.boolean,
                 TypeCode.String or TypeCode.Char or TypeCode.DateTime => JsonType.@string,
-                TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64 or TypeCode.Single or TypeCode.Double or TypeCode.Decimal or TypeCode.SByte or TypeCode.Byte => JsonType.number,
+                TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 or TypeCode.UInt16 or TypeCode.UInt32 or
+                    TypeCode.UInt64 or TypeCode.Single or TypeCode.Double or TypeCode.Decimal or TypeCode.SByte or
+                    TypeCode.Byte => JsonType.number,
                 TypeCode.Object => (obj is IEnumerable) ? JsonType.array : JsonType.@object,
                 _ => JsonType.@null,
             };
@@ -452,13 +465,15 @@ namespace Silky.Core.ClayObject
             if (obj is ExpandoObject expando)
             {
                 var dict = (IDictionary<string, object>)expando;
-                return dict.Select(a => new XStreamingElement(a.Key, CreateTypeAttr(GetJsonType(a.Value)), CreateJsonNode(a.Value)));
+                return dict.Select(a =>
+                    new XStreamingElement(a.Key, CreateTypeAttr(GetJsonType(a.Value)), CreateJsonNode(a.Value)));
             }
 
             return obj.GetType()
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Select(pi => new { pi.Name, Value = pi.GetValue(obj, null) })
-                .Select(a => new XStreamingElement(a.Name, CreateTypeAttr(GetJsonType(a.Value)), CreateJsonNode(a.Value)));
+                .Select(a =>
+                    new XStreamingElement(a.Name, CreateTypeAttr(GetJsonType(a.Value)), CreateJsonNode(a.Value)));
         }
 
         /// <summary>
@@ -519,6 +534,7 @@ namespace Silky.Core.ClayObject
                     {
                         list.Add(item is Clay c ? c.ToExpandoObject() : item);
                     }
+
                     value = list;
                 }
             }
@@ -588,7 +604,7 @@ namespace Silky.Core.ClayObject
             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
             return typeConvertibleService.Convert(value, elementType);
         }
-        
+
         /// <summary>
         /// 反序列化对象
         /// </summary>
@@ -607,6 +623,7 @@ namespace Silky.Core.ClayObject
                 var value = Clay.DeserializeValue(item, propertyInfo.PropertyType);
                 propertyInfo.SetValue(result, value, null);
             }
+
             return result;
         }
 
@@ -626,6 +643,7 @@ namespace Silky.Core.ClayObject
                 {
                     array[index++] = Clay.DeserializeValue(item, elemType);
                 }
+
                 return array;
             }
             else
@@ -636,6 +654,7 @@ namespace Silky.Core.ClayObject
                 {
                     list.Add(Clay.DeserializeValue(item, elemType));
                 }
+
                 return list;
             }
         }
@@ -643,7 +662,8 @@ namespace Silky.Core.ClayObject
         /// <summary>
         /// 将被转换成字符串的类型
         /// </summary>
-        private static readonly Type[] ToBeConvertStringTypes = new[] {
+        private static readonly Type[] ToBeConvertStringTypes = new[]
+        {
             typeof(DateTimeOffset)
         };
     }

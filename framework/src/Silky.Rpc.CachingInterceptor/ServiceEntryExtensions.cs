@@ -27,8 +27,8 @@ namespace Silky.Rpc.CachingInterceptor
 
             return returnType.FullName.RemovePostFix("CacheItem");
         }
-        
-         public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,
+
+        public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,
             [NotNull] ICachingInterceptProvider cachingInterceptProvider)
         {
             Check.NotNull(parameters, nameof(parameters));
@@ -96,20 +96,20 @@ namespace Silky.Rpc.CachingInterceptor
             return cachingInterceptKey;
         }
 
-         public static ICachingInterceptProvider GetCachingInterceptProvider(this ServiceEntry serviceEntry)
-         {
-             return serviceEntry.CustomAttributes.OfType<IGetCachingInterceptProvider>().FirstOrDefault();
-         }
+        public static ICachingInterceptProvider GetCachingInterceptProvider(this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IGetCachingInterceptProvider>().FirstOrDefault();
+        }
 
-         public static ICachingInterceptProvider UpdateCachingInterceptProvider(this ServiceEntry serviceEntry)
-         {
-             return serviceEntry.CustomAttributes.OfType<IUpdateCachingInterceptProvider>().FirstOrDefault();
-         }
-         
-         public static  IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders(this ServiceEntry serviceEntry)
-         {
-             return serviceEntry.CustomAttributes.OfType<IRemoveCachingInterceptProvider>().ToArray();
-         }
-         
+        public static ICachingInterceptProvider UpdateCachingInterceptProvider(this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IUpdateCachingInterceptProvider>().FirstOrDefault();
+        }
+
+        public static IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders(
+            this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IRemoveCachingInterceptProvider>().ToArray();
+        }
     }
 }

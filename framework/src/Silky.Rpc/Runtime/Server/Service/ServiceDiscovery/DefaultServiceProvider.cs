@@ -11,7 +11,7 @@ namespace Silky.Rpc.Runtime.Server
     public class DefaultServiceProvider : IServiceProvider
     {
         private readonly ITypeFinder _typeFinder;
- 
+
         private readonly IServiceGenerator _serviceGenerator;
         public ILogger<DefaultServiceProvider> Logger { get; set; }
 
@@ -22,15 +22,17 @@ namespace Silky.Rpc.Runtime.Server
             _serviceGenerator = serviceGenerator;
             Logger = NullLogger<DefaultServiceProvider>.Instance;
         }
-        
+
 
         public IReadOnlyCollection<Service> GetServices()
         {
             var serviceTypes = ServiceHelper.FindAllServiceTypes(_typeFinder);
             if (!EngineContext.Current.IsContainHttpCoreModule())
             {
-                serviceTypes = serviceTypes.Where(p => p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
+                serviceTypes = serviceTypes.Where(p =>
+                    p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
             }
+
             var services = new List<Service>();
             foreach (var serviceTypeInfo in serviceTypes)
             {

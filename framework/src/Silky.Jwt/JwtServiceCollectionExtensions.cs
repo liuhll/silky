@@ -13,8 +13,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddOptions<JwtOptions>()
                 .Bind(EngineContext.Current.Configuration.GetSection(JwtOptions.JwtSettings));
-            
-            var jwtAlgorithm = EngineContext.Current.Configuration.GetValue<JwtAlgorithmName?>("jwtSettings:algorithm") ?? JwtAlgorithmName.HS256;
+
+            var jwtAlgorithm =
+                EngineContext.Current.Configuration.GetValue<JwtAlgorithmName?>("jwtSettings:algorithm") ??
+                JwtAlgorithmName.HS256;
             services.AddTransient<IJsonSerializer, JsonNetSerializer>();
             services.AddTransient<IBase64UrlEncoder, JwtBase64UrlEncoder>();
             services.AddTransient<IJwtEncoder, JwtEncoder>();

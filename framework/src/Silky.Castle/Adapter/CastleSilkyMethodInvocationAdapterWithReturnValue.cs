@@ -5,7 +5,8 @@ using Silky.Core.DynamicProxy;
 
 namespace Silky.Castle.Adapter
 {
-    public class CastleSilkyMethodInvocationAdapterWithReturnValue<TResult> : CastleSilkyMethodInvocationAdapterBase, ISilkyMethodInvocation
+    public class CastleSilkyMethodInvocationAdapterWithReturnValue<TResult> : CastleSilkyMethodInvocationAdapterBase,
+        ISilkyMethodInvocation
     {
         protected IInvocationProceedInfo ProceedInfo { get; }
         protected Func<IInvocation, IInvocationProceedInfo, Task<TResult>> Proceed { get; }

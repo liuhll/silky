@@ -5,6 +5,5 @@
         Start = 0,
 
         Participant,
-        
     }
 }

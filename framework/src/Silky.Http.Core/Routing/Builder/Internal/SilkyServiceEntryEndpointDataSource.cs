@@ -60,6 +60,7 @@ namespace Silky.Http.Core.Routing.Builder.Internal
             {
                 _serviceEntryEndpointFactory.AddEndpoints(endpoints, routeNames, serviceEntry, conventions);
             }
+
             return endpoints;
         }
 

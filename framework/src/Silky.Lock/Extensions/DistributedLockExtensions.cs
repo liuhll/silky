@@ -18,6 +18,7 @@ namespace Silky.Lock.Extensions
                     await callback();
                     break;
                 }
+
                 Thread.Sleep(sleepTime);
             }
         }

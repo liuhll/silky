@@ -7,7 +7,7 @@ namespace Silky.DotNetty.Handlers
     public class ServerHandler : ChannelHandlerAdapter
     {
         private readonly Action<IChannelHandlerContext, TransportMessage> _readMessageAction;
-  
+
         public ServerHandler(Action<IChannelHandlerContext, TransportMessage> readMessageAction)
         {
             _readMessageAction = readMessageAction;
@@ -18,6 +18,5 @@ namespace Silky.DotNetty.Handlers
             var transportMessage = (TransportMessage)message;
             _readMessageAction(context, transportMessage);
         }
-        
     }
 }

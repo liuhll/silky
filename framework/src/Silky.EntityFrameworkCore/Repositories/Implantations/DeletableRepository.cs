@@ -148,7 +148,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="entity">实体</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>代理中的实体</returns>
-        public virtual async Task<EntityEntry<TEntity>> DeleteNowAsync(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async Task<EntityEntry<TEntity>> DeleteNowAsync(TEntity entity,
+            CancellationToken cancellationToken = default)
         {
             var entityEntry = await DeleteAsync(entity);
             await SaveNowAsync(cancellationToken);
@@ -162,7 +163,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>代理中的实体</returns>
-        public virtual async Task<EntityEntry<TEntity>> DeleteNowAsync(TEntity entity, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public virtual async Task<EntityEntry<TEntity>> DeleteNowAsync(TEntity entity, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
         {
             var entityEntry = await DeleteAsync(entity);
             await SaveNowAsync(acceptAllChangesOnSuccess, cancellationToken);
@@ -199,7 +201,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>Task</returns>
-        public virtual async Task DeleteNowAsync(TEntity[] entities, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteNowAsync(TEntity[] entities, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
         {
             await DeleteAsync(entities);
             await SaveNowAsync(acceptAllChangesOnSuccess, cancellationToken);
@@ -211,7 +214,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="entities">多个实体</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>Task</returns>
-        public virtual async Task DeleteNowAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteNowAsync(IEnumerable<TEntity> entities,
+            CancellationToken cancellationToken = default)
         {
             await DeleteAsync(entities);
             await SaveNowAsync(cancellationToken);
@@ -224,7 +228,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>Task</returns>
-        public virtual async Task DeleteNowAsync(IEnumerable<TEntity> entities, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteNowAsync(IEnumerable<TEntity> entities, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
         {
             await DeleteAsync(entities);
             await SaveNowAsync(acceptAllChangesOnSuccess, cancellationToken);
@@ -300,7 +305,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="acceptAllChangesOnSuccess">接受所有更改</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns></returns>
-        public virtual async Task DeleteNowAsync(object key, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteNowAsync(object key, bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
         {
             await DeleteAsync(key, cancellationToken);
             await SaveNowAsync(acceptAllChangesOnSuccess, cancellationToken);

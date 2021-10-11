@@ -59,6 +59,7 @@ namespace Silky.Transaction.Cache
 
             return null;
         }
+
         public void RemoveByKey(string participantId)
         {
             if (!participantId.IsNullOrEmpty())

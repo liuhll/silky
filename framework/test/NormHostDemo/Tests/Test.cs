@@ -9,17 +9,17 @@ namespace NormHostDemo.Tests
 {
     public class Test : IEntity, IEntitySeedData<Test>
     {
-        [Key]
-        public long Id { get; set; }
+        [Key] public long Id { get; set; }
 
         public string Name { get; set; }
 
         public string Address { get; set; }
+
         public IEnumerable<Test> HasData(DbContext dbContext, Type dbContextLocator)
         {
             return new List<Test>()
             {
-                new ()
+                new()
                 {
                     Id = 1,
                     Name = "test",

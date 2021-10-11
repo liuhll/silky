@@ -10,8 +10,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var config = new MapperConfiguration(cfg =>
             {
-                var profileTypes =EngineContext.Current.TypeFinder.FindClassesOfType<Profile>().Where(p=> !p.IsAbstract);
-                
+                var profileTypes = EngineContext.Current.TypeFinder.FindClassesOfType<Profile>()
+                    .Where(p => !p.IsAbstract);
+
                 foreach (var profileType in profileTypes)
                 {
                     cfg.AddProfile(profileType);

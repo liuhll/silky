@@ -20,7 +20,7 @@ namespace Silky.Http.MiniProfiler
             SwaggerDocumentOptions swaggerDocumentOptions = default;
             swaggerDocumentOptions = EngineContext.Current.GetOptionsMonitor<SwaggerDocumentOptions>(
                 (options, name) => { swaggerDocumentOptions = options; });
-            
+
             var customTiming = StackExchange.Profiling.MiniProfiler.Current?.CustomTiming(category,
                 string.IsNullOrWhiteSpace(message) ? $"{category.ToTitleCase()} {state}" : message, state);
             if (customTiming == null) return;

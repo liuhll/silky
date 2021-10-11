@@ -6,11 +6,11 @@ using Silky.Rpc.Security;
 
 namespace ITestApplication.Account
 {
-    [ServiceRoute,AllowAnonymous]
+    [ServiceRoute, AllowAnonymous]
     public interface IAccountAppService
     {
         [Author("liuhll")]
-       // [Governance(TimeoutMillSeconds = 5, RetryTimes = 2)]
+        // [Governance(TimeoutMillSeconds = 5, RetryTimes = 2)]
         Task<string> Login(LoginInput input);
     }
 }

@@ -14,6 +14,5 @@ namespace Silky.Rpc.Runtime.Server
             };
             return descriptor;
         }
-        
     }
 }

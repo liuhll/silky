@@ -20,7 +20,7 @@ namespace Silky.Core.Configuration
         /// </summary>
         public bool? LogEntityFrameworkCoreSqlExecuteCommand { get; set; }
 
-        
+
         /// <summary>
         /// 是否自动校验输入参数
         /// </summary>

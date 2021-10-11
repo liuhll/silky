@@ -413,7 +413,7 @@ namespace Silky.Http.Dashboard.AppService
             {
                 throw new BusinessException($"{address} incorrect rpcAddress format");
             }
-            
+
             var result = await _appointAddressInvoker.Invoke<IReadOnlyCollection<ServerHandleInfo>>(address,
                 getGetServiceEntrySupervisorServiceHandleServiceEntryId, Array.Empty<object>());
 

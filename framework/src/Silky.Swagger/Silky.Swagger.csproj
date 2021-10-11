@@ -1,37 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>Generate swagger API document for Silky framework</Description>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
+        <PackageReference Include="Microsoft.OpenApi" Version="1.2.3"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
-      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
     </ItemGroup>
-    
+
     <PropertyGroup Condition="Exists('$(VsInstallRoot)\Web\External\npm.cmd')">
         <Path>$(Path)$(VsInstallRoot)\Web\External\;</Path>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <EmbeddedResource Include="SwaggerUI/index.html" />
-        <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md" />
-        <EmbeddedResource Include="SwaggerUI\index-mini-profiler.html" />
+        <EmbeddedResource Include="SwaggerUI/index.html"/>
+        <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md"/>
+        <EmbeddedResource Include="SwaggerUI\index-mini-profiler.html"/>
     </ItemGroup>
 
     <Target Name="NpmInstall" BeforeTargets="Build">
         <Exec Command="npm install" EnvironmentVariables="PATH=$(Path.Replace(';', '%3B'))" ContinueOnError="true">
-            <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+            <Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
         </Exec>
-        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project. To continue, please install Node.js from https://nodejs.org/ or Visual Studio Installer, and then restart your command prompt or IDE." />
+        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project. To continue, please install Node.js from https://nodejs.org/ or Visual Studio Installer, and then restart your command prompt or IDE."/>
     </Target>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     </ItemGroup>
 </Project>

@@ -33,7 +33,7 @@ namespace Silky.Rpc.Runtime.Server
                 return null;
             }
         }
-        
+
         public override object TenantId
         {
             get

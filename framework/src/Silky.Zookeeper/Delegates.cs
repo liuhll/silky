@@ -53,7 +53,8 @@ namespace Silky.Zookeeper
         /// <param name="path">节点路径。</param>
         /// <param name="type">事件类型。</param>
         /// <param name="currentData">最新的节点数据。</param>
-        public NodeDataChangeArgs(string path, Watcher.Event.EventType type, IEnumerable<byte> currentData) : base(path, type)
+        public NodeDataChangeArgs(string path, Watcher.Event.EventType type, IEnumerable<byte> currentData) : base(path,
+            type)
         {
             CurrentData = currentData;
         }
@@ -75,7 +76,8 @@ namespace Silky.Zookeeper
         /// <param name="path">节点路径。</param>
         /// <param name="type">事件类型。</param>
         /// <param name="currentChildrens">最新的子节点集合。</param>
-        public NodeChildrenChangeArgs(string path, Watcher.Event.EventType type, IEnumerable<string> currentChildrens) : base(path, type)
+        public NodeChildrenChangeArgs(string path, Watcher.Event.EventType type, IEnumerable<string> currentChildrens) :
+            base(path, type)
         {
             CurrentChildrens = currentChildrens;
         }

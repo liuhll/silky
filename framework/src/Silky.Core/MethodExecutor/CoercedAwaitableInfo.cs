@@ -17,7 +17,8 @@ namespace Silky.Core.MethodExecutor
             CoercerResultType = null;
         }
 
-        public CoercedAwaitableInfo(Expression coercerExpression, Type coercerResultType, AwaitableInfo coercedAwaitableInfo)
+        public CoercedAwaitableInfo(Expression coercerExpression, Type coercerResultType,
+            AwaitableInfo coercedAwaitableInfo)
         {
             CoercerExpression = coercerExpression;
             CoercerResultType = coercerResultType;
@@ -31,7 +32,7 @@ namespace Silky.Core.MethodExecutor
                 info = new CoercedAwaitableInfo(directlyAwaitableInfo);
                 return true;
             }
-            
+
             info = default(CoercedAwaitableInfo);
             return false;
         }

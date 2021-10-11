@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>The Silky framework uses castle as the adapter module of interceptor</Description>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
-        <PackageReference Include="Castle.Core" Version="4.4.1" />
-        <PackageReference Include="Castle.Core.AsyncInterceptor" Version="2.0.21-alpha" />
+        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0"/>
+        <PackageReference Include="Castle.Core" Version="4.4.1"/>
+        <PackageReference Include="Castle.Core.AsyncInterceptor" Version="2.0.21-alpha"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
     </ItemGroup>
 
 </Project>

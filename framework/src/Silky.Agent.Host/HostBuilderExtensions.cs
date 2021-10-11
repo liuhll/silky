@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.Hosting
             hostBuilder.RegisterSilkyServices<T>();
             return hostBuilder.ConfigureWebHostDefaults(configure);
         }
-        
+
         public static IHostBuilder ConfigureSilkyGatewayDefaults(this IHostBuilder hostBuilder,
             Action<IWebHostBuilder> configure)
         {
@@ -32,27 +32,28 @@ namespace Microsoft.Extensions.Hosting
             return hostBuilder.ConfigureWebHostDefaults(configure);
         }
 
-        public static IHostBuilder  ConfigureSilkyGateway<T>(this IHostBuilder hostBuilder,
+        public static IHostBuilder ConfigureSilkyGateway<T>(this IHostBuilder hostBuilder,
             Action<IWebHostBuilder> configure) where T : GatewayHostModule
         {
             if (configure == null)
                 throw new ArgumentNullException(nameof(configure));
             hostBuilder.RegisterSilkyServices<T>();
             return hostBuilder.ConfigureWebHostDefaults(configure);
-        }        
-        
+        }
+
         public static IHostBuilder ConfigureSilkyGeneralHostDefaults(this IHostBuilder hostBuilder)
         {
             hostBuilder.RegisterSilkyServices<DefaultGeneralHostModule>();
             return hostBuilder;
         }
-        
-        public static IHostBuilder ConfigureSilkyGeneralHost<T>(this IHostBuilder hostBuilder) where T : GeneralHostModule
+
+        public static IHostBuilder ConfigureSilkyGeneralHost<T>(this IHostBuilder hostBuilder)
+            where T : GeneralHostModule
         {
             hostBuilder.RegisterSilkyServices<T>();
             return hostBuilder;
         }
-        
+
         public static IHostBuilder ConfigureSilkyWebSocketDefaults(this IHostBuilder hostBuilder)
         {
             hostBuilder.RegisterSilkyServices<DefaultWebSocketHostModule>();

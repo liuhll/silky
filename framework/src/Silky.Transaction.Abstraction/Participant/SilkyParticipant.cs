@@ -23,7 +23,7 @@ namespace Silky.Transaction.Abstraction.Participant
 
         public string ServiceKey { get; set; }
         public object[] Parameters { get; set; }
-        
+
         public string HostName { get; set; }
         public string ParticipantRefId { get; set; }
         public TransactionType TransType { get; set; }
@@ -36,7 +36,7 @@ namespace Silky.Transaction.Abstraction.Participant
         [JsonIgnore] public ISilkyMethodInvocation Invocation { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
-        
+
         public int Version { get; set; }
     }
 }

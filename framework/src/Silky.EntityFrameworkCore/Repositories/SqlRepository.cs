@@ -43,15 +43,12 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// </summary>
     public partial class PrivateSqlRepository : IPrivateSqlRepository
     {
-
-
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="dbContextLocator"></param>
         public PrivateSqlRepository(Type dbContextLocator)
         {
-
             // 解析数据库上下文
             var dbContextResolve = EngineContext.Current.Resolve<Func<Type, IScopedDependency, DbContext>>();
             var dbContext = dbContextResolve(dbContextLocator, default);

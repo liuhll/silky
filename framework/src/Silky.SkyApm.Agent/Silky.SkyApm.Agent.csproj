@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>Rpc SkyApm Agent</Description>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Http\Silky.SkyApm.Diagnostics.Http.csproj" />
-      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj" />
-      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Transaction\Silky.SkyApm.Diagnostics.Transaction.csproj" />
+        <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Http\Silky.SkyApm.Diagnostics.Http.csproj"/>
+        <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Rpc\Silky.SkyApm.Diagnostics.Rpc.csproj"/>
+        <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Transaction\Silky.SkyApm.Diagnostics.Transaction.csproj"/>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0" />
+        <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0"/>
     </ItemGroup>
 </Project>

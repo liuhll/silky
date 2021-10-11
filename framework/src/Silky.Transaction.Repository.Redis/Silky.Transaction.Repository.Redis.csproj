@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
-        <ProjectReference Include="..\Silky.Transaction.Abstraction\Silky.Transaction.Abstraction.csproj" />
+        <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj"/>
+        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj"/>
+        <ProjectReference Include="..\Silky.Transaction.Abstraction\Silky.Transaction.Abstraction.csproj"/>
     </ItemGroup>
 
 </Project>

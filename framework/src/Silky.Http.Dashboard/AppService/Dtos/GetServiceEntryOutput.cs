@@ -32,11 +32,11 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public bool IsAllowAnonymous { get; set; }
         public bool IsDistributeTransaction { get; set; }
-        
+
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public ICollection<ServiceKeyOutput> ServiceKeys { get; set; }
-        
+
         public bool IsSystem { get; set; }
     }
 }

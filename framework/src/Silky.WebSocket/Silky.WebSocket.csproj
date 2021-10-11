@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>Make Silky framework support websocket protocol</Description>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
+        <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
     </ItemGroup>
 
 </Project>

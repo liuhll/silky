@@ -67,7 +67,7 @@ namespace Silky.Http.Core.Handlers
                     Exception = exception,
                     StatusCode = statusCode,
                     ServiceEntry = serviceEntry,
-                    ElapsedTimeMs =  now - tracingTimestamp.Value,
+                    ElapsedTimeMs = now - tracingTimestamp.Value,
                 };
                 s_diagnosticListener.Write(HttpDiagnosticListenerNames.ErrorHttpHandle, httpHandleResultData);
             }

@@ -25,6 +25,7 @@ namespace Silky.Validation.Fluent
                 {
                     continue;
                 }
+
                 var serviceType = typeof(IValidator<>).MakeGenericType(validatingType);
                 services.AddTransient(
                     serviceType,
@@ -32,8 +33,8 @@ namespace Silky.Validation.Fluent
                 );
             }
         }
-        
-        
+
+
         private static Type GetFirstGenericArgumentOrNull(Type type, int depth)
         {
             const int maxFindDepth = 8;

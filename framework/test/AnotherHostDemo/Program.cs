@@ -20,6 +20,7 @@ namespace AnotherHostDemo
             {
                 hostBuilder.AddApollo();
             }
+
             return hostBuilder;
         }
     }

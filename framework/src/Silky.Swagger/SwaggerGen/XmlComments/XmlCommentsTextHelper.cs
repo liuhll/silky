@@ -7,7 +7,9 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
 {
     public static class XmlCommentsTextHelper
     {
-        private static Regex RefTagPattern = new Regex(@"<(see|paramref) (name|cref)=""([TPF]{1}:)?(?<display>.+?)"" ?/>");
+        private static Regex RefTagPattern =
+            new Regex(@"<(see|paramref) (name|cref)=""([TPF]{1}:)?(?<display>.+?)"" ?/>");
+
         private static Regex CodeTagPattern = new Regex(@"<c>(?<display>.+?)</c>");
         private static Regex ParaTagPattern = new Regex(@"<para>(?<display>.+?)</para>", RegexOptions.Singleline);
 
@@ -104,6 +106,5 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
         {
             return WebUtility.HtmlDecode(text);
         }
-
     }
 }

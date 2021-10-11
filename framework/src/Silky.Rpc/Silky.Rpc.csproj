@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Providing RPC communication service for Silky framework</Description>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
-        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj"/>
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Polly" Version="7.2.1" />
+        <PackageReference Include="Polly" Version="7.2.1"/>
     </ItemGroup>
 
 </Project>

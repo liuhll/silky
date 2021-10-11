@@ -30,7 +30,6 @@ namespace Silky.EntityFrameworkCore.Repositories
     public partial class MSRepository<TMasterDbContextLocator> : IMSRepository<TMasterDbContextLocator>
         where TMasterDbContextLocator : class, IDbContextLocator
     {
-        
         /// <summary>
         /// 非泛型仓储
         /// </summary>
@@ -66,8 +65,11 @@ namespace Silky.EntityFrameworkCore.Repositories
             where TEntity : class, IPrivateEntity, new()
         {
             // 判断数据库主库是否注册
-            var isRegister = Penetrates.DbContextWithLocatorCached.TryGetValue(typeof(TMasterDbContextLocator), out var dbContextType);
-            if (!isRegister) throw new InvalidCastException($" The locator `{typeof(TMasterDbContextLocator).Name}` is not bind.");
+            var isRegister =
+                Penetrates.DbContextWithLocatorCached.TryGetValue(typeof(TMasterDbContextLocator),
+                    out var dbContextType);
+            if (!isRegister)
+                throw new InvalidCastException($" The locator `{typeof(TMasterDbContextLocator).Name}` is not bind.");
 
             // 获取主库贴的特性
             var appDbContextAttribute = DbProvider.GetAppDbContextAttribute(dbContextType);
@@ -76,7 +78,8 @@ namespace Silky.EntityFrameworkCore.Repositories
             var slaveDbContextLocators = appDbContextAttribute.SlaveDbContextLocators;
 
             // 如果没有定义从库定位器，则抛出异常
-            if (slaveDbContextLocators == null || slaveDbContextLocators.Length == 0) throw new InvalidOperationException("Not found slave locators.");
+            if (slaveDbContextLocators == null || slaveDbContextLocators.Length == 0)
+                throw new InvalidOperationException("Not found slave locators.");
 
             // 如果只配置了一个从库，直接返回
             if (slaveDbContextLocators.Length == 1) return Slave<TEntity>(() => slaveDbContextLocators[0]);
@@ -100,14 +103,20 @@ namespace Silky.EntityFrameworkCore.Repositories
 
             // 获取定位器类型
             var dbContextLocatorType = locatorHandle();
-            if (!typeof(IDbContextLocator).IsAssignableFrom(dbContextLocatorType)) throw new InvalidCastException($"{dbContextLocatorType.Name} is not assignable from {nameof(IDbContextLocator)}.");
+            if (!typeof(IDbContextLocator).IsAssignableFrom(dbContextLocatorType))
+                throw new InvalidCastException(
+                    $"{dbContextLocatorType.Name} is not assignable from {nameof(IDbContextLocator)}.");
 
             // 判断从库定位器是否绑定
             var isRegister = Penetrates.DbContextWithLocatorCached.TryGetValue(dbContextLocatorType, out _);
-            if (!isRegister) throw new InvalidCastException($" The slave locator `{dbContextLocatorType.Name}` is not bind.");
+            if (!isRegister)
+                throw new InvalidCastException($" The slave locator `{dbContextLocatorType.Name}` is not bind.");
 
             // 解析从库定位器
-            var repository = EngineContext.Current.Resolve(typeof(IRepository<,>).MakeGenericType(typeof(TEntity), dbContextLocatorType)) as IPrivateRepository<TEntity>;
+            var repository =
+                EngineContext.Current.Resolve(
+                        typeof(IRepository<,>).MakeGenericType(typeof(TEntity), dbContextLocatorType)) as
+                    IPrivateRepository<TEntity>;
 
             // 返回从库仓储
             return repository.Constraint<IPrivateReadableRepository<TEntity>>();
@@ -119,7 +128,9 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// </summary>
     /// <typeparam name="TMasterDbContextLocator">主库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator1">从库</typeparam>
-    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1> : IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1>
+    public partial class
+        MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1> : IMSRepository<TMasterDbContextLocator,
+            TSlaveDbContextLocator1>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
     {
@@ -156,7 +167,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IReadableRepository<TEntity, TSlaveDbContextLocator1> Slave1<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _repository.Change<TEntity, TSlaveDbContextLocator1>().Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator1>>();
+            return _repository.Change<TEntity, TSlaveDbContextLocator1>()
+                .Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator1>>();
         }
     }
 
@@ -168,7 +180,7 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator2">从库</typeparam>
     public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2>
         : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1>
-        , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2>
+            , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -195,7 +207,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IReadableRepository<TEntity, TSlaveDbContextLocator2> Slave2<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _repository.Change<TEntity, TSlaveDbContextLocator2>().Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator2>>();
+            return _repository.Change<TEntity, TSlaveDbContextLocator2>()
+                .Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator2>>();
         }
     }
 
@@ -206,9 +219,10 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator1">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator2">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator3">从库</typeparam>
-    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3>
+    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3>
         : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2>
-        , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3>
+            , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -236,7 +250,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IReadableRepository<TEntity, TSlaveDbContextLocator3> Slave3<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _repository.Change<TEntity, TSlaveDbContextLocator3>().Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator3>>();
+            return _repository.Change<TEntity, TSlaveDbContextLocator3>()
+                .Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator3>>();
         }
     }
 
@@ -248,9 +263,11 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator2">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator3">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator4">从库</typeparam>
-    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4>
-        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3>
-        , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4>
+    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4>
+        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+                TSlaveDbContextLocator3>
+            , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -279,7 +296,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IReadableRepository<TEntity, TSlaveDbContextLocator4> Slave4<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _repository.Change<TEntity, TSlaveDbContextLocator4>().Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator4>>();
+            return _repository.Change<TEntity, TSlaveDbContextLocator4>()
+                .Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator4>>();
         }
     }
 
@@ -292,9 +310,11 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator3">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator4">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator5">从库</typeparam>
-    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
-        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4>
-        , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
+    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
+        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+                TSlaveDbContextLocator3, TSlaveDbContextLocator4>
+            , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -324,7 +344,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IReadableRepository<TEntity, TSlaveDbContextLocator5> Slave5<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _repository.Change<TEntity, TSlaveDbContextLocator5>().Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator5>>();
+            return _repository.Change<TEntity, TSlaveDbContextLocator5>()
+                .Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator5>>();
         }
     }
 
@@ -338,9 +359,11 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator4">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator5">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator6">从库</typeparam>
-    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
-        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
-        , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
+    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
+        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+                TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5>
+            , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -371,7 +394,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IReadableRepository<TEntity, TSlaveDbContextLocator6> Slave6<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _repository.Change<TEntity, TSlaveDbContextLocator6>().Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator6>>();
+            return _repository.Change<TEntity, TSlaveDbContextLocator6>()
+                .Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator6>>();
         }
     }
 
@@ -386,9 +410,12 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// <typeparam name="TSlaveDbContextLocator5">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator6">从库</typeparam>
     /// <typeparam name="TSlaveDbContextLocator7">从库</typeparam>
-    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6, TSlaveDbContextLocator7>
-        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
-        , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6, TSlaveDbContextLocator7>
+    public partial class MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+            TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6,
+            TSlaveDbContextLocator7>
+        : MSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2,
+                TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6>
+            , IMSRepository<TMasterDbContextLocator, TSlaveDbContextLocator1, TSlaveDbContextLocator2, TSlaveDbContextLocator3, TSlaveDbContextLocator4, TSlaveDbContextLocator5, TSlaveDbContextLocator6, TSlaveDbContextLocator7>
         where TMasterDbContextLocator : class, IDbContextLocator
         where TSlaveDbContextLocator1 : class, IDbContextLocator
         where TSlaveDbContextLocator2 : class, IDbContextLocator
@@ -420,7 +447,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         public virtual IReadableRepository<TEntity, TSlaveDbContextLocator7> Slave7<TEntity>()
             where TEntity : class, IPrivateEntity, new()
         {
-            return _repository.Change<TEntity, TSlaveDbContextLocator7>().Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator7>>();
+            return _repository.Change<TEntity, TSlaveDbContextLocator7>()
+                .Constraint<IReadableRepository<TEntity, TSlaveDbContextLocator7>>();
         }
     }
 }

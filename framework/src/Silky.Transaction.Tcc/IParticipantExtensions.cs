@@ -20,7 +20,7 @@ namespace Silky.Transaction.Tcc
         public static ILogger<TccTransactionExecutor> Logger =
             EngineContext.Current.Resolve<ILogger<TccTransactionExecutor>>();
 
-        
+
         public static async Task Executor(this IParticipant participant, ActionStage stage,
             ISilkyMethodInvocation invocation = null)
 
@@ -79,13 +79,12 @@ namespace Silky.Transaction.Tcc
             }
             else
             {
-              
                 RpcContext.Context.SetTransactionContext(SilkyTransactionContextHolder.Instance.Get());
                 var executor = EngineContext.Current.Resolve<IExecutor>();
                 await executor.Execute(serviceEntry, participant.Parameters, participant.ServiceKey);
             }
         }
-        
+
         private static void SetContext(ActionStage action, IParticipant participant)
         {
             var context = new TransactionContext()

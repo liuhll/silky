@@ -37,7 +37,7 @@ namespace Silky.RegistryCenter.Nacos
             _serviceProvider = serviceProvider;
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
-        
+
         protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
         {
             var serverInstances = await _nacosNamingService.GetAllInstances(hostName);

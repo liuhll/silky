@@ -25,6 +25,7 @@ namespace Silky.Rpc.Runtime.Client
                         {
                             return false;
                         }
+
                         return true;
                     })
                     .FallbackAsync(

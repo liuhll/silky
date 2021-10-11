@@ -1,5 +1,4 @@
-﻿
-namespace System.ComponentModel.DataAnnotations.Schema
+﻿namespace System.ComponentModel.DataAnnotations.Schema
 {
     /// <summary>
     /// 配置表名称前缀

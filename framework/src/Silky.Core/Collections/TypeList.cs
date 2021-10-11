@@ -5,11 +5,11 @@ using System.Reflection;
 
 namespace Silky.Core.Collections
 {
- public class TypeList : TypeList<object>, ITypeList
+    public class TypeList : TypeList<object>, ITypeList
     {
     }
 
-   
+
     public class TypeList<TBaseType> : ITypeList<TBaseType>
     {
         /// <summary>
@@ -142,7 +142,9 @@ namespace Silky.Core.Collections
         {
             if (!typeof(TBaseType).GetTypeInfo().IsAssignableFrom(item))
             {
-                throw new ArgumentException($"Given type ({item.AssemblyQualifiedName}) should be instance of {typeof(TBaseType).AssemblyQualifiedName} ", nameof(item));
+                throw new ArgumentException(
+                    $"Given type ({item.AssemblyQualifiedName}) should be instance of {typeof(TBaseType).AssemblyQualifiedName} ",
+                    nameof(item));
             }
         }
     }

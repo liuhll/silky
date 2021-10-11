@@ -91,7 +91,7 @@ namespace Silky.Caching.StackExchangeRedis
                 return Task.CompletedTask;
             }
 
-            return (Task) ConnectAsyncMethod.Invoke(this, new object[] {token});
+            return (Task)ConnectAsyncMethod.Invoke(this, new object[] { token });
         }
 
         public byte[][] GetMany(
@@ -141,7 +141,7 @@ namespace Silky.Caching.StackExchangeRedis
             RedisDatabase.ScriptEvaluate(@" local keys = redis.call('keys', ARGV[1]) 
                 for i=1,#keys,5000 do 
                 redis.call('del', unpack(keys, i, math.min(i+4999, #keys)))
-                end", values: new RedisValue[] {Instance + key});
+                end", values: new RedisValue[] { Instance + key });
         }
 
         public async Task<IReadOnlyCollection<string>> SearchKeys(string pattern, CancellationToken token = default)
@@ -150,13 +150,13 @@ namespace Silky.Caching.StackExchangeRedis
             var redisResult = await RedisDatabase.ScriptEvaluateAsync(LuaScript.Prepare(
                 //Redis的keys模糊查询：
                 " local res = redis.call('KEYS', @keyPattern) " +
-                " return res "), new {@keyPattern = Instance + pattern});
+                " return res "), new { @keyPattern = Instance + pattern });
             if (redisResult == null)
             {
                 return new List<string>();
             }
 
-            return (string[]) redisResult;
+            return (string[])redisResult;
         }
 
 
@@ -182,7 +182,7 @@ namespace Silky.Caching.StackExchangeRedis
 
             Connect();
 
-            RedisDatabase.KeyDelete(keys.Select(key => (RedisKey) (Instance + key)).ToArray());
+            RedisDatabase.KeyDelete(keys.Select(key => (RedisKey)(Instance + key)).ToArray());
         }
 
         public async Task RemoveManyAsync(IEnumerable<string> keys, CancellationToken token = default)
@@ -192,7 +192,7 @@ namespace Silky.Caching.StackExchangeRedis
             token.ThrowIfCancellationRequested();
             await ConnectAsync(token);
 
-            await RedisDatabase.KeyDeleteAsync(keys.Select(key => (RedisKey) (Instance + key)).ToArray());
+            await RedisDatabase.KeyDeleteAsync(keys.Select(key => (RedisKey)(Instance + key)).ToArray());
         }
 
         protected virtual byte[][] GetAndRefreshMany(
@@ -311,7 +311,7 @@ namespace Silky.Caching.StackExchangeRedis
 
             for (var i = 0; i < itemArray.Length; i++)
             {
-                tasks[i] = RedisDatabase.ScriptEvaluateAsync(SetScript, new RedisKey[] {Instance + itemArray[i].Key},
+                tasks[i] = RedisDatabase.ScriptEvaluateAsync(SetScript, new RedisKey[] { Instance + itemArray[i].Key },
                     new RedisValue[]
                     {
                         absoluteExpiration?.Ticks ?? NotPresent,
@@ -329,11 +329,11 @@ namespace Silky.Caching.StackExchangeRedis
             out DateTimeOffset? absoluteExpiration,
             out TimeSpan? slidingExpiration)
         {
-            var parameters = new object[] {results, null, null};
+            var parameters = new object[] { results, null, null };
             MapMetadataMethod.Invoke(this, parameters);
 
-            absoluteExpiration = (DateTimeOffset?) parameters[1];
-            slidingExpiration = (TimeSpan?) parameters[2];
+            absoluteExpiration = (DateTimeOffset?)parameters[1];
+            slidingExpiration = (TimeSpan?)parameters[2];
         }
 
         protected virtual long? GetExpirationInSeconds(
@@ -341,15 +341,15 @@ namespace Silky.Caching.StackExchangeRedis
             DateTimeOffset? absoluteExpiration,
             DistributedCacheEntryOptions options)
         {
-            return (long?) GetExpirationInSecondsMethod.Invoke(null,
-                new object[] {creationTime, absoluteExpiration, options});
+            return (long?)GetExpirationInSecondsMethod.Invoke(null,
+                new object[] { creationTime, absoluteExpiration, options });
         }
 
         protected virtual DateTimeOffset? GetAbsoluteExpiration(
             DateTimeOffset creationTime,
             DistributedCacheEntryOptions options)
         {
-            return (DateTimeOffset?) GetAbsoluteExpirationMethod.Invoke(null, new object[] {creationTime, options});
+            return (DateTimeOffset?)GetAbsoluteExpirationMethod.Invoke(null, new object[] { creationTime, options });
         }
 
         private IDatabase GetRedisDatabase()

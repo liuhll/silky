@@ -1,5 +1,4 @@
-﻿
-using Silky.EntityFrameworkCore.Entities;
+﻿using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
 
 namespace Silky.EntityFrameworkCore.Repositories
@@ -24,6 +23,5 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <returns></returns>
         ISqlRepository<TDbContextLocator> Sql();
-        
     }
 }

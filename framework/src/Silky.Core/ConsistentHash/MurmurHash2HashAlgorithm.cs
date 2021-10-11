@@ -42,6 +42,7 @@ namespace Silky.Core
                 h ^= k;
                 length -= 4;
             }
+
             switch (length)
             {
                 case 3:

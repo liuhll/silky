@@ -144,7 +144,8 @@ namespace Silky.Zookeeper
         /// <remarks>
         /// 因为使用序列方式创建节点zk会修改节点name，所以需要返回真正的节点路径。
         /// </remarks>
-        public static Task<string> CreateEphemeralAsync(this IZookeeperClient client, string path, byte[] data, bool isSequential = false)
+        public static Task<string> CreateEphemeralAsync(this IZookeeperClient client, string path, byte[] data,
+            bool isSequential = false)
         {
             return client.CreateEphemeralAsync(path, data, ZooDefs.Ids.OPEN_ACL_UNSAFE, isSequential);
         }
@@ -161,9 +162,11 @@ namespace Silky.Zookeeper
         /// <remarks>
         /// 因为使用序列方式创建节点zk会修改节点name，所以需要返回真正的节点路径。
         /// </remarks>
-        public static Task<string> CreateEphemeralAsync(this IZookeeperClient client, string path, byte[] data, List<ACL> acls, bool isSequential = false)
+        public static Task<string> CreateEphemeralAsync(this IZookeeperClient client, string path, byte[] data,
+            List<ACL> acls, bool isSequential = false)
         {
-            return client.CreateAsync(path, data, acls, isSequential ? CreateMode.EPHEMERAL_SEQUENTIAL : CreateMode.EPHEMERAL);
+            return client.CreateAsync(path, data, acls,
+                isSequential ? CreateMode.EPHEMERAL_SEQUENTIAL : CreateMode.EPHEMERAL);
         }
 
         /// <summary>
@@ -177,7 +180,8 @@ namespace Silky.Zookeeper
         /// <remarks>
         /// 因为使用序列方式创建节点zk会修改节点name，所以需要返回真正的节点路径。
         /// </remarks>
-        public static Task<string> CreatePersistentAsync(this IZookeeperClient client, string path, byte[] data, bool isSequential = false)
+        public static Task<string> CreatePersistentAsync(this IZookeeperClient client, string path, byte[] data,
+            bool isSequential = false)
         {
             return client.CreatePersistentAsync(path, data, ZooDefs.Ids.OPEN_ACL_UNSAFE, isSequential);
         }
@@ -194,9 +198,11 @@ namespace Silky.Zookeeper
         /// <remarks>
         /// 因为使用序列方式创建节点zk会修改节点name，所以需要返回真正的节点路径。
         /// </remarks>
-        public static Task<string> CreatePersistentAsync(this IZookeeperClient client, string path, byte[] data, List<ACL> acls, bool isSequential = false)
+        public static Task<string> CreatePersistentAsync(this IZookeeperClient client, string path, byte[] data,
+            List<ACL> acls, bool isSequential = false)
         {
-            return client.CreateAsync(path, data, acls, isSequential ? CreateMode.PERSISTENT_SEQUENTIAL : CreateMode.PERSISTENT);
+            return client.CreateAsync(path, data, acls,
+                isSequential ? CreateMode.PERSISTENT_SEQUENTIAL : CreateMode.PERSISTENT);
         }
 
         /// <summary>
@@ -224,6 +230,7 @@ namespace Silky.Zookeeper
                     return false;
                 }
             }
+
             await client.DeleteAsync(path);
             return true;
         }
@@ -258,7 +265,8 @@ namespace Silky.Zookeeper
         /// <param name="path">节点路径。</param>
         /// <param name="getNodeData">获取当前被创建节点数据的委托。</param>
         /// <param name="getNodeAcls">获取当前被创建节点权限的委托。</param>
-        public static async Task CreateRecursiveAsync(this IZookeeperClient client, string path, Func<string, byte[]> getNodeData, Func<string, List<ACL>> getNodeAcls)
+        public static async Task CreateRecursiveAsync(this IZookeeperClient client, string path,
+            Func<string, byte[]> getNodeData, Func<string, List<ACL>> getNodeAcls)
         {
             var data = getNodeData(path);
             var acls = getNodeAcls(path);

@@ -42,7 +42,8 @@ namespace Silky.Transaction
         {
             if (!EngineContext.Current.IsRegistered(typeof(IDistributedLockProvider)))
             {
-                throw new SilkyException("You must specify the implementation of IDistributedLockProvider in the Transaction.Repository project of the distributed transaction");
+                throw new SilkyException(
+                    "You must specify the implementation of IDistributedLockProvider in the Transaction.Repository project of the distributed transaction");
             }
         }
     }

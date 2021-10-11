@@ -12,7 +12,7 @@ namespace Silky.Core
     {
         [ContractAnnotation("value:null => halt")]
         public static T NotNull<T>(
-            T value, 
+            T value,
             [InvokerParameterName] [NotNull] string parameterName)
         {
             if (value == null)
@@ -25,8 +25,8 @@ namespace Silky.Core
 
         [ContractAnnotation("value:null => halt")]
         public static T NotNull<T>(
-            T value, 
-            [InvokerParameterName] [NotNull] string parameterName, 
+            T value,
+            [InvokerParameterName] [NotNull] string parameterName,
             string message)
         {
             if (value == null)
@@ -113,7 +113,8 @@ namespace Silky.Core
         }
 
         [ContractAnnotation("value:null => halt")]
-        public static ICollection<T> NotNullOrEmpty<T>(ICollection<T> value, [InvokerParameterName] [NotNull] string parameterName)
+        public static ICollection<T> NotNullOrEmpty<T>(ICollection<T> value,
+            [InvokerParameterName] [NotNull] string parameterName)
         {
             if (value.IsNullOrEmpty())
             {
@@ -125,8 +126,8 @@ namespace Silky.Core
 
         public static string Length(
             [CanBeNull] string value,
-            [InvokerParameterName] [NotNull] string parameterName, 
-            int maxLength, 
+            [InvokerParameterName] [NotNull] string parameterName,
+            int maxLength,
             int minLength = 0)
         {
             if (minLength > 0)
@@ -138,13 +139,15 @@ namespace Silky.Core
 
                 if (value.Length < minLength)
                 {
-                    throw new ArgumentException($"{parameterName} length must be equal to or bigger than {minLength}!", parameterName);
+                    throw new ArgumentException($"{parameterName} length must be equal to or bigger than {minLength}!",
+                        parameterName);
                 }
             }
 
             if (value != null && value.Length > maxLength)
             {
-                throw new ArgumentException($"{parameterName} length must be equal to or lower than {maxLength}!", parameterName);
+                throw new ArgumentException($"{parameterName} length must be equal to or lower than {maxLength}!",
+                    parameterName);
             }
 
             return value;

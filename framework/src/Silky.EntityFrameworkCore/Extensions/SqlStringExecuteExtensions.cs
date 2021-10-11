@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -38,7 +36,7 @@ namespace Silky.EntityFrameworkCore.Extensions
         {
             return new SqlStringExecutePart().SetSqlString(sql).Change(dbContextLocator);
         }
-        
+
         /// <summary>
         /// 设置 ADO.NET 超时时间
         /// </summary>
@@ -90,7 +88,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataTable}</returns>
-        public static Task<DataTable> SqlQueryAsync(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<DataTable> SqlQueryAsync(this string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueryAsync(parameters, cancellationToken);
         }
@@ -102,7 +101,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataTable}</returns>
-        public static Task<DataTable> SqlQueryAsync(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<DataTable> SqlQueryAsync(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueryAsync(model, cancellationToken);
         }
@@ -151,7 +151,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T}}</returns>
-        public static Task<List<T>> SqlQueryAsync<T>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<List<T>> SqlQueryAsync<T>(this string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueryAsync<T>(parameters, cancellationToken);
         }
@@ -164,7 +165,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T}}</returns>
-        public static Task<List<T>> SqlQueryAsync<T>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<List<T>> SqlQueryAsync<T>(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueryAsync<T>(model, cancellationToken);
         }
@@ -209,7 +211,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataSet}</returns>
-        public static Task<DataSet> SqlQueriesAsync(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<DataSet> SqlQueriesAsync(this string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync(parameters, cancellationToken);
         }
@@ -221,7 +224,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataSet}</returns>
-        public static Task<DataSet> SqlQueriesAsync(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<DataSet> SqlQueriesAsync(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync(model, cancellationToken);
         }
@@ -246,7 +250,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2) SqlQueries<T1, T2>(this string sql, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2) SqlQueries<T1, T2>(this string sql,
+            params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2>(parameters);
         }
@@ -260,7 +265,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlQueries<T1, T2, T3>(this string sql, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlQueries<T1, T2, T3>(this string sql,
+            params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3>(parameters);
         }
@@ -275,7 +281,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlQueries<T1, T2, T3, T4>(this string sql, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlQueries<T1, T2, T3, T4>(
+            this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4>(parameters);
         }
@@ -291,7 +298,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) SqlQueries<T1, T2, T3, T4, T5>(this string sql, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)
+            SqlQueries<T1, T2, T3, T4, T5>(this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5>(parameters);
         }
@@ -308,7 +316,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6) SqlQueries<T1, T2, T3, T4, T5, T6>(this string sql, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)
+            SqlQueries<T1, T2, T3, T4, T5, T6>(this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5, T6>(parameters);
         }
@@ -326,7 +335,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7) SqlQueries<T1, T2, T3, T4, T5, T6, T7>(this string sql, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7) SqlQueries<T1, T2, T3, T4, T5, T6, T7>(this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5, T6, T7>(parameters);
         }
@@ -345,7 +355,9 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8) SqlQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7, List<T8> list8) SqlQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql,
+                params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5, T6, T7, T8>(parameters);
         }
@@ -384,7 +396,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlQueries<T1, T2, T3>(this string sql, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlQueries<T1, T2, T3>(this string sql,
+            object model)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3>(model);
         }
@@ -399,7 +412,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlQueries<T1, T2, T3, T4>(this string sql, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlQueries<T1, T2, T3, T4>(
+            this string sql, object model)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4>(model);
         }
@@ -415,7 +429,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) SqlQueries<T1, T2, T3, T4, T5>(this string sql, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) SqlQueries<T1,
+            T2, T3, T4, T5>(this string sql, object model)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5>(model);
         }
@@ -432,7 +447,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6) SqlQueries<T1, T2, T3, T4, T5, T6>(this string sql, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)
+            SqlQueries<T1, T2, T3, T4, T5, T6>(this string sql, object model)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5, T6>(model);
         }
@@ -450,7 +466,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7) SqlQueries<T1, T2, T3, T4, T5, T6, T7>(this string sql, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7) SqlQueries<T1, T2, T3, T4, T5, T6, T7>(this string sql, object model)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5, T6, T7>(model);
         }
@@ -469,7 +486,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8) SqlQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7, List<T8> list8) SqlQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql, object model)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueries<T1, T2, T3, T4, T5, T6, T7, T8>(model);
         }
@@ -494,7 +512,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T1}}</returns>
-        public static Task<List<T1>> SqlQueriesAsync<T1>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<List<T1>> SqlQueriesAsync<T1>(this string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1>(parameters, cancellationToken);
         }
@@ -507,7 +526,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2)> SqlQueriesAsync<T1, T2>(this string sql, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2)> SqlQueriesAsync<T1, T2>(this string sql,
+            params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2>(parameters);
         }
@@ -521,7 +541,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2)> SqlQueriesAsync<T1, T2>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2)> SqlQueriesAsync<T1, T2>(this string sql,
+            DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2>(parameters, cancellationToken);
         }
@@ -535,7 +556,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlQueriesAsync<T1, T2, T3>(this string sql, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlQueriesAsync<T1, T2, T3>(
+            this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3>(parameters);
         }
@@ -550,9 +572,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlQueriesAsync<T1, T2, T3>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlQueriesAsync<T1, T2, T3>(
+            this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -565,7 +589,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlQueriesAsync<T1, T2, T3, T4>(this string sql, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlQueriesAsync<T1, T2, T3, T4>(this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4>(parameters);
         }
@@ -581,9 +606,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlQueriesAsync<T1, T2, T3, T4>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlQueriesAsync<T1, T2, T3, T4>(this string sql, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -597,7 +625,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlQueriesAsync<T1, T2, T3, T4, T5>(this string sql, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlQueriesAsync<T1, T2, T3, T4, T5>(this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5>(parameters);
         }
@@ -614,9 +643,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlQueriesAsync<T1, T2, T3, T4, T5>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlQueriesAsync<T1, T2, T3, T4, T5>(this string sql, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -631,7 +663,9 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(this string sql, params DbParameter[] parameters)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(this string sql, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(parameters);
         }
@@ -649,9 +683,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(this string sql, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -667,7 +705,10 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string sql, params DbParameter[] parameters)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string sql,
+                params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(parameters);
         }
@@ -686,9 +727,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string sql, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -705,9 +750,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="sql"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql, params DbParameter[] parameters)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql,
+                params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters);
         }
 
         /// <summary>
@@ -725,9 +774,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql,
+                DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -738,7 +791,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>List{T1}</returns>
-        public static Task<List<T1>> SqlQueriesAsync<T1>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<List<T1>> SqlQueriesAsync<T1>(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1>(model, cancellationToken);
         }
@@ -752,7 +806,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2)> SqlQueriesAsync<T1, T2>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2)> SqlQueriesAsync<T1, T2>(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2>(model, cancellationToken);
         }
@@ -767,7 +822,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlQueriesAsync<T1, T2, T3>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlQueriesAsync<T1, T2, T3>(
+            this string sql, object model, CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3>(model, cancellationToken);
         }
@@ -783,9 +839,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlQueriesAsync<T1, T2, T3, T4>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlQueriesAsync<T1, T2, T3, T4>(this string sql, object model,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4>(model, cancellationToken);
         }
 
         /// <summary>
@@ -800,9 +859,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlQueriesAsync<T1, T2, T3, T4, T5>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlQueriesAsync<T1, T2, T3, T4, T5>(this string sql, object model,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5>(model, cancellationToken);
         }
 
         /// <summary>
@@ -818,9 +880,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(this string sql, object model,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5, T6>(model, cancellationToken);
         }
 
         /// <summary>
@@ -837,9 +903,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string sql, object model,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(model, cancellationToken);
         }
 
         /// <summary>
@@ -857,9 +927,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string sql,
+                object model, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(sql).SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(sql)
+                .SqlQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(model, cancellationToken);
         }
 
         /// <summary>
@@ -902,7 +976,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public static Task<int> SqlNonQueryAsync(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<int> SqlNonQueryAsync(this string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlNonQueryAsync(parameters, cancellationToken);
         }
@@ -914,7 +989,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public static Task<int> SqlNonQueryAsync(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<int> SqlNonQueryAsync(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlNonQueryAsync(model, cancellationToken);
         }
@@ -959,7 +1035,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public static Task<object> SqlScalarAsync(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<object> SqlScalarAsync(this string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlScalarAsync(parameters, cancellationToken);
         }
@@ -971,7 +1048,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public static Task<object> SqlScalarAsync(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<object> SqlScalarAsync(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlScalarAsync(model, cancellationToken);
         }
@@ -1016,7 +1094,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public static Task<TResult> SqlScalarAsync<TResult>(this string sql, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<TResult> SqlScalarAsync<TResult>(this string sql, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlScalarAsync<TResult>(parameters, cancellationToken);
         }
@@ -1028,7 +1107,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public static Task<TResult> SqlScalarAsync<TResult>(this string sql, object model, CancellationToken cancellationToken = default)
+        public static Task<TResult> SqlScalarAsync<TResult>(this string sql, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(sql).SqlScalarAsync<TResult>(model, cancellationToken);
         }
@@ -1073,9 +1153,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataTable</returns>
-        public static Task<DataTable> SqlProcedureQueryAsync(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<DataTable> SqlProcedureQueryAsync(this string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueryAsync(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueryAsync(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1085,7 +1167,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataTable</returns>
-        public static Task<DataTable> SqlProcedureQueryAsync(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<DataTable> SqlProcedureQueryAsync(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueryAsync(model, cancellationToken);
         }
@@ -1130,9 +1213,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>List{T}</returns>
-        public static Task<List<T>> SqlProcedureQueryAsync<T>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<List<T>> SqlProcedureQueryAsync<T>(this string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueryAsync<T>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueryAsync<T>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1142,9 +1227,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>List{T}</returns>
-        public static Task<List<T>> SqlProcedureQueryAsync<T>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<List<T>> SqlProcedureQueryAsync<T>(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueryAsync<T>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueryAsync<T>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1187,9 +1274,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataSet</returns>
-        public static Task<DataSet> SqlProcedureQueriesAsync(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<DataSet> SqlProcedureQueriesAsync(this string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1199,7 +1288,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>DataSet</returns>
-        public static Task<DataSet> SqlProcedureQueriesAsync(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<DataSet> SqlProcedureQueriesAsync(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync(model, cancellationToken);
         }
@@ -1224,7 +1314,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2) SqlProcedureQueries<T1, T2>(this string procName, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2) SqlProcedureQueries<T1, T2>(this string procName,
+            params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2>(parameters);
         }
@@ -1238,7 +1329,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(this string procName, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(
+            this string procName, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3>(parameters);
         }
@@ -1253,7 +1345,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlProcedureQueries<T1, T2, T3, T4>(this string procName, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)
+            SqlProcedureQueries<T1, T2, T3, T4>(this string procName, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4>(parameters);
         }
@@ -1269,9 +1362,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) SqlProcedureQueries<T1, T2, T3, T4, T5>(this string procName, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)
+            SqlProcedureQueries<T1, T2, T3, T4, T5>(this string procName, params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueries<T1, T2, T3, T4, T5>(parameters);
         }
 
         /// <summary>
@@ -1286,9 +1381,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6) SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(this string procName, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)
+            SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(this string procName, params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(parameters);
         }
 
         /// <summary>
@@ -1304,9 +1401,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(this string procName, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(this string procName,
+                params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(parameters);
         }
 
         /// <summary>
@@ -1323,9 +1423,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string procName, params DbParameter[] parameters)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string procName,
+                params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(parameters);
         }
 
         /// <summary>
@@ -1362,7 +1465,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(this string procName, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3) SqlProcedureQueries<T1, T2, T3>(
+            this string procName, object model)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3>(model);
         }
@@ -1377,7 +1481,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlProcedureQueries<T1, T2, T3, T4>(this string procName, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4) SqlProcedureQueries<T1, T2, T3,
+            T4>(this string procName, object model)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4>(model);
         }
@@ -1393,7 +1498,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5) SqlProcedureQueries<T1, T2, T3, T4, T5>(this string procName, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)
+            SqlProcedureQueries<T1, T2, T3, T4, T5>(this string procName, object model)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5>(model);
         }
@@ -1410,7 +1516,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6) SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(this string procName, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)
+            SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(this string procName, object model)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5, T6>(model);
         }
@@ -1428,9 +1535,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(this string procName, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(this string procName, object model)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(model);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7>(model);
         }
 
         /// <summary>
@@ -1447,9 +1556,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="model">参数模型</param>
         /// <returns>元组类型</returns>
-        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string procName, object model)
+        public static (List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+            List<T7> list7, List<T8> list8) SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(this string procName,
+                object model)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(model);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueries<T1, T2, T3, T4, T5, T6, T7, T8>(model);
         }
 
         /// <summary>
@@ -1472,9 +1584,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T1}}</returns>
-        public static Task<List<T1>> SqlProcedureQueriesAsync<T1>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<List<T1>> SqlProcedureQueriesAsync<T1>(this string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1485,7 +1599,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(this string procName, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(this string procName,
+            params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2>(parameters);
         }
@@ -1499,9 +1614,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(this string procName,
+            DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1513,7 +1630,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(this string procName, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(
+            this string procName, params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3>(parameters);
         }
@@ -1528,9 +1646,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(
+            this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1543,9 +1663,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlProcedureQueriesAsync<T1, T2, T3, T4>(this string procName, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4>(this string procName, params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4>(parameters);
         }
 
         /// <summary>
@@ -1559,9 +1681,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlProcedureQueriesAsync<T1, T2, T3, T4>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4>(this string procName, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1575,9 +1700,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(this string procName, params DbParameter[] parameters)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(this string procName, params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(parameters);
         }
 
         /// <summary>
@@ -1592,9 +1719,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(this string procName, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1609,9 +1739,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(this string procName, params DbParameter[] parameters)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(this string procName, params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(parameters);
         }
 
         /// <summary>
@@ -1627,9 +1760,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(this string procName, DbParameter[] parameters,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1645,9 +1782,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string procName, params DbParameter[] parameters)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string procName,
+                params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(parameters);
         }
 
         /// <summary>
@@ -1664,9 +1805,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string procName,
+                DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1683,9 +1828,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string procName, params DbParameter[] parameters)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(
+                this string procName, params DbParameter[] parameters)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters);
         }
 
         /// <summary>
@@ -1703,9 +1852,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(
+                this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1716,9 +1869,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>List{T1}</returns>
-        public static Task<List<T1>> SqlProcedureQueriesAsync<T1>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<List<T1>> SqlProcedureQueriesAsync<T1>(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1730,9 +1885,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2)> SqlProcedureQueriesAsync<T1, T2>(this string procName,
+            object model, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1745,9 +1902,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3)> SqlProcedureQueriesAsync<T1, T2, T3>(
+            this string procName, object model, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1761,9 +1920,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)> SqlProcedureQueriesAsync<T1, T2, T3, T4>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4>(this string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1778,9 +1940,12 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(this string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1796,9 +1961,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6)>
+            SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(this string procName, object model,
+                CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1815,9 +1984,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(this string procName,
+                object model, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1835,9 +2008,13 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>元组类型</returns>
-        public static Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6, List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static
+            Task<(List<T1> list1, List<T2> list2, List<T3> list3, List<T4> list4, List<T5> list5, List<T6> list6,
+                List<T7> list7, List<T8> list8)> SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(
+                this string procName, object model, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureQueriesAsync<T1, T2, T3, T4, T5, T6, T7, T8>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1880,9 +2057,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public static Task<object> SqlProcedureScalarAsync(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<object> SqlProcedureScalarAsync(this string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureScalarAsync(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureScalarAsync(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1892,7 +2071,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public static Task<object> SqlProcedureScalarAsync(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<object> SqlProcedureScalarAsync(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureScalarAsync(model, cancellationToken);
         }
@@ -1925,7 +2105,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>TResult</returns>
-        public static Task<TResult> SqlProcedureScalarAsync<TResult>(this string procName, params DbParameter[] parameters)
+        public static Task<TResult> SqlProcedureScalarAsync<TResult>(this string procName,
+            params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureScalarAsync<TResult>(parameters);
         }
@@ -1937,9 +2118,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public static Task<TResult> SqlProcedureScalarAsync<TResult>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<TResult> SqlProcedureScalarAsync<TResult>(this string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureScalarAsync<TResult>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureScalarAsync<TResult>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -1949,9 +2132,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public static Task<TResult> SqlProcedureScalarAsync<TResult>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<TResult> SqlProcedureScalarAsync<TResult>(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureScalarAsync<TResult>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureScalarAsync<TResult>(model, cancellationToken);
         }
 
         /// <summary>
@@ -1994,9 +2179,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public static Task<int> SqlProcedureNonQueryAsync(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<int> SqlProcedureNonQueryAsync(this string procName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureNonQueryAsync(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureNonQueryAsync(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -2006,9 +2193,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>int</returns>
-        public static Task<int> SqlProcedureNonQueryAsync(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<int> SqlProcedureNonQueryAsync(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureNonQueryAsync(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureNonQueryAsync(model, cancellationToken);
         }
 
         /// <summary>
@@ -2029,9 +2218,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public static Task<ProcedureOutputResult> SqlProcedureOutputAsync(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<ProcedureOutputResult> SqlProcedureOutputAsync(this string procName,
+            DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureOutputAsync(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureOutputAsync(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -2052,7 +2243,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">命令模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public static Task<ProcedureOutputResult> SqlProcedureOutputAsync(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<ProcedureOutputResult> SqlProcedureOutputAsync(this string procName, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureOutputAsync(model, cancellationToken);
         }
@@ -2064,7 +2256,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="procName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>ProcedureOutput</returns>
-        public static ProcedureOutputResult<TResult> SqlProcedureOutput<TResult>(this string procName, DbParameter[] parameters)
+        public static ProcedureOutputResult<TResult> SqlProcedureOutput<TResult>(this string procName,
+            DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureOutput<TResult>(parameters);
         }
@@ -2077,9 +2270,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public static Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(this string procName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(this string procName,
+            DbParameter[] parameters, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureOutputAsync<TResult>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureOutputAsync<TResult>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -2102,9 +2297,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">命令模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>ProcedureOutput</returns>
-        public static Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(this string procName, object model, CancellationToken cancellationToken = default)
+        public static Task<ProcedureOutputResult<TResult>> SqlProcedureOutputAsync<TResult>(this string procName,
+            object model, CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(procName).SqlProcedureOutputAsync<TResult>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(procName)
+                .SqlProcedureOutputAsync<TResult>(model, cancellationToken);
         }
 
         /// <summary>
@@ -2147,9 +2344,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public static Task<object> SqlFunctionScalarAsync(this string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<object> SqlFunctionScalarAsync(this string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionScalarAsync(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(funcName)
+                .SqlFunctionScalarAsync(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -2159,7 +2358,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public static Task<object> SqlFunctionScalarAsync(this string funcName, object model, CancellationToken cancellationToken = default)
+        public static Task<object> SqlFunctionScalarAsync(this string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionScalarAsync(model, cancellationToken);
         }
@@ -2195,7 +2395,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="funcName"></param>
         /// <param name="parameters">命令参数</param>
         /// <returns>TResult</returns>
-        public static Task<TResult> SqlFunctionScalarAsync<TResult>(this string funcName, params DbParameter[] parameters)
+        public static Task<TResult> SqlFunctionScalarAsync<TResult>(this string funcName,
+            params DbParameter[] parameters)
         {
             return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionScalarAsync<TResult>(parameters);
         }
@@ -2208,9 +2409,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>TResult</returns>
-        public static Task<TResult> SqlFunctionScalarAsync<TResult>(this string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<TResult> SqlFunctionScalarAsync<TResult>(this string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionScalarAsync<TResult>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(funcName)
+                .SqlFunctionScalarAsync<TResult>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -2221,9 +2424,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>object</returns>
-        public static Task<TResult> SqlFunctionScalarAsync<TResult>(this string funcName, object model, CancellationToken cancellationToken = default)
+        public static Task<TResult> SqlFunctionScalarAsync<TResult>(this string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionScalarAsync<TResult>(model, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(funcName)
+                .SqlFunctionScalarAsync<TResult>(model, cancellationToken);
         }
 
         /// <summary>
@@ -2266,9 +2471,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataTable}</returns>
-        public static Task<DataTable> SqlFunctionQueryAsync(this string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<DataTable> SqlFunctionQueryAsync(this string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionQueryAsync(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(funcName)
+                .SqlFunctionQueryAsync(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -2278,7 +2485,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{DataTable}</returns>
-        public static Task<DataTable> SqlFunctionQueryAsync(this string funcName, object model, CancellationToken cancellationToken = default)
+        public static Task<DataTable> SqlFunctionQueryAsync(this string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionQueryAsync(model, cancellationToken);
         }
@@ -2327,9 +2535,11 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="parameters">命令参数</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T}}</returns>
-        public static Task<List<T>> SqlFunctionQueryAsync<T>(this string funcName, DbParameter[] parameters, CancellationToken cancellationToken = default)
+        public static Task<List<T>> SqlFunctionQueryAsync<T>(this string funcName, DbParameter[] parameters,
+            CancellationToken cancellationToken = default)
         {
-            return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionQueryAsync<T>(parameters, cancellationToken);
+            return new SqlStringExecutePart().SetSqlString(funcName)
+                .SqlFunctionQueryAsync<T>(parameters, cancellationToken);
         }
 
         /// <summary>
@@ -2340,7 +2550,8 @@ namespace Silky.EntityFrameworkCore.Extensions
         /// <param name="model">参数模型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>Task{List{T}}</returns>
-        public static Task<List<T>> SqlFunctionQueryAsync<T>(this string funcName, object model, CancellationToken cancellationToken = default)
+        public static Task<List<T>> SqlFunctionQueryAsync<T>(this string funcName, object model,
+            CancellationToken cancellationToken = default)
         {
             return new SqlStringExecutePart().SetSqlString(funcName).SqlFunctionQueryAsync<T>(model, cancellationToken);
         }

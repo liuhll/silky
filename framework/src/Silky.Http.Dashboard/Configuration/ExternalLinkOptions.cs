@@ -7,6 +7,5 @@ namespace Silky.Http.Dashboard.Configuration
         public string Path { get; set; }
 
         public string Icon { get; set; }
-        
     }
 }

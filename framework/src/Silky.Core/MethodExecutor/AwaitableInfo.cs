@@ -78,7 +78,8 @@ namespace Silky.Core.MethodExecutor
                 && m.GetParameters()[0].ParameterType == typeof(Action));
 
             // Awaiter optionally implements ICriticalNotifyCompletion
-            var implementsICriticalNotifyCompletion = awaiterInterfaces.Any(t => t == typeof(ICriticalNotifyCompletion));
+            var implementsICriticalNotifyCompletion =
+                awaiterInterfaces.Any(t => t == typeof(ICriticalNotifyCompletion));
             MethodInfo unsafeOnCompletedMethod;
             if (implementsICriticalNotifyCompletion)
             {

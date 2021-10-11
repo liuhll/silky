@@ -32,7 +32,6 @@ namespace Silky.Http.Core
                 .InstancePerLifetimeScope()
                 .AddInterceptors(
                     typeof(TransactionInterceptor)
-                    
                 )
                 ;
         }

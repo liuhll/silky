@@ -14,6 +14,7 @@ namespace Microsoft.AspNetCore.Builder
             {
                 throw new ArgumentNullException(nameof(endpoints));
             }
+
             return GetOrCreateDataSource(endpoints).DefaultBuilder;
         }
 
@@ -28,6 +29,5 @@ namespace Microsoft.AspNetCore.Builder
 
             return dataSource;
         }
-        
     }
 }

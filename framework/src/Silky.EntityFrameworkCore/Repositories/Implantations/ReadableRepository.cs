@@ -124,7 +124,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="keyValues">多个键</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual async Task<TEntity> FindOrDefaultAsync(object[] keyValues, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> FindOrDefaultAsync(object[] keyValues,
+            CancellationToken cancellationToken = default)
         {
             var entity = await Entities.FindAsync(keyValues, cancellationToken);
             return entity;
@@ -190,7 +191,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).SingleAsync(predicate, cancellationToken);
         }
@@ -201,7 +203,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <returns>数据库中的实体</returns>
         /// <param name="cancellationToken">异步取消令牌</param>
-        public virtual Task<TEntity> SingleOrDefaultAsync(bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> SingleOrDefaultAsync(bool? tracking = null,
+            CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).SingleOrDefaultAsync(cancellationToken);
         }
@@ -213,7 +216,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
+            bool? tracking = null, CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).SingleOrDefaultAsync(predicate, cancellationToken);
         }
@@ -278,7 +282,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).FirstAsync(predicate, cancellationToken);
         }
@@ -289,7 +294,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> FirstOrDefaultAsync(bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> FirstOrDefaultAsync(bool? tracking = null,
+            CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).FirstOrDefaultAsync(cancellationToken);
         }
@@ -301,7 +307,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
+            bool? tracking = null, CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).FirstOrDefaultAsync(predicate, cancellationToken);
         }
@@ -366,7 +373,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> LastAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> LastAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).LastAsync(predicate, cancellationToken);
         }
@@ -377,7 +385,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> LastOrDefaultAsync(bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> LastOrDefaultAsync(bool? tracking = null,
+            CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).LastOrDefaultAsync(cancellationToken);
         }
@@ -389,7 +398,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>数据库中的实体</returns>
-        public virtual Task<TEntity> LastOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> LastOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
+            bool? tracking = null, CancellationToken cancellationToken = default)
         {
             return AsQueryable(tracking).LastOrDefaultAsync(predicate, cancellationToken);
         }
@@ -401,7 +411,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             return AsQueryable(predicate, tracking, ignoreQueryFilters);
         }
@@ -413,7 +424,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, int, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, int, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             return AsQueryable(predicate, tracking, ignoreQueryFilters);
         }
@@ -426,9 +438,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(bool condition, Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(bool condition, Expression<Func<TEntity, bool>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Where(condition, predicate);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .Where(condition, predicate);
         }
 
         /// <summary>
@@ -439,9 +453,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(bool condition, Expression<Func<TEntity, int, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(bool condition, Expression<Func<TEntity, int, bool>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, int, bool>>), tracking, ignoreQueryFilters).Where(condition, predicate);
+            return AsQueryable(default(Expression<Func<TEntity, int, bool>>), tracking, ignoreQueryFilters)
+                .Where(condition, predicate);
         }
 
         /// <summary>
@@ -461,9 +477,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, bool>>[] predicates, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, bool>>[] predicates, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Where(predicates);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .Where(predicates);
         }
 
         /// <summary>
@@ -483,9 +501,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, int, bool>>[] predicates, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(Expression<Func<TEntity, int, bool>>[] predicates,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, int, bool>>), tracking, ignoreQueryFilters).Where(predicates);
+            return AsQueryable(default(Expression<Func<TEntity, int, bool>>), tracking, ignoreQueryFilters)
+                .Where(predicates);
         }
 
         /// <summary>
@@ -493,7 +513,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="conditionPredicates">条件表达式集合</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(params (bool condition, Expression<Func<TEntity, bool>> expression)[] conditionPredicates)
+        public virtual IQueryable<TEntity> Where(
+            params (bool condition, Expression<Func<TEntity, bool>> expression)[] conditionPredicates)
         {
             return AsQueryable(default(Expression<Func<TEntity, bool>>)).Where(conditionPredicates);
         }
@@ -505,9 +526,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where((bool condition, Expression<Func<TEntity, bool>> expression)[] conditionPredicates, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(
+            (bool condition, Expression<Func<TEntity, bool>> expression)[] conditionPredicates, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Where(conditionPredicates);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .Where(conditionPredicates);
         }
 
         /// <summary>
@@ -515,7 +539,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         /// <param name="conditionPredicates">条件表达式集合</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where(params (bool condition, Expression<Func<TEntity, int, bool>> expression)[] conditionPredicates)
+        public virtual IQueryable<TEntity> Where(
+            params (bool condition, Expression<Func<TEntity, int, bool>> expression)[] conditionPredicates)
         {
             return AsQueryable(default(Expression<Func<TEntity, int, bool>>)).Where(conditionPredicates);
         }
@@ -527,9 +552,12 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IQueryable<TEntity> Where((bool condition, Expression<Func<TEntity, int, bool>> expression)[] conditionPredicates, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> Where(
+            (bool condition, Expression<Func<TEntity, int, bool>> expression)[] conditionPredicates,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, int, bool>>), tracking, ignoreQueryFilters).Where(conditionPredicates);
+            return AsQueryable(default(Expression<Func<TEntity, int, bool>>), tracking, ignoreQueryFilters)
+                .Where(conditionPredicates);
         }
 
         /// <summary>
@@ -539,9 +567,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IIncludableQueryable<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IIncludableQueryable<TEntity, TProperty> Include<TProperty>(
+            Expression<Func<TEntity, TProperty>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Include(predicate);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .Include(predicate);
         }
 
         /// <summary>
@@ -552,9 +582,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>数据库中的多个实体</returns>
-        public virtual IIncludableQueryable<TEntity, TProperty> Include<TProperty>(bool condition, Expression<Func<TEntity, TProperty>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IIncludableQueryable<TEntity, TProperty> Include<TProperty>(bool condition,
+            Expression<Func<TEntity, TProperty>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Include(condition, predicate);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .Include(condition, predicate);
         }
 
         /// <summary>
@@ -575,7 +607,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>bool</returns>
-        public virtual bool Any(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual bool Any(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Any(predicate);
         }
@@ -587,9 +620,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>bool</returns>
-        public virtual Task<bool> AnyAsync(bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<bool> AnyAsync(bool? tracking = null, bool ignoreQueryFilters = false,
+            CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).AnyAsync(cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .AnyAsync(cancellationToken);
         }
 
         /// <summary>
@@ -600,9 +635,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>bool</returns>
-        public virtual Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).AnyAsync(predicate, cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .AnyAsync(predicate, cancellationToken);
         }
 
         /// <summary>
@@ -612,7 +649,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>bool</returns>
-        public virtual bool All(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual bool All(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).All(predicate);
         }
@@ -625,9 +663,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>bool</returns>
-        public virtual Task<bool> AllAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<bool> AllAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).AllAsync(predicate, cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .AllAsync(predicate, cancellationToken);
         }
 
         /// <summary>
@@ -648,7 +688,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>int</returns>
-        public virtual int Count(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual int Count(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Count(predicate);
         }
@@ -660,9 +701,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>int</returns>
-        public virtual Task<int> CountAsync(bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<int> CountAsync(bool? tracking = null, bool ignoreQueryFilters = false,
+            CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).CountAsync(cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .CountAsync(cancellationToken);
         }
 
         /// <summary>
@@ -673,9 +716,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>int</returns>
-        public virtual Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).CountAsync(predicate, cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .CountAsync(predicate, cancellationToken);
         }
 
         /// <summary>
@@ -697,7 +742,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>TResult</returns>
-        public virtual TResult Min<TResult>(Expression<Func<TEntity, TResult>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual TResult Min<TResult>(Expression<Func<TEntity, TResult>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Min(predicate);
         }
@@ -709,9 +755,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>实体</returns>
-        public virtual Task<TEntity> MinAsync(bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> MinAsync(bool? tracking = null, bool ignoreQueryFilters = false,
+            CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).MinAsync(cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .MinAsync(cancellationToken);
         }
 
         /// <summary>
@@ -723,9 +771,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>TResult</returns>
-        public virtual Task<TResult> MinAsync<TResult>(Expression<Func<TEntity, TResult>> predicate, bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<TResult> MinAsync<TResult>(Expression<Func<TEntity, TResult>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).MinAsync(predicate, cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .MinAsync(predicate, cancellationToken);
         }
 
         /// <summary>
@@ -747,7 +797,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>TResult</returns>
-        public virtual TResult Max<TResult>(Expression<Func<TEntity, TResult>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual TResult Max<TResult>(Expression<Func<TEntity, TResult>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).Max(predicate);
         }
@@ -759,9 +810,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>实体</returns>
-        public virtual Task<TEntity> MaxAsync(bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> MaxAsync(bool? tracking = null, bool ignoreQueryFilters = false,
+            CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).MaxAsync(cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .MaxAsync(cancellationToken);
         }
 
         /// <summary>
@@ -773,9 +826,11 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <param name="cancellationToken">取消异步令牌</param>
         /// <returns>TResult</returns>
-        public virtual Task<TResult> MaxAsync<TResult>(Expression<Func<TEntity, TResult>> predicate, bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
+        public virtual Task<TResult> MaxAsync<TResult>(Expression<Func<TEntity, TResult>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false, CancellationToken cancellationToken = default)
         {
-            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters).MaxAsync(predicate, cancellationToken);
+            return AsQueryable(default(Expression<Func<TEntity, bool>>), tracking, ignoreQueryFilters)
+                .MaxAsync(predicate, cancellationToken);
         }
 
         /// <summary>
@@ -798,7 +853,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>IQueryable{TEntity}</returns>
-        public virtual IQueryable<TEntity> AsQueryable(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> AsQueryable(Expression<Func<TEntity, bool>> predicate, bool? tracking = null,
+            bool ignoreQueryFilters = false)
         {
             var entities = AsQueryable(tracking);
             if (ignoreQueryFilters) entities = entities.IgnoreQueryFilters();
@@ -814,7 +870,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>IQueryable{TEntity}</returns>
-        public virtual IQueryable<TEntity> AsQueryable(Expression<Func<TEntity, int, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IQueryable<TEntity> AsQueryable(Expression<Func<TEntity, int, bool>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
             var entities = AsQueryable(tracking);
             if (ignoreQueryFilters) entities = entities.IgnoreQueryFilters();
@@ -840,7 +897,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>List{TEntity}</returns>
-        public virtual IEnumerable<TEntity> AsEnumerable(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IEnumerable<TEntity> AsEnumerable(Expression<Func<TEntity, bool>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
             return AsQueryable(predicate, tracking, ignoreQueryFilters).AsEnumerable();
         }
@@ -852,7 +910,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>IEnumerable{TEntity}</returns>
-        public virtual IEnumerable<TEntity> AsEnumerable(Expression<Func<TEntity, int, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IEnumerable<TEntity> AsEnumerable(Expression<Func<TEntity, int, bool>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
             return AsQueryable(predicate, tracking, ignoreQueryFilters).AsEnumerable();
         }
@@ -874,7 +933,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>IAsyncEnumerable{TEntity}</returns>
-        public virtual IAsyncEnumerable<TEntity> AsAsyncEnumerable(Expression<Func<TEntity, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IAsyncEnumerable<TEntity> AsAsyncEnumerable(Expression<Func<TEntity, bool>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
             return AsQueryable(predicate, tracking, ignoreQueryFilters).AsAsyncEnumerable();
         }
@@ -886,7 +946,8 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="tracking">是否跟踪实体</param>
         /// <param name="ignoreQueryFilters">是否忽略查询过滤器</param>
         /// <returns>IAsyncEnumerable{TEntity}</returns>
-        public virtual IAsyncEnumerable<TEntity> AsAsyncEnumerable(Expression<Func<TEntity, int, bool>> predicate, bool? tracking = null, bool ignoreQueryFilters = false)
+        public virtual IAsyncEnumerable<TEntity> AsAsyncEnumerable(Expression<Func<TEntity, int, bool>> predicate,
+            bool? tracking = null, bool ignoreQueryFilters = false)
         {
             return AsQueryable(predicate, tracking, ignoreQueryFilters).AsAsyncEnumerable();
         }

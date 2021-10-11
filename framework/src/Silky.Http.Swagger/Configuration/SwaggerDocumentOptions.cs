@@ -9,6 +9,7 @@ namespace Silky.Http.Swagger.Configuration
     public class SwaggerDocumentOptions
     {
         internal static string SwaggerDocument = "SwaggerDocument";
+
         public SwaggerDocumentOptions()
         {
             OrganizationMode = OrganizationMode.AllAndGroup;
@@ -23,7 +24,7 @@ namespace Silky.Http.Swagger.Configuration
             {
                 SecurityDefinitions ??= new SpecificationOpenApiSecurityScheme[]
                 {
-                    new ()
+                    new()
                     {
                         Id = "Bearer",
                         Type = SecuritySchemeType.ApiKey,
@@ -67,12 +68,12 @@ namespace Silky.Http.Swagger.Configuration
         public bool FormatAsV2 { get; set; } = true;
 
         public string RoutePrefix { get; set; }
-        
+
         public DocExpansion DocExpansionState { get; set; }
         public bool EnableAuthorized { get; set; }
 
         public SpecificationOpenApiSecurityScheme[] SecurityDefinitions { get; set; }
-        
+
         public string[] XmlComments { get; set; }
     }
 

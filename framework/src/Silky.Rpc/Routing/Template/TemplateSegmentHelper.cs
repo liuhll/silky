@@ -9,7 +9,7 @@ namespace Silky.Rpc.Routing.Template
     {
         private const string isVariableReg = @"\{(.*?)\}";
         private const string segmentValReg = @"(?<=\{)[^}]*(?=\})";
-        
+
 
         public static bool IsVariable(string segmentLine)
         {
@@ -29,7 +29,7 @@ namespace Silky.Rpc.Routing.Template
                 throw new SilkyException("Incorrect routing format", StatusCode.RouteParseError);
             }
 
-            if (segemnetLineVal.Value.StartsWith("appservice",StringComparison.OrdinalIgnoreCase))
+            if (segemnetLineVal.Value.StartsWith("appservice", StringComparison.OrdinalIgnoreCase))
             {
                 return SegmentType.AppService;
             }
@@ -44,11 +44,13 @@ namespace Silky.Rpc.Routing.Template
                 var appServiceName = segemnetLineVal.Value.Split("=")[0];
                 if (!serviceName.EndsWith(appServiceName))
                 {
-                    throw new SilkyException("The specified service application route segment is incorrect", StatusCode.RouteParseError);
+                    throw new SilkyException("The specified service application route segment is incorrect",
+                        StatusCode.RouteParseError);
                 }
+
                 return SegmentType.AppService;
             }
-            
+
             return SegmentType.Path;
         }
 
@@ -58,6 +60,7 @@ namespace Silky.Rpc.Routing.Template
             {
                 return segemnetLine;
             }
+
             var segemnetLineVal = Regex.Match(segemnetLine, segmentValReg);
             return segemnetLineVal.Value;
         }

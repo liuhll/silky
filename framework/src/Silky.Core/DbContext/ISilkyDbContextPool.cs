@@ -7,7 +7,7 @@ namespace Silky.Core.DbContext
     public interface ISilkyDbContextPool
     {
         void EnsureDbContextAddToPools();
-        
+
         int SavePoolNow();
 
         int SavePoolNow(bool acceptAllChangesOnSuccess);

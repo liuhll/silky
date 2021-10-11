@@ -8,7 +8,8 @@ namespace Silky.Core
         {
             Singleton<ConcurrentDictionary<TKey, TValue>>.Instance = new ConcurrentDictionary<TKey, TValue>();
         }
-        
-        public static new ConcurrentDictionary<TKey, TValue> Instance => Singleton<ConcurrentDictionary<TKey, TValue>>.Instance;
+
+        public static new ConcurrentDictionary<TKey, TValue> Instance =>
+            Singleton<ConcurrentDictionary<TKey, TValue>>.Instance;
     }
 }

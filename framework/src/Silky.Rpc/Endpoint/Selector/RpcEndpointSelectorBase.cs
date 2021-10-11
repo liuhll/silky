@@ -8,11 +8,12 @@ namespace Silky.Rpc.Endpoint.Selector
         public IRpcEndpoint Select(RpcEndpointSelectContext context)
         {
             Check.NotNull(context, nameof(context));
-            if (context.AddressModels.Count(p => p.Enabled) == 1 
+            if (context.AddressModels.Count(p => p.Enabled) == 1
                 && ShuntStrategy != ShuntStrategy.HashAlgorithm)
             {
                 return context.AddressModels.First(p => p.Enabled);
             }
+
             return SelectAddressByAlgorithm(context);
         }
 

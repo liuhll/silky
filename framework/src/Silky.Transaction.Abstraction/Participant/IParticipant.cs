@@ -24,7 +24,7 @@ namespace Silky.Transaction.Abstraction.Participant
         DateTime CreateTime { get; set; }
 
         DateTime UpdateTime { get; set; }
-        
+
         int Version { get; set; }
     }
 }

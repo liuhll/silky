@@ -21,7 +21,7 @@ namespace Silky.Core.Extensions.Collections.Generic
 
             return sorted;
         }
-        
+
         public static void MoveItem<T>(this List<T> source, Predicate<T> selector, int targetIndex)
         {
             if (!targetIndex.IsBetween(0, source.Count - 1))
@@ -39,8 +39,9 @@ namespace Silky.Core.Extensions.Collections.Generic
             source.RemoveAt(currentIndex);
             source.Insert(targetIndex, item);
         }
-        
-        private static void SortByDependenciesVisit<T>(T item, Func<T, IEnumerable<T>> getDependencies, List<T> sorted, Dictionary<T, bool> visited)
+
+        private static void SortByDependenciesVisit<T>(T item, Func<T, IEnumerable<T>> getDependencies, List<T> sorted,
+            Dictionary<T, bool> visited)
         {
             bool inProcess;
             var alreadyVisited = visited.TryGetValue(item, out inProcess);

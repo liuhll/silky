@@ -2,47 +2,47 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-		 <GenerateDocumentationFile>true</GenerateDocumentationFile>
-         <NoWarn>$(NoWarn);1591</NoWarn>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
-        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
-        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj"/>
+        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj"/>
+        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj"/>
     </ItemGroup>
     <ItemGroup>
-      <None Include="skyapm.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </None>
+        <None Include="skyapm.json">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="5.0.1" />
-      <PackageReference Include="AspNetCore.HealthChecks.UI" Version="5.0.1" />
-      <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1" />
-      <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="5.0.1" />
-      <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1" />
-      <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0" />
+        <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="5.0.1"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="5.0.1"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="5.0.1"/>
+        <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1"/>
+        <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0"/>
     </ItemGroup>
     <ItemGroup>
-      <Content Update="skyapm.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="appsettings.Development.yml" />
-      <Content Include="appsettings.Apollo.yml">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="appsettings.Development.yml">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="appsettings.yml" />
-      <Content Include="appsettings.yml">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+        <Content Update="skyapm.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <None Remove="appsettings.Development.yml"/>
+        <Content Include="appsettings.Apollo.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="appsettings.Development.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <None Remove="appsettings.yml"/>
+        <Content Include="appsettings.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
     <ItemGroup>
-      <None Include="apollo.properties" />
+        <None Include="apollo.properties"/>
     </ItemGroup>
 
 </Project>

@@ -55,11 +55,10 @@ namespace Silky.Rpc.Extensions
             RpcContext.Context.SetAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
             RpcContext.Context.SetAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol);
         }
-        
+
         public static void SetResultCode(this HttpResponse httpResponse, StatusCode statusCode)
         {
             httpResponse.Headers["SilkyResultCode"] = statusCode.ToString();
         }
-        
     }
 }

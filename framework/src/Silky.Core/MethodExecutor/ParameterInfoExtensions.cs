@@ -10,7 +10,7 @@ namespace Silky.Core.MethodExecutor
         {
             return parameterInfo.ParameterType.IsSample();
         }
-        
+
         [CanBeNull]
         public static object GetDefaultValue(this ParameterInfo parameterInfo)
         {

@@ -8,7 +8,6 @@ namespace Silky.Validation.StringValues
     {
         public FreeTextStringValueType()
         {
-
         }
 
         public FreeTextStringValueType(IValueValidator validator)

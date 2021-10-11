@@ -13,7 +13,5 @@ namespace NormHostDemo.Contexts
         }
 
         public DbSet<Test> Tests { get; set; }
-        
-        
     }
 }

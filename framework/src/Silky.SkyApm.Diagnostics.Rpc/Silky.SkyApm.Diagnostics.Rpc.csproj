@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>Rpc SkyApm Diagnostics</Description>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
-      <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Abstraction\Silky.SkyApm.Diagnostics.Abstraction.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
+        <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Abstraction\Silky.SkyApm.Diagnostics.Abstraction.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -33,7 +33,7 @@ namespace Silky.Http.Core.Handlers
             IParameterParser parameterParser,
             ICurrentRpcToken currentRpcToken,
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener)
-            : base(executor, parameterParser, currentRpcToken, 
+            : base(executor, parameterParser, currentRpcToken,
                 httpHandleDiagnosticListener)
         {
             _serializer = serializer;

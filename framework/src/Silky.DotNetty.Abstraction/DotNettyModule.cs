@@ -4,6 +4,5 @@ namespace Silky.DotNetty
 {
     public class DotNettyModule : SilkyModule
     {
-        
     }
 }

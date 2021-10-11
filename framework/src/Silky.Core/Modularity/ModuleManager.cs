@@ -25,7 +25,7 @@ namespace Silky.Core.Modularity
             {
                 try
                 {
-                    Logger.LogInformation("Initialize the module {0}",module.Name);
+                    Logger.LogInformation("Initialize the module {0}", module.Name);
                     await module.Instance.Initialize(new ApplicationContext(_serviceProvider, _moduleContainer));
                 }
                 catch (Exception e)
@@ -33,7 +33,6 @@ namespace Silky.Core.Modularity
                     Logger.LogError($"Initializing the {module.Name} module is an error, reason: {e.Message}");
                     throw;
                 }
-                
             }
         }
 

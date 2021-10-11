@@ -15,7 +15,8 @@ namespace Silky.EntityFrameworkCore.Interceptors
         /// <param name="eventData"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData,
+            InterceptionResult<int> result)
         {
             dynamic dbContext = eventData.Context;
             dbContext.SavingChangesEventInner(eventData, result);
@@ -30,7 +31,8 @@ namespace Silky.EntityFrameworkCore.Interceptors
         /// <param name="result"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+            InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             dynamic dbContext = eventData.Context;
             dbContext.SavingChangesEventInner(eventData, result);
@@ -59,7 +61,8 @@ namespace Silky.EntityFrameworkCore.Interceptors
         /// <param name="result"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
+        public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result,
+            CancellationToken cancellationToken = default)
         {
             dynamic dbContext = eventData.Context;
             dbContext.SavedChangesEventInner(eventData, result);
@@ -85,7 +88,8 @@ namespace Silky.EntityFrameworkCore.Interceptors
         /// <param name="eventData"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task SaveChangesFailedAsync(DbContextErrorEventData eventData, CancellationToken cancellationToken = default)
+        public override Task SaveChangesFailedAsync(DbContextErrorEventData eventData,
+            CancellationToken cancellationToken = default)
         {
             dynamic dbContext = eventData.Context;
             dbContext.SaveChangesFailedEventInner(eventData);

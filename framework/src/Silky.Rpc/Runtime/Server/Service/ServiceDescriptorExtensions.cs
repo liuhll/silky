@@ -39,7 +39,5 @@ namespace Silky.Rpc.Runtime.Server
             var serviceKeys = serviceDescriptor.GetServiceKeys();
             return serviceKeys != null && serviceKeys.Any();
         }
-
-
     }
 }

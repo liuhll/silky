@@ -14,8 +14,8 @@ using Silky.Rpc.Security;
 namespace ITestApplication.Test
 {
     [ServiceRoute]
-   // [Authorize(Roles = "Administrator, PowerUser")]
-   [Authorize]
+    // [Authorize(Roles = "Administrator, PowerUser")]
+    [Authorize]
     public interface ITestAppService
     {
         /// <summary>
@@ -38,7 +38,7 @@ namespace ITestApplication.Test
 
         [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
         [Transaction]
-       // [Governance(TimeoutMillSeconds = 5, RetryTimes = 2)]
+        // [Governance(TimeoutMillSeconds = 5, RetryTimes = 2)]
         Task<string> Delete(TestInput input);
 
         [HttpGet]

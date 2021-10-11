@@ -26,7 +26,7 @@ namespace Silky.Http.Core
 
             return defaultResponseContextType;
         }
-        
+
         public static void SetExceptionResponseStatus(this HttpResponse httpResponse, Exception exception)
         {
             if (exception.IsBusinessException() || exception.IsUserFriendlyException())

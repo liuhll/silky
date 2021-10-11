@@ -23,7 +23,7 @@ namespace Silky.Rpc.Endpoint
             ServiceProtocol = serviceProtocol;
             m_fuseTimes = 0;
             Descriptor = new RpcEndpointDescriptor()
-                {Host = Host, Port = Port, ServiceProtocol = ServiceProtocol};
+                { Host = Host, Port = Port, ServiceProtocol = ServiceProtocol };
         }
 
         public string Host { get; }

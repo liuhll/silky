@@ -148,7 +148,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 return ServiceProtocol.Ws;
             }
-            
+
             return ServiceProtocol.Tcp;
         }
     }

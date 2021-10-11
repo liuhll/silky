@@ -250,7 +250,8 @@ namespace Silky.Zookeeper.Implementation
 
                 case Watcher.Event.EventType.NodeDataChanged:
                 case Watcher.Event.EventType.None: //重连时触发
-                    args = new NodeDataChangeArgs(Path, Watcher.Event.EventType.NodeDataChanged, await getCurrentData());
+                    args = new NodeDataChangeArgs(Path, Watcher.Event.EventType.NodeDataChanged,
+                        await getCurrentData());
                     break;
 
                 default:
@@ -328,6 +329,7 @@ namespace Silky.Zookeeper.Implementation
                 catch (KeeperException.NoNodeException)
                 {
                 }
+
                 return null;
             });
         }
@@ -357,7 +359,8 @@ namespace Silky.Zookeeper.Implementation
                 {
                     try
                     {
-                        return await CreateAsync(_localSnapshot.Data?.ToArray(), _localSnapshot.Acls, _localSnapshot.Mode);
+                        return await CreateAsync(_localSnapshot.Data?.ToArray(), _localSnapshot.Acls,
+                            _localSnapshot.Mode);
                     }
                     catch (KeeperException.NodeExistsException) //节点已经存在则忽略
                     {
@@ -430,6 +433,7 @@ namespace Silky.Zookeeper.Implementation
                     Delete();
                     return;
                 }
+
                 IsExist = true;
             }
         }

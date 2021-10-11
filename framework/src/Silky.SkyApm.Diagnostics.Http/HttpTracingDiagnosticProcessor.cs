@@ -155,7 +155,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
 
             context.Span.AddLog(
                 LogEvent.Event("Http Handle Begin"));
-            
+
             context.Span.AddTag(SilkyTags.WEBAPI, eventData.HttpContext.Request.Path);
             context.Span.AddTag(SilkyTags.HTTPMETHOD, eventData.HttpContext.Request.Method);
             context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntry.Id);

@@ -32,7 +32,8 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
         private void ApplyTypeTags(OpenApiSchema schema, Type type)
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
-            var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
+            var typeSummaryNode =
+                _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
 
             if (typeSummaryNode != null)
             {
@@ -42,8 +43,10 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
 
         private void ApplyMemberTags(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
-            var fieldOrPropertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
+            var fieldOrPropertyMemberName =
+                XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
+            var fieldOrPropertyNode =
+                _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
 
             if (fieldOrPropertyNode == null) return;
 

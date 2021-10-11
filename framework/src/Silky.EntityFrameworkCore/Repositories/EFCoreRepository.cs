@@ -25,13 +25,11 @@ namespace Silky.EntityFrameworkCore.Repositories
     /// </summary>
     public partial class EFCoreRepository : IRepository
     {
-        
         /// <summary>
         /// 构造函数
         /// </summary>
         public EFCoreRepository()
         {
-     
         }
 
         /// <summary>
@@ -115,10 +113,6 @@ namespace Silky.EntityFrameworkCore.Repositories
         {
             return EngineContext.Current.Resolve<ISqlRepository<TDbContextLocator>>();
         }
-
-  
-
-      
     }
 
     /// <summary>
@@ -176,7 +170,6 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <param name="dbContextLocator"></param>
         public PrivateRepository(Type dbContextLocator) : base(dbContextLocator)
         {
-            
             DbConnection = Database.GetDbConnection();
             ChangeTracker = Context.ChangeTracker;
             Model = Context.Model;

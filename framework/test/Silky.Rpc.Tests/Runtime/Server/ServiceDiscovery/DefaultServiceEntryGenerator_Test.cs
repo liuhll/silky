@@ -16,7 +16,6 @@ namespace Silky.Rpc.Tests.Runtime.Server.ServiceDiscovery
         [Fact]
         public void Shuold_CreateServiceEntry()
         {
-
         }
     }
 }

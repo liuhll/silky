@@ -85,7 +85,7 @@ namespace Silky.WebSocket
             webSocketServerBootstrap.Initialize(webSocketServices);
             var serviceRouteRegisterProvider =
                 applicationContext.ServiceProvider.GetRequiredService<IServerProvider>();
-            
+
             serviceRouteRegisterProvider.AddWsServices();
         }
 

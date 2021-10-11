@@ -11,7 +11,7 @@ namespace Silky.Rpc.Endpoint
         /// 地址(Ip或是域名)
         /// </summary>
         string Host { get; }
-        
+
         /// <summary>
         /// 指定的端口号
         /// </summary>
@@ -31,7 +31,7 @@ namespace Silky.Rpc.Endpoint
         ///  该地址是否可用
         /// </summary>
         bool Enabled { get; }
-        
+
         /// <summary>
         /// 上次不可用时间
         /// </summary>
@@ -43,7 +43,7 @@ namespace Silky.Rpc.Endpoint
         void MakeFusing(int fuseSleepDuration);
 
         void InitFuseTimes();
-        
+
         int FuseTimes { get; }
 
         /// <summary>

@@ -62,7 +62,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     return ResolveDbContext(provider, locator);
                 }
 
-                return (Func<Type, ITransientDependency, DbContext>) dbContextResolve;
+                return (Func<Type, ITransientDependency, DbContext>)dbContextResolve;
             });
 
             services.AddScoped(provider =>
@@ -72,7 +72,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     return ResolveDbContext(provider, locator);
                 }
 
-                return (Func<Type, IScopedDependency, DbContext>) dbContextResolve;
+                return (Func<Type, IScopedDependency, DbContext>)dbContextResolve;
             });
             return services;
         }

@@ -8,7 +8,8 @@ namespace Silky.Core.Exceptions
 {
     public static class HasValidationErrorsExtensions
     {
-        public static TException WithValidationError<TException>([NotNull] this TException exception, [NotNull] ValidationResult validationError)
+        public static TException WithValidationError<TException>([NotNull] this TException exception,
+            [NotNull] ValidationResult validationError)
             where TException : IHasValidationErrors
         {
             Check.NotNull(exception, nameof(exception));
@@ -19,7 +20,8 @@ namespace Silky.Core.Exceptions
             return exception;
         }
 
-        public static TException WithValidationError<TException>([NotNull] this TException exception, string errorMessage, params string[] memberNames)
+        public static TException WithValidationError<TException>([NotNull] this TException exception,
+            string errorMessage, params string[] memberNames)
             where TException : IHasValidationErrors
         {
             var validationResult = memberNames.IsNullOrEmpty()
@@ -33,7 +35,7 @@ namespace Silky.Core.Exceptions
             where TException : IHasValidationErrors
         {
             var validateErrors = new List<ValidError>();
-            
+
             foreach (var validateError in exception.ValidationErrors)
             {
                 validateErrors.Add(new ValidError()
@@ -42,8 +44,8 @@ namespace Silky.Core.Exceptions
                     MemberNames = validateError.MemberNames.ToArray()
                 });
             }
-            return validateErrors;
 
+            return validateErrors;
         }
     }
 }

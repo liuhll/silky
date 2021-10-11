@@ -18,7 +18,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public IReadOnlyCollection<WsAppServiceOutput> WsServices { get; set; }
     }
-    
+
 
     public class WsAppServiceOutput
     {
@@ -34,11 +34,11 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public string HostName { get; set; }
-        
+
         public string Application { get; set; }
         public string ServiceName { get; set; }
         public string ServiceId { get; set; }
-        
+
         public string ServiceEntryId { get; set; }
 
         public string Method { get; set; }
@@ -52,6 +52,5 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public bool ProhibitExtranet { get; set; }
 
         public string Author { get; set; }
-        
     }
 }

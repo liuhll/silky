@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace Silky.Core.MethodExecutor
 {
- 
     public readonly struct ObjectMethodExecutorAwaitable
     {
         private readonly object _customAwaitable;
@@ -12,7 +11,7 @@ namespace Silky.Core.MethodExecutor
         private readonly Func<object, object> _getResultMethod;
         private readonly Action<object, Action> _onCompletedMethod;
         private readonly Action<object, Action> _unsafeOnCompletedMethod;
-        
+
 
         public ObjectMethodExecutorAwaitable(
             object customAwaitable,
@@ -33,7 +32,8 @@ namespace Silky.Core.MethodExecutor
         public Awaiter GetAwaiter()
         {
             var customAwaiter = _getAwaiterMethod(_customAwaitable);
-            return new Awaiter(customAwaiter, _isCompletedMethod, _getResultMethod, _onCompletedMethod, _unsafeOnCompletedMethod);
+            return new Awaiter(customAwaiter, _isCompletedMethod, _getResultMethod, _onCompletedMethod,
+                _unsafeOnCompletedMethod);
         }
 
         public readonly struct Awaiter : ICriticalNotifyCompletion
@@ -69,7 +69,6 @@ namespace Silky.Core.MethodExecutor
 
             public void UnsafeOnCompleted(Action continuation)
             {
-
                 var underlyingMethodToUse = _unsafeOnCompletedMethod ?? _onCompletedMethod;
                 underlyingMethodToUse(_customAwaiter, continuation);
             }

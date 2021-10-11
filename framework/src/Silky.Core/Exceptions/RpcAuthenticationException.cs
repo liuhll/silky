@@ -4,7 +4,6 @@ namespace Silky.Core.Exceptions
     {
         public RpcAuthenticationException(string message) : base(message, StatusCode.RpcUnAuthentication)
         {
-
         }
     }
 }

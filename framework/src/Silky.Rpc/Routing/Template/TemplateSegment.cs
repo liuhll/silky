@@ -2,7 +2,7 @@
 {
     public class TemplateSegment
     {
-        public TemplateSegment(SegmentType segmentType,string value)
+        public TemplateSegment(SegmentType segmentType, string value)
         {
             SegmentType = segmentType;
             Value = value;

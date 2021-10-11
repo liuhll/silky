@@ -6,7 +6,7 @@ namespace Silky.TestBase
     public abstract class SilkyTestBaseWithServiceProvider
     {
         protected IServiceProvider ServiceProvider { get; set; }
-        
+
         protected virtual T GetService<T>()
         {
             return ServiceProvider.GetService<T>();

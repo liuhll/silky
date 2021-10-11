@@ -5,7 +5,6 @@ namespace Silky.Core.Convertible
 {
     public interface ITypeConvertibleService : ISingletonDependency
     {
-         object Convert(object instance, Type conversionType);
-        
+        object Convert(object instance, Type conversionType);
     }
 }

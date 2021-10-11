@@ -9,5 +9,4 @@ namespace Silky.Http.Dashboard.AppService.Dtos
         public int Port { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
     }
-    
 }

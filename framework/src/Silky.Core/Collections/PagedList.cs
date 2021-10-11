@@ -1,4 +1,3 @@
-
 namespace System.Collections.Generic
 {
     /// <summary>
@@ -8,7 +7,6 @@ namespace System.Collections.Generic
     public class PagedList<TEntity>
         where TEntity : new()
     {
-
         /// <summary>
         /// 总条数
         /// </summary>

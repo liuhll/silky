@@ -33,7 +33,8 @@ namespace Silky.Validation
             }
         }
 
-        public virtual List<ValidationResult> GetErrors(object validatingObject, string name = null, bool allowNull = false)
+        public virtual List<ValidationResult> GetErrors(object validatingObject, string name = null,
+            bool allowNull = false)
         {
             if (validatingObject == null)
             {
@@ -47,7 +48,7 @@ namespace Silky.Validation
                     {
                         name == null
                             ? new ValidationResult("Given object is null!")
-                            : new ValidationResult(name + " is null!", new[] {name})
+                            : new ValidationResult(name + " is null!", new[] { name })
                     };
                 }
             }

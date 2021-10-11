@@ -74,7 +74,8 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
         /// <param name="modelBuilder">模型构建器</param>
         /// <param name="dbContext">数据库上下文</param>
         /// <param name="dbContextLocator">数据库上下文定位器</param>
-        internal static void ConfigureDbContextEntity(ModelBuilder modelBuilder, DbContext dbContext, Type dbContextLocator)
+        internal static void ConfigureDbContextEntity(ModelBuilder modelBuilder, DbContext dbContext,
+            Type dbContextLocator)
         {
             // 获取当前数据库上下文关联的类型
             var dbContextCorrelationType = GetDbContextCorrelationType(dbContext, dbContextLocator);
@@ -90,27 +91,33 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
             foreach (var entityType in dbContextCorrelationType.EntityTypes)
             {
                 // 创建实体类型
-                var entityBuilder = CreateEntityTypeBuilder(entityType, modelBuilder, dbContext, dbContextType, dbContextLocator, dbContextCorrelationType, appDbContextAttribute);
+                var entityBuilder = CreateEntityTypeBuilder(entityType, modelBuilder, dbContext, dbContextType,
+                    dbContextLocator, dbContextCorrelationType, appDbContextAttribute);
                 if (entityBuilder == null) continue;
 
                 // 配置无键实体构建器
                 ConfigureEntityNoKeyType(entityType, entityBuilder, dbContextCorrelationType.EntityNoKeyTypes);
 
                 // 实体构建成功注入拦截
-                LoadModelBuilderOnCreating(modelBuilder, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType.ModelBuilderFilterInstances);
+                LoadModelBuilderOnCreating(modelBuilder, entityBuilder, dbContext, dbContextLocator,
+                    dbContextCorrelationType.ModelBuilderFilterInstances);
 
                 // 配置数据库实体类型构建器
-                ConfigureEntityTypeBuilder(entityType, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType);
+                ConfigureEntityTypeBuilder(entityType, entityBuilder, dbContext, dbContextLocator,
+                    dbContextCorrelationType);
 
                 // 配置数据库实体种子数据
-                ConfigureEntitySeedData(entityType, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType);
+                ConfigureEntitySeedData(entityType, entityBuilder, dbContext, dbContextLocator,
+                    dbContextCorrelationType);
 
                 // 实体完成配置注入拦截
-                LoadModelBuilderOnCreated(modelBuilder, entityBuilder, dbContext, dbContextLocator, dbContextCorrelationType.ModelBuilderFilterInstances);
+                LoadModelBuilderOnCreated(modelBuilder, entityBuilder, dbContext, dbContextLocator,
+                    dbContextCorrelationType.ModelBuilderFilterInstances);
             }
 
             // 配置数据库函数
-            EntityFunctions: ConfigureDbFunctions(modelBuilder, dbContextLocator);
+            EntityFunctions:
+            ConfigureDbFunctions(modelBuilder, dbContextLocator);
         }
 
         /// <summary>
@@ -244,7 +251,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
 
             var instance = Activator.CreateInstance(lastEntityMutableTableType);
             var getTableNameMethod = lastEntityMutableTableType.GetMethod("GetTableName");
-            var tableName = getTableNameMethod.Invoke(instance, new object[] {dbContext, dbContextLocator});
+            var tableName = getTableNameMethod.Invoke(instance, new object[] { dbContext, dbContextLocator });
             if (tableName != null)
             {
                 // 设置动态表名
@@ -343,7 +350,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
                                 typeof(EntityTypeBuilder<>).MakeGenericType(entityType))
                     .FirstOrDefault();
 
-                configureMethod.Invoke(instance, new object[] {entityBuilder, dbContext, dbContextLocator});
+                configureMethod.Invoke(instance, new object[] { entityBuilder, dbContext, dbContextLocator });
             }
         }
 
@@ -374,7 +381,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
                 var instance = Activator.CreateInstance(entitySeedDataType);
                 var hasDataMethod = entitySeedDataType.GetMethod("HasData");
 
-                var seedData = ((IList) hasDataMethod?.Invoke(instance, new object[] {dbContext, dbContextLocator}))
+                var seedData = ((IList)hasDataMethod?.Invoke(instance, new object[] { dbContext, dbContextLocator }))
                     ?.Cast<object>();
                 if (seedData == null) continue;
 
@@ -467,7 +474,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
             // 本地静态方法
             static DbContextCorrelationType Function(DbContext dbContext, Type dbContextLocator)
             {
-                var result = new DbContextCorrelationType {DbContextLocator = dbContextLocator};
+                var result = new DbContextCorrelationType { DbContextLocator = dbContextLocator };
 
                 // 获取当前数据库上下文关联类型
                 var dbContextEntityCorrelationTypes =

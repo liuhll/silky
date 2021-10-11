@@ -38,7 +38,9 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                 if (jsonElement.ValueKind == JsonValueKind.Object)
                     return CreateOpenApiObject(jsonElement);
             }
-            catch { }
+            catch
+            {
+            }
 
             return null;
         }

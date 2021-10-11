@@ -2,7 +2,7 @@ apollo:
   appId: "silky-another-host"
   cluster: default
   metaServer: "http://127.0.0.1:8080/"
-#  secret: "ffd9d01130ee4329875ac3441c0bedda"
+  #  secret: "ffd9d01130ee4329875ac3441c0bedda"
   namespaces:
     - application
     - TEST1.silky.test

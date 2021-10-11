@@ -15,9 +15,9 @@ namespace Silky.Core
         {
             _fileProvider = fileProvider ?? CommonHelper.DefaultFileProvider;
         }
-        
+
         #region Utilities
-        
+
         private void AddAssembliesInAppDomain(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -33,7 +33,7 @@ namespace Silky.Core
                 addedAssemblyNames.Add(assembly.FullName);
             }
         }
-        
+
         protected virtual void AddConfiguredAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
             foreach (var assemblyName in AssemblyNames)
@@ -46,18 +46,18 @@ namespace Silky.Core
                 addedAssemblyNames.Add(assembly.FullName);
             }
         }
-        
+
         protected virtual bool Matches(string assemblyFullName)
         {
             return !Matches(assemblyFullName, AssemblySkipLoadingPattern)
                    && Matches(assemblyFullName, AssemblyRestrictToLoadingPattern);
         }
-        
+
         protected virtual bool Matches(string assemblyFullName, string pattern)
         {
             return Regex.IsMatch(assemblyFullName, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
-        
+
         protected virtual void LoadMatchingAssemblies(string directoryPath)
         {
             var loadedAssemblyNames = new List<string>();
@@ -95,7 +95,7 @@ namespace Silky.Core
                 }
             }
         }
-        
+
         protected virtual bool DoesTypeImplementOpenGeneric(Type type, Type openGeneric)
         {
             try
@@ -117,8 +117,9 @@ namespace Silky.Core
                 return false;
             }
         }
-        
-        protected virtual IEnumerable<Type> FindClassesOfType(Type assignTypeFrom, IEnumerable<Assembly> assemblies, bool onlyConcreteClasses = true)
+
+        protected virtual IEnumerable<Type> FindClassesOfType(Type assignTypeFrom, IEnumerable<Assembly> assemblies,
+            bool onlyConcreteClasses = true)
         {
             var result = new List<Type>();
             try
@@ -144,7 +145,8 @@ namespace Silky.Core
 
                     foreach (var t in types)
                     {
-                        if (!assignTypeFrom.IsAssignableFrom(t) && (!assignTypeFrom.IsGenericTypeDefinition || !DoesTypeImplementOpenGeneric(t, assignTypeFrom)))
+                        if (!assignTypeFrom.IsAssignableFrom(t) && (!assignTypeFrom.IsGenericTypeDefinition ||
+                                                                    !DoesTypeImplementOpenGeneric(t, assignTypeFrom)))
                             continue;
 
                         if (t.IsInterface)
@@ -178,21 +180,21 @@ namespace Silky.Core
 
             return result;
         }
-        
+
         #endregion
 
         #region Methods
-        
+
         public IEnumerable<Type> FindClassesOfType<T>(bool onlyConcreteClasses = true)
         {
             return FindClassesOfType(typeof(T), onlyConcreteClasses);
         }
-        
+
         public IEnumerable<Type> FindClassesOfType(Type assignTypeFrom, bool onlyConcreteClasses = true)
         {
             return FindClassesOfType(assignTypeFrom, GetAssemblies(), onlyConcreteClasses);
         }
-        
+
         public virtual IList<Assembly> GetAssemblies()
         {
             var addedAssemblyNames = new List<string>();
@@ -201,26 +203,25 @@ namespace Silky.Core
             if (LoadAppDomainAssemblies)
                 AddAssembliesInAppDomain(addedAssemblyNames, assemblies);
             AddConfiguredAssemblies(addedAssemblyNames, assemblies);
-           // AddDependModuleAssemblies(addedAssemblyNames, assemblies);
+            // AddDependModuleAssemblies(addedAssemblyNames, assemblies);
             return assemblies;
         }
-        
 
         #endregion
 
         #region Properties
-        
+
         public virtual AppDomain App => AppDomain.CurrentDomain;
-        
+
         public bool LoadAppDomainAssemblies { get; set; } = true;
-        
+
         public IList<string> AssemblyNames { get; set; } = new List<string>();
-        
-        public string AssemblySkipLoadingPattern { get; set; } = "^System|^mscorlib|^Microsoft|^AjaxControlToolkit|^Antlr3|^Autofac|^AutoMapper|^Castle|^ComponentArt|^CppCodeProvider|^DotNetOpenAuth|^EntityFramework|^EPPlus|^FluentValidation|^ImageResizer|^itextsharp|^log4net|^MaxMind|^MbUnit|^MiniProfiler|^Mono.Math|^MvcContrib|^Newtonsoft|^NHibernate|^nunit|^Org.Mentalis|^PerlRegex|^QuickGraph|^Recaptcha|^Remotion|^RestSharp|^Rhino|^Telerik|^Iesi|^TestDriven|^TestFu|^UserAgentStringLibrary|^VJSharpCodeProvider|^WebActivator|^WebDev|^WebGrease|^netstandard|^xunit";
-        
+
+        public string AssemblySkipLoadingPattern { get; set; } =
+            "^System|^mscorlib|^Microsoft|^AjaxControlToolkit|^Antlr3|^Autofac|^AutoMapper|^Castle|^ComponentArt|^CppCodeProvider|^DotNetOpenAuth|^EntityFramework|^EPPlus|^FluentValidation|^ImageResizer|^itextsharp|^log4net|^MaxMind|^MbUnit|^MiniProfiler|^Mono.Math|^MvcContrib|^Newtonsoft|^NHibernate|^nunit|^Org.Mentalis|^PerlRegex|^QuickGraph|^Recaptcha|^Remotion|^RestSharp|^Rhino|^Telerik|^Iesi|^TestDriven|^TestFu|^UserAgentStringLibrary|^VJSharpCodeProvider|^WebActivator|^WebDev|^WebGrease|^netstandard|^xunit";
+
         public string AssemblyRestrictToLoadingPattern { get; set; } = ".*";
 
         #endregion
-        
     }
 }

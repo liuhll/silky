@@ -33,7 +33,7 @@ namespace Silky.Rpc.Runtime.Server
         /// Whether to enable cache interception
         /// </summary>
         public bool EnableCachingInterceptor { get; set; }
-        
+
 
         /// <summary>
         /// Whether to open the circuit breaker
@@ -43,7 +43,7 @@ namespace Silky.Rpc.Runtime.Server
         public int BreakerSeconds { get; set; }
 
         public int ExceptionsAllowedBeforeBreaking { get; set; }
-        
+
         /// <summary>
         /// Number of retry
         /// </summary>

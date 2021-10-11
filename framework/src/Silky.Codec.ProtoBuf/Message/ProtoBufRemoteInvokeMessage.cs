@@ -47,7 +47,7 @@ namespace Silky.Codec.Message
         [ProtoMember(1)] public string ServiceEntryId { get; set; }
 
         [ProtoMember(2)] public string ServiceId { get; set; }
-        
+
         [ProtoMember(3)] public DynamicItem[] Parameters { get; set; }
 
         [ProtoMember(4)] public ParameterItem[] Attachments { get; set; }

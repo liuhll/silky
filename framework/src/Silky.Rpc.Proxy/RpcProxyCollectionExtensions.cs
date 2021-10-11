@@ -33,6 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     throw new SilkyException("Only allow to generate Rpc proxy for the interface");
                 }
+
                 services.AddAServiceClientProxy(serviceType);
             }
 

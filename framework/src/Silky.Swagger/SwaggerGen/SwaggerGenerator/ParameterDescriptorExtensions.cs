@@ -13,17 +13,14 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
         }
 
 
-
         public static IEnumerable<object> CustomAttributes(this ParameterDescriptor apiParameter)
         {
-        
             var parameterInfo = apiParameter.ParameterInfo();
             if (parameterInfo != null) return parameterInfo.GetCustomAttributes(true);
 
             return Enumerable.Empty<object>();
         }
 
-       
 
         internal static bool IsFromPath(this ParameterDescriptor apiParameter)
         {

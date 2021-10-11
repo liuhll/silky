@@ -13,8 +13,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Enums
         /// OnModelCreating 只会初始化一次
         /// </para>
         /// </summary>
-        [Description("缓存模型数据库上下文")]
-        Cached,
+        [Description("缓存模型数据库上下文")] Cached,
 
         /// <summary>
         /// 动态模型数据库上下文
@@ -22,7 +21,6 @@ namespace Silky.EntityFrameworkCore.Contexts.Enums
         /// OnModelCreating 每次都会调用
         /// </para>
         /// </summary>
-        [Description("动态模型数据库上下文")]
-        Dynamic
+        [Description("动态模型数据库上下文")] Dynamic
     }
 }

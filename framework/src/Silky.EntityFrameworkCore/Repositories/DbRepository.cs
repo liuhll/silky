@@ -13,13 +13,11 @@ namespace Silky.EntityFrameworkCore.Repositories
     public partial class DbRepository<TDbContextLocator> : IDbRepository<TDbContextLocator>
         where TDbContextLocator : class, IDbContextLocator
     {
-
         /// <summary>
         /// 构造函数
         /// </summary>
         public DbRepository()
         {
-
         }
 
         /// <summary>
@@ -28,7 +26,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// <typeparam name="TEntity"></typeparam>
         /// <returns></returns>
         public virtual IRepository<TEntity, TDbContextLocator> Change<TEntity>()
-             where TEntity : class, IPrivateEntity, new()
+            where TEntity : class, IPrivateEntity, new()
         {
             return EngineContext.Current.Resolve<IRepository<TEntity, TDbContextLocator>>();
         }
@@ -41,6 +39,5 @@ namespace Silky.EntityFrameworkCore.Repositories
         {
             return EngineContext.Current.Resolve<ISqlRepository<TDbContextLocator>>();
         }
-        
     }
 }

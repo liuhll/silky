@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Linq.Expressions;
 
 namespace Silky.EntityFrameworkCore.LinqBuilder
@@ -27,7 +25,8 @@ namespace Silky.EntityFrameworkCore.LinqBuilder
         /// <typeparam name="TSource">泛型类型</typeparam>
         /// <param name="expression">表达式</param>
         /// <returns>新的表达式</returns>
-        public static Expression<Func<TSource, int, bool>> Create<TSource>(Expression<Func<TSource, int, bool>> expression)
+        public static Expression<Func<TSource, int, bool>> Create<TSource>(
+            Expression<Func<TSource, int, bool>> expression)
         {
             return expression;
         }

@@ -9,6 +9,5 @@ namespace Silky.Rpc.Runtime.Server
         string MethodName { get; set; }
 
         int Weight { get; set; }
-        
     }
 }

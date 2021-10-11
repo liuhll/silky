@@ -21,6 +21,7 @@ namespace Silky.RegistryCenter.Nacos
             {
                 throw new SilkyException("RpcEndpoint does not exist");
             }
+
             var serviceProtocols = new Dictionary<ServiceProtocol, int>();
             foreach (var rpcEndpointDescriptor in serverDescriptor.Endpoints)
             {

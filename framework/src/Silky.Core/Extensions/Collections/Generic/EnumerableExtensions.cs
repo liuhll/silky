@@ -64,7 +64,8 @@ namespace Silky.Core.Extensions.Collections.Generic
             int pageSize = 20)
             where T : new()
         {
-            if (pageIndex <= 0) throw new InvalidOperationException($"{nameof(pageIndex)} must be a positive integer greater than 0.");
+            if (pageIndex <= 0)
+                throw new InvalidOperationException($"{nameof(pageIndex)} must be a positive integer greater than 0.");
 
             var totalCount = source.Count();
             var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();

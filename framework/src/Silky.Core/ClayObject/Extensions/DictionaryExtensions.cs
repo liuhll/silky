@@ -30,6 +30,7 @@ namespace Silky.Core.ClayObject.Extensions
                 {
                     dic.Add(item.Key, item.Value is Clay v ? v.ToDictionary() : item.Value);
                 }
+
                 return dic;
             }
 
@@ -53,9 +54,9 @@ namespace Silky.Core.ClayObject.Extensions
             if (input is IDictionary<string, object> dictionary)
                 return dictionary.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => kvp.Value == null ?
-                        new Tuple<Type, object>(typeof(object), kvp.Value) :
-                        new Tuple<Type, object>(kvp.Value.GetType(), kvp.Value)
+                    kvp => kvp.Value == null
+                        ? new Tuple<Type, object>(typeof(object), kvp.Value)
+                        : new Tuple<Type, object>(kvp.Value.GetType(), kvp.Value)
                 );
 
             var dict = new Dictionary<string, Tuple<Type, object>>();

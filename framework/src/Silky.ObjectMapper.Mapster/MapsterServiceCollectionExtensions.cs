@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 config.Scan(assemblies);
             }
-        
+
             config.Default
                 .NameMatchingStrategy(NameMatchingStrategy.Flexible)
                 .PreserveReference(true);

@@ -8,6 +8,5 @@ namespace Silky.Validation
     [AttributeUsage(AttributeTargets.Method)]
     public class EnableValidationAttribute : Attribute
     {
-
     }
 }

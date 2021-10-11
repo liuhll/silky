@@ -6,6 +6,6 @@ namespace Silky.Rpc.Runtime.Server
 {
     public interface IServiceEntryGenerator : ITransientDependency
     {
-        IEnumerable<ServiceEntry> CreateServiceEntry((Type,bool) serviceType);
+        IEnumerable<ServiceEntry> CreateServiceEntry((Type, bool) serviceType);
     }
 }

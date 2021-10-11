@@ -99,8 +99,6 @@ namespace Silky.Rpc.SkyApm.Configuration
                 }
 
                 return guid;
-
-
             }
             catch (Exception)
             {

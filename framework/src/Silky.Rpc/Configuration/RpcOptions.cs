@@ -25,7 +25,7 @@ namespace Silky.Rpc.Configuration
         public string SslCertificateName { get; set; }
         public string SslCertificatePassword { get; set; }
         public int SoBacklog { get; set; }
-        
+
         public bool EnableHeartbeat { get; set; }
         [NotNull] public string Token { get; set; }
         public double ConnectTimeout { get; set; }

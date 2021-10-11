@@ -22,9 +22,9 @@ namespace Silky.Rpc.Runtime.Server
         public ServiceProtocol ServiceProtocol { get; set; }
 
         public IDictionary<string, object> Metadatas { get; set; }
-        
+
         public bool ProhibitExtranet { get; set; }
-        
+
         public bool IsAllowAnonymous { get; set; }
         public bool IsDistributeTransaction { get; set; }
 

@@ -26,12 +26,12 @@ namespace Silky.EntityFrameworkCore
             var dbContextResolve = EngineContext.Current.Resolve<Func<Type, IScopedDependency, DbContext>>();
             return dbContextResolve(dbContextLocator, default);
         }
-        
+
         public static DbContext GetMasterDbContext()
         {
             return GetDbContext(typeof(MasterDbContextLocator));
         }
-        
+
         public static DbContext GetDbContext<TDbContextLocator>()
             where TDbContextLocator : class, IDbContextLocator
         {

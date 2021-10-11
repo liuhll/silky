@@ -8,7 +8,7 @@ namespace Silky.Rpc.CachingInterceptor
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class RemoveCachingInterceptAttribute : Attribute, IRemoveCachingInterceptProvider
     {
-        public RemoveCachingInterceptAttribute([NotNull]string cacheName,[NotNull]string keyTemplete)
+        public RemoveCachingInterceptAttribute([NotNull] string cacheName, [NotNull] string keyTemplete)
         {
             Check.NotNullOrEmpty(cacheName, nameof(cacheName));
             Check.NotNullOrEmpty(keyTemplete, nameof(keyTemplete));
@@ -17,13 +17,12 @@ namespace Silky.Rpc.CachingInterceptor
             OnlyCurrentUserData = false;
             CachingMethod = CachingMethod.Remove;
         }
-        
+
         public string CacheName { get; }
         public string KeyTemplete { get; }
-        
+
         public CachingMethod CachingMethod { get; }
-        
+
         public bool OnlyCurrentUserData { get; set; }
     }
-    
 }

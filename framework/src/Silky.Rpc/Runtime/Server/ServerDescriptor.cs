@@ -5,7 +5,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServerDescriptor 
+    public class ServerDescriptor
     {
         public ServerDescriptor()
         {
@@ -38,7 +38,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             return Equals(model1, model2);
         }
-        
+
         public static bool operator !=(ServerDescriptor model1, ServerDescriptor model2)
         {
             return !Equals(model1, model2);
@@ -49,6 +49,5 @@ namespace Silky.Rpc.Runtime.Server
             return (string.Join("", Services.Select(p => p.ToString())) +
                     string.Join("", Endpoints.Select(p => p.ToString()))).GetHashCode();
         }
-        
     }
 }

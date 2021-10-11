@@ -30,7 +30,7 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// 是否是开发环境
         /// </summary>
         private static readonly bool IsDevelopment;
-        
+
         /// <summary>
         /// 是否记录 EFCore 执行 sql 命令打印日志
         /// </summary>
@@ -58,7 +58,9 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="parameters">命令参数</param>
         /// <param name="commandType">命令类型</param>
         /// <returns>(DbConnection dbConnection, DbCommand dbCommand)</returns>
-        public static (DbConnection dbConnection, DbCommand dbCommand) PrepareDbCommand(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql, DbParameter[] parameters = null, CommandType commandType = CommandType.Text)
+        public static (DbConnection dbConnection, DbCommand dbCommand) PrepareDbCommand(
+            this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql,
+            DbParameter[] parameters = null, CommandType commandType = CommandType.Text)
         {
             // 支持读取配置渲染
             var realSql = sql.Render();
@@ -82,7 +84,9 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="model">命令模型</param>
         /// <param name="commandType">命令类型</param>
         /// <returns>(DbConnection dbConnection, DbCommand dbCommand, DbParameter[] dbParameters)</returns>
-        public static (DbConnection dbConnection, DbCommand dbCommand, DbParameter[] dbParameters) PrepareDbCommand(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql, object model, CommandType commandType = CommandType.Text)
+        public static (DbConnection dbConnection, DbCommand dbCommand, DbParameter[] dbParameters) PrepareDbCommand(
+            this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql, object model,
+            CommandType commandType = CommandType.Text)
         {
             // 支持读取配置渲染
             var realSql = sql.Render();
@@ -107,7 +111,10 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="commandType">命令类型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>(DbConnection dbConnection, DbCommand dbCommand)</returns>
-        public static async Task<(DbConnection dbConnection, DbCommand dbCommand)> PrepareDbCommandAsync(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql, DbParameter[] parameters = null, CommandType commandType = CommandType.Text, CancellationToken cancellationToken = default)
+        public static async Task<(DbConnection dbConnection, DbCommand dbCommand)> PrepareDbCommandAsync(
+            this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql,
+            DbParameter[] parameters = null, CommandType commandType = CommandType.Text,
+            CancellationToken cancellationToken = default)
         {
             // 支持读取配置渲染
             var realSql = sql.Render();
@@ -132,7 +139,10 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="commandType">命令类型</param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns>(DbConnection dbConnection, DbCommand dbCommand, DbParameter[] dbParameters)</returns>
-        public static async Task<(DbConnection dbConnection, DbCommand dbCommand, DbParameter[] dbParameters)> PrepareDbCommandAsync(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql, object model, CommandType commandType = CommandType.Text, CancellationToken cancellationToken = default)
+        public static async Task<(DbConnection dbConnection, DbCommand dbCommand, DbParameter[] dbParameters)>
+            PrepareDbCommandAsync(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade,
+                string sql, object model, CommandType commandType = CommandType.Text,
+                CancellationToken cancellationToken = default)
         {
             // 支持读取配置渲染
             var realSql = sql.Render();
@@ -155,7 +165,9 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="sql">sql 语句</param>
         /// <param name="commandType">命令类型</param>
         /// <returns>(DbConnection dbConnection, DbCommand dbCommand)</returns>
-        private static (DbConnection dbConnection, DbCommand dbCommand) CreateDbCommand(this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql, CommandType commandType = CommandType.Text)
+        private static (DbConnection dbConnection, DbCommand dbCommand) CreateDbCommand(
+            this Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, string sql,
+            CommandType commandType = CommandType.Text)
         {
             // 检查是否支持存储过程
             // DbProvider.CheckStoredProcedureSupported(databaseFacade.ProviderName, commandType);
@@ -185,7 +197,8 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="databaseFacade">ADO.NET 数据库对象</param>
         /// <param name="dbConnection">数据库连接对象</param>
         /// <param name="dbCommand"></param>
-        private static void OpenConnection(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, DbConnection dbConnection, DbCommand dbCommand)
+        private static void OpenConnection(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade,
+            DbConnection dbConnection, DbCommand dbCommand)
         {
             // 判断连接字符串是否关闭，如果是，则开启
             if (dbConnection.State == ConnectionState.Closed)
@@ -205,7 +218,9 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="dbCommand"></param>
         /// <param name="cancellationToken">异步取消令牌</param>
         /// <returns></returns>
-        private static async Task OpenConnectionAsync(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, DbConnection dbConnection, DbCommand dbCommand, CancellationToken cancellationToken = default)
+        private static async Task OpenConnectionAsync(
+            Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, DbConnection dbConnection,
+            DbCommand dbCommand, CancellationToken cancellationToken = default)
         {
             // 判断连接字符串是否关闭，如果是，则开启
             if (dbConnection.State == ConnectionState.Closed)
@@ -223,7 +238,8 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="providerName"></param>
         /// <param name="dbCommand">数据库命令对象</param>
         /// <param name="parameters">命令参数</param>
-        private static void SetDbParameters(string providerName, ref DbCommand dbCommand, DbParameter[] parameters = null)
+        private static void SetDbParameters(string providerName, ref DbCommand dbCommand,
+            DbParameter[] parameters = null)
         {
             if (parameters == null || parameters.Length == 0) return;
 
@@ -242,19 +258,21 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         /// <param name="dbCommand">数据库命令对象</param>
         /// <param name="model">参数模型</param>
         /// <param name="dbParameters">命令参数</param>
-        private static void SetDbParameters(string providerName, ref DbCommand dbCommand, object model, out DbParameter[] dbParameters)
+        private static void SetDbParameters(string providerName, ref DbCommand dbCommand, object model,
+            out DbParameter[] dbParameters)
         {
             dbParameters = DbHelpers.ConvertToDbParameters(model, dbCommand);
             SetDbParameters(providerName, ref dbCommand, dbParameters);
         }
 
-        
+
         /// <summary>
         /// 记录 Sql 执行命令日志
         /// </summary>
         /// <param name="databaseFacade"></param>
         /// <param name="dbCommand"></param>
-        private static void LogSqlExecuteCommand(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, DbCommand dbCommand)
+        private static void LogSqlExecuteCommand(
+            Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, DbCommand dbCommand)
         {
             // 打印执行 SQL
             //App.PrintToMiniProfiler("sql", "Execution", dbCommand.CommandText);
@@ -278,16 +296,22 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
                 var parameterType = parameter.GetType();
 
                 // 处理 OracleParameter 参数打印
-                var dbType = parameterType.FullName.Equals("Oracle.ManagedDataAccess.Client.OracleParameter", StringComparison.OrdinalIgnoreCase)
-                    ? parameterType.GetProperty("OracleDbType").GetValue(parameter) : parameter.DbType;
+                var dbType = parameterType.FullName.Equals("Oracle.ManagedDataAccess.Client.OracleParameter",
+                    StringComparison.OrdinalIgnoreCase)
+                    ? parameterType.GetProperty("OracleDbType").GetValue(parameter)
+                    : parameter.DbType;
 
-                sqlLogBuilder.Append($"{parameter.ParameterName}='{parameter.Value}' (Size = {parameter.Size}) (DbType = {dbType})");
+                sqlLogBuilder.Append(
+                    $"{parameter.ParameterName}='{parameter.Value}' (Size = {parameter.Size}) (DbType = {dbType})");
                 if (i < parameters.Count - 1) sqlLogBuilder.Append(", ");
             }
 
-            sqlLogBuilder.Append(@$"], CommandType='{dbCommand.CommandType}', CommandTimeout='{dbCommand.CommandTimeout}']");
+            sqlLogBuilder.Append(
+                @$"], CommandType='{dbCommand.CommandType}', CommandTimeout='{dbCommand.CommandTimeout}']");
             sqlLogBuilder.Append("\r\n");
-            sqlLogBuilder.Append(dbCommand.CommandType == CommandType.StoredProcedure ? "EXEC " + dbCommand.CommandText : dbCommand.CommandText);
+            sqlLogBuilder.Append(dbCommand.CommandType == CommandType.StoredProcedure
+                ? "EXEC " + dbCommand.CommandText
+                : dbCommand.CommandText);
 
             // 打印日志
             logger.LogInformation(sqlLogBuilder.ToString());

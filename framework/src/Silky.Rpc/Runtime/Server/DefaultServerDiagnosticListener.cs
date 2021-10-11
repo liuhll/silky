@@ -72,6 +72,5 @@ namespace Silky.Rpc.Runtime.Server
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcServerHandler, eventData);
             }
         }
-        
     }
 }

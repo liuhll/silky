@@ -17,8 +17,8 @@ namespace Silky.Rpc.Endpoint.Selector
 
         protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
-             var index = _generate(0, context.AddressModels.Length);
-             return context.AddressModels[index];
+            var index = _generate(0, context.AddressModels.Length);
+            return context.AddressModels[index];
         }
     }
 }

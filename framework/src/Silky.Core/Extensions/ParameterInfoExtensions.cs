@@ -12,14 +12,17 @@ namespace Silky.Core.Extensions
         {
             _typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
         }
-        public static object GetActualValue([NotNull]this ParameterInfo parameterInfo, object value)
+
+        public static object GetActualValue([NotNull] this ParameterInfo parameterInfo, object value)
         {
             if (value == null)
             {
                 return value;
             }
 
-            return parameterInfo.ParameterType == value.GetType() ? value : _typeConvertibleService.Convert(value, parameterInfo.ParameterType);
+            return parameterInfo.ParameterType == value.GetType()
+                ? value
+                : _typeConvertibleService.Convert(value, parameterInfo.ParameterType);
         }
     }
 }

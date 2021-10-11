@@ -9,8 +9,9 @@ namespace Silky.Http.Identity.Authorization.Extensions
         public static DefaultHttpContext GetCurrentHttpContext(this AuthorizationHandlerContext context)
         {
             DefaultHttpContext httpContext;
-            
-            if (context.Resource is AuthorizationFilterContext filterContext) httpContext = (DefaultHttpContext)filterContext.HttpContext;
+
+            if (context.Resource is AuthorizationFilterContext filterContext)
+                httpContext = (DefaultHttpContext)filterContext.HttpContext;
             else if (context.Resource is DefaultHttpContext defaultHttpContext) httpContext = defaultHttpContext;
             else httpContext = null;
 

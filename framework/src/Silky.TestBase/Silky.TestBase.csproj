@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\common.props"/>
     <PropertyGroup>
-       <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Description>The necessary basic component package for Silky framework testing</Description>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Moq" Version="4.16.0" />
+        <PackageReference Include="Moq" Version="4.16.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
     </ItemGroup>
 
 </Project>

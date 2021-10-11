@@ -9,7 +9,7 @@ namespace Silky.Core
         {
             AllSingletons = new Dictionary<Type, object>();
         }
-        
+
         public static IDictionary<Type, object> AllSingletons { get; }
     }
 }
