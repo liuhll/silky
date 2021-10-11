@@ -27,7 +27,6 @@
         <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj"/>
         <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj"/>
         <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj"/>
-        <ProjectReference Include="..\Silky.WebSocket.Middleware\Silky.WebSocket.Middleware.csproj"/>
         <ProjectReference Include="..\Silky.Rpc.Proxy\Silky.Rpc.Proxy.csproj"/>
         <ProjectReference Include="..\Silky.WebSocket\Silky.WebSocket.csproj"/>
     </ItemGroup>
