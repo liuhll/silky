@@ -44,7 +44,7 @@ namespace Silky.Http.Core.Handlers
 
         public virtual async Task Handle([NotNull] ServiceEntry serviceEntry, [NotNull] HttpContext httpContext)
         {
-            Check.NotNull(serviceEntry, nameof(httpContext));
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
             Check.NotNull(httpContext, nameof(httpContext));
             var path = httpContext.Request.Path;
             var method = httpContext.Request.Method.ToEnum<HttpMethod>();
