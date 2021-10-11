@@ -1,11 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silky.Core.DependencyInjection;
 using Silky.Http.Identity;
 using Silky.Http.Identity.Authentication.Handlers;
-using Silky.Http.Identity.Authorization;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -38,8 +36,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
-            services.TryAdd(ServiceDescriptor
-                .Transient<IAuthorizationMiddlewareResultHandler, SilkyAuthorizationMiddlewareResultHandler>());
             if (configure == null)
             {
                 services.AddAuthorization();
