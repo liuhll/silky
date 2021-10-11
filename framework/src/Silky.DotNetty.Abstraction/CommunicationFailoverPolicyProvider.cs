@@ -2,10 +2,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
-using Microsoft.Extensions.Options;
 using Polly;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
@@ -15,13 +13,10 @@ namespace Silky.DotNetty.Abstraction
     public class CommunicationFailoverPolicyProvider : InvokeFailoverPolicyProviderBase
     {
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-        private GovernanceOptions _governanceOptions;
 
-        public CommunicationFailoverPolicyProvider(IRpcEndpointMonitor rpcEndpointMonitor,
-            IOptionsSnapshot<GovernanceOptions> governanceOptions)
+        public CommunicationFailoverPolicyProvider(IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
-            _governanceOptions = governanceOptions.Value;
         }
 
         public override IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters)
@@ -40,7 +35,7 @@ namespace Silky.DotNetty.Abstraction
                             retryAttempt =>
                                 TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds),
                             async (outcome, timeSpan, retryNumber, context)
-                                => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context)
+                                => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntry)
                         );
                 }
                 else
@@ -51,7 +46,7 @@ namespace Silky.DotNetty.Abstraction
                         .Or<CommunicationException>()
                         .RetryAsync(serviceEntry.GovernanceOptions.RetryTimes,
                             onRetryAsync: async (outcome, retryNumber, context) =>
-                                await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context));
+                                await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntry));
                 }
             }
 
@@ -59,11 +54,11 @@ namespace Silky.DotNetty.Abstraction
         }
 
         private async Task SetInvokeCurrentSeverDisEnable(DelegateResult<object> outcome, int retryNumber,
-            Context context)
+            Context context, ServiceEntry serviceEntry)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();
             _rpcEndpointMonitor.ChangeStatus(serviceAddressModel, false,
-                _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+                serviceEntry.GovernanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,

@@ -20,8 +20,8 @@ namespace Silky.Rpc.Configuration
             RetryIntervalMillSeconds = 50;
             RetryTimes = 0;
             FailoverCountEqualInstanceCount = true;
-            // ConcurrentHandlingCount = 50;
-            // MaxConcurrentHandlingCount = 500;
+            MaxConcurrentHandlingCount = 50;
+          
         }
 
 
@@ -76,13 +76,12 @@ namespace Silky.Rpc.Configuration
         /// </summary>
         public int RetryIntervalMillSeconds { get; set; }
 
-        // public int ConcurrentHandlingCount { get; set; }
-        //
-        // public int MaxConcurrentHandlingCount { get; set; }
+        public int MaxConcurrentHandlingCount { get; set; }
 
         /// <summary>
         /// 故障转移次数与服务实例个数相同
         /// </summary>
         public bool FailoverCountEqualInstanceCount { get; set; }
+        
     }
 }

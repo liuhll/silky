@@ -54,17 +54,14 @@ namespace Silky.Rpc.Runtime.Server
             MethodInfo = methodInfo;
             CustomAttributes = MethodInfo.GetCustomAttributes(true);
             (IsAsyncMethod, ReturnType) = MethodInfo.ReturnTypeInfo();
-            GovernanceOptions = new ServiceEntryGovernance();
+            GovernanceOptions = new ServiceEntryGovernance(governanceOptions);
 
             var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
             if (governanceProvider != null)
             {
                 ReConfiguration(governanceProvider);
             }
-            else
-            {
-                ReConfiguration(governanceOptions);
-            }
+
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();

@@ -35,4 +35,5 @@ jwtSettings:
 
 governance:
   timeoutMillSeconds: 5000
+  maxConcurrentHandlingCount: 1
   

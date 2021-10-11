@@ -49,8 +49,15 @@ namespace Silky.Rpc.Runtime.Server
                 remoteResultMessage.ExceptionMessage = exception.Message;
                 return remoteResultMessage;
             }
+            
+            if (!ctx.TryGetValue(PollyContextNames.ServiceEntry, out var ctxValue))
+            {
+                remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
+                remoteResultMessage.ExceptionMessage = exception.GetExceptionMessage();
+                return remoteResultMessage;
+            }
 
-            var serviceEntry = ctx[PollyContextNames.ServiceEntry] as ServiceEntry;
+            var serviceEntry = ctxValue as ServiceEntry;
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
             {
@@ -80,6 +87,7 @@ namespace Silky.Rpc.Runtime.Server
                     var parameters = serviceEntry.ConvertParameters(message.Parameters);
                     result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithDbContextAsync(instance,
                         parameters);
+
                     remoteResultMessage.StatusCode = StatusCode.Success;
                     remoteResultMessage.Result = result;
                     _fallbackDiagnosticListener.TracingFallbackAfter(fallbackTracingTimestamp,

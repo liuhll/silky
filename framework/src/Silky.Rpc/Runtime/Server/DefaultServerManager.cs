@@ -104,7 +104,8 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     if (serviceEntry.FailoverCountIsDefaultValue)
                     {
-                        serviceEntry.GovernanceOptions.RetryTimes = serverDescriptor.Endpoints.Count();
+                        serviceEntry.GovernanceOptions.RetryTimes =
+                            serverDescriptor.Endpoints.Count(p => p.ServiceProtocol == ServiceProtocol.Tcp);
                         _serviceEntryManager.Update(serviceEntry);
                     }
                 }

@@ -31,15 +31,17 @@ namespace Silky.Core.Exceptions
         [Description("不存在服务条目")] NotFindServiceEntry = 513,
 
         [Description("超过最大并发量")] OverflowMaxRequest = 514,
+        
+        [Description("超过最大并发量")] OverflowMaxServerHandle = 515,
 
         [Description("UnServiceKeyImplementation")]
-        UnServiceKeyImplementation = 515,
+        UnServiceKeyImplementation = 516,
 
-        [Description("rpc通信认证失败")] RpcUnAuthentication = 516,
+        [Description("rpc通信认证失败")] RpcUnAuthentication = 517,
 
-        [Description("缓存拦截存在异常")] CachingInterceptError = 517,
+        [Description("缓存拦截存在异常")] CachingInterceptError = 518,
 
-        [Description("执行超时")] Timeout = 518,
+        [Description("执行超时")] Timeout = 519,
 
         [Description("服务器异常")] ServerError = 520,
 

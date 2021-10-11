@@ -4,11 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Polly;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.Rpc;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Security;
 using Silky.Rpc.Transport.Messages;
 
@@ -19,15 +21,14 @@ namespace Silky.Rpc.Runtime.Server
         private readonly IServiceEntryLocator _serviceEntryLocator;
 
         private readonly IServiceKeyExecutor _serviceKeyExecutor;
+
         public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
 
         public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
             IServiceKeyExecutor serviceKeyExecutor)
         {
             _serviceEntryLocator = serviceEntryLocator;
-
             _serviceKeyExecutor = serviceKeyExecutor;
-            Logger = NullLogger<DefaultServerMessageReceivedHandler>.Instance;
         }
 
         public async Task<RemoteResultMessage> Handle(RemoteInvokeMessage message, Context context,
@@ -44,7 +45,7 @@ namespace Silky.Rpc.Runtime.Server
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
             var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
-            ServerHandleInfo serverHandleInfo = null;
+            var serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientRpcEndpoint));
             var remoteResultMessage = new RemoteResultMessage()
             {
                 ServiceEntryId = serviceEntry?.Id
@@ -58,6 +59,20 @@ namespace Silky.Rpc.Runtime.Server
                         $"Failed to get local service entry through serviceEntryId {message.ServiceEntryId}");
                 }
 
+                if (serverHandleMonitor != null)
+                {
+                    var getServerInstanceHandleInfo = await serverHandleMonitor.GetServerInstanceHandleInfo();
+
+                    if (serviceEntry.GovernanceOptions.MaxConcurrentHandlingCount > 0 &&
+                        getServerInstanceHandleInfo.ConcurrentCount >
+                        serviceEntry.GovernanceOptions.MaxConcurrentHandlingCount)
+                    {
+                        throw new OverflowMaxServerHandleException(
+                            $"Exceeds the maximum allowable processing concurrency. Current concurrency {getServerInstanceHandleInfo.ConcurrentCount}");
+                    }
+                }
+
+
                 var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
                 if (!tokenValidator.Validate())
                 {
@@ -66,7 +81,6 @@ namespace Silky.Rpc.Runtime.Server
 
                 context[PollyContextNames.ServiceEntry] = serviceEntry;
 
-                serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientRpcEndpoint));
 
                 var result = await serviceEntry.Executor(_serviceKeyExecutor.ServiceKey,
                     message.Parameters);
