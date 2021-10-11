@@ -62,6 +62,7 @@ namespace GatewayDemo
                 app.UseMiniProfiler();
             }
 
+            app.UseSilkyErrorHandling();
             app.UseSerilogRequestLogging();
             app.UseDashboard();
             app.UseHealthChecks("/healthz", new HealthCheckOptions
@@ -76,7 +77,6 @@ namespace GatewayDemo
             app.UseResponseCaching();
             app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
-            app.UseSilkyExceptionHandler();
             app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
             app.UseEndpoints(endpoints =>

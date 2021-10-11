@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Silky provides HTTP access to the Internet</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22"/>
+        <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
-        <ProjectReference Include="..\Silky.Transaction\Silky.Transaction.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\Silky.Transaction\Silky.Transaction.csproj" />
     </ItemGroup>
 </Project>

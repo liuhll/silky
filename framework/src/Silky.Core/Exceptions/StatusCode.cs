@@ -6,11 +6,14 @@ namespace Silky.Core.Exceptions
     {
         [Description("成功")] Success = 200,
 
+
         [Description("框架异常")] FrameworkException = 500,
 
-        [Description("路由解析异常")] RouteParseError = 502,
+        [Description("请求异常")] RequestError = 502,
+        
+        [Description("路由解析异常")] RouteParseError = 503,
 
-        [Description("未找到服务路由")] NotFindServiceRoute = 503,
+        [Description("未找到服务路由")] NotFindServiceRoute = 404,
 
         [Description("未找到可用的服务地址")] NotFindServiceRouteAddress = 504,
 
@@ -31,7 +34,7 @@ namespace Silky.Core.Exceptions
         [Description("不存在服务条目")] NotFindServiceEntry = 513,
 
         [Description("超过最大并发量")] OverflowMaxRequest = 514,
-        
+
         [Description("超过最大并发量")] OverflowMaxServerHandle = 515,
 
         [Description("UnServiceKeyImplementation")]
