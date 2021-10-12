@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
@@ -16,9 +18,16 @@ namespace Silky.Rpc.Monitor.Handle
         private readonly IDistributedCache<ServerHandleInfo> _distributedCache;
         private ServerInstanceHandleInfo _serverInstanceHandleInfo = new();
 
-        public DefaultServerHandleMonitor(IDistributedCache<ServerHandleInfo> distributedCache)
+
+        public DefaultServerHandleMonitor(IDistributedCache<ServerHandleInfo> distributedCache,IOptionsMonitor<GovernanceOptions> governanceOptions)
         {
             _distributedCache = distributedCache;
+            _serverInstanceHandleInfo.AllowMaxConcurrentCount = governanceOptions.CurrentValue.MaxConcurrentHandlingCount;
+            governanceOptions.OnChange(options =>
+            {
+                _serverInstanceHandleInfo.AllowMaxConcurrentCount = options.MaxConcurrentHandlingCount;
+            });
+           
         }
 
         public ServerHandleInfo Monitor((string, string) item)

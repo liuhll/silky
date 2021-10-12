@@ -63,9 +63,9 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     var getServerInstanceHandleInfo = await serverHandleMonitor.GetServerInstanceHandleInfo();
 
-                    if (serviceEntry.GovernanceOptions.MaxConcurrentHandlingCount > 0 &&
+                    if (getServerInstanceHandleInfo.AllowMaxConcurrentCount > 0 &&
                         getServerInstanceHandleInfo.ConcurrentCount >
-                        serviceEntry.GovernanceOptions.MaxConcurrentHandlingCount)
+                        getServerInstanceHandleInfo.AllowMaxConcurrentCount)
                     {
                         throw new OverflowMaxServerHandleException(
                             $"Exceeds the maximum allowable processing concurrency. Current concurrency {getServerInstanceHandleInfo.ConcurrentCount}");
