@@ -16,12 +16,11 @@ namespace Silky.GatewayHost
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyWebHostDefaults()
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+                .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
                 .UseSerilogDefault();
             if (EngineContext.Current.IsEnvironment("Apollo"))
             {
-               // hostBuilder.AddApollo();
+                // hostBuilder.AddApollo();
             }
 
             return hostBuilder;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Silky.Core.Extensions;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Entities.Configures;
 using Silky.Rpc.Runtime.Server;
@@ -17,7 +18,7 @@ namespace Silky.Account.Domain.Accounts
         {
             _session = NullSession.Instance;
             CreateTime = DateTime.Now;
-            CreateBy = _session.UserId;
+            CreateBy = _session.UserId?.ConventTo<long>();
         }
 
         [Key] public long Id { get; set; }

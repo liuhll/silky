@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Silky.Core.Extensions;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.Order.Domain.Shared.Orders;
 using Silky.Rpc.Runtime.Server;
@@ -14,7 +15,7 @@ namespace Silky.Order.Domain.Orders
         {
             _session = NullSession.Instance;
             CreateTime = DateTime.Now;
-            CreateBy = _session.UserId;
+            CreateBy = _session.UserId?.ConventTo<long>();
         }
 
         [Key]

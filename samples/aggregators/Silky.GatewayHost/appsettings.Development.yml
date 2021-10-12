@@ -20,9 +20,9 @@ swaggerDocument:
   termsOfService: https://www.github.com/liuhll/silky
 
 dashboard:
-  displayWebApiInSwagger: true
+  displayWebApiInSwagger: false
   useAuth: true
-  loginWebApi: /api/account/dashboard/login
+  dashboardLoginApi: /api/account/dashboard/login
   externalLinks:
     - title: "message.swagger"
       path: "http://localhost:5002"

@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using DotNetCore.CAP;
 using Mapster;
 using Silky.Account.Application.Contracts.Accounts;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
@@ -10,15 +9,14 @@ using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Application.Accounts
 {
-    public class AccountAppService : IAccountAppService, ICapSubscribe
+    public class AccountAppService : IAccountAppService
     {
         private readonly IAccountDomainService _accountDomainService;
-        private readonly ICapPublisher _capBus;
 
-        public AccountAppService(IAccountDomainService accountDomainService, ICapPublisher capBus)
+
+        public AccountAppService(IAccountDomainService accountDomainService)
         {
             _accountDomainService = accountDomainService;
-            _capBus = capBus;
         }
 
         public async Task<GetAccountOutput> Create(CreateAccountInput input)

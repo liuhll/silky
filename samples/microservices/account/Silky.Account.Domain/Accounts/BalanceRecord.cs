@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Silky.Account.Domain.Shared.Accounts;
+using Silky.Core.Extensions;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.Rpc.Runtime.Server;
 
@@ -14,7 +15,7 @@ namespace Silky.Account.Domain.Accounts
         {
             _session = NullSession.Instance;
             CreateTime = DateTime.Now;
-            CreateBy = _session.UserId;
+            CreateBy = _session.UserId?.ConventTo<long>();
         }
 
         [Key]

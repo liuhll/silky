@@ -37,6 +37,7 @@ namespace Silky.GatewayHost
             app.UseSerilogRequestLogging();
             app.UseDashboard();
             app.UseRouting();
+            app.UseSilkyWrapperResponse();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
             app.UseResponseCaching();

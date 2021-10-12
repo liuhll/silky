@@ -1,6 +1,4 @@
-src/Silky.Agent.GeneralHost
-src/Silky.Agent.WebHost
-src/Silky.Agent.WebSocketHost
+src/Silky.Agent.Host
 src/Silky.Caching
 src/Silky.Caching.StackExchangeRedis
 src/Silky.Castle
@@ -10,6 +8,7 @@ src/Silky.Core
 src/Silky.DotNetty.Abstraction
 src/Silky.DotNetty.Protocol.Tcp
 src/Silky.EntityFrameworkCore
+src/Silky.HealthChecks.Rpc
 src/Silky.Http.Core
 src/Silky.Http.CorsAccessor
 src/Silky.Http.Dashboard
@@ -26,11 +25,14 @@ src/Silky.RegistryCenter.Consul
 src/Silky.RegistryCenter.Nacos
 src/Silky.RegistryCenter.Zookeeper
 src/Silky.Rpc
+src/Silky.Rpc.AppService
 src/Silky.Rpc.CachingInterceptor
+src/Silky.Rpc.Monitor
 src/Silky.Rpc.Proxy
 src/Silky.SkyApm.Agent
 src/Silky.SkyApm.Diagnostics.Abstraction
 src/Silky.SkyApm.Diagnostics.Rpc
+src/Silky.SkyApm.Diagnostics.Http
 src/Silky.SkyApm.Diagnostics.Transaction
 src/Silky.Swagger
 src/Silky.TestBase

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Mapster;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
@@ -12,7 +13,6 @@ using Silky.Core.Rpc;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Jwt;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Security;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Domain.Accounts
@@ -192,8 +192,8 @@ namespace Silky.Account.Domain.Accounts
 
             var payload = new Dictionary<string, object>()
             {
-                { ClaimTypes.UserId, userInfo.Id },
-                { ClaimTypes.UserName, userInfo.UserName },
+                { ClaimTypes.NameIdentifier, userInfo.Id },
+                { ClaimTypes.Name, userInfo.UserName },
                 { ClaimTypes.Email, userInfo.Email },
             };
             return _jwtTokenGenerator.Generate(payload);
@@ -216,8 +216,9 @@ namespace Silky.Account.Domain.Accounts
 
             var payload = new Dictionary<string, object>()
             {
-                { ClaimTypes.UserId, 1 },
-                { ClaimTypes.UserName, "admin" },
+                { ClaimTypes.NameIdentifier, "dashboard" },
+                { ClaimTypes.Name, "Dashboard" },
+                { ClaimTypes.Role, "Dashboard" },
             };
             return _jwtTokenGenerator.Generate(payload);
         }

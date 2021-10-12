@@ -9,7 +9,6 @@
       <ProjectReference Include="..\Silky.Stock.Domain.Shared\Silky.Stock.Domain.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="DotNetCore.CAP" Version="5.1.0" />
         <PackageReference Include="Silky.ObjectMapper.Mapster" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.Caching" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.EntityFrameworkCore" Version="$(SilkyVersion)" />

@@ -10,7 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotNetCore.CAP" Version="5.1.0" />
         <PackageReference Include="Silky.Jwt" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.ObjectMapper.Mapster" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.Caching" Version="$(SilkyVersion)" />
