@@ -102,11 +102,6 @@ namespace Silky.Rpc.Transport
 
                 return remoteResultMessage;
             }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex);
-                throw;
-            }
             finally
             {
                 m_resultDictionary.TryRemove(id, out tcs);

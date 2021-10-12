@@ -48,31 +48,10 @@ namespace Silky.Http.Core.Handlers
             httpContext.Response.ContentType = httpContext.GetResponseContentType(_gatewayOptions);
             httpContext.Response.StatusCode = ResponseStatusCode.Success;
             httpContext.Response.SetResultCode(StatusCode.Success);
-            if (_gatewayOptions.WrapResult)
-            {
-                var responseResult = new ResponseResultDto()
-                {
-                    Data = result,
-                    Status = StatusCode.Success,
-                };
-                var responseData = _serializer.Serialize(responseResult);
-                httpContext.Response.ContentLength = responseData.GetBytes().Length;
-                await httpContext.Response.WriteAsync(responseData);
-            }
-            else
-            {
-                if (result != null)
-                {
-                    var responseData = _serializer.Serialize(result);
-                    httpContext.Response.ContentLength = responseData.GetBytes().Length;
-                    await httpContext.Response.WriteAsync(responseData);
-                }
-                else
-                {
-                    httpContext.Response.ContentLength = 0;
-                    await httpContext.Response.WriteAsync(string.Empty);
-                }
-            }
+            result ??= string.Empty;
+
+            var responseData = _serializer.Serialize(result);
+            await httpContext.Response.WriteAsync(responseData);
         }
 
 

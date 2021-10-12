@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Silky.Core.Extensions;
 
 namespace Silky.Core.Exceptions
@@ -14,6 +15,38 @@ namespace Silky.Core.Exceptions
             }
 
             return false;
+        }
+
+        public static HttpStatusCode GetHttpStatusCode(this StatusCode statusCode)
+        {
+            if (statusCode.IsBusinessStatus() || statusCode.IsUserFriendlyStatus())
+            {
+                return HttpStatusCode.BadRequest;
+            }
+
+            HttpStatusCode httpStatusCode = HttpStatusCode.OK;
+            switch (statusCode)
+            {
+                case StatusCode.Success:
+                    httpStatusCode = HttpStatusCode.OK;
+                    break;
+                case StatusCode.UnAuthentication:
+                    httpStatusCode = HttpStatusCode.Unauthorized;
+                    break;
+                case StatusCode.UnAuthorization:
+                    httpStatusCode = HttpStatusCode.Forbidden;
+                    break;
+                case StatusCode.UserFriendly:
+                case StatusCode.BusinessError:
+                case StatusCode.ValidateError:
+                    httpStatusCode = HttpStatusCode.BadRequest;
+                    break;
+                default:
+                    httpStatusCode = HttpStatusCode.InternalServerError;
+                    break;
+            }
+
+            return httpStatusCode;
         }
 
         public static bool IsUserFriendlyStatus(this StatusCode statusCode)

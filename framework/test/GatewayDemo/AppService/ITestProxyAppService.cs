@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Routing;
-using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
+
 
 namespace GatewayDemo.AppService
 {
@@ -11,6 +11,7 @@ namespace GatewayDemo.AppService
     /// Test Proxy Services
     /// </summary>
     [ServiceRoute(template: "test/{appservice=proxy}")]
+    [Authorize]
     public interface ITestProxyAppService
     {
         Task<TestOut> CreateProxy(TestInput testInput);

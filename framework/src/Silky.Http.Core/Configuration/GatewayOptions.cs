@@ -9,5 +9,6 @@ namespace Silky.Http.Core.Configuration
         public string ResponseContentType { get; set; }
 
         public string JwtSecret { get; set; }
+        public string IgnoreWrapperPathPattern { get; set; } = "swagger";
     }
 }

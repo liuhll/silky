@@ -20,7 +20,7 @@ namespace Silky.Http.Core
 
         public override void Configure(IApplicationBuilder application)
         {
-            application.UseSilkyErrorHandling();
+            application.UseSilkyWrapperResponse();
             application.UseSilkyWebSocketsProxy();
             application.UseSilkyHttpServer();
         }

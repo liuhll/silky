@@ -1,5 +1,8 @@
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
@@ -59,6 +62,34 @@ namespace Silky.Rpc.Extensions
         public static void SetResultCode(this HttpResponse httpResponse, StatusCode statusCode)
         {
             httpResponse.Headers["SilkyResultCode"] = statusCode.ToString();
+        }
+
+        public static StatusCode GetResultCode(this HttpResponse httpResponse, int httpCode)
+        {
+            var silkyResultCode = httpResponse.Headers["SilkyResultCode"];
+            if (!silkyResultCode.IsNullOrEmpty())
+            {
+                return silkyResultCode.ToString().To<StatusCode>();
+            }
+
+            StatusCode statusCode;
+            switch ((HttpStatusCode)httpCode)
+            {
+                case HttpStatusCode.Unauthorized:
+                    statusCode = StatusCode.UnAuthentication;
+                    break;
+                case HttpStatusCode.NoContent:
+                    statusCode = StatusCode.NoContent;
+                    break;
+                case HttpStatusCode.MethodNotAllowed:
+                    statusCode = StatusCode.RouteParseError;
+                    break;
+                default:
+                    statusCode = StatusCode.ServerError;
+                    break;
+            }
+
+            return statusCode;
         }
     }
 }

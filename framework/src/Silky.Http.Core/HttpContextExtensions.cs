@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Http.Core.Configuration;
+using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Core
 {
@@ -29,17 +30,8 @@ namespace Silky.Http.Core
 
         public static void SetExceptionResponseStatus(this HttpResponse httpResponse, Exception exception)
         {
-            if (exception.IsBusinessException() || exception.IsUserFriendlyException())
-            {
-                httpResponse.StatusCode = ResponseStatusCode.BadCode;
-            }
-
-            if (exception.IsUnauthorized())
-            {
-                httpResponse.StatusCode = ResponseStatusCode.Unauthorized;
-            }
-
-            httpResponse.StatusCode = ResponseStatusCode.InternalServerError;
+            var status = exception.GetExceptionStatusCode();
+            httpResponse.StatusCode = status.GetHttpStatusCode().To<int>();
         }
     }
 }

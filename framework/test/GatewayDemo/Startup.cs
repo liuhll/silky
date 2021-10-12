@@ -1,4 +1,3 @@
-using AspNetCoreRateLimit;
 using GatewayDemo.Authorization;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Silky.HealthChecks.Rpc;
 
 namespace GatewayDemo
 {
@@ -62,7 +60,6 @@ namespace GatewayDemo
                 app.UseMiniProfiler();
             }
 
-            app.UseSilkyErrorHandling();
             app.UseSerilogRequestLogging();
             app.UseDashboard();
             app.UseHealthChecks("/healthz", new HealthCheckOptions
@@ -71,14 +68,18 @@ namespace GatewayDemo
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 })
                 .UseHealthChecksPrometheusExporter("/metrics");
+
             app.UseRouting();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
+            app.UseSilkyWrapperResponse();
             app.UseResponseCaching();
             app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
             app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
+
+            //   app.UseSilkyExceptionHandler();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecksUI();

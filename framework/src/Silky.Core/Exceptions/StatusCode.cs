@@ -10,7 +10,7 @@ namespace Silky.Core.Exceptions
         [Description("框架异常")] FrameworkException = 500,
 
         [Description("请求异常")] RequestError = 502,
-        
+
         [Description("路由解析异常")] RouteParseError = 503,
 
         [Description("未找到服务路由")] NotFindServiceRoute = 404,
@@ -47,6 +47,8 @@ namespace Silky.Core.Exceptions
         [Description("执行超时")] Timeout = 519,
 
         [Description("服务器异常")] ServerError = 520,
+
+        [Description("没有内容")] NoContent = 521,
 
         [Description("业务异常")] [IsBusinessException]
         BusinessError = 1000,
