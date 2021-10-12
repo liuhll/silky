@@ -1,4 +1,6 @@
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,15 @@ namespace Silky.GatewayHost
             services.AddSilkyHttpServices();
             services.AddSilkySkyApm();
             services.AddMessagePackCodec();
+            services.AddHealthChecks()
+                .AddSilkyRpc();
+            services
+                .AddHealthChecksUI(setupSettings: setup =>
+                {
+                    setup.AddHealthCheckEndpoint("silkyrpc", "http://127.0.0.1:5000/healthz");
+                    setup.SetEvaluationTimeInSeconds(60);
+                })
+                .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,6 +47,12 @@ namespace Silky.GatewayHost
             }
             app.UseSerilogRequestLogging();
             app.UseDashboard();
+            app.UseHealthChecks("/healthz", new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                })
+                .UseHealthChecksPrometheusExporter("/metrics");
             app.UseRouting();
             app.UseSilkyWrapperResponse();
             // app.UseClientRateLimiting();
@@ -47,7 +64,11 @@ namespace Silky.GatewayHost
             app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
             // app.ConfigureSilkyRequestPipeline();
-            app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHealthChecksUI();
+                endpoints.MapSilkyRpcServices();
+            });
         }
     }
 }

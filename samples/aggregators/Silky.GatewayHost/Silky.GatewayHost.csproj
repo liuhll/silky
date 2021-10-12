@@ -8,8 +8,13 @@
 
     <ItemGroup>
         <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
+        <PackageReference Include="Silky.HealthChecks.Rpc" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.Http.MiniProfiler" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.SkyApm.Agent" Version="$(SilkyVersion)" />
+        <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="5.0.1"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="5.0.1"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="5.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
