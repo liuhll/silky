@@ -127,7 +127,7 @@ namespace Silky.RegistryCenter.Zookeeper
                 foreach (var localEndpoint in server.Endpoints)
                 {
                     var removeExceptRouteDescriptors = serviceRouteDescriptors.Where(p =>
-                        p.Endpoints.Any(p => p.Equals(localEndpoint.Descriptor))
+                        p.Endpoints.Any(e => e.Equals(localEndpoint.Descriptor))
                         && !p.HostName.Equals(EngineContext.Current.HostName)
                     );
                     if (removeExceptRouteDescriptors.Any())
