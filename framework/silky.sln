@@ -110,6 +110,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Rpc.AppService", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.SkyApm.Diagnostics.Http", "src\Silky.SkyApm.Diagnostics.Http\Silky.SkyApm.Diagnostics.Http.csproj", "{A55DA184-5BF2-4DE8-B9E6-C8890F12F879}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "test\docker-compose\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,7 @@ Global
 		{7F1393A4-F5F6-4575-9386-00E3D0FF265A} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{A55DA184-5BF2-4DE8-B9E6-C8890F12F879} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{FEA0C318-FFED-4D39-8781-265718CA43DD} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{17D3E946-6069-428A-89EB-63ED642F395B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -383,5 +386,9 @@ Global
 		{A55DA184-5BF2-4DE8-B9E6-C8890F12F879}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A55DA184-5BF2-4DE8-B9E6-C8890F12F879}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A55DA184-5BF2-4DE8-B9E6-C8890F12F879}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,27 @@
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+WORKDIR /app
+ARG rpc_port=2200
+ENV TZ=Asia/Shanghai 
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone 
+EXPOSE ${rpc_port}
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /
+COPY framework/src framework/src
+COPY framework/test/NormHostDemo framework/test/NormHostDemo
+COPY framework/test/IAnotherApplication framework/test/IAnotherApplication
+COPY framework/test/ITestApplication framework/test/ITestApplication
+COPY NuGet.Config NuGet.Config
+COPY common.props common.props
+COPY Directory.Build.props Directory.Build.props
+RUN dotnet restore /test/NormHostDemo/NormHostDemo.csproj --disable-parallel && \
+    dotnet build --no-restore -c Release /test/NormHostDemo/NormHostDemo.csproj 
+
+FROM build AS publish
+WORKDIR /framework/test/NormHostDemo
+RUN dotnet publish --no-restore -c Release -o /app
+
+FROM base AS final
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "NormHostDemo.dll"]
+   
