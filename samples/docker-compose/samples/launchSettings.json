@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchServiceName": "silky.sample.gateway",
+      "serviceActions": {
+        "silky.sample.account": "DoNotStart",
+        "silky.sample.gateway": "StartDebugging",
+        "silky.sample.order": "DoNotStart",
+        "silky.sample.stock": "DoNotStart"
+      },
+      "composeLaunchAction": "None",
+      "commandVersion": "1.0"
+    }
+  }
+}
