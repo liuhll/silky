@@ -53,11 +53,26 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.GatewayHost", "aggreg
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose\samples\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.Database.Migrations", "microservices\order\Silky.Order.Database.Migrations\Silky.Order.Database.Migrations.csproj", "{0CA3C157-731A-4B50-843E-6A9D4803B938}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Order.Database.Migrations", "microservices\order\Silky.Order.Database.Migrations\Silky.Order.Database.Migrations.csproj", "{0CA3C157-731A-4B50-843E-6A9D4803B938}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.Database.Migrations", "microservices\account\Silky.Account.Database.Migrations\Silky.Account.Database.Migrations.csproj", "{48F6D0CE-95D4-459A-A787-AA5B64454589}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Account.Database.Migrations", "microservices\account\Silky.Account.Database.Migrations\Silky.Account.Database.Migrations.csproj", "{48F6D0CE-95D4-459A-A787-AA5B64454589}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.Database.Migrations", "microservices\stock\Silky.Stock.Database.Migrations\Silky.Stock.Database.Migrations.csproj", "{7021B542-624B-4552-BFAF-587048D55118}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Stock.Database.Migrations", "microservices\stock\Silky.Stock.Database.Migrations\Silky.Stock.Database.Migrations.csproj", "{7021B542-624B-4552-BFAF-587048D55118}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{B0E7BBDC-D0D3-4A3E-BD53-7B3DCAD63C7B}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose\samples\.env = docker-compose\samples\.env
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastr", "infrastr", "{84D155B1-62E2-4AFF-9781-BA64F6360AC7}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose\infrastr\docker-compose.apollo.yml = docker-compose\infrastr\docker-compose.apollo.yml
+		docker-compose\infrastr\docker-compose.consul.yml = docker-compose\infrastr\docker-compose.consul.yml
+		docker-compose\infrastr\docker-compose.nacos.cluster-hostname.yaml = docker-compose\infrastr\docker-compose.nacos.cluster-hostname.yaml
+		docker-compose\infrastr\docker-compose.redis.yml = docker-compose\infrastr\docker-compose.redis.yml
+		docker-compose\infrastr\docker-compose.skywalking.yml = docker-compose\infrastr\docker-compose.skywalking.yml
+		docker-compose\infrastr\docker-compose.zookeeper.yml = docker-compose\infrastr\docker-compose.zookeeper.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -187,6 +202,7 @@ Global
 		{0CA3C157-731A-4B50-843E-6A9D4803B938} = {3F654FD6-30FF-43C8-AB04-C4F4B2E4EECF}
 		{48F6D0CE-95D4-459A-A787-AA5B64454589} = {AC0D5F65-4838-4502-BA54-2DAFF445E861}
 		{7021B542-624B-4552-BFAF-587048D55118} = {90D32BC6-C128-4CA0-B7F8-B55B100314EE}
+		{84D155B1-62E2-4AFF-9781-BA64F6360AC7} = {B0E7BBDC-D0D3-4A3E-BD53-7B3DCAD63C7B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {148592DC-79FF-4B93-9DF9-21C2E7C97DA6}
