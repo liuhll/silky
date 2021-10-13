@@ -82,7 +82,7 @@ namespace Silky.Http.Core.Middlewares
                 }
                 else if (!body.IsNullOrEmpty())
                 {
-                    result.ErrorMessage = _serializer.Deserialize<dynamic>(body);
+                    result.ErrorMessage = body;
                 }
                 else
                 {
