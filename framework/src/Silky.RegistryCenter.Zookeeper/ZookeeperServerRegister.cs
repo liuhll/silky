@@ -227,21 +227,17 @@ namespace Silky.RegistryCenter.Zookeeper
             await zookeeperClient.SubscribeDataChange(serverPath, watcher.SubscribeServerChange);
             m_serverWatchers.AddOrUpdate(zookeeperClient, watcher, (k, v) => watcher);
             var synchronizationProvider = zookeeperClient.GetSynchronizationProvider();
-            var @lock = synchronizationProvider.CreateLock(LockName.CreateSubscribeServersChange);
-            await @lock.ExecForHandle(async () =>
+            if (!await zookeeperClient.ExistsAsync(serverPath))
             {
-                if (!await zookeeperClient.ExistsAsync(serverPath))
-                {
-                    await zookeeperClient.CreateRecursiveAsync(serverPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
-                    return;
-                }
+                await zookeeperClient.CreateRecursiveAsync(serverPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                return;
+            }
 
-                var allServers = await GetAllServers(zookeeperClient, serverPath);
-                foreach (var server in allServers)
-                {
-                    await CreateSubscribeDataChange(zookeeperClient, server);
-                }
-            });
+            var allServers = await GetAllServers(zookeeperClient, serverPath);
+            foreach (var server in allServers)
+            {
+                await CreateSubscribeDataChange(zookeeperClient, server);
+            }
         }
 
         private async Task<List<string>> GetAllServers(IZookeeperClient zookeeperClient, string serverPath)
