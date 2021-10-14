@@ -15,8 +15,8 @@ COPY framework/test/ITestApplication framework/test/ITestApplication
 COPY NuGet.Config NuGet.Config
 COPY common.props common.props
 COPY Directory.Build.props Directory.Build.props
-RUN dotnet restore /test/AnotherHostDemo/AnotherHostDemo.csproj --disable-parallel && \
-    dotnet build --no-restore -c Release /test/AnotherHostDemo/AnotherHostDemo.csproj 
+RUN dotnet restore /framework/test/AnotherHostDemo/AnotherHostDemo.csproj --disable-parallel && \
+    dotnet build --no-restore -c Release /framework/test/AnotherHostDemo/AnotherHostDemo.csproj 
 
 FROM build AS publish
 WORKDIR /framework/test/AnotherHostDemo
