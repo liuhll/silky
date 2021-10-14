@@ -57,10 +57,7 @@ namespace Silky.Rpc.Runtime.Server
             GovernanceOptions = new ServiceEntryGovernance(governanceOptions);
 
             var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
-            if (governanceProvider != null)
-            {
-                ReConfiguration(governanceProvider);
-            }
+            ReConfiguration(governanceProvider);
 
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
@@ -144,8 +141,6 @@ namespace Silky.Rpc.Runtime.Server
                     }
                 }
             }
-
-            GovernanceOptions.IsAllowAnonymous = allowAnonymous != null;
             UpdateServiceEntryDescriptor(GovernanceOptions);
         }
 
