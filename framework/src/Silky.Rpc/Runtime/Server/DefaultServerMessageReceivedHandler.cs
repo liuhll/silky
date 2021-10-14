@@ -107,7 +107,7 @@ namespace Silky.Rpc.Runtime.Server
                 else
                 {
                     serverHandleMonitor?.ExecFail((serviceEntry?.Id, clientRpcEndpoint),
-                        !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds, null);
+                        !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds, serverHandleInfo);
                 }
 
                 Logger.LogDebug("Server processing completed{0}" +
