@@ -16,7 +16,6 @@ namespace Silky.Rpc.Runtime.Server
             UnHealthAddressTimesAllowedBeforeRemoving = governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving;
             RetryIntervalMillSeconds = governanceOptions.RetryIntervalMillSeconds;
             RetryTimes = governanceOptions.RetryTimes;
-            FailoverCountEqualInstanceCount = governanceOptions.FailoverCountEqualInstanceCount;
             MaxConcurrentHandlingCount = governanceOptions.MaxConcurrentHandlingCount;
         }
 

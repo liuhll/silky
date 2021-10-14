@@ -18,8 +18,7 @@ namespace Silky.Rpc.Configuration
             AddressFuseSleepDurationSeconds = 60;
             UnHealthAddressTimesAllowedBeforeRemoving = 0;
             RetryIntervalMillSeconds = 50;
-            RetryTimes = 0;
-            FailoverCountEqualInstanceCount = true;
+            RetryTimes = 3;
             MaxConcurrentHandlingCount = 50;
           
         }
@@ -77,11 +76,7 @@ namespace Silky.Rpc.Configuration
         public int RetryIntervalMillSeconds { get; set; }
 
         public int MaxConcurrentHandlingCount { get; set; }
-
-        /// <summary>
-        /// 故障转移次数与服务实例个数相同
-        /// </summary>
-        public bool FailoverCountEqualInstanceCount { get; set; }
+        
         
     }
 }

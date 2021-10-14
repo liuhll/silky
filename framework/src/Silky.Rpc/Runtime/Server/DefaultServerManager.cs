@@ -96,20 +96,7 @@ namespace Silky.Rpc.Runtime.Server
                 _rpcEndpointMonitor.Monitor(rpcEndpoint);
                 RemoveRpcEndpointCache(rpcEndpoint);
             }
-
-            foreach (var serviceDescriptor in serverDescriptor.Services)
-            {
-                var serviceEntries = _serviceEntryManager.GetServiceEntries(serviceDescriptor.Id);
-                foreach (var serviceEntry in serviceEntries)
-                {
-                    if (serviceEntry.FailoverCountIsDefaultValue)
-                    {
-                        serviceEntry.GovernanceOptions.RetryTimes =
-                            serverDescriptor.Endpoints.Count(p => p.ServiceProtocol == ServiceProtocol.Tcp);
-                        _serviceEntryManager.Update(serviceEntry);
-                    }
-                }
-            }
+            
         }
 
         public void Remove(string hostName)

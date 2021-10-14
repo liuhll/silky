@@ -16,7 +16,7 @@ namespace Silky.Rpc.Runtime.Server
             ExceptionsAllowedBeforeBreaking = 3;
             BreakerSeconds = 60;
             RetryIntervalMillSeconds = 50;
-            RetryTimes = 0;
+            RetryTimes = 3;
         }
 
         /// <summary>

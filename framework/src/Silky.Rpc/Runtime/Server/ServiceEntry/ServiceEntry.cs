@@ -26,8 +26,7 @@ namespace Silky.Rpc.Runtime.Server
         private readonly Type _serviceType;
 
         private readonly ServiceEntryDescriptor _serviceEntryDescriptor;
-        public bool FailoverCountIsDefaultValue { get; private set; }
-
+        
         public string Id => ServiceEntryDescriptor.Id;
 
         public string ServiceId => ServiceEntryDescriptor.ServiceId;
@@ -123,8 +122,6 @@ namespace Silky.Rpc.Runtime.Server
                 GovernanceOptions.RetryTimes = governanceProvider.RetryTimes;
 
                 GovernanceOptions.RetryIntervalMillSeconds = governanceProvider.RetryIntervalMillSeconds;
-                FailoverCountIsDefaultValue = governanceProvider.RetryTimes == 0 &&
-                                              GovernanceOptions.FailoverCountEqualInstanceCount;
                 var governanceAttribute = governanceProvider as GovernanceAttribute;
                 GovernanceOptions.ProhibitExtranet = governanceAttribute?.ProhibitExtranet ?? false;
             }
