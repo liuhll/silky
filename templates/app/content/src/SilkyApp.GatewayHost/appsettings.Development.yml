@@ -11,8 +11,6 @@ distributedCache:
     isEnabled: redisenable
     configuration: redisconfiguration
 gateway:
-  wrapResult: true
-  enableSwaggerDoc: true
   jwtSecret: gatewayjwtsecret
 swaggerDocument:
   organizationMode: Group

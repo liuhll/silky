@@ -10,8 +10,6 @@ distributedCache:
     isEnabled: true
     configuration: silky.redis1:6379,defaultDatabase=0
 gateway:
-  wrapResult: true
-  enableSwaggerDoc: true
   jwtSecret: gatewayjwtsecret
 swaggerDocument:
   organizationMode: Group

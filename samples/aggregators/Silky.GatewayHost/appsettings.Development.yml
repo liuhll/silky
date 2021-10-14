@@ -11,8 +11,6 @@ distributedCache:
     isEnabled: true
     configuration: 127.0.0.1:6379,defaultDatabase=0
 gateway:
-  wrapResult: true
-  enableSwaggerDoc: true
   jwtSecret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW
 swaggerDocument:
   organizationMode: Group
