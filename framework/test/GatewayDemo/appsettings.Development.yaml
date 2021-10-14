@@ -33,8 +33,6 @@ swaggerDocument:
   injectMiniProfiler: true
   termsOfService: https://www.github.com/liuhll/silky
 gateway:
-  wrapResult: true
-  enableSwaggerDoc: true
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
   enableCors: true
 governance:

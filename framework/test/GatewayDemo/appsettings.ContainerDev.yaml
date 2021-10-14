@@ -11,6 +11,29 @@ distributedCache:
         configuration: silky.redis1:6379,defaultDatabase=0
 connectionStrings:
     default: server=silky.mysql;port=3306;database=order;uid=root;pwd=qwe!P4ss;
+allowedHosts: "*"
+gateway:
+  jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
+dashboard:
+  displayWebApiInSwagger: true
+  useAuth: true
+  dashboardLoginApi: /api/account/login
+  externalLinks:
+    - title: "message.swagger"
+      path: "http://localhost"
+      icon: "iconfont icon-swagger"
+    - title: "SkyWalking"
+      path: "http://localhost:8180"
+    - title: "Github"
+      path: "https://github.com/liuhll/silky"
+      icon: "iconfont icon-github"
+    - title: "Gitee"
+      path: "https://gitee.com/liuhll2/silky"
+      icon: "iconfont icon-gitee2"
+swaggerDocument:
+  organizationMode: Group
+  injectMiniProfiler: true
+  termsOfService: https://www.github.com/liuhll/silky
 skyWalking:
     transport:
         gRPC:

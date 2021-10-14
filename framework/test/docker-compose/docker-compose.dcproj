@@ -8,7 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="../../../.dockerignore" />
-    <None Include=".env" />
-    <None Include="docker-compose.yaml" />
+    <None Include="docker-compose.yml" />
   </ItemGroup>
 </Project>
