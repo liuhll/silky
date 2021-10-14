@@ -34,7 +34,12 @@ swaggerDocument:
   termsOfService: https://www.github.com/liuhll/silky
 gateway:
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
-  enableCors: true
+healthChecksUI:
+  healthChecks:
+    - name: silkyrpc
+      uri: http://127.0.0.1:5002/silkyrpc/healthz
+  evaluationTimeinSeconds: 30
+  minimumSecondsBetweenFailureNotifications: 60
 governance:
   timeoutMillSeconds: 0
 dashboard:

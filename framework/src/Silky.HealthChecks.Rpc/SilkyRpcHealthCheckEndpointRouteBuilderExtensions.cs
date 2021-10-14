@@ -14,33 +14,14 @@ namespace Silky.HealthChecks.Rpc
 {
     public static class SilkyRpcHealthCheckEndpointRouteBuilderExtensions
     {
-        public static IEndpointConventionBuilder MapSilkyRpcHealthChecks(this IEndpointRouteBuilder endpoints)
+        public static IEndpointConventionBuilder MapSilkyRpcHealthChecks(this IEndpointRouteBuilder endpoints,
+            string pattern = "/api/silkyrpc/health")
         {
-            return endpoints.MapHealthChecks("/rpc-health", new HealthCheckOptions()
+            return endpoints.MapHealthChecks(pattern, new HealthCheckOptions()
             {
                 Predicate = (check) => check.Name.Equals(SilkyRpcHealthCheckBuilderExtensions.SILKYRPC_NAME),
-                ResponseWriter = ResponseWriter
+                ResponseWriter = SilkyRpcApiResponseWriter.ResponseWriter
             }).RequireAuthorization();
-            //.RequireAuthorization();
-        }
-
-        private static Task ResponseWriter(HttpContext httpContext, HealthReport healthReport)
-        {
-            httpContext.Response.ContentType = "application/json;charset=utf-8";
-            var serializer = EngineContext.Current.Resolve<ISerializer>();
-
-            var silkyRpcHealthCheckResult = new SilkyRpcHealthCheckResult()
-            {
-                Status = healthReport.Status,
-                TotalDuration = healthReport.TotalDuration,
-                HealthData = healthReport.Entries.SelectMany(p => p.Value.Data.Values.Select(p => (ServerHealthData)p))
-                    .ToArray()
-            };
-            var responseResultData = serializer.Serialize(silkyRpcHealthCheckResult);
-            httpContext.Response.ContentLength = responseResultData.GetBytes().Length;
-            httpContext.Response.StatusCode = 200;
-
-            return httpContext.Response.WriteAsync(responseResultData);
         }
     }
 }

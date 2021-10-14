@@ -37,15 +37,11 @@ namespace GatewayDemo
             services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
             services.AddSilkyHttpServices();
             services.AddMessagePackCodec();
-            //services.AddHealthChecks()
-            //    .AddSilkyRpc();
-            //services
-            //    .AddHealthChecksUI(setupSettings: setup =>
-            //    {
-            //        setup.AddHealthCheckEndpoint("silkyrpc", "http://127.0.0.1:5002/healthz");
-            //        setup.SetEvaluationTimeInSeconds(60);
-            //    })
-            //    .AddInMemoryStorage();
+            services.AddHealthChecks()
+                .AddSilkyRpc();
+            services
+                .AddHealthChecksUI()
+                .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,12 +56,8 @@ namespace GatewayDemo
 
             app.UseSerilogRequestLogging();
             app.UseDashboard();
-            //app.UseHealthChecks("/healthz", new HealthCheckOptions
-            //    {
-            //        Predicate = _ => true,
-            //        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            //    })
-            //    .UseHealthChecksPrometheusExporter("/metrics");
+            app.UseSilkyRpcHealthCheck()
+                .UseHealthChecksPrometheusExporter("/metrics");
 
             app.UseRouting();
             // app.UseClientRateLimiting();
@@ -80,9 +72,7 @@ namespace GatewayDemo
             //   app.UseSilkyExceptionHandler();
             app.UseEndpoints(endpoints =>
             {
-                // endpoints.MapHealthChecksUI();
-                // endpoints.MapSilkyRpcHealthChecks();
-
+                endpoints.MapHealthChecksUI();
                 endpoints.MapSilkyRpcServices();
             });
         }
