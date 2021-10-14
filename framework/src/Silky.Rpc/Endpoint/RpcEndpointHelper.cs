@@ -55,11 +55,23 @@ namespace Silky.Rpc.Endpoint
         {
             var addressSegments = address.Split("://");
             var scheme = addressSegments.First();
+            var url = addressSegments.Last();
             var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(scheme);
-            var domainAndPort = addressSegments.Last().Split(":");
-            var domain = domainAndPort[0];
-            var port = int.Parse(domainAndPort[1]);
-            return new RpcEndpoint(domain, port, serviceProtocol);
+            
+            string host;
+            
+            if (url.Contains("+") || url.Contains("[::]") || url.Contains("*"))
+            {
+                host = GetAnyHostIp();
+               
+            }
+            else 
+            {
+                var domainAndPort = url.Split(":");
+                host = domainAndPort[0];
+            }
+            var port = url.Split(":").Last().To<int>();
+            return new RpcEndpoint(host, port, serviceProtocol);
         }
 
         private static string GetAnyHostIp()
