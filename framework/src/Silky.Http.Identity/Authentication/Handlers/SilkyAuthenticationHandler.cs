@@ -88,7 +88,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
 
         private AuthenticationTicket CreateTicket(IDictionary<string, object> payload)
         {
-            var claimsIdentity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationType);
+            var claimsIdentity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
             foreach (var item in payload)
             {
                 if (item.Key.Equals(ClaimTypes.Role))
