@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Authorization;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Http.Core;
@@ -32,7 +33,8 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         public static IServiceCollection AddSilkyHttpServices(this IServiceCollection services,
-            Action<SwaggerGenOptions> setupAction = null)
+            Action<SwaggerGenOptions> setupAction = null,
+            Action<AuthorizationOptions> authorizationAction = null)
         {
             var redisOptions = EngineContext.Current.Configuration.GetRateLimitRedisOptions();
             services
@@ -42,7 +44,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddResponseCaching()
                 .AddHttpContextAccessor()
                 .AddRouting()
-                .AddSilkyIdentity()
+                .AddSilkyIdentity(authorizationAction)
                 .AddSilkyMiniProfiler()
                 .AddSilkyCaching()
                 .AddSilkySkyApm()

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
@@ -101,6 +102,11 @@ namespace Silky.Rpc.Runtime.Server
             authorizeData.AddRange(serviceEntryAuthorizeData);
             var serviceAuthorizeData = ServiceType.GetCustomAttributes().OfType<IAuthorizeData>();
             authorizeData.AddRange(serviceAuthorizeData);
+            if (!authorizeData.Any() && !_serviceEntryDescriptor.IsAllowAnonymous)
+            {
+                authorizeData.Add(new AuthorizeAttribute());
+            }
+
             return authorizeData;
         }
 
@@ -141,6 +147,15 @@ namespace Silky.Rpc.Runtime.Server
                     }
                 }
             }
+
+            if (_serviceType.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().Any())
+            {
+                if (EngineContext.Current.Configuration.GetValue<bool?>(ServiceEntryConstant.DashboardUseAuth) == false)
+                {
+                    GovernanceOptions.IsAllowAnonymous = true;
+                }
+            }
+
             UpdateServiceEntryDescriptor(GovernanceOptions);
         }
 

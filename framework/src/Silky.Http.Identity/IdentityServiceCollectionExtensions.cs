@@ -1,6 +1,8 @@
 using System;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Silky.Core.DependencyInjection;
 using Silky.Http.Identity;
 using Silky.Http.Identity.Authentication.Handlers;
@@ -44,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.AddAuthorization(configure);
             }
-
+            
             return services;
         }
     }

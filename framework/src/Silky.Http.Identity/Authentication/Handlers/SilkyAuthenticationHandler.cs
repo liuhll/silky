@@ -45,14 +45,6 @@ namespace Silky.Http.Identity.Authentication.Handlers
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var serviceEntry = Context.GetServiceEntry();
-            var silkyAppServiceUseAuth =
-                EngineContext.Current.Configuration.GetValue<bool?>("dashboard:useAuth") ?? false;
-            if (serviceEntry?.IsSilkyAppService() == true && !silkyAppServiceUseAuth)
-            {
-                return AuthenticateResult.NoResult();
-            }
-
             var token = Context.Request.Headers["Authorization"];
             if (token.IsNullOrEmpty())
             {

@@ -5,7 +5,6 @@ using Silky.DotNetty.Protocol.Tcp;
 using Silky.Validation.Fluent;
 using Silky.Http.Core;
 using Silky.Http.CorsAccessor;
-using Silky.Http.Identity;
 using Silky.Http.MiniProfiler;
 using Silky.Http.RateLimit;
 using Silky.Http.Swagger;
@@ -26,7 +25,6 @@ namespace Microsoft.Extensions.Hosting
         typeof(SwaggerModule),
         typeof(MiniProfilerModule),
         typeof(RateLimitModule),
-        typeof(IdentityModule),
         typeof(CorsModule),
         typeof(RpcCachingInterceptorModule),
         typeof(DotNettyModule),

@@ -1,8 +1,6 @@
 using GatewayDemo.Authorization;
-using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -82,7 +80,7 @@ namespace GatewayDemo
             //   app.UseSilkyExceptionHandler();
             app.UseEndpoints(endpoints =>
             {
-               // endpoints.MapHealthChecksUI();
+                // endpoints.MapHealthChecksUI();
                 // endpoints.MapSilkyRpcHealthChecks();
 
                 endpoints.MapSilkyRpcServices();

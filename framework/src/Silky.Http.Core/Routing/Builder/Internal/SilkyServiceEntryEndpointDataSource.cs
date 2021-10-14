@@ -18,7 +18,7 @@ namespace Silky.Http.Core.Routing.Builder.Internal
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly List<Action<EndpointBuilder>> Conventions;
         private readonly ServiceEntryEndpointFactory _serviceEntryEndpointFactory;
-        private readonly object Lock = new object();
+        private readonly object Lock = new ();
 
         public SilkyServiceEntryEndpointDataSource(IServiceEntryManager serviceEntryManager,
             ServiceEntryEndpointFactory serviceEntryEndpointFactory)

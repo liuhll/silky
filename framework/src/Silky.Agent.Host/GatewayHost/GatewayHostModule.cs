@@ -31,7 +31,6 @@ namespace Microsoft.Extensions.Hosting
         typeof(SwaggerModule),
         typeof(MiniProfilerModule),
         typeof(RateLimitModule),
-        typeof(IdentityModule),
         typeof(CorsModule),
         typeof(RpcCachingInterceptorModule),
         typeof(DotNettyModule),
