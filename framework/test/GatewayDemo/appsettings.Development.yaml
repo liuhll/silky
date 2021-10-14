@@ -58,3 +58,5 @@ dashboard:
     - title: "Gitee"
       path: "https://gitee.com/liuhll2/silky"
       icon: "iconfont icon-gitee2"
+    - title: "Healthchecks UI"
+      path: "http://localhost:5002/healthchecks-ui"
