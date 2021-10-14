@@ -10,7 +10,7 @@ distributedCache:
         isEnabled: true
         configuration: silky.redis1:6379,defaultDatabase=0
 connectionStrings:
-    default: server=silky.mysql;port=3306;database=order;uid=root;pwd=qwe!P4ss;
+    demoDbContext: server=silky.mysql;port=3306;database=order;uid=root;pwd=qwe!P4ss;
 jwtSettings:
     secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
 skyWalking:
