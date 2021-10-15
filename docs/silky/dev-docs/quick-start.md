@@ -65,7 +65,7 @@ rpc:
   Port: 2201
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 governance:
-  executionTimeout: -1
+  timeoutMillSeconds: 0
 registrycenter:
   connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
   registryCenterType: Zookeeper

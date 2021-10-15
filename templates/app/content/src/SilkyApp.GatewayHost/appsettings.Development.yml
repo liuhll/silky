@@ -2,7 +2,7 @@ rpc:
   host: 0.0.0.0
   token: rpcTokenValue
 governance:
-  executionTimeout: -1  
+  timeoutMillSeconds: 0  
 registrycenter:
   connectionStrings: registrycenterconnections
   registryCenterType: registrycentertype
