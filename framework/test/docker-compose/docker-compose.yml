@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  silky.test.anotherhostdemo:
+    image: silkyframework/silky.test.anotherhostdemo:${TAG:-latest}
+    build:
+      context: ../../../
+      dockerfile: ./framework/test/AnotherHostDemo/Dockerfile
+    volumes:
+      - ./logs/anotherhost:/app/logs    
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+    networks: 
+      - silky_service_net
+    
+  silky.test.normhostdemo:
+    image: silkyframework/silky.test.normhostdemo:${TAG:-latest}
+    build:
+      context: ../../../
+      dockerfile: ./framework/test/NormHostDemo/Dockerfile
+    volumes:
+      - ./logs/normhost:/app/logs
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+    networks: 
+      - silky_service_net
+  
+  silky.test.gatewaydemo:
+    image: silkyframework/silky.test.gatewaydemo:${TAG:-latest}
+    build:
+      context: ../../../
+      dockerfile: ./framework/test/GatewayDemo/Dockerfile
+    volumes:
+      - ./logs/gateway:/app/logs      
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+      ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+    ports:
+      - 80:80
+    networks: 
+      - silky_service_net
+
+networks:
+  silky_service_net: 
+    external:
+      name: silky_service_net

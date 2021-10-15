@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "serviceActions": {
+        "silky.test.anotherhostdemo": "StartDebugging",
+        "silky.test.gatewaydemo": "StartDebugging",
+        "silky.test.normhostdemo": "StartDebugging"
+      },
+      "commandVersion": "1.0"
+    }
+  }
+}
