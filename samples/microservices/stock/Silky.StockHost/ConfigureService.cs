@@ -1,5 +1,6 @@
 
-using Microsoft.Extensions.Configuration;using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Silky.Stock.EntityFrameworkCore;
 
 namespace Silky.StockHost

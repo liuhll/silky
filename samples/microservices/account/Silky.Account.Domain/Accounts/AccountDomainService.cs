@@ -202,7 +202,7 @@ namespace Silky.Account.Domain.Accounts
         public async Task<GetAccountOutput> GetLoginUserInfo()
         {
             Debug.Assert(_session.IsLogin());
-            var userInfo = await _accountRepository.FindOrDefaultAsync(_session.UserId);
+            var userInfo = await _accountRepository.FindOrDefaultAsync(_session.UserId.To<long>());
             if (userInfo == null)
             {
                 throw new AuthenticationException($"当前系统不存在用户{_session.UserId}");

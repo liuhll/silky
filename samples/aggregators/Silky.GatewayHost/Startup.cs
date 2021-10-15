@@ -27,11 +27,7 @@ namespace Silky.GatewayHost
             services.AddHealthChecks()
                 .AddSilkyRpc();
             services
-                .AddHealthChecksUI(setupSettings: setup =>
-                {
-                    setup.AddHealthCheckEndpoint("silkyrpc", "http://127.0.0.1:5000/healthz");
-                    setup.SetEvaluationTimeInSeconds(60);
-                })
+                .AddHealthChecksUI()
                 .AddInMemoryStorage();
         }
 
@@ -47,11 +43,7 @@ namespace Silky.GatewayHost
             }
             app.UseSerilogRequestLogging();
             app.UseDashboard();
-            app.UseHealthChecks("/healthz", new HealthCheckOptions
-                {
-                    Predicate = _ => true,
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                })
+            app.UseSilkyRpcHealthCheck()
                 .UseHealthChecksPrometheusExporter("/metrics");
             app.UseRouting();
             app.UseSilkyWrapperResponse();

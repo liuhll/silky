@@ -10,13 +10,33 @@ distributedCache:
     isEnabled: true
     configuration: silky.redis1:6379,defaultDatabase=0
 gateway:
-  wrapResult: true
-  enableSwaggerDoc: true
   jwtSecret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4
 swaggerDocument:
   organizationMode: Group
   injectMiniProfiler: true
   termsOfService: https://www.github.com/liuhll/silky
+healthChecksUI:
+  healthChecks:
+    - name: silkyrpc
+      uri: http://silky.sample.gateway/silkyrpc/healthz
+  evaluationTimeinSeconds: 30
+  minimumSecondsBetweenFailureNotifications: 60
+dashboard:
+  displayWebApiInSwagger: false
+  useAuth: true
+  dashboardLoginApi: /api/account/dashboard/login
+  externalLinks:
+    - title: "message.swagger"
+      path: "http://localhost"
+      icon: "iconfont icon-swagger"
+    - title: "SkyWalking"
+      path: "http://localhost:8180"
+    - title: "Github"
+      path: "https://github.com/liuhll/silky"
+      icon: "iconfont icon-github"
+    - title: "Gitee"
+      path: "https://gitee.com/liuhll2/silky"
+      icon: "iconfont icon-gitee2"
 skyWalking:
   transport:
     gRPC:
