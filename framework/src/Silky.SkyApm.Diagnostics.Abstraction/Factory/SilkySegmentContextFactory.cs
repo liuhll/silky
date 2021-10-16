@@ -41,6 +41,12 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
             return context;
         }
 
+        public SegmentContext GetCurrentEntryContext(string serviceEntryId)
+        {
+            var context = _entrySegmentContextAccessor.Context;
+            return context;
+        }
+
         public SegmentContext GetExitContext(string serviceEntryId)
         {
             var context = _exitSegmentContextAccessor.Context;
@@ -55,6 +61,12 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
                 context.Span.Component = SilkyComponents.SilkyRpc;
             }
 
+            return context;
+        }
+
+        public SegmentContext GetCurrentExitContext(string serviceEntryId)
+        {
+            var context = _exitSegmentContextAccessor.Context;
             return context;
         }
 

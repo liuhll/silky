@@ -70,27 +70,33 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
         [DiagnosticName(RpcDiagnosticListenerNames.EndRpcRequest)]
         public void EndRequest([Object] RpcInvokeResultEventData eventData)
         {
-            var context = _silkySegmentContextFactory.GetExitContext(eventData.ServiceEntryId);
-            context.Span.AddLog(LogEvent.Event("Rpc Client Invoke End"),
-                LogEvent.Message(
-                    $"Rpc Invoke Succeeded!{Environment.NewLine}" +
-                    $"--> Spend Time: {eventData.ElapsedTimeMs}ms.{Environment.NewLine}" +
-                    $"--> ServiceEntryId: {eventData.ServiceEntryId}.{Environment.NewLine}" +
-                    $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
-                    $"--> Result: {_serializer.Serialize(eventData.Result)}"));
+            var context = _silkySegmentContextFactory.GetCurrentExitContext(eventData.ServiceEntryId);
+            if (context != null)
+            {
+                context.Span.AddLog(LogEvent.Event("Rpc Client Invoke End"),
+                    LogEvent.Message(
+                        $"Rpc Invoke Succeeded!{Environment.NewLine}" +
+                        $"--> Spend Time: {eventData.ElapsedTimeMs}ms.{Environment.NewLine}" +
+                        $"--> ServiceEntryId: {eventData.ServiceEntryId}.{Environment.NewLine}" +
+                        $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
+                        $"--> Result: {_serializer.Serialize(eventData.Result)}"));
 
-            context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
-            context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
-            _silkySegmentContextFactory.ReleaseContext(context);
+                context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
+                context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
+                _silkySegmentContextFactory.ReleaseContext(context);
+            }
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.ErrorRpcRequest)]
         public void RpcError([Object] RpcInvokeExceptionEventData eventData)
         {
-            var context = _silkySegmentContextFactory.GetExitContext(eventData.ServiceEntryId);
-            context.Span?.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
-            context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
-            _silkySegmentContextFactory.ReleaseContext(context);
+            var context = _silkySegmentContextFactory.GetCurrentExitContext(eventData.ServiceEntryId);
+            if (context != null)
+            {
+                context.Span?.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
+                context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
+                _silkySegmentContextFactory.ReleaseContext(context);
+            }
         }
     }
 }
