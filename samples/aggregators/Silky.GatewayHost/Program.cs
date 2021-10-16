@@ -1,26 +1,24 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Silky.Core;
-using Silky.Core.Extensions;
 
 namespace Silky.GatewayHost
 {
     class Program
     {
-        public async static Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
             await CreateHostBuilder(args).Build().RunAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
                 .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
                 .UseSerilogDefault();
-            if (EngineContext.Current.IsEnvironment("Apollo"))
+            if (hostBuilder.IsEnvironment("Apollo"))
             {
-                // hostBuilder.AddApollo();
+                hostBuilder.AddApollo();
             }
 
             return hostBuilder;

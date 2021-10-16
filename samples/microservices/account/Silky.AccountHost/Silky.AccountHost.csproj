@@ -8,6 +8,7 @@
     <ItemGroup>
         <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.SkyApm.Agent" Version="$(SilkyVersion)" />
+        <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

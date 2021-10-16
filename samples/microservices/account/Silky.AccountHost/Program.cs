@@ -15,10 +15,10 @@ namespace Silky.AccountHost
             var hostBuilder = Host.CreateDefaultBuilder(args)
                 .ConfigureSilkyGeneralHostDefaults()
                 .UseSerilogDefault();
-            // if (EngineContext.Current.IsEnvironment("Apollo"))
-            // {
-            //     hostBuilder.AddApollo();
-            // }
+            if (hostBuilder.IsEnvironment("Apollo"))
+            {
+                hostBuilder.AddApollo();
+            }
 
             return hostBuilder;
         }
