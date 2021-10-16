@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Using messagepack as the component of Silky framework RPC codec</Description>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MessagePack" Version="2.2.85"/>
-        <PackageReference Include="MessagePack.ReactiveProperty" Version="2.2.85"/>
-        <PackageReference Include="MessagePack.UnityShims" Version="2.2.85"/>
+        <PackageReference Include="MessagePack" Version="2.2.85" />
+        <PackageReference Include="MessagePack.ReactiveProperty" Version="2.2.85" />
+        <PackageReference Include="MessagePack.UnityShims" Version="2.2.85" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>
 
 </Project>

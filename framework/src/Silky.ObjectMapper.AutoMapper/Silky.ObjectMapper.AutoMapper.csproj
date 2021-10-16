@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Silky Object mapping component implemented with automapper</Description>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="10.1.1"/>
+        <PackageReference Include="AutoMapper" Version="10.1.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
     </ItemGroup>
 
 </Project>

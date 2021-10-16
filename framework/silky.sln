@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Core", "src\Silky.Core\Silky.Core.csproj", "{17D3E946-6069-428A-89EB-63ED642F395B}"
@@ -110,7 +111,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Rpc.AppService", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.SkyApm.Diagnostics.Http", "src\Silky.SkyApm.Diagnostics.Http\Silky.SkyApm.Diagnostics.Http.csproj", "{A55DA184-5BF2-4DE8-B9E6-C8890F12F879}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "test\docker-compose\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "test\docker-compose\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -388,7 +389,7 @@ Global
 		{A55DA184-5BF2-4DE8-B9E6-C8890F12F879}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

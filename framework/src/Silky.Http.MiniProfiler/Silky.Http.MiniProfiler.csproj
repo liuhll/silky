@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Use Miniprofiler to implement performance monitoring of Http requests</Description>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj"/>
-        <ProjectReference Include="..\Silky.Http.Swagger\Silky.Http.Swagger.csproj"/>
-        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
+        <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
+        <ProjectReference Include="..\Silky.Http.Swagger\Silky.Http.Swagger.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>
 </Project>

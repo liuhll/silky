@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Silky Abstraction SkyApm Diagnostics</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="SkyAPM.Abstractions" Version="1.3.0"/>
-        <PackageReference Include="SkyAPM.Core" Version="1.3.0"/>
-        <PackageReference Include="SkyAPM.Utilities.DependencyInjection" Version="1.3.0"/>
+        <PackageReference Include="SkyAPM.Abstractions" Version="1.3.0" />
+        <PackageReference Include="SkyAPM.Core" Version="1.3.0" />
+        <PackageReference Include="SkyAPM.Utilities.DependencyInjection" Version="1.3.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
     </ItemGroup>
 </Project>

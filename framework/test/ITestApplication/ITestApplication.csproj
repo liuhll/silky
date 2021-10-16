@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj"/>
-        <ProjectReference Include="..\..\src\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj"/>
-        <ProjectReference Include="..\..\src\Silky.Rpc\Silky.Rpc.csproj"/>
-        <ProjectReference Include="..\..\src\Silky.Transaction\Silky.Transaction.csproj"/>
+        <ProjectReference Include="..\..\src\Silky.Rpc.CachingInterceptor\Silky.Rpc.CachingInterceptor.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Validation.Fluent\Silky.Validation.Fluent.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Transaction\Silky.Transaction.csproj" />
     </ItemGroup>
 
 </Project>

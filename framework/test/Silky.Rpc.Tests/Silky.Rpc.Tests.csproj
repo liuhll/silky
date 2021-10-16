@@ -5,9 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silky.Rpc\Silky.Rpc.csproj"/>
-        <ProjectReference Include="..\SilkyTestBase\SilkyTestBase.csproj"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkPackageVersion)"/>
+        <ProjectReference Include="..\..\src\Silky.Rpc\Silky.Rpc.csproj" />
+        <ProjectReference Include="..\SilkyTestBase\SilkyTestBase.csproj" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkPackageVersion)" />
     </ItemGroup>
 
 </Project>

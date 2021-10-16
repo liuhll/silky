@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Silky cross-domain components</Description>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj"/>
-        <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj"/>
+        <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
     </ItemGroup>
 
 </Project>

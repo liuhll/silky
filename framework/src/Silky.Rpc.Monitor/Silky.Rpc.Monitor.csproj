@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\..\common.props"/>
+    <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Description>Silky Rpc Monitor</Description>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Caching\Silky.Caching.csproj"/>
-        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj"/>
+        <ProjectReference Include="..\Silky.Caching\Silky.Caching.csproj" />
+        <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>
 
 </Project>
