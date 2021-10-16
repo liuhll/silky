@@ -15,7 +15,7 @@ namespace Silky.Http.Core.Handlers
         public long? TracingBefore(string messageId, ServiceEntry serviceEntry, HttpContext httpContext,
             object[] parameters)
         {
-            if (s_diagnosticListener.IsEnabled(HttpDiagnosticListenerNames.BeginHttpHandle))
+            if (serviceEntry.IsLocal && s_diagnosticListener.IsEnabled(HttpDiagnosticListenerNames.BeginHttpHandle))
             {
                 var httpHandleEventData = new HttpHandleEventData()
                 {
@@ -36,7 +36,7 @@ namespace Silky.Http.Core.Handlers
             HttpContext httpContext,
             object result)
         {
-            if (tracingTimestamp != null &&
+            if (tracingTimestamp != null && serviceEntry.IsLocal &&
                 s_diagnosticListener.IsEnabled(HttpDiagnosticListenerNames.EndHttpHandle))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -56,7 +56,7 @@ namespace Silky.Http.Core.Handlers
             HttpContext httpContext,
             Exception exception, StatusCode statusCode)
         {
-            if (tracingTimestamp != null &&
+            if (tracingTimestamp != null && serviceEntry.IsLocal &&
                 s_diagnosticListener.IsEnabled(HttpDiagnosticListenerNames.ErrorHttpHandle))
             {
                 var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

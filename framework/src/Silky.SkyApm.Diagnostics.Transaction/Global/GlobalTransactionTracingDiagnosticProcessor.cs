@@ -60,6 +60,10 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Global
         [DiagnosticName(TransactionDiagnosticListenerNames.GlobalCancelingHandle)]
         public void GlobalCancelingHandle([Object] GlobalTransactionEventData eventData)
         {
+            var tryingContext =
+                _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Trying));
+            _segmentContextFactory.ReleaseContext(tryingContext);
+
             var context =
                 _segmentContextFactory.GetTransactionContext(GetOperationName(eventData, ActionStage.Canceling));
             context.Span.AddLog(LogEvent.Event($"{eventData.Type}-{eventData.Role}-Canceling"));

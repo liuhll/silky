@@ -34,18 +34,17 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
         private readonly ITracingContext _tracingContext;
         private readonly IEntrySegmentContextAccessor _entrySegmentContextAccessor;
         private readonly ISilkySegmentContextFactory _silkySegmentContextFactory;
-        private readonly ISerializer _serializer;
+
         private readonly HostingDiagnosticConfig _config;
         private readonly TracingConfig _tracingConfig;
 
         public HttpTracingDiagnosticProcessor(IEntrySegmentContextAccessor entrySegmentContextAccessor,
             ISilkySegmentContextFactory silkySegmentContextFactory,
             ITracingContext tracingContext,
-            IConfigAccessor configAccessor,
-            ISerializer serializer)
+            IConfigAccessor configAccessor)
         {
             _tracingContext = tracingContext;
-            _serializer = serializer;
+
             _silkySegmentContextFactory = silkySegmentContextFactory;
             _entrySegmentContextAccessor = entrySegmentContextAccessor;
             _config = configAccessor.Get<HostingDiagnosticConfig>();
@@ -145,14 +144,11 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
         [DiagnosticName(HttpDiagnosticListenerNames.BeginHttpHandle)]
         public void BeginHttpHandle([Object] HttpHandleEventData eventData)
         {
-            SegmentContext context;
             var localAddress = RpcContext.Context.Connection.LocalAddress;
             var clientAddress = RpcContext.Context.Connection.ClientAddress;
             var serviceKey = RpcContext.Context.GetServiceKey();
-            context = eventData.ServiceEntry.IsLocal
-                ? _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id)
-                : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
 
+            var context = _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id);
             context.Span.AddLog(
                 LogEvent.Event("Http Handle Begin"));
 
@@ -169,9 +165,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
         [DiagnosticName(HttpDiagnosticListenerNames.EndHttpHandle)]
         public void EndHttpHandle([Object] HttpHandleResultEventData eventData)
         {
-            var context = eventData.ServiceEntry.IsLocal
-                ? _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id)
-                : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
+            var context = _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id);
             context.Span.AddLog(LogEvent.Event("Http Handle End"));
 
             context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
@@ -182,9 +176,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
         [DiagnosticName(HttpDiagnosticListenerNames.ErrorHttpHandle)]
         public void ErrorHttpHandle([Object] HttpHandleExceptionEventData eventData)
         {
-            var context = eventData.ServiceEntry.IsLocal
-                ? _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id)
-                : _silkySegmentContextFactory.GetCurrentContext(eventData.ServiceEntry.Id);
+            var context = _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntry.Id);
             context.Span?.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
             context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
             _silkySegmentContextFactory.ReleaseContext(context);
