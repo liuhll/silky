@@ -26,7 +26,7 @@ namespace Silky.Rpc.Runtime.Server
         private readonly Type _serviceType;
 
         private readonly ServiceEntryDescriptor _serviceEntryDescriptor;
-        
+
         public string Id => ServiceEntryDescriptor.Id;
 
         public string ServiceId => ServiceEntryDescriptor.ServiceId;
@@ -62,7 +62,12 @@ namespace Silky.Rpc.Runtime.Server
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
-            AuthorizeData = CreateAuthorizeData();
+            if (EngineContext.Current.IsRegistered(typeof(IAuthorizationService)))
+            {
+                AuthorizeData = CreateAuthorizeData();
+            }
+
+
             ClientFilters = CreateClientFilters();
             ServerFilters = CreateServerFilters();
             CreateFallBackExecutor();

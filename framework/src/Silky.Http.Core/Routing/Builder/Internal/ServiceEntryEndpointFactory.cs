@@ -61,10 +61,9 @@ namespace Silky.Http.Core.Routing.Builder.Internal
             builder.Metadata.Add(serviceEntry);
             builder.Metadata.Add(serviceEntry.Id);
             builder.Metadata.Add(new HttpMethodMetadata(new[] { serviceEntry.Router.HttpMethod.ToString() }));
-            if (!serviceEntry.ServiceEntryDescriptor.IsAllowAnonymous)
+            if (!serviceEntry.ServiceEntryDescriptor.IsAllowAnonymous && serviceEntry.AuthorizeData != null)
             {
-                var authorizeData = serviceEntry.AuthorizeData;
-                foreach (var data in authorizeData)
+                foreach (var data in serviceEntry.AuthorizeData)
                 {
                     builder.Metadata.Add(data);
                 }
