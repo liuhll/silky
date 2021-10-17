@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralHostDemo", "GeneralHostDemo\GeneralHostDemo.csproj", "{96E48551-E321-4ADA-A181-28816A70DEB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Contracts", "Application.Contracts\Application.Contracts.csproj", "{479F1819-D26E-434C-8E77-2FDFCC778C4A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96E48551-E321-4ADA-A181-28816A70DEB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96E48551-E321-4ADA-A181-28816A70DEB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96E48551-E321-4ADA-A181-28816A70DEB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96E48551-E321-4ADA-A181-28816A70DEB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{479F1819-D26E-434C-8E77-2FDFCC778C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{479F1819-D26E-434C-8E77-2FDFCC778C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{479F1819-D26E-434C-8E77-2FDFCC778C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{479F1819-D26E-434C-8E77-2FDFCC778C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
