@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketDemo", "WebSocketDemo\WebSocketDemo.csproj", "{862EB6D8-7A11-447B-9086-0A78A22E9697}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Contracts", "Application.Contracts\Application.Contracts.csproj", "{28ECDD9B-CE78-44D1-86D4-E1B3DAED4E53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WsApplication.Contracts", "WsApplication.Contracts\WsApplication.Contracts.csproj", "{28ECDD9B-CE78-44D1-86D4-E1B3DAED4E53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 using Silky.Rpc.Routing;
 
-namespace Application.Contracts.AppServices
+namespace WsApplication.Contracts.AppServices
 {
     [ServiceRoute]
     public interface ITestAppService
