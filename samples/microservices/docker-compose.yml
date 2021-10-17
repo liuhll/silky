@@ -4,7 +4,7 @@ services:
   silky.sample.account:
     image: silkyframework/sample.account:${TAG:-latest}
     build:
-      context: ../..
+      context: ..
       dockerfile: microservices/account/Silky.AccountHost/Dockerfile
     volumes:
       - ./logs/account:/app/logs    
@@ -16,7 +16,7 @@ services:
   silky.sample.order:
     image: silkyframework/sample.order:${TAG:-latest}
     build:
-      context: ../..
+      context: ..
       dockerfile: microservices/order/Silky.OrderHost/Dockerfile
     volumes:
       - ./logs/order:/app/logs
@@ -28,7 +28,7 @@ services:
   silky.sample.stock:
     image: silkyframework/sample.stock:${TAG:-latest}
     build:
-      context: ../..
+      context: ..
       dockerfile: microservices/stock/Silky.StockHost/Dockerfile
     volumes:
       - ./logs/stock:/app/logs
@@ -40,8 +40,8 @@ services:
   silky.sample.gateway:
     image: silkyframework/sample.gateway:${TAG:-latest}
     build:
-      context: ../..
-      dockerfile: aggregators/Silky.GatewayHost/Dockerfile
+      context: ..
+      dockerfile: microservices/gateway/Silky.GatewayHost/Dockerfile
     volumes:
       - ./logs/gateway:/app/logs      
     environment:

@@ -7,7 +7,7 @@
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="../../../.dockerignore" />
+    <None Include="../../.dockerignore" />
     <None Include="docker-compose.yml" />
   </ItemGroup>
 </Project>

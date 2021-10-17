@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\sample.common.props" />
+    <Import Project="..\..\..\sample.common.props" />
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
@@ -36,9 +36,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\microservices\account\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj" />
-        <ProjectReference Include="..\..\microservices\order\Silky.Order.Application.Contracts\Silky.Order.Application.Contracts.csproj" />
-        <ProjectReference Include="..\..\microservices\stock\Silky.Stock.Application.Contracts\Silky.Stock.Application.Contracts.csproj" />
+        <ProjectReference Include="..\..\account\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj" />
+        <ProjectReference Include="..\..\order\Silky.Order.Application.Contracts\Silky.Order.Application.Contracts.csproj" />
+        <ProjectReference Include="..\..\stock\Silky.Stock.Application.Contracts\Silky.Stock.Application.Contracts.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="skyapm.json" />
