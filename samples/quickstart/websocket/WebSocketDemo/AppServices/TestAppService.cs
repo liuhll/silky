@@ -5,11 +5,11 @@ using WsApplication.Contracts.AppServices;
 
 namespace WebSocketDemo.AppServices
 {
-    public class TestAooService : WsAppServiceBase, ITestAppService
+    public class TestAppService : WsAppServiceBase, ITestAppService
     {
-        private readonly ILogger<TestAooService> _logger;
+        private readonly ILogger<TestAppService> _logger;
 
-        public TestAooService(ILogger<TestAooService> logger)
+        public TestAppService(ILogger<TestAppService> logger)
         {
             _logger = logger;
         }
