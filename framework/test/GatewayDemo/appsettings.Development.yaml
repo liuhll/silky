@@ -45,6 +45,7 @@ governance:
 dashboard:
   displayWebApiInSwagger: true
   useAuth: true
+  wrapperResponse: true
   dashboardLoginApi: /api/account/login
   externalLinks:
     - title: "message.swagger"

@@ -67,6 +67,7 @@ namespace Silky.Http.Dashboard.Middlewares
                     var htmlBuilder = new StringBuilder(await sr.ReadToEndAsync());
                     htmlBuilder.Replace("%(servicePrefix)", _options.PathBase + "/api/silky");
                     htmlBuilder.Replace("%(useAuth)", _options.UseAuth.ToString());
+                    htmlBuilder.Replace("%(wrapperResponse)", _options.WrapperResponse.ToString());
                     if (_options.UseAuth)
                     {
                         var loginWebApi = _options.DashboardLoginApi.StartsWith("/")

@@ -22,6 +22,8 @@ namespace Silky.Http.Dashboard.Configuration
 
         public string PathBase { get; set; }
 
+        public bool WrapperResponse { get; set; }
+
         public ICollection<ExternalLinkOptions> ExternalLinks { get; set; }
     }
 }
