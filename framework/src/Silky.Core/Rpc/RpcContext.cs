@@ -16,7 +16,7 @@ namespace Silky.Core.Rpc
 
         private RpcContext()
         {
-            contextAttachments = new();
+            contextAttachments = new(StringComparer.OrdinalIgnoreCase);
         }
 
         public static RpcContext Context
