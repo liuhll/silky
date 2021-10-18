@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
         <Description>Make Silky framework support websocket protocol</Description>
     </PropertyGroup>
 
@@ -10,6 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="websocketsharp.core" Version="1.0.0" />
+        <PackageReference Include="websocketsharp.core" Version="1.0.0" />
     </ItemGroup>
 </Project>

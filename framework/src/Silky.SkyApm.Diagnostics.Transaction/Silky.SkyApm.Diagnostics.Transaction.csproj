@@ -2,7 +2,7 @@
 
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
         <Description>Silky Transaction SkyApm Diagnostics</Description>
     </PropertyGroup>
     <ItemGroup>
