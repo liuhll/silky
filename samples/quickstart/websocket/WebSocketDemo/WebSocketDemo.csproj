@@ -18,5 +18,7 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Silky.Agent.Host" Version="3.0.0.1-bate.8" />
+	</ItemGroup>
 </Project>
