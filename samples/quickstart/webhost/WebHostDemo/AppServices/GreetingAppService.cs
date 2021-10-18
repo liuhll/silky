@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace WebHostDemo.AppServices
 {
-    public class HelloWorldAppService : IHelloWorldAppService
+    public class GreetingAppService : IGreetingAppService
     {
         public Task<string> Get()
         {

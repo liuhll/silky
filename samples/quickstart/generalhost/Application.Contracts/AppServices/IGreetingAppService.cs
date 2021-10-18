@@ -4,7 +4,7 @@ using Silky.Rpc.Routing;
 namespace Application.Contracts.AppServices
 {
     [ServiceRoute]
-    public interface IDemoAppService
+    public interface IGreetingAppService
     {
         Task<string> Say(string line);
     }

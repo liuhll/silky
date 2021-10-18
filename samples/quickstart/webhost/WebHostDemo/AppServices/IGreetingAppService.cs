@@ -1,13 +1,11 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Routing;
 
 namespace WebHostDemo.AppServices
 {
     [ServiceRoute]
-    public interface IHelloWorldAppService
-    {
-        [HttpGet]
+    public interface IGreetingAppService
+    {   
         Task<string> Get();
     }
 }

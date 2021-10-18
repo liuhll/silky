@@ -3,7 +3,7 @@ using Application.Contracts.AppServices;
 
 namespace GeneralHostDemo.AppServices
 {
-    public class DemoAppService : IDemoAppService
+    public class GreetingAppService : IGreetingAppService
     {
         public Task<string> Say(string line)
         {
