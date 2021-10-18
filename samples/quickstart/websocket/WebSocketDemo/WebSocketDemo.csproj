@@ -19,6 +19,6 @@
       </None>
     </ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Silky.Agent.Host" Version="3.0.0.1-bate.8" />
+		<PackageReference Include="Silky.Agent.Host" Version="3.0.0.1-bate.9" />
 	</ItemGroup>
 </Project>
