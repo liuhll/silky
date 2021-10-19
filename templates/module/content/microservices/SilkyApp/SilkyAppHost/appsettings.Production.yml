@@ -4,7 +4,7 @@ rpc:
   token: rpcTokenValue
 registrycenter:
   connectionStrings: registrycenterconnections
-  registryCenterType: registrycentertype
+  type: registrycentertype
 distributedCache:
   redis:
     isEnabled: true

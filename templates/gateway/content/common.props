@@ -1,7 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-    <SilkyVersion>2.0.0</SilkyVersion>
-  </PropertyGroup>
-</Project>

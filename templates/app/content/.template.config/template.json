@@ -98,26 +98,19 @@
         "isRequired": false,
         "description": "Set docker network"
       },
-      "supportwebsocket": {
-        "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "false",
-        "isRequired": false,
-        "description": "Support websocket Services"
-      },
-      "isnew": {
+      "new": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "true",
         "isRequired": false,
         "description": "Is New Project"
       },
-      "isgateway": {
+      "hosttype": {
         "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "false",
+        "datatype": "string",
+        "defaultValue": "webhost",
         "isRequired": false,
-        "description": "Is Gateway App"
+        "description": "Set the silky host type, optional values: webhost, generalhost,websockethost,gateway"
       }
     },
     "sources": [
@@ -162,7 +155,7 @@
             ]
           },
           {
-            "condition": "!(isnew)",
+            "condition": "!(new)",
             "exclude": [
               ".dockerignore",
               ".gitignore",
@@ -171,7 +164,7 @@
             ]
           },
           {
-            "condition": "isgateway",
+            "condition": "(hosttype==gateway)",
             "exclude": [
               "src/SilkyApp.Application/**",
               "src/SilkyApp.Application.Contracts/**",
@@ -179,17 +172,21 @@
               "src/SilkyApp.Domain/**",
               "src/SilkyApp.Domain.Shared/**",
               "src/SilkyApp.EntityFrameworkCore/**",
-              "src/SilkyAppHost/**",
               "SilkyApp.DockerCompose.sln",
               "SilkyApp.sln"
             ]
           },
           {
-            "condition": "!isgateway",
+            "condition": "(hosttype!=gateway)",
             "exclude": [
               "src/SilkyApp.GatewayHost/**",
               "SilkyAppGateway.sln",
               "SilkyAppGateway.DockerCompose.sln"
+            ]
+          },{
+            "condition": "(hosttype!=webhost || hosttype!=gateway)",
+            "exclude": [
+              "Startup"
             ]
           }
         ]

@@ -6,7 +6,7 @@ governance:
   timeoutMillSeconds: 0
 registrycenter:
   connectionStrings: registrycenterconnections
-  registryCenterType: registrycentertype
+  type: registrycentertype
 distributedCache:
   redis:
     isEnabled: true

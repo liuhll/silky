@@ -1,4 +1,4 @@
-using Silky.Rpc.Runtime.Server.ServiceDiscovery;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Security;
 using SilkyApp.Application.Contracts.System.Dtos;
 

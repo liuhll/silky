@@ -18,14 +18,14 @@
       "sourceName": "SilkyApp",
       "preferNameDirectory": true,
       "symbols": {
-        "rpcToken": {
+        "token": {
           "type": "parameter",
           "defaultValue": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
           "replaces": "rpcTokenValue",
           "isRequired": false,
           "description": "The rpc token for application"
         },
-        "rpcPort": {
+        "port": {
           "type": "parameter",
           "defaultValue": "2200",
           "datatype": "int",
@@ -98,19 +98,19 @@
         "isRequired": false,
         "description": "Set docker network"
       },
-      "supportwebsocket": {
-        "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "false",
-        "isRequired": false,
-        "description": "Support websocket Services"
-      },
-      "isnew": {
+      "new": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "false",
         "isRequired": false,
         "description": "Is New Project"
+      },
+      "hosttype": {
+        "type": "parameter",
+        "datatype": "string",
+        "defaultValue": "webhost",
+        "isRequired": false,
+        "description": "Set the silky host type, optional values: webhost, generalhost, websockethost,gateway"
       }
     },
     "sources": [
@@ -151,12 +151,31 @@
             ]
           },
           {
-            "condition": "!(isnew)",
+            "condition": "!(new)",
             "exclude": [
               ".dockerignore",
               ".gitignore",
               "common.props",
               ".DS_Store"
+            ]
+          },
+          {
+            "condition": "(hosttype==gateway)",
+            "exclude": [
+              "microservices/SilkyApp/SilkyApp.Application/**",
+              "microservices/SilkyApp/SilkyApp.Application.Contracts/**",
+              "microservices/SilkyApp/SilkyApp.Database.Migrations/**",
+              "microservices/SilkyApp/SilkyApp.Domain/**",
+              "microservices/SilkyApp/SilkyApp.Domain.Shared/**",
+              "microservices/SilkyApp/SilkyApp.EntityFrameworkCore/**",
+              "SilkyApp.DockerCompose.sln",
+              "SilkyApp.sln"
+            ]
+          },
+          ,{
+            "condition": "(hosttype!=webhost || hosttype!=gateway)",
+            "exclude": [
+              "Startup"
             ]
           }
         ]

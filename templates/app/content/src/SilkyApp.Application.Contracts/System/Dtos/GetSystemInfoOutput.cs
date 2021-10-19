@@ -13,11 +13,6 @@ namespace SilkyApp.Application.Contracts.System.Dtos
         public string Environment { get; set; }
         
         /// <summary>
-        /// 应用名称
-        /// </summary>
-        public string AppName { get; set; }
-
-        /// <summary>
         /// 服务地址
         /// </summary>
         public string Address { get; set; }

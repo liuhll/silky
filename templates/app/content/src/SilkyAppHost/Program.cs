@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace SilkyAppHost
@@ -10,17 +11,22 @@ namespace SilkyAppHost
             await CreateHostBuilder(args).Build().RunAsync();
         }
 
-        private static IHostBuilder CreateHostBuilder(string[] args)
-        {
-#if (dotnetenv=="Apollo")
-            return Host.CreateDefaultBuilder(args)
-                .RegisterSilkyServices<HostModule>()
-                .AddApollo();
-
-#else
-            return Host.CreateDefaultBuilder(args)
-                .RegisterSilkyServices<HostModule>();
+#if (hosttype=="webhost")  
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+#elif(hosttype=="websockethost")
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyGeneralHostDefaults();
+#elif(hosttype=="gateway")
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+#else 
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyWebSocketDefaults();   
 #endif
-        }
     }
 }
