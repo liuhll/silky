@@ -152,6 +152,11 @@ namespace Silky.Http.Dashboard.AppService
         private string GetWebSocketProxyAddress()
         {
             var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
+            if (webEndpoint == null)
+            {
+                return string.Empty;
+            }
+
             var wsServiceProtocol = webEndpoint.ServiceProtocol == ServiceProtocol.Https
                 ? ServiceProtocol.Wss
                 : ServiceProtocol.Ws;

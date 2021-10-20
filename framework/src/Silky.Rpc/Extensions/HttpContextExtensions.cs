@@ -43,13 +43,12 @@ namespace Silky.Rpc.Extensions
         {
             RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, true);
 
-            var localWebEndpointDescriptor = RpcEndpointHelper.GetLocalWebEndpoint();
+          
             var clientHost = httpContext.Connection.RemoteIpAddress;
             var clientPort = httpContext.Connection.RemotePort;
 
             RpcContext.Context.SetAttachment(AttachmentKeys.ClientHost, clientHost.MapToIPv4().ToString());
-            RpcContext.Context.SetAttachment(AttachmentKeys.ClientServiceProtocol,
-                localWebEndpointDescriptor.ServiceProtocol.ToString());
+            RpcContext.Context.SetAttachment(AttachmentKeys.ClientServiceProtocol, ServiceProtocol.Http.ToString());
             RpcContext.Context.SetAttachment(AttachmentKeys.RpcRequestPort, clientPort.ToString());
             RpcContext.Context.SetAttachment(AttachmentKeys.ClientPort, clientPort.ToString());
 

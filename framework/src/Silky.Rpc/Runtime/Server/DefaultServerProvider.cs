@@ -33,8 +33,11 @@ namespace Silky.Rpc.Runtime.Server
         public void AddHttpServices()
         {
             var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
-            _server.Endpoints.Add(webEndpoint);
-       
+            if (webEndpoint != null)
+            {
+                _server.Endpoints.Add(webEndpoint);
+            }
+            
         }
 
         public void AddWsServices()
