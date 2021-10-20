@@ -45,16 +45,139 @@ Silky 通过 .net core的[主机](https://docs.microsoft.com/zh-cn/aspnet/core/f
 
 ### 1. 构建主机
 
-### 2. 定义一个服务接口
+新建一个web或是控制台项目,通过 nuget安装`Silky.Agent.Host`包。
 
-### 3. 提供者实现服务
+```pwsh
+PM> Install-Package Silky.Agent.Host
+```
 
-### 4. 消费者通过RPC远程调用服务
+在`Main`方法中通过`HostBuilder`构建主机。
 
-## 微服务应用分层
+```csharp
+public class Program
+{
+  public static Task Main(string[] args)
+  {
+    return CreateHostBuilder(args).Build().RunAsync();
+  }
 
-## 视频教程
+  private static IHostBuilder CreateHostBuilder(string[] args) =>
+    Host.CreateDefaultBuilder(args)
+      .ConfigureSilkyWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>();});
+   
+}
+```
+
+在`Startup`中配置服务依赖注入，以及配置中间件。
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSilkyHttpCore()
+        .AddSwaggerDocuments()
+        .AddRouting();
+}
+
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+  if (env.IsDevelopment())
+  {
+    app.UseDeveloperExceptionPage();
+    app.UseSwaggerDocuments();
+  }
+
+  app.UseRouting();
+
+  app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
+}
+```
+
+### 2. 更新配置
+
+在配置文件中指定服务注册中心的类型和服务注册中心配置属性以及`SilkyRpc`框架的配置。如果使用使用分布式事务必须要使用redis作为分布式缓存。
+
+其中,在同一个微服务集群中,`Rpc:Token`的值必须相同。`Rpc:Port`的缺省值是`2200`,`Rpc:Host`的缺省值为`0.0.0.0`。
+
+在`appsettings.json`中新增如下配置:
+
+```json
+  {
+    "RegistryCenter": {
+    "Type": "Zookeeper",
+    "ConnectionStrings": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186"
+  },
+  "DistributedCache": {
+    "Redis": {
+      "IsEnabled": true,
+      "Configuration": "127.0.0.1:6379,defaultDatabase=0"
+    }
+  },
+  "Rpc": {
+    "Token": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
+    "Port": 2200
+  }
+  }
+```
+
+### 3. 定义一个服务接口
+
+一般地,我们需要将服务接口单独定义在一个项目中,方便被服务消费者引用。
+
+创建一个接口,并通过`[ServiceRoute]`特性标识为该接口是一个应用服务。
+
+```csharp
+[ServiceRoute]
+public interface IGreetingAppService
+{   
+    Task<string> Get();
+}
+```
+
+### 4. 提供者实现服务
+
+创建一个类,通过继承服务接口即可实现接口定义的方法。
+
+```csharp
+public class GreetingAppService : IGreetingAppService
+{
+  public Task<string> Get()
+  {
+    return Task.FromResult("Hello World");
+  }
+}
+```
+
+
+### 5. 消费者通过RPC远程调用服务
+
+其他微服务应用只需要通过引用应用服务接口项目,通过接口代理与服务提供者通过`SilkyRpc`框架进行通信。
+
+### 6. Swagger在线文档
+
+运行程序后,打开浏览器,输入`http://127.0.0.1:5000/index.html` 即可查看swagger在线文档,并且通过api进行调试。
+
+
+## 通过项目模板快速创建应用
+
+silky提供了两个项目模板可以快速的创建应用，开发者可以根据需要选择合适的项目模板来创建应用。
+
+```pwsh
+
+# 以模块的方式创建微服务应用,适用于将所有的应用放在同一个仓库
+> dotnet new --install Silky.Module.Template::3.0.0.2
+
+# 以独立应用的方式创建微服务应用,将每个微服务应用单独存放一个仓库
+> dotnet new --install Silky.App.Template::3.0.0.2
+```
+
+使用项目模板创建微服务应用。
+
+```pwsh
+
+dotnet new -n silky.app --newsln -n Demo
+
+```
 
 
 ## 贡献
-- 贡献的最简单的方法之一就是是参与讨论和讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
+- 贡献的最简单的方法之一就是讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
