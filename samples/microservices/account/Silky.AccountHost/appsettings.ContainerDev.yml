@@ -11,11 +11,6 @@ distributedCache:
     configuration: silky.redis1:6379,defaultDatabase=0
 connectionStrings:
     default: server=silky.mysql;port=3306;database=account;uid=root;pwd=qwe!P4ss;
-cap:
-  rabbitmq:
-    hostName: silky.rabbitmq
-    userName: rabbitmq
-    password: rabbitmq
 jwtSettings:
   secret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4
 skyWalking:

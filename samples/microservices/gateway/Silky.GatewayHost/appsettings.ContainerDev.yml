@@ -13,7 +13,6 @@ gateway:
   jwtSecret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4
 swaggerDocument:
   organizationMode: Group
-  injectMiniProfiler: true
   termsOfService: https://www.github.com/liuhll/silky
 healthChecksUI:
   healthChecks:
@@ -23,7 +22,7 @@ healthChecksUI:
   minimumSecondsBetweenFailureNotifications: 60
 dashboard:
   displayWebApiInSwagger: false
-  useAuth: true
+  useAuth: false
   dashboardLoginApi: /api/account/dashboard/login
   externalLinks:
     - title: "message.swagger"

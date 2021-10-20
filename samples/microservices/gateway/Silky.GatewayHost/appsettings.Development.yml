@@ -14,7 +14,6 @@ gateway:
   jwtSecret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW
 swaggerDocument:
   organizationMode: Group
-  injectMiniProfiler: true
   termsOfService: https://www.github.com/liuhll/silky
 
 dashboard:
