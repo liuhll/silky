@@ -8,7 +8,7 @@ registrycenter:
 distributedCache:
   redis:
     isEnabled: true
-    configuration: silky.redis1:6379,defaultDatabase=0
+    configuration: silky.redis:6379,defaultDatabase=0
 gateway:
   jwtSecret: UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4
 swaggerDocument:

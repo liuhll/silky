@@ -8,7 +8,7 @@ registrycenter:
 distributedCache:
   redis:
     isEnabled: true
-    configuration: silky.redis1:6379,defaultDatabase=0 
+    configuration: silky.redis:6379,defaultDatabase=0 
 connectionStrings:
     default: server=silky.mysql;port=3306;database=order;uid=root;pwd=qwe!P4ss;   
 skyWalking:
