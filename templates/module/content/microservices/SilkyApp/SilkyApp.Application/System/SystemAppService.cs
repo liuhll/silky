@@ -1,19 +1,27 @@
+using System.Linq;
 using Silky.Core;
-using Demo.Application.Contracts.System;
-using Demo.Application.Contracts.System.Dtos;
-using Silky.Rpc.Endpoint;
+using Silky.Rpc.Runtime.Server;
+using SilkyApp.Application.Contracts.System;
+using SilkyApp.Application.Contracts.System.Dtos;
 
-namespace Demo.Application.System
+namespace SilkyApp.Application.System
 {
     public class SystemAppService : ISystemAppService
     {
+        private readonly IServerManager _serverManager;
+
+        public SystemAppService(IServerManager serverManager)
+        {
+            _serverManager = serverManager;
+        }        
+
         public GetSystemInfoOutput GetInfo()
         {
             return new GetSystemInfoOutput()
             {
                 HostName = EngineContext.Current.HostName,
                 Environment = EngineContext.Current.HostEnvironment.EnvironmentName,
-                Address = RpcEndpointHelper.GetLocalTcpEndpoint().ToString()
+                Addresses = _serverManager.GetSelfServer().Endpoints.Select(p => p.ToString()).ToArray()
             };
         }
     }

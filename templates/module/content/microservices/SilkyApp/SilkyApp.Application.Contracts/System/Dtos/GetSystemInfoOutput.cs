@@ -15,6 +15,6 @@ namespace SilkyApp.Application.Contracts.System.Dtos
         /// <summary>
         /// 服务地址
         /// </summary>
-        public string Address { get; set; }
+        public string[] Addresses { get; set; }
     }
 }

@@ -22,11 +22,11 @@ namespace SilkyAppHost
 #elif(hosttype=="gateway")
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });                
 #else 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyWebSocketDefaults();   
+                .ConfigureSilkyGeneralHostDefaults();   
 #endif
     }
 }

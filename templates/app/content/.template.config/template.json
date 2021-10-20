@@ -68,19 +68,19 @@
          "isRequired": false,
         "description": "Add docker support for Silky"
        },
-       "incudeinfrastr": {
+       "includeinfrastr": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "true",
         "isRequired": false,
-       "description": "Contains infrastr services"
+       "description": "Whether to include basic service orchestration files"
       },
-      "inculuesln": {
+      "includesln": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "true",
         "isRequired": false,
-        "description": "Inculue Solution"
+        "description": "Whether to include the solution file"
       },
       "dotnetenv": {
         "type": "parameter",
@@ -98,7 +98,7 @@
         "isRequired": false,
         "description": "Set docker network"
       },
-      "new": {
+      "newsln": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "true",
@@ -110,7 +110,7 @@
         "datatype": "string",
         "defaultValue": "webhost",
         "isRequired": false,
-        "description": "Set the silky host type, optional values: webhost, generalhost,websockethost,gateway"
+        "description": "Set the silky host type, optional values: webhost, generalhost ,websockethost, gateway"
       }
     },
     "sources": [
@@ -135,7 +135,7 @@
             ]
           },
           {
-            "condition": "!(incudeinfrastr)",
+            "condition": "!(includeinfrastr)",
             "exclude": [
               "docker-compose/infrastr/**"
             ]
@@ -148,14 +148,16 @@
             ]
           },
           {
-            "condition": "!(inculuesln)",
+            "condition": "!(includesln)",
             "exclude": [
               "SilkyApp.DockerCompose.sln",
-              "SilkyApp.sln"
+              "SilkyApp.sln",
+              "Gateway.sln",
+              "Gateway.DockerCompose.sln"
             ]
           },
           {
-            "condition": "!(new)",
+            "condition": "!(newsln)",
             "exclude": [
               ".dockerignore",
               ".gitignore",
@@ -180,13 +182,13 @@
             "condition": "(hosttype!=gateway)",
             "exclude": [
               "src/SilkyApp.GatewayHost/**",
-              "SilkyAppGateway.sln",
-              "SilkyAppGateway.DockerCompose.sln"
+              "Gateway.sln",
+              "Gateway.DockerCompose.sln"
             ]
           },{
-            "condition": "(hosttype!=webhost || hosttype!=gateway)",
+            "condition": "(hosttype==generalhost || hosttype==websockethost)",
             "exclude": [
-              "Startup"
+              "src/SilkyAppHost/Startup.cs"
             ]
           }
         ]

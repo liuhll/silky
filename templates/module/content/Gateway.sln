@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "microservices", "microservices", "{8E40A818-4EF1-4ED5-AE5C-DE3B3A962A68}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "silkyapp", "silkyapp", "{A9A81E0E-C078-4DAB-9DDC-5226F24A89F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyAppHost", "microservices\SilkyApp\SilkyAppHost\SilkyAppHost.csproj", "{686395D1-4C18-4571-8F3A-98DDBCCFCFBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "docker-compose\SilkyApp\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A9A81E0E-C078-4DAB-9DDC-5226F24A89F9} = {8E40A818-4EF1-4ED5-AE5C-DE3B3A962A68}
+		{686395D1-4C18-4571-8F3A-98DDBCCFCFBB} = {A9A81E0E-C078-4DAB-9DDC-5226F24A89F9}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{686395D1-4C18-4571-8F3A-98DDBCCFCFBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{686395D1-4C18-4571-8F3A-98DDBCCFCFBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{686395D1-4C18-4571-8F3A-98DDBCCFCFBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{686395D1-4C18-4571-8F3A-98DDBCCFCFBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+EndGlobal

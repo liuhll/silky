@@ -5,7 +5,7 @@ services:
     image: silkyapp:${TAG:-latest}
     build:
       context: ../..
-      dockerfile: microservices/SilkyApp/SilkyAppHost/Dockerfile
+      dockerfile: src/SilkyApp/SilkyAppHost/Dockerfile
     volumes:
       - ./logs/silkyapp:/app/logs    
     environment:

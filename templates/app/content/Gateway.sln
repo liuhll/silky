@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A1CA826E-EE44-42F5-9AA9-A4DBB6AB6A1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayHost", "src\GatewayHost\GatewayHost.csproj", "{7D342439-F982-408E-BFAF-73A0E5C858A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyAppHost", "src\SilkyAppHost\SilkyAppHost.csproj", "{5CD4B4B1-36AC-4E73-B951-11B3EC4F8CC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,12 +10,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7D342439-F982-408E-BFAF-73A0E5C858A7} = {A1CA826E-EE44-42F5-9AA9-A4DBB6AB6A1E}
+		{5CD4B4B1-36AC-4E73-B951-11B3EC4F8CC1} = {A1CA826E-EE44-42F5-9AA9-A4DBB6AB6A1E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7D342439-F982-408E-BFAF-73A0E5C858A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D342439-F982-408E-BFAF-73A0E5C858A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D342439-F982-408E-BFAF-73A0E5C858A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D342439-F982-408E-BFAF-73A0E5C858A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD4B4B1-36AC-4E73-B951-11B3EC4F8CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD4B4B1-36AC-4E73-B951-11B3EC4F8CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD4B4B1-36AC-4E73-B951-11B3EC4F8CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD4B4B1-36AC-4E73-B951-11B3EC4F8CC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

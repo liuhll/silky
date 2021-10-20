@@ -26,7 +26,7 @@ namespace SilkyAppHost
 #else 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyWebSocketDefaults();   
+                .ConfigureSilkyGeneralHostDefaults();   
 #endif
     }
 }

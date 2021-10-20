@@ -68,19 +68,19 @@
          "isRequired": false,
         "description": "Add docker support for Silky"
        },
-       "incudeinfrastr": {
+       "includeinfrastr": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "false",
         "isRequired": false,
-       "description": "Contains infrastr services"
+       "description": "Whether to include basic service orchestration files"
       },
-      "inculuesln": {
+      "includesln": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "false",
         "isRequired": false,
-        "description": "Inculue Solution"
+        "description": "Whether to include the solution file"
       },
       "dotnetenv": {
         "type": "parameter",
@@ -98,19 +98,19 @@
         "isRequired": false,
         "description": "Set docker network"
       },
-      "new": {
+      "newsln": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "false",
         "isRequired": false,
-        "description": "Is New Project"
+        "description": "Is New Solution"
       },
       "hosttype": {
         "type": "parameter",
         "datatype": "string",
         "defaultValue": "webhost",
         "isRequired": false,
-        "description": "Set the silky host type, optional values: webhost, generalhost, websockethost,gateway"
+        "description": "Set the silky host type, optional values: webhost, generalhost, websockethost, gateway"
       }
     },
     "sources": [
@@ -119,19 +119,19 @@
           {
             "condition": "(dotnetenv!=Apollo)",
             "exclude": [
-              "microservices/SilkyApp/SilkyAppHost/appsettings.Apollo.yml"
+              "microservices/SilkyApp/SilkyAppHost/appsettings.Apollo.yaml"
             ]
           },
           {
             "condition": "(dotnetenv==Apollo)",
             "exclude": [
-              "microservices/SilkyApp/SilkyAppHost/appsettings.Development.yml",
-              "microservices/SilkyApp/SilkyAppHost/appsettings.Production.yml",
-              "microservices/SilkyApp/SilkyAppHost/appsettings.ContainerDev.yml"
+              "microservices/SilkyApp/SilkyAppHost/appsettings.Development.yaml",
+              "microservices/SilkyApp/SilkyAppHost/appsettings.Production.yaml",
+              "microservices/SilkyApp/SilkyAppHost/appsettings.ContainerDev.yaml"
             ]
           },
           {
-            "condition": "!(incudeinfrastr)",
+            "condition": "!(includeinfrastr)",
             "exclude": [
               "docker-compose/infrastr/**"
             ]
@@ -144,14 +144,7 @@
             ]
           },
           {
-            "condition": "!(inculuesln)",
-            "exclude": [
-              "SilkyApp.DockerCompose.sln",
-              "SilkyApp.sln"
-            ]
-          },
-          {
-            "condition": "!(new)",
+            "condition": "!(newsln)",
             "exclude": [
               ".dockerignore",
               ".gitignore",
@@ -159,6 +152,16 @@
               ".DS_Store"
             ]
           },
+          {
+            "condition": "!(includesln)",
+            "exclude": [
+              "SilkyApp.DockerCompose.sln",
+              "SilkyApp.sln",
+              "Gateway.DockerCompose.sln",
+              "Gateway.sln"
+            ]
+          },
+          
           {
             "condition": "(hosttype==gateway)",
             "exclude": [
@@ -172,10 +175,17 @@
               "SilkyApp.sln"
             ]
           },
-          ,{
-            "condition": "(hosttype!=webhost || hosttype!=gateway)",
+          {
+            "condition": "(hosttype!=gateway)",
             "exclude": [
-              "Startup"
+              "Gateway.DockerCompose.sln",
+              "Gateway.sln"
+            ]
+          },
+          {
+            "condition": "(hosttype==generalhost || hosttype==websockethost)",
+            "exclude": [
+              "microservices/SilkyApp/SilkyAppHost/Startup.cs"
             ]
           }
         ]

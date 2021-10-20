@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silky.Http.Core;
 using Silky.Http.MiniProfiler;
-using Demo.EntityFrameworkCore.DbContexts;
 
 namespace SilkyAppHost
 {
@@ -24,21 +23,14 @@ namespace SilkyAppHost
                 .AddSilkyHttpCore()
 #if (hosttype=="gateway")        
                 .AddDashboard()    
-#endif                  
+#endif           
                 .AddResponseCaching()
                 .AddHttpContextAccessor()
                 .AddRouting()
                 .AddSilkyIdentity()
                 .AddSilkyMiniProfiler()
-                .AddSilkyCaching()
-                .AddSilkySkyApm()
-                .AddSwaggerDocuments()
-                .AddMessagePackCodec();
-#if(hosttype=="gateway")
-            services.AddDatabaseAccessor(
-                options => { options.AddDbPool<DefaultContext>(); },
-                "SilkyApp.Database.Migrations");
-#endif
+                .AddSwaggerDocuments();
+            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -50,16 +42,16 @@ namespace SilkyAppHost
                 app.UseMiniProfiler();
             }
 #if (hosttype=="gateway")   
-           app.UseDashboard();
-#endif                
+            app.UseDashboard();
+#endif           
             app.UseRouting();
+#if (hosttype=="gateway")             
+            app.UseSilkyWrapperResponse();
+#endif            
             app.UseResponseCaching();
-            app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
             app.UseSilkyIdentity();
-#if (hosttype=="gateway")   
-           app.UseSilkyHttpServer();
-#endif                
+            app.UseSilkyHttpServer();           
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapSilkyRpcServices();
