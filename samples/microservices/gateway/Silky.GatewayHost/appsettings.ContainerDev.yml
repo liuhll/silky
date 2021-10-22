@@ -23,6 +23,7 @@ healthChecksUI:
 dashboard:
   displayWebApiInSwagger: false
   useAuth: false
+  wrapperResponse: true
   dashboardLoginApi: /api/account/dashboard/login
   externalLinks:
     - title: "message.swagger"

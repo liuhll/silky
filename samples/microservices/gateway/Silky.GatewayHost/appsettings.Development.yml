@@ -19,6 +19,7 @@ swaggerDocument:
 dashboard:
   displayWebApiInSwagger: false
   useAuth: true
+  wrapperResponse: true
   dashboardLoginApi: /api/account/dashboard/login
   externalLinks:
     - title: "message.swagger"
