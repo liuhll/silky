@@ -21,16 +21,15 @@ namespace Silky.Rpc.Runtime.Server
 
         private readonly ConcurrentDictionary<string, IRpcEndpoint[]> _rpcRpcEndpointCache = new();
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-        private readonly IServiceEntryManager _serviceEntryManager;
+       
         public ILogger<DefaultServerManager> Logger { get; set; }
 
         public event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
+        public event OnUpdateRpcEndpoint OnUpdateRpcEndpoint;
 
-        public DefaultServerManager(IRpcEndpointMonitor rpcEndpointMonitor,
-            IServiceEntryManager serviceEntryManager)
+        public DefaultServerManager(IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
-            _serviceEntryManager = serviceEntryManager;
             _rpcEndpointMonitor.OnRemoveRpcEndpoint += RemoveRpcEndpointHandler;
             _rpcEndpointMonitor.OnStatusChange += HealthChangeHandler;
             Logger = NullLogger<DefaultServerManager>.Instance;
@@ -96,7 +95,8 @@ namespace Silky.Rpc.Runtime.Server
                 _rpcEndpointMonitor.Monitor(rpcEndpoint);
                 RemoveRpcEndpointCache(rpcEndpoint);
             }
-            
+
+            OnUpdateRpcEndpoint?.Invoke(serverDescriptor.HostName, server.Endpoints.ToArray());
         }
 
         public void Remove(string hostName)

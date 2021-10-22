@@ -26,5 +26,7 @@ namespace Silky.Rpc.Runtime.Server
         IServer GetSelfServer();
 
         event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
+
+        event OnUpdateRpcEndpoint OnUpdateRpcEndpoint;
     }
 }
