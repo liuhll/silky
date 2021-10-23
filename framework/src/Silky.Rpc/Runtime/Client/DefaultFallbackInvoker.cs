@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Core.Extensions;
 using Silky.Core.Logging;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
