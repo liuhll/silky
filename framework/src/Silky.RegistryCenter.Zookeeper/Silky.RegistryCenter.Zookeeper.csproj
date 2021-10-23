@@ -5,7 +5,6 @@
         <Description>Silky uses zookeeper as the service registry</Description>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
         <ProjectReference Include="..\Silky.Zookeeper\Silky.Zookeeper.csproj" />
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
