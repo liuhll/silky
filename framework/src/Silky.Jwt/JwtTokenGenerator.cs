@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -29,6 +30,8 @@ namespace Silky.Jwt
                 .WithSecret(_jwtOptions.Secret)
                 .AddClaim(ClaimName.Issuer, _jwtOptions.Issuer)
                 .AddClaim(ClaimName.Audience, _jwtOptions.Audience)
+                .AddClaim(ClaimName.IssuedAt, DateTime.Now)
+                .AddClaim(ClaimName.ExpirationTime,DateTimeOffset.UtcNow.AddHours(_jwtOptions.ExpiredTime).ToUnixTimeSeconds())
                 .AddClaims(payload)
                 .Encode();
         }
