@@ -1,8 +1,41 @@
-#Logging:
-#    LogLevel:
-#        Default: "Debug"
-#        Microsoft: "Warning"
-#        Microsoft.Hosting.Lifetime: "Information"
+rpc:
+  host: 0.0.0.0
+  port: 2203
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+#registrycenter:
+#  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+#  type: Zookeeper
+#registrycenter:
+#  type: Nacos
+#  namespace: public
+#  serverAddresses:
+#    - http://127.0.0.1:8848/
+#    - http://127.0.0.1:8849/
+#    - http://127.0.0.1:8850/
+#  userName: nacos
+#  password: nacos
+#  groupName: DEFAULT_GROUP
+#  clusterName: DEFAULT
+#  registerEnabled: true
+#  instanceEnabled: true
+#  namingUseRpc: true
+
+registrycenter:
+  type: Consul
+  address: http://127.0.0.1:8500
+
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+connectionStrings:
+  demoDbContext: "server=127.0.0.1;port=3306;database=test;uid=root;pwd=qwe!P4ss;"
+jwtSettings:
+  secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
+
+governance:
+  timeoutMillSeconds: 5000
+  maxConcurrentHandlingCount: 1
 serilog:
   minimumLevel:
     default: Information

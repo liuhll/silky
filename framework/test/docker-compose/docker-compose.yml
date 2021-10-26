@@ -10,6 +10,11 @@ services:
       - ./logs/anotherhost:/app/logs    
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+      registrycenter__type: ${registrycenter__type:-Zookeeper}
+      registrycenter__connectionStrings: ${registrycenter__connectionStrings:-silky.zoo1:2181,silky.zoo2:2181,silky.zoo3:2181;silky.zoo4:2181,silky.zoo5:2181,silky.zoo6:2181}
+      distributedCache__redis__isEnabled: ${distributedCache__redis__isEnabled:-true}
+      distributedCache__redis__configuration: ${distributedCache__redis__configuration:-silky.redis,defaultDatabase=0}
+      skyWalking__transport__gRPC_servers: ${skyWalking__transport__gRPC_servers:-oap:11800}
     networks: 
       - silky_service_net
     
@@ -22,6 +27,13 @@ services:
       - ./logs/normhost:/app/logs
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+      registrycenter__type: ${registrycenter__type:-Zookeeper}
+      registrycenter__connectionStrings: ${registrycenter__connectionStrings:-silky.zoo1:2181,silky.zoo2:2181,silky.zoo3:2181;silky.zoo4:2181,silky.zoo5:2181,silky.zoo6:2181}
+      distributedCache__redis__isEnabled: ${distributedCache__redis__isEnabled:-true}
+      distributedCache__redis__configuration: ${distributedCache__redis__configuration:-silky.redis,defaultDatabase=0}
+      connectionStrings__demoDbContext: ${connectionStrings__demoDbContext:-server=silky.mysql;port=3306;database=order;uid=root;pwd=qwe!P4ss;}
+      jwtSettings__secret: ${jwtSettings__secret:-jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh}
+      skyWalking__transport__gRPC_servers: ${skyWalking__transport__gRPC_servers:-oap:11800}
     networks: 
       - silky_service_net
   
@@ -35,6 +47,26 @@ services:
     environment:
       DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
       ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-ContainerDev}
+      registrycenter__type: ${registrycenter__type:-Zookeeper}
+      registrycenter__connectionStrings: ${registrycenter__connectionStrings:-silky.zoo1:2181,silky.zoo2:2181,silky.zoo3:2181;silky.zoo4:2181,silky.zoo5:2181,silky.zoo6:2181}
+      distributedCache__redis__isEnabled: ${distributedCache__redis__isEnabled:-true}
+      distributedCache__redis__configuration: ${distributedCache__redis__configuration:-silky.redis,defaultDatabase=0}
+      jwtSettings__secret: ${jwtSettings__secret:-jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh}
+      skyWalking__transport__gRPC_servers: ${skyWalking__transport__gRPC_servers:-oap:11800}
+      dashboard__displayWebApiInSwagger: ${dashboard__displayWebApiInSwagger:-false}
+      dashboard__useAuth: ${dashboard__useAuth:-true}
+      dashboard__dashboardLoginApi: ${dashboard__dashboardLoginApi:-/api/account/login}
+      dashboard__externalLinks__0__title: ${dashboard__externalLinks__0__title:-swagger docs}
+      dashboard__externalLinks__0__path: ${dashboard__externalLinks__0__path:-http://localhost}
+      dashboard__externalLinks__0__icon: ${dashboard__externalLinks__0__icon:-iconfont icon-swagger}
+      dashboard__externalLinks__1__title: ${dashboard__externalLinks__1__title:-SkyWalking}
+      dashboard__externalLinks__1__path: ${dashboard__externalLinks__1__path:-http://localhost:8180}
+      dashboard__externalLinks__2__title: ${dashboard__externalLinks__2__title:-Github}
+      dashboard__externalLinks__2__path: ${dashboard__externalLinks__2__path:-https://github.com/liuhll/silky}
+      dashboard__externalLinks__2__icon: ${dashboard__externalLinks__2__icon:-iconfont icon-github} 
+      dashboard__externalLinks__3__title: ${dashboard__externalLinks__3__title:-Gitee}
+      dashboard__externalLinks__3__path: ${dashboard__externalLinks__3__path:-https://gitee.com/liuhll2/silky}
+      dashboard__externalLinks__3__icon: ${dashboard__externalLinks__3__icon:-iconfont icon-gitee2}       
     ports:
       - 80:80
     networks: 

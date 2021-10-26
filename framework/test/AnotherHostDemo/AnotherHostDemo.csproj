@@ -16,9 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings.Development.yaml">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="appsettings.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>

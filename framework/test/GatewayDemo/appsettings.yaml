@@ -1,8 +1,66 @@
-#Logging:
-#    LogLevel:
-#        Default: "Debug"
-#        Microsoft: "Warning"
-#        Microsoft.Hosting.Lifetime: "Information"
+rpc:
+  host: 0.0.0.0
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+#registrycenter:
+#  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+#  type: Zookeeper
+#registrycenter:
+#  type: Nacos
+#  namespace: silky
+#  serverAddresses:
+#    - http://127.0.0.1:8848/
+#    - http://127.0.0.1:8849/
+#    - http://127.0.0.1:8850/
+#  userName: nacos
+#  password: nacos
+#  groupName: DEFAULT_GROUP
+#  clusterName: DEFAULT
+#  registerEnabled: true
+#  instanceEnabled: true
+#  namingUseRpc: true
+
+registrycenter:
+  type: Consul
+  address: http://127.0.0.1:8500
+
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+allowedHosts: "*"
+swaggerDocument:
+  organizationMode: Group
+  injectMiniProfiler: true
+  termsOfService: https://www.github.com/liuhll/silky
+gateway:
+  jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
+healthChecksUI:
+  healthChecks:
+    - name: silkyrpc
+      uri: http://127.0.0.1:5002/silkyrpc/healthz
+  evaluationTimeinSeconds: 30
+  minimumSecondsBetweenFailureNotifications: 60
+governance:
+  timeoutMillSeconds: 0
+dashboard:
+  displayWebApiInSwagger: true
+  useAuth: true
+  wrapperResponse: true
+  dashboardLoginApi: /api/account/login
+  externalLinks:
+    - title: "message.swagger"
+      path: "http://localhost:5002"
+      icon: "iconfont icon-swagger"
+    - title: "SkyWalking"
+      path: "http://localhost:8180"
+    - title: "Github"
+      path: "https://github.com/liuhll/silky"
+      icon: "iconfont icon-github"
+    - title: "Gitee"
+      path: "https://gitee.com/liuhll2/silky"
+      icon: "iconfont icon-gitee2"
+    - title: "Healthchecks UI"
+      path: "http://localhost:5002/healthchecks-ui"
 serilog:
   minimumLevel:
     default: Debug

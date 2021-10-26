@@ -29,9 +29,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings.Development.yaml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <None Update="appsettings.yaml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

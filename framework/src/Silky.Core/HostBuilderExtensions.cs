@@ -52,6 +52,7 @@ namespace Microsoft.Extensions.Hosting
                         .AddYamlFile("ratelimit.yaml", optional: true, reloadOnChange: true)
                         .AddYamlFile($"ratelimit.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true,
                             true);
+                    config.AddEnvironmentVariables();
                 })
                 ;
 

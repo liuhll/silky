@@ -1,8 +1,33 @@
-#Logging:
-#    LogLevel:
-#        Default: "Debug"
-#        Microsoft: "Warning"
-#        Microsoft.Hosting.Lifetime: "Information"
+rpc:
+  host: 0.0.0.0
+  port: 2202
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+#registrycenter:
+#    connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+#    type: Zookeeper
+#registrycenter:
+#    type: Nacos
+#    namespace: silky
+#    serverAddresses:
+#        - http://127.0.0.1:8848/
+#        - http://127.0.0.1:8849/
+#        - http://127.0.0.1:8850/
+#    userName: nacos
+#    password: nacos
+#    groupName: DEFAULT_GROUP
+#    clusterName: DEFAULT
+#    registerEnabled: true
+#    instanceEnabled: true
+#    namingUseRpc: true
+registrycenter:
+  type: Consul
+  address: http://127.0.0.1:8500
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+governance:
+  timeoutMillSeconds: 0
 serilog:
   minimumLevel:
     default: Information
