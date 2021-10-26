@@ -29,9 +29,6 @@
         <None Update="appsettings.Development.yml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.ContainerDev.yml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="appsettings.Apollo.yml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
