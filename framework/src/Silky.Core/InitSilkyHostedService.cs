@@ -35,7 +35,8 @@ namespace Silky.Core
                       |___/
             ");
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            Console.WriteLine($" :: Silky ::        {version}");
+            var ver = $"{version.Major}.{version.Minor}.{version.Build}";
+            Console.WriteLine($" :: Silky ::        {ver}");
             await _moduleManager.InitializeModules();
         }
 
