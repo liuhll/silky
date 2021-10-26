@@ -2,8 +2,6 @@
   "profiles": {
     "Docker Compose": {
       "commandName": "DockerCompose",
-      "composeLaunchAction": "None",
-      "composeLaunchServiceName": "silky.sample.gateway",
       "commandVersion": "1.0",
       "serviceActions": {
         "silky.sample.account": "StartDebugging",

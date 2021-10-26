@@ -11,51 +11,56 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "order", "order", "{3F654FD6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stock", "stock", "{90D32BC6-C128-4CA0-B7F8-B55B100314EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.AccountHost", "account\Silky.AccountHost\Silky.AccountHost.csproj", "{0E485C82-41F4-4A47-AEAD-4BC7FC5C492E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.AccountHost", "account\Silky.AccountHost\Silky.AccountHost.csproj", "{0E485C82-41F4-4A47-AEAD-4BC7FC5C492E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.Application", "account\Silky.Account.Application\Silky.Account.Application.csproj", "{F3DF21BD-261D-49D6-97B1-53306F1F15FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Account.Application", "account\Silky.Account.Application\Silky.Account.Application.csproj", "{F3DF21BD-261D-49D6-97B1-53306F1F15FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.Application.Contracts", "account\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj", "{BBBF7B66-DB51-40C9-8E15-FADA206C7A54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Account.Application.Contracts", "account\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj", "{BBBF7B66-DB51-40C9-8E15-FADA206C7A54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.Database.Migrations", "account\Silky.Account.Database.Migrations\Silky.Account.Database.Migrations.csproj", "{14467111-EC36-4D37-B110-7DF02D154D93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Account.Database.Migrations", "account\Silky.Account.Database.Migrations\Silky.Account.Database.Migrations.csproj", "{14467111-EC36-4D37-B110-7DF02D154D93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.Domain.Shared", "account\Silky.Account.Domain.Shared\Silky.Account.Domain.Shared.csproj", "{34EAC849-08A1-4A6F-9580-42510261F9A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Account.Domain.Shared", "account\Silky.Account.Domain.Shared\Silky.Account.Domain.Shared.csproj", "{34EAC849-08A1-4A6F-9580-42510261F9A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.Domain", "account\Silky.Account.Domain\Silky.Account.Domain.csproj", "{DC6F07E1-92A9-484F-9EAC-D397EF5839A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Account.Domain", "account\Silky.Account.Domain\Silky.Account.Domain.csproj", "{DC6F07E1-92A9-484F-9EAC-D397EF5839A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Account.EntityFrameworkCore", "account\Silky.Account.EntityFrameworkCore\Silky.Account.EntityFrameworkCore.csproj", "{831C0065-9270-47F8-BB40-4845C7F07BD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Account.EntityFrameworkCore", "account\Silky.Account.EntityFrameworkCore\Silky.Account.EntityFrameworkCore.csproj", "{831C0065-9270-47F8-BB40-4845C7F07BD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.GatewayHost", "gateway\Silky.GatewayHost\Silky.GatewayHost.csproj", "{CA4F8128-2289-4A4D-A097-98CAC01B712F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.GatewayHost", "gateway\Silky.GatewayHost\Silky.GatewayHost.csproj", "{CA4F8128-2289-4A4D-A097-98CAC01B712F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.Application", "order\Silky.Order.Application\Silky.Order.Application.csproj", "{F65826FE-42F7-413F-B741-E419B37D2ACB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Order.Application", "order\Silky.Order.Application\Silky.Order.Application.csproj", "{F65826FE-42F7-413F-B741-E419B37D2ACB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.Application.Contracts", "order\Silky.Order.Application.Contracts\Silky.Order.Application.Contracts.csproj", "{414246E7-BF5D-4544-BCAF-77519CEDD7F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Order.Application.Contracts", "order\Silky.Order.Application.Contracts\Silky.Order.Application.Contracts.csproj", "{414246E7-BF5D-4544-BCAF-77519CEDD7F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.Database.Migrations", "order\Silky.Order.Database.Migrations\Silky.Order.Database.Migrations.csproj", "{29B7FC83-A822-4A2C-B124-C9E74F941702}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Order.Database.Migrations", "order\Silky.Order.Database.Migrations\Silky.Order.Database.Migrations.csproj", "{29B7FC83-A822-4A2C-B124-C9E74F941702}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.Domain", "order\Silky.Order.Domain\Silky.Order.Domain.csproj", "{BA2B345C-C960-4AA5-9B5C-691A59C91B75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Order.Domain", "order\Silky.Order.Domain\Silky.Order.Domain.csproj", "{BA2B345C-C960-4AA5-9B5C-691A59C91B75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.Domain.Shared", "order\Silky.Order.Domain.Shared\Silky.Order.Domain.Shared.csproj", "{A645119F-3F9F-434C-B8FA-56DF48F654E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Order.Domain.Shared", "order\Silky.Order.Domain.Shared\Silky.Order.Domain.Shared.csproj", "{A645119F-3F9F-434C-B8FA-56DF48F654E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Order.EntityFrameworkCore", "order\Silky.Order.EntityFrameworkCore\Silky.Order.EntityFrameworkCore.csproj", "{3A0FC957-56CD-45F0-87D0-533284149FA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Order.EntityFrameworkCore", "order\Silky.Order.EntityFrameworkCore\Silky.Order.EntityFrameworkCore.csproj", "{3A0FC957-56CD-45F0-87D0-533284149FA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.OrderHost", "order\Silky.OrderHost\Silky.OrderHost.csproj", "{33F5C0DE-52CC-447C-A64B-72457BA691C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.OrderHost", "order\Silky.OrderHost\Silky.OrderHost.csproj", "{33F5C0DE-52CC-447C-A64B-72457BA691C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.Application", "stock\Silky.Stock.Application\Silky.Stock.Application.csproj", "{5AA41121-79DC-49F8-9F47-35501595BC88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Stock.Application", "stock\Silky.Stock.Application\Silky.Stock.Application.csproj", "{5AA41121-79DC-49F8-9F47-35501595BC88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.Application.Contracts", "stock\Silky.Stock.Application.Contracts\Silky.Stock.Application.Contracts.csproj", "{B9EAB0A5-1029-451F-8B56-58741028C082}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Stock.Application.Contracts", "stock\Silky.Stock.Application.Contracts\Silky.Stock.Application.Contracts.csproj", "{B9EAB0A5-1029-451F-8B56-58741028C082}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.Database.Migrations", "stock\Silky.Stock.Database.Migrations\Silky.Stock.Database.Migrations.csproj", "{EE68DDFB-4D7A-4605-B896-9AFE00C7F30E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Stock.Database.Migrations", "stock\Silky.Stock.Database.Migrations\Silky.Stock.Database.Migrations.csproj", "{EE68DDFB-4D7A-4605-B896-9AFE00C7F30E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.Domain", "stock\Silky.Stock.Domain\Silky.Stock.Domain.csproj", "{EB109DA8-E0E1-4791-9727-3D80D62A53A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Stock.Domain", "stock\Silky.Stock.Domain\Silky.Stock.Domain.csproj", "{EB109DA8-E0E1-4791-9727-3D80D62A53A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.Domain.Shared", "stock\Silky.Stock.Domain.Shared\Silky.Stock.Domain.Shared.csproj", "{E5F54BDC-0DF8-45F5-B4BB-2B5B823D6252}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Stock.Domain.Shared", "stock\Silky.Stock.Domain.Shared\Silky.Stock.Domain.Shared.csproj", "{E5F54BDC-0DF8-45F5-B4BB-2B5B823D6252}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Stock.EntityFrameworkCore", "stock\Silky.Stock.EntityFrameworkCore\Silky.Stock.EntityFrameworkCore.csproj", "{B8493EAD-1D6B-451B-85FA-DB627DE1E85A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Stock.EntityFrameworkCore", "stock\Silky.Stock.EntityFrameworkCore\Silky.Stock.EntityFrameworkCore.csproj", "{B8493EAD-1D6B-451B-85FA-DB627DE1E85A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.StockHost", "stock\Silky.StockHost\Silky.StockHost.csproj", "{2FE6AE86-A387-4754-BEB1-5172C9306759}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.StockHost", "stock\Silky.StockHost\Silky.StockHost.csproj", "{2FE6AE86-A387-4754-BEB1-5172C9306759}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "docker-compose", "docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{3906638F-8C5A-4C01-8600-4A3B4ACD5289}"
+	ProjectSection(SolutionItems) = preProject
+		.env = .env
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

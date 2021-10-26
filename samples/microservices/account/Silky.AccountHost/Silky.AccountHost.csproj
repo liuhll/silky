@@ -2,7 +2,7 @@
     <Import Project="..\..\..\sample.common.props" />
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,9 +28,6 @@
         </None>
         <None Update="appsettings.Development.yml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="appsettings.ContainerDev.yml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="appsettings.Apollo.yml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
