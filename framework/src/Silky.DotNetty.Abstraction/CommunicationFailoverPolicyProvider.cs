@@ -13,18 +13,22 @@ namespace Silky.DotNetty.Abstraction
     public class CommunicationFailoverPolicyProvider : InvokeFailoverPolicyProviderBase
     {
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
+        private readonly IServerManager _serverManager;
 
-        public CommunicationFailoverPolicyProvider(IRpcEndpointMonitor rpcEndpointMonitor)
+        public CommunicationFailoverPolicyProvider(IRpcEndpointMonitor rpcEndpointMonitor, 
+            IServerManager serverManager)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
+            _serverManager = serverManager;
         }
 
-        public override IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters)
+        public override IAsyncPolicy<object> Create(string serviceEntryId, object[] parameters)
         {
             IAsyncPolicy<object> policy = null;
-            if (serviceEntry.GovernanceOptions.RetryTimes > 0)
+            var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
+            if (serviceEntryDescriptor?.GovernanceOptions.RetryTimes > 0)
             {
-                if (serviceEntry.GovernanceOptions.RetryIntervalMillSeconds > 0)
+                if (serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds > 0)
                 {
                     policy = Policy<object>
                         .Handle<ChannelException>()
@@ -32,11 +36,11 @@ namespace Silky.DotNetty.Abstraction
                         .Or<IOException>()
                         .Or<CommunicationException>()
                         .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
-                        .WaitAndRetryAsync(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds,
+                        .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
                             retryAttempt =>
-                                TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds),
+                                TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds),
                             async (outcome, timeSpan, retryNumber, context)
-                                => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntry)
+                                => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntryDescriptor)
                         );
                 }
                 else
@@ -45,9 +49,9 @@ namespace Silky.DotNetty.Abstraction
                         .Or<ConnectException>()
                         .Or<IOException>()
                         .Or<CommunicationException>()
-                        .RetryAsync(serviceEntry.GovernanceOptions.RetryTimes,
+                        .RetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                             onRetryAsync: async (outcome, retryNumber, context) =>
-                                await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntry));
+                                await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntryDescriptor));
                 }
             }
 
@@ -55,11 +59,11 @@ namespace Silky.DotNetty.Abstraction
         }
 
         private async Task SetInvokeCurrentSeverDisEnable(DelegateResult<object> outcome, int retryNumber,
-            Context context, ServiceEntry serviceEntry)
+            Context context, ServiceEntryDescriptor serviceEntryDescriptor)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();
             _rpcEndpointMonitor.ChangeStatus(serviceAddressModel, false,
-                serviceEntry.GovernanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+                serviceEntryDescriptor.GovernanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,

@@ -24,6 +24,8 @@ namespace Silky.Rpc.Runtime.Server
         IRpcEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
 
         IServer GetSelfServer();
+        
+        ServiceEntryDescriptor GetServiceEntryDescriptor(string serviceEntryId);
 
         event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
 

@@ -7,12 +7,20 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class DefaultTimeoutInvokePolicyProvider : IInvokePolicyProvider
     {
-        public IAsyncPolicy Create(ServiceEntry serviceEntry, object[] parameters)
+        private readonly IServerManager _serverManager;
+
+        public DefaultTimeoutInvokePolicyProvider(IServerManager serverManager)
         {
-            if (serviceEntry.GovernanceOptions.TimeoutMillSeconds > 0)
+            _serverManager = serverManager;
+        }
+
+        public IAsyncPolicy Create(string serviceEntryId, object[] parameters)
+        {
+            var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
+            if (serviceEntryDescriptor?.GovernanceOptions.TimeoutMillSeconds > 0)
             {
                 return Policy.TimeoutAsync(
-                    TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.TimeoutMillSeconds),
+                    TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions.TimeoutMillSeconds),
                     TimeoutStrategy.Pessimistic);
             }
 

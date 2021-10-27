@@ -6,6 +6,6 @@ namespace Silky.Rpc.Runtime.Client
 {
     public interface IInvokePolicyProvider : IScopedDependency
     {
-        IAsyncPolicy Create(ServiceEntry serviceEntry, object[] parameters);
+        IAsyncPolicy Create(string serviceEntryId, object[] parameters);
     }
 }

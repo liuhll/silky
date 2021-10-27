@@ -8,15 +8,24 @@ namespace Silky.Rpc.Runtime.Client
 {
     public class DefaultInvokeCircuitBreakerPolicyProvider : IInvokeCircuitBreakerPolicyProvider
     {
-        public AsyncCircuitBreakerPolicy Create(ServiceEntry serviceEntry, object[] parameters)
+        private readonly IServerManager _serverManager;
+
+        public DefaultInvokeCircuitBreakerPolicyProvider(IServerManager serverManager)
         {
-            if (serviceEntry.GovernanceOptions.EnableCircuitBreaker)
+            _serverManager = serverManager;
+        }
+
+        public AsyncCircuitBreakerPolicy Create(string serviceEntryId, object[] parameters)
+        {
+            var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
+            if (serviceEntryDescriptor?.GovernanceOptions.EnableCircuitBreaker == true)
             {
                 var policy = Policy
                     .Handle<Exception>(ex => !ex.IsFriendlyException())
                     .CircuitBreakerAsync(
-                        exceptionsAllowedBeforeBreaking: serviceEntry.GovernanceOptions.ExceptionsAllowedBeforeBreaking,
-                        durationOfBreak: TimeSpan.FromSeconds(serviceEntry.GovernanceOptions.BreakerSeconds),
+                        exceptionsAllowedBeforeBreaking: serviceEntryDescriptor.GovernanceOptions
+                            .ExceptionsAllowedBeforeBreaking,
+                        durationOfBreak: TimeSpan.FromSeconds(serviceEntryDescriptor.GovernanceOptions.BreakerSeconds),
                         (ex, timespan) =>
                         {
                             if (OnBreak != null)

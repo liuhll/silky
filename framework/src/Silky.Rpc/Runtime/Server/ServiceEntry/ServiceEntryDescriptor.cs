@@ -28,6 +28,8 @@ namespace Silky.Rpc.Runtime.Server
         public bool IsAllowAnonymous { get; set; }
         public bool IsDistributeTransaction { get; set; }
 
+        public ServiceEntryGovernance GovernanceOptions { get; set; }
+
         public T GetMetadata<T>(string name, T def = default(T))
         {
             if (!Metadatas.ContainsKey(name))

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Rpc.Endpoint.Selector;
-using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
 
@@ -41,12 +40,43 @@ namespace Silky.Rpc.Runtime.Client
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
 
-            var policy = _invokePolicyBuilder.Build(serviceEntry, parameters);
+            var policy = _invokePolicyBuilder.Build(serviceEntry.Id, parameters);
             var result = await policy
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
                         await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
+                            hashKey);
+                    return invokeResult.GetResult();
+                });
+
+            return result;
+        }
+
+        public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters,
+            string serviceKey = null)
+        {
+            var remoteInvokeMessage = new RemoteInvokeMessage()
+            {
+                ServiceEntryId = serviceEntryDescriptor.Id,
+                ServiceId = serviceEntryDescriptor.ServiceId,
+                Parameters = parameters,
+            };
+            string hashKey = null;
+            if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
+            {
+                //  hashKey = serviceEntryDescriptor.GetHashKeyValue(parameters.ToArray());
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                    $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
+            }
+
+            var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id, parameters);
+            var result = await policy
+                .ExecuteAsync(async () =>
+                {
+                    var invokeResult =
+                        await _remoteInvoker.Invoke(remoteInvokeMessage,
+                            serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
                     return invokeResult.GetResult();
                 });

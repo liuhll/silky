@@ -19,10 +19,26 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly ConcurrentDictionary<string, IServer> _serverCache = new();
 
+        private readonly ConcurrentDictionary<string, ServiceEntryDescriptor> _serviceEntryDescriptors = new();
+
         private readonly ConcurrentDictionary<string, IRpcEndpoint[]> _rpcRpcEndpointCache = new();
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-       
+
         public ILogger<DefaultServerManager> Logger { get; set; }
+
+        public ServiceEntryDescriptor GetServiceEntryDescriptor(string serviceEntryId)
+        {
+            if (_serviceEntryDescriptors.TryGetValue(serviceEntryId, out var serviceEntryDescriptor))
+            {
+                return serviceEntryDescriptor;
+            }
+
+            serviceEntryDescriptor = _serverCache.Values
+                .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
+                .FirstOrDefault(p => p.Id == serviceEntryId);
+            _serviceEntryDescriptors.TryAdd(serviceEntryId, serviceEntryDescriptor);
+            return serviceEntryDescriptor;
+        }
 
         public event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
         public event OnUpdateRpcEndpoint OnUpdateRpcEndpoint;

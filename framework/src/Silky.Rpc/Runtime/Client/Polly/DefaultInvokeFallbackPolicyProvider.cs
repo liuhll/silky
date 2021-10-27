@@ -8,15 +8,19 @@ namespace Silky.Rpc.Runtime.Client
     public class DefaultInvokeFallbackPolicyProvider : IInvokeFallbackPolicyProvider
     {
         private readonly IFallbackInvoker _fallbackInvoker;
+        private readonly IServiceEntryLocator _serviceEntryLocator;
 
-        public DefaultInvokeFallbackPolicyProvider(IFallbackInvoker fallbackInvoker)
+        public DefaultInvokeFallbackPolicyProvider(IFallbackInvoker fallbackInvoker,
+            IServiceEntryLocator serviceEntryLocator)
         {
             _fallbackInvoker = fallbackInvoker;
+            _serviceEntryLocator = serviceEntryLocator;
         }
 
-        public IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters)
+        public IAsyncPolicy<object> Create(string serviceEntryId, object[] parameters)
         {
-            if (serviceEntry.FallbackMethodExecutor != null && serviceEntry.FallbackProvider != null)
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
+            if (serviceEntry is { FallbackMethodExecutor: { }, FallbackProvider: { } })
             {
                 var fallbackPolicy = Policy<object>.Handle<Exception>(ex =>
                     {

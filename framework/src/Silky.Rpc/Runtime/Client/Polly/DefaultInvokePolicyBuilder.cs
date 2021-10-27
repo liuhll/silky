@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Polly;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
@@ -23,13 +22,13 @@ namespace Silky.Rpc.Runtime.Client
         }
 
 
-        public IAsyncPolicy<object> Build(ServiceEntry serviceEntry, object[] parameters)
+        public IAsyncPolicy<object> Build(string serviceEntryId, object[] parameters)
         {
             IAsyncPolicy<object> policy = Policy.NoOpAsync<object>();
 
             foreach (var policyProvider in _policyWithResultProviders)
             {
-                var policyItem = policyProvider.Create(serviceEntry, parameters);
+                var policyItem = policyProvider.Create(serviceEntryId, parameters);
                 if (policyItem != null)
                 {
                     policy = policy.WrapAsync(policyItem);
@@ -38,7 +37,7 @@ namespace Silky.Rpc.Runtime.Client
 
             foreach (var policyProvider in _policyProviders)
             {
-                var policyItem = policyProvider.Create(serviceEntry, parameters);
+                var policyItem = policyProvider.Create(serviceEntryId, parameters);
                 if (policyItem != null)
                 {
                     policy = policy.WrapAsync(policyItem);
@@ -47,7 +46,7 @@ namespace Silky.Rpc.Runtime.Client
 
             foreach (var circuitBreakerPolicyProvider in _circuitBreakerPolicyProviders)
             {
-                var policyItem = circuitBreakerPolicyProvider.Create(serviceEntry, parameters);
+                var policyItem = circuitBreakerPolicyProvider.Create(serviceEntryId, parameters);
                 policy = policy.WrapAsync(policyItem);
             }
 

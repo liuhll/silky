@@ -66,8 +66,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 AuthorizeData = CreateAuthorizeData();
             }
-
-
+            
             ClientFilters = CreateClientFilters();
             ServerFilters = CreateServerFilters();
             CreateFallBackExecutor();
@@ -171,6 +170,8 @@ namespace Silky.Rpc.Runtime.Server
                 ServiceEntryDescriptor.WebApi = Router.RoutePath;
                 ServiceEntryDescriptor.HttpMethod = Router.HttpMethod;
             }
+
+            ServiceEntryDescriptor.GovernanceOptions = serviceEntryGovernance;
         }
 
         private void CreateFallBackExecutor()

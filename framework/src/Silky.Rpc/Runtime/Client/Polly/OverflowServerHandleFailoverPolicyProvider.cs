@@ -12,25 +12,30 @@ namespace Silky.Rpc.Runtime.Client
     public class OverflowServerHandleFailoverPolicyProvider : InvokeFailoverPolicyProviderBase
     {
         private readonly ILogger<OverflowServerHandleFailoverPolicyProvider> _logger;
+        private readonly IServerManager _serverManager;
 
-        public OverflowServerHandleFailoverPolicyProvider(ILogger<OverflowServerHandleFailoverPolicyProvider> logger)
+        public OverflowServerHandleFailoverPolicyProvider(ILogger<OverflowServerHandleFailoverPolicyProvider> logger,
+            IServerManager serverManager)
         {
             _logger = logger;
+            _serverManager = serverManager;
         }
 
-        public override IAsyncPolicy<object> Create(ServiceEntry serviceEntry, object[] parameters)
+        public override IAsyncPolicy<object> Create(string serviceEntryId, object[] parameters)
         {
             IAsyncPolicy<object> policy = null;
-            if (serviceEntry.GovernanceOptions.RetryTimes > 0)
+            var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
+
+            if (serviceEntryDescriptor?.GovernanceOptions.RetryTimes > 0)
             {
-                if (serviceEntry.GovernanceOptions.RetryIntervalMillSeconds > 0)
+                if (serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds > 0)
                 {
                     policy = Policy<object>
                         .Handle<OverflowMaxServerHandleException>()
                         .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.OverflowMaxServerHandle)
-                        .WaitAndRetryAsync(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds,
+                        .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
                             retryAttempt =>
-                                TimeSpan.FromMilliseconds(serviceEntry.GovernanceOptions.RetryIntervalMillSeconds),
+                                TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds),
                             (outcome, timeSpan, retryNumber, context)
                                 => OnRetry(retryNumber, outcome, context));
                 }
@@ -39,7 +44,7 @@ namespace Silky.Rpc.Runtime.Client
                     policy = Policy<object>
                         .Handle<OverflowMaxServerHandleException>()
                         .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.OverflowMaxServerHandle)
-                        .RetryAsync(serviceEntry.GovernanceOptions.RetryTimes,
+                        .RetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                             onRetryAsync: (outcome, retryNumber, context) =>
                                 OnRetry(retryNumber, outcome, context));
                 }
