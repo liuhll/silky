@@ -77,10 +77,10 @@ services:
       registrycenter__connectionStrings: ${registrycenter__connectionStrings:-silky.zoo1:2181,silky.zoo2:2181,silky.zoo3:2181;silky.zoo4:2181,silky.zoo5:2181,silky.zoo6:2181}
       distributedCache__redis__isEnabled: ${distributedCache__redis__isEnabled:-true}
       distributedCache__redis__configuration: ${distributedCache__redis__configuration:-silky.redis,defaultDatabase=0}
-      jwtSettings__secret: ${jwtSettings__secret:-UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4}
-      skyWalking__transport__gRPC_servers: ${skyWalking__transport__gRPC_servers:-oap:11800}
+      skyWalking__transport__gRPC__servers: ${skyWalking__transport__gRPC__servers:-oap:11800}
+      gateway__jwtSecret: ${gateway__jwtSecret:-UnMTH4QvAAp0BLYyEmdXYjoAOv4biHW4}
       dashboard__displayWebApiInSwagger: ${dashboard__displayWebApiInSwagger:-false}
-      dashboard__useAuth: ${dashboard__useAuth:-true}
+      dashboard__useAuth: ${dashboard__useAuth:-false}
       dashboard__dashboardLoginApi: ${dashboard__dashboardLoginApi:-/api/account/login}
       dashboard__externalLinks__0__title: ${dashboard__externalLinks__0__title:-swagger docs}
       dashboard__externalLinks__0__path: ${dashboard__externalLinks__0__path:-http://localhost}

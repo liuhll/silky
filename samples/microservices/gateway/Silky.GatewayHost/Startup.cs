@@ -26,15 +26,15 @@ namespace Silky.GatewayHost
             services.AddMessagePackCodec();
             services.AddHealthChecks()
                 .AddSilkyRpc();
-            services
-                .AddHealthChecksUI()
-                .AddInMemoryStorage();
+            //services
+            //    .AddHealthChecksUI()
+            //    .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment() || env.EnvironmentName == "ContainerDev")
+            if (env.IsDevelopment())
             {
                
                 app.UseDeveloperExceptionPage();
@@ -43,22 +43,20 @@ namespace Silky.GatewayHost
             }
             app.UseSerilogRequestLogging();
             app.UseDashboard();
-            app.UseSilkyRpcHealthCheck()
-                .UseHealthChecksPrometheusExporter("/metrics");
+            //app.UseSilkyRpcHealthCheck()
+            //    .UseHealthChecksPrometheusExporter("/metrics");
             app.UseRouting();
+            app.UseSilkyIdentity();
             app.UseSilkyWrapperResponse();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
             app.UseResponseCaching();
             app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
-            app.UseSilkyExceptionHandler();
-            app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
-            // app.ConfigureSilkyRequestPipeline();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHealthChecksUI();
+                //endpoints.MapHealthChecksUI();
                 endpoints.MapSilkyRpcServices();
             });
         }
