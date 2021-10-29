@@ -3,15 +3,24 @@ title: silky框架介绍
 lang: zh-cn
 ---
 
+
 ## 背景介绍
 
 silky框架旨在帮助开发者在.net平台下,通过简单代码和配置快速构建一个微服务开发框架。
 
-通过.net框架的[通用主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)构建普通业务微服务应用,内部通过[dotnetty/SpanNetty](https://github.com/cuteant/SpanNetty)实现的rpc进行通信,在消息传递过程中,通过`rpcToken`保证消息在同一个集群内部进行通信，而且rpc通信支持ssl加密。
+使用[通用主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0)或是[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)来构建(托管)微服务应用。
 
-通过.net的[web主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-5.0)构建对外提供访问入口的服务主机(网关)，在`http`请求或是`ws`会话请求到达该主机时,通过内置的中间件解析到服务集群的路由条目,并指定`rpcToken`,通过内置的负载均衡算法和路由寻址与集群内部的主机进行`rpc`通信。
+使用[DotNetty](https://github.com/Azure/DotNetty)通信框架实现了基于接口代理的RPC框架，提供高性能的基于代理的远程调用能力，服务以接口为粒度，为开发者屏蔽远程调用底层细节。
 
-silky在通信过程中,使用基于缓存拦截实现了TCC分布式事务。
+内置多种负载均衡策略，智能感知下游节点健康状况，显著减少调用延迟，提高系统吞吐量。
+
+支持多种注册中心服务,服务实例上下线实时感知。
+
+采用**服务引擎+模块化**的设计模式,所有核心能力(如通信框架、服务序列化组件、服务治理能力)被设计为扩展点,平等对待内置实现和第三方实现。
+
+通过[Polly](https://github.com/App-vNext/Polly)实现的服务治理,提高服务的容错能力。
+
+使用拦截器和todo日志实现了TCC分布式事务,保证数据最终一致性。
 
 
 在开发与设计过程中借鉴和吸收了各个优秀的开源产品的设计与思想。在此，作者表示对各个先辈的致敬与感谢。
