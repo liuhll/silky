@@ -13,7 +13,7 @@ features:
   details: 内置轮询、随机、哈希一致性等负载均衡算法
 
 - title: 服务自动注册和发现
-  details: 支持Zookeeper、Consul、Nacos作为服务注册中心
+  details: 支持Zookeeper、Consul、Nacos作为服务注册中心,服务实例上下线实时感知
 
 - title: 缓存拦截
   details: RPC通信过程中,支持缓存拦截,提高通信性能
