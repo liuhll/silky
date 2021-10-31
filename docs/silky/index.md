@@ -29,6 +29,8 @@ silky微服务有着如下的优势：
 
 ## 框架特性
 
+![silky微服务框架.png](/assets/imgs/silky微服务框架.png)
+
 ### 服务引擎+模块化设计
 
 - 负责silky主机的初始化过程
