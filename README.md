@@ -114,18 +114,6 @@ silky微服务有着如下的优势：
 - 通过[silky.samples项目](http://docs.silky-fk.com/silky/dev-docs/quick-start.html)熟悉如何使用Silky框架构建一个微服务应用。
 - 通过[配置](http://docs.silky-fk.com/config/)文档熟悉Silky框架的相关配置属性。
 
-## 框架特性
-
-- 面向接口代理的高性能RPC调用
-- 服务自动注册和发现,支持Zookeeper、Consul、Nacos作为服务注册中心
-- 智能容错和负载均衡，强大的服务治理能力
-- 支持缓冲拦截
-- 高度可扩展能力
-- 支持分布式事务
-- 流量监控
-- 通过SkyApm进行链路跟踪
-- 通过Swagger生成在线API文档
-
 
 ## 快速开始
 
