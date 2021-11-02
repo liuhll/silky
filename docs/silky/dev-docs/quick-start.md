@@ -14,7 +14,13 @@ lang: zh-cn
 4. (**可选**) 你可以选择`redis`服务作为分布式缓存服务。
 
 
-## 使用web host构建微服务应用 
+## 使用Web主机构建微服务应用 
+
+开发者可以通过.net平台提供[Web 主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-6.0)来构建silky微服务应用。
+
+使用webhost来构建的Silky微服务应用，不但可以作为微服务应用的服务提供者(服务内部可以通过SilkyRpc框架进行通信);也提供http服务，http请求通过应用服务方法(服务条目)生成的webapi,通过silky设定的路由规则即可访问微服务应用提供的相关服务。
+
+我们通过如下步骤可以快速的构建一个使用Web 主机构建的Silky微服务应用。
 
 1. 新增一个控制台应用或是ASP.NET Core Empty应用
 
@@ -34,7 +40,7 @@ lang: zh-cn
 PM> Install-Package Silky.Agent.Host -Version 3.0.2
 ```
 
-3. 在`Main`方法中构建构建silky主机
+3. 在`Main`方法中构建silky主机
 
 ```csharp
 namespace Silky.Sample
@@ -149,7 +155,7 @@ silky支持通过`json`或是`yml`格式进行配置。您可以通过`appsettin
 
 在该示例项目中,我们使用`Zookeeper`作为服务注册中心。我们在silky的示例项目中给出各种基础服务的[docker-compose的编排文件](https://github.com/liuhll/silky/tree/main/samples/docker-compose/infrastr),其中,也包括了zookeeper和redis服务的。
 
-将[docker-compose.zookeeper.yml](https://raw.githubusercontent.com/liuhll/silky/main/samples/docker-compose/infrastr/docker-compose.zookeeper.yml)和[docker-compose.redis.yml](https://raw.githubusercontent.com/liuhll/silky/main/samples/docker-compose/infrastr/docker-compose.redis.yml)拷贝到本地,保存为相同名称文件,进入到保存文件的本地目录。
+将[docker-compose.zookeeper.yml](https://raw.githubusercontent.com/liuhll/silky/main/samples/docker-compose/infrastr/docker-compose.zookeeper.yml)和[docker-compose.redis.yml](https://raw.githubusercontent.com/liuhll/silky/main/samples/docker-compose/infrastr/docker-compose.redis.yml)拷贝到本地,保存为相同名称的文件,进入到保存文件的本地目录。
 
 ```powershell
 # 创建一个名称为silky_service_net的docker网络
@@ -162,7 +168,7 @@ docker-compose -f docker-compose.zookeeper.yml -f docker-compose.redis.yml up -d
 
 6. 微服务应用的其他层(项目)
 
-完成主机项目构建后,您可以新增**应用接口层**、**应用层**、**领域层**、**基础设施层**等其他项目,更多内容请参考[微服务架构](#)节点。
+完成主机项目后,您可以新增**应用接口层**、**应用层**、**领域层**、**基础设施层**等其他项目,更多内容请参考[微服务架构](#)节点。
 
 一个典型的微服务模块的划分与传统的`DDD`领域模型的应用划分基本一致。需要将应用接口单独的抽象为一个程序集，方便被其他微服务应用引用，其他微服务应用通过应用接口生成RPC代理,与该微服务通信。
 
@@ -175,7 +181,7 @@ docker-compose -f docker-compose.zookeeper.yml -f docker-compose.redis.yml up -d
 1) 主机项目依赖**应用层**,从而达到对应用的托管。
 2) **应用接口层**用于定义服务接口和`DTO`对象,**应用层**需要依赖**应用接口层**,实现定义好的服务接口。
 3) **领域层**主要用于实现具体的业务逻辑,可以依赖自身的**应用接口层**以及其他微服务应用的**应用接口层**(开发者可以通过nuget包安装其他微服务应用的应用接口项目或是直接添加项目的方式进行引用);**领域层**依赖自身的**应用接口层**的原因是为了方便使用`DTO`对象;引用其他微服务的**应用接口层**可以通过接口生成的动态代理,与其他微服务通过`SilkyRPC`框架进行通信。
-4) **领域共享层(Domain.Shared)**一般用于定义ddd概念中的值类型以及枚举等,可以被其他微服务应用引用。
+4) **领域共享层(Domain.Shared)** 一般用于定义ddd概念中的值类型以及枚举等,方便被其他微服务应用引用。
 5) **EntityFramework**作为基础服务层,提供数据访问能力,当然,开发者也可以选择使用其他ORM框架。
 
 
@@ -218,3 +224,68 @@ public interface IGreetingAppService
 运行应用程序,即可打开swagger在线文档。开发者可以通过swagger生成的在线文档调试API。
 
 ![quick-start6.png](/assets/imgs/quick-start6.png)
+
+## 使用.NET 通用主机构建微服务应用
+
+开发者可以通过.net平台提供[通用主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-6.0)来构建silky微服务应用。
+
+使用.NET 通用主机构建微服务应用只能作为服务提供者,通过SilkyRPC框架与其他微服务应用进行通信;无法提供http服务，也就是说,集群外部无法直接访问该微服务应用，只能通过网关或是其他提供http服务的微服务应用访问该微服务应用的服务。
+
+使用.NET 通用主机构建Silky微服务应用的步骤与使用使用Web 主机构建微服务应用的步骤基本一致,区别在于无需配置`Startup`类,也不能配置http中间件(配置了也无效);开发者可以通过实现`IConfigureService`接口来完成对服务注入的配置。
+
+1-2 步骤与[使用web主机构建微服务应用](#使用Web主机构建微服务应用)一致。
+
+3. 在`Main`方法中构建silky主机
+
+```csharp
+namespace Silky.Sample
+{
+    using Microsoft.Extensions.Hosting;
+    using System.Threading.Tasks;
+    class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
+
+        private static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                    .ConfigureSilkyGeneralHostDefaults();
+               
+        }
+    }
+}
+```
+创建`ConfigureService`类,用于实现`IConfigureService`接口,在`ConfigureServices()`方法中配置服务注入依赖。
+
+```csharp
+   public class ConfigureService : IConfigureService
+    {
+        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSilkySkyApm()
+                //其他服务(包括第三方组件的服务或是silky框架的其他服务,例如:Efcore组件,MessagePack编解码,Cap或是MassTransit等分布式事件总线等)
+                //...
+                ;
+        }
+    }
+```
+
+5-7步骤与[使用web主机构建微服务应用](#使用Web主机构建微服务应用)一致。
+
+启动应用后,我们可以在控制台看到相关的日志输出,应用服务启动成功。
+
+![quick-start7.png](/assets/imgs/quick-start7.png)
+
+用户无法直接访问该微服务应用,必须通过网关引用该微服务的 **应用接口层** ,通过[网关](#构建Silky微服务网关)的提供的http服务简介的访问该微服务应用提供的服务。
+
+
+## 构建具有websocket服务能力的微服务应用
+
+
+
+## 构建Silky微服务网关
+
+
