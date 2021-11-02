@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   silky-docs:
-    image: silkydocs/silky-docs:${TAG:-latest}
+    image: silkyframework/silky-docs:${TAG:-latest}
     build:
       context: ..
       dockerfile: Dockerfile.docs
