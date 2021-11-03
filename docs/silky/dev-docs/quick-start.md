@@ -11,7 +11,7 @@ lang: zh-cn
 
 3. (**必须**) 您必须准备一个可用的`zookeeper`服务作为服务注册中心。
 
-4. (**可选**) 你可以选择`redis`服务作为分布式缓存服务。
+4. (**必须**) 使用选择`redis`服务作为分布式缓存服务。
 
 
 ## 使用Web主机构建微服务应用 
@@ -64,7 +64,7 @@ namespace Silky.Sample
 }
 ```
 
-4. 在启用类中配置服务和配置中间件和路由
+4. 在启用类中配置服务和置中间件、路由
 
 ```csharp
 using Microsoft.AspNetCore.Builder;
@@ -225,7 +225,7 @@ public interface IGreetingAppService
 
 ![quick-start6.png](/assets/imgs/quick-start6.png)
 
-## 使用.NET 通用主机构建微服务应用
+## 使用.NET通用主机构建微服务应用
 
 开发者可以通过.net平台提供[通用主机](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-6.0)来构建silky微服务应用。
 
@@ -279,13 +279,142 @@ namespace Silky.Sample
 
 ![quick-start7.png](/assets/imgs/quick-start7.png)
 
-用户无法直接访问该微服务应用,必须通过网关引用该微服务的 **应用接口层** ,通过[网关](#构建Silky微服务网关)的提供的http服务简介的访问该微服务应用提供的服务。
+用户无法直接访问该微服务应用,必须通过网关引用该微服务的 **应用接口层** ,通过[网关](#构建Silky微服务网关)的提供的http服务间接的访问该微服务应用提供的服务。
 
 
 ## 构建具有websocket服务能力的微服务应用
 
+开发者通过构建具有websocket服务能力的微服务应用, 这样的微服务应用可以除了可以作为服务提供者之外,还具有提供websocket通信的能力(websocket端口默认为:3000)。可以通过与服务端进行握手会话(可以通过网关代理),服务端实现向客户单推送消息的能力。
 
+
+构建具有websocket服务能力的微服务应用与[使用.NET通用主机构建微服务应用](#使用.NET通用主机构建微服务应用)的步骤一致,只是用于构建微服务应用的方法有差异。
+
+1-2 步骤与[使用web主机构建微服务应用](#使用Web主机构建微服务应用)一致。
+
+3. 在`Main`方法中构建silky主机
+
+```csharp
+namespace Silky.Sample
+{
+    using Microsoft.Extensions.Hosting;
+    using System.Threading.Tasks;
+    class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
+
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyWebSocketDefaults();
+    }
+}
+
+```
+
+创建`ConfigureService`类,用于实现`IConfigureService`接口,在`ConfigureServices()`方法中配置服务注入依赖。
+
+```csharp
+   public class ConfigureService : IConfigureService
+    {
+        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSilkySkyApm()
+                //其他服务(包括第三方组件的服务或是silky框架的其他服务,例如:Efcore组件,MessagePack编解码,Cap或是MassTransit等分布式事件总线等)
+                //...
+                ;
+        }
+    }
+```
+
+5-6步骤与[使用web主机构建微服务应用](#使用Web主机构建微服务应用)一致。
+
+7. 构建具有提供websocket服务能力的服务
+
+应用服务接口的定义与一般应用服务的接口定义一样,只需要在一个普通的接口标识`[ServiceRoute]`特性即可。
+
+```csharp
+
+[ServiceRoute]
+public interface ITestAppService
+{
+   // 可以定义其他方法(服务条目),定义的方法可以与其他微服务应用通过RPC框架进行通信
+}
+```
+
+
+我们需要在 **应用层(Silky.Sample.Application)** 安装 `Silky.WebSocket`包。
+
+```powershell
+PM> Install-Package Silky.WebSocket -Version 3.0.2
+```
+
+并新增一个 `TestAppService`类, 通过它来实现 `ITestAppService`, 除此之外,我们需要 `TestAppService`类继承 `WsAppServiceBase`基类。
+
+```csharp
+    public class TestAppService : WsAppServiceBase, ITestAppService
+    {
+        private readonly ILogger<TestAppService> _logger;
+
+        public TestAppService(ILogger<TestAppService> logger)
+        {
+            _logger = logger;
+        }
+
+        // 当建立websocket会话时
+        protected override void OnOpen()
+        {
+            base.OnOpen();
+            _logger.LogInformation("websocket established a session");
+            
+        }
+
+        // 当服务端接收到客服端的消息时
+        protected override void OnMessage(MessageEventArgs e)
+        {
+            _logger.LogInformation(e.Data);
+        }
+        
+       // 当websocket会话关闭时
+        protected override void OnClose(CloseEventArgs e)
+        {
+            base.OnClose(e);
+            _logger.LogInformation("websocket disconnected");
+        }
+
+        // 其他服务方法
+    }
+```
+
+启动应用后,我们可以在控制台看到相关的日志输出,应用服务启动成功。我们定义的websocket的服务的webapi地址为:`/api/test`。
+
+![quick-start8.png](/assets/imgs/quick-start8.png)
+
+8. 客户端透过网关与websocket服务握手
+
+客户端无法直接与该微服务应用进行握手,必须通过网关引用该微服务的 **应用接口层** ,通过[网关](#构建Silky微服务网关)的提供的websocket代理服务与该微服务进行握手,通过`ws[s]://gateway_ip[:gateway_port]/websocket_webapi`与之前定义websocket服务进行会话。
+
+我们在构建的网关应用中引用该微服务的**应用接口层**,并启动网关应用(网关服务地址为`127.0.0.1:5000`),并可通过地址:`ws://127.0.0.1:5000/api/test`与之前定义的websocket服务进行握手和通信。
+
+客户端与websocket服务进行握手时,需要通过`qstring参数`或是请求头设置`hashkey`，确保每次通信的微服务应用都是同一个实例。
+
+![quick-start9.png](/assets/imgs/quick-start9.png)
+
+![quick-start10.png](/assets/imgs/quick-start10.png)
 
 ## 构建Silky微服务网关
 
+实际上,[通过.net平台提供Web主机](#使用Web主机构建微服务应用)来构建silky微服务应用，也可以认为是一个网关。我们在这里专门构建的网关与[通过.net平台提供Web 主机](#使用Web主机构建微服务应用)的区别在于该类型的微服务应用只能作为服务消费者,不能作为服务提供者,不能作为RPC服务提供者。
 
+总的来说,网关是对微服务应用集群来说是一个对接外部的流量入口。
+
+构建过程与[通过.net平台提供Web 主机](#使用Web主机构建微服务应用)一致,我们只需要将创建主机的方法修改为:
+
+```csharp
+ private static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+```
+
+网关项目通过引用其他微服务应用的**应用接口层**，就可以作为服务消费者通过SilkyRPC框架调用其他微服务应用提供的服务,并且通过网关提供的http相关中间件可以实现生成在线swagger文档,实现统一的api鉴权,http限流,生成dashboard管理端,实现对微服务集群服务提供者实例的健康检查等功能。
