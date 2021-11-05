@@ -9,7 +9,15 @@ services:
     volumes:
       - ./logs/silkyapp:/app/logs    
     environment:
-      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-dotnetenv}
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT:-Development}
+      rpc__token: ${rpc__token:-ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW}
+      governance__timeoutMillSeconds: ${governance__timeoutMillSeconds:-5000}
+      registrycenter__type: ${registrycenter_type:-Zookeeper}
+      registrycenter__connectionStrings: ${registrycenter_connectionStrings:-silky.zoo1:2181,silky.zoo2:2181,silky.zoo3:2181;silky.zoo4:2181,silky.zoo5:2181,silky.zoo6:2181}
+      distributedCache__redis__isEnabled: ${distributedCache__redis__isEnabled:-true}
+      distributedCache__redis__configuration: ${distributedCache__redis__configuration:-silky.redis:6379,defaultDatabase=0}
+      connectionStrings__default:  ${connectionStrings__order:-server=silky.mysql;port=3306;database=order;uid=root;pwd=qwe!P4ss;}
+      skyWalking__transport__gRPC__servers: ${skyWalking__transport__gRPC__servers:-oap:11800}
     networks: 
       - silky_service_net
 

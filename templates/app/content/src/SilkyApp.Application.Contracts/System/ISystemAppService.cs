@@ -11,7 +11,7 @@ namespace SilkyApp.Application.Contracts.System
     public interface ISystemAppService
     {
         /// <summary>
-        /// 获取当前系统细信息
+        /// 获取当前应用详细信息
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
