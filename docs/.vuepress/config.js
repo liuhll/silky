@@ -155,6 +155,7 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                     collapsable: false,
                     children: [
                         'dev-docs/quick-start',
+                        'dev-docs/templete',
                         'dev-docs/host',
                         'dev-docs/modularity',
                         'dev-docs/appservice-and-serviceentry',
