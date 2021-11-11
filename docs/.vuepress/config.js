@@ -80,7 +80,7 @@ var _hmt = _hmt || [];
                 content: 'width=device-width, initial-scale=1'
             }
         ],
-        ["meta", { name: "baidu-site-verification", content: "code-q0r0KSL5ZB" }],
+        ["meta", { name: "baidu-site-verification", content: "code-cAZSIwloPN" }],
         [
             "script",
             {
