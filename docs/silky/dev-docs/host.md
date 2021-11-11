@@ -29,6 +29,9 @@ silky微服务框架提供了多种类型的业务主机,开发者可以选择�
 2. 可以作为外部流量的入口,集群外部通过http服务访问微服务应用集群
 3. 作为RPC服务提供者,通过RPC框架与其他微服务进行通信
 
+![host0.png](/assets/imgs/host0.png)
+
+
 一般地,如果我们希望该服务应用既可以作为RPC服务提供者,也希望外部能够直接通过http协议访问应用,那么我们就可以通过web主机构建微服务应用。这样的方式适用于将微服务应用拆分给不同的团队进行开发,开发者也无需要额外的构建网关,就可以访问微服务应用服务。
 
 使用web主机构建Silky微服务应用只需要开发者安装`Silky.Agent.Host`包后,在`Main()`方法中通过`Host`提供的API`ConfigureSilkyWebHostDefaults`即可。开发者需要指定`Startup`类,在`Startup`中注册服务和配置http中间件。
@@ -79,7 +82,7 @@ namespace Silky.Sample
 }
 ```
 
-自定义的启动模块`DemoModule`需要继承`WebHostModule`,开发者可以在自定义的启动模块中,定义应用启动和停止需要执行的业务方法和配置服务注册,也可以通过依赖开发者扩展的自定义模块。
+自定义的启动模块`DemoModule`需要继承`WebHostModule`,开发者可以在自定义的启动模块中,定义应用启动和停止需要执行的业务方法和配置服务注册,也可以依赖开发者扩展的自定义模块。
 
 ```csharp
     // 依赖开发者自定义的模块
@@ -89,19 +92,25 @@ namespace Silky.Sample
         public override Task Initialize(ApplicationContext applicationContext)
         {
             // 开发者可以定义应用程序启动时执行的业务方法
-            return base.Initialize(applicationContext);
+            return Task.CompletedTask;
         }
 
         public override Task Shutdown(ApplicationContext applicationContext)
         {
             // 开发者可以定义应用程序停止时执行的业务方法
-            return base.Shutdown(applicationContext);
+            return Task.CompletedTask;d
         }
 
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             // 开发者可以配置服务注册,作用与Startup类ConfigureServices一致
-            base.ConfigureServices(services, configuration);
+            
+        }
+
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
+            // 开发者可以通过 Autofac 的ContainerBuilder注册服务,
+            // 例如: IServiceCollection无法注册命名服务,ContainerBuilder支持注册命名服务
         }
     }
 ```
@@ -207,28 +216,34 @@ namespace Silky.Sample
 }
 ```
 
-在这里,我们需要自定义的启动模块`DemoModule`需要继承`GatewayHostModule`,开发者可以在自定义的启动模块中,定义应用启动和停止需要执行的业务方法和配置服务注册,也可以通过依赖开发者扩展的自定义模块。
+在这里,我们需要自定义的启动模块`DemoModule`需要继承`GeneralHostModule`,开发者可以在自定义的启动模块中,定义应用启动和停止需要执行的业务方法和配置服务注册,也可以依赖开发者扩展的自定义模块。
 
 ```csharp
   // [DependsOn(typeof("UserDefinedModule"))]
-    public class DemoModule : GatewayHostModule
+    public class DemoModule : GeneralHostModule
     {
         public override Task Initialize(ApplicationContext applicationContext)
         {
             // 开发者可以定义应用程序启动时执行的业务方法
-            return base.Initialize(applicationContext);
+            return Task.CompletedTask;
         }
 
         public override Task Shutdown(ApplicationContext applicationContext)
         {
             // 开发者可以定义应用程序停止时执行的业务方法
-            return base.Shutdown(applicationContext);
+            return Task.CompletedTask;
         }
 
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             // 开发者可以配置服务注册,作用与Startup类ConfigureServices一致
-            base.ConfigureServices(services, configuration);
+            
+        }
+
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
+            // 开发者可以通过 Autofac 的ContainerBuilder注册服务,
+            // 例如: IServiceCollection无法注册命名服务,ContainerBuilder支持注册命名服务
         }
     }
 ```
@@ -249,16 +264,208 @@ namespace Silky.Sample
             services.AddSilkyCaching()
                 .AddSilkySkyApm()
                 .AddMessagePackCodec();
-            
-            // 可以通过服务注册引入第三方组件,例如:CAP,MassTransit等
-            
+             
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<DefaultContext>(); },
                 "Demo.Database.Migrations");
+
+             // 可以通过服务注册引入第三方组件,例如:CAP,MassTransit等
         }
     }
 ```
 
 ### 构建具有websocket能力的微服务应用
 
+具有websocket服务能力的微服务应用除了能够提供RPC服务,还可以提供websocket服务。
+
+1. 提供RPC服务,也提供WebSocket服务
+2. 可以通过网关的websocket代理中间件与该微服务的websocket服务进行握手
+
+![host2.png](/assets/imgs/host2.png)
+
+开发者在安装`Silky.Agent.Host`包后,在`Main()`方法中通过`Host`提供的API`ConfigureSilkyGeneralHostDefaults`即可通过通用主机构建支持websocket服务的微服务应用。
+
+```csharp
+namespace Silky.Sample
+{
+    using Microsoft.Extensions.Hosting;
+    using System.Threading.Tasks;
+    class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
+
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyWebSocketDefaults();
+    }
+}
+```
+
+同样地,我们也可以在构建主机的时候,另外指定启动模块:
+
+```csharp
+namespace Silky.Sample
+{
+    using Microsoft.Extensions.Hosting;
+    using System.Threading.Tasks;
+    class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
+
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyWebSocket<DemoModule>();
+    }
+}
+```
+
+在这里,我们需要自定义的启动模块`DemoModule`需要继承`WebSocketHostModule`,开发者可以在自定义的启动模块中,定义应用启动和停止需要执行的业务方法和配置服务注册,也可以依赖开发者扩展的自定义模块。
+
+```csharp
+// [DependsOn(typeof("UserDefinedModule"))]
+    public class DemoModule : WebSocketHostModule
+    {
+        public override Task Initialize(ApplicationContext applicationContext)
+        {
+            // 开发者可以定义应用程序启动时执行的业务方法
+            return Task.CompletedTask;
+        }
+
+        public override Task Shutdown(ApplicationContext applicationContext)
+        {
+            // 开发者可以定义应用程序停止时执行的业务方法
+            return Task.CompletedTask;
+        }
+
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            // 开发者可以配置服务注册,作用与Startup类ConfigureServices一致
+            
+        }
+
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
+            // 开发者可以通过 Autofac 的ContainerBuilder注册服务,
+            // 例如: IServiceCollection无法注册命名服务,ContainerBuilder支持注册命名服务
+        }
+    }
+```
+
+::: warning 注意
+
+与web主机构建微服务应用自定义启动模块继承的基类不同,但是作用和使用上一致
+
+:::
+
+构建具有websocket能力的服务,实现应用服务接口的类需要继承`WsAppServiceBase`。在与前端建立会话后,就可以通过`SessionManager`向前端发送消息。
+
+
+```csharp
+    public class TestAppService : WsAppServiceBase, ITestAppService
+    {
+        private readonly ILogger<TestAppService> _logger;
+
+        public TestAppService(ILogger<TestAppService> logger)
+        {
+            _logger = logger;
+        }
+
+        protected override void OnOpen()
+        {
+            base.OnOpen();
+            _logger.LogInformation("websocket established a session");
+            
+        }
+
+        protected override void OnMessage(MessageEventArgs e)
+        {
+            _logger.LogInformation(e.Data);
+        }
+
+        protected override void OnClose(CloseEventArgs e)
+        {
+            base.OnClose(e);
+            _logger.LogInformation("websocket disconnected");
+        }
+    }
+```
+
+前端需要通过网关的websocket代理中间件，与具体的websocket服务实例建立会话时,需要满足如下要求:
+
+1. 需要通过请求头或是`qString`参数指定`bussinessId`，通过该值使用哈希算法,路由到具体的websocket服务实例。
+2. 为保证每次都能够路由到同一个websocket服务实例,websocket服务对应的网关实例只能有一个。
+3. 该网关必须要引用websocket服务代理中间件。
+
+```csharp
+// 需要在网关的Configure()配置websocket代理中间件
+app.UseSilkyWebSocketsProxy();
+```
+
+::: warning 注意
+
+1. 开发者可以考虑,普通业务服务对应一组网关应用(支持部署多个实例),websocket应用对应一组网关应用(只允许一个服务实例)
+
+:::
+
 ### 构建网关
+
+这里,网关的作用只是作为集群流量的入口,将http请求转发到集群内部,交个各个微服务应用的服务进行处理,并不作为rpc服务提供者。也就是说,这里构建的网关只能作为服务消费者。
+
+1. 只提供http服务,作为集群流量入口
+2. 不提供RPC服务,不可以作为rpc服务提供者
+
+![host3.png](/assets/imgs/host3.png)
+
+::: warning 注意
+
+网关与web主机构建业务主机的区别在于,网关只能作为服务消费者,转发外部的http请求,而后者除了具有转发http请求的能力之外,还能作为RPC服务提供者。
+
+:::
+
+开发者在安装`Silky.Agent.Host`包后,在`Main()`方法中通过`Host`提供的API`ConfigureSilkyGatewayDefaults`即可通过通用主机构建支持websocket服务的微服务应用。
+
+```csharp
+namespace Silky.Sample
+{
+    using Microsoft.Extensions.Hosting;
+    using System.Threading.Tasks;
+    class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
+
+    private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+    }
+}
+```
+
+当然,也可以自定义启动模块,只需要将自定义的启动模块`DemoModule`继承的基类修改为`GatewayHostModule`:
+
+```csharp
+namespace Silky.Sample
+{
+    using Microsoft.Extensions.Hosting;
+    using System.Threading.Tasks;
+    class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
+
+    private static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyGateway<DemoModule>(webBuilder => { webBuilder.UseStartup<Startup>(); });
+    }
+}
+```
