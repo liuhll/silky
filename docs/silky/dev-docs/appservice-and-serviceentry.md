@@ -5,9 +5,9 @@ lang: zh-cn
 
 ## 服务的定义
 
-服务接口是微服务定义webAPI的基本单位，可以被其他微服务应用引用，其他微服务可以通过rpc通信与该微服务进行通信。应用接口如果被网关应用引用,网关可以通过服务应用接口生成swagger文档。
+服务接口是微服务定义服务的基本单位，定义的应用服务接口可以被其他微服务引用，其他微服务通过rpc框架与该微服务进行通信。
 
-通过`ServiceRouteAttribute`特性对一个接口进行标识即可成为一个服务应用接口。
+通过`ServiceRouteAttribute`特性对一个接口进行标识即可成为一个应用服务接口。
 
 例如:
 
@@ -19,29 +19,32 @@ public interface ITestAppService
 
 ```
 
-## 服务路由特性
+虽然我们通过使用`[ServiceRoute]`特性可以对任何一个接口标识为一个服务，服务定义的方法会通过应用服务的模板和方法特性的模板生成对应的webapi(该方法没有服务特性标识为禁用外网)。但是良好的命名规范可以为我们构建服务省去很多不必要的麻烦(通俗的说就是:**约定大约配置**)。
 
-开发者对应用接口标识路由(`ServiceRouteAttribute`)时,可以通过路由特性的属性对生成的路由模板、应用接口请求头是否支持`serviceKey`进行配置。
+一般地,我们推荐使用`AppService`作为定义的服务的后缀。即推荐使用`IXxxxAppService`作为应用服务接口名称,默认生成的服务模板为:`api/{appservice}`,使用`XxxxAppService`作为应用服务实现类的名称。
+
+路由特性(`ServiceRouteAttribute`)可以通过`template`对服务路由模板进行设置。路由模板可以通过`{appservice=templateName}`设置服务的名称。
 
 | 属性名称 | 说明   |  缺省值  | 
 |:---------|:----- |:--------| 
-| template | 在对服务应用接口标识为服务路由时,可以通过`[ServiceRoute(template: "test/{appservice=templateName}")]`指定应用服务接口的路由模板。| api/{appservice} | 
-| multipleServiceKey | 网关生成的webapi请求头是否支持`serviceKey`请求头 | false | 
+| template | 在对服务接口标识为服务路由时,可以通过`[ServiceRoute("{appservice=templateName}")]`指定应用服务接口的路由模板。`templateName`的缺省值名称为对应服务的名称 | api/{appservice} | 
+
+
 
 ## 服务条目
 
-**服务条目(ServiceEntry)**: 服务应用接口中定义的每一个方法都会生成微服务集群的一个服务条目。对微服务应用本身而言,服务条目就相当于MVC中的`Action`，服务应用接口就相当于`Controller`。
+**服务条目(ServiceEntry)**: 服务接口中定义的每一个方法都会生成微服务集群的一个服务条目。对微服务应用本身而言,服务条目就相当于MVC中的`Action`，应用服务就相当于`Controller`。
 
-### 根据服务条目生成webAPI
+### 根据服务条目生成WebAPI
 
-应用接口被网关引用后,会根据服务应用接口的路由模板和服务条目方法的Http动词特性指定的路由信息或是方法名称生成相应的webapi,服务条目生成的WebAPI支持restfulAPI风格。
+应用接口被web主机应用或是网关引用后,会根据服务应用接口的路由模板和服务条目方法的Http动词特性指定的路由信息或是方法名称生成相应的webapi,服务条目生成的WebAPI支持restfulAPI风格。
 
 
 服务条目生成webapi的规则为:
 
 1. 禁止集群外部访问的服务条目(`[Governance(ProhibitExtranet = true)]`)不会生成webapi;
 
-2. 可以通过` [ServiceRoute(template: "test/{appservice=templateName}")]`为应用接口指定统一的路由模板;
+2. 可以通过` [ServiceRoute("{appservice=templateName}")]`为应用接口指定统一的路由模板;
 
 3. 如果服务条目方法没有被http谓词特性标识,那么生成的webapi的http请求动词会根据服务条目的方法名称生成,如果没有匹配到相应的服务条目方法,则会根据服务条目的方法参数；
 
@@ -125,19 +128,16 @@ public interface ITestAppService
 
         ///更新部分数据，使用patch请求 ([patch]/api/test)
         [HttpPatch]
-        [Governance(FallBackType = typeof(UpdatePartFallBack))]
         Task<string> UpdatePart(TestInput input);
     }
 
 ```
 
-## 应用接口的实现
+## 服务的实现
 
-一般地,开发者应当将应用服务接口和应用服务接口的实现分开定义在不同的程序集。应用接口程序集可以被打包成Nuget包或是以项目的形式被其他微服务应用引用，这样其他微服务就可以通过rpc代理的方式与该微服务应用进行通信。更多RPC通信方面的文档[请参考](rpc)。
+一般地,开发者应当将定义服务的接口和服务的实现分开定义在不同的程序集。应用服务接口程序集可以被打包成Nuget包或是以项目的形式被其他微服务应用引用，这样其他微服务就可以通过rpc代理的方式与该微服务应用进行通信。更多RPC通信方面的文档[请参考](rpc)。
 
-一个应用接口可以有一个或多个实现类。只有应用接口在当前微服务应用中存在实现类,该微服务应用接口对应的服务条目才会生成相应的服务路由，并将服务路由信息注册到服务注册中心,同时其他微服务应用的实例会订阅到微服务集群的路由信息。
-
-如果服务应用接口存在多个实现类,那么服务应用接口的路由特性应的`multipleServiceKey`的参数值应当被设置为`true`(`[ServiceRoute(multipleServiceKey: true)]`)。这样,在网关应用引用该微服务的应用接口程序集生成的swagger文档才会有`serviceKey`请求头。
+一个服务接口可以有一个或多个实现类。只有应用接口在当前微服务应用中存在实现类,该微服务应用接口对应的服务条目才会生成相应的服务路由，并将服务路由信息注册到服务注册中心,同时其他微服务应用的实例会订阅到微服务集群的路由信息。
 
 应用接口如果存在多个实现类的情况下,那么应用接口的实现类,需要通过`ServiceKeyAttribute`特性进行标识。`ServiceKeyAttribute`存在两个参数(属性)。
 
@@ -151,7 +151,7 @@ public interface ITestAppService
 
 ```csharp
 /// 应用服务接口(如:可定义在ITestApplication.csproj项目)
-[ServiceRoute(multipleServiceKey: true)]
+[ServiceRoute]
 public interface ITestAppService
 {
     Task<string> Create(TestInput input);
@@ -190,22 +190,21 @@ public class TestV2AppService : ITestAppService
 ![appservice-and-serviceentry1.jpg](/assets/imgs/appservice-and-serviceentry1.jpg)
 
 
-在rpc通信过程中,可以通过`ICurrentServiceKey`的实例设置要请求的应用接口的`serviceKey`。
+在rpc通信过程中,可以通过`IServiceKeyExecutor`的实例设置要请求的应用接口的`serviceKey`。
 
 ```csharp
-private readonly ICurrentServiceKey _currentServiceKey;
+private readonly IServiceKeyExecutor _serviceKeyExecutor;
 
 public TestProxyAppService(ITestAppService testAppService,
-    ICurrentServiceKey currentServiceKey)
+    IServiceKeyExecutor serviceKeyExecutor)
 {
     _testAppService = testAppService;
-    _currentServiceKey = currentServiceKey;
+    _serviceKeyExecutor = serviceKeyExecutor;
 }
 
 public async Task<string> CreateProxy(TestInput testInput)
 {
-    _currentServiceKey.Change("v2"); //在rpc代理请求之前设置`serviceKey`;
-    return await _testAppService.Create(testInput);
+   return await _serviceKeyExecutor.Execute(() => _testAppService.Create(testInput), "v2");
 }
 
 ```
