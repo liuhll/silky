@@ -4,6 +4,12 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class ServiceEntryGovernance : GovernanceOptions
     {
+
+        public ServiceEntryGovernance() 
+        {
+        
+        }
+
         public ServiceEntryGovernance(GovernanceOptions governanceOptions)
         {
             ShuntStrategy = governanceOptions.ShuntStrategy;
