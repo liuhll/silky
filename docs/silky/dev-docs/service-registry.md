@@ -3,9 +3,9 @@ title:  服务注册中心
 lang: zh-cn
 ---
 
-## 服务注册中心原理
+## 服务注册中心简介
 
-在分布式系统里的注册中心。原理是将部署服务的机器地址记录到注册中心，服务消费者在有需求的时候，只需要查询注册中心，输入提供的服务名，就可以得到地址，从而发起调用。
+在分布式系统中,注册中心的作用是将部署服务的机器地址以及其他元数据记录到注册中心,服务消费者在有需求的时候，只需要查询注册中心，输入提供的服务名，就可以得到地址，从而发起调用。
 
 在微服务架构下，主要有三种角色：**服务提供者（RPC Server）**、**服务消费者（RPC Client）** 和 **服务注册中心（Registry）**，三者的交互关系请看下面这张图:
 
@@ -24,76 +24,159 @@ lang: zh-cn
 
 :::
 
-## 服务路由
+当前, silky微服务框架支持使用 **Zookeeper** 、 **Nacos** 、 **Consul** 作为服务注册中心,开发者可以选择熟悉的服务中间件作为服务注册中心。
 
-在silky框架中,服务提供者将会以**服务路由**为单位向服务注册中心注册路由信息。每一个**被实现了**的应用服务接口方法(服务条目)都会生成一条**服务路由**。
+## 服务元数据
 
-服务路由的格式如下：
+在silky框架中,服务提供者向服务注册中心注册的数据被称为: **服务元数据** 。服务元数据主要四部分组成:
+
+1. **hostName** : 用于描述服务提供者的名称,为构建主机的包名称
+2. **services** : 该服务提供者所提供的应用服务信息,是一个数组,包括：服务Id,服务名称,服务协议,服务条目，元数据等信息
+3. **timeStamp** : 更新服务元数据的时间戳
+4. **endpoints** : 该服务实例的终结点,是一个数组。不同服务注册中心注册服务实例的终结点不同
+
+
+例如,注册到 **Zookeeper** 服务注册中心的服务元数据如下:
 
 ```json
 {
-    "serviceDescriptor":{
-        "id":"IAnotherApplication_IAnotherAppService_DeleteTwo_name",
-        "serviceProtocol":0,
-        "metadatas":{
-
-        }
-    },
-    "addressDescriptors":[
+    "hostName":"DemoHost",
+    "services":[
         {
-            "address":"172.19.16.1",
-            "port":2202,
+            "id":"Demo.Application.Contracts.System.ISystemAppService",
+            "serviceName":"SystemAppService",
+            "serviceProtocol":0,
+            "serviceEntries":[
+                {
+                    "id":"Demo.Application.Contracts.System.ISystemAppService.GetInfo_Get",
+                    "serviceId":"Demo.Application.Contracts.System.ISystemAppService",
+                    "serviceName":"SystemAppService",
+                    "method":"GetInfo",
+                    "webApi":"api/system/demo/info",
+                    "httpMethod":0,
+                    "serviceProtocol":0,
+                    "metadatas":{
+
+                    },
+                    "prohibitExtranet":false,
+                    "isAllowAnonymous":true,
+                    "isDistributeTransaction":false
+                }
+            ],
+            "metadatas":{
+
+            }
+        }
+    ],
+    "endpoints":[
+        {
+            "host":"172.26.144.1",
+            "port":2200,
+            "processorTime":2578.125,
+            "timeStamp":1636464575,
             "serviceProtocol":0
         }
     ],
-    "timeStamp":1623254897
+    "timeStamp":1636464576
 }
 ```
 
-服务路由主要由三部分组成，分别为：**服务描述符(serviceDescriptor)**、**地址描述符(addressDescriptors)**、**时间戳(timeStamp)**。
+如果服务注册中心是 **Consul** 或是 **Nacos**, 服务元数据格式如下(服务实例的终结点会单独维护):
 
-### 服务描述符(serviceDescriptor)
+```json
+{
+    "hostName":"DemoHost",
+    "services":[
+        {
+            "id":"Demo.Application.Contracts.System.ISystemAppService",
+            "serviceName":"SystemAppService",
+            "serviceProtocol":0,
+            "serviceEntries":[
+                {
+                    "id":"Demo.Application.Contracts.System.ISystemAppService.GetInfo_Get",
+                    "serviceId":"Demo.Application.Contracts.System.ISystemAppService",
+                    "serviceName":"SystemAppService",
+                    "method":"GetInfo",
+                    "webApi":"api/system/demo/info",
+                    "httpMethod":0,
+                    "serviceProtocol":0,
+                    "metadatas":{
 
-每一个服务条目对应生成一条**服务路由**,服务路由通过服务描述符标识其唯一性。服务描述符由如下三部分组成:
+                    },
+                    "prohibitExtranet":false,
+                    "isAllowAnonymous":true,
+                    "isDistributeTransaction":false
+                }
+            ],
+            "metadatas":{
+
+            }
+        }
+    ],
+    "timeStamp":1636464576
+}
+```
+
+### 主机名称(hostName)
+
+**hostName** 用于描述服务提供者的名称,在向服务注册中心注册服务的过程中,应用会判断服务注册中心是否存在该应用的服务元数据,如果不存在,则创建相应的节点,并添加相应的服务元数据;如果已经存在相应的服务节点,则会更新服务元数据,其他服务提供者的实例从服务注册中心获取到服务元数据,并更新本地内存的服务元数据。
+
+### 服务列表(services)
+
+该属性包含该应用所支持的服务列表,如果服务注册中心的服务列表被更新,其他服务实例也会从服务注册中心获取,并更新到本地内存。
+
+服务列表包括：服务Id,服务名称,服务协议,服务条目，元数据等信息
 
 | 字段 | 说明 | 备注 |
 |:-----|:-----|:-----|
-| id | 服务路由(描述符)Id | 具有唯一性; 生成规则:通过服务条目对应的方法的完全限定名 + 参数名 |
+| id | 服务Id | 具有唯一性;服务接口定义的完全限定名 |
+| serviceName | 服务名称 |  |
 | serviceProtocol | 服务通信协议 | rpc通信框架中,采用的通信协议  |
-| metadatas | 其他元数据 | 可以为服务路由写入(k,v)格式的元数据  |
+| serviceEntries | 该服务支持的服务条目(即：应用服务定义的方法) | 数据类型为数组  |
+| serviceEntries.id | 服务条目Id | 方法的完全限定名 + 参数名 + Http方法名  |
+| serviceEntries.serviceId | 服务Id |  |
+| serviceEntries.serviceName | 服务名称 |  |
+| serviceEntries.method | 服务条目对应的方法名称 |  |
+| serviceEntries.webApi | 生成的webapi 地址 | 如果被禁止访问外网则为空  |
+| serviceEntries.httpMethod | 生成的webapi的请求地址 | 如果被禁止访问外网则为空  |
+| serviceEntries.serviceProtocol |  rpc通信框架中,采用的通信协议 |   |
+| serviceEntries.metadatas |  服务条目的元数据 | 可以为服务条目写入(k,v)格式的元数据   |
+| metadatas | 服务的其他元数据 | 可以为服务写入(k,v)格式的元数据  |
 
 ::: warning 注意
 
-1. 在一个微服务集群中,服务路由具有唯一性。也就是说,不允许在同一个微服务集群中, 不同微服务应用中不允许出现两个一模一样的方法(应用服务接口的完全限定名和方法名、参数名一致);
-
+1. 在一个微服务集群中,服务条目具有唯一性。也就是说,不允许在同一个微服务集群中, 不同微服务应用中不允许出现两个一模一样的方法(应用服务接口的完全限定名和方法名、参数名一致);
+2. 只有被实现的应用服务接口才会被注册到服务注册中心。
 ::: 
 
-### 地址描述符(addressDescriptors)
+### 终结点
 
-**地址描述符**是一个数组,用于存放该服务路由(服务条目)存在的微服务应用实例的IP地址信息。
+**endpoints** 是用来描述该微服务的服务实例的地址信息。
 
-| 字段 | 说明 | 备注 |
-|:-----|:-----|:-----|
-| address | ip地址 | 微服务应用实例的IP地址 |
-| port | rpc通信端口号 | 微服务应用通信中指定的rpc端口号  |
-| serviceProtocol | 服务通信协议 | rpc通信框架中,采用的通信协议  |
+一个服务实例可能存在多个终结点,如：使用webhost构建的微服务应用(存在web地址终结点和rpc终结点地址)；构建支持websocket服务的微服务应用(存在websocket服务地址终结点和rpc终结点地址)。
 
-::: warning 注意
+使用不同的服务注册中心,终结点可能会被做不同的处理。
 
-1. 只有被实现的应用服务接口才会生成服务路由。
+1. 如果使用 **Zookeeper** 作为服务注册中心, 服务实例的终结点将被更新到该服务提供者对应节点数据的 `endpoints` 属性
+2. 如果使用 **Consul** 作为服务注册中心, 服务实例将会被注册到 **Services** 节点,并且只会注册协议为`TCP`的终结点,其他协议的终结点将会以元数据的形式添加到服务实例的元数据中
 
-2. 在微服务应用向服务注册中心注册路由时，首先会从服务注册中心获取最新的路由信息,在内存中更新该服务路由的服务路由地址(**将该微服务应用的地址更新到地址描述符中**),并将更新后的服务路由地址注册到服务注册中心,其他微服务应用根据从服务注册中心订阅到更新后的服务路由信息后,会将服务路由信息更新到微服务的内存中缓存起来。
+![service-registry2.png](/assets/imgs/service-registry2.png)
 
-3. 为防止同一个微服务应用同时伸缩服务实例,在微服务应用获取或是注册服务路由的过程中会加分布式锁。
+![service-registry3.png](/assets/imgs/service-registry3.png)
 
-::: 
+3. 如果使用 **Nacos** 作为服务注册中心, 服务将会被注册到服务列表节点,与使用 **Consul** 作为服务注册中心相同,只会注册协议为`TCP`的终结点,其他协议的终结点将会以元数据的形式添加到服务实例的元数据中
+
+![service-registry4.png](/assets/imgs/service-registry4.png)
+
+![service-registry5.png](/assets/imgs/service-registry5.png)
+
 
 ### 时间戳
 
 `timeStamp`是指向服务注册中心更新服务路由的最后时间。
 
 
-## 使用zookeeper作为服务注册中心
+## 使用Zookeeper作为服务注册中心
 
 当前,silky支持使用zookeeper作为服务注册中心。
 
@@ -106,6 +189,7 @@ silky支持为微服务集群配置多个服务注册中心，您只需要在配
 ```yml
 
 registrycenter: // 服务注册中心配置节点
+  type: Zookeeper
   connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186 // 服务配置中心链接
   registryCenterType: Zookeeper // 注册中心类型
   connectionTimeout: 1000 // 链接超时时间(单位:ms)
@@ -117,8 +201,6 @@ registrycenter: // 服务注册中心配置节点
 
 除此之外,使用zookeeper作为服务注册中心,还必须要依赖`ZookeeperModule`模块。
 
-::: warning 注意
+## 使用Nacas作为服务注册中心
 
-1. 默认启动服务模块(`NormHostModule`、`WebHostModule`、`WsHostModule`)均已经依赖`ZookeeperModule`模块。
-
-::: 
+## 使用Consul作为服务注册中心
