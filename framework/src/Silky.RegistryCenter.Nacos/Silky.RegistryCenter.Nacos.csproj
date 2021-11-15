@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="nacos-sdk-csharp" Version="1.2.1" />
+        <PackageReference Include="nacos-sdk-csharp" Version="1.2.2" />
     </ItemGroup>
 
 </Project>
