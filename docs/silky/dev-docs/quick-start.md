@@ -395,7 +395,7 @@ PM> Install-Package Silky.WebSocket -Version 3.0.2
 
 ![quick-start8.png](/assets/imgs/quick-start8.png)
 
-8. 客户端透过网关与websocket服务握手
+8. 客户端透过网关代理与websocket服务握手
 
 客户端无法直接与该微服务应用进行握手,必须通过网关引用该微服务的 **应用接口层** ,通过[网关](#构建Silky微服务网关)的提供的websocket代理服务与该微服务进行握手,通过`ws[s]://gateway_ip[:gateway_port]/websocket_webapi`与之前定义websocket服务进行会话。
 
