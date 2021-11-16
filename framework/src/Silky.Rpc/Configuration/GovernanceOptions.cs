@@ -20,7 +20,10 @@ namespace Silky.Rpc.Configuration
             RetryIntervalMillSeconds = 50;
             RetryTimes = 3;
             MaxConcurrentHandlingCount = 50;
-          
+            _heartbeatWatchIntervalSeconds = 300;
+            EnableHeartbeat = false;
+
+
         }
 
 
@@ -76,7 +79,15 @@ namespace Silky.Rpc.Configuration
         public int RetryIntervalMillSeconds { get; set; }
 
         public int MaxConcurrentHandlingCount { get; set; }
-        
-        
+
+        public bool EnableHeartbeat { get; set; }
+
+        private int _heartbeatWatchIntervalSeconds;
+
+        public int HeartbeatWatchIntervalSeconds
+        {
+            get => _heartbeatWatchIntervalSeconds;
+            set => _heartbeatWatchIntervalSeconds = value <= 60 ? 60 : value;
+        }
     }
 }

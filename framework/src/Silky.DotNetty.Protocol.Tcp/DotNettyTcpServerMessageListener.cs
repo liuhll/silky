@@ -34,17 +34,21 @@ namespace Silky.DotNetty.Protocol.Tcp
         private readonly IHostEnvironment _hostEnvironment;
         private readonly IRpcEndpoint _hostRpcEndpoint;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
+        private GovernanceOptions _governanceOptions;
         private IChannel m_boundChannel;
         private IEventLoopGroup m_bossGroup;
         private IEventLoopGroup m_workerGroup;
 
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
+            IOptionsMonitor<GovernanceOptions> governanceOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder)
         {
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
             _rpcOptions = rpcOptions.Value;
+            _governanceOptions = governanceOptions.CurrentValue;
+            governanceOptions.OnChange((options, s) => _governanceOptions = options);
             _hostRpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
             if (_rpcOptions.IsSsl)
             {
@@ -93,9 +97,9 @@ namespace Silky.DotNetty.Protocol.Tcp
 
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
-                    if (_rpcOptions.EnableHeartbeat && _rpcOptions.HeartbeatWatchInterval > 0)
+                    if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
                     {
-                        pipeline.AddLast(new IdleStateHandler(0, _rpcOptions.HeartbeatWatchInterval, 0));
+                        pipeline.AddLast(new IdleStateHandler(0, _governanceOptions.HeartbeatWatchIntervalSeconds, 0));
                         pipeline.AddLast(
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }

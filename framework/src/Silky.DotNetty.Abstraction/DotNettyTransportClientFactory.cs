@@ -36,19 +36,21 @@ namespace Silky.DotNetty
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
         private readonly Bootstrap _bootstrap;
         private RpcOptions _rpcOptions;
+        private GovernanceOptions _governanceOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
-
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-        // private IEventLoopGroup m_group;
+   
 
-        public DotNettyTransportClientFactory(IOptionsMonitor<RpcOptions> rpcOptions,
+        public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
+            IOptionsMonitor<GovernanceOptions> governanceOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
             IRpcEndpointMonitor rpcEndpointMonitor)
         {
-            _rpcOptions = rpcOptions.CurrentValue;
-            rpcOptions.OnChange((options, s) => _rpcOptions = options);
+            _rpcOptions = rpcOptions.Value;
+            _governanceOptions = governanceOptions.CurrentValue;
+            governanceOptions.OnChange((options, s) => _governanceOptions = options);
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
             _rpcEndpointMonitor = rpcEndpointMonitor;
@@ -121,9 +123,9 @@ namespace Silky.DotNetty
 
                     pipeline.AddLast(new LengthFieldPrepender(8));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
-                    if (_rpcOptions.EnableHeartbeat && _rpcOptions.HeartbeatWatchInterval > 0)
+                    if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
                     {
-                        pipeline.AddLast(new IdleStateHandler(_rpcOptions.HeartbeatWatchInterval * 2, 0, 0));
+                        pipeline.AddLast(new IdleStateHandler(_governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0, 0));
                         pipeline.AddLast(new ChannelInboundHandlerAdapter());
                     }
 

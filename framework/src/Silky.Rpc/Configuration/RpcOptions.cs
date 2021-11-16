@@ -13,9 +13,8 @@ namespace Silky.Rpc.Configuration
             UseLibuv = true;
             IsSsl = false;
             SoBacklog = 8192;
-            EnableHeartbeat = true;
             ConnectTimeout = 500;
-            _heartbeatWatchInterval = 300;
+      
         }
 
         public string Host { get; set; }
@@ -26,16 +25,8 @@ namespace Silky.Rpc.Configuration
         public string SslCertificatePassword { get; set; }
         public int SoBacklog { get; set; }
 
-        public bool EnableHeartbeat { get; set; }
         [NotNull] public string Token { get; set; }
         public double ConnectTimeout { get; set; }
 
-        private int _heartbeatWatchInterval;
-
-        public int HeartbeatWatchInterval
-        {
-            get => _heartbeatWatchInterval;
-            set => _heartbeatWatchInterval = value <= 60 ? 60 : value;
-        }
     }
 }
