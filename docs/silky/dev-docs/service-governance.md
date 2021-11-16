@@ -3,13 +3,13 @@ title: 服务治理
 lang: zh-cn
 ---
 
-## 概念
+## 服务治理的概念
 
-服务治理是主要针对分布式服务框架，微服务，处理服务调用之间的关系，服务发布和发现（谁是提供者，谁是消费者，要注册到哪里），出了故障谁调用谁，服务的参数都有哪些约束,如何保证服务的质量？如何服务降级和熔断？怎么让服务受到监控，提高机器的利用率?
+服务治理是主要针对分布式服务框架、微服务，处理服务调用之间的关系，服务发布和发现（谁是提供者，谁是消费者，要注册到哪里），出了故障谁调用谁，服务的参数都有哪些约束,如何保证服务的质量？如何服务降级和熔断？怎么让服务受到监控，提高机器的利用率?
 
 微服务有哪些问题需要治理？
 
-1. **服务注册与发现**: 单体服务拆分为微服务后，如果微服务之间存在调用依赖，就需要得到目标服务的服务地址，也就是微服务治理的”服务发现“。要完成服务发现，就需要将服务信息存储到某个载体，载体本身即是微服务治理的*服务注册中心*，而存储到载体的动作即是*服务注册*。
+1. **服务注册与发现**: 单体服务拆分为微服务后，如果微服务之间存在调用依赖，就需要得到目标服务的服务地址，也就是微服务治理的 **服务发现** 。要完成服务发现，就需要将服务信息存储到某个载体，载体本身即是微服务治理的*服务注册中心*，而存储到载体的动作即是*服务注册*。
 
 2. **可观测性**: 微服务由于较单体应用有了更多的部署载体，需要对众多服务间的调用关系、状态有清晰的掌控。可观测性就包括了调用拓扑关系、监控（Metrics）、日志（Logging）、调用追踪（Trace）等。
 
@@ -23,71 +23,46 @@ lang: zh-cn
 
 6. **服务本身的治理**: 确保微服务主机的健康,有能力将不健康节点从微服务集群中移除。
 
-## Silky框架的服务治理
+## 服务注册与发现
 
-silky框架的服务治理主要以**服务条目**为基本单位，框架为每个服务条目的治理属性指定了缺省值,开发者也可以通过**配置文件统一配置**或是通过**GovernanceAttribute**特性对服务治理属性进行设置。
+silky支持服务的自动注册和发现,支持使用 **Zookeeper** 、**Nacos** 、**Consul** 作为服务注册中心。服务实例上线、下线智能感知。
 
-以下描述了以服务条目为治理单位的属性表单：
+1. 当服务实例启动时,会向服务注册中心新增或是更新服务元数据(*如果不存在新增服务元数据、如果存在服务元数据则更新*);同时,更新服务注册中心该实例的终结点(实例地址信息)。
 
-| 属性 | 说明 | 缺省值 |  备注 |
-|:-----|:-----|:-----|:------|
-| AddressSelectorMode | 负载均衡策略 | Polling(轮询) | 负载均衡算法支持：Polling(轮询)、Random(随机)、HashAlgorithm(哈希一致性，根据rpc参数的第一个参数值) |
-| ExecutionTimeout | 执行超时时间 | 3000(ms) | 单位为(ms),超时时发生熔断，-1表示在rpc通信过程中不会超时 |
-| CacheEnabled | 是否启用缓存拦截 | true | rpc通信中是否启用缓存拦截 |
-| MaxConcurrent | 允许的最大并发量 | 100 |  |
-| FuseProtection | 是否开启熔断保护  | true |  |
-| FuseSleepDuration | 熔断休眠时长  | 60(s) | 发生熔断后,多少时长后再次重试该服务实例 |
-| FuseTimes | 服务提供者允许的熔断次数  | 3 | 服务实例连续n次发生熔断端,服务实例将被标识为不健康 |
-| FailoverCount | 故障转移次数  | 0 | rpc通信异常情况下,允许的重新路由服务实例的次数,0表示有几个服务实例就转移几次 |
-| ProhibitExtranet | 是否禁止外网访问  | false | 该属性只允许通过`GovernanceAttribute`特性进行设置 |
-| FallBackType | 失败回调指定的类型  | null | 类型为`Type`,如果指定了失败回调类型,那么在服务执行失败,则会执行该类型的`Invoke`方法,该类型,必须要继承`IFallbackInvoker`该接口 |
+2. 使用 **Zookeeper** 或是 **Nacos** 作为服务注册中心,会通过 **发布-订阅** 的方式从服务注册中心获取最新的服务元数据和服务实例的终结点(实例地址)信息,并更新到本地内存;
 
+3. 如果使用 **Consul** 作为服务注册中心，则会通过心跳的方式从服务注册中心 **拉取** 最新的服务元数据和服务实例的终结点(实例地址)信息。当服务注册中心的终结点(地址信息)发生变化,服务实例的内存中服务路由表信息也将得到更新。
 
-### 统一配置
+4. 当服务在RPC通信过程中发生IO异常或是通信异常时,会在配置的n(配置属性为:`Governance:UnHealthAddressTimesAllowedBeforeRemoving`)次后,从服务注册中心移除。(`UnHealthAddressTimesAllowedBeforeRemoving`如果的值等于0,则服务实例将会被立即移除)。
 
-开发者可以通过配置文件的`Governance`节点对微服务的治理进行统一配置。如果在配置文件中不对服务治理进行配置,那么，在rpc通信过程中,服务治理的属性值使用缺省值。
+5. 在RPC通信过程中,采用长链接, 支持心跳检测。在服务之间建立连接后,如果`Governance:EnableHeartbeat`配置为`true`，那么会定时(通过配置`Governance:HeartbeatWatchIntervalSeconds`)发送一个心跳包,从而保证会话链接的可靠性。如果心跳检测到通信异常,则会根据配置属性(`Governance:UnHealthAddressTimesAllowedBeforeRemoving`)n次后,从服务注册中心移除。
 
-对服务治理的配置如下述所示:
+## 负载均衡
 
-```yaml
-governance:
-  addressSelectorMode: Random
-  executionTimeout: 3000
-  maxConcurrent: 500
-```
-
-### 通过`GovernanceAttribute`特性
-
-开发者可以通过`GovernanceAttribute`特性对应用服务接口方法进行标识，通过`GovernanceAttribute`特性的属性对该服务条目的治理方式进行调整。
+在RPC通信过程中,silky框架支持 **轮询(Polling)**、 **随机(Random)** 、 **哈希一致性(HashAlgorithm)** 等负载均衡算法。负载均衡的缺省值为 **轮询(Polling)** ,开发者可以通过配置属性 `Governance:ShuntStrategy` 来统一指定负载均衡算法。同时,开发者也可以通过`GovernanceAttribute`特性来重置应用服务方法(服务条目)的负载均衡算法。
 
 例如:
 
 ```csharp
-[Governance(FallBackType = typeof(UpdatePartFallBack),ShuntStrategy = AddressSelectorMode.HashAlgorithm)]
-Task<string> UpdatePart(TestInput input);
-
+[HttpGet("{name}")]
+[Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
+Task<TestOut> Get([HashKey]string name);
 ```
 
-### 失败回调
+如果选择使用 **哈希一致性(HashAlgorithm)** 作为负载均衡算法,则需要使用`[HashKey]`对某一个参数进行标识,这样,相同参数的请求,在RPC通信过程中,都会被路由到通一个服务实例。
 
-应用服务接口方法可以通过`GovernanceAttribute`特性的`FallBackType`属性指定失败回调类型。指定的失败回调类型必须是一个非抽象的类,且必须继承自`IFallbackInvoker<ReturnType>`。
+## 超时
 
-例如:上述应用程序接口方法指定的失败回调类型`UpdatePartFallBack`定义如下所示:
+## 失败重试
 
-```csharp
-public class UpdatePartFallBack : IFallbackInvoker<string> 
-//泛形类型与应用程序接口的返回值类型保持一致
-{
-    public async Task<string> Invoke(IDictionary<string, object> parameters)
-    {
-        return "UpdatePartFallBack";
-    }
-}
+## 熔断保护(断路器)
 
-```
+## 限流
 
-:::warning
+## 失败回退
 
-应用服务接口方法的治理属性的优先级为: `GovernanceAttribute`特性 > 配置 > 缺省值
+## 链路跟踪
 
-:::
+## 服务保护
+
+## 缓存拦截
