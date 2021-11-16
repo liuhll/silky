@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Silky.Core.Exceptions;
-using Silky.Core.Rpc;
-using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
@@ -65,23 +63,7 @@ namespace Silky.Rpc.Runtime.Client
                     FailoverType.Communication);
             }
         }
-
-
-        protected virtual IRpcEndpoint GetSelectedServerEndpoint()
-        {
-            var selectedHost = RpcContext.Context.GetSelectedServerHost();
-            if (selectedHost == null)
-            {
-                return null;
-            }
-
-            var selectedServerPort = RpcContext.Context.GetSelectedServerPort();
-            var selectedServerServiceProtocol = RpcContext.Context.GetSelectedServerServiceProtocol();
-            var selectedServerEndpoint =
-                RpcEndpointHelper.CreateRpcEndpoint(selectedHost, selectedServerPort, selectedServerServiceProtocol);
-            return selectedServerEndpoint;
-        }
-
+        
         public override event RpcInvokeFailoverHandle OnInvokeFailover;
 
         public override FailoverType FailoverType { get; } = FailoverType.OverflowServerHandle;
