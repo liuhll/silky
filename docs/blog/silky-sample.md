@@ -147,8 +147,6 @@ distributedCache:
   redis:
     isEnabled: true 
     configuration: 127.0.0.1:6379,defaultDatabase=0
-lock:
-  lockRedisConnection: 127.0.0.1:6379,defaultDatabase=1
 connectionStrings:
     default: server=127.0.0.1;port=3306;database=account;uid=root;pwd=qwe!P4ss;
 ```
