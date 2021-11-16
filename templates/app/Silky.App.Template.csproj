@@ -1,28 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
-    <PropertyGroup>
-      <PackageType>Template</PackageType>
-      <License>MIT</License>
-      <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
-      <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
-      <RepositoryUrl>https://github.com/liuhll/silky</RepositoryUrl>
-      <PackageId>Silky.App.Template</PackageId>
-      <Title>Silky App Template</Title>
-      <Authors>Liuhll</Authors>
-      <Description>Templates to use when creating an application for Silky App.</Description>
-      <PackageTags>silky,app,microservice,aspnetcore,host</PackageTags>
-  
-      <TargetFramework>net5.0</TargetFramework>
-  
-      <IncludeContentInPack>true</IncludeContentInPack>
-      <IncludeBuildOutput>false</IncludeBuildOutput>
-      <ContentTargetFolders>content</ContentTargetFolders>
-      <NoWarn>$(NoWarn);NU5128</NoWarn>
-    </PropertyGroup>
-  
-    <ItemGroup>
-      <Content Include="content\**\*" Exclude="content\**\bin\**;templates\**\obj\**" />
-      <Compile Remove="**\*" />
-    </ItemGroup>
-  
-  </Project>
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <License>MIT</License>
+    <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/liuhll/silky</RepositoryUrl>
+    <PackageId>Silky.App.Template</PackageId>
+    <Title>Silky App Template</Title>
+    <Authors>Liuhll</Authors>
+    <Description>Templates to use when creating an application for Silky App.</Description>
+    <PackageTags>silky,app,microservice,aspnetcore,host</PackageTags>
+
+    <TargetFramework>net6.0</TargetFramework>
+
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="content\**\*" Exclude="content\**\bin\**;templates\**\obj\**" />
+    <Compile Remove="**\*" />
+  </ItemGroup>
+
+</Project>

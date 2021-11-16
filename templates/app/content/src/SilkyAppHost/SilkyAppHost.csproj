@@ -2,7 +2,7 @@
     <Import Project="..\..\common.props" />
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
@@ -24,19 +24,19 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="appsettings.Apollo.yaml" Condition="'$(dotnetenv)' == 'Apollo'">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="appsettings.Production.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="appsettings.ContainerDev.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
-   <ItemGroup Condition="'$(hosttype)' != 'gateway'">
-      <ProjectReference Include="..\SilkyApp.Application\SilkyApp.Application.csproj" />
-      <ProjectReference Include="..\SilkyApp.Database.Migrations\SilkyApp.Database.Migrations.csproj" />
+    <ItemGroup Condition="'$(hosttype)' != 'gateway'">
+        <ProjectReference Include="..\SilkyApp.Application\SilkyApp.Application.csproj" />
+        <ProjectReference Include="..\SilkyApp.Database.Migrations\SilkyApp.Database.Migrations.csproj" />
     </ItemGroup>
-    
+
 </Project>

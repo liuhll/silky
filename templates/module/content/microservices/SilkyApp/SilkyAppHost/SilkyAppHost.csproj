@@ -1,42 +1,42 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-    <Import Project="..\..\..\common.props" />
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+  <Import Project="..\..\..\common.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-    <ItemGroup>
-        <None Update="appsettings.yaml">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="appsettings.Development.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="appsettings.Apollo.yaml" Condition="'$(dotnetenv)' == 'Apollo'">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="appsettings.Production.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="appsettings.ContainerDev.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Development.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Apollo.yaml" Condition="'$(dotnetenv)' == 'Apollo'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Production.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.ContainerDev.yaml" Condition="'$(dotnetenv)' != 'Apollo'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
-    <ItemGroup Condition="'$(hosttype)' != 'gateway'">
-      <ProjectReference Include="..\SilkyApp.Application\SilkyApp.Application.csproj" />
-      <ProjectReference Include="..\SilkyApp.Database.Migrations\SilkyApp.Database.Migrations.csproj" />
-    </ItemGroup>
-    
+  <ItemGroup Condition="'$(hosttype)' != 'gateway'">
+    <ProjectReference Include="..\SilkyApp.Application\SilkyApp.Application.csproj" />
+    <ProjectReference Include="..\SilkyApp.Database.Migrations\SilkyApp.Database.Migrations.csproj" />
+  </ItemGroup>
+
 </Project>
