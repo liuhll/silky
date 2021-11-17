@@ -200,7 +200,7 @@ lang: zh-cn
 
 | 字段 | 说明 | 备注 |
 |:-----|:-----|:-----|
-| host | 对应的主机地址 | ip或是域名 |
+| host | 对应的主机地址 | 微服务应用的Ip内网地址 |
 | port | 端口号 |  |
 | processorTime | CPU使使用率  |  |
 | timeStamp | 注册时间戳  |  |
