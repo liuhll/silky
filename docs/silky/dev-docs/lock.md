@@ -22,34 +22,3 @@ silky框架使用[RedLock.net](https://github.com/samcook/RedLock.net)实现分�
 
 silky框架在服务条目注册的过程中,使用到了分布式锁,避免由于多个服务实例同时注册统一服务条目,导致服务地址未被更新的问题。由于在框架层面使用了分布式锁,所以,在普通业务应用服务中,开发者必须要对分布式锁使用到的`redis`服务进行配置。
 
-## 使用
-
-1. 在配置文件中的`lock`节点指定redis服务的连接字符串
-
-```yml
-lock:
-  lockRedisConnection: silky.redis1:6379,defaultDatabase=1
-```
-
-2. 通过构造器注入`ILockerProvider`的实例
-
-```csharp
-protected readonly ILockerProvider _lockerProvider;
-protected ServiceRouteManagerBase(ILockerProvider lockerProvider)           
-{
-   _lockerProvider = lockerProvider;
-}
-
-```
-
-3. 通过`ILockerProvider`实例对象创建分布式锁,并通`locker`执行锁定的代码块
-  
-   创建分布式锁对象的时候,需要传入一个锁定的资源名称。 
- 
-  ```csharp
-  protected async Task RegisterRouteWithLockAsync(ServiceRouteDescriptor serviceRouteDescriptor)
-  {
-      using var locker = await _lockerProvider.CreateLockAsync(serviceRouteDescriptor.ServiceDescriptor.Id);
-      await locker.Lock(async () => { await RegisterRouteAsync(serviceRouteDescriptor); });
-  }
-  ```
