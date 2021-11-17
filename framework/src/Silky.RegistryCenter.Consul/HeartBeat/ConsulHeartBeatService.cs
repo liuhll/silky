@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Silky.Core.Logging;
 using Silky.RegistryCenter.Consul.Configuration;
 
 namespace Silky.RegistryCenter.Consul
@@ -30,8 +31,15 @@ namespace Silky.RegistryCenter.Consul
 
         private async void HeartBeatCallBack(object state)
         {
-            Func<Task> cacheServerFromConsul = (Func<Task>)state;
-            await cacheServerFromConsul();
+            try 
+            {
+                Func<Task> cacheServerFromConsul = (Func<Task>)state;
+                await cacheServerFromConsul();
+            } catch (Exception ex) 
+            {
+                _logger.LogException(ex);
+            }
+            
         }
 
 
