@@ -355,7 +355,6 @@ namespace Silky.Http.Dashboard.AppService
                 {
                     TypeName = p.Type.FullName,
                     MethodName = p.MethodName ?? serviceEntry?.MethodInfo.Name,
-                    Weight = p.Weight
                 }).ToArray()
             };
 

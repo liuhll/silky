@@ -22,7 +22,6 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public string MethodName { get; set; }
 
-        public int Weight { get; set; }
     }
 
     public class ServiceKeyOutput

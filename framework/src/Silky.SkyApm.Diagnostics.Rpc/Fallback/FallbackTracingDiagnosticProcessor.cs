@@ -43,8 +43,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Fallback
                                  $"--> MessageId:{eventData.MessageId}.{Environment.NewLine}" +
                                  $"--> Parameters:{_serializer.Serialize(eventData.Parameters)}.{Environment.NewLine}" +
                                  $"--> FallbackType:{eventData.FallbackProvider.Type.FullName}.{Environment.NewLine}" +
-                                 $"--> FallbackType Method:{eventData.FallbackProvider.MethodName}.{Environment.NewLine}" +
-                                 $"--> FallbackType Weight:{eventData.FallbackProvider.Weight}"));
+                                 $"--> FallbackType Method:{eventData.FallbackProvider.MethodName}.{Environment.NewLine}"));
 
             context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientAddress);

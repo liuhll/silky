@@ -176,23 +176,21 @@ namespace Silky.Rpc.Runtime.Server
 
         private void CreateFallBackExecutor()
         {
-            var fallbackProviders = CustomAttributes
-                .OfType<IFallbackProvider>()
-                .OrderBy(p => p.Weight);
-            foreach (var fallbackProvider in fallbackProviders)
+            var fallbackProvider = CustomAttributes
+                .OfType<IFallbackProvider>().FirstOrDefault();
+
+            if (fallbackProvider != null) 
             {
                 if (!EngineContext.Current.IsRegistered(fallbackProvider.Type))
                 {
-                    continue;
+                    return;
                 }
-
                 var compareMethodName = fallbackProvider.MethodName ?? MethodInfo.Name;
                 var fallbackMethod = fallbackProvider.Type.GetCompareMethod(MethodInfo, compareMethodName);
                 if (fallbackMethod == null)
                 {
-                    continue;
+                    return;
                 }
-
                 var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(fallbackMethod);
                 FallbackMethodExecutor =
                     ObjectMethodExecutor.Create(fallbackMethod, fallbackProvider.Type.GetTypeInfo(),
@@ -200,6 +198,7 @@ namespace Silky.Rpc.Runtime.Server
 
                 FallbackProvider = fallbackProvider;
             }
+                
         }
 
         private void CreateDefaultSupportedResponseMediaTypes()
