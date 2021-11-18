@@ -26,9 +26,9 @@ namespace Silky.GatewayHost
             services.AddMessagePackCodec();
             services.AddHealthChecks()
                 .AddSilkyRpc();
-            //services
-            //    .AddHealthChecksUI()
-            //    .AddInMemoryStorage();
+            services
+                .AddHealthChecksUI()
+                .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,8 +43,8 @@ namespace Silky.GatewayHost
             }
             app.UseSerilogRequestLogging();
             app.UseDashboard();
-            //app.UseSilkyRpcHealthCheck()
-            //    .UseHealthChecksPrometheusExporter("/metrics");
+            app.UseSilkyRpcHealthCheck()
+                .UseHealthChecksPrometheusExporter("/metrics");
             app.UseRouting();
             app.UseSilkyIdentity();
             app.UseSilkyWrapperResponse();
@@ -56,7 +56,7 @@ namespace Silky.GatewayHost
             app.UseSilkyHttpServer();
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapHealthChecksUI();
+                endpoints.MapHealthChecksUI();
                 endpoints.MapSilkyRpcServices();
             });
         }

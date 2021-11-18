@@ -34,3 +34,9 @@ skyWalking:
       timeout: 10000
       connectTimeout: 10000
       reportTimeout: 600000
+healthChecksUI:
+  healthChecks:
+    - name: silkyrpc
+      uri: http://127.0.0.1:5000/silkyrpc/healthz
+  evaluationTimeinSeconds: 30
+  minimumSecondsBetweenFailureNotifications: 60

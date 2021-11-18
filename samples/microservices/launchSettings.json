@@ -4,10 +4,10 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "silky.sample.account": "StartDebugging",
-        "silky.sample.gateway": "StartDebugging",
-        "silky.sample.order": "StartDebugging",
-        "silky.sample.stock": "StartDebugging"
+        "Silky.StockHost": "StartDebugging",
+        "Silky.OrderHost": "StartDebugging",
+        "Silky.GatewayHost": "StartDebugging",
+        "Silky.AccountHost": "StartDebugging"
       }
     }
   }

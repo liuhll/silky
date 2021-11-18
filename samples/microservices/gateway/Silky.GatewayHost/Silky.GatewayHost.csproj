@@ -5,7 +5,6 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
-
     <ItemGroup>
         <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1" />
         <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
@@ -13,8 +12,8 @@
         <PackageReference Include="Silky.Http.MiniProfiler" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.SkyApm.Agent" Version="$(SilkyVersion)" />
         <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="5.0.1" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="5.0.1" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="5.0.1" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="6.0.1-rc2.4" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="6.0.1-rc2.4" />
     </ItemGroup>
 
     <ItemGroup>
@@ -39,5 +38,8 @@
     </ItemGroup>
     <ItemGroup>
         <None Remove="skyapm.json" />
+    </ItemGroup>
+    <ItemGroup>
+      <AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
     </ItemGroup>
 </Project>

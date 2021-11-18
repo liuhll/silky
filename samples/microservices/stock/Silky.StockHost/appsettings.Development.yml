@@ -12,4 +12,4 @@ distributedCache:
     isEnabled: true
     configuration: 127.0.0.1:6379,defaultDatabase=0
 connectionStrings:
-    default: server=127.0.0.1;port=3306;database=stock;uid=root;pwd=qwe!P4ss;  
+    default: server=127.0.0.1;port=3306;database=stock;uid=root;pwd=qwe!P4ss; 

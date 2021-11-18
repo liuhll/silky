@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  silky.sample.account:
+  Silky.AccountHost:
     image: silkyframework/sample.account:${TAG:-latest}
     build:
       context: ..
@@ -22,7 +22,7 @@ services:
     networks: 
       - silky_service_net
     
-  silky.sample.order:
+  Silky.OrderHost:
     image: silkyframework/sample.order:${TAG:-latest}
     build:
       context: ..
@@ -42,7 +42,7 @@ services:
     networks: 
       - silky_service_net
   
-  silky.sample.stock:
+  Silky.StockHost:
     image: silkyframework/sample.stock:${TAG:-latest}
     build:
       context: ..
@@ -62,7 +62,7 @@ services:
     networks: 
       - silky_service_net
 
-  silky.sample.gateway:
+  Silky.GatewayHost:
     image: silkyframework/sample.gateway:${TAG:-latest}
     build:
       context: ..
@@ -92,7 +92,11 @@ services:
       dashboard__externalLinks__2__icon: ${dashboard__externalLinks__2__icon:-iconfont icon-github} 
       dashboard__externalLinks__3__title: ${dashboard__externalLinks__3__title:-Gitee}
       dashboard__externalLinks__3__path: ${dashboard__externalLinks__3__path:-https://gitee.com/liuhll2/silky}
-      dashboard__externalLinks__3__icon: ${dashboard__externalLinks__3__icon:-iconfont icon-gitee2}       
+      dashboard__externalLinks__3__icon: ${dashboard__externalLinks__3__icon:-iconfont icon-gitee2}
+      dashboard__externalLinks__4__title: ${dashboard__externalLinks__4__title:-healthchecks-ui}
+      dashboard__externalLinks__4__path: ${dashboard__externalLinks__4__path:-http://localhost/healthchecks-ui}
+      healthChecksUI__healthChecks__0__name: ${healthChecksUI__healthChecks__silkyrpc__name:-silkyrpc}
+      healthChecksUI__healthChecks__0__uri: ${healthChecksUI__healthChecks__silkyrpc__uri:-http://127.0.0.1/silkyrpc/healthz}
     ports:
       - 80:80
     networks: 
