@@ -351,11 +351,11 @@ namespace Silky.Http.Dashboard.AppService
                     }).ToArray(),
                 ServiceKeys = serviceEntryOutput.ServiceKeys,
                 IsDistributeTransaction = serviceEntryOutput.IsDistributeTransaction,
-                Fallbacks = serviceEntry?.CustomAttributes.OfType<FallbackAttribute>().Select(p => new FallbackOutput()
+                Fallback = serviceEntry?.CustomAttributes.OfType<FallbackAttribute>().Select(p => new FallbackOutput()
                 {
                     TypeName = p.Type.FullName,
                     MethodName = p.MethodName ?? serviceEntry?.MethodInfo.Name,
-                }).ToArray()
+                }).FirstOrDefault()
             };
 
             return serviceEntryDetailOutput;

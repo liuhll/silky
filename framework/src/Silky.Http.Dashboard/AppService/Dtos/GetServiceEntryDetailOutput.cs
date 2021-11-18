@@ -12,7 +12,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
         public ICollection<ServiceKeyOutput> ServiceKeys { get; set; }
 
-        public ICollection<FallbackOutput> Fallbacks { get; set; }
+        public FallbackOutput Fallback { get; set; }
         public bool SupportCachingIntercept => Governance.EnableCachingInterceptor && CacheTemplates.Count > 0;
     }
 
