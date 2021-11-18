@@ -238,10 +238,10 @@ silky提供了两个项目模板可以快速的创建应用，开发者可以根
 ```pwsh
 
 # 以模块的方式创建微服务应用,适用于将所有的应用放在同一个仓库
-> dotnet new --install Silky.Module.Template::3.0.2
+> dotnet new --install Silky.Module.Template::3.0.3
 
 # 以独立应用的方式创建微服务应用,将每个微服务应用单独存放一个仓库
-> dotnet new --install Silky.App.Template::3.0.2
+> dotnet new --install Silky.App.Template::3.0.3
 ```
 
 使用项目模板创建微服务应用。

@@ -14,7 +14,7 @@ lang: zh-cn
 1. 安装 **Silky.App.Template** 模板
 
 ```powershell
-dotnet new --install Silky.App.Template::3.0.2
+dotnet new --install Silky.App.Template::3.0.3
 ```
 
 2. 创建微服务应用
@@ -91,7 +91,7 @@ docker-compose -f docker-compose.zookeeper.yml -f docker-compose.redis.yml up -d
 1. 安装 **Silky.Module.Template** 模板
 
 ```powershell
-dotnet new --install Silky.Module.Template::3.0.2
+dotnet new --install Silky.Module.Template::3.0.3
 ```
 
 2. 创建微服务应用
