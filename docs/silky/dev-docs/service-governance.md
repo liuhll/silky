@@ -73,7 +73,7 @@ Task<TestOut> Get([HashKey]string name);
 
 ## 故障转移(失败重试)
 
-在RPC通信过程中,如果发生IO异常(`IOException`)、通信异常(`CommunicationException`)、或是不存在本地服务条目(服务提供者抛出`NotFindLocalServiceEntryException`异常)、超出服务提供者允许的最大处理并发量,则会根据配置的次数选择其他服务实例重新调用。
+在RPC通信过程中,如果发生IO异常(`IOException`)、通信异常(`CommunicationException`)、或是找不到本地服务条目(服务提供者抛出`NotFindLocalServiceEntryException`异常)、超出服务提供者允许的最大处理并发量(`NotFindLocalServiceEntryException`),则服务消费者会根据配置的次数选择其他服务实例重新调用。
 
 1. 如果RPC调用过程中发生的是IO异常(`IOException`)或是通信异常(`CommunicationException`)或是服务提供者抛出`NotFindLocalServiceEntryException`异常，将会把选择的服务实例的状态变更为不可用状态,在`Governance:UnHealthAddressTimesAllowedBeforeRemoving`次标识后,服务实例将会下线(*将服务提供者的实例地址从服务注册中心移除*)。
 
