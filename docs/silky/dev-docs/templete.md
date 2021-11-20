@@ -22,7 +22,7 @@ dotnet new --install Silky.App.Template::3.0.3
 通过如下命令创建一个新的微服务应用：
 
 ```powershell
-dotnet new silky.module --hosttype webhost -p:i --includeinfrastr -n Demo
+dotnet new silky.app --hosttype webhost -p:i --includeinfrastr -n Demo
 ```
 
 **Silky.App.Template** 模板参数:
