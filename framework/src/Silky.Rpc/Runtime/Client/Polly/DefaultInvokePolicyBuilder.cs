@@ -47,7 +47,11 @@ namespace Silky.Rpc.Runtime.Client
             foreach (var circuitBreakerPolicyProvider in _circuitBreakerPolicyProviders)
             {
                 var policyItem = circuitBreakerPolicyProvider.Create(serviceEntryId, parameters);
-                policy = policy.WrapAsync(policyItem);
+                if (policyItem != null)
+                {
+                    policy = policy.WrapAsync(policyItem);
+                }
+                
             }
 
             return policy;
