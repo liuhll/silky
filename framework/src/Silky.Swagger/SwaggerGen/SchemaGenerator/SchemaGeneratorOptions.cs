@@ -43,13 +43,13 @@ namespace Silky.Swagger.SwaggerGen.SchemaGenerator
 
         private string DefaultSchemaIdSelector(Type modelType)
         {
-            if (!modelType.IsConstructedGenericType) return modelType.Name.Replace("[]", "Array");
+            if (!modelType.IsConstructedGenericType) return modelType.FullName.Replace("[]", "Array");
 
             var prefix = modelType.GetGenericArguments()
                 .Select(genericArg => DefaultSchemaIdSelector(genericArg))
                 .Aggregate((previous, current) => previous + current);
 
-            return prefix + modelType.Name.Split('`').First();
+            return prefix + modelType.FullName.Split('`').First();
         }
 
         private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
