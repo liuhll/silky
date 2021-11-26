@@ -22,8 +22,8 @@ namespace Silky.Rpc.Configuration
             MaxConcurrentHandlingCount = 50;
             _heartbeatWatchIntervalSeconds = 300;
             EnableHeartbeat = false;
-
-
+            ApiIsRESTfulStyle = true;
+            
         }
 
 
@@ -83,6 +83,7 @@ namespace Silky.Rpc.Configuration
         public bool EnableHeartbeat { get; set; }
 
         private int _heartbeatWatchIntervalSeconds;
+        public bool ApiIsRESTfulStyle { get; set; }
 
         public int HeartbeatWatchIntervalSeconds
         {

@@ -28,6 +28,11 @@ namespace NormHostDemo.AppService
             };
         }
 
+        public Task CreateOrUpdateAsync(TestInput input)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<TestOut> Get(long id)
         {
             throw new System.NotImplementedException();

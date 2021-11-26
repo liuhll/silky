@@ -53,6 +53,11 @@ namespace NormHostDemo.AppService
             };
         }
 
+        public Task CreateOrUpdateAsync(TestInput input)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task<TestOut> Get(long id)
         {
             var test = await _testRepository.FindAsync(id);

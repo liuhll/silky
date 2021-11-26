@@ -57,7 +57,7 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     var serviceEntryTemplate =
                         TemplateHelper.GenerateServerEntryTemplate(routeTemplate, httpMethodInfo.Template,
-                            httpMethodInfo.HttpMethod, httpMethodInfo.IsSpecify,
+                            httpMethodInfo.HttpMethod, httpMethodInfo.IsSpecify,_governanceOptions.ApiIsRESTfulStyle,
                             method.Name);
                     yield return Create(method,
                         serviceType.Item1,

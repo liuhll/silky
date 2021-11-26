@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
-using ITestApplication.Test.Dtos;
-using Silky.Core.Exceptions;
 using Silky.Transaction.Tcc;
 
 namespace AnotherHostDemo.AppService
@@ -33,7 +31,7 @@ namespace AnotherHostDemo.AppService
 
         public async Task<string> Create(string name)
         {
-            await _testAppService.Create(new TestInput() { Name = name });
+           // await _testAppService.Create(new TestInput() { Name = name });
             return "ok";
         }
 
