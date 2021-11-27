@@ -64,14 +64,14 @@ namespace Silky.HealthChecks.Rpc
             if (healthData.Values.All(p => ((ServerHealthData)p).Health))
             {
                 return HealthCheckResult.Healthy(
-                    $"There are a total of {healthData.Count} Rpc server provider instances, and all server provider instances are healthy.",
+                    $"There are a total of {healthData.Count} Rpc service provider instances, and all service provider instances are healthy.",
                     healthData);
             }
 
             if (healthData.Values.All(p => !((ServerHealthData)p).Health))
             {
                 return HealthCheckResult.Unhealthy(
-                    $"There are a total of {healthData.Count} Rpc server provider instances, and all server provider instances are unhealthy.",
+                    $"There are a total of {healthData.Count} Rpc service provider instances, and all service provider instances are unhealthy.",
                     null, healthData);
             }
 
@@ -79,9 +79,9 @@ namespace Silky.HealthChecks.Rpc
                 .Select(p => (ServerHealthData)p).ToArray();
 
             return HealthCheckResult.Degraded(
-                $"There are a total of {healthData.Count}  Rpc server provider instances," +
+                $"There are a total of {healthData.Count}  Rpc service provider instances," +
                 $" of which {unHealthData.Count()}" +
-                $" server instances are unhealthy{Environment.NewLine}." +
+                $" service instances are unhealthy{Environment.NewLine}." +
                 $"unhealthy instances:{string.Join(",", unHealthData.Select(p => p.Address))}",
                 null, healthData);
         }
