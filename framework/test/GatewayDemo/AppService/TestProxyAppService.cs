@@ -43,7 +43,7 @@ namespace GatewayDemo.AppService
 
         public async Task<string> DeleteProxy(string name, string address)
         {
-            return await _testAppService.Delete(new TestInput() { Name = name, Address = address });
+            return await _testAppService.DeleteAsync(new TestInput() { Name = name, Address = address });
         }
 
         public async Task<string> UpdatePart(TestInput input)

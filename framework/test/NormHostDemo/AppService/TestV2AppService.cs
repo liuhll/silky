@@ -43,7 +43,7 @@ namespace NormHostDemo.AppService
             throw new System.NotImplementedException();
         }
 
-        public async Task<string> Delete(TestInput input)
+        public async Task<string> DeleteAsync(TestInput input)
         {
             return _serializer.Serialize(input);
         }

@@ -33,7 +33,7 @@ namespace Silky.Rpc.Runtime.Server
             return parameterDescriptors.ToImmutableList();
         }
 
-        private static ParameterDescriptor CreateParameterDescriptor(MethodInfo methodInfo, ParameterInfo parameter,
+        private ParameterDescriptor CreateParameterDescriptor(MethodInfo methodInfo, ParameterInfo parameter,
             HttpMethod httpMethod)
         {
             var bindingSourceMetadata =
@@ -70,25 +70,27 @@ namespace Silky.Rpc.Runtime.Server
                     else
                     {
                         var routeTemplate = httpMethodAttribute.Template;
-                        var routeTemplateSegments = routeTemplate.Split("/");
                         var parameterFromPath = false;
-                        foreach (var routeTemplateSegment in routeTemplateSegments)
+                        if (!routeTemplate.IsNullOrWhiteSpace())
                         {
-                            if (TemplateSegmentHelper.IsVariable(routeTemplateSegment)
-                                && TemplateSegmentHelper.GetVariableName(routeTemplateSegment) == parameter.Name)
+                            var routeTemplateSegments = routeTemplate.Split("/");
+                            foreach (var routeTemplateSegment in routeTemplateSegments)
                             {
-                                parameterDescriptor =
-                                    new ParameterDescriptor(ParameterFrom.Path, parameter,
-                                        TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment));
-                                parameterFromPath = true;
-                                break;
+                                if (TemplateSegmentHelper.IsVariable(routeTemplateSegment)
+                                    && TemplateSegmentHelper.GetVariableName(routeTemplateSegment) == parameter.Name)
+                                {
+                                    parameterDescriptor =
+                                        new ParameterDescriptor(ParameterFrom.Path, parameter,
+                                            TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment));
+                                    parameterFromPath = true;
+                                    break;
+                                }
                             }
                         }
 
                         if (!parameterFromPath)
                         {
-                            parameterDescriptor =
-                                new ParameterDescriptor(ParameterFrom.Query, parameter);
+                            parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter);
                         }
                     }
                 }

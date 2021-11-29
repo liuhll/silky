@@ -49,8 +49,11 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
         {
             // 扫描程序集，获取数据库实体相关类型
             EntityCorrelationTypes = EngineContext.Current.TypeFinder.GetAssemblies().SelectMany(a => a.GetTypes())
-                .Where(t => typeof(IPrivateEntity).IsAssignableFrom(t) ||
-                            typeof(IPrivateModelBuilder).IsAssignableFrom(t));
+                .Where(t => (typeof(IPrivateEntity).IsAssignableFrom(t) ||
+                             typeof(IPrivateModelBuilder).IsAssignableFrom(t))
+                            && t.IsClass && !t.IsAbstract && !t.IsGenericType && !t.IsInterface &&
+                            !t.IsDefined(typeof(ManualAttribute))
+                );
 
             if (EntityCorrelationTypes.Any())
             {
