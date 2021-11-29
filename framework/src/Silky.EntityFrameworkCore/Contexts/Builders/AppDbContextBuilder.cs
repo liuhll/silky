@@ -48,7 +48,9 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
         static AppDbContextBuilder()
         {
             // 扫描程序集，获取数据库实体相关类型
-            EntityCorrelationTypes = EngineContext.Current.TypeFinder.FindClassesOfType<IPrivateEntity>();
+            EntityCorrelationTypes = EngineContext.Current.TypeFinder.GetAssemblies().SelectMany(a => a.GetTypes())
+                .Where(t => typeof(IPrivateEntity).IsAssignableFrom(t) ||
+                            typeof(IPrivateModelBuilder).IsAssignableFrom(t));
 
             if (EntityCorrelationTypes.Any())
             {
@@ -141,7 +143,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
 
             // 配置动态表名
             if (!ConfigureEntityMutableTableName(type, entityTypeBuilder, dbContext, dbContextLocator,
-                dbContextCorrelationType))
+                    dbContextCorrelationType))
             {
                 // 配置实体表名
                 ConfigureEntityTableName(type, appDbContextAttribute, entityTypeBuilder, dbContext, dbContextType);
