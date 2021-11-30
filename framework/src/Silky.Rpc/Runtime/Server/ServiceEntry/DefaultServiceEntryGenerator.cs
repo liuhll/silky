@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Silky.Core.Exceptions;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Rpc.Configuration;
@@ -48,23 +47,17 @@ namespace Silky.Rpc.Runtime.Server
         public IEnumerable<ServiceEntry> CreateServiceEntry((Type, bool) serviceType)
         {
             var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(serviceType.Item1);
-            var routeTemplate = serviceBundleProvider.Template;
             var methods = serviceType.Item1.GetTypeInfo().GetMethods();
             foreach (var method in methods)
             {
                 var httpMethodInfos = method.GetHttpMethodInfos();
                 foreach (var httpMethodInfo in httpMethodInfos)
                 {
-                    var serviceEntryTemplate =
-                        TemplateHelper.GenerateServerEntryTemplate(routeTemplate, httpMethodInfo.Template,
-                            httpMethodInfo.HttpMethod, httpMethodInfo.IsSpecify,_governanceOptions.ApiIsRESTfulStyle,
-                            method.Name);
                     yield return Create(method,
                         serviceType.Item1,
                         serviceType.Item2,
-                        serviceEntryTemplate,
                         serviceBundleProvider,
-                        httpMethodInfo.HttpMethod);
+                        httpMethodInfo);
                 }
             }
         }
@@ -72,21 +65,25 @@ namespace Silky.Rpc.Runtime.Server
         private ServiceEntry Create(MethodInfo method,
             Type serviceType,
             bool isLocal,
-            string serviceEntryTemplate,
             IRouteTemplateProvider routeTemplateProvider,
-            HttpMethod httpMethod)
+            HttpMethodInfo httpMethodInfo)
         {
             var serviceName = serviceType.Name;
-            var router = new Router(serviceEntryTemplate, serviceName, method, httpMethod);
-            var serviceEntryId = _idGenerator.GenerateServiceEntryId(method, httpMethod);
+            var serviceEntryId = _idGenerator.GenerateServiceEntryId(method, httpMethodInfo.HttpMethod);
             var serviceId = _idGenerator.GenerateServiceId(serviceType);
-            var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethod);
+            var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethodInfo);
             if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
             {
                 throw new SilkyException(
                     $"It is not allowed to specify multiple HashKey,Method is {serviceType.FullName}.{method.Name}");
             }
+            
+            var serviceEntryTemplate =
+                TemplateHelper.GenerateServerEntryTemplate(routeTemplateProvider.Template, parameterDescriptors,
+                    httpMethodInfo, _governanceOptions.ApiIsRESTfulStyle,
+                    method.Name);
 
+            var router = new Router(serviceEntryTemplate, serviceName, method, httpMethodInfo.HttpMethod);
             Debug.Assert(method.DeclaringType != null);
             var serviceEntryDescriptor = new ServiceEntryDescriptor()
             {

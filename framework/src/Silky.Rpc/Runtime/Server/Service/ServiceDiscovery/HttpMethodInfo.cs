@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    internal class HttpMethodInfo
+    public class HttpMethodInfo
     {
         public string Template { get; set; }
 

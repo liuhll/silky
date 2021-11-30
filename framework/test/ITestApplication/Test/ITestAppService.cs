@@ -62,6 +62,9 @@ namespace ITestApplication.Test
         // [HttpGet("{id:long}")]
         // [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
         //  [GetCachingIntercept("id:{0}")]
+        // [HttpGet("test/{id:long}")]
+        [HttpGet]
+        [AllowAnonymous]
         Task<TestOut> GetById(long? id);
 
         [HttpPatch]

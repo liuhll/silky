@@ -15,12 +15,12 @@ namespace Silky.Rpc.Runtime.Server
     public class ParameterProvider : IParameterProvider
     {
         public IReadOnlyList<ParameterDescriptor> GetParameterDescriptors(MethodInfo methodInfo,
-            HttpMethod httpMethod)
+            HttpMethodInfo httpMethodInfo)
         {
             var parameterDescriptors = new List<ParameterDescriptor>();
             foreach (var parameter in methodInfo.GetParameters())
             {
-                var parameterDescriptor = CreateParameterDescriptor(methodInfo, parameter, httpMethod);
+                var parameterDescriptor = CreateParameterDescriptor(methodInfo, parameter, httpMethodInfo);
                 if (parameterDescriptor.From == ParameterFrom.Body &&
                     parameterDescriptors.Any(p => p.From == ParameterFrom.Body))
                 {
@@ -34,7 +34,7 @@ namespace Silky.Rpc.Runtime.Server
         }
 
         private ParameterDescriptor CreateParameterDescriptor(MethodInfo methodInfo, ParameterInfo parameter,
-            HttpMethod httpMethod)
+            HttpMethodInfo httpMethodInfo)
         {
             var bindingSourceMetadata =
                 parameter.GetCustomAttributes().OfType<IBindingSourceMetadata>().FirstOrDefault();
@@ -42,7 +42,7 @@ namespace Silky.Rpc.Runtime.Server
             if (bindingSourceMetadata != null)
             {
                 var parameterFrom = bindingSourceMetadata.BindingSource.Id.To<ParameterFrom>();
-                if (httpMethod == HttpMethod.Get && parameterFrom == ParameterFrom.Body)
+                if (httpMethodInfo.HttpMethod == HttpMethod.Get && parameterFrom == ParameterFrom.Body)
                 {
                     throw new SilkyException(
                         "Get requests are not allowed to obtain parameter values through RequestBody");
@@ -61,18 +61,20 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     var httpMethodAttribute =
                         methodInfo.GetCustomAttributes().OfType<HttpMethodAttribute>().FirstOrDefault(p =>
-                            p.HttpMethods.Contains(httpMethod.ToString().ToUpper()));
+                            p.HttpMethods.Contains(httpMethodInfo.HttpMethod.ToString().ToUpper()));
                     if (httpMethodAttribute == null)
                     {
-                        parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter);
+                        parameterDescriptor = parameter.IsSampleType()
+                            ? new ParameterDescriptor(ParameterFrom.Path, parameter)
+                            : new ParameterDescriptor(ParameterFrom.Query, parameter);
                     }
                     else
                     {
-                        var routeTemplate = httpMethodAttribute.Template;
+                        var httpRouteTemplate = httpMethodAttribute.Template;
                         var parameterFromPath = false;
-                        if (!routeTemplate.IsNullOrWhiteSpace())
+                        if (!httpRouteTemplate.IsNullOrWhiteSpace())
                         {
-                            var routeTemplateSegments = routeTemplate.Split("/");
+                            var routeTemplateSegments = httpRouteTemplate.Split("/");
                             foreach (var routeTemplateSegment in routeTemplateSegments)
                             {
                                 if (TemplateSegmentHelper.IsVariable(routeTemplateSegment)
@@ -80,22 +82,29 @@ namespace Silky.Rpc.Runtime.Server
                                 {
                                     parameterDescriptor =
                                         new ParameterDescriptor(ParameterFrom.Path, parameter,
-                                            TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment));
+                                            TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment),
+                                            routeTemplateSegment);
                                     parameterFromPath = true;
                                     break;
                                 }
                             }
-                        }
 
-                        if (!parameterFromPath)
+                            if (!parameterFromPath)
+                            {
+                                parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter);
+                            }
+                        }
+                        else
                         {
-                            parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter);
+                            parameterDescriptor = parameter.IsSampleType()
+                                ? new ParameterDescriptor(ParameterFrom.Path, parameter)
+                                : new ParameterDescriptor(ParameterFrom.Query, parameter);
                         }
                     }
                 }
                 else
                 {
-                    parameterDescriptor = httpMethod == HttpMethod.Get
+                    parameterDescriptor = httpMethodInfo.HttpMethod == HttpMethod.Get
                         ? new ParameterDescriptor(ParameterFrom.Query, parameter)
                         : new ParameterDescriptor(ParameterFrom.Body, parameter);
                 }

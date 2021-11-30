@@ -9,7 +9,11 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class ParameterDescriptor
     {
-        public ParameterDescriptor(ParameterFrom @from, ParameterInfo parameterInfo, string name = null)
+        public ParameterDescriptor(
+            ParameterFrom @from,
+            ParameterInfo parameterInfo,
+            string name = null,
+            string pathTemplate = null)
         {
             From = @from;
             ParameterInfo = parameterInfo;
@@ -17,6 +21,11 @@ namespace Silky.Rpc.Runtime.Server
             Type = parameterInfo.ParameterType;
             IsHashKey = DecideIsHashKey();
             CacheKeys = CreateCacheKeys();
+            PathTemplate = pathTemplate;
+            if (@from == ParameterFrom.Path && PathTemplate.IsNullOrEmpty())
+            {
+                PathTemplate = "{" + Name + "}";
+            }
         }
 
         private IReadOnlyCollection<ICacheKeyProvider> CreateCacheKeys()
@@ -82,6 +91,8 @@ namespace Silky.Rpc.Runtime.Server
         public bool IsHashKey { get; }
 
         public string Name { get; }
+
+        public string PathTemplate { get; }
 
         public bool IsSampleOrNullableType => Type.IsSample() || Type.IsNullableType();
 

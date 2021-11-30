@@ -8,6 +8,6 @@ namespace Silky.Rpc.Runtime.Server
     public interface IParameterProvider : ITransientDependency
     {
         IReadOnlyList<ParameterDescriptor> GetParameterDescriptors(MethodInfo methodInfo,
-            HttpMethod httpMethod);
+            HttpMethodInfo httpMethodInfo);
     }
 }

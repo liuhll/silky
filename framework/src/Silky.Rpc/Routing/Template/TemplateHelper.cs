@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Silky.Core.Extensions;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Routing.Template
 {
@@ -26,14 +27,14 @@ namespace Silky.Rpc.Routing.Template
         private const string constraintRemovePostFix = "Async";
 
         public static string GenerateServerEntryTemplate(string routeTemplate,
-            string methodEntryTemplate,
-            HttpMethod httpMethod,
-            bool isSpecify,
+            IReadOnlyList<ParameterDescriptor> parameterDescriptors,
+            HttpMethodInfo httpMethodInfo,
             bool isRestful,
             string methodName)
         {
             var serverEntryTemplate = routeTemplate;
-            if (isSpecify)
+            var methodEntryTemplate = httpMethodInfo.Template;
+            if (httpMethodInfo.IsSpecify)
             {
                 if (methodEntryTemplate == null)
                 {
@@ -41,7 +42,7 @@ namespace Silky.Rpc.Routing.Template
                         ? methodName.RemovePostFix(StringComparison.OrdinalIgnoreCase, constraintRemovePostFix)
                         : methodName;
 
-                    if (constraintDefualtMethods.TryGetValue(httpMethod, out var constraintMethods) &&
+                    if (constraintDefualtMethods.TryGetValue(httpMethodInfo.HttpMethod, out var constraintMethods) &&
                         constraintMethods.Any(cm => methodName.StartsWith(cm, StringComparison.OrdinalIgnoreCase)) &&
                         isRestful)
                     {
@@ -56,6 +57,11 @@ namespace Silky.Rpc.Routing.Template
                     }
 
                     serverEntryTemplate = $"{routeTemplate}/{methodEntryTemplate}";
+                    var parameterPathTemplate = GetParametersTemplate(parameterDescriptors);
+                    if (!parameterPathTemplate.IsNullOrEmpty())
+                    {
+                        serverEntryTemplate += "/" + parameterPathTemplate;
+                    }
                 }
                 else
                 {
@@ -66,7 +72,7 @@ namespace Silky.Rpc.Routing.Template
             }
             else
             {
-                var constraintMethods = constraintDefualtMethods[httpMethod];
+                var constraintMethods = constraintDefualtMethods[httpMethodInfo.HttpMethod];
                 methodEntryTemplate = isRestful
                     ? methodName.RemovePostFix(StringComparison.OrdinalIgnoreCase, constraintRemovePostFix)
                     : methodName;
@@ -83,9 +89,26 @@ namespace Silky.Rpc.Routing.Template
                 }
 
                 serverEntryTemplate = $"{routeTemplate}/{methodEntryTemplate}";
+                var parameterPathTemplate = GetParametersTemplate(parameterDescriptors);
+                if (!parameterPathTemplate.IsNullOrEmpty())
+                {
+                    serverEntryTemplate += "/" + parameterPathTemplate;
+                }
             }
 
             return serverEntryTemplate;
+        }
+
+        private static string GetParametersTemplate(IReadOnlyList<ParameterDescriptor> parameterDescriptors)
+        {
+            var pathParameters = parameterDescriptors.Where(p => p.From == ParameterFrom.Path);
+            if (pathParameters.Any())
+            {
+                var parameterPathTemplate =
+                    string.Join("/", pathParameters.Select(p => p.PathTemplate)).TrimEnd('/');
+                return parameterPathTemplate;
+            }
+            return null;
         }
     }
 }
