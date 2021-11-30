@@ -57,15 +57,14 @@ namespace Silky.Rpc.Runtime.Server
             }
             else
             {
-                if (parameter.IsSampleType())
+                if (parameter.IsSampleOrNullableType())
                 {
                     var httpMethodAttribute =
                         methodInfo.GetCustomAttributes().OfType<HttpMethodAttribute>().FirstOrDefault(p =>
                             p.HttpMethods.Contains(httpMethod.ToString().ToUpper()));
                     if (httpMethodAttribute == null)
                     {
-                        parameterDescriptor =
-                            new ParameterDescriptor(ParameterFrom.Query, parameter);
+                        parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter);
                     }
                     else
                     {

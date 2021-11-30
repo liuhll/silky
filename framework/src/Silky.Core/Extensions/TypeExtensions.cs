@@ -140,5 +140,8 @@ namespace Silky.Core.Extensions
 
             static bool IsNoObjectBaseType(Type type) => type.BaseType != typeof(object);
         }
+
+        public static bool IsNullableType(this Type type) => type.GetTypeInfo().IsGenericType &&
+                                                             type.GetGenericTypeDefinition() == typeof(Nullable<>);
     }
 }

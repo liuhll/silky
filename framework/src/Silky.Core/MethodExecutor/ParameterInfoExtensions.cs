@@ -11,6 +11,17 @@ namespace Silky.Core.MethodExecutor
             return parameterInfo.ParameterType.IsSample();
         }
 
+        public static bool IsSampleOrNullableType(this ParameterInfo parameterInfo)
+        {
+            return parameterInfo.ParameterType.IsSample() || parameterInfo.ParameterType.IsNullableType();
+        }
+
+        public static bool IsNullableType(this ParameterInfo parameterInfo)
+        {
+            return parameterInfo.ParameterType.IsNullableType();
+        }
+
+
         [CanBeNull]
         public static object GetDefaultValue(this ParameterInfo parameterInfo)
         {

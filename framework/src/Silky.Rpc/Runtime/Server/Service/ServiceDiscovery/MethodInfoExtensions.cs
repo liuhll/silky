@@ -19,7 +19,7 @@ namespace Silky.Rpc.Runtime.Server
                 return (httpMethods.ToArray(), true);
             }
 
-            if (method.GetParameters().All(p => p.IsSampleType()))
+            if (method.GetParameters().All(p => p.IsSampleOrNullableType()))
             {
                 return (new[] { new HttpGetAttribute() }, false);
             }
