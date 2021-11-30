@@ -289,7 +289,7 @@ namespace Silky.Rpc.Runtime.Server
                         list.Add(parameter);
                         break;
                     case ParameterFrom.Form:
-                        if (parameterDescriptor.IsSample)
+                        if (parameterDescriptor.IsSampleOrNullableType)
                         {
                             SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                         }
@@ -300,7 +300,7 @@ namespace Silky.Rpc.Runtime.Server
 
                         break;
                     case ParameterFrom.Header:
-                        if (parameterDescriptor.IsSample)
+                        if (parameterDescriptor.IsSampleOrNullableType)
                         {
                             SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                         }
@@ -311,7 +311,7 @@ namespace Silky.Rpc.Runtime.Server
 
                         break;
                     case ParameterFrom.Path:
-                        if (parameterDescriptor.IsSample)
+                        if (parameterDescriptor.IsSampleOrNullableType)
                         {
                             var pathVal =
                                 (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
@@ -334,7 +334,7 @@ namespace Silky.Rpc.Runtime.Server
 
                         break;
                     case ParameterFrom.Query:
-                        if (parameterDescriptor.IsSample)
+                        if (parameterDescriptor.IsSampleOrNullableType)
                         {
                             SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                         }

@@ -49,7 +49,7 @@ namespace Silky.Rpc.CachingInterceptor
             {
                 if (parameterDescriptor.CacheKeys.Any())
                 {
-                    if (parameterDescriptor.IsSample)
+                    if (parameterDescriptor.IsSampleOrNullableType)
                     {
                         var cacheKeyProvider = parameterDescriptor.CacheKeys.First();
                         cacheKeyProvider.Value = parameters[index]?.ToString();

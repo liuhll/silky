@@ -59,10 +59,10 @@ namespace ITestApplication.Test
         [GetCachingIntercept("name:{0}")]
         Task<TestOut> Get([HashKey] [CacheKey(0)] string name);
 
-        [HttpGet("{id:long}")]
-        [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
-        [GetCachingIntercept("id:{0}")]
-        Task<TestOut> GetById([HashKey] [CacheKey(0)] long id);
+        // [HttpGet("{id:long}")]
+        // [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
+        //  [GetCachingIntercept("id:{0}")]
+        Task<TestOut> GetById(long? id);
 
         [HttpPatch]
         [Fallback(typeof(IUpdatePartFallBack))]

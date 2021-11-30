@@ -66,7 +66,7 @@ namespace NormHostDemo.AppService
             };
         }
 
-        public Task<TestOut> GetById(long id)
+        public Task<TestOut> GetById(long? id)
         {
             throw new System.NotImplementedException();
         }

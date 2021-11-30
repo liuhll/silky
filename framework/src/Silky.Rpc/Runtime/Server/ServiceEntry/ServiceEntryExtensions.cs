@@ -56,7 +56,7 @@ namespace Silky.Rpc.Runtime.Server
             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
             foreach (var parameter in serviceEntry.ParameterDescriptors)
             {
-                if (parameter.IsSample)
+                if (parameter.IsSampleOrNullableType)
                 {
                     dictionaryParms[parameter.Name] = parameters[index];
                 }
@@ -104,7 +104,7 @@ namespace Silky.Rpc.Runtime.Server
             ITypeConvertibleService typeConvertibleService)
         {
             string hashKey;
-            if (parameterDescriptor.IsSample)
+            if (parameterDescriptor.IsSampleOrNullableType)
             {
                 var propVal = parameterValues[index];
                 if (propVal == null)

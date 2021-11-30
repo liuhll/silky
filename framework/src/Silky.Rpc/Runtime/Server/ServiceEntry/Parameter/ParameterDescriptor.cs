@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Castle.DynamicProxy.Internal;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 
@@ -24,13 +25,13 @@ namespace Silky.Rpc.Runtime.Server
             var cacheKeys = new List<ICacheKeyProvider>();
             var parameterInfoCacheKeyProvider =
                 ParameterInfo.GetCustomAttributes().OfType<ICacheKeyProvider>().FirstOrDefault();
-            if (IsSample && parameterInfoCacheKeyProvider != null)
+            if (IsSampleOrNullableType && parameterInfoCacheKeyProvider != null)
             {
                 parameterInfoCacheKeyProvider.PropName = Name;
 
                 cacheKeys.Add(parameterInfoCacheKeyProvider);
             }
-            else if (!IsSample && parameterInfoCacheKeyProvider != null)
+            else if (!IsSampleOrNullableType && parameterInfoCacheKeyProvider != null)
             {
                 throw new SilkyException("Complex parameter types are not allowed to use CacheKeyAttribute");
             }
@@ -59,7 +60,7 @@ namespace Silky.Rpc.Runtime.Server
             var hashKeyProvider = ParameterInfo.GetCustomAttributes().OfType<IHashKeyProvider>();
             if (hashKeyProvider.Any())
             {
-                if (IsSample)
+                if (IsSampleOrNullableType)
                 {
                     return true;
                 }
@@ -83,7 +84,13 @@ namespace Silky.Rpc.Runtime.Server
 
         public string Name { get; }
 
-        public bool IsSample => Type.IsSample();
+        public bool IsSampleOrNullableType => Type.IsSample() || Type.IsNullableType();
+
+        public bool IsSampleType => Type.IsSample();
+
+        public bool IsNullableType => Type.IsNullableType();
+
+        // public bool IsNullEnabled => Type.IsNullableType();
 
         public ParameterInfo ParameterInfo { get; }
 

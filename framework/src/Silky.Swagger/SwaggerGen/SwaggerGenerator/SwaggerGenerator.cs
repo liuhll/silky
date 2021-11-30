@@ -298,7 +298,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             var requiredPropertyNames = new List<string>();
             foreach (var formParameter in formParameters)
             {
-                if (formParameter.IsSample)
+                if (formParameter.IsSampleOrNullableType)
                 {
                     var name = _options.DescribeAllParametersInCamelCase
                         ? formParameter.Name.ToCamelCase()
@@ -401,7 +401,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             SchemaRepository schemaRespository)
         {
             var parameters = new List<OpenApiParameter>();
-            if (apiParameter.IsSample)
+            if (apiParameter.IsSampleOrNullableType)
             {
                 parameters.Add(GenerateSampleParameter(apiParameter, schemaRespository));
             }
@@ -458,7 +458,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             var propertyInfos = apiParameter.Type.GetProperties();
             foreach (var propertyInfo in propertyInfos)
             {
-                // if (!propertyInfo.PropertyType.IsSample())
+                // if (!propertyInfo.PropertyType.IsSampleOrNullableType())
                 // {
                 //     throw new SilkyException("Specifying QString parameters does not allow specifying complex type parameters");
                 // }

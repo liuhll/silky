@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
@@ -106,11 +107,12 @@ namespace NormHostDemo.AppService
             };
         }
 
-        public async Task<TestOut> GetById(long id)
+        public async Task<TestOut> GetById(long? id)
         {
+            
             return new()
             {
-                Id = id
+                Id = id ?? 0
             };
         }
 

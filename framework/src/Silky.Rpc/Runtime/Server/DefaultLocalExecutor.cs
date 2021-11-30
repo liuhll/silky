@@ -33,6 +33,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filter.OnActionExecuting(rpcActionExecutingContext);
             }
+            
 
             if (serviceEntry.IsAsyncMethod)
             {
