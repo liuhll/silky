@@ -1,12 +1,16 @@
 using System;
-using Silky.Core;
 
 namespace Silky.Rpc.Routing
 {
     [AttributeUsage(AttributeTargets.Interface)]
     public class ServiceRouteAttribute : Attribute, IRouteTemplateProvider
     {
-        public ServiceRouteAttribute(string template = "api/{appservice}")
+        public ServiceRouteAttribute()
+            : this("api/{appservice}")
+        {
+        }
+
+        public ServiceRouteAttribute(string template)
         {
             Template = template;
         }
