@@ -18,6 +18,9 @@ rpc:
 #  registerEnabled: true
 #  instanceEnabled: true
 #  namingUseRpc: true
+appSettings:
+  appServiceInterfaceDirectory: ..
+  appServiceInterfacePattern: I*Application
 
 registrycenter:
   type: Consul

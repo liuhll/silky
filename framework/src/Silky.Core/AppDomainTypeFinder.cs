@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Silky.Core.Configuration;
+using Silky.Core.Extensions;
 
 namespace Silky.Core
 {
@@ -61,6 +64,7 @@ namespace Silky.Core
         protected virtual void LoadMatchingAssemblies(string directoryPath)
         {
             var loadedAssemblyNames = new List<string>();
+
 
             foreach (var a in GetAssemblies())
             {
@@ -203,8 +207,54 @@ namespace Silky.Core
             if (LoadAppDomainAssemblies)
                 AddAssembliesInAppDomain(addedAssemblyNames, assemblies);
             AddConfiguredAssemblies(addedAssemblyNames, assemblies);
-            // AddDependModuleAssemblies(addedAssemblyNames, assemblies);
+            AddAppServiceAssemblies(addedAssemblyNames, assemblies);
             return assemblies;
+        }
+
+        protected virtual void AddAppServiceAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
+        {
+            var appSettingsOptions = EngineContext.Current.GetOptions<AppSettingsOptions>();
+            LoadServiceAssemblies(appSettingsOptions.AppServiceDirectory, appSettingsOptions.AppServicePattern,
+                addedAssemblyNames, assemblies);
+            LoadServiceAssemblies(appSettingsOptions.AppServiceInterfaceDirectory,
+                appSettingsOptions.AppServiceInterfacePattern,
+                addedAssemblyNames, assemblies);
+        }
+
+        protected virtual void LoadServiceAssemblies(string directoryPath, string pattern,
+            List<string> loadedAssemblyNames, List<Assembly> assemblies)
+        {
+            if (directoryPath.IsNullOrWhiteSpace() || pattern.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            if (!_fileProvider.DirectoryExists(directoryPath))
+            {
+                return;
+            }
+
+            foreach (var dllPath in _fileProvider.GetFiles(directoryPath, "*.dll", false))
+            {
+                try
+                {
+                    if (Matches(dllPath) && Matches(dllPath, pattern))
+                    {
+                        var dllFullPath = Path.GetFullPath(dllPath);
+                        var an = AssemblyName.GetAssemblyName(dllFullPath);
+                        if (loadedAssemblyNames.Contains(an.FullName))
+                            continue;
+
+                        var assembly = Assembly.LoadFile(dllFullPath);
+                        assemblies.Add(assembly);
+                        loadedAssemblyNames.Add(assembly.FullName);
+                    }
+                }
+                catch (BadImageFormatException ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+            }
         }
 
         #endregion
