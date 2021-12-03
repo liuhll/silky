@@ -214,11 +214,14 @@ namespace Silky.Core
         protected virtual void AddAppServiceAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
             var appSettingsOptions = EngineContext.Current.GetOptions<AppSettingsOptions>();
-            LoadServiceAssemblies(appSettingsOptions.AppServiceDirectory, appSettingsOptions.AppServicePattern,
-                addedAssemblyNames, assemblies);
-            LoadServiceAssemblies(appSettingsOptions.AppServiceInterfaceDirectory,
-                appSettingsOptions.AppServiceInterfacePattern,
-                addedAssemblyNames, assemblies);
+            foreach (var appService in appSettingsOptions.Services)
+            {
+                LoadServiceAssemblies(appService.AppServiceDirectory, appService.AppServicePattern,
+                    addedAssemblyNames, assemblies);
+                LoadServiceAssemblies(appService.AppServiceInterfaceDirectory,
+                    appService.AppServiceInterfacePattern,
+                    addedAssemblyNames, assemblies);
+            }
         }
 
         protected virtual void LoadServiceAssemblies(string directoryPath, string pattern,

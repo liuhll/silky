@@ -5,6 +5,7 @@ using System.Reflection;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Runtime.Server
@@ -13,8 +14,7 @@ namespace Silky.Rpc.Runtime.Server
     {
         internal static IEnumerable<Type> FindLocalServiceTypes(ITypeFinder typeFinder)
         {
-            var types = typeFinder.GetAssemblies()
-                    .SelectMany(p => p.ExportedTypes)
+            var types = typeFinder.GetaAllExportedTypes()
                     .Where(p => p.IsClass
                                 && !p.IsAbstract
                                 && !p.IsGenericType
@@ -30,8 +30,7 @@ namespace Silky.Rpc.Runtime.Server
 
         internal static IEnumerable<Type> FindLocalServiceImplementTypes(ITypeFinder typeFinder, Type type)
         {
-            var types = typeFinder.GetAssemblies()
-                    .SelectMany(p => p.ExportedTypes)
+            var types = typeFinder.GetaAllExportedTypes()
                     .Where(p => p.IsClass
                                 && !p.IsAbstract
                                 && !p.IsGenericType
@@ -50,9 +49,7 @@ namespace Silky.Rpc.Runtime.Server
         public static IEnumerable<(Type, bool)> FindAllServiceTypes(ITypeFinder typeFinder)
         {
             var serviceTypes = new List<(Type, bool)>();
-            var exportedTypes = typeFinder.GetAssemblies()
-                .SelectMany(p => p.ExportedTypes);
-
+            var exportedTypes = typeFinder.GetaAllExportedTypes();
             var serviceInterfaces = exportedTypes
                     .Where(p => p.IsInterface
                                 && p.GetCustomAttributes().Any(a => a is ServiceRouteAttribute)
@@ -80,8 +77,7 @@ namespace Silky.Rpc.Runtime.Server
         public static IEnumerable<(Type, bool)> FindWsServiceTypeInfos(ITypeFinder typeFinder)
         {
             var entryTypes = new List<(Type, bool)>();
-            var exportedTypes = typeFinder.GetAssemblies()
-                .SelectMany(p => p.ExportedTypes);
+            var exportedTypes = typeFinder.GetaAllExportedTypes();
 
             var entryInterfaces = exportedTypes
                     .Where(p => p.IsInterface
@@ -106,8 +102,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public static IEnumerable<Type> FindServiceLocalWsTypes(ITypeFinder typeFinder)
         {
-            var types = typeFinder.GetAssemblies()
-                    .SelectMany(p => p.ExportedTypes)
+            var types = typeFinder.GetaAllExportedTypes()
                     .Where(p => p.IsClass
                                 && !p.IsAbstract
                                 && !p.IsGenericType
