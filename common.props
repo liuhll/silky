@@ -7,7 +7,7 @@
 
     <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
 
-    <Version>3.0.5-bate11</Version>
+    <Version>3.0.5-bate13</Version>
 
     <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
 
@@ -16,6 +16,10 @@
     <PackageTags>silky;micro-service;rpc;distributed-transactions;tcc-transaction</PackageTags>
 
     <RepositoryType>Github</RepositoryType>
+	
+	<EfCore6Version>6.0.0</EfCore6Version>
+	
+	<EfCore5Version>5.0.7</EfCore5Version>
 
   </PropertyGroup>
 </Project>
