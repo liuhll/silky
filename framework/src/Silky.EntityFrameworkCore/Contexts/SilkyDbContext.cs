@@ -114,8 +114,10 @@ namespace Silky.EntityFrameworkCore.Contexts
         /// </summary>
         public virtual bool FailedAutoRollback { get; protected set; } = true;
 
-
-        public virtual Tenant Tenant
+        /// <summary>
+        /// 获取租户信息
+        /// </summary>
+        public Tenant Tenant
         {
             get
             {
@@ -137,12 +139,7 @@ namespace Silky.EntityFrameworkCore.Contexts
 
                 if (cachedValue.IsNullOrEmpty())
                 {
-                    var dbContextResolve = EngineContext.Current.Resolve<Func<Type, IScopedDependency, DbContext>>();
-                    if (dbContextResolve == null) return default;
-
-                    var tenantDbContext = dbContextResolve(typeof(MultiTenantDbContextLocator), default);
-                    currentTenant = tenantDbContext.Set<Tenant>().AsNoTracking()
-                        .FirstOrDefault(u => u.TenantId == session.TenantId.ToString());
+                    currentTenant = GetCurrentTenant();
                     if (currentTenant != null)
                     {
                         distributedCache?.SetString(tenantCachedKey, serializer.Serialize(currentTenant));
@@ -155,6 +152,11 @@ namespace Silky.EntityFrameworkCore.Contexts
 
                 return currentTenant;
             }
+        }
+
+        protected virtual Tenant GetCurrentTenant()
+        {
+            return null;
         }
 
         /// <summary>
