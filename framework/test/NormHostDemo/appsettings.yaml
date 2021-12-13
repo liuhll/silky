@@ -32,6 +32,7 @@ connectionStrings:
   demoDbContext: "server=127.0.0.1;port=3306;database=test;uid=root;pwd=qwe!P4ss;"
 jwtSettings:
   secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
+  expiredTime: 30
 
 governance:
   timeoutMillSeconds: 5000

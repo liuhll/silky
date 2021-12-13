@@ -8,16 +8,12 @@ using JetBrains.Annotations;
 using JWT;
 using JWT.Exceptions;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Core.Configuration;
-using Silky.Http.Identity.Extensions;
-using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Identity.Authentication.Handlers
 {
@@ -45,7 +41,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var token = Context.Request.Headers["Authorization"];
+            var token = GetAuthorizationToken(Context);
             if (token.IsNullOrEmpty())
             {
                 return AuthenticateResult.Fail(new AuthenticationException("You have not logged in to the system"));
@@ -65,17 +61,28 @@ namespace Silky.Http.Identity.Authentication.Handlers
             }
             catch (TokenExpiredException ex)
             {
-                return AuthenticateResult.Fail(new AuthenticationException("Token has expired"));
+                throw new AuthenticationException("Token has expired");
             }
             catch (SignatureVerificationException ex)
             {
-                return AuthenticateResult.Fail(new AuthenticationException("Token has invalid signature"));
+                throw new AuthenticationException("Token has invalid signature");
             }
             catch (Exception ex)
             {
-                return AuthenticateResult.Fail(
-                    new AuthenticationException($"The token format is illegal, the reason: {ex.Message}"));
+                throw new AuthenticationException($"The token format is illegal, the reason: {ex.Message}");
             }
+        }
+
+        private string GetAuthorizationToken(HttpContext httpContext, string headerKey = "Authorization",
+            string tokenPrefix = "Bearer ")
+        {
+            var bearerToken = httpContext.Request.Headers[headerKey].ToString();
+            if (string.IsNullOrWhiteSpace(bearerToken)) return default;
+
+            var prefixLenght = tokenPrefix.Length;
+            return bearerToken.StartsWith(tokenPrefix, true, null) && bearerToken.Length > prefixLenght
+                ? bearerToken[prefixLenght..]
+                : bearerToken;
         }
 
         private AuthenticationTicket CreateTicket(IDictionary<string, object> payload)
