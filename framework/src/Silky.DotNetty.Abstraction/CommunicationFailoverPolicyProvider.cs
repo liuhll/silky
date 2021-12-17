@@ -33,6 +33,7 @@ namespace Silky.DotNetty.Abstraction
                     policy = Policy<object>
                         .Handle<ChannelException>()
                         .Or<ConnectException>()
+                        .Or<ConnectTimeoutException>()
                         .Or<IOException>()
                         .Or<CommunicationException>()
                         .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
@@ -45,10 +46,13 @@ namespace Silky.DotNetty.Abstraction
                 }
                 else
                 {
-                    policy = Policy<object>.Handle<ChannelException>()
+                    policy = Policy<object>
+                        .Handle<ChannelException>()
                         .Or<ConnectException>()
+                        .Or<ConnectTimeoutException>()
                         .Or<IOException>()
                         .Or<CommunicationException>()
+                        .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
                         .RetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                             onRetryAsync: async (outcome, retryNumber, context) =>
                                 await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntryDescriptor));
