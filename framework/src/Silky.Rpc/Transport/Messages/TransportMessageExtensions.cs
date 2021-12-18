@@ -24,7 +24,7 @@ namespace Silky.Rpc.Transport.Messages
 
         public static void SetRpcMessageId(this TransportMessage message)
         {
-            RpcContext.Context.SetAttachment(AttachmentKeys.MessageId, message.Id);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.MessageId, message.Id);
         }
     }
 }

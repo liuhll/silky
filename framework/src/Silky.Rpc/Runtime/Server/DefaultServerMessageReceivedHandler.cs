@@ -81,11 +81,11 @@ namespace Silky.Rpc.Runtime.Server
 
                 context[PollyContextNames.ServiceEntry] = serviceEntry;
 
-
                 var result = await serviceEntry.Executor(_serviceKeyExecutor.ServiceKey,
                     message.Parameters);
 
                 remoteResultMessage.Result = result;
+                remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                 remoteResultMessage.StatusCode = StatusCode.Success;
             }
             catch (Exception ex)

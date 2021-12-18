@@ -15,11 +15,11 @@ namespace Silky.Rpc.Security
             rpcOptions.OnChange(options => { _token = rpcOptions.CurrentValue.Token; });
         }
 
-        public string Token { get; } = RpcContext.Context.GetAttachment(AttachmentKeys.RpcToken)?.ToString();
+        public string Token { get; } = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.RpcToken)?.ToString();
 
         public void SetRpcToken()
         {
-            RpcContext.Context.SetAttachment(AttachmentKeys.RpcToken, _token);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcToken, _token);
         }
     }
 }

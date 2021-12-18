@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Silky.Core.Exceptions;
 using MessagePack;
 using Silky.Rpc.Transport.Messages;
@@ -14,6 +15,7 @@ namespace Silky.Codec.Message
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result;
             ValidateErrors = remoteResultMessage.ValidateErrors;
+            Attachments = remoteResultMessage.Attachments;
         }
 
         public MessagePackRemoteResultMessage()
@@ -29,6 +31,8 @@ namespace Silky.Codec.Message
 
         [Key(5)] public ValidError[] ValidateErrors { get; set; }
 
+        [Key(6)] public IDictionary<string, object> Attachments { get; set; }
+
 
         public RemoteResultMessage GetMessage()
         {
@@ -38,7 +42,8 @@ namespace Silky.Codec.Message
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
                 Result = Result,
-                ValidateErrors = ValidateErrors
+                ValidateErrors = ValidateErrors,
+                Attachments = Attachments
             };
         }
     }

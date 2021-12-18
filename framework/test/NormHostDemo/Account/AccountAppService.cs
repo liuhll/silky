@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ITestApplication.Account;
 using ITestApplication.Account.Dtos;
 using Silky.Core.Exceptions;
+using Silky.Core.Rpc;
 using Silky.Jwt;
 
 namespace NormHostDemo.Account
@@ -33,6 +34,9 @@ namespace NormHostDemo.Account
                 { ClaimTypes.Name, input.UserName },
                 { ClaimTypes.Role, "PowerUser,Dashboard" }
             };
+            
+            RpcContext.Context.SetResponseHeader("test","test set header");
+            
             return _jwtTokenGenerator.Generate(payload);
         }
     }

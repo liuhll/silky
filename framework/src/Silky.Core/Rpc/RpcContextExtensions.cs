@@ -6,7 +6,7 @@ namespace Silky.Core.Rpc
     {
         public static bool IsGateway(this RpcContext rpcContext)
         {
-            var isGateway = rpcContext.GetAttachment(AttachmentKeys.IsGateway);
+            var isGateway = rpcContext.GetInvokeAttachment(AttachmentKeys.IsGateway);
             if (isGateway == null)
             {
                 return false;
@@ -17,19 +17,19 @@ namespace Silky.Core.Rpc
 
         public static string GetClientHost(this RpcContext rpcContext)
         {
-            var clientHost = rpcContext.GetAttachment(AttachmentKeys.ClientHost);
+            var clientHost = rpcContext.GetInvokeAttachment(AttachmentKeys.ClientHost);
             return clientHost?.ToString();
         }
 
         public static int GetClientPort(this RpcContext rpcContext)
         {
-            var clientPort = rpcContext.GetAttachment(AttachmentKeys.ClientPort);
+            var clientPort = rpcContext.GetInvokeAttachment(AttachmentKeys.ClientPort);
             return clientPort.To<int>();
         }
 
         public static int? GetRpcRequestPort(this RpcContext rpcContext)
         {
-            var rpcRequestPort = rpcContext.GetAttachment(AttachmentKeys.RpcRequestPort);
+            var rpcRequestPort = rpcContext.GetInvokeAttachment(AttachmentKeys.RpcRequestPort);
             if (rpcRequestPort != null)
             {
                 return rpcRequestPort.To<int>();
@@ -40,40 +40,40 @@ namespace Silky.Core.Rpc
 
         public static ServiceProtocol GetClientServiceProtocol(this RpcContext rpcContext)
         {
-            var clientPort = rpcContext.GetAttachment(AttachmentKeys.ClientServiceProtocol);
+            var clientPort = rpcContext.GetInvokeAttachment(AttachmentKeys.ClientServiceProtocol);
             return clientPort.To<ServiceProtocol>();
         }
 
 
         public static string GetLocalHost(this RpcContext rpcContext)
         {
-            var localAddress = rpcContext.GetAttachment(AttachmentKeys.LocalAddress);
+            var localAddress = rpcContext.GetInvokeAttachment(AttachmentKeys.LocalAddress);
             return localAddress?.ToString();
         }
 
         public static int GetLocalPort(this RpcContext rpcContext)
         {
-            var localPort = rpcContext.GetAttachment(AttachmentKeys.LocalPort);
+            var localPort = rpcContext.GetInvokeAttachment(AttachmentKeys.LocalPort);
             return localPort.To<int>();
         }
 
         public static ServiceProtocol GetLocalServiceProtocol(this RpcContext rpcContext)
         {
-            var localServiceProtocol = rpcContext.GetAttachment(AttachmentKeys.LocalServiceProtocol);
+            var localServiceProtocol = rpcContext.GetInvokeAttachment(AttachmentKeys.LocalServiceProtocol);
             return localServiceProtocol.To<ServiceProtocol>();
         }
 
 
         public static string GetServiceKey(this RpcContext rpcContext)
         {
-            var serviceKey = rpcContext.GetAttachment(AttachmentKeys.ServiceKey);
+            var serviceKey = rpcContext.GetInvokeAttachment(AttachmentKeys.ServiceKey);
             return serviceKey?.ToString();
         }
 
 
         public static void SetServiceKey(this RpcContext rpcContext, string serviceKey)
         {
-            rpcContext.SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
+            rpcContext.SetInvokeAttachment(AttachmentKeys.ServiceKey, serviceKey);
         }
 
         public static string GetSelectedServerAddress(this RpcContext rpcContext)
@@ -89,27 +89,27 @@ namespace Silky.Core.Rpc
 
         public static string GetSelectedServerHost(this RpcContext rpcContext)
         {
-            var selectedServerHost = rpcContext.GetAttachment(AttachmentKeys.SelectedServerHost);
+            var selectedServerHost = rpcContext.GetInvokeAttachment(AttachmentKeys.SelectedServerHost);
             return selectedServerHost?.ToString();
         }
 
         public static int GetSelectedServerPort(this RpcContext rpcContext)
         {
-            var selectedServerPort = rpcContext.GetAttachment(AttachmentKeys.SelectedServerPort);
+            var selectedServerPort = rpcContext.GetInvokeAttachment(AttachmentKeys.SelectedServerPort);
             return selectedServerPort.To<int>();
         }
 
 
         public static ServiceProtocol GetSelectedServerServiceProtocol(this RpcContext rpcContext)
         {
-            var selectedServerServiceProtocol = rpcContext.GetAttachment(AttachmentKeys.SelectedServerServiceProtocol)
+            var selectedServerServiceProtocol = rpcContext.GetInvokeAttachment(AttachmentKeys.SelectedServerServiceProtocol)
                 .To<ServiceProtocol>();
             return selectedServerServiceProtocol;
         }
 
         public static string GetMessageId(this RpcContext rpcContext)
         {
-            var messageId = rpcContext.GetAttachment(AttachmentKeys.MessageId);
+            var messageId = rpcContext.GetInvokeAttachment(AttachmentKeys.MessageId);
             return messageId?.ToString();
         }
     }

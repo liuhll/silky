@@ -17,23 +17,23 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Collections
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
-            return _rpcContext.GetContextAttachments()
+            return _rpcContext.GetInvokeAttachments()
                 .Select(x => new KeyValuePair<string, string>(x.Key, x.Value.ToString())).GetEnumerator();
         }
 
         public void Add(string key, string value)
         {
-            if (_rpcContext.GetContextAttachments().ContainsKey(key))
+            if (_rpcContext.GetInvokeAttachments().ContainsKey(key))
             {
-                _rpcContext.GetContextAttachments().Remove(key);
+                _rpcContext.GetInvokeAttachments().Remove(key);
             }
 
-            _rpcContext.GetContextAttachments().Add(key, value);
+            _rpcContext.GetInvokeAttachments().Add(key, value);
         }
 
         public string Get(string key)
         {
-            if (_rpcContext.GetContextAttachments().TryGetValue(key, out var value))
+            if (_rpcContext.GetInvokeAttachments().TryGetValue(key, out var value))
                 return value.ToString();
             return null;
         }

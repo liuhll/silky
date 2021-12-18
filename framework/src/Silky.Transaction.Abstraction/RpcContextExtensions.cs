@@ -9,7 +9,7 @@ namespace Silky.Transaction.Abstraction
     {
         public static TransactionContext GetTransactionContext(this RpcContext rpcContext)
         {
-            var transactionContextAttachment = rpcContext.GetAttachment(AttachmentKeys.TransactionContext);
+            var transactionContextAttachment = rpcContext.GetInvokeAttachment(AttachmentKeys.TransactionContext);
 
             if (transactionContextAttachment == null)
             {
@@ -26,7 +26,7 @@ namespace Silky.Transaction.Abstraction
         {
             var serializer = EngineContext.Current.Resolve<ISerializer>();
 
-            rpcContext.SetAttachment(AttachmentKeys.TransactionContext, serializer.Serialize(transactionContext));
+            rpcContext.SetInvokeAttachment(AttachmentKeys.TransactionContext, serializer.Serialize(transactionContext));
         }
 
         // public static void RemoveTransactionContext(this RpcContext rpcContext, TransactionContext transactionContext)

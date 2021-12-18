@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
@@ -11,12 +12,14 @@ namespace Silky.Core.Rpc
 {
     public class RpcContext
     {
-        private ConcurrentDictionary<string, object> contextAttachments;
+        private ConcurrentDictionary<string, object> invokeAttachments;
+        private ConcurrentDictionary<string, object> resultAttachments;
         private static AsyncLocal<RpcContext> rpcContextThreadLocal = new();
 
         private RpcContext()
         {
-            contextAttachments = new(StringComparer.OrdinalIgnoreCase);
+            invokeAttachments = new(StringComparer.OrdinalIgnoreCase);
+            resultAttachments = new(StringComparer.OrdinalIgnoreCase);
         }
 
         public static RpcContext Context
@@ -60,12 +63,17 @@ namespace Silky.Core.Rpc
 
         public IServiceProvider RpcServices { set; get; }
 
-        public void RemoveAttachment(string key)
+        public void RemoveInvokeAttachment([NotNull] string key)
         {
-            contextAttachments.TryRemove(key, out _);
+            invokeAttachments.TryRemove(key, out _);
         }
 
-        public void SetAttachment(string key, object value)
+        public void RemoveResultAttachment([NotNull] string key)
+        {
+            resultAttachments.TryRemove(key, out _);
+        }
+
+        public void SetInvokeAttachment([NotNull] string key, object value)
         {
             if (AttachmentKeys.RequestHeader.Equals(key))
             {
@@ -77,37 +85,114 @@ namespace Silky.Core.Rpc
                 && !(value is IDictionary<string, object>)
                 && !(value is JObject)
                 && !(value is JArray)
-            )
+               )
             {
                 throw new SilkyException("rpcContext attachments complex type parameters are not allowed");
             }
 
-            contextAttachments.AddOrUpdate(key, value, (k, v) => value);
+            invokeAttachments.AddOrUpdate(key, value, (k, v) => value);
         }
 
-        public bool HasAttachment(string key)
+        public void SetResultAttachment([NotNull] string key, object value)
         {
-            return contextAttachments.ContainsKey(key);
+            if (AttachmentKeys.ResponseHeader.Equals(key))
+            {
+                var convertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+                value = convertibleService.Convert(value, typeof(IDictionary<string, object>));
+            }
+
+            if (value?.GetType().GetObjectDataType() == ObjectDataType.Complex
+                && !(value is IDictionary<string, object>)
+                && !(value is IDictionary<string, string>)
+                && !(value is JObject)
+                && !(value is JArray)
+               )
+            {
+                throw new SilkyException("rpcContext attachments complex type parameters are not allowed");
+            }
+
+            resultAttachments.AddOrUpdate(key, value, (k, v) => value);
         }
 
-        public object GetAttachment(string key)
+        public bool HasInvokeAttachment([NotNull] string key)
         {
-            contextAttachments.TryGetValue(key, out object result);
+            return invokeAttachments.ContainsKey(key);
+        }
+
+        public bool HasResultAttachment([NotNull] string key)
+        {
+            return resultAttachments.ContainsKey(key);
+        }
+
+        public object GetInvokeAttachment([NotNull] string key)
+        {
+            invokeAttachments.TryGetValue(key, out object result);
             return result;
         }
 
-        public void SetAttachments(IDictionary<string, object> attachments)
+        public object GetResultAttachment([NotNull] string key)
+        {
+            resultAttachments.TryGetValue(key, out object result);
+            return result;
+        }
+
+        public void SetInvokeAttachments(IDictionary<string, object> attachments)
         {
             foreach (var item in attachments)
             {
-                SetAttachment(item.Key, item.Value);
+                SetInvokeAttachment(item.Key, item.Value);
             }
         }
 
-
-        public IDictionary<string, object> GetContextAttachments()
+        public void SetResponseHeader([NotNull] string key, string value)
         {
-            return contextAttachments;
+            IDictionary<string, string> responseHeader;
+            if (AttachmentKeys.ResponseHeader.Equals(key))
+            {
+                var responseHeaderValue = GetResultAttachment(AttachmentKeys.ResponseHeader);
+                responseHeader = responseHeaderValue.ConventTo<IDictionary<string, string>>();
+            }
+            else
+            {
+                responseHeader = new Dictionary<string, string>();
+            }
+
+            responseHeader[key] = value;
+            SetResultAttachment(AttachmentKeys.ResponseHeader, responseHeader);
+        }
+
+        public void SetResultAttachments(IDictionary<string, object> attachments)
+        {
+            if (attachments == null)
+            {
+                return;
+            }
+
+            foreach (var item in attachments)
+            {
+                SetResultAttachment(item.Key, item.Value);
+            }
+        }
+
+        public IDictionary<string, object> GetInvokeAttachments()
+        {
+            return invokeAttachments;
+        }
+
+        public IDictionary<string, object> GetResultAttachments()
+        {
+            return resultAttachments;
+        }
+
+        public IDictionary<string, string> GetResponseHeaders()
+        {
+            var responseHeadersValue = GetResultAttachment(AttachmentKeys.ResponseHeader);
+            if (responseHeadersValue == null)
+            {
+                return null;
+            }
+
+            return responseHeadersValue.ConventTo<IDictionary<string, string>>();
         }
     }
 }

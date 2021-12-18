@@ -111,6 +111,7 @@ namespace Silky.Rpc.Runtime.Client
                 $"The rpc request call succeeded");
             _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
                 remoteInvokeMessage.ServiceEntryId, invokeResult);
+            RpcContext.Context.SetResultAttachments(invokeResult?.Attachments);
             return invokeResult;
         }
 
@@ -135,7 +136,8 @@ namespace Silky.Rpc.Runtime.Client
         private IRpcEndpoint SelectedRpcEndpoint(IRpcEndpoint[] rpcEndpoints, ShuntStrategy shuntStrategy,
             string serviceEntryId, string hashKey, out ShuntStrategy confirmedShuntStrategy)
         {
-            var remoteAddress = RpcContext.Context.GetAttachment(AttachmentKeys.SelectedServerEndpoint)?.ToString();
+            var remoteAddress = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.SelectedServerEndpoint)
+                ?.ToString();
             IRpcEndpoint selectedRpcEndpoint;
             if (remoteAddress != null)
             {

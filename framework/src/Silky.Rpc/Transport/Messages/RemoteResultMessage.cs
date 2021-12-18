@@ -1,4 +1,5 @@
-﻿using Silky.Core.Exceptions;
+﻿using System.Collections.Generic;
+using Silky.Core.Exceptions;
 
 namespace Silky.Rpc.Transport.Messages
 {
@@ -13,5 +14,7 @@ namespace Silky.Rpc.Transport.Messages
         public ValidError[] ValidateErrors { get; set; }
 
         public object Result { get; set; }
+
+        public IDictionary<string, object> Attachments { get; set; }
     }
 }

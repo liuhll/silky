@@ -23,6 +23,8 @@ namespace Silky.Core.Rpc
         public const string RpcRequestPort = "RpcRequestPort";
 
         public const string RequestHeader = "RequestHeader";
+        
+        public const string ResponseHeader = "ResponseHeader";
 
         public const string ServiceKey = "ServiceKey";
 

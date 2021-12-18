@@ -34,7 +34,7 @@ namespace Silky.DotNetty
         private void SetClientPort()
         {
             var localAddress = _channel.LocalAddress as IPEndPoint;
-            RpcContext.Context.SetAttachment(AttachmentKeys.RpcRequestPort, localAddress?.Port);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, localAddress?.Port);
         }
     }
 }

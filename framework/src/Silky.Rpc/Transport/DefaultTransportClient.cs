@@ -74,7 +74,7 @@ namespace Silky.Rpc.Transport
         {
             var transportMessage = new TransportMessage(message, messageId);
             transportMessage.SetRpcMessageId();
-            message.Attachments = RpcContext.Context.GetContextAttachments();
+            message.Attachments = RpcContext.Context.GetInvokeAttachments();
             var callbackTask =
                 RegisterResultCallbackAsync(transportMessage.Id, message.ServiceEntryId, timeout);
             Logger.LogDebug(

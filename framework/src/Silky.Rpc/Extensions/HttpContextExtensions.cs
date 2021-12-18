@@ -24,7 +24,7 @@ namespace Silky.Rpc.Extensions
 
         public static void SetHttpMessageId(this HttpContext httpContext)
         {
-            RpcContext.Context.SetAttachment(AttachmentKeys.MessageId, httpContext.TraceIdentifier);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.MessageId, httpContext.TraceIdentifier);
         }
 
         public static void SetUserClaims(this HttpContext httpContext)
@@ -34,33 +34,47 @@ namespace Silky.Rpc.Extensions
             {
                 foreach (var userClaim in httpContext.User.Claims)
                 {
-                    RpcContext.Context.SetAttachment(userClaim.Type, userClaim.Value);
+                    RpcContext.Context.SetInvokeAttachment(userClaim.Type, userClaim.Value);
                 }
             }
         }
 
         public static void SetHttpHandleAddressInfo(this HttpContext httpContext)
         {
-            RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, true);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.IsGateway, true);
 
-          
+
             var clientHost = httpContext.Connection.RemoteIpAddress;
             var clientPort = httpContext.Connection.RemotePort;
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.ClientHost, clientHost.MapToIPv4().ToString());
-            RpcContext.Context.SetAttachment(AttachmentKeys.ClientServiceProtocol, ServiceProtocol.Http.ToString());
-            RpcContext.Context.SetAttachment(AttachmentKeys.RpcRequestPort, clientPort.ToString());
-            RpcContext.Context.SetAttachment(AttachmentKeys.ClientPort, clientPort.ToString());
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ClientHost, clientHost.MapToIPv4().ToString());
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ClientServiceProtocol,
+                ServiceProtocol.Http.ToString());
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, clientPort.ToString());
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ClientPort, clientPort.ToString());
 
             var localRpcEndpoint = RpcEndpointHelper.GetLocalWebEndpointDescriptor();
-            RpcContext.Context.SetAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
-            RpcContext.Context.SetAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
-            RpcContext.Context.SetAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol,
+                localRpcEndpoint.ServiceProtocol);
         }
 
         public static void SetResultCode(this HttpResponse httpResponse, StatusCode statusCode)
         {
             httpResponse.Headers["SilkyResultCode"] = statusCode.ToString();
+        }
+
+        public static void SetHeaders(this HttpResponse httpResponse)
+        {
+            var responseHeaders = RpcContext.Context.GetResponseHeaders();
+            if (responseHeaders != null)
+            {
+                foreach (var responseHeader in responseHeaders)
+                {
+                    httpResponse.Headers[responseHeader.Key] = responseHeader.Value;
+                }
+            }
         }
 
         public static StatusCode GetResultCode(this HttpResponse httpResponse, int httpCode)

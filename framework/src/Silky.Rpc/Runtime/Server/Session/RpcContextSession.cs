@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             get
             {
-                var userId = RpcContext.Context.GetAttachment(ClaimTypes.NameIdentifier);
+                var userId = RpcContext.Context.GetInvokeAttachment(ClaimTypes.NameIdentifier);
                 return userId;
             }
         }
@@ -24,7 +24,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             get
             {
-                var userName = RpcContext.Context.GetAttachment(ClaimTypes.Name);
+                var userName = RpcContext.Context.GetInvokeAttachment(ClaimTypes.Name);
                 if (userName != null)
                 {
                     return userName.ToString();
@@ -38,7 +38,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             get
             {
-                var tenantId = RpcContext.Context.GetAttachment(SilkyClaimTypes.TenantId);
+                var tenantId = RpcContext.Context.GetInvokeAttachment(SilkyClaimTypes.TenantId);
                 return tenantId;
             }
         }

@@ -254,7 +254,7 @@ namespace Silky.Rpc.Runtime.Server
         private Func<string, object[], Task<object>> CreateExecutor() =>
             (key, parameters) =>
             {
-                RpcContext.Context.SetAttachment(AttachmentKeys.ServiceMethodName,
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ServiceMethodName,
                     $"{MethodInfo.DeclaringType?.FullName}.{MethodInfo.Name}");
 
                 if (IsLocal)

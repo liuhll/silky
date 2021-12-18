@@ -48,6 +48,7 @@ namespace Silky.Http.Core.Handlers
             httpContext.Response.ContentType = httpContext.GetResponseContentType(_gatewayOptions);
             httpContext.Response.StatusCode = ResponseStatusCode.Success;
             httpContext.Response.SetResultCode(StatusCode.Success);
+            httpContext.Response.SetHeaders();
             result ??= string.Empty;
 
             var responseData = _serializer.Serialize(result);

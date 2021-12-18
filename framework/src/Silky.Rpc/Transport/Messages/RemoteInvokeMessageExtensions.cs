@@ -18,14 +18,14 @@ namespace Silky.Rpc.Transport.Messages
                     continue;
                 }
 
-                RpcContext.Context.SetAttachment(messageAttachment.Key, messageAttachment.Value);
+                RpcContext.Context.SetInvokeAttachment(messageAttachment.Key, messageAttachment.Value);
             }
 
             var localRpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
-            RpcContext.Context.SetAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
-            RpcContext.Context.SetAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
-            RpcContext.Context.SetAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol);
-            RpcContext.Context.SetAttachment(AttachmentKeys.IsGateway, isGateway);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.IsGateway, isGateway);
         }
     }
 }

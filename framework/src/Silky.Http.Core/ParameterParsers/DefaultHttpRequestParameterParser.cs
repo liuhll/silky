@@ -42,7 +42,7 @@ namespace Silky.Http.Core
             if (request.Headers.Any())
             {
                 var headerData = request.Headers.ToDictionary(p => p.Key, p => p.Value.ToString());
-                RpcContext.Context.SetAttachment(AttachmentKeys.RequestHeader, headerData);
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RequestHeader, headerData);
                 parameters.Add(ParameterFrom.Header, _serializer.Serialize(headerData));
             }
 

@@ -8,7 +8,7 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class ServiceKeyExecutor : IServiceKeyExecutor, IScopedDependency
     {
-        public string ServiceKey => RpcContext.Context.GetAttachment(AttachmentKeys.ServiceKey)?.ToString();
+        public string ServiceKey => RpcContext.Context.GetInvokeAttachment(AttachmentKeys.ServiceKey)?.ToString();
 
 
         public async Task Execute(Func<Task> func, string serviceKey)
@@ -32,7 +32,7 @@ namespace Silky.Rpc.Runtime.Server
             var currentServiceKey = ServiceKey;
             if (!serviceKey.IsNullOrEmpty())
             {
-                RpcContext.Context.SetAttachment(AttachmentKeys.ServiceKey, serviceKey);
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ServiceKey, serviceKey);
             }
 
             return currentServiceKey;
@@ -42,11 +42,11 @@ namespace Silky.Rpc.Runtime.Server
         {
             if (!currentServiceKey.IsNullOrEmpty())
             {
-                RpcContext.Context.SetAttachment(AttachmentKeys.ServiceKey, currentServiceKey);
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ServiceKey, currentServiceKey);
             }
             else
             {
-                RpcContext.Context.RemoveAttachment(AttachmentKeys.ServiceKey);
+                RpcContext.Context.RemoveInvokeAttachment(AttachmentKeys.ServiceKey);
             }
         }
     }

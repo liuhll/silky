@@ -46,7 +46,7 @@ namespace Silky.Rpc.Runtime.Client
                 return _localExecutor.Execute(serviceEntry, parameters, serviceKey);
             }
 
-            RpcContext.Context.SetAttachment(AttachmentKeys.SelectedServerEndpoint, address);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.SelectedServerEndpoint, address);
             return _remoteExecutor.Execute(serviceEntry, parameters, serviceKey);
         }
 

@@ -15,6 +15,7 @@ namespace Silky.Codec.Message
             StatusCode = remoteResultMessage.StatusCode;
             Result = remoteResultMessage.Result == null ? null : new DynamicItem(remoteResultMessage.Result);
             ValidateErrors = remoteResultMessage.ValidateErrors?.Select(i => new DynamicItem(i)).ToArray();
+            Attachments = remoteResultMessage.Attachments?.Select(i => new ParameterItem(i)).ToArray();
         }
 
         public ProtoBufRemoteResultMessage()
@@ -30,6 +31,8 @@ namespace Silky.Codec.Message
 
         [ProtoMember(5)] public DynamicItem[] ValidateErrors { get; set; }
 
+        [ProtoMember(6)] public ParameterItem[] Attachments { get; set; }
+
         public RemoteResultMessage GetMessage()
         {
             return new()
@@ -38,7 +41,8 @@ namespace Silky.Codec.Message
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
                 Result = Result?.Get(),
-                ValidateErrors = ValidateErrors.Select(p => (ValidError)p.Get()).ToArray()
+                ValidateErrors = ValidateErrors.Select(p => (ValidError)p.Get()).ToArray(),
+                Attachments = Attachments?.ToDictionary(i => i.Key, i => i.Value?.Get()),
             };
         }
     }

@@ -44,7 +44,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
                                  $"--> ServiceKey:{serviceKey}{Environment.NewLine}" +
                                  $"--> MessageId:{eventData.MessageId}.{Environment.NewLine}" +
                                  $"--> Parameters:{_serializer.Serialize(eventData.Message.Parameters)}.{Environment.NewLine}" +
-                                 $"--> Attachments:{_serializer.Serialize(RpcContext.Context.GetContextAttachments())}"));
+                                 $"--> InvokeAttachments:{_serializer.Serialize(RpcContext.Context.GetInvokeAttachments())}"));
 
             context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);

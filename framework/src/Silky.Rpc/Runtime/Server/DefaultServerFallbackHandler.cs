@@ -49,7 +49,7 @@ namespace Silky.Rpc.Runtime.Server
                 remoteResultMessage.ExceptionMessage = exception.Message;
                 return remoteResultMessage;
             }
-            
+
             if (!ctx.TryGetValue(PollyContextNames.ServiceEntry, out var ctxValue))
             {
                 remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
@@ -90,6 +90,7 @@ namespace Silky.Rpc.Runtime.Server
 
                     remoteResultMessage.StatusCode = StatusCode.Success;
                     remoteResultMessage.Result = result;
+                    remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                     _fallbackDiagnosticListener.TracingFallbackAfter(fallbackTracingTimestamp,
                         RpcContext.Context.GetMessageId(), serviceEntry.Id, result,
                         serviceEntry.FallbackProvider);
@@ -100,6 +101,7 @@ namespace Silky.Rpc.Runtime.Server
                     Logger.LogException(ex);
                     remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
                     remoteResultMessage.ExceptionMessage = ex.GetExceptionMessage();
+                    remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                     _fallbackDiagnosticListener.TracingFallbackError(fallbackTracingTimestamp,
                         RpcContext.Context.GetMessageId(), serviceEntry.Id, ex.GetExceptionStatusCode(),
                         ex, serviceEntry.FallbackProvider);
