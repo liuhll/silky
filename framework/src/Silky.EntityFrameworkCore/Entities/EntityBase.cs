@@ -176,11 +176,5 @@ namespace Silky.EntityFrameworkCore.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual TKey Id { get; set; }
-
-        /// <summary>
-        /// 租户Id
-        /// </summary>
-        [JsonIgnore]
-        public virtual Guid? TenantId { get; set; }
     }
 }

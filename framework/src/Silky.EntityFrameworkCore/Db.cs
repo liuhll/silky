@@ -16,7 +16,7 @@ namespace Silky.EntityFrameworkCore
         /// <summary>
         /// 基于表的多租户外键名
         /// </summary>
-        internal static string OnTableTenantId = nameof(Entity.TenantId);
+        internal static string OnTableTenantId = "TenantId";
 
         public static DbContext GetDbContext(Type dbContextLocator)
         {
