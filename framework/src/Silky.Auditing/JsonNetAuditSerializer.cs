@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Silky.Auditing.Configuration;
+using Silky.Rpc.Configuration;
 
 namespace Silky.Auditing;
 

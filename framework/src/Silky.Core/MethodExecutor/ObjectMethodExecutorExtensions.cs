@@ -12,7 +12,7 @@ namespace Silky.Core.MethodExecutor
     {
         [CanBeNull]
         public static async Task<object> ExecuteMethodWithDbContextAsync([NotNull] this ObjectMethodExecutor executor,
-            object target,
+            [NotNull] object target,
             object?[]? parameters)
         {
             Check.NotNull(executor, nameof(executor));

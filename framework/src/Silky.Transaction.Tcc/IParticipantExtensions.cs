@@ -8,6 +8,7 @@ using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Transport.Auditing;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
@@ -56,7 +57,8 @@ namespace Silky.Transaction.Tcc
                             }
                         }
 
-                        await excutor?.ExecuteMethodWithDbContextAsync(instance, actualParameters.ToArray());
+                        await excutor?.ExecuteMethodWithAuditingAsync(instance, actualParameters.ToArray(),
+                            serviceEntry);
                     }
                 }
             }

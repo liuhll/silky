@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Options;
-using Silky.Auditing.Configuration;
 using Silky.Core.Extensions;
 using Silky.Core.Rpc;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Transport.Auditing;
 using Silky.Transaction.Abstraction;
 
 namespace Silky.Auditing.Filters;
@@ -49,13 +50,7 @@ public class AuditingFilter : IServerFilter
         {
             return;
         }
-
-        if (_auditLogActionInfo.IsDistributedTransaction)
-        {
-            var transactionContext = RpcContext.Context.GetTransactionContext();
-            _auditLogActionInfo.TransId = transactionContext?.TransId;
-        }
-
+        
         _auditLogActionInfo.ExecutionDuration =
             (int)(DateTimeOffset.Now - _auditLogActionInfo.ExecutionTime).TotalMilliseconds;
 

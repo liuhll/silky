@@ -6,6 +6,7 @@ using Silky.Core.DynamicProxy;
 using Silky.Core.MethodExecutor;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Transport.Auditing;
 
 namespace Silky.Transaction.Tcc
 {
@@ -33,7 +34,8 @@ namespace Silky.Transaction.Tcc
                 Debug.Assert(excutor != null);
                 Debug.Assert(instance != null);
                 invocation.ReturnValue =
-                    await excutor.ExecuteMethodWithDbContextAsync(instance, actualParameters.ToArray());
+                    await excutor.ExecuteMethodWithAuditingAsync(instance, actualParameters.ToArray(),
+                        invocation.GetServiceEntry());
             }
             else
             {

@@ -10,6 +10,7 @@ using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Transport.Auditing;
 
 namespace Silky.Rpc.Runtime.Client
 {
@@ -54,7 +55,7 @@ namespace Silky.Rpc.Runtime.Client
             try
             {
                 result = await serviceEntry.FallbackMethodExecutor
-                    .ExecuteMethodWithDbContextAsync(instance, parameters);
+                    .ExecuteMethodWithAuditingAsync(instance, parameters, serviceEntry);
             }
             catch (Exception ex)
             {

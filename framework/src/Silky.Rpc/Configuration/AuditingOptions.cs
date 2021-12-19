@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq.Expressions;
 
-namespace Silky.Auditing.Configuration;
+namespace Silky.Rpc.Configuration;
 
 public class AuditingOptions
 {
@@ -15,9 +18,7 @@ public class AuditingOptions
 
     public List<Type> IgnoredTypes { get; }
 
-
     public bool IsEnabledForGetRequests { get; set; }
-
 
     public AuditingOptions()
     {

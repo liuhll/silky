@@ -1,6 +1,6 @@
-using Silky.Transaction.Abstraction;
+using System;
 
-namespace Silky.Auditing;
+namespace Silky.Rpc.Transport.Auditing;
 
 public class AuditLogActionInfo
 {
@@ -15,7 +15,6 @@ public class AuditLogActionInfo
     public string Parameters { get; set; }
 
     public bool IsDistributedTransaction { get; set; }
-    public string? TransId { get; set; }
     public DateTimeOffset ExecutionTime { get; set; }
 
     public int ExecutionDuration { get; set; }

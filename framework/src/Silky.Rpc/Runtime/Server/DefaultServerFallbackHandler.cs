@@ -11,6 +11,7 @@ using Silky.Core.Logging;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Rpc.Diagnostics;
+using Silky.Rpc.Transport.Auditing;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
@@ -85,8 +86,8 @@ namespace Silky.Rpc.Runtime.Server
                 try
                 {
                     var parameters = serviceEntry.ConvertParameters(message.Parameters);
-                    result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithDbContextAsync(instance,
-                        parameters);
+                    result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithAuditingAsync(instance,
+                        parameters, serviceEntry);
 
                     remoteResultMessage.StatusCode = StatusCode.Success;
                     remoteResultMessage.Result = result;

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Silky.Auditing;
-using Silky.Auditing.Configuration;
 using Silky.Auditing.Filters;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Runtime.Server;
 
 namespace Microsoft.Extensions.DependencyInjection;

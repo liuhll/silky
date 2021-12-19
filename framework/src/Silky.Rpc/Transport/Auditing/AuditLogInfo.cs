@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Silky.Auditing;
+namespace Silky.Rpc.Transport.Auditing;
 
 public class AuditLogInfo
 {
