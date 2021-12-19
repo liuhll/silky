@@ -5,19 +5,11 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Caching.Distributed;
-using Silky.Core;
-using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
-using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Contexts.Builders;
 using Silky.EntityFrameworkCore.Entities.Attributes;
 using Silky.EntityFrameworkCore.Entities.Configures;
 using Silky.EntityFrameworkCore.Locators;
-using Silky.EntityFrameworkCore.MultiTenants.Dependencies;
-using Silky.EntityFrameworkCore.MultiTenants.Entities;
-using Silky.EntityFrameworkCore.MultiTenants.Locators;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.EntityFrameworkCore.Contexts
 {
@@ -113,52 +105,7 @@ namespace Silky.EntityFrameworkCore.Contexts
         /// 保存失败自动回滚
         /// </summary>
         public virtual bool FailedAutoRollback { get; protected set; } = true;
-
-        /// <summary>
-        /// 获取租户信息
-        /// </summary>
-        public Tenant Tenant
-        {
-            get
-            {
-                if (Db.CustomizeMultiTenants || !typeof(IPrivateMultiTenant).IsAssignableFrom(GetType()))
-                    return default;
-
-                var session = NullSession.Instance;
-
-                if (session.TenantId == null)
-                {
-                    return default;
-                }
-
-                Tenant currentTenant;
-                var tenantCachedKey = $"MULTI_TENANT:{session.TenantId}";
-                var distributedCache = EngineContext.Current.Resolve<IDistributedCache>();
-                var cachedValue = distributedCache?.GetString(tenantCachedKey);
-                var serializer = EngineContext.Current.Resolve<ISerializer>();
-
-                if (cachedValue.IsNullOrEmpty())
-                {
-                    currentTenant = GetCurrentTenant();
-                    if (currentTenant != null)
-                    {
-                        distributedCache?.SetString(tenantCachedKey, serializer.Serialize(currentTenant));
-                    }
-                }
-                else
-                {
-                    currentTenant = serializer.Deserialize<Tenant>(cachedValue);
-                }
-
-                return currentTenant;
-            }
-        }
-
-        protected virtual Tenant GetCurrentTenant()
-        {
-            return null;
-        }
-
+        
         /// <summary>
         /// 正在更改并跟踪的数据
         /// </summary>

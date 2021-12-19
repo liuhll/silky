@@ -25,14 +25,14 @@ namespace ITestApplication.Test
         /// <returns></returns>
         //[GetCachingIntercept("name:{0}")]
         //[UnitOfWork]
-        // [Fallback(typeof(ICreateFallback))]
-        // [Authorize(Roles = "Administrator, PowerUser")]
-        // [TestClientFilter(1)]
-        // Task<TestOut> Create(TestInput input);
+        [Fallback(typeof(ICreateFallback))]
+      //  [Authorize(Roles = "Administrator, PowerUser")]
+        [TestClientFilter(1)]
+        Task<TestOut> Create(TestInput input);
 
         // [HttpPost]
         // [HttpPut]
-        Task CreateOrUpdateAsync(TestInput input);
+        // Task CreateOrUpdateAsync(TestInput input);
 
         [AllowAnonymous]
         Task<TestOut> Get(long id);

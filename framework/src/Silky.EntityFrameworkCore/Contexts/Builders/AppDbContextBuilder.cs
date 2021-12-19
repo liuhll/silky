@@ -422,7 +422,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
         {
             // 处理自定义多租户的情况
             if (dbContextLocator == typeof(MultiTenantDbContextLocator) && Db.CustomizeMultiTenants &&
-                entityCorrelationType == typeof(Tenant)) return false;
+                typeof(ITenant).IsAssignableFrom(entityCorrelationType)) return false;
 
             // 获取所有祖先类型
             var ancestorTypes = entityCorrelationType.GetAncestorTypes();

@@ -16,7 +16,6 @@ using Silky.Core.DbContext;
 using Silky.EntityFrameworkCore.ContextPool;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Locators;
-using Silky.EntityFrameworkCore.MultiTenants.Entities;
 
 namespace Silky.EntityFrameworkCore.Repositories
 {
@@ -173,10 +172,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             DbConnection = Database.GetDbConnection();
             ChangeTracker = Context.ChangeTracker;
             Model = Context.Model;
-
-            // 内置多租户
-            Tenant = DynamicContext.Tenant;
-
+            
             // 设置提供器名称
             ProviderName = Database.ProviderName;
 
@@ -222,11 +218,7 @@ namespace Silky.EntityFrameworkCore.Repositories
         /// </summary>
         public virtual IModel Model { get; }
 
-        /// <summary>
-        /// 租户信息
-        /// </summary>
-        public virtual Tenant Tenant { get; }
-
+        
         /// <summary>
         /// 数据库提供器名
         /// </summary>
