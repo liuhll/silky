@@ -122,7 +122,7 @@ namespace Silky.Rpc.Endpoint
 
         public static IRpcEndpoint GetRpcEndpoint(int port, ServiceProtocol serviceProtocol)
         {
-            string host = GetHostIp(GetAnyHostIp());
+            string host = GetIp(GetAnyHostIp());
             var address = new RpcEndpoint(host, port, serviceProtocol);
             return address;
         }

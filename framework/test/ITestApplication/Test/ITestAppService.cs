@@ -41,9 +41,9 @@ namespace ITestApplication.Test
         // [HttpPut]
         // Task<string> Update(TestInput input);
 
-        // [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
-        // [Transaction]
-        // [Governance(TimeoutMillSeconds = 5, RetryTimes = 2)]
+        [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
+        [Transaction]
+        [Governance(RetryTimes = 2)]
         [HttpDelete]
         Task<string> DeleteAsync(TestInput input);
 

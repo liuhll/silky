@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Auditing;
 using Silky.Caching.StackExchangeRedis;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
@@ -35,6 +36,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(RpcCachingInterceptorModule),
         typeof(DotNettyModule),
         typeof(ValidationModule),
+        typeof(AuditingModule),
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
         typeof(TransactionTccModule),

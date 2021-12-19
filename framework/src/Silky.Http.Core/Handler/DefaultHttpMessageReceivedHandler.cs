@@ -4,16 +4,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Silky.Core.Extensions;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Executor;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
-using Silky.Rpc.Runtime.Client;
-using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
 
 namespace Silky.Http.Core.Handlers

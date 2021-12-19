@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
 
 namespace Silky.Core.Rpc
 {
@@ -104,11 +105,57 @@ namespace Silky.Core.Rpc
             if (value?.GetType().GetObjectDataType() == ObjectDataType.Complex
                 && !(value is IDictionary<string, object>)
                 && !(value is IDictionary<string, string>)
+                && !(value is IList<string>)
                 && !(value is JObject)
                 && !(value is JArray)
                )
             {
                 throw new SilkyException("rpcContext attachments complex type parameters are not allowed");
+            }
+
+            if (value is IDictionary<string, object> dict)
+            {
+                var resultAttachment = GetResultAttachment(key);
+                if (resultAttachment != null)
+                {
+                    var resultAttachmentValue = resultAttachment.ConventTo<IDictionary<string, object>>();
+                    foreach (var item in resultAttachmentValue)
+                    {
+                        if (!dict.ContainsKey(item.Key))
+                        {
+                            dict[item.Key] = item.Value;
+                        }
+                    }
+                }
+            }
+
+            if (value is IDictionary<string, string> dict1)
+            {
+                var resultAttachment = GetResultAttachment(key);
+                if (resultAttachment != null)
+                {
+                    var resultAttachmentValue = resultAttachment.ConventTo<IDictionary<string, string>>();
+                    foreach (var item in resultAttachmentValue)
+                    {
+                        if (!dict1.ContainsKey(item.Key))
+                        {
+                            dict1[item.Key] = item.Value;
+                        }
+                    }
+                }
+            }
+
+            if (value is List<string> list)
+            {
+                var resultAttachment = GetResultAttachment(key);
+                if (resultAttachment != null)
+                {
+                    var resultAttachmentValue = resultAttachment.ConventTo<List<string>>();
+                    foreach (var item in resultAttachmentValue)
+                    {
+                        list.AddIfNotContains(item);
+                    }
+                }
             }
 
             resultAttachments.AddOrUpdate(key, value, (k, v) => value);
@@ -160,6 +207,7 @@ namespace Silky.Core.Rpc
             responseHeader[key] = value;
             SetResultAttachment(AttachmentKeys.ResponseHeader, responseHeader);
         }
+
 
         public void SetResultAttachments(IDictionary<string, object> attachments)
         {

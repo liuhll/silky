@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Auditing;
 using Silky.Caching.StackExchangeRedis;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
@@ -27,6 +28,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(ValidationModule),
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
+        typeof(AuditingModule),
         typeof(RedisTransactionRepositoryModule)
     )]
     public abstract class GeneralHostModule : StartUpModule

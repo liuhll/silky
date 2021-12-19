@@ -120,6 +120,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{83BB8BED-C
 		test\docker-compose\.env = test\docker-compose\.env
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Auditing", "src\Silky.Auditing\Silky.Auditing.csproj", "{117DFADA-BF7A-4980-839C-E8AA62DE5DD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -342,6 +344,10 @@ Global
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{117DFADA-BF7A-4980-839C-E8AA62DE5DD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{117DFADA-BF7A-4980-839C-E8AA62DE5DD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{117DFADA-BF7A-4980-839C-E8AA62DE5DD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{117DFADA-BF7A-4980-839C-E8AA62DE5DD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -401,6 +407,7 @@ Global
 		{7D61552F-6E1C-41E0-AF6F-D4883C68AAF9} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{A55DA184-5BF2-4DE8-B9E6-C8890F12F879} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{FEA0C318-FFED-4D39-8781-265718CA43DD} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
+		{117DFADA-BF7A-4980-839C-E8AA62DE5DD1} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42B14424-34C2-4891-A02A-690A57FE2795}
