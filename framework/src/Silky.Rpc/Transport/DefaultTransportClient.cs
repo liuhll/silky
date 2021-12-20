@@ -8,12 +8,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Logging;
 using Silky.Core.Rpc;
-using Silky.Rpc.Auditing;
-using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime;
-using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport

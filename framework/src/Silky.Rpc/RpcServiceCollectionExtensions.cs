@@ -15,22 +15,12 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (!services.IsAdded(typeof(ITransportMessageDecoder)))
             {
-                services.AddScoped<ITransportMessageDecoder, DefaultTransportMessageDecoder>();
+                services.AddSingleton<ITransportMessageDecoder, DefaultTransportMessageDecoder>();
             }
 
             if (!services.IsAdded(typeof(ITransportMessageEncoder)))
             {
-                services.AddScoped<ITransportMessageEncoder, DefaultTransportMessageEncoder>();
-            }
-
-            return services;
-        }
-
-        public static IServiceCollection AddDefaultServiceGovernancePolicy(this IServiceCollection services)
-        {
-            if (!services.IsAdded(typeof(IInvokePolicyBuilder)))
-            {
-                services.AddScoped<IInvokePolicyBuilder, DefaultInvokePolicyBuilder>();
+                services.AddSingleton<ITransportMessageEncoder, DefaultTransportMessageEncoder>();
             }
 
             return services;
@@ -40,7 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.AddOptions<AuditingOptions>()
                     .Bind(configuration.GetSection(AuditingOptions.Auditing));
-                services.AddTransient<IAuditSerializer, JsonNetAuditSerializer>();
+                services.AddSingleton<IAuditSerializer, JsonNetAuditSerializer>();
                 services.AddScoped<IServerFilter, AuditingFilter>();
                 return services;
             }

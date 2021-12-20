@@ -3,7 +3,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IPolicyWithResultProvider : IScopedDependency
+    public interface IPolicyWithResultProvider : ISingletonDependency
     {
         IAsyncPolicy<object> Create(string serviceEntryId, object[] parameters);
     }

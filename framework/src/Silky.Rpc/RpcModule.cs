@@ -34,7 +34,6 @@ namespace Silky.Rpc
                 .Bind(configuration.GetSection(WebSocketOptions.WebSocket));
 
             services.AddDefaultMessageCodec();
-            services.AddDefaultServiceGovernancePolicy();
             services.AddAuditing(configuration);
         }
 

@@ -11,22 +11,22 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (!services.IsAdded(typeof(ITransportMessageDecoder)))
             {
-                services.AddScoped<ITransportMessageDecoder, MessagePackTransportMessageDecoder>();
+                services.AddSingleton<ITransportMessageDecoder, MessagePackTransportMessageDecoder>();
             }
             else
             {
                 services.Replace(
-                    ServiceDescriptor.Scoped<ITransportMessageDecoder, MessagePackTransportMessageDecoder>());
+                    ServiceDescriptor.Singleton<ITransportMessageDecoder, MessagePackTransportMessageDecoder>());
             }
 
             if (!services.IsAdded(typeof(ITransportMessageEncoder)))
             {
-                services.AddScoped<ITransportMessageEncoder, MessagePackTransportMessageEncoder>();
+                services.AddSingleton<ITransportMessageEncoder, MessagePackTransportMessageEncoder>();
             }
             else
             {
                 services.Replace(
-                    ServiceDescriptor.Scoped<ITransportMessageEncoder, MessagePackTransportMessageEncoder>());
+                    ServiceDescriptor.Singleton<ITransportMessageEncoder, MessagePackTransportMessageEncoder>());
             }
 
             return services;

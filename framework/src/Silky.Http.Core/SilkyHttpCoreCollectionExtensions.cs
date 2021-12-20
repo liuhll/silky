@@ -10,8 +10,8 @@ namespace Silky.Http.Core
     {
         public static IServiceCollection AddSilkyHttpCore(this IServiceCollection services)
         {
-            services.AddScoped<IMessageReceivedHandler, DefaultHttpMessageReceivedHandler>();
-            services.AddScoped<IParameterParser, DefaultHttpRequestParameterParser>();
+            services.AddSingleton<IMessageReceivedHandler, DefaultHttpMessageReceivedHandler>();
+            services.AddSingleton<IParameterParser, DefaultHttpRequestParameterParser>();
             services.AddSingleton<SilkyServiceEntryEndpointDataSource>();
             services.AddSingleton<ServiceEntryEndpointFactory>();
             services.AddOptions<GatewayOptions>()

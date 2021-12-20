@@ -5,7 +5,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IHandleCircuitBreakerPolicyProvider : IScopedDependency
+    public interface IHandleCircuitBreakerPolicyProvider : ISingletonDependency
     {
         AsyncCircuitBreakerPolicy Create(RemoteInvokeMessage message);
 

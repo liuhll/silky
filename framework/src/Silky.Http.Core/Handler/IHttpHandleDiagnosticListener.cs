@@ -6,7 +6,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Handlers
 {
-    public interface IHttpHandleDiagnosticListener : IScopedDependency
+    public interface IHttpHandleDiagnosticListener : ISingletonDependency
     {
         long? TracingBefore(string messageId, ServiceEntry serviceEntry, HttpContext httpContext, object[] parameters);
 

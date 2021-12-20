@@ -4,7 +4,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IHandlePolicyBuilder : IScopedDependency
+    public interface IHandlePolicyBuilder : ISingletonDependency
     {
         IAsyncPolicy<RemoteResultMessage> Build(RemoteInvokeMessage message);
     }

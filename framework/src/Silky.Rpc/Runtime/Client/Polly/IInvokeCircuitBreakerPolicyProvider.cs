@@ -4,7 +4,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IInvokeCircuitBreakerPolicyProvider : IScopedDependency
+    public interface IInvokeCircuitBreakerPolicyProvider : ISingletonDependency
     {
         AsyncCircuitBreakerPolicy Create(string serviceEntryId, object[] parameters);
 
