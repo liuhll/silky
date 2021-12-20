@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Extensions;
@@ -19,14 +20,17 @@ public class AuditingMiddleware
     private readonly ISession _session;
     private readonly AuditingOptions _auditingOptions;
     private readonly IAuditSerializer _auditSerializer;
+    private readonly ILogger<AuditingMiddleware> _logger;
 
     public AuditingMiddleware(
         RequestDelegate next,
         IOptions<AuditingOptions> auditingOptions,
-        IAuditSerializer auditSerializer)
+        IAuditSerializer auditSerializer,
+        ILogger<AuditingMiddleware> logger)
     {
         _next = next;
         _auditSerializer = auditSerializer;
+        _logger = logger;
         _auditingOptions = auditingOptions.Value;
         _session = NullSession.Instance;
     }
@@ -68,6 +72,8 @@ public class AuditingMiddleware
                 {
                     await auditingStore.SaveAsync(auditLogInfo);
                 }
+
+                _logger.LogDebug(auditLogInfo.ToString());
             }
         }
         else
