@@ -42,34 +42,6 @@ namespace Silky.Rpc.Transport
                 return;
             Debug.Assert(message.IsResultMessage(), "The message type received by the service consumer is incorrect");
             task.SetResult(message);
-            //  var content = message.GetContent<RemoteResultMessage>();
-
-            // if (content.StatusCode != StatusCode.Success)
-            // {
-            //     if (content.StatusCode == StatusCode.ValidateError)
-            //     {
-            //         var validateException = new ValidationException(content.ExceptionMessage);
-            //         if (content.ValidateErrors != null)
-            //         {
-            //             foreach (var validateError in content.ValidateErrors)
-            //             {
-            //                 validateException.WithValidationError(validateError.ErrorMessage,
-            //                     validateError.MemberNames);
-            //             }
-            //         }
-            //
-            //         task.TrySetException(validateException);
-            //     }
-            //     else
-            //     {
-            //         var exception = new SilkyException(content.ExceptionMessage, content.StatusCode);
-            //         task.TrySetException(exception);
-            //     }
-            // }
-            // else
-            // {
-            //     task.SetResult(message);
-            // }
         }
 
         public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
