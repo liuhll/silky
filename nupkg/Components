@@ -9,6 +9,7 @@ src/Silky.DotNetty.Abstraction
 src/Silky.DotNetty.Protocol.Tcp
 src/Silky.EntityFrameworkCore
 src/Silky.HealthChecks.Rpc
+src/Silky.Http.Auditing
 src/Silky.Http.Core
 src/Silky.Http.CorsAccessor
 src/Silky.Http.Dashboard
