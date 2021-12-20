@@ -7,5 +7,6 @@ namespace Silky.Rpc.Runtime.Server
         public Exception Exception { get; set; }
 
         public object Result { get; set; }
+        public ServiceEntry ServiceEntry { get; set; }
     }
 }

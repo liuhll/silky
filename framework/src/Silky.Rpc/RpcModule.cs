@@ -35,6 +35,7 @@ namespace Silky.Rpc
 
             services.AddDefaultMessageCodec();
             services.AddDefaultServiceGovernancePolicy();
+            services.AddAuditing(configuration);
         }
 
         protected override void RegisterServices(ContainerBuilder builder)

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Silky.Rpc.Configuration;
 
-namespace Silky.Auditing;
+namespace Silky.Rpc.Auditing;
 
 public class JsonNetAuditSerializer : IAuditSerializer
 {
@@ -16,6 +16,11 @@ public class JsonNetAuditSerializer : IAuditSerializer
     public string Serialize(object obj)
     {
         return JsonConvert.SerializeObject(obj, GetSharedJsonSerializerSettings());
+    }
+    
+    public T Deserialize<T>(string line)
+    {
+        return JsonConvert.DeserializeObject<T>(line, GetSharedJsonSerializerSettings());
     }
 
     private static readonly object SyncObj = new object();

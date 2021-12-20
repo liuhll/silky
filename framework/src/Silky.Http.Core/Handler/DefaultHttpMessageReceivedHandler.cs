@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -52,8 +53,13 @@ namespace Silky.Http.Core.Handlers
         }
 
 
-        protected override async Task HandleException(Exception exception)
+        protected override async Task HandleException(HttpContext httpContext, Exception exception)
         {
+            httpContext.Features.Set(new ExceptionHandlerFeature()
+            {
+                Error = exception,
+                Path = httpContext.Request.Path
+            });
             Logger.LogException(exception);
         }
     }

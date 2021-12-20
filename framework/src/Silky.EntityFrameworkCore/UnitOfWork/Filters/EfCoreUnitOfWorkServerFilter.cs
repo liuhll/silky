@@ -55,5 +55,24 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
                 _silkyDbContextPool?.CloseAll();
             }
         }
+
+        public void OnActionException(ServerExceptionContext context)
+        {
+            try
+            {
+                if (_unitOfWorkAttribute == null)
+                {
+                    if (context.Exception == null && !_isManualSaveChanges) _silkyDbContextPool?.SavePoolNow();
+                }
+                else
+                {
+                    _silkyDbContextPool?.CommitTransaction(_isManualSaveChanges, context.Exception);
+                }
+            }
+            finally
+            {
+                _silkyDbContextPool?.CloseAll();
+            }
+        }
     }
 }

@@ -7,5 +7,7 @@ namespace Silky.Rpc.Runtime.Server
         void OnActionExecuting(ServerExecutingContext context);
 
         void OnActionExecuted(ServerExecutedContext context);
+
+        void OnActionException(ServerExceptionContext context);
     }
 }

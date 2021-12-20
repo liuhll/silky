@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Silky.Rpc.Transport.Auditing;
+namespace Silky.Rpc.Auditing;
 
 public class AuditLogInfo
 {
-    public long? UserId { get; set; }
+    public object? UserId { get; set; }
 
     public string UserName { get; set; }
 
-    public long? TenantId { get; set; }
+    public object? TenantId { get; set; }
 
     public DateTimeOffset ExecutionTime { get; set; }
 
@@ -19,6 +19,8 @@ public class AuditLogInfo
 
     public string BrowserInfo { get; set; }
 
+    public string Url { get; set; }
+    
     public string HttpMethod { get; set; }
 
     public string ClientIpAddress { get; set; }
@@ -31,7 +33,7 @@ public class AuditLogInfo
 
     public int? HttpStatusCode { get; set; }
 
-    public string Url { get; set; }
+    public string ExceptionMessage { get; set; }
 
     public List<AuditLogActionInfo> Actions { get; set; }
 

@@ -1,6 +1,6 @@
 using System;
 
-namespace Silky.Rpc.Transport.Auditing;
+namespace Silky.Rpc.Auditing;
 
 public class AuditLogActionInfo
 {
@@ -18,4 +18,6 @@ public class AuditLogActionInfo
     public DateTimeOffset ExecutionTime { get; set; }
 
     public int ExecutionDuration { get; set; }
+
+    public string ExceptionMessage { get; set; }
 }

@@ -8,9 +8,10 @@ using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Transport.Auditing;
+namespace Silky.Rpc.Auditing;
 
 public static class ObjectMethodExecutorExtensions
 {
@@ -46,14 +47,9 @@ public static class ObjectMethodExecutorExtensions
             {
                 auditLogActionInfo.ExecutionDuration =
                     (int)(DateTimeOffset.Now - auditLogActionInfo.ExecutionTime).TotalMilliseconds;
+                RpcContext.Context.SetAuditingActionLog(auditLogActionInfo);
             }
-
-            var auditLogsValue = RpcContext.Context.GetResultAttachment(AttachmentKeys.AuditActionLog);
-            IList<string> auditLogs;
-            auditLogs = auditLogsValue != null ? auditLogsValue.ConventTo<IList<string>>() : new List<string>();
-
-            auditLogs.Add(serializer.Serialize(auditLogActionInfo));
-            RpcContext.Context.SetResultAttachment(AttachmentKeys.AuditActionLog, auditLogs);
+            
         }
     }
 }

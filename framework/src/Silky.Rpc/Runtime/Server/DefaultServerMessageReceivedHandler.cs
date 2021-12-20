@@ -85,13 +85,13 @@ namespace Silky.Rpc.Runtime.Server
                     message.Parameters);
 
                 remoteResultMessage.Result = result;
-                remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                 remoteResultMessage.StatusCode = StatusCode.Success;
             }
             catch (Exception ex)
             {
                 isHandleSuccess = false;
                 context[PollyContextNames.Exception] = ex;
+                remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                 Logger.LogException(ex);
                 throw;
             }
@@ -114,6 +114,7 @@ namespace Silky.Rpc.Runtime.Server
                                 "messageId:[{1}],serviceEntryId:[{2}],handleSuccess:{3}", Environment.NewLine,
                     messageId,
                     message.ServiceEntryId, isHandleSuccess);
+                remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
             }
 
             return remoteResultMessage;

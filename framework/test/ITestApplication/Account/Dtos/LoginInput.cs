@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Silky.Rpc.Auditing;
 
 namespace ITestApplication.Account.Dtos
 {
@@ -6,6 +7,8 @@ namespace ITestApplication.Account.Dtos
     {
         [Required(ErrorMessage = "用户名不允许为空")] public string UserName { get; set; }
 
-        [Required(ErrorMessage = "密码不允许为空")] public string Password { get; set; }
+        [DisableAuditing]
+        [Required(ErrorMessage = "密码不允许为空")]
+        public string Password { get; set; }
     }
 }

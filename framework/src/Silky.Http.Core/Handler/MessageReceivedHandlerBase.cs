@@ -13,7 +13,6 @@ using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Rpc;
-using Silky.Http.Core.Diagnostics;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Security;
@@ -87,7 +86,7 @@ namespace Silky.Http.Core.Handlers
                 isFriendlyStatus = ex.IsFriendlyException();
                 _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId, serviceEntry, httpContext, ex,
                     ex.GetExceptionStatusCode());
-                await HandleException(ex);
+                await HandleException(httpContext,ex);
                 Logger.LogException(ex);
                 throw;
             }
@@ -112,7 +111,7 @@ namespace Silky.Http.Core.Handlers
         protected abstract Task HandleResult(HttpContext httpContext, object result);
 
 
-        protected abstract Task HandleException(Exception exception);
+        protected abstract Task HandleException(HttpContext httpContext, Exception exception);
 
         protected virtual Task<string> ResolveServiceKey(HttpContext httpContext)
         {

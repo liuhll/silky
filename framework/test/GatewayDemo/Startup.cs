@@ -62,13 +62,13 @@ namespace GatewayDemo
             app.UseRouting();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
+            app.UseAuditing();
             app.UseSilkyWrapperResponse();
             app.UseResponseCaching();
             app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
             app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
-
             //   app.UseSilkyExceptionHandler();
             app.UseEndpoints(endpoints =>
             {

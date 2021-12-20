@@ -1,12 +1,11 @@
+using System;
 using Microsoft.Extensions.Options;
-using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport.Auditing;
-using Silky.Transaction.Abstraction;
 
-namespace Silky.Auditing.Filters;
+namespace Silky.Rpc.Auditing.Filters;
 
 public class AuditingFilter : IServerFilter
 {
@@ -50,15 +49,22 @@ public class AuditingFilter : IServerFilter
         {
             return;
         }
-        
+
         _auditLogActionInfo.ExecutionDuration =
             (int)(DateTimeOffset.Now - _auditLogActionInfo.ExecutionTime).TotalMilliseconds;
+        RpcContext.Context.SetAuditingActionLog(_auditLogActionInfo);
+    }
 
-        var auditLogsValue = RpcContext.Context.GetResultAttachment(AttachmentKeys.AuditActionLog);
-        IList<string> auditLogs;
-        auditLogs = auditLogsValue != null ? auditLogsValue.ConventTo<IList<string>>() : new List<string>();
+    public void OnActionException(ServerExceptionContext context)
+    {
+        if (!_auditingOptions.IsEnabled)
+        {
+            return;
+        }
 
-        auditLogs.Add(_auditSerializer.Serialize(_auditLogActionInfo));
-        RpcContext.Context.SetResultAttachment(AttachmentKeys.AuditActionLog, auditLogs);
+        _auditLogActionInfo.ExecutionDuration =
+            (int)(DateTimeOffset.Now - _auditLogActionInfo.ExecutionTime).TotalMilliseconds;
+        _auditLogActionInfo.ExceptionMessage = context.Exception.Message;
+        RpcContext.Context.SetAuditingActionLog(_auditLogActionInfo);
     }
 }

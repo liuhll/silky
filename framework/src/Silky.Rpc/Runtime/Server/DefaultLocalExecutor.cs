@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
 
@@ -33,20 +34,35 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filter.OnActionExecuting(rpcActionExecutingContext);
             }
+
+            try
+            {
+                if (serviceEntry.IsAsyncMethod)
+                {
+                    result = await serviceEntry.MethodExecutor.ExecuteAsync(instance, parameters.ToArray());
+                }
+                else
+                {
+                    result = serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                foreach (var filter in filters)
+                {
+                    filter.OnActionException(new ServerExceptionContext()
+                    {
+                        Exception = ex,
+                        ServiceEntry = serviceEntry,
+                    });
+                }
+                throw;
+            }
             
-
-            if (serviceEntry.IsAsyncMethod)
-            {
-                result = await serviceEntry.MethodExecutor.ExecuteAsync(instance, parameters.ToArray());
-            }
-            else
-            {
-                result = serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
-            }
-
             var rpcActionExecutedContext = new ServerExecutedContext()
             {
-                Result = result
+                Result = result,
+                ServiceEntry = serviceEntry,
             };
 
             foreach (var filter in filters)

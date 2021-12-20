@@ -8,10 +8,9 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
-using Silky.Core.MethodExecutor;
 using Silky.Core.Rpc;
+using Silky.Rpc.Auditing;
 using Silky.Rpc.Diagnostics;
-using Silky.Rpc.Transport.Auditing;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
@@ -102,17 +101,20 @@ namespace Silky.Rpc.Runtime.Server
                     Logger.LogException(ex);
                     remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
                     remoteResultMessage.ExceptionMessage = ex.GetExceptionMessage();
-                    remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                     _fallbackDiagnosticListener.TracingFallbackError(fallbackTracingTimestamp,
                         RpcContext.Context.GetMessageId(), serviceEntry.Id, ex.GetExceptionStatusCode(),
                         ex, serviceEntry.FallbackProvider);
                     return remoteResultMessage;
                 }
+                finally
+                {
+                    remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
+                }
             }
 
             remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
             remoteResultMessage.ExceptionMessage = exception.GetExceptionMessage();
-
+            remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
             return remoteResultMessage;
         }
     }

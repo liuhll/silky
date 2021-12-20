@@ -102,7 +102,7 @@ namespace Silky.Rpc.Runtime.Client
                     remoteInvokeMessage.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
                 throw;
             }
-
+            
             sp.Stop();
             invokeMonitor?.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
                 sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
@@ -111,7 +111,6 @@ namespace Silky.Rpc.Runtime.Client
                 $"The rpc request call succeeded");
             _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
                 remoteInvokeMessage.ServiceEntryId, invokeResult);
-            RpcContext.Context.SetResultAttachments(invokeResult?.Attachments);
             return invokeResult;
         }
 

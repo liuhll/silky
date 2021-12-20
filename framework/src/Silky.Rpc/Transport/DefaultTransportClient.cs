@@ -10,6 +10,8 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
 using Silky.Core.Rpc;
+using Silky.Rpc.Auditing;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport.Messages;
@@ -39,34 +41,35 @@ namespace Silky.Rpc.Transport
             if (!m_resultDictionary.TryGetValue(message.Id, out task))
                 return;
             Debug.Assert(message.IsResultMessage(), "The message type received by the service consumer is incorrect");
+            task.SetResult(message);
+            //  var content = message.GetContent<RemoteResultMessage>();
 
-            var content = message.GetContent<RemoteResultMessage>();
-            if (content.StatusCode != StatusCode.Success)
-            {
-                if (content.StatusCode == StatusCode.ValidateError)
-                {
-                    var validateException = new ValidationException(content.ExceptionMessage);
-                    if (content.ValidateErrors != null)
-                    {
-                        foreach (var validateError in content.ValidateErrors)
-                        {
-                            validateException.WithValidationError(validateError.ErrorMessage,
-                                validateError.MemberNames);
-                        }
-                    }
-
-                    task.TrySetException(validateException);
-                }
-                else
-                {
-                    var exception = new SilkyException(content.ExceptionMessage, content.StatusCode);
-                    task.TrySetException(exception);
-                }
-            }
-            else
-            {
-                task.SetResult(message);
-            }
+            // if (content.StatusCode != StatusCode.Success)
+            // {
+            //     if (content.StatusCode == StatusCode.ValidateError)
+            //     {
+            //         var validateException = new ValidationException(content.ExceptionMessage);
+            //         if (content.ValidateErrors != null)
+            //         {
+            //             foreach (var validateError in content.ValidateErrors)
+            //             {
+            //                 validateException.WithValidationError(validateError.ErrorMessage,
+            //                     validateError.MemberNames);
+            //             }
+            //         }
+            //
+            //         task.TrySetException(validateException);
+            //     }
+            //     else
+            //     {
+            //         var exception = new SilkyException(content.ExceptionMessage, content.StatusCode);
+            //         task.TrySetException(exception);
+            //     }
+            // }
+            // else
+            // {
+            //     task.SetResult(message);
+            // }
         }
 
         public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
@@ -92,20 +95,48 @@ namespace Silky.Rpc.Transport
             var tcs = new TaskCompletionSource<TransportMessage>();
 
             m_resultDictionary.TryAdd(id, tcs);
+            RemoteResultMessage remoteResultMessage = null;
             try
             {
                 var resultMessage = await tcs.WaitAsync(timeout);
-                var remoteResultMessage = resultMessage.GetContent<RemoteResultMessage>();
+                remoteResultMessage = resultMessage.GetContent<RemoteResultMessage>();
                 Logger.LogDebug(
                     "Received the message returned from server{0}messageId:[{1}],serviceEntryId:[{2}]",
                     Environment.NewLine, id, serviceEntryId);
-
+                CheckRemoteResultMessage(remoteResultMessage);
                 return remoteResultMessage;
             }
             finally
             {
+                RpcContext.Context.SetResultAttachments(remoteResultMessage?.Attachments);
                 m_resultDictionary.TryRemove(id, out tcs);
             }
+        }
+
+        private void CheckRemoteResultMessage(RemoteResultMessage remoteResultMessage)
+        {
+            if (remoteResultMessage.StatusCode == StatusCode.Success)
+            {
+                return;
+            }
+
+            if (remoteResultMessage.StatusCode == StatusCode.ValidateError)
+            {
+                var validateException = new ValidationException(remoteResultMessage.ExceptionMessage);
+                if (remoteResultMessage.ValidateErrors != null)
+                {
+                    foreach (var validateError in remoteResultMessage.ValidateErrors)
+                    {
+                        validateException.WithValidationError(validateError.ErrorMessage,
+                            validateError.MemberNames);
+                    }
+                }
+
+                throw validateException;
+            }
+
+            throw new SilkyException(remoteResultMessage.ExceptionMessage,
+                remoteResultMessage.StatusCode);
         }
     }
 }

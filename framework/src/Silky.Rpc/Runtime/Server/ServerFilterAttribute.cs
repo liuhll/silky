@@ -21,5 +21,9 @@ namespace Silky.Rpc.Runtime.Server
         public virtual void OnActionExecuted(ServerExecutedContext context)
         {
         }
+
+        public void OnActionException(ServerExceptionContext context)
+        {
+        }
     }
 }

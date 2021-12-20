@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Silky.Core.Exceptions;
@@ -51,6 +52,11 @@ namespace Silky.Http.Core.Middlewares
                 catch (Exception exception)
                 {
                     context.Response.Body = originalBodyStream;
+                    context.Features.Set(new ExceptionHandlerFeature()
+                    {
+                        Error = exception,
+                        Path = context.Request.Path
+                    });
                     context.Response.SetExceptionResponseStatus(exception);
                     context.Response.SetResultCode(exception.GetExceptionStatusCode());
                     context.Response.ContentType = context.GetResponseContentType(_gatewayOptions);
@@ -87,6 +93,11 @@ namespace Silky.Http.Core.Middlewares
                 {
                     result.ErrorMessage = status.GetDisplay();
                 }
+                context.Features.Set(new ExceptionHandlerFeature()
+                {
+                    Error = new SilkyException(result.ErrorMessage,status),
+                    Path = context.Request.Path
+                });
             }
 
             var jsonString = _serializer.Serialize(result);

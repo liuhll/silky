@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Silky.Auditing;
 using Silky.Caching.StackExchangeRedis;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
@@ -10,7 +9,6 @@ using Silky.Core.Modularity;
 using Silky.DotNetty;
 using Silky.Http.Core;
 using Silky.Http.CorsAccessor;
-using Silky.Http.Identity;
 using Silky.Http.MiniProfiler;
 using Silky.Http.RateLimit;
 using Silky.Http.Swagger;
@@ -36,7 +34,6 @@ namespace Microsoft.Extensions.Hosting
         typeof(RpcCachingInterceptorModule),
         typeof(DotNettyModule),
         typeof(ValidationModule),
-        typeof(AuditingModule),
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
         typeof(TransactionTccModule),
