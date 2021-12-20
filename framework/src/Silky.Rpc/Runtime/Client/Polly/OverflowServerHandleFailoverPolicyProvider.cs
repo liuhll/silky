@@ -26,26 +26,15 @@ namespace Silky.Rpc.Runtime.Client
 
             if (serviceEntryDescriptor?.GovernanceOptions.RetryTimes > 0)
             {
-                if (serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds > 0)
-                {
-                    policy = Policy<object>
-                        .Handle<OverflowMaxServerHandleException>()
-                        .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.OverflowMaxServerHandle)
-                        .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
-                            retryAttempt =>
-                                TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds),
-                            (outcome, timeSpan, retryNumber, context)
-                                => OnRetry(retryNumber, outcome, context));
-                }
-                else
-                {
-                    policy = Policy<object>
-                        .Handle<OverflowMaxServerHandleException>()
-                        .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.OverflowMaxServerHandle)
-                        .RetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
-                            onRetryAsync: (outcome, retryNumber, context) =>
-                                OnRetry(retryNumber, outcome, context));
-                }
+                policy = Policy<object>
+                    .Handle<OverflowMaxServerHandleException>()
+                    .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.OverflowMaxServerHandle)
+                    .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
+                        retryAttempt =>
+                            TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
+                                .RetryIntervalMillSeconds),
+                        (outcome, timeSpan, retryNumber, context)
+                            => OnRetry(retryNumber, outcome, context));
             }
 
             return policy;
@@ -63,7 +52,7 @@ namespace Silky.Rpc.Runtime.Client
                     FailoverType.Communication);
             }
         }
-        
+
         public override event RpcInvokeFailoverHandle OnInvokeFailover;
 
         public override FailoverType FailoverType { get; } = FailoverType.OverflowServerHandle;

@@ -83,11 +83,6 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     filter.OnActionExecuted(invokeResult);
                 }
-
-                if (invokeResult != null && invokeResult?.StatusCode != StatusCode.Success)
-                {
-                    throw new SilkyException(invokeResult.ExceptionMessage, invokeResult.StatusCode);
-                }
             }
             catch (Exception ex)
             {
@@ -102,7 +97,7 @@ namespace Silky.Rpc.Runtime.Client
                     remoteInvokeMessage.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
                 throw;
             }
-            
+
             sp.Stop();
             invokeMonitor?.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
                 sp.Elapsed.TotalMilliseconds, clientInvokeInfo);

@@ -37,9 +37,9 @@ namespace ITestApplication.Test
         [AllowAnonymous]
         Task<TestOut> Get(long id);
 
-        // [Obsolete]
-        // [HttpPut]
-        // Task<string> Update(TestInput input);
+        [Obsolete]
+        [HttpPut]
+        Task<string> Update(TestInput input);
 
         [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "name:{0}")]
         [Transaction]

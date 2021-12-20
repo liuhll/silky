@@ -15,7 +15,7 @@ namespace Silky.DotNetty.Abstraction
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
         private readonly IServerManager _serverManager;
 
-        public CommunicationFailoverPolicyProvider(IRpcEndpointMonitor rpcEndpointMonitor, 
+        public CommunicationFailoverPolicyProvider(IRpcEndpointMonitor rpcEndpointMonitor,
             IServerManager serverManager)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
@@ -39,9 +39,11 @@ namespace Silky.DotNetty.Abstraction
                         .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
                         .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
                             retryAttempt =>
-                                TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds),
+                                TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
+                                    .RetryIntervalMillSeconds),
                             async (outcome, timeSpan, retryNumber, context)
-                                => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntryDescriptor)
+                                => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context,
+                                    serviceEntryDescriptor)
                         );
                 }
                 else
@@ -55,7 +57,8 @@ namespace Silky.DotNetty.Abstraction
                         .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
                         .RetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                             onRetryAsync: async (outcome, retryNumber, context) =>
-                                await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context, serviceEntryDescriptor));
+                                await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context,
+                                    serviceEntryDescriptor));
                 }
             }
 

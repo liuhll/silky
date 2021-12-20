@@ -25,12 +25,7 @@ namespace Silky.Rpc.Runtime.Client
                 var fallbackPolicy = Policy<object>.Handle<Exception>(ex =>
                     {
                         var isNotNeedFallback = ex is INotNeedFallback;
-                        if (isNotNeedFallback)
-                        {
-                            return false;
-                        }
-
-                        return true;
+                        return !isNotNeedFallback;
                     })
                     .FallbackAsync(
                         async (ctx, t) => await _fallbackInvoker.Invoke(serviceEntry, parameters),
