@@ -29,13 +29,16 @@ public static class ObjectMethodExecutorExtensions
             {
                 auditLogActionInfo = new AuditLogActionInfo()
                 {
+                    HostName = EngineContext.Current.HostName,
+                    HostAddress = RpcContext.Context.Connection.LocalAddress,
                     Parameters = serializer.Serialize(parameters),
                     ExecutionTime = DateTimeOffset.Now,
                     MethodName = executor.MethodInfo.Name,
                     ServiceName = serviceEntry.ServiceEntryDescriptor.ServiceName,
                     ServiceEntryId = serviceEntry.Id,
                     ServiceKey = RpcContext.Context.GetServiceKey(),
-                    IsDistributedTransaction = serviceEntry.IsTransactionServiceEntry()
+                    IsDistributedTransaction = serviceEntry.IsTransactionServiceEntry(),
+                    
                 };
             }
 

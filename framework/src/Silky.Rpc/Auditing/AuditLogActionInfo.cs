@@ -4,7 +4,10 @@ namespace Silky.Rpc.Auditing;
 
 public class AuditLogActionInfo
 {
+    public string HostName { get; set; }
     public string ServiceEntryId { get; set; }
+
+    public string HostAddress { get; set; }
 
     public string ServiceName { get; set; }
 
@@ -20,4 +23,5 @@ public class AuditLogActionInfo
     public int ExecutionDuration { get; set; }
 
     public string ExceptionMessage { get; set; }
+    
 }

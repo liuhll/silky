@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.Options;
+using Silky.Core;
 using Silky.Core.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
@@ -36,10 +37,13 @@ public class AuditingFilter : IServerFilter
             Parameters = _auditSerializer.Serialize(context.Parameters),
             ExecutionTime = DateTimeOffset.Now,
             MethodName = context.ServiceEntry.MethodInfo.Name,
+            HostName = EngineContext.Current.HostName,
+            HostAddress = RpcContext.Context.Connection.LocalAddress,
             ServiceName = context.ServiceEntry.ServiceEntryDescriptor.ServiceName,
             ServiceEntryId = context.ServiceEntry.Id,
             ServiceKey = context.ServiceKey,
-            IsDistributedTransaction = context.ServiceEntry.IsTransactionServiceEntry()
+            IsDistributedTransaction = context.ServiceEntry.IsTransactionServiceEntry(),
+            
         };
     }
 

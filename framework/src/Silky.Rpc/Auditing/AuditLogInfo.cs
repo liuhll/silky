@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Auditing;
 
@@ -20,13 +21,11 @@ public class AuditLogInfo
     public string BrowserInfo { get; set; }
 
     public string Url { get; set; }
-    
+
     public string HttpMethod { get; set; }
 
     public string ClientIpAddress { get; set; }
-
-    public string ClientName { get; set; }
-
+    
     public string ClientId { get; set; }
 
     public string CorrelationId { get; set; }
@@ -46,14 +45,24 @@ public class AuditLogInfo
         sb.AppendLine($"- UserName - UserId                 : {UserName} - {UserId}");
         sb.AppendLine($"- ClientIpAddress        : {ClientIpAddress}");
         sb.AppendLine($"- ExecutionDuration      : {ExecutionDuration}");
-
+        if (!ExceptionMessage.IsNullOrEmpty())
+        {
+            sb.AppendLine($"- ExceptionMessage      : {ExceptionMessage}");
+        }
+        
         if (Actions.Any())
         {
             sb.AppendLine("- Actions:");
             foreach (var action in Actions)
             {
-                sb.AppendLine($"  - {action.ServiceName}.{action.MethodName} ({action.ExecutionDuration} ms.)");
+                sb.AppendLine(
+                    $"  - {action.HostName}.{action.ServiceName}.{action.MethodName} ({action.ExecutionDuration} ms.)");
                 sb.AppendLine($"    {action.Parameters}");
+                sb.AppendLine($"    {action.HostAddress}");
+                if (!action.ExceptionMessage.IsNullOrEmpty())
+                {
+                    sb.AppendLine($"    {action.ExceptionMessage}");
+                }
             }
         }
 
