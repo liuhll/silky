@@ -154,8 +154,7 @@ namespace Silky.DotNetty
                 , k => new Lazy<Task<ITransportClient>>(async () =>
                     {
                         Logger.LogInformation(
-                            $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}" +
-                            $"");
+                            $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}.");
                         var bootstrap = _bootstrap;
                         var channel = await bootstrap.ConnectAsync(k.IPEndPoint);
                         var pipeline = channel.Pipeline;

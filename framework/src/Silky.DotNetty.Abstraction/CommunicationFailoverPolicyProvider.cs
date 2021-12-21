@@ -28,38 +28,22 @@ namespace Silky.DotNetty.Abstraction
             var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
             if (serviceEntryDescriptor?.GovernanceOptions.RetryTimes > 0)
             {
-                if (serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds > 0)
-                {
-                    policy = Policy<object>
-                        .Handle<ChannelException>()
-                        .Or<ConnectException>()
-                        .Or<ConnectTimeoutException>()
-                        .Or<IOException>()
-                        .Or<CommunicationException>()
-                        .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
-                        .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
-                            retryAttempt =>
-                                TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
-                                    .RetryIntervalMillSeconds),
-                            async (outcome, timeSpan, retryNumber, context)
-                                => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context,
-                                    serviceEntryDescriptor)
-                        );
-                }
-                else
-                {
-                    policy = Policy<object>
-                        .Handle<ChannelException>()
-                        .Or<ConnectException>()
-                        .Or<ConnectTimeoutException>()
-                        .Or<IOException>()
-                        .Or<CommunicationException>()
-                        .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
-                        .RetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
-                            onRetryAsync: async (outcome, retryNumber, context) =>
-                                await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context,
-                                    serviceEntryDescriptor));
-                }
+               
+                policy = Policy<object>
+                    .Handle<ChannelException>()
+                    .Or<ConnectException>()
+                    .Or<ConnectTimeoutException>()
+                    .Or<IOException>()
+                    .Or<CommunicationException>()
+                    .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
+                    .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
+                        retryAttempt =>
+                            TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
+                                .RetryIntervalMillSeconds),
+                        async (outcome, timeSpan, retryNumber, context)
+                            => await SetInvokeCurrentSeverDisEnable(outcome, retryNumber, context,
+                                serviceEntryDescriptor)
+                    );
             }
 
             return policy;
