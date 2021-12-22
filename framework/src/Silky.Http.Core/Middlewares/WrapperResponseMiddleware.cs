@@ -52,14 +52,6 @@ namespace Silky.Http.Core.Middlewares
                 catch (Exception exception)
                 {
                     context.Response.Body = originalBodyStream;
-                    context.Features.Set(new ExceptionHandlerFeature()
-                    {
-                        Error = exception,
-                        Path = context.Request.Path
-                    });
-                    context.Response.SetExceptionResponseStatus(exception);
-                    context.Response.SetResultCode(exception.GetExceptionStatusCode());
-                    context.Response.ContentType = context.GetResponseContentType(_gatewayOptions);
                     await HandleExceptionAsync(context, exception);
                 }
             }

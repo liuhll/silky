@@ -60,6 +60,9 @@ namespace Silky.Http.Core.Handlers
                 Error = exception,
                 Path = httpContext.Request.Path
             });
+            httpContext.Response.SetExceptionResponseStatus(exception);
+            httpContext.Response.SetResultCode(exception.GetExceptionStatusCode());
+            httpContext.Response.ContentType = httpContext.GetResponseContentType(_gatewayOptions);
             Logger.LogException(exception);
         }
     }
