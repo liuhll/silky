@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Routing;
+using Silky.Rpc.Auditing;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -98,6 +98,20 @@ namespace Silky.Rpc.Runtime.Server
             var serverManager = EngineContext.Current.Resolve<IServerManager>();
             var serviceDescriptor = serverManager.GetServiceDescriptor(serviceEntry.ServiceId);
             return serviceDescriptor;
+        }
+
+        public static bool DisableAuditing(this ServiceEntry serviceEntry)
+        {
+            var disableAuditing = serviceEntry.CustomAttributes.OfType<DisableAuditingAttribute>().Any()
+                                  || serviceEntry.ServiceType.GetCustomAttributes(true)
+                                      .OfType<DisableAuditingAttribute>()
+                                      .Any();
+            return disableAuditing;
+        }
+
+        public static bool IsEnableAuditing(this ServiceEntry serviceEntry, bool isEnable)
+        {
+            return isEnable && !serviceEntry.DisableAuditing();
         }
 
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,

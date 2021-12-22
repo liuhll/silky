@@ -8,6 +8,7 @@ using Silky.Core.Extensions;
 using Silky.Core.Rpc;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using UAParser;
 using ISession = Silky.Rpc.Runtime.Server.ISession;
@@ -37,7 +38,9 @@ public class AuditingMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        if (_auditingOptions.IsEnabled)
+        var serviceEntry = context.GetServiceEntry();
+
+        if (serviceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
         {
             var userAgent = context.Request.Headers["User-Agent"];
             var uaParser = Parser.GetDefault();

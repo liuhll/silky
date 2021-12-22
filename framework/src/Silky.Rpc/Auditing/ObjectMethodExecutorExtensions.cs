@@ -25,7 +25,7 @@ public static class ObjectMethodExecutorExtensions
         AuditLogActionInfo auditLogActionInfo = null;
         try
         {
-            if (auditingOptions.IsEnabled)
+            if (serviceEntry.IsEnableAuditing(auditingOptions.IsEnabled))
             {
                 auditLogActionInfo = new AuditLogActionInfo()
                 {

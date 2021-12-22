@@ -27,7 +27,7 @@ public class AuditingFilter : IServerFilter
 
     public void OnActionExecuting(ServerExecutingContext context)
     {
-        if (!_auditingOptions.IsEnabled)
+        if (!context.ServiceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
         {
             return;
         }
@@ -43,13 +43,12 @@ public class AuditingFilter : IServerFilter
             ServiceEntryId = context.ServiceEntry.Id,
             ServiceKey = context.ServiceKey,
             IsDistributedTransaction = context.ServiceEntry.IsTransactionServiceEntry(),
-            
         };
     }
 
     public void OnActionExecuted(ServerExecutedContext context)
     {
-        if (!_auditingOptions.IsEnabled)
+        if (!context.ServiceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
         {
             return;
         }
@@ -61,7 +60,7 @@ public class AuditingFilter : IServerFilter
 
     public void OnActionException(ServerExceptionContext context)
     {
-        if (!_auditingOptions.IsEnabled)
+        if (!context.ServiceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
         {
             return;
         }
