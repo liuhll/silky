@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
@@ -8,7 +9,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty
 {
-    public class DotNettyClientMessageSender : DotNettyMessageSenderBase
+    public class DotNettyClientMessageSender : DotNettyMessageSenderBase, IDisposable
     {
         private readonly IChannel _channel;
 
@@ -35,6 +36,11 @@ namespace Silky.DotNetty
         {
             var localAddress = _channel.LocalAddress as IPEndPoint;
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, localAddress?.Port);
+        }
+
+        public async void Dispose()
+        {
+            await _channel.CloseAsync();
         }
     }
 }

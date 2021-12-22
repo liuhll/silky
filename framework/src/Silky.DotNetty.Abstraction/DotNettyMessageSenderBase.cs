@@ -18,7 +18,7 @@ namespace Silky.DotNetty.Abstraction
             Logger = NullLogger<DotNettyMessageSenderBase>.Instance;
         }
 
-        public virtual async Task SendMessageAsync(TransportMessage message, bool flush)
+        public virtual async Task SendMessageAsync(TransportMessage message, bool flush = true)
         {
             try
             {

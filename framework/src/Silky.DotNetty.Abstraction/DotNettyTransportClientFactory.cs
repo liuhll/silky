@@ -40,7 +40,7 @@ namespace Silky.DotNetty
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-   
+
 
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IOptionsMonitor<GovernanceOptions> governanceOptions,
@@ -77,6 +77,7 @@ namespace Silky.DotNetty
                 m_clients.TryRemove(addressModel, out _);
             };
 
+
             _bootstrap = CreateBootstrap();
             Logger = NullLogger<DotNettyTransportClientFactory>.Instance;
         }
@@ -98,9 +99,7 @@ namespace Silky.DotNetty
             string targetHost = null;
             if (_rpcOptions.IsSsl)
             {
-                tlsCertificate =
-                    new X509Certificate2(Path.Combine(_hostEnvironment.ContentRootPath, _rpcOptions.SslCertificateName),
-                        _rpcOptions.SslCertificatePassword);
+                tlsCertificate = new X509Certificate2(GetCertificateFile(), _rpcOptions.SslCertificatePassword);
                 targetHost = tlsCertificate.GetNameInfo(X509NameType.DnsName, false);
             }
 
@@ -125,7 +124,8 @@ namespace Silky.DotNetty
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 8, 0, 8));
                     if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
                     {
-                        pipeline.AddLast(new IdleStateHandler(_governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0, 0));
+                        pipeline.AddLast(new IdleStateHandler(_governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0,
+                            0));
                         pipeline.AddLast(new ChannelInboundHandlerAdapter());
                     }
 
@@ -165,6 +165,23 @@ namespace Silky.DotNetty
                         return client;
                     }
                 )).Value;
+        }
+
+        private string GetCertificateFile()
+        {
+            var certificateFileName = Path.Combine(_hostEnvironment.ContentRootPath, _rpcOptions.SslCertificateName);
+            if (!File.Exists(certificateFileName))
+            {
+                certificateFileName =
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _rpcOptions.SslCertificateName);
+            }
+
+            if (!File.Exists(certificateFileName))
+            {
+                throw new SilkyException($"There is no ssl certificate for {certificateFileName}");
+            }
+
+            return certificateFileName;
         }
 
         public async void Dispose()

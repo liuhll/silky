@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Configuration;
@@ -78,9 +79,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             X509Certificate2 tlsCertificate = null;
             if (_rpcOptions.IsSsl)
             {
-                tlsCertificate =
-                    new X509Certificate2(Path.Combine(_hostEnvironment.ContentRootPath, _rpcOptions.SslCertificateName),
-                        _rpcOptions.SslCertificatePassword);
+                tlsCertificate = new X509Certificate2(GetCertificateFile(), _rpcOptions.SslCertificatePassword);
             }
 
             bootstrap
@@ -126,6 +125,23 @@ namespace Silky.DotNetty.Protocol.Tcp
                 Logger.LogException(ex);
                 throw;
             }
+        }
+
+        private string GetCertificateFile()
+        {
+            var certificateFileName = Path.Combine(_hostEnvironment.ContentRootPath, _rpcOptions.SslCertificateName);
+            if (!File.Exists(certificateFileName))
+            {
+                certificateFileName =
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _rpcOptions.SslCertificateName);
+            }
+
+            if (!File.Exists(certificateFileName))
+            {
+                throw new SilkyException($"There is no ssl certificate for {certificateFileName}");
+            }
+
+            return certificateFileName;
         }
 
         public async void Dispose()
