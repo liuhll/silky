@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <PackageReference Include="Silky.Rpc" Version="$(SilkyVersion)" />
+        <PackageReference Include="Silky.Rpc.CachingInterceptor" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.Transaction.Tcc" Version="$(SilkyVersion)" />
     </ItemGroup>
 
