@@ -102,6 +102,11 @@ namespace Silky.Rpc.Runtime.Server
 
         public static bool DisableAuditing(this ServiceEntry serviceEntry)
         {
+            if (serviceEntry == null)
+            {
+                return false;
+            }
+
             var disableAuditing = serviceEntry.CustomAttributes.OfType<DisableAuditingAttribute>().Any()
                                   || serviceEntry.ServiceType.GetCustomAttributes(true)
                                       .OfType<DisableAuditingAttribute>()
