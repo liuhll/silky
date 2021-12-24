@@ -40,21 +40,17 @@ namespace Silky.Rpc.Runtime.Client
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
 
-            // var policy = _invokePolicyBuilder.Build(serviceEntry.Id, parameters);
-            // var result = await policy
-            //     .ExecuteAsync(async () =>
-            //     {
-            //         var invokeResult =
-            //             await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
-            //                 hashKey);
-            //         return invokeResult.GetResult();
-            //     });
-            //
-            // return result;
-            var invokeResult =
-                await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
-                    hashKey);
-            return invokeResult.GetResult();
+            var policy = _invokePolicyBuilder.Build(serviceEntry.Id, parameters);
+            var result = await policy
+                .ExecuteAsync(async () =>
+                {
+                    var invokeResult =
+                        await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
+                            hashKey);
+                    return invokeResult.GetResult();
+                });
+            
+            return result;
         }
 
         public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters,
