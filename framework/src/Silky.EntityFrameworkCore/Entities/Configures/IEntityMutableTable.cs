@@ -1,5 +1,4 @@
 ﻿using System;
-using Furion.DatabaseAccessor;
 using Microsoft.EntityFrameworkCore;
 using Silky.EntityFrameworkCore.Locators;
 

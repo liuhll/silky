@@ -1,7 +1,6 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 
-namespace Furion.DatabaseAccessor
+namespace System.ComponentModel.DataAnnotations.Schema
 {
     /// <summary>
     /// DbParameter 配置特性

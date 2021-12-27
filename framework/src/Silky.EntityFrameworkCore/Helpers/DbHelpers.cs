@@ -5,11 +5,11 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Furion.DatabaseAccessor;
 using Microsoft.EntityFrameworkCore;
 using Silky.Core.Extensions;
 using Silky.EntityFrameworkCore.Extensions.DatabaseFacade;
 using Silky.EntityFrameworkCore.Values;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Silky.EntityFrameworkCore.Helpers
 {
