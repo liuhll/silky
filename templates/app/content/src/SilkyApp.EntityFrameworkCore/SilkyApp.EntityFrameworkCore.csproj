@@ -8,6 +8,6 @@
     <ProjectReference Include="..\SilkyApp.Domain\SilkyApp.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.0-alpha.2" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.0" />
   </ItemGroup>
 </Project>

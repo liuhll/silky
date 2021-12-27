@@ -6,11 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4" Condition="'$(hosttype)' != 'gateway'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0" Condition="'$(hosttype)' != 'gateway'">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4" Condition="'$(hosttype)' != 'gateway'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0" Condition="'$(hosttype)' != 'gateway'">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
