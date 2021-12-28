@@ -34,7 +34,7 @@ namespace GatewayDemo
             // services.AddResponseCaching();
             // services.AddMvc();
             // services.AddSilkyHttpCore();
-            services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
+           // services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
             services.AddSilkyHttpServices();
             services.AddMessagePackCodec();
             services.AddHealthChecks()
@@ -65,9 +65,9 @@ namespace GatewayDemo
             app.UseResponseCaching();
             app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
+            app.UseSilkyWrapperResponse();
             app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
-            app.UseSilkyWrapperResponse();
             app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
