@@ -6,11 +6,11 @@ using Silky.Http.Identity.Authorization.Handlers;
 
 namespace GatewayDemo.Authorization
 {
-    public class TestAuthorizationHandlerBase : SilkyAuthorizationHandlerBase
+    public class TestAuthorizationHandler : SilkyAuthorizationHandlerBase
     {
-        private readonly ILogger<TestAuthorizationHandlerBase> _logger;
+        private readonly ILogger<TestAuthorizationHandler> _logger;
 
-        public TestAuthorizationHandlerBase(ILogger<TestAuthorizationHandlerBase> logger)
+        public TestAuthorizationHandler(ILogger<TestAuthorizationHandler> logger)
         {
             _logger = logger;
         }
