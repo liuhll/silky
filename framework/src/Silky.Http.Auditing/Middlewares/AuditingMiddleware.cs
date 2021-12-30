@@ -10,6 +10,7 @@ using Silky.Rpc.Auditing;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 using UAParser;
 using ISession = Silky.Rpc.Runtime.Server.ISession;
 
@@ -73,6 +74,8 @@ public class AuditingMiddleware
                 var auditingStore = EngineContext.Current.ServiceProvider.GetService<IAuditingStore>();
                 if (auditingStore != null)
                 {
+                    var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
+                    currentRpcToken.SetRpcToken();
                     await auditingStore.SaveAsync(auditLogInfo);
                 }
 

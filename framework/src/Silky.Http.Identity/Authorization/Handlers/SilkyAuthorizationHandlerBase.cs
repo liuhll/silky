@@ -1,8 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Silky.Core;
+using Silky.Core.Rpc;
 using Silky.Http.Identity.Authorization.Extensions;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Security;
 
 namespace Silky.Http.Identity.Authorization.Handlers
 {
@@ -21,6 +24,8 @@ namespace Silky.Http.Identity.Authorization.Handlers
                 var httpContext = context.GetCurrentHttpContext();
                 httpContext.SetUserClaims();
                 httpContext.SetHttpHandleAddressInfo();
+                var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
+                currentRpcToken.SetRpcToken();
                 await AuthorizeHandleAsync(context, httpContext);
             }
         }
