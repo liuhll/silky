@@ -1,48 +1,43 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Silky.Http.Identity.Authorization.Requirements;
-using Silky.Rpc.Security;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Identity.Authorization.Providers;
 
-public sealed class SilkyAuthorizationPolicyProvider : IAuthorizationPolicyProvider
+public sealed class SilkyAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider, IAuthorizationPolicyProvider
 {
-    public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
+    private readonly IServiceEntryManager _serviceEntryManager;
 
-    public SilkyAuthorizationPolicyProvider(IOptions<AuthorizationOptions> options)
+    public SilkyAuthorizationPolicyProvider(
+        [NotNull] [ItemNotNull] IOptions<AuthorizationOptions> options,
+        IServiceEntryManager serviceEntryManager) :
+        base(options)
     {
-        FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
+        _serviceEntryManager = serviceEntryManager;
     }
 
-
-    public Task<AuthorizationPolicy> GetDefaultPolicyAsync()
+    public override async Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
     {
-        return FallbackPolicyProvider.GetDefaultPolicyAsync();
-    }
-
-
-    public Task<AuthorizationPolicy> GetFallbackPolicyAsync()
-    {
-        return FallbackPolicyProvider.GetFallbackPolicyAsync();
-    }
-
-
-    public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
-    {
-        if (policyName.StartsWith(AuthorizationConsts.SilkyAuthorizePrefix))
+        var policy = await base.GetPolicyAsync(policyName);
+        if (policy != null)
         {
-            var policies = policyName[AuthorizationConsts.SilkyAuthorizePrefix.Length..]
-                .Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-
-            var policy = new AuthorizationPolicyBuilder();
-            policy.AddRequirements(new SilkyAuthorizeRequirement(policies));
-
-            return Task.FromResult(policy.Build());
+            return policy;
         }
-        
-        return FallbackPolicyProvider.GetPolicyAsync(policyName);
+
+        var serviceEntries = _serviceEntryManager.GetAllEntries();
+        if (serviceEntries.Any(se => se.AuthorizeData.Any(ad => ad.Policy == policyName)))
+        {
+            //TODO: Optimize & Cache!
+            var policyBuilder = new AuthorizationPolicyBuilder(Array.Empty<string>());
+            policyBuilder.Requirements.Add(new PermissionRequirement(policyName));
+            return policyBuilder.Build();
+        }
+
+        return null;
     }
 }

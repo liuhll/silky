@@ -11,7 +11,7 @@ namespace Silky.Rpc.Security
         }
 
         public AuthorizeAttribute(string policy) => this.Policy = policy;
-
+        
         public string? Policy { get; set; }
 
         public string? Roles { get; set; }
