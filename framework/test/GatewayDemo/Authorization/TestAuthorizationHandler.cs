@@ -15,8 +15,7 @@ namespace GatewayDemo.Authorization
             _logger = logger;
         }
 
-        public async override Task<bool> PipelineAsync(AuthorizationHandlerContext context,
-            DefaultHttpContext httpContext)
+        protected async override Task<bool> PipelineAsync(AuthorizationHandlerContext context, HttpContext httpContext)
         {
             // var serviceEntry = httpContext.GetServiceEntry();
             // if (serviceEntry.Services.Id.Contains("ITestApplication"))

@@ -2,12 +2,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Silky.Http.Identity.Authorization.Extensions;
+using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Identity.Authorization.Handlers
 {
     public abstract class SilkyAuthorizationHandlerBase : IAuthorizationHandler
     {
-        public virtual Task<bool> PipelineAsync(AuthorizationHandlerContext context, DefaultHttpContext httpContext)
+        protected virtual Task<bool> PipelineAsync(AuthorizationHandlerContext context, HttpContext httpContext)
         {
             return Task.FromResult(true);
         }
@@ -17,13 +18,15 @@ namespace Silky.Http.Identity.Authorization.Handlers
             var isAuthenticated = context.User.Identity?.IsAuthenticated;
             if (isAuthenticated == true)
             {
-                await AuthorizeHandleAsync(context);
+                var httpContext = context.GetCurrentHttpContext();
+                httpContext.SetUserClaims();
+                httpContext.SetHttpHandleAddressInfo();
+                await AuthorizeHandleAsync(context, httpContext);
             }
         }
 
-        private async Task AuthorizeHandleAsync(AuthorizationHandlerContext context)
+        private async Task AuthorizeHandleAsync(AuthorizationHandlerContext context, HttpContext httpContext)
         {
-            var httpContext = context.GetCurrentHttpContext();
             var pipeline = await PipelineAsync(context, httpContext);
             if (!pipeline)
             {
