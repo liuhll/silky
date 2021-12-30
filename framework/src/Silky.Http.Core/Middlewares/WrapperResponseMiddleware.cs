@@ -123,7 +123,7 @@ namespace Silky.Http.Core.Middlewares
             {
                 responseResultDto.ValidErrors = validErrors;
             }
-
+            context.Response.ContentType = context.GetResponseContentType(_gatewayOptions);
             var responseResultData = _serializer.Serialize(responseResultDto);
             return context.Response.WriteAsync(responseResultData);
         }
