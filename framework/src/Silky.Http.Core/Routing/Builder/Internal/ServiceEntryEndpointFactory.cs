@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Silky.Core;
+using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Handlers;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 
 namespace Silky.Http.Core.Routing.Builder.Internal
 {
@@ -63,9 +66,17 @@ namespace Silky.Http.Core.Routing.Builder.Internal
             builder.Metadata.Add(new HttpMethodMetadata(new[] { serviceEntry.Router.HttpMethod.ToString() }));
             if (!serviceEntry.ServiceEntryDescriptor.IsAllowAnonymous && serviceEntry.AuthorizeData != null)
             {
-                foreach (var data in serviceEntry.AuthorizeData)
+                var gatewayOptions = EngineContext.Current.Resolve<GatewayOptions>();
+                if (serviceEntry.AuthorizeData.Any())
                 {
-                    builder.Metadata.Add(data);
+                    foreach (var data in serviceEntry.AuthorizeData)
+                    {
+                        builder.Metadata.Add(data);
+                    }
+                }
+                else if (gatewayOptions.GlobalAuthorize)
+                {
+                    builder.Metadata.Add(new AuthorizeAttribute());
                 }
             }
 

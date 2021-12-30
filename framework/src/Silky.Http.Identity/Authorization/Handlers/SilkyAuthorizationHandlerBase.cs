@@ -10,7 +10,26 @@ namespace Silky.Http.Identity.Authorization.Handlers
 {
     public abstract class SilkyAuthorizationHandlerBase : IAuthorizationHandler
     {
+        /// <summary>
+        /// 验证管道
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
         protected virtual Task<bool> PipelineAsync(AuthorizationHandlerContext context, HttpContext httpContext)
+        {
+            return Task.FromResult(true);
+        }
+
+        /// <summary>
+        /// 策略验证管道
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="httpContext"></param>
+        /// <param name="requirement"></param>
+        /// <returns></returns>
+        protected virtual Task<bool> PolicyPipelineAsync(AuthorizationHandlerContext context, HttpContext httpContext,
+            IAuthorizationRequirement requirement)
         {
             return Task.FromResult(true);
         }
@@ -31,8 +50,18 @@ namespace Silky.Http.Identity.Authorization.Handlers
 
         private async Task AuthorizeHandleAsync(AuthorizationHandlerContext context, HttpContext httpContext)
         {
+            var pendingRequirements = context.PendingRequirements;
+
             var pipeline = await PipelineAsync(context, httpContext);
-            if (!pipeline)
+            if (pipeline)
+            {
+                foreach (var requirement in pendingRequirements)
+                {
+                    var policyPipeline = await PolicyPipelineAsync(context, httpContext, requirement);
+                    if (policyPipeline) context.Succeed(requirement);
+                }
+            }
+            else
             {
                 context.Fail();
             }

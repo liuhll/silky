@@ -1,11 +1,11 @@
 using System;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silky.Core.DependencyInjection;
 using Silky.Http.Identity;
 using Silky.Http.Identity.Authentication.Handlers;
+using Silky.Http.Identity.Authorization.Providers;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,6 +17,15 @@ namespace Microsoft.Extensions.DependencyInjection
             return services
                 .AddSilkyAuthentication()
                 .AddSilkyAuthorization(configure);
+        }
+
+        public static IServiceCollection AddSilkyIdentity<TAuthorizationHandler>(this IServiceCollection services,
+            Action<AuthorizationOptions> configure = null)
+            where TAuthorizationHandler : class, IAuthorizationHandler
+        {
+            return services
+                .AddSilkyAuthentication()
+                .AddSilkyAuthorization<TAuthorizationHandler>(configure);
         }
 
         public static IServiceCollection AddSilkyAuthentication(this IServiceCollection services)
@@ -33,6 +42,19 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        public static IServiceCollection AddSilkyAuthorization<TAuthorizationHandler>(this IServiceCollection services,
+            Action<AuthorizationOptions> configure = null)
+            where TAuthorizationHandler : class, IAuthorizationHandler
+        {
+            if (services == null)
+                throw new ArgumentNullException(nameof(services));
+
+            services.TryAddSingleton<IAuthorizationPolicyProvider, SilkyAuthorizationPolicyProvider>();
+            services.TryAddSingleton<IAuthorizationHandler, TAuthorizationHandler>();
+            services.AddSilkyAuthorization();
+            return services;
+        }
+
         public static IServiceCollection AddSilkyAuthorization(this IServiceCollection services,
             Action<AuthorizationOptions> configure = null)
         {
@@ -46,7 +68,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.AddAuthorization(configure);
             }
-            
+
             return services;
         }
     }
