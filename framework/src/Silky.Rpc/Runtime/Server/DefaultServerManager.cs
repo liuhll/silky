@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
 

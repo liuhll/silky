@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ITestApplication.Account;
 using ITestApplication.Account.Dtos;
 using Silky.Core.Exceptions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Jwt;
 
 namespace NormHostDemo.Account

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime.Client;

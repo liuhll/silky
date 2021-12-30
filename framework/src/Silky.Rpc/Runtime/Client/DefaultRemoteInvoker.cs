@@ -8,7 +8,7 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Core.Utils;
 using Silky.Rpc.Endpoint;

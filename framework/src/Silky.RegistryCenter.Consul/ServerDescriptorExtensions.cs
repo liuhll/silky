@@ -3,7 +3,7 @@ using System.Linq;
 using Consul;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Rpc.Runtime.Server;

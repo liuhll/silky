@@ -1,4 +1,4 @@
-﻿namespace Silky.Rpc.Runtime.Server
+﻿namespace Silky.Core.Runtime.Session
 {
     public static class SessionExtensions
     {

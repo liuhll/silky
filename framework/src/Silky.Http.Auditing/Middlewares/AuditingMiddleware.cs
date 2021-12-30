@@ -5,14 +5,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
+using Silky.Core.Runtime.Session;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
 using UAParser;
-using ISession = Silky.Rpc.Runtime.Server.ISession;
+using ISession = Silky.Core.Runtime.Session.ISession;
 
 namespace Silky.Http.Auditing.Middlewares;
 

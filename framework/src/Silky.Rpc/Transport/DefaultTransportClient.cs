@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Transport.Messages;
 

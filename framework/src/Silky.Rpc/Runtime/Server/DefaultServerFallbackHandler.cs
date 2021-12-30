@@ -8,7 +8,7 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Transport.Messages;

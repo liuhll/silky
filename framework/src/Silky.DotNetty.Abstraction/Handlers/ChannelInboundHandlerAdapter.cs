@@ -3,7 +3,7 @@ using DotNetty.Buffers;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Channels;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.DotNetty.Abstraction;
 using Silky.Rpc.Endpoint.Monitor;
 

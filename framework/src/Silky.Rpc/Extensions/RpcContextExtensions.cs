@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;

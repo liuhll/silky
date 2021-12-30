@@ -1,7 +1,7 @@
 using System;
 using Silky.Core.Exceptions;
 
-namespace Silky.Core.Rpc
+namespace Silky.Core.Runtime.Rpc
 {
     public enum ServiceProtocol
     {

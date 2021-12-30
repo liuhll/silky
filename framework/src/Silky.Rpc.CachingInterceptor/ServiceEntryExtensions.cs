@@ -8,6 +8,7 @@ using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Runtime.Session;
 using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Runtime.Server;
 

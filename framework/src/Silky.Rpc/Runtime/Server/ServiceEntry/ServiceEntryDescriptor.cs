@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
 {

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using SkyApm.Tracing;
 
 namespace Silky.SkyApm.Diagnostics.Abstraction.Collections

@@ -9,7 +9,6 @@ using Nacos.V2.Naming.Dtos;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Rpc.Endpoint;

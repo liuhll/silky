@@ -9,7 +9,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
 
-namespace Silky.Core.Rpc
+namespace Silky.Core.Runtime.Rpc
 {
     public class RpcContext
     {

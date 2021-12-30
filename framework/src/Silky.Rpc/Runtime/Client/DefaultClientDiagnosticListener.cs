@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using Silky.Core.Exceptions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Diagnostics;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;

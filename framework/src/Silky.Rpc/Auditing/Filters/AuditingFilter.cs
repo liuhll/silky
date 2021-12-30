@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Options;
 using Silky.Core;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;

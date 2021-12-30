@@ -17,7 +17,7 @@ using Silky.Rpc.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using WebSocketSharp.Server;
 

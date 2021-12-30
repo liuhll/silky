@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Silky.Core;
+using Silky.Core.Runtime.Session;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.EntityFrameworkCore.MultiTenants.Extensions

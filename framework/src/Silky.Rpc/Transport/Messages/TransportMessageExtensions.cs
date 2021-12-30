@@ -1,5 +1,5 @@
 ﻿using Silky.Core;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Transport.Codec;
 
 namespace Silky.Rpc.Transport.Messages

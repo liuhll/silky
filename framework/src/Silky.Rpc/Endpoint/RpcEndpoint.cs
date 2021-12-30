@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using JetBrains.Annotations;
 using Silky.Core;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Endpoint

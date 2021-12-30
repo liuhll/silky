@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 
 namespace Silky.Http.Dashboard.AppService.Dtos
 {

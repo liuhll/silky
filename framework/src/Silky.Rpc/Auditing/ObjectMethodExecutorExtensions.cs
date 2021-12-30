@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;

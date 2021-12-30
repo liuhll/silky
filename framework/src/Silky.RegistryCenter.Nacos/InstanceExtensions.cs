@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Nacos.V2.Naming.Dtos;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Endpoint.Descriptor;
 

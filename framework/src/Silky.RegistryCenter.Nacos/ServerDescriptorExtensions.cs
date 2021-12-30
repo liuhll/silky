@@ -3,7 +3,7 @@ using System.Linq;
 using Nacos.V2.Naming.Dtos;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 

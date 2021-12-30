@@ -2,7 +2,7 @@ using System.Threading;
 using JetBrains.Annotations;
 using Silky.Core.DependencyInjection;
 
-namespace Silky.Core.Rpc
+namespace Silky.Core.Runtime.Rpc
 {
     public class DefaultRpcContextAccessor : IRpcContextAccessor, ISingletonDependency
     {

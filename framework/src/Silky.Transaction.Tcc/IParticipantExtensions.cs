@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Core.MethodExecutor;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;

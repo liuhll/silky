@@ -1,5 +1,5 @@
 using Silky.Core.DependencyInjection;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;

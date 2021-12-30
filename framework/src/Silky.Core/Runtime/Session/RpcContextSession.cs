@@ -1,9 +1,7 @@
-using System;
 using System.Security.Claims;
-using Silky.Core.Rpc;
-using Silky.Rpc.Security;
+using Silky.Core.Runtime.Rpc;
 
-namespace Silky.Rpc.Runtime.Server
+namespace Silky.Core.Runtime.Session
 {
     public class RpcContextSession : SessionBase
     {

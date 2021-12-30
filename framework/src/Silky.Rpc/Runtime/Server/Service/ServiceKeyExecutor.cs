@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
 {

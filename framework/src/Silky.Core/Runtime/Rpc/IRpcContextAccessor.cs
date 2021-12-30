@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace Silky.Core.Rpc
+namespace Silky.Core.Runtime.Rpc
 {
     public interface IRpcContextAccessor
     {

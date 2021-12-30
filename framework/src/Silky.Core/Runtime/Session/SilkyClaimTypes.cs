@@ -1,4 +1,4 @@
-namespace Silky.Rpc.Security
+namespace Silky.Core.Runtime.Session
 {
     public class SilkyClaimTypes
     {

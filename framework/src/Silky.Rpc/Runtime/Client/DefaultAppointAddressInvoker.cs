@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;

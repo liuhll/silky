@@ -1,5 +1,5 @@
 using Polly;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
 

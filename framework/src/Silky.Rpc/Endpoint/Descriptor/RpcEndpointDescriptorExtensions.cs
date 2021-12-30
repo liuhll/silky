@@ -1,6 +1,6 @@
 using System;
 using Silky.Core;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 
 namespace Silky.Rpc.Endpoint.Descriptor
 {

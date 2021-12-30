@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.DotNetty.Abstraction;
 using Silky.Rpc.Transport.Messages;
 

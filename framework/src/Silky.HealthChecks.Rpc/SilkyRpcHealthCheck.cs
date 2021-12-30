@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;

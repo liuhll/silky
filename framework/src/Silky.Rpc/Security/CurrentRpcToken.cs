@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 using Silky.Core.DependencyInjection;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 
 namespace Silky.Rpc.Security

@@ -1,5 +1,5 @@
 ﻿using System;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Diagnostics;
 using Silky.SkyApm.Diagnostics.Abstraction;

@@ -1,4 +1,4 @@
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
 using Silky.SkyApm.Diagnostics.Abstraction.Collections;
 using SkyApm.Tracing;
 using SkyApm.Tracing.Segments;
