@@ -66,7 +66,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 AuthorizeData = CreateAuthorizeData();
             }
-            
+
             ClientFilters = CreateClientFilters();
             ServerFilters = CreateServerFilters();
             CreateFallBackExecutor();
@@ -105,10 +105,6 @@ namespace Silky.Rpc.Runtime.Server
             authorizeData.AddRange(serviceEntryAuthorizeData);
             var serviceAuthorizeData = ServiceType.GetCustomAttributes().OfType<IAuthorizeData>();
             authorizeData.AddRange(serviceAuthorizeData);
-            if (!authorizeData.Any() && !_serviceEntryDescriptor.IsAllowAnonymous)
-            {
-                authorizeData.Add(new AuthorizeAttribute());
-            }
 
             return authorizeData;
         }
@@ -179,18 +175,20 @@ namespace Silky.Rpc.Runtime.Server
             var fallbackProvider = CustomAttributes
                 .OfType<IFallbackProvider>().FirstOrDefault();
 
-            if (fallbackProvider != null) 
+            if (fallbackProvider != null)
             {
                 if (!EngineContext.Current.IsRegistered(fallbackProvider.Type))
                 {
                     return;
                 }
+
                 var compareMethodName = fallbackProvider.MethodName ?? MethodInfo.Name;
                 var fallbackMethod = fallbackProvider.Type.GetCompareMethod(MethodInfo, compareMethodName);
                 if (fallbackMethod == null)
                 {
                     return;
                 }
+
                 var parameterDefaultValues = ParameterDefaultValues.GetParameterDefaultValues(fallbackMethod);
                 FallbackMethodExecutor =
                     ObjectMethodExecutor.Create(fallbackMethod, fallbackProvider.Type.GetTypeInfo(),
@@ -198,7 +196,6 @@ namespace Silky.Rpc.Runtime.Server
 
                 FallbackProvider = fallbackProvider;
             }
-                
         }
 
         private void CreateDefaultSupportedResponseMediaTypes()
