@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Silky.Core;
-using Silky.Core.Rpc;
 using Silky.Http.Identity.Authorization.Extensions;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Security;
