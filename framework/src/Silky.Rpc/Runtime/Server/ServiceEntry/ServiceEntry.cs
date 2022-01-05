@@ -153,6 +153,12 @@ namespace Silky.Rpc.Runtime.Server
                 }
             }
 
+            if (_serviceType.GetCustomAttributes().OfType<ProhibitExtranetAttribute>().Any() ||
+                CustomAttributes.OfType<ProhibitExtranetAttribute>().Any())
+            {
+                GovernanceOptions.ProhibitExtranet = true;
+            }
+
             UpdateServiceEntryDescriptor(GovernanceOptions);
         }
 
