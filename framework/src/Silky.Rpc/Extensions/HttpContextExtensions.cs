@@ -88,8 +88,17 @@ namespace Silky.Rpc.Extensions
             StatusCode statusCode;
             switch ((HttpStatusCode)httpCode)
             {
+                case HttpStatusCode.OK:
+                    statusCode = StatusCode.Success;
+                    break;
                 case HttpStatusCode.Unauthorized:
                     statusCode = StatusCode.UnAuthentication;
+                    break;
+                case HttpStatusCode.Forbidden:
+                    statusCode = StatusCode.UnAuthorization;
+                    break;
+                case HttpStatusCode.NotFound:
+                    statusCode = StatusCode.NotFound;
                     break;
                 case HttpStatusCode.NoContent:
                     statusCode = StatusCode.NoContent;
@@ -98,7 +107,7 @@ namespace Silky.Rpc.Extensions
                     statusCode = StatusCode.RouteParseError;
                     break;
                 default:
-                    statusCode = StatusCode.ServerError;
+                    statusCode = StatusCode.BadRequest;
                     break;
             }
 

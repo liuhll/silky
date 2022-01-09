@@ -77,17 +77,32 @@ namespace Silky.Http.Core.Middlewares
                     result.ErrorMessage = status.GetDisplay();
                     result.ValidErrors = _serializer.Deserialize<dynamic>(body);
                 }
+                else if (status == StatusCode.UnAuthentication)
+                {
+                    result.ErrorMessage = "You are not logged in to the system!";
+                }
+                else if (status == StatusCode.UnAuthorization)
+                {
+                   
+                    result.ErrorMessage = $"You do not have permission to access the {context.Request.Path}-{context.Request.Method}!";
+                }
+                else if (status == StatusCode.NotFound)
+                {
+                    result.ErrorMessage = $"No route found for {context.Request.Path}-{context.Request.Method}!";
+                }
                 else if (!body.IsNullOrEmpty())
                 {
                     result.ErrorMessage = body;
                 }
+
                 else
                 {
                     result.ErrorMessage = status.GetDisplay();
                 }
+
                 context.Features.Set(new ExceptionHandlerFeature()
                 {
-                    Error = new SilkyException(result.ErrorMessage,status),
+                    Error = new SilkyException(result.ErrorMessage, status),
                     Path = context.Request.Path
                 });
             }
@@ -123,6 +138,7 @@ namespace Silky.Http.Core.Middlewares
             {
                 responseResultDto.ValidErrors = validErrors;
             }
+
             context.Response.ContentType = context.GetResponseContentType(_gatewayOptions);
             var responseResultData = _serializer.Serialize(responseResultDto);
             return context.Response.WriteAsync(responseResultData);

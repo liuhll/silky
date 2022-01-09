@@ -15,7 +15,7 @@ namespace ITestApplication.Test
 {
     [ServiceRoute]
     // [Authorize(Roles = "Administrator, PowerUser")]
-    // [Authorize]
+    [Authorize]
     public interface ITestAppService
     {
         /// <summary>

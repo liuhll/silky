@@ -24,7 +24,7 @@ namespace GatewayDemo.Authorization
             //     return true;
             // }
 
-            return true;
+            return false;
         }
     }
 }

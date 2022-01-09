@@ -34,8 +34,9 @@ namespace GatewayDemo
             // services.AddResponseCaching();
             // services.AddMvc();
             // services.AddSilkyHttpCore();
-           // services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
+            // services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
             services.AddSilkyHttpServices();
+            services.AddSingleton<IAuthorizationHandler, TestAuthorizationHandler>();
             services.AddMessagePackCodec();
             services.AddHealthChecks()
                 .AddSilkyRpc();
@@ -58,7 +59,7 @@ namespace GatewayDemo
             app.UseDashboard();
             app.UseSilkyRpcHealthCheck()
                 .UseHealthChecksPrometheusExporter("/metrics");
-          
+
             app.UseRouting();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();

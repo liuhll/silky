@@ -54,5 +54,29 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services;
         }
+
+        public static IServiceCollection AddSilkyHttpServices<TAuthorizationHandler>(this IServiceCollection services,
+            Action<SwaggerGenOptions> setupAction = null,
+            Action<AuthorizationOptions> authorizationAction = null)
+            where TAuthorizationHandler : class, IAuthorizationHandler
+        {
+            var redisOptions = EngineContext.Current.Configuration.GetRateLimitRedisOptions();
+            services
+                .AddSilkyHttpCore()
+                .AddClientRateLimit(redisOptions)
+                .AddIpRateLimit(redisOptions)
+                .AddResponseCaching()
+                .AddHttpContextAccessor()
+                .AddRouting()
+                .AddSilkyIdentity<TAuthorizationHandler>(authorizationAction)
+                .AddSilkyMiniProfiler()
+                .AddSilkyCaching()
+                .AddSilkySkyApm()
+                .AddDashboard()
+                .AddSwaggerDocuments(setupAction);
+            services.AddMvc();
+
+            return services;
+        }
     }
 }

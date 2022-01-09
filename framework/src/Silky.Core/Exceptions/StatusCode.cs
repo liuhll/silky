@@ -9,7 +9,7 @@ namespace Silky.Core.Exceptions
 
         [Description("框架异常")] FrameworkException = 500,
 
-        [Description("请求异常")] RequestError = 502,
+
 
         [Description("路由解析异常")] RouteParseError = 503,
 
@@ -63,11 +63,15 @@ namespace Silky.Core.Exceptions
         UnAuthentication = 401,
 
         [Description("未授权")] [IsUnAuthorizedException]
-        UnAuthorization = 402,
+        UnAuthorization = 403,
+
+        [Description("未找到路由信息")] NotFound = 404,
 
         [Description("校验token失败")] [IsUnAuthorizedException]
         IssueTokenError = 4011,
 
         [Description("禁止外网访问")] FuseProtection = 406,
+        
+        [Description("请求异常")] BadRequest = 400,
     }
 }
