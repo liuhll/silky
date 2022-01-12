@@ -14,6 +14,7 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Http.Core.Executor;
+using Silky.Rpc.Auditing;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Security;
 
@@ -25,18 +26,21 @@ namespace Silky.Http.Core.Handlers
         private readonly IParameterParser _parameterParser;
         private readonly ICurrentRpcToken _currentRpcToken;
         private readonly IHttpHandleDiagnosticListener _httpHandleDiagnosticListener;
+        private readonly IAuditSerializer _auditSerializer;
         public ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
         protected MessageReceivedHandlerBase(
             IHttpExecutor executor,
             IParameterParser parameterParser,
             ICurrentRpcToken currentRpcToken,
-            IHttpHandleDiagnosticListener httpHandleDiagnosticListener)
+            IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
+            IAuditSerializer auditSerializer)
         {
             _executor = executor;
             _parameterParser = parameterParser;
             _currentRpcToken = currentRpcToken;
             _httpHandleDiagnosticListener = httpHandleDiagnosticListener;
+            _auditSerializer = auditSerializer;
 
             Logger = NullLogger<MessageReceivedHandlerBase>.Instance;
         }
@@ -53,7 +57,10 @@ namespace Silky.Http.Core.Handlers
             httpContext.SetUserClaims();
             httpContext.SetHttpHandleAddressInfo();
             var sp = Stopwatch.StartNew();
-            var parameters = await _parameterParser.ParserAsync(serviceEntry, httpContext.Request);
+            var parameters = await _parameterParser.Parser(httpContext.Request, serviceEntry);
+
+            RpcContext.Context.SetRequestParameters(
+                _auditSerializer.Serialize(serviceEntry.ConvertParameters(parameters)));
             var messageId = GetMessageId(httpContext);
             var serviceKey = await ResolveServiceKey(httpContext);
             var rpcConnection = RpcContext.Context.Connection;

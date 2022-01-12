@@ -7,6 +7,7 @@ using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Runtime.Session;
+using Silky.Http.Core;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
@@ -24,16 +25,19 @@ public class AuditingMiddleware
     private readonly AuditingOptions _auditingOptions;
     private readonly IAuditSerializer _auditSerializer;
     private readonly ILogger<AuditingMiddleware> _logger;
+    private readonly IAuditSerializer _serializer;
 
     public AuditingMiddleware(
         RequestDelegate next,
         IOptions<AuditingOptions> auditingOptions,
         IAuditSerializer auditSerializer,
-        ILogger<AuditingMiddleware> logger)
+        ILogger<AuditingMiddleware> logger,
+        IAuditSerializer serializer)
     {
         _next = next;
         _auditSerializer = auditSerializer;
         _logger = logger;
+        _serializer = serializer;
         _auditingOptions = auditingOptions.Value;
         _session = NullSession.Instance;
     }
@@ -47,7 +51,6 @@ public class AuditingMiddleware
             var userAgent = context.Request.Headers["User-Agent"];
             var uaParser = Parser.GetDefault();
             var clientInfo = uaParser.Parse(userAgent);
-
             var auditLogInfo = new AuditLogInfo()
             {
                 Url = context.Request.Path,
@@ -56,7 +59,7 @@ public class AuditingMiddleware
                 BrowserInfo = clientInfo.String,
                 ClientId = context.Connection.Id,
                 ClientIpAddress = context.Connection.RemoteIpAddress?.MapToIPv4().ToString(),
-                CorrelationId = context.TraceIdentifier,
+                CorrelationId = context.TraceIdentifier
             };
             try
             {
@@ -68,6 +71,7 @@ public class AuditingMiddleware
                 auditLogInfo.UserName = _session.UserName;
                 auditLogInfo.TenantId = _session.TenantId;
                 auditLogInfo.HttpStatusCode = context.Response.StatusCode;
+                auditLogInfo.RequestParameters = RpcContext.Context.GetRequestParameters();
                 auditLogInfo.ExceptionMessage = context.Features.Get<ExceptionHandlerFeature>()?.Error.Message;
                 auditLogInfo.ExecutionDuration =
                     (int)(DateTimeOffset.Now - auditLogInfo.ExecutionTime).TotalMilliseconds;

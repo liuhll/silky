@@ -15,13 +15,12 @@ namespace Silky.Http.Core
     {
         private readonly ISerializer _serializer;
 
-
         public DefaultHttpRequestParameterParser(ISerializer serializer)
         {
             _serializer = serializer;
         }
 
-        private async Task<IDictionary<ParameterFrom, object>> ParserAsync(HttpRequest request,
+        private async Task<IDictionary<ParameterFrom, object>> ParserHttpRequest(HttpRequest request,
             ServiceEntry serviceEntry)
         {
             var parameters = new Dictionary<ParameterFrom, object>();
@@ -60,53 +59,9 @@ namespace Silky.Http.Core
             return parameters;
         }
 
-        private IDictionary<ParameterFrom, object> Parser(HttpRequest request, ServiceEntry serviceEntry)
+        public async Task<object[]> Parser([NotNull] HttpRequest httpRequest, [NotNull] ServiceEntry serviceEntry)
         {
-            var parameters = new Dictionary<ParameterFrom, object>();
-            if (request.HasFormContentType)
-            {
-                var formData = request.Form.ToDictionary(p => p.Key, p => p.Value.ToString());
-                parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
-            }
-
-            if (request.Query.Any())
-            {
-                var queryData = request.Query.ToDictionary(p => p.Key, p => p.Value.ToString());
-                parameters.Add(ParameterFrom.Query, _serializer.Serialize(queryData));
-            }
-
-            if (request.Headers.Any())
-            {
-                var headerData = request.Headers.ToDictionary(p => p.Key, p => p.Value.ToString());
-                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RequestHeader, headerData);
-                parameters.Add(ParameterFrom.Header, _serializer.Serialize(headerData));
-            }
-
-            if (!request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
-            {
-                var streamReader = new StreamReader(request.Body);
-                var bodyData = streamReader.ReadToEnd();
-                parameters.Add(ParameterFrom.Body, bodyData);
-            }
-
-            if (serviceEntry != null && serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path))
-            {
-                var pathData = serviceEntry.Router.ParserRouteParameters(request.Path);
-                parameters.Add(ParameterFrom.Path, _serializer.Serialize(pathData));
-            }
-
-            return parameters;
-        }
-
-        public async Task<object[]> ParserAsync([NotNull] ServiceEntry serviceEntry, HttpRequest request)
-        {
-            var requestParameters = await ParserAsync(request, serviceEntry);
-            return serviceEntry.ResolveParameters(requestParameters);
-        }
-
-        public object[] Parser(ServiceEntry serviceEntry, HttpRequest request)
-        {
-            var requestParameters = Parser(request, serviceEntry);
+            var requestParameters = await ParserHttpRequest(httpRequest, serviceEntry);
             return serviceEntry.ResolveParameters(requestParameters);
         }
     }

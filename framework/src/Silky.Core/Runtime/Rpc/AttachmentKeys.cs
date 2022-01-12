@@ -45,5 +45,7 @@ namespace Silky.Core.Runtime.Rpc
         public const string SelectedServerEndpoint = "SelectedServerEndpoint";
 
         public const string MessageId = "MessageId";
+
+        public const string RequestParameters = "RequestParameters";
     }
 }

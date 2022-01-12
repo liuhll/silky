@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\pfx.props" />
+<!--    <Import Project="..\pfx.props" />-->
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <OutputType>Exe</OutputType>

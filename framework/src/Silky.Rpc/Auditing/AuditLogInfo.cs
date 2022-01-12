@@ -31,6 +31,8 @@ public class AuditLogInfo
     public string CorrelationId { get; set; }
 
     public int? HttpStatusCode { get; set; }
+    
+    public string RequestParameters { get; set; }
 
     public string ExceptionMessage { get; set; }
 

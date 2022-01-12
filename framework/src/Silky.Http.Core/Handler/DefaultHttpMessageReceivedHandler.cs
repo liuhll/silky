@@ -10,6 +10,7 @@ using Silky.Core.Logging;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Executor;
+using Silky.Rpc.Auditing;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Security;
 
@@ -29,9 +30,13 @@ namespace Silky.Http.Core.Handlers
             ISerializer serializer,
             IParameterParser parameterParser,
             ICurrentRpcToken currentRpcToken,
-            IHttpHandleDiagnosticListener httpHandleDiagnosticListener)
-            : base(executor, parameterParser, currentRpcToken,
-                httpHandleDiagnosticListener)
+            IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
+            IAuditSerializer auditSerializer)
+            : base(executor,
+                parameterParser,
+                currentRpcToken,
+                httpHandleDiagnosticListener,
+                auditSerializer)
         {
             _serializer = serializer;
             _gatewayOptions = gatewayOptions.CurrentValue;
