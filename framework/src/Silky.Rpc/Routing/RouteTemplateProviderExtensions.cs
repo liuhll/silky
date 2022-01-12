@@ -39,7 +39,7 @@ namespace Silky.Rpc.Routing
             Type serviceType)
         {
             return routeTemplateProvider.ServiceName.IsNullOrEmpty()
-                ? serviceType.Name.TrimStart('I')
+                ? serviceType.Name.StartsWith("I") ? serviceType.Name.Remove(0, 1) : serviceType.Name
                 : routeTemplateProvider.ServiceName;
         }
 
