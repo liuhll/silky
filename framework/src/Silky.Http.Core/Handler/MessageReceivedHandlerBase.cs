@@ -53,7 +53,7 @@ namespace Silky.Http.Core.Handlers
             httpContext.SetUserClaims();
             httpContext.SetHttpHandleAddressInfo();
             var sp = Stopwatch.StartNew();
-            var parameters = await _parameterParser.Parser(serviceEntry);
+            var parameters = await _parameterParser.ParserAsync(serviceEntry, httpContext.Request);
             var messageId = GetMessageId(httpContext);
             var serviceKey = await ResolveServiceKey(httpContext);
             var rpcConnection = RpcContext.Context.Connection;
@@ -86,7 +86,7 @@ namespace Silky.Http.Core.Handlers
                 isFriendlyStatus = ex.IsFriendlyException();
                 _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId, serviceEntry, httpContext, ex,
                     ex.GetExceptionStatusCode());
-                await HandleException(httpContext,ex);
+                await HandleException(httpContext, ex);
                 Logger.LogException(ex);
                 throw;
             }
@@ -104,7 +104,7 @@ namespace Silky.Http.Core.Handlers
                         sp.ElapsedMilliseconds, serverHandleInfo);
                 }
             }
-  
+
             await HandleResult(httpContext, executeResult);
         }
 
