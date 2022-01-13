@@ -25,19 +25,16 @@ public class AuditingMiddleware
     private readonly AuditingOptions _auditingOptions;
     private readonly IAuditSerializer _auditSerializer;
     private readonly ILogger<AuditingMiddleware> _logger;
-    private readonly IAuditSerializer _serializer;
 
     public AuditingMiddleware(
         RequestDelegate next,
         IOptions<AuditingOptions> auditingOptions,
         IAuditSerializer auditSerializer,
-        ILogger<AuditingMiddleware> logger,
-        IAuditSerializer serializer)
+        ILogger<AuditingMiddleware> logger)
     {
         _next = next;
         _auditSerializer = auditSerializer;
         _logger = logger;
-        _serializer = serializer;
         _auditingOptions = auditingOptions.Value;
         _session = NullSession.Instance;
     }

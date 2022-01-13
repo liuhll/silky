@@ -58,9 +58,8 @@ namespace Silky.Http.Core.Handlers
             httpContext.SetHttpHandleAddressInfo();
             var sp = Stopwatch.StartNew();
             var parameters = await _parameterParser.Parser(httpContext.Request, serviceEntry);
-
-            RpcContext.Context.SetRequestParameters(
-                _auditSerializer.Serialize(serviceEntry.ConvertParameters(parameters)));
+            parameters = serviceEntry.ConvertParameters(parameters);
+            RpcContext.Context.SetRequestParameters(_auditSerializer.Serialize(parameters));
             var messageId = GetMessageId(httpContext);
             var serviceKey = await ResolveServiceKey(httpContext);
             var rpcConnection = RpcContext.Context.Connection;
