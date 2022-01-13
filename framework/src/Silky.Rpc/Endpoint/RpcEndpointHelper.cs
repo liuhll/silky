@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -76,26 +77,47 @@ namespace Silky.Rpc.Endpoint
 
         private static string GetAnyHostIp()
         {
-            string result = "";
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (NetworkInterface adapter in nics)
+         
+            UnicastIPAddressInformation mostSuitableIp = null;
+            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var network in networkInterfaces)
             {
-                if (adapter.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                if (network.OperationalStatus != OperationalStatus.Up)
+                    continue;
+                var properties = network.GetIPProperties();
+                if (properties.GatewayAddresses.Count == 0)
+                    continue;
+                foreach (var address in properties.UnicastAddresses)
                 {
-                    IPInterfaceProperties pix = adapter.GetIPProperties();
-                    UnicastIPAddressInformationCollection ipCollection = pix.UnicastAddresses;
-                    foreach (UnicastIPAddressInformation ipaddr in ipCollection)
+                    if (address.Address.AddressFamily != AddressFamily.InterNetwork)
+                        continue;
+
+                    if (IPAddress.IsLoopback(address.Address))
+                        continue;
+
+                    if (!address.IsDnsEligible)
                     {
-                        if (ipaddr.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            result = ipaddr.Address.ToString();
-                            break;
-                        }
+                        if (mostSuitableIp == null)
+                            mostSuitableIp = address;
+                        continue;
                     }
+
+                    // The best IP is the IP got from DHCP server
+                    if (address.PrefixOrigin != PrefixOrigin.Dhcp)
+                    {
+                        if (mostSuitableIp == null || !mostSuitableIp.IsDnsEligible)
+                            mostSuitableIp = address;
+                        continue;
+                    }
+
+                    return address.Address.ToString();
                 }
+                
             }
 
-            return result;
+            return mostSuitableIp != null 
+                ? mostSuitableIp.Address.ToString()
+                : "";
         }
 
         public static IRpcEndpoint GetLocalTcpEndpoint()
