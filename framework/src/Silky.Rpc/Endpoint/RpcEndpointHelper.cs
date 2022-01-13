@@ -58,66 +58,52 @@ namespace Silky.Rpc.Endpoint
             var scheme = addressSegments.First();
             var url = addressSegments.Last();
             var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(scheme);
-            
+
             string host;
-            
+
             if (url.Contains("+") || url.Contains("[::]") || url.Contains("*"))
             {
                 host = GetAnyHostIp();
-               
             }
-            else 
+            else
             {
                 var domainAndPort = url.Split(":");
                 host = domainAndPort[0];
             }
+
             var port = url.Split(":").Last().To<int>();
             return new RpcEndpoint(host, port, serviceProtocol);
         }
 
         private static string GetAnyHostIp()
         {
-         
-            UnicastIPAddressInformation mostSuitableIp = null;
-            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var network in networkInterfaces)
+            var result = "";
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface adapter in nics)
             {
-                if (network.OperationalStatus != OperationalStatus.Up)
+                if (adapter.OperationalStatus != OperationalStatus.Up)
                     continue;
-                var properties = network.GetIPProperties();
-                if (properties.GatewayAddresses.Count == 0)
+                IPInterfaceProperties pix = adapter.GetIPProperties();
+                if (pix.GatewayAddresses.Count == 0)
                     continue;
-                foreach (var address in properties.UnicastAddresses)
+                UnicastIPAddressInformationCollection ipCollection = pix.UnicastAddresses;
+                foreach (UnicastIPAddressInformation ipaddr in ipCollection)
                 {
-                    if (address.Address.AddressFamily != AddressFamily.InterNetwork)
-                        continue;
-
-                    if (IPAddress.IsLoopback(address.Address))
-                        continue;
-
-                    if (!address.IsDnsEligible)
+                    if (ipaddr.Address.AddressFamily == AddressFamily.InterNetwork)
                     {
-                        if (mostSuitableIp == null)
-                            mostSuitableIp = address;
-                        continue;
+                        result = ipaddr.Address.ToString();
+                        break;
                     }
-
-                    // The best IP is the IP got from DHCP server
-                    if (address.PrefixOrigin != PrefixOrigin.Dhcp)
-                    {
-                        if (mostSuitableIp == null || !mostSuitableIp.IsDnsEligible)
-                            mostSuitableIp = address;
-                        continue;
-                    }
-
-                    return address.Address.ToString();
                 }
-                
             }
 
-            return mostSuitableIp != null 
-                ? mostSuitableIp.Address.ToString()
-                : "";
+            if (!result.IsNullOrEmpty())
+            {
+                return result;
+            }
+
+            return Dns.GetHostEntry(Dns.GetHostName()).AddressList
+                .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
         }
 
         public static IRpcEndpoint GetLocalTcpEndpoint()
