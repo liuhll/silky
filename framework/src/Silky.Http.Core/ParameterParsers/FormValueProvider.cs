@@ -23,10 +23,17 @@ public class FormValueProvider : ServiceEntryValueProvider
 
         foreach (var value in _values)
         {
-            _ = formParamKeys.TryGetValue(value.Key, out var type);
-            if (type?.IsArray == true || IsEnumerable(type))
+            var hasParamKey = formParamKeys.TryGetValue(value.Key, out var type);
+            if (hasParamKey)
             {
-                formData[value.Key] = value.Value.ToString().Split(",");
+                if (type.IsArray || IsEnumerable(type))
+                {
+                    formData[value.Key] = value.Value.ToString().Split(",");
+                }
+                else
+                {
+                    formData[value.Key] = value.Value.ToString();
+                }
             }
             else
             {

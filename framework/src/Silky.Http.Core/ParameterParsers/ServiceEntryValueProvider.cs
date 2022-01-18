@@ -20,7 +20,7 @@ public abstract class ServiceEntryValueProvider
         var @params = _serviceEntry.ParameterDescriptors.Where(p => p.From == from);
         foreach (var param in @params)
         {
-            if (param.IsSampleType)
+            if (param.IsSampleOrNullableType)
             {
                 keys.Add(param.Name, param.Type);
             }

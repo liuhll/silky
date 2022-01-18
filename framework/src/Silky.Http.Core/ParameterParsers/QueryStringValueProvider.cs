@@ -23,10 +23,17 @@ public class QueryStringValueProvider : ServiceEntryValueProvider
 
         foreach (var value in _values)
         {
-            _ = queryParamKeys.TryGetValue(value.Key, out var type);
-            if (type?.IsArray == true || IsEnumerable(type))
+            var hasParamKey = queryParamKeys.TryGetValue(value.Key, out var type);
+            if (hasParamKey)
             {
-                queryData[value.Key] = value.Value.ToString().Split(",");
+                if (type.IsArray || IsEnumerable(type))
+                {
+                    queryData[value.Key] = value.Value.ToString().Split(",");
+                }
+                else
+                {
+                    queryData[value.Key] = value.Value.ToString();
+                }
             }
             else
             {
@@ -36,5 +43,4 @@ public class QueryStringValueProvider : ServiceEntryValueProvider
 
         return queryData;
     }
-    
 }
