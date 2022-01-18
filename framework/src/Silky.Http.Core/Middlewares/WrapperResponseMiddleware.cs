@@ -79,16 +79,16 @@ namespace Silky.Http.Core.Middlewares
                 }
                 else if (status == StatusCode.UnAuthentication)
                 {
-                    result.ErrorMessage = "You are not logged in to the system!";
+                    result.ErrorMessage = "You are not logged in to the system.";
                 }
                 else if (status == StatusCode.UnAuthorization)
                 {
                    
-                    result.ErrorMessage = $"You do not have permission to access the {context.Request.Path}-{context.Request.Method}!";
+                    result.ErrorMessage = $"You do not have permission to access the {context.Request.Path}-{context.Request.Method}.";
                 }
                 else if (status == StatusCode.NotFound)
                 {
-                    result.ErrorMessage = $"No route found for {context.Request.Path}-{context.Request.Method}!";
+                    result.ErrorMessage = $"No route found for {context.Request.Path}-{context.Request.Method}.";
                 }
                 else if (!body.IsNullOrEmpty())
                 {
