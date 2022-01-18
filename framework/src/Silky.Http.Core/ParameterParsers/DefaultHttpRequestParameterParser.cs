@@ -26,13 +26,16 @@ namespace Silky.Http.Core
             var parameters = new Dictionary<ParameterFrom, object>();
             if (request.HasFormContentType)
             {
-                var formData = request.Form.ToDictionary(p => p.Key, p => p.Value.ToString());
+               
+                var formValueProvider = new FormValueProvider(serviceEntry, request.Form);
+                var formData = formValueProvider.GetFormData();
                 parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
             }
 
             if (request.Query.Any())
             {
-                var queryData = request.Query.ToDictionary(p => p.Key, p => p.Value.ToString());
+                var queryValueProvider = new QueryStringValueProvider(serviceEntry, request.Query);
+                var queryData = queryValueProvider.GetQueryData();
                 parameters.Add(ParameterFrom.Query, _serializer.Serialize(queryData));
             }
 
