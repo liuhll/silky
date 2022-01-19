@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITestApplication.Filters;
 using ITestApplication.Test.Dtos;
@@ -70,5 +71,9 @@ namespace ITestApplication.Test
         [HttpPatch]
         [Fallback(typeof(IUpdatePartFallBack))]
         Task<string> UpdatePart(TestInput input);
+
+        Task<IList<object>> GetObjectList();
+        
+        Task<object> GetObject();
     }
 }

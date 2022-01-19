@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
@@ -119,6 +120,56 @@ namespace NormHostDemo.AppService
         public async Task<string> UpdatePart(TestInput input)
         {
             return "UpdatePart";
+        }
+
+        public async Task<IList<object>> GetObjectList()
+        {
+            var objects = new List<object>();
+            dynamic obj = new
+            {
+                Value = "08车10F号",
+                Position = new List<int>()
+                {
+                    730,
+                    246,
+                    967,
+                    249,
+                    966,
+                    302,
+                    729,
+                    299
+                },
+                Key = "seat_number",
+                Description = "座位号"
+            };
+            for (int i = 0; i < 1000; i++)
+            {
+                objects.Add(obj);
+            }
+            
+            return objects;
+        }
+
+        public async Task<object> GetObject()
+        {
+            var obj = new
+            {
+                Value = "08车10F号",
+                Position = new List<int>()
+                {
+                    730,
+                    246,
+                    967,
+                    249,
+                    966,
+                    302,
+                    729,
+                    299
+                },
+                Key = "seat_number",
+                Description = "座位号"
+            };
+            return obj;
         }
     }
 }
