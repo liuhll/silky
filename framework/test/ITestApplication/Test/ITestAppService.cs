@@ -75,5 +75,7 @@ namespace ITestApplication.Test
         Task<IList<object>> GetObjectList();
         
         Task<object> GetObject();
+
+        Task<OcrOutput> GetOcr();
     }
 }

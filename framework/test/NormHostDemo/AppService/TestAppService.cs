@@ -171,5 +171,31 @@ namespace NormHostDemo.AppService
             };
             return obj;
         }
+
+        public async Task<OcrOutput> GetOcr()
+        {
+            var obj = new
+            {
+                Value = "08车10F号",
+                Position = new List<int>()
+                {
+                    730,
+                    246,
+                    967,
+                    249,
+                    966,
+                    302,
+                    729,
+                    299
+                },
+                Key = "seat_number",
+                Description = "座位号"
+            };
+            var ocrOutput = new OcrOutput()
+            {
+                Result = obj
+            };
+            return ocrOutput;
+        }
     }
 }
