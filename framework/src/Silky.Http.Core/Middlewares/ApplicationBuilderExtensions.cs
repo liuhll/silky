@@ -36,7 +36,8 @@ namespace Microsoft.AspNetCore.Builder
                     if (exception == null)
                         return Task.CompletedTask;
                     context.Response.ContentType = context.GetResponseContentType(gatewayOptions);
-                    context.Response.SetResultCode(exception.GetExceptionStatusCode());
+                    context.Response.SetResultStatusCode(exception.GetExceptionStatusCode());
+                    context.Response.SetResultStatus(exception.GetExceptionStatus());
                     logger.LogWithMiniProfiler("Error", "Exception", exception.Message, true);
                     if (exception is IHasValidationErrors)
                     {

@@ -49,7 +49,8 @@ namespace Silky.Http.Core.Handlers
         {
             httpContext.Response.ContentType = httpContext.GetResponseContentType(_gatewayOptions);
             httpContext.Response.StatusCode = ResponseStatusCode.Success;
-            httpContext.Response.SetResultCode(StatusCode.Success);
+            httpContext.Response.SetResultStatusCode(StatusCode.Success);
+            httpContext.Response.SetResultStatus((int)StatusCode.Success);
             httpContext.Response.SetHeaders();
             result ??= string.Empty;
 
@@ -66,7 +67,8 @@ namespace Silky.Http.Core.Handlers
                 Path = httpContext.Request.Path
             });
             httpContext.Response.SetExceptionResponseStatus(exception);
-            httpContext.Response.SetResultCode(exception.GetExceptionStatusCode());
+            httpContext.Response.SetResultStatusCode(exception.GetExceptionStatusCode());
+            httpContext.Response.SetResultStatus(exception.GetExceptionStatus());
             httpContext.Response.ContentType = httpContext.GetResponseContentType(_gatewayOptions);
             Logger.LogException(exception);
         }

@@ -110,7 +110,10 @@ namespace Silky.Rpc.Monitor.Invoke
 
         public Task<ServerInstanceInvokeInfo> GetServerInstanceInvokeInfo()
         {
-            return Task.FromResult(_serverInstanceInvokeInfo);
+            lock (_serverInstanceInvokeInfo)
+            {
+                return Task.FromResult(_serverInstanceInvokeInfo);
+            }
         }
 
         public async Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos()

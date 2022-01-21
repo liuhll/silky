@@ -5,5 +5,9 @@
         public BusinessException(string message) : base(message, StatusCode.BusinessError)
         {
         }
+
+        public BusinessException(string message, int status) : base(message, StatusCode.BusinessError, status)
+        {
+        }
     }
 }

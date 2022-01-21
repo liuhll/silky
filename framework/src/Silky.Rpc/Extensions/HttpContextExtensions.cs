@@ -60,9 +60,14 @@ namespace Silky.Rpc.Extensions
                 localRpcEndpoint.ServiceProtocol);
         }
 
-        public static void SetResultCode(this HttpResponse httpResponse, StatusCode statusCode)
+        public static void SetResultStatusCode(this HttpResponse httpResponse, StatusCode statusCode)
         {
-            httpResponse.Headers["SilkyResultCode"] = statusCode.ToString();
+            httpResponse.Headers["SilkyResultStatusCode"] = statusCode.ToString();
+        }
+        
+        public static void SetResultStatus(this HttpResponse httpResponse, int status)
+        {
+            httpResponse.Headers["SilkyResultStatus"] = status.ToString();
         }
 
         public static void SetHeaders(this HttpResponse httpResponse)

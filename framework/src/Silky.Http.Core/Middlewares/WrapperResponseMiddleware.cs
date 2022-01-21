@@ -61,53 +61,54 @@ namespace Silky.Http.Core.Middlewares
         {
             context.Response.ContentType = context.GetResponseContentType(_gatewayOptions);
             var status = context.Response.GetResultCode(code);
-            var result = new ResponseResultDto()
+            var responseResultDto = new ResponseResultDto()
             {
-                Status = status,
+                Status = (int)status,
+                Code = status.ToString(),
             };
             if (status == StatusCode.Success)
             {
-                var data = _serializer.Deserialize<dynamic>(body);
-                result.Data = data;
+                var resultData = _serializer.Deserialize<dynamic>(body);
+                responseResultDto.Result = resultData;
             }
             else
             {
                 if (status == StatusCode.ValidateError)
                 {
-                    result.ErrorMessage = status.GetDisplay();
-                    result.ValidErrors = _serializer.Deserialize<dynamic>(body);
+                    responseResultDto.ErrorMessage = status.GetDisplay();
+                    responseResultDto.ValidErrors = _serializer.Deserialize<dynamic>(body);
                 }
                 else if (status == StatusCode.UnAuthentication)
                 {
-                    result.ErrorMessage = "You are not logged in to the system.";
+                    responseResultDto.ErrorMessage = "You are not logged in to the system.";
                 }
                 else if (status == StatusCode.UnAuthorization)
                 {
-                   
-                    result.ErrorMessage = $"You do not have permission to access the {context.Request.Path}-{context.Request.Method}.";
+                    responseResultDto.ErrorMessage =
+                        $"You do not have permission to access the {context.Request.Path}-{context.Request.Method}.";
                 }
                 else if (status == StatusCode.NotFound)
                 {
-                    result.ErrorMessage = $"No route found for {context.Request.Path}-{context.Request.Method}.";
+                    responseResultDto.ErrorMessage = $"No route found for {context.Request.Path}-{context.Request.Method}.";
                 }
                 else if (!body.IsNullOrEmpty())
                 {
-                    result.ErrorMessage = body;
+                    responseResultDto.ErrorMessage = body;
                 }
 
                 else
                 {
-                    result.ErrorMessage = status.GetDisplay();
+                    responseResultDto.ErrorMessage = status.GetDisplay();
                 }
 
                 context.Features.Set(new ExceptionHandlerFeature()
                 {
-                    Error = new SilkyException(result.ErrorMessage, status),
+                    Error = new SilkyException(responseResultDto.ErrorMessage, status),
                     Path = context.Request.Path
                 });
             }
 
-            var jsonString = _serializer.Serialize(result);
+            var jsonString = _serializer.Serialize(responseResultDto);
             return context.Response.WriteAsync(jsonString);
         }
 
@@ -124,6 +125,7 @@ namespace Silky.Http.Core.Middlewares
         {
             IEnumerable<ValidError> validErrors = null;
             var statusCode = exception.GetExceptionStatusCode();
+            var status = exception.GetExceptionStatus();
             if (exception is IHasValidationErrors)
             {
                 validErrors = ((IHasValidationErrors)exception).GetValidateErrors();
@@ -131,7 +133,8 @@ namespace Silky.Http.Core.Middlewares
 
             var responseResultDto = new ResponseResultDto()
             {
-                Status = statusCode,
+                Status = status,
+                Code = statusCode.ToString(),
                 ErrorMessage = exception.Message
             };
             if (validErrors != null)

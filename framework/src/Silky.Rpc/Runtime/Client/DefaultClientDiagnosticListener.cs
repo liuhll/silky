@@ -47,6 +47,7 @@ namespace Silky.Rpc.Runtime.Client
                     ServiceEntryId = serviceEntryId,
                     Result = remoteResultMessage.Result,
                     StatusCode = remoteResultMessage.StatusCode,
+                    Status = remoteResultMessage.Status,
                     ElapsedTimeMs = now - tracingTimestamp.Value
                 };
 

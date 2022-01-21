@@ -103,8 +103,8 @@ namespace Silky.Rpc.Transport
                 throw validateException;
             }
 
-            throw new SilkyException(remoteResultMessage.ExceptionMessage,
-                remoteResultMessage.StatusCode);
+            throw new SilkyException(remoteResultMessage.ExceptionMessage, remoteResultMessage.StatusCode,
+                remoteResultMessage.Status);
         }
     }
 }

@@ -5,11 +5,11 @@ namespace Silky.Http.Core
 {
     public class ResponseResultDto
     {
-        public object Data { get; set; }
+        public object Result { get; set; }
 
-        public StatusCode Status { get; set; }
+        public int Status { get; set; }
 
-        public string StatusCode => Status.ToString();
+        public string Code { get; set; }
 
         public string ErrorMessage { get; set; }
 

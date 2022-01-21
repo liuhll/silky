@@ -41,12 +41,12 @@ namespace NormHostDemo.AppService
             _session = NullSession.Instance;
         }
 
-        [UnitOfWork]
+       // [UnitOfWork]
         public async Task<TestOut> Create(TestInput input)
         {
             var test = input.Adapt<Test>();
+            throw new BusinessException("error",1010);
             var result = await _testRepository.InsertNowAsync(test);
-            // throw new BusinessException("error");
             return new TestOut()
             {
                 Id = result.Entity.Id,
@@ -146,7 +146,7 @@ namespace NormHostDemo.AppService
             {
                 objects.Add(obj);
             }
-            
+
             return objects;
         }
 

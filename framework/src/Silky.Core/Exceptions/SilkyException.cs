@@ -9,33 +9,47 @@ namespace Silky.Core.Exceptions
     {
         protected StatusCode _statusCode;
 
+        protected int? _status;
 
-        public SilkyException(string message, StatusCode status = StatusCode.FrameworkException)
+        public SilkyException(string message, StatusCode statusCode = StatusCode.FrameworkException, int? status = null)
             : base(message)
         {
-            _statusCode = status;
+            _statusCode = statusCode;
+            _status = status;
             LogLevel = LogLevel.Error;
         }
 
         public SilkyException(string message, Exception innerException,
-            StatusCode status = StatusCode.FrameworkException)
+            StatusCode statusCode = StatusCode.FrameworkException, int? status = null)
             : base(message, innerException)
         {
-            _statusCode = status;
+            _statusCode = statusCode;
+            _status = status;
             LogLevel = LogLevel.Error;
         }
 
         public SilkyException(SerializationInfo serializationInfo, StreamingContext context,
-            StatusCode status = StatusCode.FrameworkException)
+            StatusCode statusCode = StatusCode.FrameworkException, int? status = null)
             : base(serializationInfo, context)
         {
-            _statusCode = status;
+            _statusCode = statusCode;
+            _status = status;
             LogLevel = LogLevel.Error;
         }
 
-        public StatusCode StatusCode
+        public StatusCode StatusCode => _statusCode;
+
+        public int Status
         {
-            get { return _statusCode; }
+            get
+            {
+                if (_status.HasValue)
+                {
+                    return _status.Value;
+                }
+
+                return (int)_statusCode;
+            }
         }
 
         public LogLevel LogLevel { get; set; }

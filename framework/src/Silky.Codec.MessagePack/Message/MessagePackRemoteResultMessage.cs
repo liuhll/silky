@@ -13,6 +13,7 @@ namespace Silky.Codec.Message
             ServiceEntryId = remoteResultMessage.ServiceEntryId;
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
+            Status = remoteResultMessage.Status;
             Result = remoteResultMessage.Result;
             ValidateErrors = remoteResultMessage.ValidateErrors;
             Attachments = remoteResultMessage.Attachments;
@@ -26,12 +27,13 @@ namespace Silky.Codec.Message
         [Key(2)] public string ExceptionMessage { get; set; }
 
         [Key(3)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
+        
+        [Key(4)] public int Status{ get; set; } = (int)StatusCode.Success;
+        [Key(5)] public object Result { get; set; }
 
-        [Key(4)] public object Result { get; set; }
+        [Key(6)] public ValidError[] ValidateErrors { get; set; }
 
-        [Key(5)] public ValidError[] ValidateErrors { get; set; }
-
-        [Key(6)] public IDictionary<string, object> Attachments { get; set; }
+        [Key(7)] public IDictionary<string, object> Attachments { get; set; }
 
 
         public RemoteResultMessage GetMessage()
@@ -41,6 +43,7 @@ namespace Silky.Codec.Message
                 ServiceEntryId = ServiceEntryId,
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
+                Status = Status,
                 Result = Result,
                 ValidateErrors = ValidateErrors,
                 Attachments = Attachments

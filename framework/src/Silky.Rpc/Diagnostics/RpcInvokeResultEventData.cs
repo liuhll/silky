@@ -12,5 +12,7 @@ namespace Silky.Rpc.Diagnostics
         public StatusCode StatusCode { get; set; }
 
         public long? ElapsedTimeMs { get; set; }
+        
+        public int Status { get; set; }
     }
 }

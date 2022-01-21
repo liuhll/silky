@@ -128,6 +128,16 @@ namespace Silky.Core.Exceptions
             return statusCode;
         }
 
+        public static int GetExceptionStatus(this Exception exception)
+        {
+            if (exception is IHasErrorCode errorCode)
+            {
+                return errorCode.Status;
+            }
+
+            return (int)exception.GetExceptionStatusCode();
+        }
+
         public static LogLevel GetLogLevel(this Exception exception, LogLevel defaultLevel = LogLevel.Error)
         {
             return (exception as IHasLogLevel)?.LogLevel ?? defaultLevel;

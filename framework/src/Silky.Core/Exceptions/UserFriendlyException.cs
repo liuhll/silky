@@ -15,5 +15,18 @@ namespace Silky.Core.Exceptions
         {
             LogLevel = LogLevel.Warning;
         }
+
+        public UserFriendlyException(string message, int status) : base(message, StatusCode.UserFriendly, status)
+        {
+            LogLevel = LogLevel.Warning;
+        }
+
+        public UserFriendlyException(string message, Exception innerException, int status) : base(message,
+            innerException,
+            StatusCode.UserFriendly,
+            status)
+        {
+            LogLevel = LogLevel.Warning;
+        }
     }
 }

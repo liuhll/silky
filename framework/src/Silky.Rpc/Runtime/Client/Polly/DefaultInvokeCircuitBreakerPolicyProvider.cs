@@ -21,7 +21,11 @@ namespace Silky.Rpc.Runtime.Client
             if (serviceEntryDescriptor?.GovernanceOptions.EnableCircuitBreaker == true)
             {
                 var policy = Policy
-                    .Handle<Exception>(ex => !ex.IsFriendlyException())
+                    .Handle<Exception>(ex =>
+                    {
+                        var isFriendlyException = ex.IsFriendlyException();
+                        return !isFriendlyException;
+                    })
                     .CircuitBreakerAsync(
                         exceptionsAllowedBeforeBreaking: serviceEntryDescriptor.GovernanceOptions
                             .ExceptionsAllowedBeforeBreaking,
