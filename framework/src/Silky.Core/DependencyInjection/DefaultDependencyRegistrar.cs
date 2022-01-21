@@ -1,6 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using Autofac;
-using Microsoft.Extensions.Hosting;
 
 namespace Silky.Core.DependencyInjection
 {
@@ -12,29 +12,32 @@ namespace Silky.Core.DependencyInjection
             foreach (var assembly in refAssemblies)
             {
                 builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => typeof(ISingletonDependency).GetTypeInfo().IsAssignableFrom(t))
+                    .Where(t => typeof(ISingletonDependency).GetTypeInfo().IsAssignableFrom(t) &&
+                                !t.GetCustomAttributes().OfType<InjectNamedAttribute>().Any())
                     .PropertiesAutowired()
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .SingleInstance()
-                    .PropertiesAutowired()
-                    ;
+                    .PropertiesAutowired();
 
                 builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => typeof(ITransientDependency).GetTypeInfo().IsAssignableFrom(t))
+                    .Where(t => typeof(ITransientDependency).GetTypeInfo().IsAssignableFrom(t)&&
+                                !t.GetCustomAttributes().OfType<InjectNamedAttribute>().Any())
                     .PropertiesAutowired()
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .InstancePerDependency();
 
                 builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => typeof(IScopedDependency).GetTypeInfo().IsAssignableFrom(t))
+                    .Where(t => typeof(IScopedDependency).GetTypeInfo().IsAssignableFrom(t)&&
+                                !t.GetCustomAttributes().OfType<InjectNamedAttribute>().Any())
                     .PropertiesAutowired()
                     .AsImplementedInterfaces()
                     .AsSelf()
                     .InstancePerLifetimeScope();
             }
         }
+
 
         public int Order => 1;
     }

@@ -77,5 +77,7 @@ namespace ITestApplication.Test
         Task<object> GetObject();
 
         Task<OcrOutput> GetOcr();
+
+        Task<string> TestNamedService(string serviceName);
     }
 }

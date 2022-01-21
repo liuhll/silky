@@ -4,9 +4,10 @@ using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using Mapster;
+using NormHostDemo.AppService.DomainService;
 using NormHostDemo.Tests;
 using Silky.Caching;
-using Silky.Core.DbContext.UnitOfWork;
+using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Runtime.Session;
@@ -196,6 +197,17 @@ namespace NormHostDemo.AppService
                 Result = obj
             };
             return ocrOutput;
+        }
+
+        public async Task<string> TestNamedService(string serviceName)
+        {
+            var service = EngineContext.Current.ResolveNamed<ITestDomainService>(serviceName);
+            if (service == null)
+            {
+                throw new BusinessException($"不存在{serviceName}的服务");
+            }
+
+            return await service.Test();
         }
     }
 }
