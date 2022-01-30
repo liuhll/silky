@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -19,7 +20,7 @@ public class FormValueProvider : ServiceEntryValueProvider
     public IDictionary<string, object> GetFormData()
     {
         var formParamKeys = GetKeysFromFrom(ParameterFrom.Form);
-        var formData = new Dictionary<string, object>();
+        var formData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var value in _values)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +20,7 @@ public class QueryStringValueProvider : ServiceEntryValueProvider
     public IDictionary<string, object> GetQueryData()
     {
         var queryParamKeys = GetKeysFromFrom(ParameterFrom.Query);
-        var queryData = new Dictionary<string, object>();
+        var queryData = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var value in _values)
         {
