@@ -12,7 +12,7 @@ namespace Silky.Http.Dashboard.AppService
     [ServiceRoute]
     [SilkyAppService]
     [DashboardAppService]
-    [Authorize(Roles = "Dashboard")]
+    [Authorize]
     public interface ISilkyAppService
     {
         PagedList<GetHostOutput> GetHosts(PagedRequestDto input);
