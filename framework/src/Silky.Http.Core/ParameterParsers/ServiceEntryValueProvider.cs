@@ -14,9 +14,9 @@ public abstract class ServiceEntryValueProvider
         _serviceEntry = serviceEntry;
     }
 
-    protected IDictionary<string, Type> GetKeysFromFrom(ParameterFrom @from)
+    protected IDictionary<string, Type> GetKeysFromParameter(ParameterFrom @from)
     {
-        var keys = new Dictionary<string, Type>();
+        var keys = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         var @params = _serviceEntry.ParameterDescriptors.Where(p => p.From == from);
         foreach (var param in @params)
         {
