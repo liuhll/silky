@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Silky.Core.Extensions;
+using Silky.Core.Runtime.Session;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.Order.Domain.Shared.Orders;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Order.Domain.Orders
 {

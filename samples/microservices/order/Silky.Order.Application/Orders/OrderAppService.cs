@@ -7,8 +7,8 @@ using Silky.Order.Application.Contracts.Orders.Dtos;
 using Silky.Order.Domain.Orders;
 using Silky.Order.Domain.Shared.Orders;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
 using Silky.Transaction.Tcc;
+using Silky.Core.Runtime.Rpc;
 
 namespace Silky.Order.Application.Orders
 {
@@ -33,7 +33,7 @@ namespace Silky.Order.Application.Orders
         [UnitOfWork]
         public async Task<GetOrderOutput> OrderCreateConfirm(CreateOrderInput input)
         {
-            var orderId = RpcContext.Context.GetAttachment("orderId");
+            var orderId = RpcContext.Context.GetInvokeAttachment("orderId");
             var order = await _orderDomainService.GetById(orderId.To<long>());
             order.Status = OrderStatus.Payed;
             order.UpdateTime = DateTime.Now;
@@ -44,7 +44,7 @@ namespace Silky.Order.Application.Orders
         [UnitOfWork]
         public async Task OrderCreateCancel(CreateOrderInput input)
         {
-            var orderId = RpcContext.Context.GetAttachment("orderId");
+            var orderId = RpcContext.Context.GetInvokeAttachment("orderId");
             if (orderId != null)
             {
                 // await _orderDomainService.Delete(orderId.To<long>());

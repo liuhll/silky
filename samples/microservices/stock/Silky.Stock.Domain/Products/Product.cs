@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Silky.Core.Extensions;
+using Silky.Core.Runtime.Session;
 using Silky.EntityFrameworkCore.Entities;
 using Silky.EntityFrameworkCore.Entities.Configures;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Stock.Domain.Products
 {

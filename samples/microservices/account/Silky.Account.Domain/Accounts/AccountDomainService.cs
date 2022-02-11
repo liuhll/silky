@@ -9,10 +9,10 @@ using Silky.Account.Domain.Shared.Accounts;
 using Silky.Caching;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Rpc;
+using Silky.Core.Runtime.Rpc;
+using Silky.Core.Runtime.Session;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Jwt;
-using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Tcc;
 
 namespace Silky.Account.Domain.Accounts
@@ -137,11 +137,11 @@ namespace Silky.Account.Domain.Accounts
                             PayStatus = PayStatus.NoPay
                         };
                         await _balanceRecordRepository.InsertNowAsync(balanceRecord);
-                        RpcContext.Context.SetAttachment("balanceRecordId", balanceRecord.Id);
+                        RpcContext.Context.SetInvokeAttachment("balanceRecordId", balanceRecord.Id);
                         break;
                     case TccMethodType.Confirm:
                         account.LockBalance -= input.OrderBalance;
-                        var balanceRecordId1 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
+                        var balanceRecordId1 = RpcContext.Context.GetInvokeAttachment("orderBalanceId")?.To<long>();
                         if (balanceRecordId1.HasValue)
                         {
                             balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId1.Value);
@@ -153,7 +153,7 @@ namespace Silky.Account.Domain.Accounts
                     case TccMethodType.Cancel:
                         account.Balance += input.OrderBalance;
                         account.LockBalance -= input.OrderBalance;
-                        var balanceRecordId2 = RpcContext.Context.GetAttachment("orderBalanceId")?.To<long>();
+                        var balanceRecordId2 = RpcContext.Context.GetInvokeAttachment("orderBalanceId")?.To<long>();
                         if (balanceRecordId2.HasValue)
                         {
                             balanceRecord = await _balanceRecordRepository.FindAsync(balanceRecordId2.Value);
