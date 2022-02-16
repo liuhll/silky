@@ -28,6 +28,7 @@ namespace Silky.Transaction.Tcc
                     foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
                     {
                         actualParameters.Add(parameterDescriptor.GetActualParameter(parameters[i]));
+                        i++;
                     }
                 }
 

@@ -54,6 +54,7 @@ namespace Silky.Transaction.Tcc
                             {
                                 actualParameters.Add(
                                     parameterDescriptor.GetActualParameter(localParticipant.Parameters[i]));
+                                i++;
                             }
                         }
 
