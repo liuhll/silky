@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Silky.Core.Serialization;
 using Silky.HealthChecks.Rpc;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Rpc.Runtime.Server;
@@ -23,7 +24,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 sp => new SilkyRpcHealthCheck(
                     sp.GetRequiredService<IServerManager>(),
                     sp.GetRequiredService<IServerHealthCheck>(),
-                    sp.GetRequiredService<ICurrentRpcToken>()),
+                    sp.GetRequiredService<ICurrentRpcToken>(),
+                    sp.GetRequiredService<ISerializer>()),
                 failureStatus,
                 tags,
                 timeout));

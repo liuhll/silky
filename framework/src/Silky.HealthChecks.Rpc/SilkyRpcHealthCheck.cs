@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Silky.Core.Runtime.Rpc;
+using Silky.Core.Serialization;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
@@ -17,14 +18,16 @@ namespace Silky.HealthChecks.Rpc
         private readonly IServerManager _serverManager;
         private readonly IServerHealthCheck _serverHealthCheck;
         private readonly ICurrentRpcToken _currentRpcToken;
-
+        private readonly ISerializer _serializer;
         public SilkyRpcHealthCheck(IServerManager serverManager,
             IServerHealthCheck serverHealthCheck,
-            ICurrentRpcToken currentRpcToken)
+            ICurrentRpcToken currentRpcToken,
+            ISerializer serializer)
         {
             _serverManager = serverManager;
             _serverHealthCheck = serverHealthCheck;
             _currentRpcToken = currentRpcToken;
+            _serializer = serializer;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
@@ -32,6 +35,7 @@ namespace Silky.HealthChecks.Rpc
         {
             var servers = _serverManager.Servers;
             var healthData = new Dictionary<string, object>();
+            
             _currentRpcToken.SetRpcToken();
             foreach (var server in servers)
             {
@@ -60,18 +64,40 @@ namespace Silky.HealthChecks.Rpc
                     }
                 }
             }
+            var serverHealthList = healthData.Values.Select(p=> (ServerHealthData)p);
+            var serverHealthGroups = serverHealthList.GroupBy(p => p.HostName);
+            var healthCheckDescriptions = new Dictionary<string, object>();
+            foreach (var serverHealthGroup in serverHealthGroups)
+            {
+                var serverDesc = new List<string>();
+                var healthCount = serverHealthGroup.Count(p => p.Health);
+                if (healthCount > 0)
+                {
+                    serverDesc.Add($"healthCount:{healthCount}");
+                }
+                var unHealthCount = serverHealthGroup.Count(p => !p.Health);
+                if (unHealthCount > 0)
+                {
+                    serverDesc.Add($"unHealthCount:{unHealthCount}");
+                }
 
+                healthCheckDescriptions[serverHealthGroup.Key] = serverDesc;
+            }
+            
+            var detail = _serializer.Serialize(healthCheckDescriptions);
             if (healthData.Values.All(p => ((ServerHealthData)p).Health))
             {
                 return HealthCheckResult.Healthy(
-                    $"There are a total of {healthData.Count} Rpc service provider instances, and all service provider instances are healthy.",
+                    $"There are a total of {healthData.Count} Rpc service provider instances." +
+                    $"{Environment.NewLine} server detail:{detail}.",
                     healthData);
             }
 
             if (healthData.Values.All(p => !((ServerHealthData)p).Health))
             {
                 return HealthCheckResult.Unhealthy(
-                    $"There are a total of {healthData.Count} Rpc service provider instances, and all service provider instances are unhealthy.",
+                    $"There are a total of {healthData.Count} Rpc service provider instances, and all service provider instances are unhealthy." +
+                    $"{Environment.NewLine} server detail:{detail}.",
                     null, healthData);
             }
 
@@ -82,8 +108,14 @@ namespace Silky.HealthChecks.Rpc
                 $"There are a total of {healthData.Count}  Rpc service provider instances," +
                 $" of which {unHealthData.Count()}" +
                 $" service instances are unhealthy{Environment.NewLine}." +
-                $"unhealthy instances:{string.Join(",", unHealthData.Select(p => p.Address))}",
+                $" unhealthy instances:{string.Join(",", unHealthData.Select(p => p.Address))}." +
+                $" server detail:{detail}.",
                 null, healthData);
         }
+        
+        // private class HealthCheckDescription
+        // {
+        //     
+        // }
     }
 }

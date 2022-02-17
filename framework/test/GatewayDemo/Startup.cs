@@ -40,9 +40,9 @@ namespace GatewayDemo
             services.AddMessagePackCodec();
             services.AddHealthChecks()
                 .AddSilkyRpc();
-            // services
-            //     .AddHealthChecksUI()
-            //     .AddInMemoryStorage();
+            services
+                .AddHealthChecksUI()
+                .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
