@@ -14,11 +14,13 @@ namespace Silky.Rpc.CachingInterceptor
             KeyTemplete = keyTemplete;
             CachingMethod = CachingMethod.Get;
             OnlyCurrentUserData = false;
+            IgnoreMultiTenancy = false;
         }
 
         public string KeyTemplete { get; }
 
         public bool OnlyCurrentUserData { get; set; }
+        public bool IgnoreMultiTenancy { get; set; }
 
         public CachingMethod CachingMethod { get; }
     }

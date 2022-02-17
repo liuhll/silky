@@ -11,6 +11,8 @@ namespace Silky.Rpc.CachingInterceptor
     public interface IDistributedInterceptCache : IDistributedCache<object, string>, IScopedDependency
     {
         void UpdateCacheName(string cacheName);
+        
+        void SetIgnoreMultiTenancy(bool ignoreMultiTenancy);
 
         Task<object> GetOrAddAsync(
             [NotNull] string key,

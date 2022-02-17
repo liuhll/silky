@@ -34,6 +34,11 @@ namespace Silky.Rpc.CachingInterceptor
             CacheName = cacheName;
         }
 
+        public void SetIgnoreMultiTenancy(bool ignoreMultiTenancy)
+        {
+            IgnoreMultiTenancy = ignoreMultiTenancy;
+        }
+
         public async Task<object> GetOrAddAsync(string key, Type type, Func<Task<object>> factory,
             Func<DistributedCacheEntryOptions> optionsFactory = null, bool? hideErrors = null,
             CancellationToken token = default)

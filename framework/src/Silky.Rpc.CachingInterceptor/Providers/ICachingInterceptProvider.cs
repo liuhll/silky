@@ -6,6 +6,8 @@
 
         bool OnlyCurrentUserData { get; set; }
 
+        bool IgnoreMultiTenancy { get; set; }
+
         CachingMethod CachingMethod { get; }
     }
 }

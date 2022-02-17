@@ -15,6 +15,7 @@ namespace Silky.Rpc.CachingInterceptor
             CacheName = cacheName;
             KeyTemplete = keyTemplete;
             OnlyCurrentUserData = false;
+            IgnoreMultiTenancy = false;
             CachingMethod = CachingMethod.Remove;
         }
         
@@ -31,6 +32,7 @@ namespace Silky.Rpc.CachingInterceptor
         public string CacheName { get; }
         public string KeyTemplete { get; }
 
+        public bool IgnoreMultiTenancy { get; set; }
         public CachingMethod CachingMethod { get; }
 
         public bool OnlyCurrentUserData { get; set; }

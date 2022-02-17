@@ -39,12 +39,14 @@ namespace Silky.Rpc.CachingInterceptor
 
             if (serviceEntry.GovernanceOptions.EnableCachingInterceptor)
             {
+                
                 var removeCachingInterceptProviders = serviceEntry.RemoveCachingInterceptProviders();
                 if (removeCachingInterceptProviders.Any())
                 {
                     var index = 1;
                     foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
                     {
+                        _distributedCache.SetIgnoreMultiTenancy(removeCachingInterceptProvider.IgnoreMultiTenancy);
                         var removeCacheKey =
                             serviceEntry.GetCachingInterceptKey(parameters, removeCachingInterceptProvider);
                         await _distributedCache.RemoveAsync(removeCacheKey, removeCachingInterceptProvider.CacheName,
@@ -56,7 +58,9 @@ namespace Silky.Rpc.CachingInterceptor
                     }
                 }
 
-                if (serviceEntry.GetCachingInterceptProvider() != null)
+                var getCachingInterceptProvider = serviceEntry.GetCachingInterceptProvider();
+                var updateCachingInterceptProvider = serviceEntry.UpdateCachingInterceptProvider();
+                if (getCachingInterceptProvider != null)
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
@@ -67,6 +71,7 @@ namespace Silky.Rpc.CachingInterceptor
                     }
                     else
                     {
+                        _distributedCache.SetIgnoreMultiTenancy(getCachingInterceptProvider.IgnoreMultiTenancy);
                         var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
                             serviceEntry.GetCachingInterceptProvider());
                         Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
@@ -78,7 +83,7 @@ namespace Silky.Rpc.CachingInterceptor
                             serviceEntry);
                     }
                 }
-                else if (serviceEntry.UpdateCachingInterceptProvider() != null)
+                else if (updateCachingInterceptProvider != null)
                 {
                     if (serviceEntry.IsTransactionServiceEntry())
                     {
@@ -89,10 +94,10 @@ namespace Silky.Rpc.CachingInterceptor
                     }
                     else
                     {
-                        var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            serviceEntry.UpdateCachingInterceptProvider());
-                        Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
-                            MiniProfileConstant.Caching.State.UpdateCaching,
+                        _distributedCache.SetIgnoreMultiTenancy(updateCachingInterceptProvider.IgnoreMultiTenancy);
+                        var updateCacheKey = serviceEntry.GetCachingInterceptKey(parameters, updateCachingInterceptProvider);
+                           
+                        Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name, MiniProfileConstant.Caching.State.UpdateCaching,
                             $"The cacheKey for updating the cache data is[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{updateCacheKey}]");
                         await _distributedCache.RemoveAsync(updateCacheKey, serviceEntry.GetCacheName(),
                             hideErrors: true);

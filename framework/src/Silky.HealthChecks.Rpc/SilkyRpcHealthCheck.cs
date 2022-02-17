@@ -113,9 +113,5 @@ namespace Silky.HealthChecks.Rpc
                 null, healthData);
         }
         
-        // private class HealthCheckDescription
-        // {
-        //     
-        // }
     }
 }
