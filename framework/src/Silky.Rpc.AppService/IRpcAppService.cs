@@ -10,16 +10,17 @@ namespace Silky.Rpc.AppService
     [SilkyAppService]
     public interface IRpcAppService
     {
-        [Governance(ProhibitExtranet = true)]
+        [ProhibitExtranet]
         Task<ServerInstanceDetailInfo> GetInstanceDetail();
 
-        [Governance(ProhibitExtranet = true)]
+        [ProhibitExtranet]
         Task<IReadOnlyCollection<ServerHandleInfo>> GetServiceEntryHandleInfos();
 
-        [Governance(ProhibitExtranet = true)]
+        [ProhibitExtranet]
         Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos();
 
-        [Governance(ProhibitExtranet = true, TimeoutMillSeconds = 1000)]
+        [ProhibitExtranet]
+        [Governance(TimeoutMillSeconds = 1000)]
         Task<bool> IsHealth();
     }
 }
