@@ -73,18 +73,18 @@ namespace Silky.HealthChecks.Rpc
                 var healthCount = serverHealthGroup.Count(p => p.Health);
                 if (healthCount > 0)
                 {
-                    serverDesc.Add($"healthCount:{healthCount}");
+                    serverDesc.Add($"HealthCount:{healthCount}");
                 }
                 var unHealthCount = serverHealthGroup.Count(p => !p.Health);
                 if (unHealthCount > 0)
                 {
-                    serverDesc.Add($"unHealthCount:{unHealthCount}");
+                    serverDesc.Add($"UnHealthCount:{unHealthCount}");
                 }
 
                 healthCheckDescriptions[serverHealthGroup.Key] = serverDesc;
             }
             
-            var detail = _serializer.Serialize(healthCheckDescriptions);
+            var detail = _serializer.Serialize(healthCheckDescriptions,false);
             if (healthData.Values.All(p => ((ServerHealthData)p).Health))
             {
                 return HealthCheckResult.Healthy(
