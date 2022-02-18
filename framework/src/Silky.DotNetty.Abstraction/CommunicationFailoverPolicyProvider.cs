@@ -36,7 +36,7 @@ namespace Silky.DotNetty.Abstraction
                     .Or<IOException>()
                     .Or<CommunicationException>()
                     .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NotFindLocalServiceEntry)
-                    .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
+                    .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                         retryAttempt =>
                             TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
                                 .RetryIntervalMillSeconds),

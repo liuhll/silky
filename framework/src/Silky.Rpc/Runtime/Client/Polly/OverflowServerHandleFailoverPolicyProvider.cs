@@ -29,7 +29,7 @@ namespace Silky.Rpc.Runtime.Client
                 policy = Policy<object>
                     .Handle<OverflowMaxServerHandleException>()
                     .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.OverflowMaxServerHandle)
-                    .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
+                    .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                         retryAttempt =>
                             TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
                                 .RetryIntervalMillSeconds),

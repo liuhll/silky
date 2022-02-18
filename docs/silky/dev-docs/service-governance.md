@@ -115,7 +115,7 @@ public class TimeoutFailoverPolicyProvider : InvokeFailoverPolicyProviderBase
             policy = Policy<object>
                         .Handle<Timeoutxception>()
                         .Or<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.Timeout)
-                        .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds,
+                        .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                             retryAttempt =>
                                 TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions.RetryIntervalMillSeconds),
                             (outcome, timeSpan, retryNumber, context)
