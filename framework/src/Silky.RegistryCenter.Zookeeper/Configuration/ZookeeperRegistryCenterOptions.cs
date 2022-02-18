@@ -7,11 +7,11 @@ namespace Silky.RegistryCenter.Zookeeper.Configuration
         internal static string RegistryCenter = "RegistryCenter";
 
         public string Type { get; } = "Zookeeper";
-        public double ConnectionTimeout { get; set; } = 5000;
+        public double ConnectionTimeout { get; set; } = 10000;
 
-        public double SessionTimeout { get; set; } = 8000;
+        public double SessionTimeout { get; set; } = 16000;
 
-        public double OperatingTimeout { get; set; } = 10000;
+        public double OperatingTimeout { get; set; } = 20000;
 
         public string ConnectionStrings { get; set; }
 
