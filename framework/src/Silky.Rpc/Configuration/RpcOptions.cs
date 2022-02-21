@@ -14,7 +14,8 @@ namespace Silky.Rpc.Configuration
             IsSsl = false;
             SoBacklog = 8192;
             ConnectTimeout = 500;
-      
+            RegisterFailureRetryCount = 5;
+
         }
 
         public string Host { get; set; }
@@ -27,6 +28,8 @@ namespace Silky.Rpc.Configuration
 
         [NotNull] public string Token { get; set; }
         public double ConnectTimeout { get; set; }
+
+        public int RegisterFailureRetryCount { get; set; }
 
     }
 }
