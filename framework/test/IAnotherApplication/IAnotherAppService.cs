@@ -22,5 +22,7 @@ namespace IAnotherApplication
         Task<string> DeleteTwo(string address);
 
         Task<string> Create(string name);
+        
+        object ReturnNullTest();
     }
 }

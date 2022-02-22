@@ -35,6 +35,11 @@ namespace AnotherHostDemo.AppService
             return "ok";
         }
 
+        public object ReturnNullTest()
+        {
+            return null;
+        }
+
         public async Task<string> DeleteTwoConfirm(string name)
         {
             return "DeleteTwoConfirm " + name;

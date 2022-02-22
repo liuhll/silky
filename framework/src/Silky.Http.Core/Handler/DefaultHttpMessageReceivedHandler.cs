@@ -52,10 +52,11 @@ namespace Silky.Http.Core.Handlers
             httpContext.Response.SetResultStatusCode(StatusCode.Success);
             httpContext.Response.SetResultStatus((int)StatusCode.Success);
             httpContext.Response.SetHeaders();
-            result ??= string.Empty;
-
-            var responseData = _serializer.Serialize(result);
-            await httpContext.Response.WriteAsync(responseData);
+            if (result != null)
+            {
+                var responseData = _serializer.Serialize(result);
+                await httpContext.Response.WriteAsync(responseData);
+            }
         }
 
 
