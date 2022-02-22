@@ -57,8 +57,8 @@ namespace GatewayDemo
 
             app.UseSerilogRequestLogging();
             app.UseDashboard();
-            app.UseSilkyRpcHealthCheck()
-                .UseHealthChecksPrometheusExporter("/metrics");
+            // app.UseSilkyRpcHealthCheck()
+            //     .UseHealthChecksPrometheusExporter("/metrics");
 
             app.UseRouting();
             // app.UseClientRateLimiting();
@@ -72,7 +72,7 @@ namespace GatewayDemo
             app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHealthChecksUI();
+               // endpoints.MapHealthChecksUI();
                 endpoints.MapSilkyRpcServices();
             });
         }

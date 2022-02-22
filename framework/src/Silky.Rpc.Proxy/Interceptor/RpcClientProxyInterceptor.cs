@@ -2,12 +2,13 @@ using System;
 using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Proxy
 {
-    public class RpcClientProxyInterceptor : SilkyInterceptor, IScopedDependency
+    public class RpcClientProxyInterceptor : SilkyInterceptor, ITransientDependency
     {
         private readonly IIdGenerator _idGenerator;
         private readonly IServiceEntryLocator _serviceEntryLocator;
@@ -31,8 +32,17 @@ namespace Silky.Rpc.Proxy
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
             try
             {
-                invocation.ReturnValue =
+                if (invocation.Method.ReturnType == typeof(void) || invocation.Method.ReturnType.GenericTypeArguments.IsNullOrEmpty())
+                {
                     await _executor.Execute(serviceEntry, invocation.Arguments, _serviceKeyExecutor.ServiceKey);
+                }
+                else
+                {
+                    invocation.ReturnValue =
+                        await _executor.Execute(serviceEntry, invocation.Arguments, _serviceKeyExecutor.ServiceKey);
+                }
+
+
             }
             catch (Exception)
             {

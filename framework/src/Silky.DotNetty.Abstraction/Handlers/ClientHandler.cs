@@ -18,7 +18,7 @@ namespace Silky.DotNetty.Handlers
             _rpcEndpointMonitor = rpcEndpointMonitor;
         }
 
-        public async override void ChannelRead(IChannelHandlerContext context, object message)
+        public override async void ChannelRead(IChannelHandlerContext context, object message)
         {
             var transportMessage = (TransportMessage)message;
             await _messageListener.OnReceived(null, transportMessage);
@@ -33,7 +33,7 @@ namespace Silky.DotNetty.Handlers
             }
         }
 
-        public async override Task CloseAsync(IChannelHandlerContext context)
+        public override async Task CloseAsync(IChannelHandlerContext context)
         {
             var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
             if (remoteAddress != null)

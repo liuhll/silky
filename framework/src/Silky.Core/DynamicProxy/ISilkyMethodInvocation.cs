@@ -17,8 +17,6 @@ namespace Silky.Core.DynamicProxy
 
         MethodInfo Method { get; }
 
-        bool IsAsyncMethod { get; }
-
         object ReturnValue { get; set; }
 
         Task ProceedAsync();

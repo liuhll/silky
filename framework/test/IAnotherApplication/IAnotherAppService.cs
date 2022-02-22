@@ -23,6 +23,6 @@ namespace IAnotherApplication
 
         Task<string> Create(string name);
         
-        object ReturnNullTest();
+        void ReturnNullTest();
     }
 }

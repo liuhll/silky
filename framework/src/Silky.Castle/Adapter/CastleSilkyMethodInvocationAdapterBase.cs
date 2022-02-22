@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Silky.Core.DynamicProxy;
-using Silky.Core.Extensions;
 
 namespace Silky.Castle.Adapter
 {
@@ -20,8 +19,6 @@ namespace Silky.Castle.Adapter
         public object TargetObject => Invocation.InvocationTarget ?? Invocation.MethodInvocationTarget;
 
         public MethodInfo Method => Invocation.MethodInvocationTarget ?? Invocation.Method;
-
-        public bool IsAsyncMethod => Method.IsAsyncMethodInfo();
 
         public object ReturnValue { get; set; }
 

@@ -34,13 +34,12 @@ namespace Silky.DotNetty
         private ConcurrentDictionary<IRpcEndpoint, Lazy<Task<ITransportClient>>> m_clients = new();
 
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
-        private readonly Bootstrap _bootstrap;
         private RpcOptions _rpcOptions;
+
         private GovernanceOptions _governanceOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-
 
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IOptionsMonitor<GovernanceOptions> governanceOptions,
@@ -76,9 +75,6 @@ namespace Silky.DotNetty
                 Check.NotNull(addressModel, nameof(addressModel));
                 m_clients.TryRemove(addressModel, out _);
             };
-
-
-            _bootstrap = CreateBootstrap();
             Logger = NullLogger<DotNettyTransportClientFactory>.Instance;
         }
 
@@ -107,6 +103,7 @@ namespace Silky.DotNetty
                 .Channel<TcpSocketChannel>()
                 .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
                 .Option(ChannelOption.TcpNodelay, true)
+                .Option(ChannelOption.SoKeepalive, true)
                 .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                 .Group(group)
                 .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
@@ -155,8 +152,8 @@ namespace Silky.DotNetty
                     {
                         Logger.LogInformation(
                             $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}.");
-                        var bootstrap = _bootstrap;
-                        var channel = await bootstrap.ConnectAsync(k.IPEndPoint);
+                        var bootstrap = CreateBootstrap();
+                        var channel = await bootstrap.ConnectAsync(rpcEndpoint.IPEndPoint);
                         var pipeline = channel.Pipeline;
                         var messageListener = new ClientMessageListener();
                         var messageSender = new DotNettyClientMessageSender(channel);

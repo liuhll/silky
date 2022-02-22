@@ -9,7 +9,7 @@ using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Interceptor
 {
-    public class TransactionInterceptor : SilkyInterceptor, IScopedDependency
+    public class TransactionInterceptor : SilkyInterceptor, ITransientDependency
     {
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {

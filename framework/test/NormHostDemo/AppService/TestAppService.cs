@@ -46,14 +46,10 @@ namespace NormHostDemo.AppService
         public async Task<TestOut> Create(TestInput input)
         {
             var test = input.Adapt<Test>();
-            throw new BusinessException("error",1010);
-            var result = await _testRepository.InsertNowAsync(test);
-            return new TestOut()
-            {
-                Id = result.Entity.Id,
-                Name = result.Entity.Name,
-                Address = result.Entity.Address
-            };
+           // throw new BusinessException("error",1010);
+          //  var result = await _testRepository.InsertNowAsync(test);
+          _anotherAppService.ReturnNullTest();
+          return null;
         }
 
         public Task CreateOrUpdateAsync(TestInput input)
