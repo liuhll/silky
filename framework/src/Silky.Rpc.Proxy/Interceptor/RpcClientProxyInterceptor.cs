@@ -41,8 +41,6 @@ namespace Silky.Rpc.Proxy
                     invocation.ReturnValue =
                         await _executor.Execute(serviceEntry, invocation.Arguments, _serviceKeyExecutor.ServiceKey);
                 }
-
-
             }
             catch (Exception)
             {
@@ -50,7 +48,6 @@ namespace Silky.Rpc.Proxy
                 {
                     await invocation.ProceedAsync();
                 }
-
                 throw;
             }
         }
