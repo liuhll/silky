@@ -55,6 +55,24 @@ namespace Silky.Caching
             }
         }
 
+        public static async Task RemoveMatchKeyAsync([NotNull] this IDistributedCache distributedCache,
+            [NotNull] string keyPattern, bool? hideErrors = null, CancellationToken token = default)
+        {
+            var cacheSupportsMultipleItems = (distributedCache as ICacheSupportsMultipleItems);
+            if (cacheSupportsMultipleItems == null)
+            {
+                var matchKeys = SearchKeys(keyPattern, distributedCache);
+                foreach (var matchKey in matchKeys)
+                {
+                    await distributedCache.RemoveAsync(matchKey, token);
+                }
+            }
+            else
+            {
+                await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, hideErrors, token);
+            }
+        }
+
         public static Task RemoveMatchKeyAsync([NotNull] this IDistributedCache distributedCache,
             [NotNull] Type cacheType,
             [NotNull] string keyPattern, bool? hideErrors = null, CancellationToken token = default)
