@@ -14,6 +14,8 @@ namespace Silky.Rpc.CachingInterceptor
         
         void SetIgnoreMultiTenancy(bool ignoreMultiTenancy);
 
+        Task RemoveMatchKeyAsync([NotNull] string keyPattern, bool? hideErrors = null, CancellationToken token = default);
+        
         Task<object> GetOrAddAsync(
             [NotNull] string key,
             [NotNull] Type type,

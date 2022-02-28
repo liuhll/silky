@@ -112,5 +112,11 @@ namespace Silky.Rpc.CachingInterceptor
         {
             return serviceEntry.CustomAttributes.OfType<IRemoveCachingInterceptProvider>().ToArray();
         }
+        
+        public static IReadOnlyCollection<IRemoveMatchKeyCachingInterceptProvider> RemoveMatchKeyCachingInterceptProviders(
+            this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IRemoveMatchKeyCachingInterceptProvider>().ToArray();
+        }
     }
 }

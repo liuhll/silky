@@ -25,7 +25,11 @@ namespace Silky.Rpc.CachingInterceptor
             ICancellationTokenProvider cancellationTokenProvider,
             IDistributedCacheSerializer serializer,
             IDistributedCacheKeyNormalizer keyNormalizer)
-            : base(distributedCacheOption, cache, cancellationTokenProvider, serializer, keyNormalizer)
+            : base(distributedCacheOption, 
+                cache,
+                cancellationTokenProvider,
+                serializer,
+                keyNormalizer)
         {
         }
 
@@ -37,6 +41,26 @@ namespace Silky.Rpc.CachingInterceptor
         public void SetIgnoreMultiTenancy(bool ignoreMultiTenancy)
         {
             IgnoreMultiTenancy = ignoreMultiTenancy;
+        }
+
+        public async Task RemoveMatchKeyAsync(string keyPattern, bool? hideErrors = null,
+            CancellationToken token = default)
+        {
+            using (await SyncSemaphore.LockAsync(token))
+            {
+                if (Cache is not ICacheSupportsMultipleItems cacheSupportsMultipleItems)
+                {
+                    var matchKeys = SearchKeys(keyPattern);
+                    foreach (var matchKey in matchKeys)
+                    {
+                        await RemoveAsync(matchKey, hideErrors, token);
+                    }
+                }
+                else
+                {
+                    await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, hideErrors, token);
+                }
+            }
         }
 
         public async Task<object> GetOrAddAsync(string key, Type type, Func<Task<object>> factory,
