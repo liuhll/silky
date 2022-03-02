@@ -22,7 +22,7 @@ namespace Silky.Rpc.Runtime.Server
         {
         }
 
-        public void OnActionException(ServerExceptionContext context)
+        public virtual void OnActionException(ServerExceptionContext context)
         {
         }
     }
