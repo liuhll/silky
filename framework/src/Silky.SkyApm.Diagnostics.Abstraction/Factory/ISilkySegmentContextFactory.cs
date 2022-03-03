@@ -12,7 +12,7 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
         
         SegmentContext GetCurrentExitContext(string serviceEntryId);
 
-        SegmentContext GetHttpHandleExitContext(string serviceEntryId);
+        SegmentContext GetHttpHandleExitContext(string id);
 
         SegmentContext GetCurrentContext(string operationName);
 

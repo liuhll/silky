@@ -5,6 +5,7 @@
         <Description>Silky Rpc Health Check</Description>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>
     <ItemGroup>

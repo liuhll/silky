@@ -10,7 +10,6 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
 {
     public class DefaultServerHealthCheck : IServerHealthCheck
     {
-        private const string healthCheckServiceEntryId = "Silky.Rpc.AppService.IRpcAppService.IsHealth_Get";
         private readonly IAppointAddressInvoker _appointAddressInvoker;
 
         public DefaultServerHealthCheck(IAppointAddressInvoker appointAddressInvoker)
@@ -23,7 +22,7 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
             try
             {
                 return
-                    _appointAddressInvoker.Invoke<bool>(address, healthCheckServiceEntryId, Array.Empty<object>());
+                    _appointAddressInvoker.Invoke<bool>(address, HealthCheckConstants.HealthCheckServiceEntryId, Array.Empty<object>());
             }
             catch (Exception e)
             {

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Silky.Core.Serialization;
 using Silky.HealthChecks.Rpc;
 using Silky.HealthChecks.Rpc.ServerCheck;
+using Silky.Http.Core.Handlers;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
 
@@ -25,7 +27,11 @@ namespace Microsoft.Extensions.DependencyInjection
                     sp.GetRequiredService<IServerManager>(),
                     sp.GetRequiredService<IServerHealthCheck>(),
                     sp.GetRequiredService<ICurrentRpcToken>(),
-                    sp.GetRequiredService<ISerializer>()),
+                    sp.GetRequiredService<ISerializer>(),
+                    sp.GetRequiredService<IHttpHandleDiagnosticListener>(),
+                    sp.GetRequiredService<IHttpContextAccessor>(),
+                    sp.GetRequiredService<IServiceEntryLocator>()
+                ),
                 failureStatus,
                 tags,
                 timeout));
