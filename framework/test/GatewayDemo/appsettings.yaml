@@ -52,8 +52,8 @@ governance:
 dashboard:
   displayWebApiInSwagger: true
   useAuth: true
-  wrapperResponse: true
-  dashboardLoginApi: /api/account/login
+#  wrapperResponse: true
+#  dashboardLoginApi: /api/account/login
   externalLinks:
     - title: "message.swagger"
       path: "http://localhost:5002"

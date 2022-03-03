@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "silky-dashboard-ui-dist": "1.0.17"
+    "silky-dashboard-ui-dist": "2.0.0"
   }
 }

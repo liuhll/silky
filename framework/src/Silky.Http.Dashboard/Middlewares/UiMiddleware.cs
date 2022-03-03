@@ -68,6 +68,10 @@ namespace Silky.Http.Dashboard.Middlewares
                     htmlBuilder.Replace("%(servicePrefix)", _options.PathBase + "/api/silky");
                     htmlBuilder.Replace("%(useAuth)", _options.UseAuth.ToString());
                     htmlBuilder.Replace("%(wrapperResponse)", _options.WrapperResponse.ToString());
+                    htmlBuilder.Replace("%(useTenant)", _options.UseTenant.ToString());
+                    htmlBuilder.Replace("%(tenantName)", _options.TenantNameFiledName);
+                    htmlBuilder.Replace("%(userName)", _options.UserNameFiledName);
+                    htmlBuilder.Replace("%(password)", _options.PasswordFiledName);
                     if (_options.UseAuth)
                     {
                         var loginWebApi = _options.DashboardLoginApi.StartsWith("/")

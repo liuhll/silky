@@ -10,11 +10,26 @@ namespace Silky.Http.Dashboard.Configuration
         {
             StatsPollingInterval = 2000;
             ExternalLinks = new List<ExternalLinkOptions>();
+            UseAuth = true;
+            UseTenant = true;
+            DashboardLoginApi = "/api/account/login";
+            WrapperResponse = true;
+            TenantNameFiledName = "TenantName";
+            UserNameFiledName = "UserName";
+            PasswordFiledName = "Password";
         }
 
         public int StatsPollingInterval { get; set; }
 
         public bool UseAuth { get; set; }
+        
+        public bool UseTenant { get; set; }
+
+        public string TenantNameFiledName { get; set; }
+        
+        public string UserNameFiledName { get; set; }
+        
+        public string PasswordFiledName { get; set; }
 
         public string DashboardLoginApi { get; set; }
 
