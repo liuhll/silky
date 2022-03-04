@@ -5,10 +5,10 @@
         <Description>The Silky framework uses dotnetty/SpanNetty as the abstract component of communication</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="DotNetty.Codecs" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Handlers" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Transport" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Transport.Libuv" Version="0.7.0" />
+        <PackageReference Include="DotNetty.Codecs" Version="0.7.2" />
+        <PackageReference Include="DotNetty.Handlers" Version="0.7.2" />
+        <PackageReference Include="DotNetty.Transport" Version="0.7.2" />
+        <PackageReference Include="DotNetty.Transport.Libuv" Version="0.7.2" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
