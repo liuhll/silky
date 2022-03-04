@@ -10,6 +10,7 @@ namespace Silky.Http.Dashboard.Configuration
         {
             StatsPollingInterval = 2000;
             ExternalLinks = new List<ExternalLinkOptions>();
+            DisplayWebApiInSwagger = false;
             UseAuth = true;
             UseTenant = true;
             DashboardLoginApi = "/api/account/login";
