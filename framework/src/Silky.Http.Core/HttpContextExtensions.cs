@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Core
 {
@@ -26,6 +28,54 @@ namespace Silky.Http.Core
             }
 
             return defaultResponseContextType;
+        }
+
+        public static string GetClientIp(this HttpContext httpContext,bool tryUseXForwardHeader = true)
+        {
+            string ip = null;
+
+            if (tryUseXForwardHeader)
+            {
+                ip = httpContext.Request.GetHeaderValue<string>("X-Forwarded-For").SplitCsv().FirstOrDefault();
+            }
+
+            if (ip.IsNullOrEmpty() && httpContext?.Connection?.RemoteIpAddress != null)
+            {
+                ip = httpContext.Connection.RemoteIpAddress.ToString();
+            }
+
+            if (ip.IsNullOrEmpty())
+            {
+                ip = httpContext?.Request.GetHeaderValue<string>("REMOTE_ADDR");
+            }
+
+            return ip;
+        }
+        
+        public static T GetHeaderValue<T>(this HttpRequest request, string headerName)
+        {
+            StringValues values;
+
+            if (request.Headers?.TryGetValue(headerName, out values) ?? false)
+            {
+                string rawValues = values.ToString();   // writes out as Csv when there are multiple.
+
+                if (!rawValues.IsNullOrEmpty())
+                    return (T)Convert.ChangeType(values.ToString(), typeof(T));
+            }
+            return default(T);
+        }
+
+        private static ICollection<string> SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+        {
+            if (string.IsNullOrWhiteSpace(csvList))
+                return nullOrWhitespaceInputReturnsNull ? null : new List<string>();
+
+            return csvList
+                .TrimEnd(',')
+                .Split(',')
+                .Select(s => s.Trim())
+                .ToList();
         }
 
         public static void SetExceptionResponseStatus(this HttpResponse httpResponse, Exception exception)

@@ -55,7 +55,7 @@ public class AuditingMiddleware
                 ExecutionTime = DateTimeOffset.Now,
                 BrowserInfo = clientInfo.String,
                 ClientId = context.Connection.Id,
-                ClientIpAddress = context.Connection.RemoteIpAddress?.MapToIPv4().ToString(),
+                ClientIpAddress = context.GetClientIp(),
                 CorrelationId = context.TraceIdentifier
             };
             try
