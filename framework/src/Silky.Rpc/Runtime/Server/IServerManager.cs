@@ -9,6 +9,8 @@ namespace Silky.Rpc.Runtime.Server
     {
         void Update([NotNull] ServerDescriptor serverDescriptor);
 
+        void Update([NotNull] IServer server);
+
         void Remove(string hostName);
 
         ServiceDescriptor GetServiceDescriptor(string serviceId);

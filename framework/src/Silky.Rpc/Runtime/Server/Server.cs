@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Silky.Core;
 using Silky.Rpc.Endpoint;
 
 namespace Silky.Rpc.Runtime.Server
@@ -16,6 +17,13 @@ namespace Silky.Rpc.Runtime.Server
         public string HostName { get; }
         public ICollection<IRpcEndpoint> Endpoints { get; set; }
         public ICollection<ServiceDescriptor> Services { get; set; }
+
+        public void RemoveEndpoint(IRpcEndpoint endpoint)
+        {
+            Endpoints = Endpoints.Where(p => !p.Equals(endpoint)).ToList();
+            var serverManager = EngineContext.Current.Resolve<IServerManager>();
+            serverManager.Update(this);
+        }
 
         public override bool Equals(object? obj)
         {

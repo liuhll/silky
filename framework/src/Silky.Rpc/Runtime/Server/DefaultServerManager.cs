@@ -90,8 +90,13 @@ namespace Silky.Rpc.Runtime.Server
         {
             Check.NotNull(serverDescriptor, nameof(serverDescriptor));
             var server = serverDescriptor.ConvertToServer();
-            Debug.Assert(server != null, "serviceRoute != null");
-            var cacheServer = _serverCache.GetValueOrDefault(serverDescriptor.HostName);
+            Update(server);
+        }
+
+        public void Update([NotNull] IServer server)
+        {
+            Check.NotNull(server, nameof(server));
+            var cacheServer = _serverCache.GetValueOrDefault(server.HostName);
             if (server.Equals(cacheServer))
             {
                 Logger.LogDebug(
@@ -100,7 +105,7 @@ namespace Silky.Rpc.Runtime.Server
                 return;
             }
 
-            _serverCache.AddOrUpdate(serverDescriptor.HostName, server, (k, v) => server);
+            _serverCache.AddOrUpdate(server.HostName, server, (k, v) => server);
             Logger.LogInformation(
                 "Update the server [{0}] data cache," +
                 "The instance endpoints of the server provider is: {1}[{2}]",
@@ -112,7 +117,7 @@ namespace Silky.Rpc.Runtime.Server
                 RemoveRpcEndpointCache(rpcEndpoint);
             }
 
-            OnUpdateRpcEndpoint?.Invoke(serverDescriptor.HostName, server.Endpoints.ToArray());
+            OnUpdateRpcEndpoint?.Invoke(server.HostName, server.Endpoints.ToArray());
         }
 
         public void Remove(string hostName)

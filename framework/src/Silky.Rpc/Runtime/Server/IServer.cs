@@ -10,5 +10,7 @@ namespace Silky.Rpc.Runtime.Server
         ICollection<IRpcEndpoint> Endpoints { get; set; }
 
         ICollection<ServiceDescriptor> Services { get; set; }
+        
+        void RemoveEndpoint(IRpcEndpoint endpoint);
     }
 }
