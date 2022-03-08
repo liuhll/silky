@@ -16,12 +16,14 @@ namespace Silky.Rpc.Runtime.Server
         public static object GetActualParameter([NotNull] this ParameterDescriptor parameterDescriptor,
             object parameter)
         {
-            if (parameterDescriptor.Type.GetType() == parameter.GetType())
+            if (parameter == null)
             {
-                return parameter;
+                return null;
             }
 
-            return _typeConvertibleService.Convert(parameter, parameterDescriptor.Type);
+            return parameterDescriptor.Type?.GetType() == parameter.GetType()
+                ? parameter
+                : _typeConvertibleService.Convert(parameter, parameterDescriptor.Type);
         }
     }
 }
