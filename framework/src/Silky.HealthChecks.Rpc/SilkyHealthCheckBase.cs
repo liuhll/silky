@@ -74,43 +74,19 @@ namespace Silky.HealthChecks.Rpc
                 {
                     foreach (var endpoint in server.Endpoints)
                     {
-                        if (HealthCheckType == HealthCheckType.Rpc && endpoint.ServiceProtocol != ServiceProtocol.Tcp)
+                        if (HealthCheckType == HealthCheckType.Rpc && endpoint.ServiceProtocol == ServiceProtocol.Tcp)
                         {
-                            continue;
+                            var serverHealthData = await GetServerHealthData(endpoint, server.HostName);
+                            healthData[endpoint.GetAddress()] = serverHealthData;
                         }
 
                         if (HealthCheckType == HealthCheckType.Getway &&
-                            (endpoint.ServiceProtocol != ServiceProtocol.Http ||
-                             endpoint.ServiceProtocol != ServiceProtocol.Https))
+                            (endpoint.ServiceProtocol == ServiceProtocol.Http ||
+                             endpoint.ServiceProtocol == ServiceProtocol.Https))
                         {
-                            continue;
+                            var serverHealthData = await GetServerHealthData(endpoint, server.HostName);
+                            healthData[endpoint.GetAddress()] = serverHealthData;
                         }
-
-                        _rpcEndpointMonitor.Monitor(endpoint);
-                        var endpointHealthData = new ServerHealthData()
-                        {
-                            HostName = server.HostName,
-                            Address = endpoint.GetAddress(),
-                            ServiceProtocol = endpoint.ServiceProtocol,
-                        };
-                        var isHealth = false;
-                        try
-                        {
-                            isHealth = await _serverHealthCheck.IsHealth(endpoint);
-                        }
-                        catch (Exception e)
-                        {
-                            isHealth = false;
-                        }
-
-                        if (!isHealth && HealthCheckType == HealthCheckType.Getway)
-                        {
-                            _rpcEndpointMonitor.ChangeStatus(endpoint, false,
-                                _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
-                        }
-
-                        endpointHealthData.Health = isHealth;
-                        healthData[endpoint.GetAddress()] = endpointHealthData;
                     }
                 }
 
@@ -175,6 +151,35 @@ namespace Silky.HealthChecks.Rpc
                 _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serviceEntry,
                     _httpContextAccessor.HttpContext, null);
             }
+        }
+
+        private async Task<ServerHealthData> GetServerHealthData(IRpcEndpoint endpoint, string hostName)
+        {
+            var isHealth = false;
+            var endpointHealthData = new ServerHealthData()
+            {
+                HostName = hostName,
+                Address = endpoint.GetAddress(),
+                ServiceProtocol = endpoint.ServiceProtocol,
+            };
+            try
+            {
+                _rpcEndpointMonitor.Monitor(endpoint);
+                isHealth = await _serverHealthCheck.IsHealth(endpoint);
+            }
+            catch (Exception e)
+            {
+                isHealth = false;
+            }
+
+            if (!isHealth && HealthCheckType == HealthCheckType.Getway)
+            {
+                _rpcEndpointMonitor.ChangeStatus(endpoint, false,
+                    _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+            }
+
+            endpointHealthData.Health = isHealth;
+            return endpointHealthData;
         }
 
         protected abstract ICollection<IServer> GetServers();

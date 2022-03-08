@@ -24,6 +24,7 @@ namespace Silky.HealthChecks.Rpc
             serializer, httpHandleDiagnosticListener, httpContextAccessor, serviceEntryLocator, rpcEndpointMonitor,
             governanceOptions)
         {
+            HealthCheckType = HealthCheckType.Rpc;
         }
 
         protected override ICollection<IServer> GetServers()

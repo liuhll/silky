@@ -23,6 +23,7 @@ public class SilkyGatewayHealthCheck : SilkyHealthCheckBase
         serializer, httpHandleDiagnosticListener, httpContextAccessor, serviceEntryLocator, rpcEndpointMonitor,
         governanceOptions)
     {
+        HealthCheckType = HealthCheckType.Getway;
     }
 
     protected override ICollection<IServer> GetServers()
