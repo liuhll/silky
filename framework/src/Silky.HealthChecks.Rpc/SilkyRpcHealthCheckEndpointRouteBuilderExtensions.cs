@@ -23,5 +23,15 @@ namespace Silky.HealthChecks.Rpc
                 ResponseWriter = SilkyRpcApiResponseWriter.ResponseWriter
             }).RequireAuthorization();
         }
+        
+        public static IEndpointConventionBuilder MapSilkyGatewayHealthChecks(this IEndpointRouteBuilder endpoints,
+            string pattern = "/api/silkygateway/health")
+        {
+            return endpoints.MapHealthChecks(pattern, new HealthCheckOptions()
+            {
+                Predicate = (check) => check.Name.Equals(SilkyRpcHealthCheckBuilderExtensions.SILKYGATEWAT_NAME),
+                ResponseWriter = SilkyRpcApiResponseWriter.ResponseWriter
+            }).RequireAuthorization();
+        }
     }
 }

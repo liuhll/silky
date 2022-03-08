@@ -39,7 +39,8 @@ namespace GatewayDemo
             services.AddSilkyIdentity();
             services.AddMessagePackCodec();
             services.AddHealthChecks()
-                .AddSilkyRpc();
+                .AddSilkyRpc()
+                .AddSilkyGateway();
             services
                 .AddHealthChecksUI()
                 .AddInMemoryStorage();
@@ -58,6 +59,7 @@ namespace GatewayDemo
             app.UseSerilogRequestLogging();
             app.UseDashboard();
             app.UseSilkyRpcHealthCheck()
+                .UseSilkyGatewayHealthCheck()
                 .UseHealthChecksPrometheusExporter("/metrics");
 
             app.UseRouting();

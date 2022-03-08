@@ -17,6 +17,17 @@ namespace Microsoft.AspNetCore.Builder
             });
             return app;
         }
+        
+        public static IApplicationBuilder UseSilkyGatewayHealthCheck(this IApplicationBuilder app,
+            string path = "/silkygateway/healthz")
+        {
+            app.UseHealthChecks(path, new HealthCheckOptions
+            {
+                Predicate = (check) => check.Name.Equals(SilkyRpcHealthCheckBuilderExtensions.SILKYGATEWAT_NAME),
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+            return app;
+        }
 
         public static IApplicationBuilder UseSilkyRpcHealthCheckApi(this IApplicationBuilder app,
             string path = "/api/silkyrpc/healthz")
@@ -25,6 +36,17 @@ namespace Microsoft.AspNetCore.Builder
             {
                 Predicate = (check) => check.Name.Equals(SilkyRpcHealthCheckBuilderExtensions.SILKYRPC_NAME),
                 ResponseWriter = SilkyRpcApiResponseWriter.ResponseWriter
+            });
+            return app;
+        }
+        
+        public static IApplicationBuilder UseSilkyGatewayHealthCheckApi(this IApplicationBuilder app,
+            string path = "/silkygateway/healthz")
+        {
+            app.UseHealthChecks(path, new HealthCheckOptions
+            {
+                Predicate = (check) => check.Name.Equals(SilkyRpcHealthCheckBuilderExtensions.SILKYGATEWAT_NAME),
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
             return app;
         }

@@ -8,10 +8,12 @@ namespace Silky.Rpc.Endpoint.Monitor
     public class DefaultRpcEndpointMonitor : IRpcEndpointMonitor
     {
         private ConcurrentDictionary<IRpcEndpoint, CheckModel> m_checkEndpoints = new();
+
         public event StatusChangeEvent OnStatusChange;
         public event RemoveRpcEndpointEvent OnRemoveRpcEndpoint;
         public event DisEnableEvent OnDisEnable;
         public event AddMonitorEvent OnAddMonitor;
+
 
         public void RemoveRpcEndpoint(IRpcEndpoint rpcEndpoint)
         {
@@ -70,7 +72,6 @@ namespace Silky.Rpc.Endpoint.Monitor
                 healthCheckModel = new CheckModel(isEnable, isEnable ? 0 : 1);
                 m_checkEndpoints.TryAdd(rpcEndpoint, healthCheckModel);
             }
-
             if (!isEnable && healthCheckModel.UnHealthTimes >= unHealthCeilingTimes)
             {
                 OnRemoveRpcEndpoint?.Invoke(rpcEndpoint);

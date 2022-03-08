@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Silky.Core.Exceptions;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Http.Core.Handlers;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
@@ -25,6 +27,9 @@ namespace Silky.HealthChecks.Rpc
         protected readonly IHttpHandleDiagnosticListener _httpHandleDiagnosticListener;
         protected readonly IHttpContextAccessor _httpContextAccessor;
         protected readonly IServiceEntryLocator _serviceEntryLocator;
+        protected readonly IRpcEndpointMonitor _rpcEndpointMonitor;
+
+        protected HealthCheckType HealthCheckType { get; set; }
 
         protected SilkyHealthCheckBase(IServerManager serverManager,
             IServerHealthCheck serverHealthCheck,
@@ -32,7 +37,8 @@ namespace Silky.HealthChecks.Rpc
             ISerializer serializer,
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
             IHttpContextAccessor httpContextAccessor,
-            IServiceEntryLocator serviceEntryLocator)
+            IServiceEntryLocator serviceEntryLocator,
+            IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _serverManager = serverManager;
             _serverHealthCheck = serverHealthCheck;
@@ -41,6 +47,7 @@ namespace Silky.HealthChecks.Rpc
             _httpHandleDiagnosticListener = httpHandleDiagnosticListener;
             _httpContextAccessor = httpContextAccessor;
             _serviceEntryLocator = serviceEntryLocator;
+            _rpcEndpointMonitor = rpcEndpointMonitor;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
@@ -62,13 +69,36 @@ namespace Silky.HealthChecks.Rpc
                 {
                     foreach (var endpoint in server.Endpoints)
                     {
+                        if (HealthCheckType == HealthCheckType.Rpc && endpoint.ServiceProtocol != ServiceProtocol.Tcp)
+                        {
+                            continue;
+                        }
+
+                        if (HealthCheckType == HealthCheckType.Getway &&
+                            (endpoint.ServiceProtocol != ServiceProtocol.Http ||
+                             endpoint.ServiceProtocol != ServiceProtocol.Https))
+                        {
+                            continue;
+                        }
+
+                        _rpcEndpointMonitor.Monitor(endpoint);
                         var endpointHealthData = new ServerHealthData()
                         {
                             HostName = server.HostName,
                             Address = endpoint.GetAddress(),
                             ServiceProtocol = endpoint.ServiceProtocol,
                         };
-                        var isHealth = await CheckHealthEndpoint(endpoint);
+                        var isHealth = false;
+                        try
+                        {
+                            isHealth = await _serverHealthCheck.IsHealth(endpoint);
+                        }
+                        catch (Exception e)
+                        {
+                            isHealth = false;
+                        }
+                        _rpcEndpointMonitor.ChangeStatus(endpoint, isHealth);
+
                         endpointHealthData.Health = isHealth;
                         healthData[endpoint.GetAddress()] = endpointHealthData;
                     }
@@ -137,7 +167,6 @@ namespace Silky.HealthChecks.Rpc
             }
         }
 
-        protected abstract Task<bool> CheckHealthEndpoint(IRpcEndpoint endpoint);
         protected abstract ICollection<IServer> GetServers();
 
         private string GetMessageId(HttpContext httpContext)
