@@ -5,11 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Http.Core.Handlers;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Extensions;
@@ -28,6 +30,7 @@ namespace Silky.HealthChecks.Rpc
         protected readonly IHttpContextAccessor _httpContextAccessor;
         protected readonly IServiceEntryLocator _serviceEntryLocator;
         protected readonly IRpcEndpointMonitor _rpcEndpointMonitor;
+        protected readonly GovernanceOptions _governanceOptions;
 
         protected HealthCheckType HealthCheckType { get; set; }
 
@@ -38,7 +41,8 @@ namespace Silky.HealthChecks.Rpc
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
             IHttpContextAccessor httpContextAccessor,
             IServiceEntryLocator serviceEntryLocator,
-            IRpcEndpointMonitor rpcEndpointMonitor)
+            IRpcEndpointMonitor rpcEndpointMonitor,
+            IOptions<GovernanceOptions> governanceOptions)
         {
             _serverManager = serverManager;
             _serverHealthCheck = serverHealthCheck;
@@ -48,6 +52,7 @@ namespace Silky.HealthChecks.Rpc
             _httpContextAccessor = httpContextAccessor;
             _serviceEntryLocator = serviceEntryLocator;
             _rpcEndpointMonitor = rpcEndpointMonitor;
+            _governanceOptions = governanceOptions.Value;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
@@ -97,7 +102,12 @@ namespace Silky.HealthChecks.Rpc
                         {
                             isHealth = false;
                         }
-                        _rpcEndpointMonitor.ChangeStatus(endpoint, isHealth);
+
+                        if (!isHealth && HealthCheckType == HealthCheckType.Getway)
+                        {
+                            _rpcEndpointMonitor.ChangeStatus(endpoint, false,
+                                _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+                        }
 
                         endpointHealthData.Health = isHealth;
                         healthData[endpoint.GetAddress()] = endpointHealthData;

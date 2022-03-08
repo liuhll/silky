@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Silky.Core.Serialization;
 using Silky.HealthChecks.Rpc;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Http.Core.Handlers;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
@@ -34,7 +36,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     sp.GetRequiredService<IHttpHandleDiagnosticListener>(),
                     sp.GetRequiredService<IHttpContextAccessor>(),
                     sp.GetRequiredService<IServiceEntryLocator>(),
-                    sp.GetRequiredService<IRpcEndpointMonitor>()
+                    sp.GetRequiredService<IRpcEndpointMonitor>(),
+                    sp.GetRequiredService<IOptions<GovernanceOptions>>()
                 ),
                 failureStatus,
                 tags,
@@ -57,7 +60,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     sp.GetRequiredService<IHttpHandleDiagnosticListener>(),
                     sp.GetRequiredService<IHttpContextAccessor>(),
                     sp.GetRequiredService<IServiceEntryLocator>(),
-                    sp.GetRequiredService<IRpcEndpointMonitor>()
+                    sp.GetRequiredService<IRpcEndpointMonitor>(),
+                    sp.GetRequiredService<IOptions<GovernanceOptions>>()
                 ),
                 failureStatus,
                 tags,
