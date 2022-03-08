@@ -35,6 +35,7 @@ namespace GatewayDemo
             // services.AddMvc();
             // services.AddSilkyHttpCore();
             // services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
+            services.AddSilkySkyApm();
             services.AddSilkyHttpServices<TestAuthorizationHandler>();
             services.AddSilkyIdentity();
             services.AddMessagePackCodec();
@@ -56,7 +57,7 @@ namespace GatewayDemo
                 app.UseMiniProfiler();
             }
 
-            app.UseSerilogRequestLogging();
+            //  app.UseSerilogRequestLogging();
             app.UseDashboard();
             app.UseSilkyRpcHealthCheck()
                 .UseSilkyGatewayHealthCheck()
@@ -68,10 +69,10 @@ namespace GatewayDemo
             app.UseResponseCaching();
             app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
-            app.UseSilkyWrapperResponse();
+           // app.UseSilkyWrapperResponse();
             app.UseSilkyIdentity();
             app.UseSilkyHttpServer();
-            app.UseAuditing();
+           // app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecksUI();

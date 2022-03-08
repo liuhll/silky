@@ -16,7 +16,7 @@ namespace Silky.Rpc.Configuration
             ExceptionsAllowedBeforeBreaking = 3;
             BreakerSeconds = 60;
             AddressFuseSleepDurationSeconds = 60;
-            UnHealthAddressTimesAllowedBeforeRemoving = 0;
+            UnHealthAddressTimesAllowedBeforeRemoving = 3;
             RetryIntervalMillSeconds = 50;
             RetryTimes = 3;
             MaxConcurrentHandlingCount = 50;

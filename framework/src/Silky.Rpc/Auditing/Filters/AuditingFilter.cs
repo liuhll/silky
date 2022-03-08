@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Runtime.Rpc;
@@ -16,6 +17,7 @@ public class AuditingFilter : IServerFilter
     private readonly IAuditSerializer _auditSerializer;
 
     private AuditLogActionInfo _auditLogActionInfo;
+    private Stopwatch _stopwatch;
 
     public AuditingFilter(
         IOptions<AuditingOptions> auditingOptions,
@@ -31,7 +33,7 @@ public class AuditingFilter : IServerFilter
         {
             return;
         }
-
+        _stopwatch = Stopwatch.StartNew();
         _auditLogActionInfo = new AuditLogActionInfo()
         {
             Parameters = _auditSerializer.Serialize(context.Parameters),
@@ -52,9 +54,9 @@ public class AuditingFilter : IServerFilter
         {
             return;
         }
-
-        _auditLogActionInfo.ExecutionDuration =
-            (int)(DateTimeOffset.Now - _auditLogActionInfo.ExecutionTime).TotalMilliseconds;
+        _stopwatch.Stop();
+        _auditLogActionInfo.ExecutionDuration = (int)_stopwatch.ElapsedMilliseconds;
+         
         RpcContext.Context.SetAuditingActionLog(_auditLogActionInfo);
     }
 
@@ -65,8 +67,8 @@ public class AuditingFilter : IServerFilter
             return;
         }
 
-        _auditLogActionInfo.ExecutionDuration =
-            (int)(DateTimeOffset.Now - _auditLogActionInfo.ExecutionTime).TotalMilliseconds;
+        _stopwatch.Stop();
+        _auditLogActionInfo.ExecutionDuration = (int)_stopwatch.ElapsedMilliseconds;
         _auditLogActionInfo.ExceptionMessage = context.Exception.Message;
         RpcContext.Context.SetAuditingActionLog(_auditLogActionInfo);
     }

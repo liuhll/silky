@@ -10,7 +10,7 @@
       "Percentage": -1.0
     },
     "Logging": {
-      "Level": "Debug",
+      "Level": "Information",
       "FilePath": "logs/skyapm-{Date}.log"
     },
     "Transport": {

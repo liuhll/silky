@@ -44,9 +44,9 @@ serilog:
   minimumLevel:
     default: Information
     override:
-      Microsoft: Warning
+      Microsoft: Information
       Microsoft.Hosting.Lifetime: Information
-      Silky.Rpc: Debug
+      Silky.Rpc: Information
   writeTo:
     - name: File
       args:

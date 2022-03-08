@@ -49,6 +49,7 @@ namespace Silky.Rpc.Runtime.Client
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
             ShuntStrategy shuntStrategy, string hashKey = null)
         {
+            var sp = Stopwatch.StartNew();
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
                 "The rpc request call start{0} serviceEntryId:[{1}]",
                 args: new[] { Environment.NewLine, remoteInvokeMessage.ServiceEntryId });
@@ -62,7 +63,6 @@ namespace Silky.Rpc.Runtime.Client
                 remoteInvokeMessage.ServiceEntryId, confirmedShuntStrategy,
                 rpcEndpoints, selectedRpcEndpoint);
 
-            var sp = Stopwatch.StartNew();
             RemoteResultMessage invokeResult = null;
             var invokeMonitor = EngineContext.Current.Resolve<IInvokeMonitor>();
             var filters = _clientFilterProvider.GetClientFilters(remoteInvokeMessage.ServiceEntryId);

@@ -289,7 +289,7 @@ namespace Silky.Rpc.Runtime.Server
                 switch (parameterDescriptor.From)
                 {
                     case ParameterFrom.Body:
-                        list.Add(parameter);
+                        list.Add(parameterDescriptor.GetActualParameter(parameter));
                         break;
                     case ParameterFrom.Form:
                         if (parameterDescriptor.IsSampleOrNullableType)
@@ -298,7 +298,7 @@ namespace Silky.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(parameter);
+                            list.Add(parameterDescriptor.GetActualParameter(parameter));
                         }
 
                         break;
@@ -309,7 +309,7 @@ namespace Silky.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(parameter);
+                            list.Add(parameterDescriptor.GetActualParameter(parameter));
                         }
 
                         break;
@@ -327,7 +327,7 @@ namespace Silky.Rpc.Runtime.Server
                             }
 
                             var parameterVal = pathVal[parameterName];
-                            list.Add(typeConvertibleService.Convert(parameterVal, parameterDescriptor.Type));
+                            list.Add(parameterDescriptor.GetActualParameter(parameterVal));
                         }
                         else
                         {
@@ -343,7 +343,7 @@ namespace Silky.Rpc.Runtime.Server
                         }
                         else
                         {
-                            list.Add(parameter);
+                            list.Add(parameterDescriptor.GetActualParameter(parameter));
                         }
 
                         break;
@@ -367,7 +367,7 @@ namespace Silky.Rpc.Runtime.Server
                 parameterVal = dict[parameterDescriptor.Name];
             }
 
-            list.Add(parameterVal);
+            list.Add(parameterDescriptor.GetActualParameter(parameterVal));
         }
 
         internal void UpdateGovernance(GovernanceOptions options)

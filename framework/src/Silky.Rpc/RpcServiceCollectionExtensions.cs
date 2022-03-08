@@ -3,7 +3,6 @@ using Silky.Core.DependencyInjection;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Auditing.Filters;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Codec;
 

@@ -36,7 +36,6 @@ namespace NormHostDemo.Account
             };
             
             RpcContext.Context.SetResponseHeader("test","test set header");
-            
             return _jwtTokenGenerator.Generate(payload);
         }
     }
