@@ -363,7 +363,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                         contentType => contentType,
                         contentType => new OpenApiMediaType
                         {
-                            Schema = schema
+                            Schema = schema,
                         }
                     ),
                 Required = isRequired
@@ -472,7 +472,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                                  || apiParameter.Type.GetCustomAttributes().Any(attr =>
                                      RequiredAttributeTypes.Contains(attr.GetType()));
 
-                var schema = GenerateSchema(apiParameter.Type, schemaRespository, propertyInfo, null);
+                var schema = GenerateSchema(apiParameter.Type, schemaRespository, propertyInfo, apiParameter.ParameterInfo);
                 var parameter = new OpenApiParameter
                 {
                     Name = name,

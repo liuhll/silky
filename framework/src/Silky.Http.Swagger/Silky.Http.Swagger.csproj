@@ -8,4 +8,7 @@
         <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
         <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="IGeekFan.AspNetCore.Knife4jUI" Version="0.0.11" />
+    </ItemGroup>
 </Project>

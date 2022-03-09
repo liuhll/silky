@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using IGeekFan.AspNetCore.Knife4jUI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -102,7 +103,7 @@ namespace Silky.Http.Swagger.Builders
             // 配置路由模板
             swaggerOptions.RouteTemplate = RouteTemplate;
         }
-
+        
         public static void BuildUI(SwaggerUIOptions swaggerUIOptions, SwaggerDocumentOptions swaggerDocumentOptions)
         {
             // 配置分组终点路由
@@ -124,6 +125,22 @@ namespace Silky.Http.Swagger.Builders
             swaggerUIOptions.DocExpansion(swaggerDocumentOptions.DocExpansionState);
         }
 
+        public static void BuildKnife4jUI(Knife4UIOptions options, SwaggerDocumentOptions swaggerDocumentOptions)
+        {
+            // 配置分组终点路由
+            CreateEndpoint(options, swaggerDocumentOptions);
+            
+            // 配置文档标题
+            options.DocumentTitle = swaggerDocumentOptions.Title;
+            
+            // 配置UI地址
+            options.RoutePrefix = swaggerDocumentOptions.RoutePrefix;
+
+            var docExpansionState = (int)swaggerDocumentOptions.DocExpansionState;
+            // 文档展开设置
+            options.DocExpansion((IGeekFan.AspNetCore.Knife4jUI.DocExpansion)docExpansionState);
+        }
+        
         private static void AddDefaultInterceptor(SwaggerUIOptions swaggerUIOptions)
         {
             // 配置多语言和自动登录token
@@ -269,5 +286,17 @@ namespace Silky.Http.Swagger.Builders
                 options.SwaggerEndpoint(routeTemplate, documentGroup);
             }
         }
+        
+        private static void CreateEndpoint(Knife4UIOptions options, SwaggerDocumentOptions swaggerDocumentOptions)
+        {
+            foreach (var documentGroup in DocumentGroups)
+            {
+                var routeTemplate =
+                    RouteTemplate.Replace("{documentName}", Uri.EscapeDataString(documentGroup));
+
+                options.SwaggerEndpoint(routeTemplate, documentGroup);
+            }
+        }
+        
     }
 }
