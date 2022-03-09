@@ -160,11 +160,11 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
         {
             var responses = new OpenApiResponses();
             var allResponseCodes = ResponsesCodeHelper.GetAllCodes();
-            // foreach (var responseCode in allResponseCodes)
-            // {
-            //     responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(serviceEntry, schemaRepository, responseCode));
-            // }
-            responses.Add(((int)ResponsesCode.Success).ToString(), GenerateResponse(serviceEntry, schemaRepository));
+            foreach (var responseCode in allResponseCodes)
+            {
+                responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(serviceEntry, schemaRepository, responseCode));
+            }
+            // responses.Add(((int)ResponsesCode.Success).ToString(), GenerateResponse(serviceEntry, schemaRepository));
             return responses;
         }
 
@@ -206,7 +206,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                     Description = description,
                     Content = responseContentTypes.ToDictionary(
                         contentType => contentType,
-                        contentType => CreateResponseMediaType(typeof(string), schemaRepository)
+                        contentType => new OpenApiMediaType()
                     )
                 };
             }

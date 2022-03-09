@@ -53,7 +53,7 @@ namespace GatewayDemo
             if (env.IsDevelopment() || env.IsEnvironment("ContainerDev"))
             {
                 app.UseDeveloperExceptionPage();
-              //  app.UseSwaggerDocuments();
+                // app.UseSwaggerDocuments();
                 app.UseKnife4jUIDocuments();
                 app.UseMiniProfiler();
             }

@@ -6,10 +6,7 @@ namespace Silky.Core.Exceptions
     {
         [Description("成功")] Success = 200,
 
-
         [Description("框架异常")] FrameworkException = 500,
-
-
 
         [Description("路由解析异常")] RouteParseError = 503,
 
