@@ -29,7 +29,7 @@ namespace Silky.Http.Core
         {
             builder.RegisterType<DefaultHttpExecutor>()
                 .As<IHttpExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .AddInterceptors(
                     typeof(TransactionInterceptor)
                 )

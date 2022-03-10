@@ -49,8 +49,9 @@ healthChecksUI:
       uri: http://127.0.0.1:5002/silkygateway/healthz
   evaluationTimeinSeconds: 30
   minimumSecondsBetweenFailureNotifications: 60
-#governance:
-#  timeoutMillSeconds: 0
+governance:
+  timeoutMillSeconds: 0
+  maxConcurrentHandlingCount: 100
 dashboard:
   displayWebApiInSwagger: true
   useAuth: true

@@ -132,17 +132,17 @@ namespace Silky.Rpc
         {
             builder.RegisterType<DefaultLocalExecutor>()
                 .As<ILocalExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 ;
 
             builder.RegisterType<DefaultRemoteExecutor>()
                 .As<IRemoteExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 ;
 
             builder.RegisterType<DefaultExecutor>()
                 .As<IExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 ;
         }
     }

@@ -39,7 +39,7 @@ jwtSettings:
 
 governance:
   timeoutMillSeconds: 0
-  maxConcurrentHandlingCount: 1
+  maxConcurrentHandlingCount: 100
 serilog:
   minimumLevel:
     default: Information
