@@ -39,12 +39,14 @@ namespace Silky.DotNetty
         private GovernanceOptions _governanceOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
+        private readonly ITransportMessageEncoder _transportMessageEncoder;
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
         public DotNettyTransportClientFactory(IOptions<RpcOptions> rpcOptions,
             IOptionsMonitor<GovernanceOptions> governanceOptions,
             IHostEnvironment hostEnvironment,
             ITransportMessageDecoder transportMessageDecoder,
+            ITransportMessageEncoder transportMessageEncoder,
             IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _rpcOptions = rpcOptions.Value;
@@ -52,6 +54,7 @@ namespace Silky.DotNetty
             governanceOptions.OnChange((options, s) => _governanceOptions = options);
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
+            _transportMessageEncoder = transportMessageEncoder;
             _rpcEndpointMonitor = rpcEndpointMonitor;
             _rpcEndpointMonitor.OnDisEnable += async addressModel =>
             {
@@ -122,14 +125,15 @@ namespace Silky.DotNetty
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
                     if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
                     {
-                       
                         pipeline.AddLast(new IdleStateHandler(
                             _governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0,
                             0));
                         pipeline.AddLast(new ChannelInboundHandlerAdapter());
                     }
 
-                    pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
+                    // pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
+                    pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
+                    pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
                 }));
             return bootstrap;
         }

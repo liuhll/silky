@@ -17,14 +17,12 @@ namespace Silky.DotNetty
 
         protected override async Task SendAsync(TransportMessage message)
         {
-            var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await _channelContext.WriteAsync(buffer);
+            await _channelContext.WriteAsync(message);
         }
 
         protected override async Task SendAndFlushAsync(TransportMessage message)
         {
-            var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await _channelContext.WriteAndFlushAsync(buffer);
+            await _channelContext.WriteAndFlushAsync(message);
         }
     }
 }

@@ -26,8 +26,7 @@ namespace Silky.DotNetty.Handlers
         {
             if (evt is IdleStateEvent { State: IdleState.ReaderIdle })
             {
-                var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
-                if (remoteAddress != null)
+                if (context.Channel.RemoteAddress is IPEndPoint remoteAddress)
                 {
                     _rpcEndpointMonitor?.ChangeStatus(remoteAddress.Address.MapToIPv4(),
                         remoteAddress.Port,
@@ -35,7 +34,6 @@ namespace Silky.DotNetty.Handlers
                         false);
                 }
             }
-
             if (evt is IdleStateEvent { State: IdleState.WriterIdle })
             {
                 var buffer = Unpooled.WrappedBuffer(HeartBeat.Semaphore.GetBytes());
@@ -49,8 +47,7 @@ namespace Silky.DotNetty.Handlers
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-            var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
-            if (remoteAddress != null)
+            if (context.Channel.RemoteAddress is IPEndPoint remoteAddress)
             {
                 _rpcEndpointMonitor?.ChangeStatus(remoteAddress.Address.MapToIPv4(),
                     remoteAddress.Port,

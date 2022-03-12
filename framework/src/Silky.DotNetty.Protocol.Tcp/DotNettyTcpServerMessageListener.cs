@@ -35,6 +35,7 @@ namespace Silky.DotNetty.Protocol.Tcp
         private readonly IHostEnvironment _hostEnvironment;
         private readonly IRpcEndpoint _hostRpcEndpoint;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
+        private readonly ITransportMessageEncoder _transportMessageEncoder;
         private GovernanceOptions _governanceOptions;
         private IChannel m_boundChannel;
         private IEventLoopGroup m_bossGroup;
@@ -43,10 +44,12 @@ namespace Silky.DotNetty.Protocol.Tcp
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IOptionsMonitor<GovernanceOptions> governanceOptions,
             IHostEnvironment hostEnvironment,
-            ITransportMessageDecoder transportMessageDecoder)
+            ITransportMessageDecoder transportMessageDecoder,
+            ITransportMessageEncoder transportMessageEncoder)
         {
             _hostEnvironment = hostEnvironment;
             _transportMessageDecoder = transportMessageDecoder;
+            _transportMessageEncoder = transportMessageEncoder;
             _rpcOptions = rpcOptions.Value;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange((options, s) => _governanceOptions = options);
@@ -107,7 +110,9 @@ namespace Silky.DotNetty.Protocol.Tcp
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }
 
-                    pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
+                    // pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
+                    pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
+                    pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
                     pipeline.AddLast(workerGroup, new ServerHandler(async (channelContext, message) =>
                     {
                         if (message.IsInvokeMessage())
