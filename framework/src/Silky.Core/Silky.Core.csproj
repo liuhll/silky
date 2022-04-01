@@ -14,7 +14,4 @@
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
         <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     </ItemGroup>
-    <ItemGroup>
-        <Compile Remove="Exceptions\SilkyTimeoutException.cs" />
-    </ItemGroup>
 </Project>

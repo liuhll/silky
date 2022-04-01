@@ -73,39 +73,22 @@ namespace Silky.Http.Core.Middlewares
             }
             else
             {
-                if (status == StatusCode.ValidateError)
+                var exceptionFeature = context.Features.Get<ExceptionHandlerFeature>();
+                if (exceptionFeature != null)
                 {
-                    responseResultDto.ErrorMessage = status.GetDisplay();
-                    responseResultDto.ValidErrors = _serializer.Deserialize<dynamic>(body);
+                    var exceptionStatusCode = exceptionFeature.Error.GetExceptionStatusCode();
+                    responseResultDto.Status = (int)exceptionStatusCode;
+                    responseResultDto.Code = exceptionStatusCode.ToString();
+                    responseResultDto.ErrorMessage = exceptionFeature.Error.Message;
+                    if (exceptionFeature.Error is ValidationException validationException)
+                    {
+                        responseResultDto.ValidErrors = validationException.GetValidateErrors();
+                    }
                 }
-                else if (status == StatusCode.UnAuthentication)
-                {
-                    responseResultDto.ErrorMessage = "You are not logged in to the system.";
-                }
-                else if (status == StatusCode.UnAuthorization)
-                {
-                    responseResultDto.ErrorMessage =
-                        $"You do not have permission to access the {context.Request.Path}-{context.Request.Method}.";
-                }
-                else if (status == StatusCode.NotFound)
-                {
-                    responseResultDto.ErrorMessage = $"No route found for {context.Request.Path}-{context.Request.Method}.";
-                }
-                else if (!body.IsNullOrEmpty())
-                {
-                    responseResultDto.ErrorMessage = body;
-                }
-
-                else
+                if (responseResultDto.ErrorMessage.IsNullOrEmpty())
                 {
                     responseResultDto.ErrorMessage = status.GetDisplay();
                 }
-
-                context.Features.Set(new ExceptionHandlerFeature()
-                {
-                    Error = new SilkyException(responseResultDto.ErrorMessage, status),
-                    Path = context.Request.Path
-                });
             }
 
             var jsonString = _serializer.Serialize(responseResultDto);

@@ -1,11 +1,13 @@
+using System.IO.Compression;
+using System.Linq;
 using GatewayDemo.Authorization;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
+
 
 namespace GatewayDemo
 {
@@ -42,6 +44,20 @@ namespace GatewayDemo
             services.AddHealthChecks()
                 .AddSilkyRpc()
                 .AddSilkyGateway();
+            
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+               // options.Providers.Add<CustomCompressionProvider>();
+                // .Append(TItem) is only available on Core.
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml" });
+
+                ////Example of using excluded and wildcard MIME types:
+                ////Compress all MIME types except various media types, but do compress SVG images.
+                //options.MimeTypes = new[] { "*/*", "image/svg+xml" };
+                //options.ExcludedMimeTypes = new[] { "image/*", "audio/*", "video/*" };
+            });
             services
                 .AddHealthChecksUI()
                 .AddInMemoryStorage();

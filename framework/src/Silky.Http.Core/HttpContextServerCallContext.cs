@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
@@ -11,6 +12,8 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
+using Silky.Core.Serialization;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
@@ -25,15 +28,19 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
     internal ServerCallDeadlineManager? DeadlineManager;
 
+    internal ISerializer Serializer { get; }
+
     private StatusCode _statusCode;
     private string? _peer;
     private Activity? _activity;
     private HttpContextSerializationContext? _serializationContext;
 
-    internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntry serviceEntry, ILogger logger)
+    internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntry serviceEntry, ISerializer serializer,
+        ILogger logger)
     {
         HttpContext = httpContext;
         ServiceEntry = serviceEntry;
+        Serializer = serializer;
         Logger = logger;
     }
 
@@ -54,12 +61,13 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
     }
 
     public WriteOptions? WriteOptions { get; set; }
-    
+
     internal HttpContextSerializationContext SerializationContext
     {
         get => _serializationContext ??= new HttpContextSerializationContext(this);
     }
-    
+
+
     public void Initialize(ISystemClock? clock = null)
     {
         _activity = GetHostActivity();
@@ -86,15 +94,42 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         }
     }
 
-    internal Task WriteResponseAsyncCore(string responseData)
+    internal void WriteResponseHeaderCore()
     {
         if (HttpContext.Response.HasStarted)
         {
             throw new InvalidOperationException("Response headers can only be sent once per call.");
         }
 
+        var gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>();
+        HttpContext.Response.ContentType = HttpContext.GetResponseContentType(gatewayOptions);
+        HttpContext.Response.StatusCode = ResponseStatusCode.Success;
         HttpContext.Response.SetHeaders();
-        return HttpContext.Response.BodyWriter.FlushAsync().GetAsTask();
+        HttpContext.Response.SetResultStatusCode(StatusCode.Success);
+        HttpContext.Response.SetResultStatus((int)StatusCode.Success);
+    }
+
+    internal void WriteResponseHeaderCore(Exception exception)
+    {
+        if (HttpContext.Response.HasStarted)
+        {
+            throw new InvalidOperationException("Response headers can only be sent once per call.");
+        }
+
+        var gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>();
+        HttpContext.Response.ContentType = exception is ValidationException
+            ? HttpContext.GetResponseContentType(gatewayOptions)
+            : "text/plain;charset=utf-8";
+
+        HttpContext.Response.HttpContext.Features.Set(new ExceptionHandlerFeature()
+        {
+            Error = exception,
+            Path = HttpContext.Request.Path
+        });
+
+        HttpContext.Response.SetExceptionResponseStatus(exception);
+        HttpContext.Response.SetResultStatusCode(exception.GetExceptionStatusCode());
+        HttpContext.Response.SetResultStatus(exception.GetExceptionStatus());
     }
 
     public Task EndCallAsync()
@@ -118,20 +153,56 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
     public async Task DeadlineExceededAsync()
     {
-        throw new NotImplementedException();
+        SilkyRpcEventSource.Log.CallDeadlineExceeded();
+        _statusCode = StatusCode.Timeout;
+        // var trailersDestination = CommonSilkyHelpers.GetTrailersDestination(HttpContext.Response);
+        var completionFeature = HttpContext.Features.Get<IHttpResponseBodyFeature>();
+        if (completionFeature != null)
+        {
+            await completionFeature.CompleteAsync();
+        }
+
+        var resetFeature = HttpContext.Features.Get<IHttpResetFeature>();
+        if (resetFeature != null)
+        {
+            resetFeature.Reset(0x8);
+        }
+        else
+        {
+            HttpContext.Abort();
+        }
     }
 
-    public Task ProcessHandlerErrorAsync(Exception ex)
+    public async Task ProcessHandlerErrorAsync(Exception ex)
     {
         if (DeadlineManager == null)
         {
             ProcessHandlerError(ex);
-            return Task.CompletedTask;
+        }
+        else
+        {
+            await ProcessHandlerErrorAsyncCore(ex);
         }
 
-        // Could have a fast path for no deadline being raised when an error happens,
-        // but it isn't worth the complexity.
-        return ProcessHandlerErrorAsyncCore(ex);
+        if (ex is SilkyException silkyException)
+        {
+            Logger.LogWarning($"{0} => Error status code '{1}' with detail '{2}' raised.", ServiceEntry.Id, _statusCode,
+                silkyException.Message);
+            _statusCode = silkyException.StatusCode;
+            var errorResult = silkyException.Message;
+            if (silkyException is ValidationException validationException)
+            {
+                errorResult = Serializer.Serialize(validationException.GetValidateErrors());
+            }
+
+            await HttpContext.Response.WriteAsync(errorResult);
+        }
+        else
+        {
+            Logger.LogError("Error when executing service method '{0}'.", ServiceEntry.Id);
+            _statusCode = ex.GetExceptionStatusCode();
+            await HttpContext.Response.WriteAsync(ex.Message);
+        }
     }
 
     private async Task ProcessHandlerErrorAsyncCore(Exception ex)
@@ -156,36 +227,13 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
     private void ProcessHandlerError(Exception ex)
     {
-        if (ex is SilkyException silkyException)
-        {
-            _statusCode = silkyException.StatusCode;
-            Logger.LogWarning($"{0} => Error status code '{1}' with detail '{2}' raised.", ServiceEntry.Id, _statusCode,
-                silkyException.Message);
-        }
-        else
-        {
-            Logger.LogError("Error when executing service method '{0}'.", ServiceEntry.Id);
-            _statusCode = ex.GetExceptionStatusCode();
-        }
-
-        if (DeadlineManager == null || !DeadlineManager.IsDeadlineExceededStarted)
-        {
-            HttpContext.Response.ConsolidateTrailers(this, ex);
-        }
-
+        WriteResponseHeaderCore(ex);
         DeadlineManager?.SetCallEnded();
-
         LogCallEnd();
     }
 
     private void EndCallCore()
     {
-        // Don't update trailers if request has exceeded deadline
-        if (DeadlineManager == null || !DeadlineManager.IsDeadlineExceededStarted)
-        {
-            HttpContext.Response.ConsolidateTrailers(this);
-        }
-
         LogCallEnd();
     }
 

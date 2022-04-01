@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -16,39 +17,30 @@ using Silky.Http.Core.Executor;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Security;
 
 namespace Silky.Http.Core.Handlers
 {
     internal class DefaultHttpMessageReceivedHandler : MessageReceivedHandlerBase
     {
-        private readonly ISerializer _serializer;
 
-        private GatewayOptions _gatewayOptions;
+
         private readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
-        private readonly ICurrentRpcToken _currentRpcToken;
         private readonly IHttpHandleDiagnosticListener _httpHandleDiagnosticListener;
         private readonly IAuditSerializer _auditSerializer;
 
         public DefaultHttpMessageReceivedHandler(
-            IOptionsMonitor<GatewayOptions> gatewayOptions,
             IHttpExecutor executor,
             ISerializer serializer,
             IParameterParser parameterParser,
-            ICurrentRpcToken currentRpcToken,
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
-            IAuditSerializer auditSerializer)
+            IAuditSerializer auditSerializer) : base(serializer)
         {
             _executor = executor;
             _parameterParser = parameterParser;
-            _currentRpcToken = currentRpcToken;
             _httpHandleDiagnosticListener = httpHandleDiagnosticListener;
             _auditSerializer = auditSerializer;
-
-            _serializer = serializer;
-            _gatewayOptions = gatewayOptions.CurrentValue;
-            gatewayOptions.OnChange((options, s) => _gatewayOptions = options);
+            
             Logger = NullLogger<DefaultHttpMessageReceivedHandler>.Instance;
         }
 
@@ -82,16 +74,11 @@ namespace Silky.Http.Core.Handlers
             try
             {
                 executeResult = await _executor.Execute(serverCallContext.ServiceEntry, parameters, serviceKey);
+                serverCallContext.WriteResponseHeaderCore();
                 if (executeResult != null)
                 {
                     var responseData = _serializer.Serialize(executeResult);
-                    await serverCallContext.HttpContext.Response.BodyWriter.WriteMessageAsync(responseData,
-                        serverCallContext,
-                        (msg, context) =>
-                        {
-                            byte[] payload = this.serializer(message);
-                            context.Complete(payload);
-                        }, true);
+                    await serverCallContext.HttpContext.Response.WriteAsync(responseData);
                 }
 
                 _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serverCallContext.ServiceEntry,

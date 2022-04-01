@@ -4,13 +4,20 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
+using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Core.Handlers
 {
     internal abstract class MessageReceivedHandlerBase : IMessageReceivedHandler
     {
+        protected readonly ISerializer _serializer;
+
+        protected MessageReceivedHandlerBase(ISerializer serializer)
+        {
+            _serializer = serializer;
+        }
+
         public virtual ILogger<MessageReceivedHandlerBase> Logger { get; set; }
 
         public virtual Task Handle([NotNull] ServiceEntry serviceEntry, [NotNull] HttpContext httpContext)
@@ -18,7 +25,7 @@ namespace Silky.Http.Core.Handlers
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             Check.NotNull(httpContext, nameof(httpContext));
 
-            var serverCallContext = new HttpContextServerCallContext(httpContext, serviceEntry, Logger);
+            var serverCallContext = new HttpContextServerCallContext(httpContext, serviceEntry, _serializer, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
 
             try
@@ -56,6 +63,5 @@ namespace Silky.Http.Core.Handlers
 
         protected abstract Task HandleCallAsyncCore(HttpContext httpContext,
             HttpContextServerCallContext serverCallContext);
-        
     }
 }

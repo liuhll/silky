@@ -70,6 +70,16 @@ namespace Silky.Rpc.Extensions
             httpResponse.Headers["SilkyResultStatus"] = status.ToString();
         }
 
+        public static void SetResultStatusCode(this IHeaderDictionary destination, StatusCode statusCode)
+        {
+            destination["SilkyResultStatusCode"] = statusCode.ToString();
+        }
+        
+        public static void SetResultStatus(this IHeaderDictionary destination, int status)
+        {
+            destination["SilkyResultStatus"] = status.ToString();
+        }
+
         public static void SetHeaders(this HttpResponse httpResponse)
         {
             var responseHeaders = RpcContext.Context.GetResponseHeaders();

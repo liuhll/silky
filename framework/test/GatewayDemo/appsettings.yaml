@@ -50,7 +50,7 @@ healthChecksUI:
   evaluationTimeinSeconds: 30
   minimumSecondsBetweenFailureNotifications: 60
 governance:
-  timeoutMillSeconds: 0
+  timeoutMillSeconds: 2000
   maxConcurrentHandlingCount: 100
 dashboard:
   displayWebApiInSwagger: true
@@ -75,9 +75,10 @@ serilog:
   minimumLevel:
     default: Information
     override:
-      Microsoft: Information
+      Microsoft: Warning
       Microsoft.Hosting.Lifetime: Information
       Silky.Rpc: Information
+      Silky.Http.Identity: Warning
   writeTo:
     - name: File
       args:
@@ -87,3 +88,8 @@ serilog:
       args:
         outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u11}] {Message:lj} {NewLine}{Exception}{NewLine}"
         theme: "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"
+  logging:
+    logLevel:
+      default: "Information"
+      Microsoft.AspNetCore: "Warning"
+      Silky.Http.Identity: "Warning"

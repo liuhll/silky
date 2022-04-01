@@ -23,25 +23,5 @@ namespace Silky.Core
             return dueTimeMilliseconds;
         }
         
-        public static IHeaderDictionary GetTrailersDestination(HttpResponse response)
-        {
-            if (response.HasStarted)
-            {
-                // The response has content so write trailers to a trailing HEADERS frame
-                var feature = response.HttpContext.Features.Get<IHttpResponseTrailersFeature>();
-                if (feature?.Trailers == null || feature.Trailers.IsReadOnly)
-                {
-                    throw new InvalidOperationException("Trailers are not supported for this response. The server may not support gRPC.");
-                }
-
-                return feature.Trailers;
-            }
-            else
-            {
-                // The response is "Trailers-Only". There are no gRPC messages in the response so the status
-                // and other trailers can be placed in the header HEADERS frame
-                return response.Headers;
-            }
-        }
     }
 }

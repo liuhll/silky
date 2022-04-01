@@ -22,7 +22,7 @@ namespace GatewayDemo
                 .ConfigureSilkyWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
-                    .UseSerilogDefault();
+                        .UseSerilogDefault();
                 });
 
             if (hostBuilder.IsEnvironment("Apollo"))
