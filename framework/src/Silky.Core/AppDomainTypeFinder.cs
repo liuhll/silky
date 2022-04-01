@@ -16,7 +16,7 @@ namespace Silky.Core
 
         public AppDomainTypeFinder(ISilkyFileProvider fileProvider = null)
         {
-            _fileProvider = fileProvider ?? CommonHelper.DefaultFileProvider;
+            _fileProvider = fileProvider ?? CommonSilkyHelpers.DefaultFileProvider;
         }
 
         #region Utilities

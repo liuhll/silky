@@ -44,7 +44,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
             var token = GetAuthorizationToken(Context);
             if (token.IsNullOrEmpty())
             {
-                return AuthenticateResult.Fail(new AuthenticationException("You have not logged in to the system"));
+                return AuthenticateResult.Fail(new AuthenticationException("You have not logged in to the system."));
             }
 
             try

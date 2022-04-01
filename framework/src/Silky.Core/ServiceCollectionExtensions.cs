@@ -15,8 +15,8 @@ namespace Silky.Core
             IHostEnvironment hostEnvironment) where T : StartUpModule
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            CommonHelper.DefaultFileProvider = new SilkyFileProvider(hostEnvironment);
-            services.TryAddSingleton(CommonHelper.DefaultFileProvider);
+            CommonSilkyHelpers.DefaultFileProvider = new SilkyFileProvider(hostEnvironment);
+            services.TryAddSingleton(CommonSilkyHelpers.DefaultFileProvider);
             var engine = EngineContext.Create();
             services.AddOptions<AppSettingsOptions>()
                 .Bind(configuration.GetSection(AppSettingsOptions.AppSettings));

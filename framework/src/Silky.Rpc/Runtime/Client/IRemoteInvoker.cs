@@ -5,7 +5,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IRemoteInvoker : ISingletonDependency
+    public interface IRemoteInvoker : ITransientDependency
     {
         Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage, ShuntStrategy shuntStrategy,
             string hashKey = null);
