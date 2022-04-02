@@ -41,6 +41,10 @@ namespace Silky.Core.Exceptions
                 case StatusCode.ValidateError:
                     httpStatusCode = HttpStatusCode.BadRequest;
                     break;
+                case StatusCode.Timeout:
+                case StatusCode.DeadlineExceeded:
+                    httpStatusCode = HttpStatusCode.RequestTimeout;
+                    break;
                 default:
                     httpStatusCode = HttpStatusCode.InternalServerError;
                     break;

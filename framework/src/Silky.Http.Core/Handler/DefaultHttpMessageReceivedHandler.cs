@@ -22,8 +22,6 @@ namespace Silky.Http.Core.Handlers
 {
     internal class DefaultHttpMessageReceivedHandler : MessageReceivedHandlerBase
     {
-
-
         private readonly IHttpExecutor _executor;
         private readonly IParameterParser _parameterParser;
         private readonly IHttpHandleDiagnosticListener _httpHandleDiagnosticListener;
@@ -40,7 +38,7 @@ namespace Silky.Http.Core.Handlers
             _parameterParser = parameterParser;
             _httpHandleDiagnosticListener = httpHandleDiagnosticListener;
             _auditSerializer = auditSerializer;
-            
+
             Logger = NullLogger<DefaultHttpMessageReceivedHandler>.Instance;
         }
 
@@ -74,11 +72,15 @@ namespace Silky.Http.Core.Handlers
             try
             {
                 executeResult = await _executor.Execute(serverCallContext.ServiceEntry, parameters, serviceKey);
-                serverCallContext.WriteResponseHeaderCore();
-                if (executeResult != null)
+                var cancellationToken = serverCallContext.HttpContext.RequestAborted;
+                if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
                 {
-                    var responseData = _serializer.Serialize(executeResult);
-                    await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                    serverCallContext.WriteResponseHeaderCore();
+                    if (executeResult != null)
+                    {
+                        var responseData = _serializer.Serialize(executeResult);
+                        await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                    }
                 }
 
                 _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serverCallContext.ServiceEntry,

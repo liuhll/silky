@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
@@ -60,8 +61,6 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         }
     }
 
-    public WriteOptions? WriteOptions { get; set; }
-
     internal HttpContextSerializationContext SerializationContext
     {
         get => _serializationContext ??= new HttpContextSerializationContext(this);
@@ -103,10 +102,11 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
         var gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>();
         HttpContext.Response.ContentType = HttpContext.GetResponseContentType(gatewayOptions);
-        HttpContext.Response.StatusCode = ResponseStatusCode.Success;
         HttpContext.Response.SetHeaders();
-        HttpContext.Response.SetResultStatusCode(StatusCode.Success);
-        HttpContext.Response.SetResultStatus((int)StatusCode.Success);
+        _statusCode = StatusCode.Success;
+        HttpContext.Response.StatusCode = (int)_statusCode.GetHttpStatusCode();
+        HttpContext.Response.SetResultStatusCode(_statusCode);
+        HttpContext.Response.SetResultStatus((int)_statusCode);
     }
 
     internal void WriteResponseHeaderCore(Exception exception)
@@ -116,6 +116,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
             throw new InvalidOperationException("Response headers can only be sent once per call.");
         }
 
+        _statusCode = exception.GetExceptionStatusCode();
         var gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>();
         HttpContext.Response.ContentType = exception is ValidationException
             ? HttpContext.GetResponseContentType(gatewayOptions)
@@ -154,11 +155,11 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
     public async Task DeadlineExceededAsync()
     {
         SilkyRpcEventSource.Log.CallDeadlineExceeded();
-        _statusCode = StatusCode.Timeout;
-        // var trailersDestination = CommonSilkyHelpers.GetTrailersDestination(HttpContext.Response);
+        _statusCode = StatusCode.DeadlineExceeded;
         var completionFeature = HttpContext.Features.Get<IHttpResponseBodyFeature>();
         if (completionFeature != null)
         {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.RequestTimeout;
             await completionFeature.CompleteAsync();
         }
 
@@ -171,6 +172,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         {
             HttpContext.Abort();
         }
+        
     }
 
     public async Task ProcessHandlerErrorAsync(Exception ex)
@@ -183,26 +185,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         {
             await ProcessHandlerErrorAsyncCore(ex);
         }
-
-        if (ex is SilkyException silkyException)
-        {
-            Logger.LogWarning($"{0} => Error status code '{1}' with detail '{2}' raised.", ServiceEntry.Id, _statusCode,
-                silkyException.Message);
-            _statusCode = silkyException.StatusCode;
-            var errorResult = silkyException.Message;
-            if (silkyException is ValidationException validationException)
-            {
-                errorResult = Serializer.Serialize(validationException.GetValidateErrors());
-            }
-
-            await HttpContext.Response.WriteAsync(errorResult);
-        }
-        else
-        {
-            Logger.LogError("Error when executing service method '{0}'.", ServiceEntry.Id);
-            _statusCode = ex.GetExceptionStatusCode();
-            await HttpContext.Response.WriteAsync(ex.Message);
-        }
+        
     }
 
     private async Task ProcessHandlerErrorAsyncCore(Exception ex)
@@ -273,7 +256,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
     private TimeSpan GetTimeout()
     {
         return ServiceEntry.GovernanceOptions.TimeoutMillSeconds > 0
-            ? TimeSpan.FromTicks(ServiceEntry.GovernanceOptions.TimeoutMillSeconds)
+            ? TimeSpan.FromMilliseconds(ServiceEntry.GovernanceOptions.TimeoutMillSeconds)
             : TimeSpan.Zero;
     }
 

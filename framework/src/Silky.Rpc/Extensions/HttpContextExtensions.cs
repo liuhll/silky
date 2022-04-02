@@ -65,6 +65,15 @@ namespace Silky.Rpc.Extensions
             httpResponse.Headers["SilkyResultStatusCode"] = statusCode.ToString();
         }
         
+        public static StatusCode? GetResultStatusCode(this HttpResponse httpResponse)
+        {
+            if (httpResponse.Headers.Keys.Contains("SilkyResultStatusCode"))
+            {
+                return httpResponse.Headers["SilkyResultStatusCode"].To<StatusCode>();
+            }
+            return null;
+        }
+        
         public static void SetResultStatus(this HttpResponse httpResponse, int status)
         {
             httpResponse.Headers["SilkyResultStatus"] = status.ToString();

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Silky.Http.Core.Middlewares;
 
 
 namespace GatewayDemo
@@ -44,12 +45,12 @@ namespace GatewayDemo
             services.AddHealthChecks()
                 .AddSilkyRpc()
                 .AddSilkyGateway();
-            
+
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
                 options.Providers.Add<GzipCompressionProvider>();
-               // options.Providers.Add<CustomCompressionProvider>();
+                // options.Providers.Add<CustomCompressionProvider>();
                 // .Append(TItem) is only available on Core.
                 options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml" });
 
@@ -84,11 +85,11 @@ namespace GatewayDemo
             // app.UseIpRateLimiting();
             app.UseResponseCaching();
             app.UseHttpsRedirection();
-            app.UseSilkyWebSocketsProxy();
-            app.UseSilkyWrapperResponse();
             app.UseSilkyIdentity();
-            app.UseSilkyHttpServer();
-           // app.UseAuditing();
+            app.UseSilkyWebSocketsProxy();
+            app.UseSilkyWebServer();
+            // app.UseSilkyWrapperResponse();
+            // app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecksUI();

@@ -54,8 +54,8 @@ namespace Microsoft.AspNetCore.Builder
                 });
             });
         }
-
-        public static async void UseSilkyHttpServer(this IApplicationBuilder application)
+        
+        public static async void UseSilkyWebServer(this IApplicationBuilder application)
         {
             var options = EngineContext.Current.GetOptions<RpcOptions>();
             var logger = EngineContext.Current.Resolve<ILogger<SilkyHttpCoreModule>>();
@@ -73,9 +73,9 @@ namespace Microsoft.AspNetCore.Builder
                         {
                             logger.LogException(exception);
                         }
+
                         serverRegisterProvider.AddHttpServices();
                         await serverRouteRegister.RegisterServer();
-                       
                     });
             await policy.ExecuteAsync(async () =>
             {
