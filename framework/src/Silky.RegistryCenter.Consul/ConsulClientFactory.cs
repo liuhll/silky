@@ -5,9 +5,9 @@ namespace Silky.RegistryCenter.Consul
 {
     public class ConsulClientFactory : IConsulClientFactory
     {
-        private readonly IOptionsMonitor<ConsulClientConfiguration> _optionsMonitor;
+        private readonly IOptionsMonitor<ConsulRegistryCenterOptions> _optionsMonitor;
 
-        public ConsulClientFactory(IOptionsMonitor<ConsulClientConfiguration> optionsMonitor)
+        public ConsulClientFactory(IOptionsMonitor<ConsulRegistryCenterOptions> optionsMonitor)
         {
             _optionsMonitor = optionsMonitor;
         }
