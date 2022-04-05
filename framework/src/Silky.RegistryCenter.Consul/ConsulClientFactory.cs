@@ -1,5 +1,6 @@
 using Consul;
 using Microsoft.Extensions.Options;
+using Silky.RegistryCenter.Consul.Configuration;
 
 namespace Silky.RegistryCenter.Consul
 {

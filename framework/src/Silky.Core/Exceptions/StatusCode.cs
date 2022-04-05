@@ -70,5 +70,7 @@ namespace Silky.Core.Exceptions
         [Description("禁止外网访问")] FuseProtection = 406,
         
         [Description("请求异常")] BadRequest = 400,
+        
+        [Description("请求超时")] DeadlineExceeded = 408,
     }
 }

@@ -20,8 +20,7 @@ namespace Silky.Http.Core.Middlewares
         private readonly RequestDelegate _next;
         private readonly GatewayOptions _gatewayOptions;
         private readonly ISerializer _serializer;
-
-
+        
         public WrapperResponseMiddleware(RequestDelegate next, IOptionsMonitor<GatewayOptions> gatewayOptions,
             ISerializer serializer)
         {
