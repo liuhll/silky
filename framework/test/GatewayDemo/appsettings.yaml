@@ -50,7 +50,7 @@ healthChecksUI:
   evaluationTimeinSeconds: 30
   minimumSecondsBetweenFailureNotifications: 60
 governance:
-#  timeoutMillSeconds: 2000
+  timeoutMillSeconds: 0
   maxConcurrentHandlingCount: 100
 dashboard:
   displayWebApiInSwagger: true

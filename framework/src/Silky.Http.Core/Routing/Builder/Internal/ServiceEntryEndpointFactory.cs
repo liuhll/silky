@@ -19,17 +19,8 @@ namespace Silky.Http.Core.Routing.Builder.Internal
         {
             return async httpContext =>
             {
-                var feature = new SilkyWebFeature(serviceEntry, httpContext);
                 var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
-                try
-                {
-                    await messageReceivedHandler.Handle(serviceEntry, httpContext);
-                    await feature.WriteTrailersAsync();
-                }
-                finally
-                {
-                    feature.DetachFromContext(httpContext);
-                }
+                await messageReceivedHandler.Handle(serviceEntry, httpContext);
             };
         }
 
