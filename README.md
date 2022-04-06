@@ -115,6 +115,22 @@ silky微服务有着如下的优势：
 - 通过[配置](http://docs.silky-fk.com/config/)文档熟悉Silky框架的相关配置属性。
 
 
+## 示例项目
+
+### Silky.Hero权限管理系统
+
+* 项目地址
+https://github.com/liuhll/silky.hero
+
+* 演示地址
+https://hero.silky-fk.com/
+
+* 账号信息(租户silky)
+  * 管理员账号(密码): admin(123qweR!)
+  * 普通用户: liuhll(123qweR!)
+  * 其他账号密码: 123qweR!
+
+
 ## 快速开始
 
 ### 1. 构建主机
