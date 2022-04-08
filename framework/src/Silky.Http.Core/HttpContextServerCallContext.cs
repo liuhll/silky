@@ -172,7 +172,6 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         {
             HttpContext.Abort();
         }
-        
     }
 
     public async Task ProcessHandlerErrorAsync(Exception ex)
@@ -185,7 +184,6 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         {
             await ProcessHandlerErrorAsyncCore(ex);
         }
-        
     }
 
     private async Task ProcessHandlerErrorAsyncCore(Exception ex)
@@ -255,8 +253,9 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
     private TimeSpan GetTimeout()
     {
-        return ServiceEntry.GovernanceOptions.TimeoutMillSeconds > 0
-            ? TimeSpan.FromMilliseconds(ServiceEntry.GovernanceOptions.TimeoutMillSeconds)
+        var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
+        return gatewayOptions.TimeoutMillSeconds > 0
+            ? TimeSpan.FromMilliseconds(gatewayOptions.TimeoutMillSeconds)
             : TimeSpan.Zero;
     }
 
