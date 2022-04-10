@@ -23,7 +23,7 @@ namespace Silky.Rpc.Runtime.Client
         }
         
         
-        public abstract IAsyncPolicy<object> Create(string serviceEntryId, object[] parameters);
+        public abstract IAsyncPolicy<object> Create(string serviceEntryId);
 
         public abstract event RpcInvokeFailoverHandle OnInvokeFailover;
 

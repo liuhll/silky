@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Client
             _serverManager = serverManager;
         }
 
-        public AsyncCircuitBreakerPolicy Create(string serviceEntryId, object[] parameters)
+        public AsyncCircuitBreakerPolicy Create(string serviceEntryId)
         {
             var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
             if (serviceEntryDescriptor?.GovernanceOptions.EnableCircuitBreaker == true)

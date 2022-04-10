@@ -14,7 +14,7 @@ namespace Silky.Rpc.Runtime.Client
             _serverManager = serverManager;
         }
 
-        public IAsyncPolicy Create(string serviceEntryId, object[] parameters)
+        public IAsyncPolicy Create(string serviceEntryId)
         {
             var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
             if (serviceEntryDescriptor?.GovernanceOptions.TimeoutMillSeconds > 0)

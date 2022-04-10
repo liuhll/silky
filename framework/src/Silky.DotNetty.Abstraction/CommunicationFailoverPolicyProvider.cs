@@ -22,7 +22,7 @@ namespace Silky.DotNetty.Abstraction
             _serverManager = serverManager;
         }
 
-        public override IAsyncPolicy<object> Create(string serviceEntryId, object[] parameters)
+        public override IAsyncPolicy<object> Create(string serviceEntryId)
         {
             IAsyncPolicy<object> policy = null;
             var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);

@@ -78,8 +78,12 @@ namespace Silky.Rpc.Runtime.Server
 
                 context[PollyContextNames.ServiceEntry] = serviceEntry;
 
-                var result = await serviceEntry.Executor(_serviceKeyExecutor.ServiceKey,
-                    message.Parameters);
+                var parameterResolver =
+                    EngineContext.Current.ResolveNamed<IParameterResolver>(message.ParameterType.ToString());
+                
+                var parameters = parameterResolver.Parser(serviceEntry, message);
+
+                var result = await serviceEntry.Executor(_serviceKeyExecutor.ServiceKey, parameters);
 
                 remoteResultMessage.Result = result;
                 remoteResultMessage.Status = (int)StatusCode.Success;

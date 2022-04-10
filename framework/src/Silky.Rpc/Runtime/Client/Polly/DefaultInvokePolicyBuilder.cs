@@ -10,6 +10,7 @@ namespace Silky.Rpc.Runtime.Client
         private readonly ICollection<IInvokePolicyProvider> _policyProviders;
 
         private readonly ICollection<IInvokeCircuitBreakerPolicyProvider> _circuitBreakerPolicyProviders;
+        
 
         public DefaultInvokePolicyBuilder(
             ICollection<IInvokePolicyProvider> policyProviders,
@@ -22,13 +23,13 @@ namespace Silky.Rpc.Runtime.Client
         }
 
 
-        public IAsyncPolicy<object> Build(string serviceEntryId, object[] parameters)
+        public IAsyncPolicy<object> Build(string serviceEntryId)
         {
             IAsyncPolicy<object> policy = Policy.NoOpAsync<object>();
 
             foreach (var policyProvider in _policyWithResultProviders)
             {
-                var policyItem = policyProvider.Create(serviceEntryId, parameters);
+                var policyItem = policyProvider.Create(serviceEntryId);
                 if (policyItem != null)
                 {
                     policy = policy.WrapAsync(policyItem);
@@ -37,7 +38,7 @@ namespace Silky.Rpc.Runtime.Client
 
             foreach (var policyProvider in _policyProviders)
             {
-                var policyItem = policyProvider.Create(serviceEntryId, parameters);
+                var policyItem = policyProvider.Create(serviceEntryId);
                 if (policyItem != null)
                 {
                     policy = policy.WrapAsync(policyItem);
@@ -46,15 +47,16 @@ namespace Silky.Rpc.Runtime.Client
 
             foreach (var circuitBreakerPolicyProvider in _circuitBreakerPolicyProviders)
             {
-                var policyItem = circuitBreakerPolicyProvider.Create(serviceEntryId, parameters);
+                var policyItem = circuitBreakerPolicyProvider.Create(serviceEntryId);
                 if (policyItem != null)
                 {
                     policy = policy.WrapAsync(policyItem);
                 }
-                
             }
 
             return policy;
         }
+        
+        
     }
 }
