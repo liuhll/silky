@@ -4,12 +4,12 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IRemoteExecutor : IExecutor
+    internal interface IRemoteExecutor : IExecutor
     {
         Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters,
             string serviceKey = null);
 
-        Task<object> Excute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters,
+        Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters,
             string serviceKey = null);
     }
 }

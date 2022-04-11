@@ -10,7 +10,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultAppointAddressInvoker : IAppointAddressInvoker
+    internal class DefaultAppointAddressInvoker : IAppointAddressInvoker
     {
         private readonly ILocalExecutor _localExecutor;
         private readonly IRemoteExecutor _remoteExecutor;

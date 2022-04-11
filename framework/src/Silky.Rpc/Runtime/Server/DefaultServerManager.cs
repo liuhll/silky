@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
@@ -19,7 +20,10 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly ConcurrentDictionary<string, IServer> _serverCache = new();
 
-        private readonly ConcurrentDictionary<string, ServiceEntryDescriptor> _serviceEntryDescriptors = new();
+        private readonly ConcurrentDictionary<string, ServiceEntryDescriptor> _serviceEntryDescriptorCacheForId = new();
+
+        private readonly ConcurrentDictionary<(string, HttpMethod), ServiceEntryDescriptor>
+            _serviceEntryDescriptorCacheForApi = new();
 
         private readonly ConcurrentDictionary<string, IRpcEndpoint[]> _rpcRpcEndpointCache = new();
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
@@ -28,7 +32,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public ServiceEntryDescriptor GetServiceEntryDescriptor(string serviceEntryId)
         {
-            if (_serviceEntryDescriptors.TryGetValue(serviceEntryId, out var serviceEntryDescriptor))
+            if (_serviceEntryDescriptorCacheForId.TryGetValue(serviceEntryId, out var serviceEntryDescriptor))
             {
                 return serviceEntryDescriptor;
             }
@@ -36,7 +40,21 @@ namespace Silky.Rpc.Runtime.Server
             serviceEntryDescriptor = _serverCache.Values
                 .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
                 .FirstOrDefault(p => p.Id == serviceEntryId);
-            _serviceEntryDescriptors.TryAdd(serviceEntryId, serviceEntryDescriptor);
+            _serviceEntryDescriptorCacheForId.TryAdd(serviceEntryId, serviceEntryDescriptor);
+            return serviceEntryDescriptor;
+        }
+
+        public ServiceEntryDescriptor GetServiceEntryDescriptor(string api, HttpMethod httpMethod)
+        {
+            if (_serviceEntryDescriptorCacheForApi.TryGetValue((api, httpMethod), out var serviceEntryDescriptor))
+            {
+                return serviceEntryDescriptor;
+            }
+
+            serviceEntryDescriptor = _serverCache.Values
+                .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
+                .FirstOrDefault(p => p.WebApi == api && p.HttpMethod == httpMethod);
+            _serviceEntryDescriptorCacheForApi.TryAdd((api, httpMethod), serviceEntryDescriptor);
             return serviceEntryDescriptor;
         }
 

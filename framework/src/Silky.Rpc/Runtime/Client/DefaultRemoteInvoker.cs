@@ -20,7 +20,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultRemoteInvoker : IRemoteInvoker
+    internal class DefaultRemoteInvoker : IRemoteInvoker
     {
         private readonly IServerManager _serverManager;
 

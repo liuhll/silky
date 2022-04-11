@@ -134,7 +134,7 @@ namespace Silky.Rpc
             builder.RegisterType<TemplateParameterResolver>()
                 .SingleInstance()
                 .AsSelf()
-                .Named<IParameterResolver>(ParameterType.Template.ToString());
+                .Named<IParameterResolver>(ParameterType.Dict.ToString());
 
             builder.RegisterType<RpcParameterResolver>()
                 .SingleInstance()

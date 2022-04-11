@@ -29,6 +29,7 @@ namespace Silky.Transaction.Filters
             context = SilkyTransactionContextHolder.Instance.Get();
             if (context == null) return;
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
+            if (serviceEntry == null) return;
             if (!serviceEntry.IsTransactionServiceEntry()) return;
 
             participantId = context.ParticipantId;

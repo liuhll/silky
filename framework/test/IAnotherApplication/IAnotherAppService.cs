@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using IAnotherApplication.Dtos;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,8 @@ namespace IAnotherApplication
         Task<string> DeleteTwo(string address);
 
         Task<string> Create(string name);
+
+        Task<TestDto> Test(TestDto input);
         
         void ReturnNullTest();
     }
