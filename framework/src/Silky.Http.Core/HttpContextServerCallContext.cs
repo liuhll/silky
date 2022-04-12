@@ -25,7 +25,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 {
     internal ILogger Logger { get; }
     internal HttpContext HttpContext { get; }
-    internal ServiceEntry ServiceEntry { get; }
+    internal ServiceEntryDescriptor ServiceEntryDescriptor { get; }
 
     internal ServerCallDeadlineManager? DeadlineManager;
 
@@ -36,11 +36,11 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
     private Activity? _activity;
     private HttpContextSerializationContext? _serializationContext;
 
-    internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntry serviceEntry, ISerializer serializer,
+    internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntryDescriptor serviceEntryDescriptor, ISerializer serializer,
         ILogger logger)
     {
         HttpContext = httpContext;
-        ServiceEntry = serviceEntry;
+        ServiceEntryDescriptor = serviceEntryDescriptor;
         Serializer = serializer;
         Logger = logger;
     }
@@ -72,15 +72,15 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         _activity = GetHostActivity();
         if (_activity != null)
         {
-            _activity.AddTag(HttpServerConstants.ActivityMethodTag, ServiceEntry.Id);
+            _activity.AddTag(HttpServerConstants.ActivityMethodTag, ServiceEntryDescriptor.Id);
         }
 
-        SilkyRpcEventSource.Log.CallStart(ServiceEntry.Id);
+        SilkyRpcEventSource.Log.CallStart(ServiceEntryDescriptor.Id);
         var path = HttpContext.Request.Path;
         var method = HttpContext.Request.Method.ToEnum<HttpMethod>();
         Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
             MiniProfileConstant.Route.State.FindServiceEntry,
-            $"Find the ServiceEntry {ServiceEntry.Id} through {path}-{method}");
+            $"Find the ServiceEntryDescriptor {ServiceEntryDescriptor.Id} through {path}-{method}");
         HttpContext.SetUserClaims();
         HttpContext.SetHttpHandleAddressInfo();
         EngineContext.Current.Resolve<ICurrentRpcToken>().SetRpcToken();

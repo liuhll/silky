@@ -8,5 +8,7 @@ namespace Silky.Http.Core.Handlers
     internal interface IMessageReceivedHandler
     {
         Task Handle([NotNull] ServiceEntry serviceEntry, HttpContext httpContext);
+
+        Task Handle(ServiceEntryDescriptor serviceEntryDescriptor, HttpContext httpContext);
     }
 }
