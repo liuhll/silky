@@ -119,5 +119,36 @@ namespace Silky.Rpc.Runtime.Client
 
             return result;
         }
+
+        public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<ParameterFrom, object> parameters, string serviceKey = null)
+        {
+            var remoteInvokeMessage = new RemoteInvokeMessage()
+            {
+                ServiceEntryId = serviceEntryDescriptor.Id,
+                ServiceId = serviceEntryDescriptor.ServiceId,
+                HttpParameters = parameters,
+                ParameterType = ParameterType.Http
+            };
+            string hashKey = null;
+            if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
+            {
+                //  hashKey = serviceEntryDescriptor.GetHashKeyValue(parameters.ToArray());
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                    $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
+            }
+
+            var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id);
+            var result = await policy
+                .ExecuteAsync(async () =>
+                {
+                    var invokeResult =
+                        await _remoteInvoker.Invoke(remoteInvokeMessage,
+                            serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
+                            hashKey);
+                    return invokeResult.Result;
+                });
+
+            return result;
+        }
     }
 }

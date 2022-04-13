@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
@@ -74,6 +75,11 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             return rpcActionExecutedContext.Result;
+        }
+
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<ParameterFrom, object> parameters, string serviceKey)
+        {
+            throw new NotImplementedException();
         }
     }
 }

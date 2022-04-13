@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Silky.Core;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime
@@ -8,6 +11,13 @@ namespace Silky.Rpc.Runtime
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
             return await serviceEntry.Executor(serviceKey, parameters);
+        }
+
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor,
+            IDictionary<ParameterFrom, object> parameters, string serviceKey)
+        {
+            var remoteExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
+            return remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey);
         }
     }
 }

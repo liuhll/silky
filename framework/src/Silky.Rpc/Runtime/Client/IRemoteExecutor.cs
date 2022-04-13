@@ -11,5 +11,8 @@ namespace Silky.Rpc.Runtime.Client
 
         Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters,
             string serviceKey = null);
+        
+        Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<ParameterFrom, object> parameters,
+            string serviceKey = null);
     }
 }

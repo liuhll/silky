@@ -5,11 +5,11 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core;
 
-public abstract class ServiceEntryValueProvider
+public abstract class ParameterValueProvider
 {
     protected ServiceEntry _serviceEntry;
 
-    public ServiceEntryValueProvider(ServiceEntry serviceEntry)
+    public ParameterValueProvider(ServiceEntry serviceEntry)
     {
         _serviceEntry = serviceEntry;
     }

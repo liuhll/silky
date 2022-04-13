@@ -5,7 +5,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core;
 
-public class FormValueProvider : ServiceEntryValueProvider
+public class FormValueProvider : ParameterValueProvider
 {
     private readonly IFormCollection _values;
     private PrefixContainer _prefixContainer;

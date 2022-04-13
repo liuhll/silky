@@ -119,10 +119,42 @@ namespace Silky.Http.Core.Handlers
             }
         }
 
-        protected override Task HandleCallAsyncCore(HttpContext httpContext, HttpContextServerCallContext serverCallContext,
+        protected override async Task HandleCallAsyncCore(HttpContext httpContext,
+            HttpContextServerCallContext serverCallContext,
             ServiceEntryDescriptor serviceEntryDescriptor)
         {
-            throw new NotImplementedException();
+            var parameters =
+                await _parameterParser.Parser(httpContext.Request, serviceEntryDescriptor);
+            var serviceKey = await ResolveServiceKey(httpContext);
+            if (!serviceKey.IsNullOrEmpty())
+            {
+                RpcContext.Context.SetServiceKey(serviceKey);
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
+                    MiniProfileConstant.Route.State.FindServiceKey,
+                    $"serviceKey => {serviceKey}");
+            }
+
+            var rpcConnection = RpcContext.Context.Connection;
+            var clientRpcEndpoint = rpcConnection.ClientHost;
+            var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
+            var messageId = GetMessageId(httpContext);
+            var serverHandleInfo =
+                serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
+            object executeResult = null;
+            var isHandleSuccess = true;
+            var isFriendlyStatus = false;
+            executeResult =
+                await _executor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+            var cancellationToken = serverCallContext.HttpContext.RequestAborted;
+            if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
+            {
+                serverCallContext.WriteResponseHeaderCore();
+                if (executeResult != null)
+                {
+                    var responseData = _serializer.Serialize(executeResult);
+                    await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                }
+            }
         }
 
         protected virtual Task<string> ResolveServiceKey(HttpContext httpContext)
