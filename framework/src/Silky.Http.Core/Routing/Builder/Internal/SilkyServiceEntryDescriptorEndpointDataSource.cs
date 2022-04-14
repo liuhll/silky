@@ -20,6 +20,8 @@ public class SilkyServiceEntryDescriptorEndpointDataSource : EndpointDataSource
     private readonly List<Action<EndpointBuilder>> Conventions;
     private readonly ServiceEntryDescriptorEndpointFactory _serviceEntryDescriptorEndpointFactory;
     private readonly object Lock = new();
+    
+    private IDisposable _disposable;
 
     public SilkyServiceEntryDescriptorEndpointDataSource(IServerManager serverManager,
         ServiceEntryDescriptorEndpointFactory serviceEntryDescriptorEndpointFactory)
@@ -28,10 +30,25 @@ public class SilkyServiceEntryDescriptorEndpointDataSource : EndpointDataSource
         _serviceEntryDescriptorEndpointFactory = serviceEntryDescriptorEndpointFactory;
         Conventions = new List<Action<EndpointBuilder>>();
         DefaultBuilder = new ServiceEntryDescriptorEndpointConventionBuilder(Lock, Conventions);
+
+        Subscribe();
     }
 
     public ServiceEntryDescriptorEndpointConventionBuilder DefaultBuilder { get; }
 
+    protected void Subscribe()
+    {
+        // IMPORTANT: this needs to be called by the derived class to avoid the fragile base class
+        // problem. We can't call this in the base-class constuctor because it's too early.
+        //
+        // It's possible for someone to override the collection provider without providing
+        // change notifications. If that's the case we won't process changes.
+        _disposable = ChangeToken.OnChange(
+            () => _serverManager.GetChangeToken(),
+            UpdateEndpoints);
+    }
+
+    
     public override IChangeToken GetChangeToken()
     {
         Initialize();

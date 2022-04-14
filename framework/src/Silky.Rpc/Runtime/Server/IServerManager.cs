@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using Microsoft.Extensions.Primitives;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 
@@ -35,5 +36,7 @@ namespace Silky.Rpc.Runtime.Server
         event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
 
         event OnUpdateRpcEndpoint OnUpdateRpcEndpoint;
+        
+        IChangeToken GetChangeToken();
     }
 }
