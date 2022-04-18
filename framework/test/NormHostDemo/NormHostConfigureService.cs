@@ -11,7 +11,7 @@ namespace NormHostDemo
             services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
             services.AddSilkySkyApm();
             services.AddJwt();
-            services.AddMessagePackCodec();
+           // services.AddMessagePackCodec();
         }
     }
 }

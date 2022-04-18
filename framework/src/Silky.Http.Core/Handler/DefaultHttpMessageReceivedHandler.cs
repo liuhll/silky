@@ -123,6 +123,7 @@ namespace Silky.Http.Core.Handlers
             HttpContextServerCallContext serverCallContext,
             ServiceEntryDescriptor serviceEntryDescriptor)
         {
+            var sp = Stopwatch.StartNew();
             var parameters =
                 await _parameterParser.Parser(httpContext.Request, serviceEntryDescriptor);
             var serviceKey = await ResolveServiceKey(httpContext);
@@ -143,16 +144,41 @@ namespace Silky.Http.Core.Handlers
             object executeResult = null;
             var isHandleSuccess = true;
             var isFriendlyStatus = false;
-            executeResult =
-                await _executor.Execute(serviceEntryDescriptor, parameters, serviceKey);
-            var cancellationToken = serverCallContext.HttpContext.RequestAborted;
-            if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
+            try
             {
-                serverCallContext.WriteResponseHeaderCore();
-                if (executeResult != null)
+                executeResult =
+                    await _executor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+                var cancellationToken = serverCallContext.HttpContext.RequestAborted;
+                if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
                 {
-                    var responseData = _serializer.Serialize(executeResult);
-                    await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                    serverCallContext.WriteResponseHeaderCore();
+                    if (executeResult != null)
+                    {
+                        var responseData = _serializer.Serialize(executeResult);
+                        await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isHandleSuccess = false;
+                isFriendlyStatus = ex.IsFriendlyException();
+                throw;
+            }
+            finally
+            {
+                sp.Stop();
+                if (isHandleSuccess)
+                {
+                    serverHandleMonitor?.ExecSuccess((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint),
+                        sp.ElapsedMilliseconds,
+                        serverHandleInfo);
+                }
+                else
+                {
+                    serverHandleMonitor?.ExecFail((serverCallContext.ServiceEntryDescriptor?.Id, clientRpcEndpoint),
+                        !isFriendlyStatus,
+                        sp.ElapsedMilliseconds, serverHandleInfo);
                 }
             }
         }

@@ -5,11 +5,13 @@ using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Routing;
+using Silky.Rpc.Security;
 
 namespace IAnotherApplication
 {
     [ServiceRoute(ServiceName = "AnotherAppService")]
     [DisableAuditing]
+    [Authorize]
     public interface IAnotherAppService
     {
         [Transaction]

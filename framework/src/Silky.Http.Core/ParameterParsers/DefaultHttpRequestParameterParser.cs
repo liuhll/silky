@@ -74,13 +74,13 @@ namespace Silky.Http.Core
 
             if (request.HasFormContentType)
             {
-                var formData = request.Form.ToDictionary(p => p.Key, p => p.Value);
+                var formData = request.Form.ToDictionary(p => p.Key, p => p.Value.ToString());
                 parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
             }
 
             if (request.Query.Any())
             {
-                var queryData = request.Form.ToDictionary(p => p.Key, p => p.Value);
+                var queryData = request.Query.ToDictionary(p => p.Key, p => p.Value.ToString());
                 parameters.Add(ParameterFrom.Query, _serializer.Serialize(queryData));
             }
 

@@ -70,7 +70,13 @@ public class ServiceEntryDescriptorEndpointFactory
             {
                 foreach (var data in serviceEntryDescriptor.AuthorizeData)
                 {
-                    builder.Metadata.Add(data);
+                    var authorizeAttribute = new AuthorizeAttribute()
+                    {
+                        AuthenticationSchemes = data.AuthenticationSchemes,
+                        Policy = data.Policy,
+                        Roles = data.Roles
+                    };
+                    builder.Metadata.Add(authorizeAttribute);
                 }
             }
             else if (gatewayOptions.GlobalAuthorize)

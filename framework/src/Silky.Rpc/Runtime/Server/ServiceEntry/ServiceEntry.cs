@@ -63,10 +63,7 @@ namespace Silky.Rpc.Runtime.Server
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
-            if (EngineContext.Current.IsRegistered(typeof(IAuthorizationService)))
-            {
-                AuthorizeData = CreateAuthorizeData();
-            }
+            AuthorizeData = CreateAuthorizeData();
 
             ClientFilters = CreateClientFilters();
             ServerFilters = CreateServerFilters();
@@ -108,7 +105,7 @@ namespace Silky.Rpc.Runtime.Server
             authorizeData.AddRange(serviceAuthorizeData);
             foreach (var item in authorizeData)
             {
-                ServiceEntryDescriptor.AuthorizeData.Add(new Security.AuthorizeAttribute()
+                ServiceEntryDescriptor.AuthorizeData.Add(new AuthorizeDescriptor()
                 {
                     Policy = item.Policy,
                     AuthenticationSchemes = item.AuthenticationSchemes,

@@ -13,6 +13,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc.Extensions;
@@ -36,7 +37,8 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
     private Activity? _activity;
     private HttpContextSerializationContext? _serializationContext;
 
-    internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntryDescriptor serviceEntryDescriptor, ISerializer serializer,
+    internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntryDescriptor serviceEntryDescriptor,
+        ISerializer serializer,
         ILogger logger)
     {
         HttpContext = httpContext;
@@ -83,6 +85,8 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
             $"Find the ServiceEntryDescriptor {ServiceEntryDescriptor.Id} through {path}-{method}");
         HttpContext.SetUserClaims();
         HttpContext.SetHttpHandleAddressInfo();
+        RpcContext.Context.SetInvokeAttachment(AttachmentKeys.Path, path.ToString());
+        RpcContext.Context.SetInvokeAttachment(AttachmentKeys.HttpMethod, method);
         EngineContext.Current.Resolve<ICurrentRpcToken>().SetRpcToken();
 
         var timeout = GetTimeout();

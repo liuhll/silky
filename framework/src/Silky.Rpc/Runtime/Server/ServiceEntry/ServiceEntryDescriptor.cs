@@ -12,7 +12,7 @@ namespace Silky.Rpc.Runtime.Server
         public ServiceEntryDescriptor()
         {
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            AuthorizeData = new List<AuthorizeAttribute>();
+            AuthorizeData = new List<AuthorizeDescriptor>();
         }
 
         public string Id { get; set; }
@@ -25,7 +25,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public HttpMethod? HttpMethod { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
-        public ICollection<AuthorizeAttribute> AuthorizeData { get; set; }
+        public ICollection<AuthorizeDescriptor> AuthorizeData { get; set; }
         public IDictionary<string, object> Metadatas { get; set; }
 
         public bool ProhibitExtranet { get; set; }

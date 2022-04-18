@@ -17,7 +17,7 @@ namespace AnotherHostDemo
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSilkySkyApm();
-            services.AddMessagePackCodec();
+            // services.AddMessagePackCodec();
         }
     }
 }
