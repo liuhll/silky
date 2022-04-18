@@ -26,7 +26,6 @@ namespace Silky.Http.Core
             var parameters = new Dictionary<ParameterFrom, object>();
             if (request.HasFormContentType)
             {
-               
                 var formValueProvider = new FormValueProvider(serviceEntry, request.Form);
                 var formData = formValueProvider.GetFormData();
                 parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
@@ -66,6 +65,40 @@ namespace Silky.Http.Core
         {
             var requestParameters = await ParserHttpRequest(httpRequest, serviceEntry);
             return serviceEntry.ResolveParameters(requestParameters);
+        }
+
+        public async Task<IDictionary<ParameterFrom, object>> Parser(HttpRequest request,
+            ServiceEntryDescriptor serviceEntryDescriptor)
+        {
+            var parameters = new Dictionary<ParameterFrom, object>();
+
+            if (request.HasFormContentType)
+            {
+                var formData = request.Form.ToDictionary(p => p.Key, p => p.Value.ToString());
+                parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
+            }
+
+            if (request.Query.Any())
+            {
+                var queryData = request.Query.ToDictionary(p => p.Key, p => p.Value.ToString());
+                parameters.Add(ParameterFrom.Query, _serializer.Serialize(queryData));
+            }
+
+            if (request.Headers.Any())
+            {
+                var headerData = request.Headers.ToDictionary(p => p.Key, p => p.Value.ToString());
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RequestHeader, headerData);
+                parameters.Add(ParameterFrom.Header, _serializer.Serialize(headerData));
+            }
+
+            if (!request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                var streamReader = new StreamReader(request.Body);
+                var bodyData = await streamReader.ReadToEndAsync();
+                parameters.Add(ParameterFrom.Body, bodyData);
+            }
+
+            return parameters;
         }
     }
 }

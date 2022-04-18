@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core.Runtime.Rpc;
+using Silky.Rpc.Security;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -11,6 +12,7 @@ namespace Silky.Rpc.Runtime.Server
         public ServiceEntryDescriptor()
         {
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            AuthorizeData = new List<AuthorizeDescriptor>();
         }
 
         public string Id { get; set; }
@@ -18,9 +20,12 @@ namespace Silky.Rpc.Runtime.Server
         public string ServiceName { get; set; }
         public string Method { get; set; }
         public string WebApi { get; set; }
+
+        public int RouteOrder { get; set; }
+
         public HttpMethod? HttpMethod { get; set; }
         public ServiceProtocol ServiceProtocol { get; set; }
-
+        public ICollection<AuthorizeDescriptor> AuthorizeData { get; set; }
         public IDictionary<string, object> Metadatas { get; set; }
 
         public bool ProhibitExtranet { get; set; }

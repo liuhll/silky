@@ -16,6 +16,7 @@ using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
+using Silky.Rpc.Security;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -62,10 +63,7 @@ namespace Silky.Rpc.Runtime.Server
 
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
-            if (EngineContext.Current.IsRegistered(typeof(IAuthorizationService)))
-            {
-                AuthorizeData = CreateAuthorizeData();
-            }
+            AuthorizeData = CreateAuthorizeData();
 
             ClientFilters = CreateClientFilters();
             ServerFilters = CreateServerFilters();
@@ -105,6 +103,15 @@ namespace Silky.Rpc.Runtime.Server
             authorizeData.AddRange(serviceEntryAuthorizeData);
             var serviceAuthorizeData = ServiceType.GetCustomAttributes().OfType<IAuthorizeData>();
             authorizeData.AddRange(serviceAuthorizeData);
+            foreach (var item in authorizeData)
+            {
+                ServiceEntryDescriptor.AuthorizeData.Add(new AuthorizeDescriptor()
+                {
+                    Policy = item.Policy,
+                    AuthenticationSchemes = item.AuthenticationSchemes,
+                    Roles = item.Roles
+                });
+            }
 
             return authorizeData;
         }
@@ -171,6 +178,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 ServiceEntryDescriptor.WebApi = Router.RoutePath;
                 ServiceEntryDescriptor.HttpMethod = Router.HttpMethod;
+                ServiceEntryDescriptor.RouteOrder = Router.RouteTemplate.Order;
             }
 
             ServiceEntryDescriptor.GovernanceOptions = serviceEntryGovernance;

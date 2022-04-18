@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -10,7 +11,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class DefaultRemoteExecutor : IRemoteExecutor
+    internal class DefaultRemoteExecutor : IRemoteExecutor
     {
         private readonly IRemoteInvoker _remoteInvoker;
         private readonly IInvokePolicyBuilder _invokePolicyBuilder;
@@ -31,6 +32,7 @@ namespace Silky.Rpc.Runtime.Client
                 ServiceEntryId = serviceEntry.ServiceEntryDescriptor.Id,
                 ServiceId = serviceEntry.ServiceId,
                 Parameters = parameters,
+                ParameterType = ParameterType.Rpc,
             };
             string hashKey = null;
             if (serviceEntry.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
@@ -39,7 +41,9 @@ namespace Silky.Rpc.Runtime.Client
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
-            var policy = _invokePolicyBuilder.Build(serviceEntry.Id, parameters);
+
+            var policy = _invokePolicyBuilder.Build(serviceEntry.Id);
+            policy = policy.WrapFallbackPolicy(serviceEntry.Id, parameters);
             var result = await policy
                 .ExecuteAsync(async () =>
                 {
@@ -47,9 +51,8 @@ namespace Silky.Rpc.Runtime.Client
                         await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
                             hashKey);
                     return invokeResult.GetResult();
-                   
                 });
-           
+
             return result;
         }
 
@@ -61,6 +64,7 @@ namespace Silky.Rpc.Runtime.Client
                 ServiceEntryId = serviceEntryDescriptor.Id,
                 ServiceId = serviceEntryDescriptor.ServiceId,
                 Parameters = parameters,
+                ParameterType = ParameterType.Rpc
             };
             string hashKey = null;
             if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
@@ -70,7 +74,7 @@ namespace Silky.Rpc.Runtime.Client
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
 
-            var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id, parameters);
+            var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id);
             var result = await policy
                 .ExecuteAsync(async () =>
                 {
@@ -78,7 +82,70 @@ namespace Silky.Rpc.Runtime.Client
                         await _remoteInvoker.Invoke(remoteInvokeMessage,
                             serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
-                    return invokeResult.GetResult();
+                    return invokeResult.Result;
+                });
+
+            return result;
+        }
+
+        public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor,
+            IDictionary<string, object> parameters, string serviceKey = null)
+        {
+            var remoteInvokeMessage = new RemoteInvokeMessage()
+            {
+                ServiceEntryId = serviceEntryDescriptor.Id,
+                ServiceId = serviceEntryDescriptor.ServiceId,
+                DictParameters = parameters,
+                ParameterType = ParameterType.Dict
+            };
+            string hashKey = null;
+            if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
+            {
+                //  hashKey = serviceEntryDescriptor.GetHashKeyValue(parameters.ToArray());
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                    $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
+            }
+
+            var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id);
+            var result = await policy
+                .ExecuteAsync(async () =>
+                {
+                    var invokeResult =
+                        await _remoteInvoker.Invoke(remoteInvokeMessage,
+                            serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
+                            hashKey);
+                    return invokeResult.Result;
+                });
+
+            return result;
+        }
+
+        public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<ParameterFrom, object> parameters, string serviceKey = null)
+        {
+            var remoteInvokeMessage = new RemoteInvokeMessage()
+            {
+                ServiceEntryId = serviceEntryDescriptor.Id,
+                ServiceId = serviceEntryDescriptor.ServiceId,
+                HttpParameters = parameters,
+                ParameterType = ParameterType.Http
+            };
+            string hashKey = null;
+            if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
+            {
+                //  hashKey = serviceEntryDescriptor.GetHashKeyValue(parameters.ToArray());
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
+                    $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
+            }
+
+            var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id);
+            var result = await policy
+                .ExecuteAsync(async () =>
+                {
+                    var invokeResult =
+                        await _remoteInvoker.Invoke(remoteInvokeMessage,
+                            serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
+                            hashKey);
+                    return invokeResult.Result;
                 });
 
             return result;

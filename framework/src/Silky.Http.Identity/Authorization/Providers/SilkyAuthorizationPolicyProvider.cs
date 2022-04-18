@@ -12,13 +12,16 @@ namespace Silky.Http.Identity.Authorization.Providers;
 public sealed class SilkyAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider, IAuthorizationPolicyProvider
 {
     private readonly IServiceEntryManager _serviceEntryManager;
+    private readonly IServerManager _serverManager;
 
     public SilkyAuthorizationPolicyProvider(
         [NotNull] [ItemNotNull] IOptions<AuthorizationOptions> options,
-        IServiceEntryManager serviceEntryManager) :
+        IServiceEntryManager serviceEntryManager,
+        IServerManager serverManager) :
         base(options)
     {
         _serviceEntryManager = serviceEntryManager;
+        _serverManager = serverManager;
     }
 
     public override async Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
@@ -37,6 +40,18 @@ public sealed class SilkyAuthorizationPolicyProvider : DefaultAuthorizationPolic
             policyBuilder.Requirements.Add(new PermissionRequirement(policyName));
             return policyBuilder.Build();
         }
+
+        var serviceEntryDescriptors = _serverManager
+            .ServerDescriptors
+            .SelectMany(p => p.Services)
+            .SelectMany(p => p.ServiceEntries);
+        if (serviceEntryDescriptors.Any(sed => sed.AuthorizeData.Any(ad => ad.Policy == policyName)))
+        {
+            var policyBuilder = new AuthorizationPolicyBuilder(Array.Empty<string>());
+            policyBuilder.Requirements.Add(new PermissionRequirement(policyName));
+            return policyBuilder.Build();
+        }
+
 
         return null;
     }

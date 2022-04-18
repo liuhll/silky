@@ -57,6 +57,10 @@ namespace Silky.Core.Convertible
             {
                 instance = _serializer.Serialize(instance);
             }
+            else if (instance.GetType() != typeof(string))
+            {
+                instance = _serializer.Serialize(instance);
+            }
 
             return _serializer.Deserialize(conversionType, instance.ToString());
         }

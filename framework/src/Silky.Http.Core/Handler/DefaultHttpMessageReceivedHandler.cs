@@ -12,7 +12,6 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
-using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Extensions;
@@ -44,10 +43,11 @@ namespace Silky.Http.Core.Handlers
 
 
         protected override async Task HandleCallAsyncCore(HttpContext httpContext,
-            HttpContextServerCallContext serverCallContext)
+            HttpContextServerCallContext serverCallContext, ServiceEntry serviceEntry)
         {
             var sp = Stopwatch.StartNew();
-            var parameters = await _parameterParser.Parser(httpContext.Request, serverCallContext.ServiceEntry);
+            var parameters =
+                await _parameterParser.Parser(httpContext.Request, serviceEntry);
             RpcContext.Context.SetRequestParameters(_auditSerializer.Serialize(parameters));
             var serviceKey = await ResolveServiceKey(httpContext);
             if (!serviceKey.IsNullOrEmpty())
@@ -62,16 +62,19 @@ namespace Silky.Http.Core.Handlers
             var clientRpcEndpoint = rpcConnection.ClientHost;
             var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
             var messageId = GetMessageId(httpContext);
-            var serverHandleInfo = serverHandleMonitor?.Monitor((serverCallContext.ServiceEntry.Id, clientRpcEndpoint));
+            var serverHandleInfo =
+                serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
             var tracingTimestamp =
-                _httpHandleDiagnosticListener.TracingBefore(messageId, serverCallContext.ServiceEntry, httpContext,
+                _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry,
+                    httpContext,
                     parameters);
             object executeResult = null;
             var isHandleSuccess = true;
             var isFriendlyStatus = false;
             try
             {
-                executeResult = await _executor.Execute(serverCallContext.ServiceEntry, parameters, serviceKey);
+                executeResult =
+                    await _executor.Execute(serviceEntry, parameters, serviceKey);
                 var cancellationToken = serverCallContext.HttpContext.RequestAborted;
                 if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
                 {
@@ -83,7 +86,8 @@ namespace Silky.Http.Core.Handlers
                     }
                 }
 
-                _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serverCallContext.ServiceEntry,
+                _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
+                    serviceEntry,
                     httpContext,
                     executeResult);
             }
@@ -91,7 +95,8 @@ namespace Silky.Http.Core.Handlers
             {
                 isHandleSuccess = false;
                 isFriendlyStatus = ex.IsFriendlyException();
-                _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId, serverCallContext.ServiceEntry,
+                _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId,
+                    serviceEntry,
                     httpContext, ex,
                     ex.GetExceptionStatusCode());
                 throw;
@@ -101,13 +106,77 @@ namespace Silky.Http.Core.Handlers
                 sp.Stop();
                 if (isHandleSuccess)
                 {
-                    serverHandleMonitor?.ExecSuccess((serverCallContext.ServiceEntry.Id, clientRpcEndpoint),
+                    serverHandleMonitor?.ExecSuccess((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint),
                         sp.ElapsedMilliseconds,
                         serverHandleInfo);
                 }
                 else
                 {
-                    serverHandleMonitor?.ExecFail((serverCallContext.ServiceEntry?.Id, clientRpcEndpoint),
+                    serverHandleMonitor?.ExecFail((serverCallContext.ServiceEntryDescriptor?.Id, clientRpcEndpoint),
+                        !isFriendlyStatus,
+                        sp.ElapsedMilliseconds, serverHandleInfo);
+                }
+            }
+        }
+
+        protected override async Task HandleCallAsyncCore(HttpContext httpContext,
+            HttpContextServerCallContext serverCallContext,
+            ServiceEntryDescriptor serviceEntryDescriptor)
+        {
+            var sp = Stopwatch.StartNew();
+            var parameters =
+                await _parameterParser.Parser(httpContext.Request, serviceEntryDescriptor);
+            var serviceKey = await ResolveServiceKey(httpContext);
+            if (!serviceKey.IsNullOrEmpty())
+            {
+                RpcContext.Context.SetServiceKey(serviceKey);
+                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
+                    MiniProfileConstant.Route.State.FindServiceKey,
+                    $"serviceKey => {serviceKey}");
+            }
+
+            var rpcConnection = RpcContext.Context.Connection;
+            var clientRpcEndpoint = rpcConnection.ClientHost;
+            var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
+            var messageId = GetMessageId(httpContext);
+            var serverHandleInfo =
+                serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
+            object executeResult = null;
+            var isHandleSuccess = true;
+            var isFriendlyStatus = false;
+            try
+            {
+                executeResult =
+                    await _executor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+                var cancellationToken = serverCallContext.HttpContext.RequestAborted;
+                if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
+                {
+                    serverCallContext.WriteResponseHeaderCore();
+                    if (executeResult != null)
+                    {
+                        var responseData = _serializer.Serialize(executeResult);
+                        await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isHandleSuccess = false;
+                isFriendlyStatus = ex.IsFriendlyException();
+                throw;
+            }
+            finally
+            {
+                sp.Stop();
+                if (isHandleSuccess)
+                {
+                    serverHandleMonitor?.ExecSuccess((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint),
+                        sp.ElapsedMilliseconds,
+                        serverHandleInfo);
+                }
+                else
+                {
+                    serverHandleMonitor?.ExecFail((serverCallContext.ServiceEntryDescriptor?.Id, clientRpcEndpoint),
                         !isFriendlyStatus,
                         sp.ElapsedMilliseconds, serverHandleInfo);
                 }

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using IAnotherApplication;
+using IAnotherApplication.Dtos;
 using ITestApplication.Test;
 using Silky.Transaction.Tcc;
 
@@ -30,14 +31,21 @@ namespace AnotherHostDemo.AppService
         }
 
         public async Task<string> Create(string name)
+        
+        
+        
         {
-           // await _testAppService.Create(new TestInput() { Name = name });
-            return "ok";
+            // await _testAppService.Create(new TestDto() { Name = name });
+            return $"ok for {name}";
+        }
+
+        public async Task<TestDto> Test(TestDto input)
+        {
+            return input;
         }
 
         public void ReturnNullTest()
         {
-            
         }
 
         public async Task<string> DeleteTwoConfirm(string name)

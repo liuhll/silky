@@ -23,7 +23,7 @@ namespace Silky.Http.Dashboard.AppService
         ServerDescriptor GetHostDetail(string hostName);
         
         [HttpGet("host/{hostName}/instances")]
-        PagedList<GetHostInstanceOutput> GetHostInstances(string hostName, GetHostInstanceInput input);
+        Task<PagedList<GetHostInstanceOutput>> GetHostInstances(string hostName, GetHostInstanceInput input);
 
         [HttpGet("host/{hostName}/wsservices")]
         PagedList<GetWebSocketServiceOutput> GetWebSocketServices(string hostName, PagedRequestDto input);

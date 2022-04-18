@@ -26,6 +26,12 @@ namespace Silky.Rpc.CachingInterceptor
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {
             var serviceEntry = invocation.GetServiceEntry();
+            if (serviceEntry == null)
+            {
+                await invocation.ProceedAsync();
+                return;
+            }
+
             var serviceKey = invocation.GetServiceKey();
             var parameters = invocation.GetParameters();
 
@@ -65,7 +71,8 @@ namespace Silky.Rpc.CachingInterceptor
                     {
                         _distributedCache.SetIgnoreMultiTenancy(removeMatchKeyCachingInterceptProvider
                             .IgnoreMultiTenancy);
-                        var removeCacheKey = serviceEntry.GetCachingInterceptKey(parameters, removeMatchKeyCachingInterceptProvider);
+                        var removeCacheKey =
+                            serviceEntry.GetCachingInterceptKey(parameters, removeMatchKeyCachingInterceptProvider);
                         await _distributedCache.RemoveMatchKeyAsync(removeCacheKey);
                         Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.RemoveCaching + index,

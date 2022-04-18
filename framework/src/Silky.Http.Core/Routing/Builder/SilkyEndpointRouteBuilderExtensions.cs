@@ -15,15 +15,41 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(endpoints));
             }
 
-            return GetOrCreateDataSource(endpoints).DefaultBuilder;
+            return GetOrCreateServiceEntryDataSource(endpoints).DefaultBuilder;
+        }
+        
+        public static ServiceEntryDescriptorEndpointConventionBuilder MapSilkyTemplateServices(this IEndpointRouteBuilder endpoints)
+        {
+            if (endpoints == null)
+            {
+                throw new ArgumentNullException(nameof(endpoints));
+            }
+
+            return GetOrCreateServiceEntryDescriptorDataSource(endpoints).DefaultBuilder;
         }
 
-        private static SilkyServiceEntryEndpointDataSource GetOrCreateDataSource(IEndpointRouteBuilder endpoints)
+        private static SilkyServiceEntryEndpointDataSource GetOrCreateServiceEntryDataSource(
+            IEndpointRouteBuilder endpoints)
         {
             var dataSource = endpoints.DataSources.OfType<SilkyServiceEntryEndpointDataSource>().FirstOrDefault();
             if (dataSource == null)
             {
                 dataSource = endpoints.ServiceProvider.GetRequiredService<SilkyServiceEntryEndpointDataSource>();
+                endpoints.DataSources.Add(dataSource);
+            }
+
+            return dataSource;
+        }
+
+        private static SilkyServiceEntryDescriptorEndpointDataSource GetOrCreateServiceEntryDescriptorDataSource(
+            IEndpointRouteBuilder endpoints)
+        {
+            var dataSource = endpoints.DataSources.OfType<SilkyServiceEntryDescriptorEndpointDataSource>()
+                .FirstOrDefault();
+            if (dataSource == null)
+            {
+                dataSource =
+                    endpoints.ServiceProvider.GetRequiredService<SilkyServiceEntryDescriptorEndpointDataSource>();
                 endpoints.DataSources.Add(dataSource);
             }
 

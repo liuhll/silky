@@ -6,7 +6,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core;
 
-public class QueryStringValueProvider : ServiceEntryValueProvider
+public class QueryStringValueProvider : ParameterValueProvider
 {
     private readonly IQueryCollection _values;
     private PrefixContainer _prefixContainer;

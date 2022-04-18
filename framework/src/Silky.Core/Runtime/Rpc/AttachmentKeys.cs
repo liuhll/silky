@@ -47,5 +47,7 @@ namespace Silky.Core.Runtime.Rpc
         public const string MessageId = "MessageId";
 
         public const string RequestParameters = "RequestParameters";
+
+        public const string ValidationParametersInClient = "ValidationParametersInClient";
     }
 }

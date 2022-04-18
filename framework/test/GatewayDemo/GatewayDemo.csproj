@@ -8,8 +8,8 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.Auditing\Silky.Http.Auditing.csproj" />
-        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
-        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
+<!--        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />-->
+<!--        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />-->
 <!--        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />-->
 <!--        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />-->
     </ItemGroup>

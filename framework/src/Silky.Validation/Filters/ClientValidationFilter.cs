@@ -2,13 +2,14 @@ using System;
 using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Validation.Filters
 {
-    public class ValidationFilter : IClientFilter, IScopedDependency
+    public class ClientValidationFilter : IClientFilter, IScopedDependency
     {
         public int Order { get; } = Int32.MaxValue;
 
@@ -16,7 +17,7 @@ namespace Silky.Validation.Filters
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private AppSettingsOptions _appSettingsOptions;
 
-        public ValidationFilter(IMethodInvocationValidator methodInvocationValidator,
+        public ClientValidationFilter(IMethodInvocationValidator methodInvocationValidator,
             IOptionsMonitor<AppSettingsOptions> appSettingsOptions,
             IServiceEntryLocator serviceEntryLocator)
         {
@@ -29,9 +30,12 @@ namespace Silky.Validation.Filters
         public void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage)
         {
             if (!_appSettingsOptions.AutoValidationParameters) return;
+            if (remoteInvokeMessage.ParameterType != ParameterType.Rpc) return;
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
+            if (serviceEntry == null) return;
             _methodInvocationValidator.Validate(
                 new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);
         }
 
         public void OnActionExecuted(RemoteResultMessage context)

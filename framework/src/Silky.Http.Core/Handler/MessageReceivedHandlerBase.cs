@@ -25,14 +25,46 @@ namespace Silky.Http.Core.Handlers
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             Check.NotNull(httpContext, nameof(httpContext));
 
-            var serverCallContext = new HttpContextServerCallContext(httpContext, serviceEntry, _serializer, Logger);
+            var serverCallContext = new HttpContextServerCallContext(httpContext,
+                serviceEntry.ServiceEntryDescriptor,
+                _serializer, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
 
             try
             {
                 serverCallContext.Initialize();
 
-                var handleCallTask = HandleCallAsyncCore(httpContext, serverCallContext);
+                var handleCallTask = HandleCallAsyncCore(httpContext, serverCallContext, serviceEntry);
+                if (handleCallTask.IsCompletedSuccessfully)
+                {
+                    return serverCallContext.EndCallAsync();
+                }
+                else
+                {
+                    return AwaitHandleCall(serverCallContext, handleCallTask);
+                }
+            }
+            catch (Exception ex)
+            {
+                return serverCallContext.ProcessHandlerErrorAsync(ex);
+            }
+        }
+
+        public Task Handle(ServiceEntryDescriptor serviceEntryDescriptor, HttpContext httpContext)
+        {
+            Check.NotNull(serviceEntryDescriptor, nameof(serviceEntryDescriptor));
+            Check.NotNull(httpContext, nameof(httpContext));
+
+            var serverCallContext = new HttpContextServerCallContext(httpContext,
+                serviceEntryDescriptor,
+                _serializer, Logger);
+            httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
+
+            try
+            {
+                serverCallContext.Initialize();
+
+                var handleCallTask = HandleCallAsyncCore(httpContext, serverCallContext, serviceEntryDescriptor);
                 if (handleCallTask.IsCompletedSuccessfully)
                 {
                     return serverCallContext.EndCallAsync();
@@ -62,6 +94,10 @@ namespace Silky.Http.Core.Handlers
         }
 
         protected abstract Task HandleCallAsyncCore(HttpContext httpContext,
-            HttpContextServerCallContext serverCallContext);
+            HttpContextServerCallContext serverCallContext, ServiceEntry serviceEntry);
+
+        protected abstract Task HandleCallAsyncCore(HttpContext httpContext,
+            HttpContextServerCallContext serverCallContext,
+            ServiceEntryDescriptor serviceEntryDescriptor);
     }
 }

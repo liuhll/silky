@@ -7,8 +7,12 @@ namespace Silky.Rpc.Extensions
     {
         public static ServiceEntry GetServiceEntry(this ISilkyMethodInvocation invocation)
         {
-            var serviceEntry = invocation.ArgumentsDictionary["serviceEntry"] as ServiceEntry;
-            return serviceEntry;
+            if (invocation.ArgumentsDictionary.TryGetValue("serviceEntry", out var serviceEntry))
+            {
+                return serviceEntry as ServiceEntry;
+            }
+
+            return null;
         }
 
         public static string GetServiceKey(this ISilkyMethodInvocation invocation)

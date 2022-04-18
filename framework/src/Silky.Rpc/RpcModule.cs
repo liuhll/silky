@@ -63,6 +63,7 @@ namespace Silky.Rpc
 
             RegisterServicesForAddressSelector(builder);
             RegisterServicesExecutor(builder);
+            RegisterServicesForParameterResolver(builder);
         }
 
         public override async Task Initialize(ApplicationContext applicationContext)
@@ -126,6 +127,24 @@ namespace Silky.Rpc
                 .SingleInstance()
                 .AsSelf()
                 .Named<IRpcEndpointSelector>(ShuntStrategy.HashAlgorithm.ToString());
+        }
+
+        private void RegisterServicesForParameterResolver(ContainerBuilder builder)
+        {
+            builder.RegisterType<TemplateParameterResolver>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IParameterResolver>(ParameterType.Dict.ToString());
+
+            builder.RegisterType<RpcParameterResolver>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IParameterResolver>(ParameterType.Rpc.ToString());
+
+            builder.RegisterType<HttpParameterResolver>()
+                .SingleInstance()
+                .AsSelf()
+                .Named<IParameterResolver>(ParameterType.Http.ToString());
         }
 
         private void RegisterServicesExecutor(ContainerBuilder builder)

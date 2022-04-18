@@ -95,7 +95,7 @@ namespace Silky.Http.Dashboard.AppService
             return serverDescriptor;
         }
 
-        public PagedList<GetHostInstanceOutput> GetHostInstances(string hostName,
+        public async Task<PagedList<GetHostInstanceOutput>> GetHostInstances(string hostName,
             GetHostInstanceInput input)
         {
             var server = _serverManager.GetServer(hostName);
@@ -104,20 +104,28 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"There is no server for {hostName}");
             }
 
-            var hostInstances = server.Endpoints
-                    .Select(p => new GetHostInstanceOutput()
-                    {
-                        HostName = server.HostName,
-                        IsHealth = _serverHealthCheck.IsHealth(p).GetAwaiter().GetResult(),
-                        Address = p.GetAddress(),
-                        Host = p.Host,
-                        Port = p.Port,
-                        IsEnable = p.Enabled,
-                        LastDisableTime = p.LastDisableTime,
-                        ServiceProtocol = p.ServiceProtocol,
-                    })
-                    .WhereIf(input.ServiceProtocol.HasValue, p => p.ServiceProtocol == input.ServiceProtocol)
-                ;
+            var hostInstances = new List<GetHostInstanceOutput>();
+
+            foreach (var endpoint in server.Endpoints)
+            {
+                if (input.ServiceProtocol.HasValue && input.ServiceProtocol != endpoint.ServiceProtocol)
+                {
+                    continue;
+                }
+
+                var isHealth = await _serverHealthCheck.IsHealth(endpoint);
+                hostInstances.Add(new GetHostInstanceOutput()
+                {
+                    HostName = server.HostName,
+                    IsHealth = isHealth,
+                    Address = endpoint.GetAddress(),
+                    Host = endpoint.Host,
+                    Port = endpoint.Port,
+                    IsEnable = endpoint.Enabled,
+                    LastDisableTime = endpoint.LastDisableTime,
+                    ServiceProtocol = endpoint.ServiceProtocol,
+                });
+            }
 
             return hostInstances.ToPagedList(input.PageIndex, input.PageSize);
         }
@@ -325,6 +333,8 @@ namespace Silky.Http.Dashboard.AppService
                 throw new BusinessException($"There is no service entry with id {serviceEntryId}");
             }
 
+            var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
+
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryOutput.ServiceEntryId);
             var serviceEntryDetailOutput = new GetServiceEntryDetailOutput()
             {
@@ -341,21 +351,23 @@ namespace Silky.Http.Dashboard.AppService
                 MultipleServiceKey = serviceEntryOutput.MultipleServiceKey,
                 IsEnable = serviceEntryOutput.IsEnable,
                 ServerInstanceCount = serviceEntryOutput.ServerInstanceCount,
-                Governance = serviceEntry?.GovernanceOptions,
-                CacheTemplates = serviceEntry?.CustomAttributes.OfType<ICachingInterceptProvider>().Select(p =>
-                    new ServiceEntryCacheTemplateOutput()
-                    {
-                        KeyTemplete = p.KeyTemplete,
-                        OnlyCurrentUserData = p.OnlyCurrentUserData,
-                        CachingMethod = p.CachingMethod
-                    }).ToArray(),
+                Governance = serviceEntryDescriptor.GovernanceOptions,
+                CacheTemplates = serviceEntry?.CustomAttributes.OfType<ICachingInterceptProvider>().Select(
+                    p =>
+                        new ServiceEntryCacheTemplateOutput()
+                        {
+                            KeyTemplete = p.KeyTemplete,
+                            OnlyCurrentUserData = p.OnlyCurrentUserData,
+                            CachingMethod = p.CachingMethod
+                        }).ToArray(),
                 ServiceKeys = serviceEntryOutput.ServiceKeys,
                 IsDistributeTransaction = serviceEntryOutput.IsDistributeTransaction,
-                Fallback = serviceEntry?.CustomAttributes.OfType<FallbackAttribute>().Select(p => new FallbackOutput()
-                {
-                    TypeName = p.Type.FullName,
-                    MethodName = p.MethodName ?? serviceEntry?.MethodInfo.Name,
-                }).FirstOrDefault()
+                Fallback = serviceEntry?.CustomAttributes.OfType<FallbackAttribute>().Select(p =>
+                    new FallbackOutput()
+                    {
+                        TypeName = p.Type.FullName,
+                        MethodName = p.MethodName ?? serviceEntry?.MethodInfo.Name,
+                    }).FirstOrDefault()
             };
 
             return serviceEntryDetailOutput;

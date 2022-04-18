@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Primitives;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Runtime.Rpc;
@@ -17,31 +20,22 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultServerManager : IServerManager, ISingletonDependency
     {
-        private readonly ConcurrentDictionary<string, IServer> _serverCache = new();
+        private ConcurrentDictionary<string, IServer> _serverCache = null;
 
-        private readonly ConcurrentDictionary<string, ServiceEntryDescriptor> _serviceEntryDescriptors = new();
+        private readonly ConcurrentDictionary<string, ServiceEntryDescriptor> _serviceEntryDescriptorCacheForId = new();
+
+        private readonly ConcurrentDictionary<(string, HttpMethod), ServiceEntryDescriptor>
+            _serviceEntryDescriptorCacheForApi = new();
 
         private readonly ConcurrentDictionary<string, IRpcEndpoint[]> _rpcRpcEndpointCache = new();
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
+        private readonly object _lock;
+        private IChangeToken _changeToken;
+        private CancellationTokenSource _cancellationTokenSource;
+
         public ILogger<DefaultServerManager> Logger { get; set; }
 
-        public ServiceEntryDescriptor GetServiceEntryDescriptor(string serviceEntryId)
-        {
-            if (_serviceEntryDescriptors.TryGetValue(serviceEntryId, out var serviceEntryDescriptor))
-            {
-                return serviceEntryDescriptor;
-            }
-
-            serviceEntryDescriptor = _serverCache.Values
-                .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
-                .FirstOrDefault(p => p.Id == serviceEntryId);
-            _serviceEntryDescriptors.TryAdd(serviceEntryId, serviceEntryDescriptor);
-            return serviceEntryDescriptor;
-        }
-
-        public event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
-        public event OnUpdateRpcEndpoint OnUpdateRpcEndpoint;
 
         public DefaultServerManager(IRpcEndpointMonitor rpcEndpointMonitor)
         {
@@ -49,7 +43,67 @@ namespace Silky.Rpc.Runtime.Server
             _rpcEndpointMonitor.OnRemoveRpcEndpoint += RemoveRpcEndpointHandler;
             _rpcEndpointMonitor.OnStatusChange += HealthChangeHandler;
             Logger = NullLogger<DefaultServerManager>.Instance;
+
+            _lock = new object();
         }
+
+        public ServiceEntryDescriptor GetServiceEntryDescriptor(string serviceEntryId)
+        {
+            if (_serviceEntryDescriptorCacheForId.TryGetValue(serviceEntryId, out var serviceEntryDescriptor))
+            {
+                return serviceEntryDescriptor;
+            }
+
+            serviceEntryDescriptor = _serverCache.Values
+                .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
+                .FirstOrDefault(p => p.Id == serviceEntryId);
+            _serviceEntryDescriptorCacheForId.TryAdd(serviceEntryId, serviceEntryDescriptor);
+            return serviceEntryDescriptor;
+        }
+
+        public ServiceEntryDescriptor GetServiceEntryDescriptor(string api, HttpMethod httpMethod)
+        {
+            if (_serviceEntryDescriptorCacheForApi.TryGetValue((api, httpMethod), out var serviceEntryDescriptor))
+            {
+                return serviceEntryDescriptor;
+            }
+
+            serviceEntryDescriptor = _serverCache.Values
+                .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
+                .FirstOrDefault(p => p.WebApi == api && p.HttpMethod == httpMethod);
+            _serviceEntryDescriptorCacheForApi.TryAdd((api, httpMethod), serviceEntryDescriptor);
+            return serviceEntryDescriptor;
+        }
+
+        public event OnRemoveRpcEndpoint OnRemoveRpcEndpoint;
+        public event OnUpdateRpcEndpoint OnUpdateRpcEndpoint;
+
+        public IChangeToken GetChangeToken()
+        {
+            Initialize();
+            Debug.Assert(_serverCache != null);
+            Debug.Assert(_changeToken != null);
+            return _changeToken;
+        }
+
+        private void Initialize()
+        {
+            if (_serverCache == null)
+            {
+                lock (_lock)
+                {
+                    if (_serverCache == null)
+                    {
+                        _serverCache = new ConcurrentDictionary<string, IServer>();
+                        var oldCancellationTokenSource = _cancellationTokenSource;
+                        _cancellationTokenSource = new CancellationTokenSource();
+                        _changeToken = new CancellationChangeToken(_cancellationTokenSource.Token);
+                        oldCancellationTokenSource?.Cancel();
+                    }
+                }
+            }
+        }
+
 
         private async Task HealthChangeHandler(IRpcEndpoint rpcEndpoint, bool isHealth)
         {
@@ -96,28 +150,37 @@ namespace Silky.Rpc.Runtime.Server
         public void Update([NotNull] IServer server)
         {
             Check.NotNull(server, nameof(server));
-            var cacheServer = _serverCache.GetValueOrDefault(server.HostName);
-            if (server.Equals(cacheServer))
+            Initialize();
+            lock (_lock)
             {
-                Logger.LogDebug(
-                    "The cached server data of [{0}] is consistent with the routing data of the service registry, no need to update",
-                    server.HostName);
-                return;
+                var cacheServer = _serverCache.GetValueOrDefault(server.HostName);
+                if (server.Equals(cacheServer))
+                {
+                    Logger.LogDebug(
+                        "The cached server data of [{0}] is consistent with the routing data of the service registry, no need to update",
+                        server.HostName);
+                    return;
+                }
+
+                _serverCache.AddOrUpdate(server.HostName, server, (k, v) => server);
+                Logger.LogInformation(
+                    "Update the server [{0}] data cache," +
+                    "The instance endpoints of the server provider is: {1}[{2}]",
+                    server.HostName, Environment.NewLine, string.Join(',', server.Endpoints.Select(p => p.ToString())));
+
+                foreach (var rpcEndpoint in server.Endpoints)
+                {
+                    _rpcEndpointMonitor.Monitor(rpcEndpoint);
+                    RemoveRpcEndpointCache(rpcEndpoint);
+                }
+
+                OnUpdateRpcEndpoint?.Invoke(server.HostName, server.Endpoints.ToArray());
+
+                var oldCancellationTokenSource = _cancellationTokenSource;
+                _cancellationTokenSource = new CancellationTokenSource();
+                _changeToken = new CancellationChangeToken(_cancellationTokenSource.Token);
+                oldCancellationTokenSource?.Cancel();
             }
-
-            _serverCache.AddOrUpdate(server.HostName, server, (k, v) => server);
-            Logger.LogInformation(
-                "Update the server [{0}] data cache," +
-                "The instance endpoints of the server provider is: {1}[{2}]",
-                server.HostName, Environment.NewLine, string.Join(',', server.Endpoints.Select(p => p.ToString())));
-
-            foreach (var rpcEndpoint in server.Endpoints)
-            {
-                _rpcEndpointMonitor.Monitor(rpcEndpoint);
-                RemoveRpcEndpointCache(rpcEndpoint);
-            }
-
-            OnUpdateRpcEndpoint?.Invoke(server.HostName, server.Endpoints.ToArray());
         }
 
         public void Remove(string hostName)

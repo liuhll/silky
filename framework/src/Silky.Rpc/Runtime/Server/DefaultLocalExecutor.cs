@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
@@ -17,8 +18,6 @@ namespace Silky.Rpc.Runtime.Server
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
             var instance = EngineContext.Current.ResolveServiceInstance(serviceKey, serviceEntry.ServiceType);
-            parameters = serviceEntry.ConvertParameters(parameters);
-
             var filters = _serverFilterProvider.GetServerFilters(serviceEntry, instance.GetType());
             var rpcActionExecutingContext = new ServerExecutingContext()
             {
@@ -76,6 +75,11 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             return rpcActionExecutedContext.Result;
+        }
+
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<ParameterFrom, object> parameters, string serviceKey)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -14,6 +14,10 @@ namespace Silky.Http.Core
             services.AddSingleton<IParameterParser, DefaultHttpRequestParameterParser>();
             services.AddSingleton<SilkyServiceEntryEndpointDataSource>();
             services.AddSingleton<ServiceEntryEndpointFactory>();
+
+            services.AddSingleton<SilkyServiceEntryDescriptorEndpointDataSource>();
+            services.AddSingleton<ServiceEntryDescriptorEndpointFactory>();
+
             services.AddOptions<GatewayOptions>()
                 .Bind(EngineContext.Current.Configuration.GetSection(GatewayOptions.Gateway));
             services.AddHttpContextAccessor();
