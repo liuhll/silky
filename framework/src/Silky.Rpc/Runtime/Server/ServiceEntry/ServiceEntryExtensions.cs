@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Rpc.Auditing;
 
 namespace Silky.Rpc.Runtime.Server
@@ -113,11 +114,53 @@ namespace Silky.Rpc.Runtime.Server
                                       .Any();
             return disableAuditing;
         }
+        
+        public static string GetCacheName([NotNull] this ServiceEntry serviceEntry)
+        {
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+            var returnType = serviceEntry.ReturnType;
+            var cacheNameAttribute = returnType.GetCustomAttributes().OfType<CacheNameAttribute>().FirstOrDefault();
+            if (cacheNameAttribute != null)
+            {
+                return cacheNameAttribute.Name;
+            }
+
+            return returnType.FullName.RemovePostFix("CacheItem");
+        }
 
         public static bool IsEnableAuditing(this ServiceEntry serviceEntry, bool isEnable)
         {
             return isEnable && !serviceEntry.DisableAuditing();
         }
+
+        public static ICollection<ICachingInterceptProvider> GetAllCachingInterceptProviders(this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().ToList();
+        }
+        
+        public static ICachingInterceptProvider GetGetCachingInterceptProvider(this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IGetCachingInterceptProvider>().FirstOrDefault();
+        }
+
+        public static ICachingInterceptProvider UpdateCachingInterceptProvider(this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IUpdateCachingInterceptProvider>().FirstOrDefault();
+        }
+
+        public static IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders(
+            this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IRemoveCachingInterceptProvider>().ToArray();
+        }
+
+        public static IReadOnlyCollection<IRemoveMatchKeyCachingInterceptProvider>
+            RemoveMatchKeyCachingInterceptProviders(
+                this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<IRemoveMatchKeyCachingInterceptProvider>().ToArray();
+        }
+
 
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,
             ITypeConvertibleService typeConvertibleService)

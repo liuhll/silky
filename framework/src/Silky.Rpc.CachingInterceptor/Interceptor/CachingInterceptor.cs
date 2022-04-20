@@ -81,7 +81,7 @@ namespace Silky.Rpc.CachingInterceptor
                     }
                 }
 
-                var getCachingInterceptProvider = serviceEntry.GetCachingInterceptProvider();
+                var getCachingInterceptProvider = serviceEntry.GetGetCachingInterceptProvider();
                 var updateCachingInterceptProvider = serviceEntry.UpdateCachingInterceptProvider();
                 if (getCachingInterceptProvider != null)
                 {
@@ -96,7 +96,7 @@ namespace Silky.Rpc.CachingInterceptor
                     {
                         _distributedCache.SetIgnoreMultiTenancy(getCachingInterceptProvider.IgnoreMultiTenancy);
                         var getCacheKey = serviceEntry.GetCachingInterceptKey(parameters,
-                            serviceEntry.GetCachingInterceptProvider());
+                            serviceEntry.GetGetCachingInterceptProvider());
                         Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
                             MiniProfileConstant.Caching.State.GetCaching,
                             $"Ready to get data from the cache service:[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{getCacheKey}]");

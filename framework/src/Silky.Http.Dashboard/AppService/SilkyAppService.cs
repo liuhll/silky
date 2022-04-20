@@ -12,7 +12,6 @@ using Silky.Core.Runtime.Rpc;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Http.Dashboard.Configuration;
-using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.RegistryCenters;

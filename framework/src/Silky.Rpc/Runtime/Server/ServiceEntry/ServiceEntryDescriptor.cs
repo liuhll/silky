@@ -35,6 +35,8 @@ namespace Silky.Rpc.Runtime.Server
 
         public ServiceEntryGovernance GovernanceOptions { get; set; }
 
+        public ICollection<CachingInterceptorDescriptor> CachingInterceptorDescriptors { get; set; }
+
         public T GetMetadata<T>(string name, T def = default(T))
         {
             if (!Metadatas.ContainsKey(name))

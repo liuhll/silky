@@ -1,4 +1,4 @@
-namespace Silky.Rpc.CachingInterceptor.Providers;
+namespace Silky.Rpc.Runtime.Server;
 
 public interface IRemoveMatchKeyCachingInterceptProvider : ICachingInterceptProvider
 {
