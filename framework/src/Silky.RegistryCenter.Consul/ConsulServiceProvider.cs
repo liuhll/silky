@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Threading.Tasks;
@@ -46,6 +47,11 @@ namespace Silky.RegistryCenter.Consul
 
             using var consulClient = _consulClientFactory.CreateClient();
             var getKvResult = await consulClient.KV.Get(string.Format(servicePath, serverName));
+            if (getKvResult.StatusCode == HttpStatusCode.NotFound)
+            {
+                return Array.Empty<ServiceDescriptor>();
+            }
+
             if (getKvResult.StatusCode != HttpStatusCode.OK)
             {
                 throw new SilkyException("Get services from consul error");
