@@ -19,5 +19,17 @@ namespace Silky.Rpc.Runtime
             var remoteExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
             return remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey);
         }
+
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters, string serviceKey = null)
+        {
+            var remoteExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
+            return remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+        }
+
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters, string serviceKey = null)
+        {
+            var remoteExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
+            return remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+        }
     }
 }

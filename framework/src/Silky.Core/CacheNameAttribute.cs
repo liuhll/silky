@@ -1,10 +1,9 @@
 using System;
 using System.Linq;
 using JetBrains.Annotations;
-using Silky.Core;
 using Silky.Core.Extensions;
 
-namespace Silky.Caching
+namespace Silky.Core
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct)]
     public class CacheNameAttribute : Attribute

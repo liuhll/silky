@@ -26,8 +26,9 @@ namespace IAnotherApplication
 
         Task<string> Create(string name);
 
+        [GetCachingIntercept("another:name:{0}")]
         Task<TestDto> Test(TestDto input);
-        
-        void ReturnNullTest();
+
+        Task ReturnNullTest();
     }
 }

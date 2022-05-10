@@ -18,9 +18,10 @@ namespace Silky.Rpc.Runtime.Server
             HttpMethodInfo httpMethodInfo)
         {
             var parameterDescriptors = new List<ParameterDescriptor>();
+            var index = 0;
             foreach (var parameter in methodInfo.GetParameters())
             {
-                var parameterDescriptor = CreateParameterDescriptor(methodInfo, parameter, httpMethodInfo);
+                var parameterDescriptor = CreateParameterDescriptor(methodInfo, parameter, httpMethodInfo, index);
                 if (parameterDescriptor.From == ParameterFrom.Body &&
                     parameterDescriptors.Any(p => p.From == ParameterFrom.Body))
                 {
@@ -28,13 +29,14 @@ namespace Silky.Rpc.Runtime.Server
                 }
 
                 parameterDescriptors.Add(parameterDescriptor);
+                index += 1;
             }
 
             return parameterDescriptors.ToImmutableList();
         }
 
         private ParameterDescriptor CreateParameterDescriptor(MethodInfo methodInfo, ParameterInfo parameter,
-            HttpMethodInfo httpMethodInfo)
+            HttpMethodInfo httpMethodInfo, int index)
         {
             var bindingSourceMetadata =
                 parameter.GetCustomAttributes().OfType<IBindingSourceMetadata>().FirstOrDefault();
@@ -53,7 +55,7 @@ namespace Silky.Rpc.Runtime.Server
                     throw new SilkyException($"Route type parameters are not allowed to be complex data types");
                 }
 
-                parameterDescriptor = new ParameterDescriptor(parameterFrom, parameter);
+                parameterDescriptor = new ParameterDescriptor(parameterFrom, parameter, index);
             }
             else
             {
@@ -65,8 +67,8 @@ namespace Silky.Rpc.Runtime.Server
                     if (httpMethodAttribute == null)
                     {
                         parameterDescriptor = parameter.IsSampleType()
-                            ? new ParameterDescriptor(ParameterFrom.Path, parameter)
-                            : new ParameterDescriptor(ParameterFrom.Query, parameter);
+                            ? new ParameterDescriptor(ParameterFrom.Path, parameter, index)
+                            : new ParameterDescriptor(ParameterFrom.Query, parameter, index);
                     }
                     else
                     {
@@ -82,6 +84,7 @@ namespace Silky.Rpc.Runtime.Server
                                 {
                                     parameterDescriptor =
                                         new ParameterDescriptor(ParameterFrom.Path, parameter,
+                                            index,
                                             TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment),
                                             routeTemplateSegment);
                                     parameterFromPath = true;
@@ -91,22 +94,22 @@ namespace Silky.Rpc.Runtime.Server
 
                             if (!parameterFromPath)
                             {
-                                parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter);
+                                parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter, index);
                             }
                         }
                         else
                         {
                             parameterDescriptor = parameter.IsSampleType()
-                                ? new ParameterDescriptor(ParameterFrom.Path, parameter)
-                                : new ParameterDescriptor(ParameterFrom.Query, parameter);
+                                ? new ParameterDescriptor(ParameterFrom.Path, parameter, index)
+                                : new ParameterDescriptor(ParameterFrom.Query, parameter, index);
                         }
                     }
                 }
                 else
                 {
                     parameterDescriptor = httpMethodInfo.HttpMethod == HttpMethod.Get
-                        ? new ParameterDescriptor(ParameterFrom.Query, parameter)
-                        : new ParameterDescriptor(ParameterFrom.Body, parameter);
+                        ? new ParameterDescriptor(ParameterFrom.Query, parameter, index)
+                        : new ParameterDescriptor(ParameterFrom.Body, parameter, index);
                 }
             }
 

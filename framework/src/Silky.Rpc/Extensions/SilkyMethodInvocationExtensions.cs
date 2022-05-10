@@ -14,6 +14,16 @@ namespace Silky.Rpc.Extensions
 
             return null;
         }
+        
+        public static ServiceEntryDescriptor GetServiceEntryDescriptor(this ISilkyMethodInvocation invocation)
+        {
+            if (invocation.ArgumentsDictionary.TryGetValue("serviceEntryDescriptor", out var serviceEntryDescriptor))
+            {
+                return serviceEntryDescriptor as ServiceEntryDescriptor;
+            }
+
+            return null;
+        }
 
         public static string GetServiceKey(this ISilkyMethodInvocation invocation)
         {
@@ -24,6 +34,12 @@ namespace Silky.Rpc.Extensions
         public static object[] GetParameters(this ISilkyMethodInvocation invocation)
         {
             var parameters = invocation.ArgumentsDictionary["parameters"] as object[];
+            return parameters;
+        }
+        
+        public static object GetServiceEntryDescriptorParameters(this ISilkyMethodInvocation invocation)
+        {
+            var parameters = invocation.ArgumentsDictionary["parameters"];
             return parameters;
         }
     }

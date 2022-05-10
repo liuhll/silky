@@ -7,7 +7,6 @@ using ITestApplication.Test.Fallback;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Security;
@@ -24,10 +23,10 @@ namespace ITestApplication.Test
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        //[GetCachingIntercept("name:{0}")]
+        [GetCachingIntercept("name:{0}")]
         //[UnitOfWork]
-       // [Fallback(typeof(ICreateFallback))]
-      //  [Authorize(Roles = "Administrator, PowerUser")]
+        // [Fallback(typeof(ICreateFallback))]
+        //  [Authorize(Roles = "Administrator, PowerUser")]
         [TestClientFilter(1)]
         Task<TestOut> Create(TestInput input);
 
@@ -73,7 +72,7 @@ namespace ITestApplication.Test
         Task<string> UpdatePart(TestInput input);
 
         Task<IList<object>> GetObjectList();
-        
+
         Task<object> GetObject();
 
         Task<OcrOutput> GetOcr();

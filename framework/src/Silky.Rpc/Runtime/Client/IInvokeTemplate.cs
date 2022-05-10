@@ -5,7 +5,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Rpc.Runtime.Client;
 
-public interface IInvokeTemplate : IScopedDependency
+public interface IInvokeTemplate : ITransientDependency
 {
     Task<T> GetForObjectAsync<T>(string api, params object[] parameters);
 
@@ -58,7 +58,7 @@ public interface IInvokeTemplate : IScopedDependency
     Task InvokeByServiceEntryId(string serviceEntryId, params object[] parameters);
 
     Task InvokeByServiceEntryId(string serviceEntryId, IDictionary<string, object> parameters);
-    
+
     Task InvokeByWebApi(string api, HttpMethod httpMethod, params object[] parameters);
 
     Task InvokeByWebApi(string api, HttpMethod httpMethod, IDictionary<string, object> parameters);

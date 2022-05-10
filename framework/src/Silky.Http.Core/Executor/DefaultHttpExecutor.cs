@@ -24,5 +24,15 @@ namespace Silky.Http.Core.Executor
         {
             return _executor.Execute(serviceEntryDescriptor, parameters, serviceKey);
         }
+
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters, string serviceKey = null)
+        {
+            return _executor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+        }
+
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters, string serviceKey = null)
+        {
+            return _executor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+        }
     }
 }

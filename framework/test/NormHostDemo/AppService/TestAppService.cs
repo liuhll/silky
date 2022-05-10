@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using IAnotherApplication;
 using ITestApplication.Test;
@@ -48,8 +49,13 @@ namespace NormHostDemo.AppService
             var test = input.Adapt<Test>();
            // throw new BusinessException("error",1010);
           //  var result = await _testRepository.InsertNowAsync(test);
-          _anotherAppService.ReturnNullTest();
-          return null;
+          await _anotherAppService.ReturnNullTest();
+          return new TestOut()
+          {
+              Name = input.Name,
+              Address = input.Address,
+              Id = input.Ids.First()
+          };
         }
 
         public Task CreateOrUpdateAsync(TestInput input)

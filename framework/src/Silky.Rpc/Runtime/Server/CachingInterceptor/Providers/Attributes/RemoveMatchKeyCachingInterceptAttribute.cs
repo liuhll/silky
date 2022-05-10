@@ -1,9 +1,8 @@
 using System;
 using JetBrains.Annotations;
 using Silky.Core;
-using Silky.Rpc.CachingInterceptor.Providers;
 
-namespace Silky.Rpc.CachingInterceptor;
+namespace Silky.Rpc.Runtime.Server;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class RemoveMatchKeyCachingInterceptAttribute : Attribute, IRemoveMatchKeyCachingInterceptProvider

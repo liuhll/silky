@@ -44,8 +44,9 @@ namespace AnotherHostDemo.AppService
             return input;
         }
 
-        public void ReturnNullTest()
+        public Task ReturnNullTest()
         {
+            return Task.CompletedTask;
         }
 
         public async Task<string> DeleteTwoConfirm(string name)

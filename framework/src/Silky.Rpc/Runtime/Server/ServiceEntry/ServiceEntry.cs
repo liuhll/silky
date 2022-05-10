@@ -60,7 +60,6 @@ namespace Silky.Rpc.Runtime.Server
             var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
             ReConfiguration(governanceProvider);
 
-
             _methodExecutor = methodInfo.CreateExecutor(serviceType);
             Executor = CreateExecutor();
             AuthorizeData = CreateAuthorizeData();
@@ -70,6 +69,51 @@ namespace Silky.Rpc.Runtime.Server
             CreateFallBackExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
+            CreateCachingInterceptorDescriptors();
+        }
+
+        private void CreateCachingInterceptorDescriptors()
+        {
+            var cachingInterceptorDescriptors = new List<CachingInterceptorDescriptor>();
+            var cachingInterceptorProviders = this.GetAllCachingInterceptProviders();
+            foreach (var cachingInterceptorProvider in cachingInterceptorProviders)
+            {
+                var cachingInterceptorDescriptor = new CachingInterceptorDescriptor()
+                {
+                    KeyTemplete = cachingInterceptorProvider.KeyTemplete,
+                    OnlyCurrentUserData = cachingInterceptorProvider.OnlyCurrentUserData,
+                    IgnoreMultiTenancy = cachingInterceptorProvider.IgnoreMultiTenancy,
+                    CachingMethod = cachingInterceptorProvider.CachingMethod,
+                    CacheName = this.GetCacheName(),
+                    IsRemoveMatchKeyProvider = cachingInterceptorProvider is IRemoveMatchKeyCachingInterceptProvider,
+                    
+                };
+                if (cachingInterceptorProvider is IRemoveCachingInterceptProvider removeCachingInterceptProvider)
+                {
+                    cachingInterceptorDescriptor.CacheName = removeCachingInterceptProvider.CacheName;
+                }
+
+                foreach (var parameterDescriptor in ParameterDescriptors)
+                {
+                    foreach (var cacheKey in parameterDescriptor.CacheKeys)
+                    {
+                        cachingInterceptorDescriptor
+                            .CacheKeyProviders
+                            .Add(new CacheKeyProviderDescriptor()
+                        {
+                            PropName = cacheKey.PropName,
+                            Index = cacheKey.Index,
+                            ParameterIndex = parameterDescriptor.Index,
+                            From = parameterDescriptor.From,
+                            IsSampleOrNullableType = parameterDescriptor.IsSampleOrNullableType,
+                        });
+                    }
+                }
+
+                cachingInterceptorDescriptors.Add(cachingInterceptorDescriptor);
+            }
+
+            ServiceEntryDescriptor.CachingInterceptorDescriptors = cachingInterceptorDescriptors;
         }
 
         private IReadOnlyCollection<IServerFilter> CreateServerFilters()

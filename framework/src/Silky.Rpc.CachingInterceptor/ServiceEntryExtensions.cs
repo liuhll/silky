@@ -1,36 +1,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using JetBrains.Annotations;
-using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Session;
-using Silky.Rpc.CachingInterceptor.Providers;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.CachingInterceptor
 {
     public static class ServiceEntryExtensions
     {
-        public static string GetCacheName([NotNull] this ServiceEntry serviceEntry)
-        {
-            Check.NotNull(serviceEntry, nameof(serviceEntry));
-            var returnType = serviceEntry.ReturnType;
-            var cacheNameAttribute = returnType.GetCustomAttributes().OfType<CacheNameAttribute>().FirstOrDefault();
-            if (cacheNameAttribute != null)
-            {
-                return cacheNameAttribute.Name;
-            }
-
-            return returnType.FullName.RemovePostFix("CacheItem");
-        }
-
         public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,
-            [NotNull] ICachingInterceptProvider cachingInterceptProvider)
+            [NotNull] ICachingInterceptProvider cachingInterceptProvider,string serviceKey)
         {
             Check.NotNull(parameters, nameof(parameters));
             Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
@@ -43,7 +27,7 @@ namespace Silky.Rpc.CachingInterceptor
             }
 
             var cachingInterceptKey = string.Empty;
-            var cacheKeyProviders = new List<ICacheKeyProvider>();
+            var cacheKeyProviders = new List<CacheKeyProvider>();
             var index = 0;
             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
             foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
@@ -52,8 +36,13 @@ namespace Silky.Rpc.CachingInterceptor
                 {
                     if (parameterDescriptor.IsSampleOrNullableType)
                     {
-                        var cacheKeyProvider = parameterDescriptor.CacheKeys.First();
-                        cacheKeyProvider.Value = parameters[index]?.ToString();
+                        var cacheKey = parameterDescriptor.CacheKeys.First();
+                        var cacheKeyProvider = new CacheKeyProvider()
+                        {
+                            PropName = cacheKey.PropName,
+                            Index = cacheKey.Index,
+                            Value = parameters[index]?.ToString()
+                        };
                         cacheKeyProviders.Add(cacheKeyProvider);
                     }
                     else
@@ -64,8 +53,13 @@ namespace Silky.Rpc.CachingInterceptor
                         {
                             var cacheKeyProp = parameterDescriptor.Type.GetProperty(cacheKey.PropName);
                             Debug.Assert(cacheKeyProp != null, nameof(cacheKeyProp));
-                            cacheKey.Value = cacheKeyProp.GetValue(parameterValue)?.ToString();
-                            cacheKeyProviders.Add(cacheKey);
+                            var cacheKeyProvider = new CacheKeyProvider()
+                            {
+                                PropName = cacheKey.PropName,
+                                Index = cacheKey.Index,
+                                Value = cacheKeyProp.GetValue(parameterValue)?.ToString()
+                            };
+                            cacheKeyProviders.Add(cacheKeyProvider);
                         }
                     }
                 }
@@ -75,10 +69,9 @@ namespace Silky.Rpc.CachingInterceptor
 
             var templeteAgrs = cacheKeyProviders.OrderBy(p => p.Index).ToList().Select(ckp => ckp.Value).ToArray();
             cachingInterceptKey = string.Format(templete, templeteAgrs);
-            var currentServiceKey = EngineContext.Current.Resolve<IServiceKeyExecutor>();
-            if (!currentServiceKey.ServiceKey.IsNullOrEmpty())
+            if (!serviceKey.IsNullOrEmpty())
             {
-                cachingInterceptKey = $"serviceKey:{currentServiceKey.ServiceKey}:" + cachingInterceptKey;
+                cachingInterceptKey = $"serviceKey:{serviceKey}:" + cachingInterceptKey;
             }
 
             if (cachingInterceptProvider.OnlyCurrentUserData)
@@ -97,26 +90,6 @@ namespace Silky.Rpc.CachingInterceptor
             return cachingInterceptKey;
         }
 
-        public static ICachingInterceptProvider GetCachingInterceptProvider(this ServiceEntry serviceEntry)
-        {
-            return serviceEntry.CustomAttributes.OfType<IGetCachingInterceptProvider>().FirstOrDefault();
-        }
-
-        public static ICachingInterceptProvider UpdateCachingInterceptProvider(this ServiceEntry serviceEntry)
-        {
-            return serviceEntry.CustomAttributes.OfType<IUpdateCachingInterceptProvider>().FirstOrDefault();
-        }
-
-        public static IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders(
-            this ServiceEntry serviceEntry)
-        {
-            return serviceEntry.CustomAttributes.OfType<IRemoveCachingInterceptProvider>().ToArray();
-        }
         
-        public static IReadOnlyCollection<IRemoveMatchKeyCachingInterceptProvider> RemoveMatchKeyCachingInterceptProviders(
-            this ServiceEntry serviceEntry)
-        {
-            return serviceEntry.CustomAttributes.OfType<IRemoveMatchKeyCachingInterceptProvider>().ToArray();
-        }
     }
 }

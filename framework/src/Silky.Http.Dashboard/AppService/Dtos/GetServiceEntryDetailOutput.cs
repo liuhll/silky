@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Dashboard.AppService.Dtos
