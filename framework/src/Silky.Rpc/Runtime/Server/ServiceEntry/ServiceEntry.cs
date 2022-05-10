@@ -84,7 +84,9 @@ namespace Silky.Rpc.Runtime.Server
                     OnlyCurrentUserData = cachingInterceptorProvider.OnlyCurrentUserData,
                     IgnoreMultiTenancy = cachingInterceptorProvider.IgnoreMultiTenancy,
                     CachingMethod = cachingInterceptorProvider.CachingMethod,
-                    CacheName = this.GetCacheName()
+                    CacheName = this.GetCacheName(),
+                    IsRemoveMatchKeyProvider = cachingInterceptorProvider is IRemoveMatchKeyCachingInterceptProvider,
+                    
                 };
                 if (cachingInterceptorProvider is IRemoveCachingInterceptProvider removeCachingInterceptProvider)
                 {
@@ -102,7 +104,8 @@ namespace Silky.Rpc.Runtime.Server
                             PropName = cacheKey.PropName,
                             Index = cacheKey.Index,
                             ParameterIndex = parameterDescriptor.Index,
-                            From = parameterDescriptor.From
+                            From = parameterDescriptor.From,
+                            IsSampleOrNullableType = parameterDescriptor.IsSampleOrNullableType,
                         });
                     }
                 }

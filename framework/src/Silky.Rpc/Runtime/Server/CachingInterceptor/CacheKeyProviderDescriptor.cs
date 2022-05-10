@@ -8,4 +8,6 @@ public class CacheKeyProviderDescriptor
     public int ParameterIndex { get; set; }
 
     public ParameterFrom From { get; set; }
+    
+    public bool IsSampleOrNullableType { get; set; }
 }

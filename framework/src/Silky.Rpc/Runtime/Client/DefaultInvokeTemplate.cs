@@ -10,16 +10,16 @@ namespace Silky.Rpc.Runtime.Client;
 
 internal class DefaultInvokeTemplate : IInvokeTemplate
 {
-    private readonly IRemoteExecutor _remoteExecutor;
+    private readonly IExecutor _executor;
     private readonly IServerManager _serverManager;
     private readonly ITypeConvertibleService _typeConvertibleService;
 
 
-    public DefaultInvokeTemplate(IRemoteExecutor remoteExecutor,
+    public DefaultInvokeTemplate(IExecutor executor,
         IServerManager serverManager,
         ITypeConvertibleService typeConvertibleService)
     {
-        _remoteExecutor = remoteExecutor;
+        _executor = executor;
         _serverManager = serverManager;
         _typeConvertibleService = typeConvertibleService;
     }
@@ -189,7 +189,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {api}-{method}");
         }
 
-        var result = await _remoteExecutor.Execute(serviceEntryDescriptor, parameters);
+        var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }
 
@@ -201,7 +201,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {api}-{method}");
         }
 
-        var result = await _remoteExecutor.Execute(serviceEntryDescriptor, parameters);
+        var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }
 
@@ -213,7 +213,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {id}");
         }
 
-        var result = await _remoteExecutor.Execute(serviceEntryDescriptor, parameters);
+        var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }
 
@@ -225,7 +225,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {id}");
         }
 
-        var result = await _remoteExecutor.Execute(serviceEntryDescriptor, parameters);
+        var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }
 

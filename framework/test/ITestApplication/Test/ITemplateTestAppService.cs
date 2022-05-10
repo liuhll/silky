@@ -9,4 +9,5 @@ public interface ITemplateTestAppService
     Task<string> CallCreateOne(string name);
     
     Task<dynamic> CallTest();
+    
 }

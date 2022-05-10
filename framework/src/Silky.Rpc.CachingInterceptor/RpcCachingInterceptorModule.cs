@@ -13,7 +13,7 @@ namespace Silky.Rpc.CachingInterceptor
         {
             builder.RegisterType<DefaultExecutor>()
                 .As<IExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .AddInterceptors(
                     typeof(CachingInterceptor)
                 )

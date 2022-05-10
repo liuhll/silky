@@ -14,7 +14,7 @@ namespace Silky.Rpc.CachingInterceptor
     public static class ServiceEntryExtensions
     {
         public static string GetCachingInterceptKey(this ServiceEntry serviceEntry, [NotNull] object[] parameters,
-            [NotNull] ICachingInterceptProvider cachingInterceptProvider)
+            [NotNull] ICachingInterceptProvider cachingInterceptProvider,string serviceKey)
         {
             Check.NotNull(parameters, nameof(parameters));
             Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
@@ -69,10 +69,9 @@ namespace Silky.Rpc.CachingInterceptor
 
             var templeteAgrs = cacheKeyProviders.OrderBy(p => p.Index).ToList().Select(ckp => ckp.Value).ToArray();
             cachingInterceptKey = string.Format(templete, templeteAgrs);
-            var currentServiceKey = EngineContext.Current.Resolve<IServiceKeyExecutor>();
-            if (!currentServiceKey.ServiceKey.IsNullOrEmpty())
+            if (!serviceKey.IsNullOrEmpty())
             {
-                cachingInterceptKey = $"serviceKey:{currentServiceKey.ServiceKey}:" + cachingInterceptKey;
+                cachingInterceptKey = $"serviceKey:{serviceKey}:" + cachingInterceptKey;
             }
 
             if (cachingInterceptProvider.OnlyCurrentUserData)
