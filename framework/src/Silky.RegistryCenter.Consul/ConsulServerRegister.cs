@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Silky.Core.Exceptions;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Rpc.Endpoint;
+using Silky.Rpc.RegistryCenters;
+using Silky.Rpc.RegistryCenters.HeartBeat;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.RegistryCenter.Consul
@@ -37,11 +39,11 @@ namespace Silky.RegistryCenter.Consul
 
         protected override async Task CacheServers()
         {
-            await CacheServerFromConsul();
-            _heartBeatService.Start(CacheServerFromConsul);
+            await CacheServersFromConsul();
+            _heartBeatService.Start(CacheServersFromConsul);
         }
 
-        private async Task CacheServerFromConsul()
+        private async Task CacheServersFromConsul()
         {
             using var consulClient = _consulClientFactory.CreateClient();
             var queryResult = await consulClient.Agent.Services();

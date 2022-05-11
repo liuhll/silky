@@ -10,6 +10,7 @@ namespace Silky.RegistryCenter.Consul.Configuration
         internal const string SilkyServer = "SilkyServer";
 
         public string Type { get; } = "Consul";
-        public int HeartBeatInterval { get; set; } = 10;
+        
+        public int HeartBeatIntervalSecond { get; set; } = 10;
     }
 }

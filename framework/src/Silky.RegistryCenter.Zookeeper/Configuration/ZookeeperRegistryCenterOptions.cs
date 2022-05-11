@@ -7,6 +7,11 @@ namespace Silky.RegistryCenter.Zookeeper.Configuration
         internal static string RegistryCenter = "RegistryCenter";
 
         public string Type { get; } = "Zookeeper";
+
+        public int HeartBeatIntervalSecond { get; set; } = 10;
+
+        public bool EnableHeartBeat { get; set; } = true;
+
         public double ConnectionTimeout { get; set; } = 10000;
 
         public double SessionTimeout { get; set; } = 16000;

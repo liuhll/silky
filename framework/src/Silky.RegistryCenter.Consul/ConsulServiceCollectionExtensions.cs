@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silky.Core;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Rpc.RegistryCenters;
+using Silky.Rpc.RegistryCenters.HeartBeat;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.RegistryCenter.Consul
@@ -18,7 +19,6 @@ namespace Silky.RegistryCenter.Consul
             services.TryAddSingleton<IConsulClientFactory, ConsulClientFactory>();
             services.TryAddSingleton<IServiceProvider, ConsulServiceProvider>();
             services.TryAddSingleton<IServerConverter, ConsulServerConverter>();
-            services.TryAddSingleton<IHeartBeatService, ConsulHeartBeatService>();
             services.AddSingleton<IRegisterCenterHealthProvider, ConsulRegisterCenterHealthProvider>();
             return services;
         }
@@ -34,7 +34,7 @@ namespace Silky.RegistryCenter.Consul
             services.TryAddSingleton<IConsulClientFactory, ConsulClientFactory>();
             services.TryAddSingleton<IServiceProvider, ConsulServiceProvider>();
             services.TryAddSingleton<IServerConverter, ConsulServerConverter>();
-            services.TryAddSingleton<IHeartBeatService, ConsulHeartBeatService>();
+            services.TryAddSingleton<IHeartBeatService, DefaultHeartBeatService>();
             services.AddSingleton<IRegisterCenterHealthProvider, ConsulRegisterCenterHealthProvider>();
             return services;
         }

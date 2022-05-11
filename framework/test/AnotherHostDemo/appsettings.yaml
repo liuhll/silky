@@ -5,9 +5,9 @@ rpc:
 #  isSSl: true
 #  sslCertificateName: test.silky-fk.com.pfx
 #  sslCertificatePassword: bdSpw3W7
-#registrycenter:
-#    connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
-#    type: Zookeeper
+registrycenter:
+    connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+    type: Zookeeper
 #registrycenter:
 #    type: Nacos
 #    namespace: silky
@@ -22,9 +22,9 @@ rpc:
 #    registerEnabled: true
 #    instanceEnabled: true
 #    namingUseRpc: true
-registrycenter:
-  type: Consul
-  address: http://127.0.0.1:8500
+#registrycenter:
+#  type: Consul
+#  address: http://127.0.0.1:8500
 distributedCache:
   redis:
     isEnabled: true

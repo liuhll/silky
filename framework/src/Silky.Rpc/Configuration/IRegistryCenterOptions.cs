@@ -3,5 +3,6 @@
     public interface IRegistryCenterOptions
     {
         string Type { get; }
+        
     }
 }

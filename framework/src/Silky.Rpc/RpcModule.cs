@@ -14,10 +14,12 @@ using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.RegistryCenters.HeartBeat;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc
@@ -35,6 +37,7 @@ namespace Silky.Rpc
 
             services.AddDefaultMessageCodec();
             services.AddAuditing(configuration);
+            services.TryAddSingleton<IHeartBeatService, DefaultHeartBeatService>();
         }
 
         protected override void RegisterServices(ContainerBuilder builder)

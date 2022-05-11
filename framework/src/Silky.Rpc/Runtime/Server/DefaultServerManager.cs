@@ -57,7 +57,11 @@ namespace Silky.Rpc.Runtime.Server
             serviceEntryDescriptor = _serverCache.Values
                 .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
                 .FirstOrDefault(p => p.Id == serviceEntryId);
-            _serviceEntryDescriptorCacheForId.TryAdd(serviceEntryId, serviceEntryDescriptor);
+            if (serviceEntryDescriptor != null)
+            {
+                _serviceEntryDescriptorCacheForId.TryAdd(serviceEntryId, serviceEntryDescriptor);
+            }
+
             return serviceEntryDescriptor;
         }
 
@@ -71,7 +75,11 @@ namespace Silky.Rpc.Runtime.Server
             serviceEntryDescriptor = _serverCache.Values
                 .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
                 .FirstOrDefault(p => p.WebApi == api && p.HttpMethod == httpMethod);
-            _serviceEntryDescriptorCacheForApi.TryAdd((api, httpMethod), serviceEntryDescriptor);
+            if (serviceEntryDescriptor != null)
+            {
+                _serviceEntryDescriptorCacheForApi.TryAdd((api, httpMethod), serviceEntryDescriptor);
+            }
+
             return serviceEntryDescriptor;
         }
 

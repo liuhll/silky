@@ -8,7 +8,7 @@ namespace Silky.RegistryCenter.Nacos.Configuration
         internal static string RegistryCenterSection = "RegistryCenter";
 
         public string Type { get; } = "Nacos";
-
+        
         public string GroupName { get; set; } = "Silky";
 
         public System.Action<NacosSdkOptions> BuildSdkOptions()
