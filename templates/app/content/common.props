@@ -2,6 +2,6 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <SilkyVersion>3.0.3</SilkyVersion>
+    <SilkyVersion>3.2.0</SilkyVersion>
   </PropertyGroup>
 </Project>
