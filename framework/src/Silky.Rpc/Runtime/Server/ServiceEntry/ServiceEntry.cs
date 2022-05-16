@@ -5,17 +5,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
-using Silky.Core.Convertible;
-using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Routing;
-using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Security;
 
@@ -258,7 +254,7 @@ namespace Silky.Rpc.Runtime.Server
 
         private void CreateDefaultSupportedResponseMediaTypes()
         {
-            if (ReturnType != null || ReturnType == typeof(void))
+            if (!this.NeedHttpProtocolSupport() && (ReturnType != null || ReturnType == typeof(void)))
             {
                 SupportedResponseMediaTypes.Add("application/json");
                 SupportedResponseMediaTypes.Add("text/json");
@@ -267,7 +263,7 @@ namespace Silky.Rpc.Runtime.Server
 
         private void CreateDefaultSupportedRequestMediaTypes()
         {
-            if (ParameterDescriptors.Any(p => p.From == ParameterFrom.Form))
+            if (ParameterDescriptors.Any(p => p.From == ParameterFrom.Form) || this.NeedHttpProtocolSupport())
             {
                 SupportedRequestMediaTypes.Add("multipart/form-data");
             }
@@ -323,7 +319,7 @@ namespace Silky.Rpc.Runtime.Server
             };
 
         public ServiceEntryDescriptor ServiceEntryDescriptor => _serviceEntryDescriptor;
-        
+
 
         internal void UpdateGovernance(GovernanceOptions options)
         {

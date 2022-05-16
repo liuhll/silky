@@ -10,12 +10,12 @@ namespace GatewayDemo.File;
 public interface IFileAppService
 {
     [HttpPost("single")]
-    public Task PostFile([FromForm] IFormFile file);
+    public Task PostFile(IFormFile file);
 
     [HttpPost("multiple")]
-    public Task PostFiles([FromForm] IFormFileCollection files);
+    public Task PostFiles(IFormFileCollection files);
 
-    public Task PostFormWithFile([FromForm] FormWithFile formWithFile);
+    public Task PostFormWithFile(FormWithFile formWithFile);
 
     public Task<FileResult> Download();
 }

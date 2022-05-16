@@ -105,6 +105,10 @@ namespace Silky.Rpc.Runtime.Server
                         }
                     }
                 }
+                else if (parameter.IsFormFileType())
+                {
+                    parameterDescriptor = new ParameterDescriptor(ParameterFrom.Form, parameter, index);
+                }
                 else
                 {
                     parameterDescriptor = httpMethodInfo.HttpMethod == HttpMethod.Get
