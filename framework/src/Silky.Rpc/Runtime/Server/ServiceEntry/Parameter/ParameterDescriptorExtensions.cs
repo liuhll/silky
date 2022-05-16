@@ -33,11 +33,14 @@ namespace Silky.Rpc.Runtime.Server
             var parameterValue = parameterDescriptor.GetActualParameter(parameter);
             if (parameterDescriptor.HasFileProp(out var filePropName))
             {
-                parameterValue.GetType().GetProperty(filePropName).SetValue(parameterValue, context.Request.Form.Files.GetFile(filePropName));
+                parameterValue.GetType().GetProperty(filePropName)
+                    .SetValue(parameterValue, context.Request.Form.Files.GetFile(filePropName));
             }
+
             if (parameterDescriptor.HasFilesProp(out var filesPropName))
             {
-                parameterValue.GetType().GetProperty(filesPropName).SetValue(parameterValue, context.Request.Form.Files);
+                parameterValue.GetType().GetProperty(filesPropName)
+                    .SetValue(parameterValue, context.Request.Form.Files);
             }
 
             return parameterValue;
@@ -80,18 +83,23 @@ namespace Silky.Rpc.Runtime.Server
             return hasFileProp;
         }
 
-        public static bool IsFile([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool IsFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
         {
             return parameterDescriptor.Type == typeof(IFormFile) ||
                    parameterDescriptor.Type == typeof(IFormFileCollection);
         }
 
-        public static bool IsSingleFile([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool IsSupportFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
+        {
+            return parameterDescriptor.IsFileParameter() || parameterDescriptor.HasFileProp(out var propName);
+        }
+
+        public static bool IsSingleFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
         {
             return parameterDescriptor.Type == typeof(IFormFile);
         }
 
-        public static bool IsMultipleFile([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool IsMultipleFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
         {
             return parameterDescriptor.Type == typeof(IFormFileCollection);
         }

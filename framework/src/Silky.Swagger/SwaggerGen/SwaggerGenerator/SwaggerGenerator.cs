@@ -321,7 +321,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                 }
                 else
                 {
-                    if (formParameter.IsFile())
+                    if (formParameter.IsFileParameter())
                     {
                         var name = _options.DescribeAllParametersInCamelCase
                             ? formParameter.Name.ToCamelCase()

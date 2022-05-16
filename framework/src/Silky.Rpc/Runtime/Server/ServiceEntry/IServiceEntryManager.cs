@@ -15,6 +15,8 @@ namespace Silky.Rpc.Runtime.Server
 
         ServiceEntry GetServiceEntry(string serviceEntryId);
 
+        bool HasHttpProtocolServiceEntry();
+
         void Update(ServiceEntry serviceEntry);
 
         event EventHandler<ServiceEntry> OnUpdate;

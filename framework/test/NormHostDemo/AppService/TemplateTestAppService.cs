@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITestApplication.Test;
+using Microsoft.AspNetCore.Http;
 using Silky.Rpc.Runtime.Client;
 
 namespace NormHostDemo.AppService;
@@ -41,4 +42,9 @@ public class TemplateTestAppService : ITemplateTestAppService
             });
         return result;
     }
+
+    // public Task Upload(IFormFile file)
+    // {
+    //     throw new System.NotImplementedException();
+    // }
 }

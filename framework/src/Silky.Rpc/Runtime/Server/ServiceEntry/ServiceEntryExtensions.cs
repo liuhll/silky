@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
@@ -167,6 +168,24 @@ namespace Silky.Rpc.Runtime.Server
                 this ServiceEntry serviceEntry)
         {
             return serviceEntry.CustomAttributes.OfType<IRemoveMatchKeyCachingInterceptProvider>().ToArray();
+        }
+
+        public static bool NeedHttpProtocolSupport(this ServiceEntry serviceEntry)
+        {
+            if (typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType))
+            {
+                return true;
+            }
+
+            foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+            {
+                if (parameterDescriptor.IsSupportFileParameter())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
 

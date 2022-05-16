@@ -62,11 +62,11 @@ public class HttpParameterResolver : ParameterResolverBase
                     {
                         SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                     }
-                    else if (parameterDescriptor.IsMultipleFile())
+                    else if (parameterDescriptor.IsMultipleFileParameter())
                     {
                         list.Add(httpContext.Request.Form.Files);
                     }
-                    else if (parameterDescriptor.IsSingleFile())
+                    else if (parameterDescriptor.IsSingleFileParameter())
                     {
                         list.Add(httpContext.Request.Form.Files.GetFile(parameterDescriptor.Name));
                     }

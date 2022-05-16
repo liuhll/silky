@@ -66,6 +66,11 @@ namespace Silky.Rpc.Runtime.Server
             return m_allServiceEntries.FirstOrDefault(p => p.Id == serviceEntryId);
         }
 
+        public bool HasHttpProtocolServiceEntry()
+        {
+            return m_allServiceEntries.Any(p => p.NeedHttpProtocolSupport());
+        }
+
         public event EventHandler<ServiceEntry> OnUpdate;
 
 

@@ -1,6 +1,8 @@
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 
@@ -11,10 +13,13 @@ namespace Silky.Rpc.Runtime.Server
         public ILogger<DefaultServerProvider> Logger { get; set; }
         private readonly IServer _server;
         private readonly IServiceManager _serviceManager;
+        private readonly IServiceEntryManager _serviceEntryManager;
 
-        public DefaultServerProvider(IServiceManager serviceManager)
+        public DefaultServerProvider(IServiceManager serviceManager,
+            IServiceEntryManager serviceEntryManager)
         {
             _serviceManager = serviceManager;
+            _serviceEntryManager = serviceEntryManager;
             Logger = NullLogger<DefaultServerProvider>.Instance;
             _server = new Server(EngineContext.Current.HostName);
         }
@@ -37,7 +42,6 @@ namespace Silky.Rpc.Runtime.Server
             {
                 _server.Endpoints.Add(webEndpoint);
             }
-            
         }
 
         public void AddWsServices()
@@ -53,6 +57,12 @@ namespace Silky.Rpc.Runtime.Server
 
         public IServer GetServer()
         {
+            if (_serviceEntryManager.HasHttpProtocolServiceEntry() && !_server.Endpoints.Any(p =>
+                    p.ServiceProtocol == ServiceProtocol.Http || p.ServiceProtocol == ServiceProtocol.Https))
+            {
+                throw new SilkyException("A server that supports file upload and download or ActionResult must be built through the http protocol host", StatusCode.ServerError);
+            }
+
             return _server;
         }
     }
