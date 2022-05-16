@@ -93,8 +93,8 @@ namespace GatewayDemo
             app.UseEndpoints(endpoints =>
             {
                 //endpoints.MapHealthChecksUI();
-                //endpoints.MapSilkyRpcServices();
-                endpoints.MapSilkyTemplateServices();
+                endpoints.MapSilkyRpcServices();
+                //endpoints.MapSilkyTemplateServices();
             });
         }
     }

@@ -8,6 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
         <ProjectReference Include="..\..\src\Silky.Http.Auditing\Silky.Http.Auditing.csproj" />
+        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
 <!--        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />-->
 <!--        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />-->
 <!--        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />-->
@@ -20,6 +21,12 @@
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </None>
         <None Update="appsettings.yaml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Contents\DownloadTest.txt">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Contents\测试.xlsx">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>

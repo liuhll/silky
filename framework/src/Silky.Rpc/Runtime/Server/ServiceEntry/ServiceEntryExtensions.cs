@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
@@ -78,6 +79,12 @@ namespace Silky.Rpc.Runtime.Server
             {
                 if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type)
                 {
+                    if (serviceEntry.ParameterDescriptors[i].Type == typeof(IFormFile) ||
+                        serviceEntry.ParameterDescriptors[i].Type == typeof(IFormFileCollection))
+                    {
+                        continue;
+                    }
+
                     var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
                     parameters[i] =
                         typeConvertibleService.Convert(parameters[i], serviceEntry.ParameterDescriptors[i].Type);
@@ -114,7 +121,7 @@ namespace Silky.Rpc.Runtime.Server
                                       .Any();
             return disableAuditing;
         }
-        
+
         public static string GetCacheName([NotNull] this ServiceEntry serviceEntry)
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
@@ -133,11 +140,12 @@ namespace Silky.Rpc.Runtime.Server
             return isEnable && !serviceEntry.DisableAuditing();
         }
 
-        public static ICollection<ICachingInterceptProvider> GetAllCachingInterceptProviders(this ServiceEntry serviceEntry)
+        public static ICollection<ICachingInterceptProvider> GetAllCachingInterceptProviders(
+            this ServiceEntry serviceEntry)
         {
             return serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().ToList();
         }
-        
+
         public static ICachingInterceptProvider GetGetCachingInterceptProvider(this ServiceEntry serviceEntry)
         {
             return serviceEntry.CustomAttributes.OfType<IGetCachingInterceptProvider>().FirstOrDefault();

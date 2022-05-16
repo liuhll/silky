@@ -1,44 +1,20 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
-using Silky.Core.Runtime.Rpc;
-using Silky.Core.Serialization;
+using Silky.Core.MethodExecutor;
 using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server;
 
-public class HttpParameterResolver : ParameterResolverBase
+public abstract class ParameterResolverBase : IParameterResolver
 {
-    private readonly ISerializer _serializer;
+    public abstract object[] Parser(ServiceEntry serviceEntry, RemoteInvokeMessage message);
 
-    public HttpParameterResolver(ISerializer serializer)
-    {
-        _serializer = serializer;
-    }
 
-    public override object[] Parser([NotNull] ServiceEntry serviceEntry, RemoteInvokeMessage message)
-    {
-        Check.NotNull(serviceEntry, nameof(serviceEntry));
-        if (serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path))
-        {
-            var path = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.Path).ToString();
-            var pathData = serviceEntry.Router.ParserRouteParameters(path);
-            message.HttpParameters.Add(ParameterFrom.Path, _serializer.Serialize(pathData));
-        }
-
-        var parameters = Resolve(serviceEntry, message.HttpParameters);
-        parameters = serviceEntry.ConvertParameters(parameters);
-        return parameters;
-    }
-
-    public override object[] Resolve(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters,
-        HttpContext httpContext)
+    public virtual object[] Resolve(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters)
     {
         var list = new List<object>();
         var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
@@ -62,17 +38,9 @@ public class HttpParameterResolver : ParameterResolverBase
                     {
                         SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                     }
-                    else if (parameterDescriptor.IsMultipleFile())
-                    {
-                        list.Add(httpContext.Request.Form.Files);
-                    }
-                    else if (parameterDescriptor.IsSingleFile())
-                    {
-                        list.Add(httpContext.Request.Form.Files.GetFile(parameterDescriptor.Name));
-                    }
                     else
                     {
-                        list.Add(parameterDescriptor.GetActualParameter(parameter, httpContext));
+                        list.Add(parameterDescriptor.GetActualParameter(parameter));
                     }
 
                     break;
@@ -127,5 +95,27 @@ public class HttpParameterResolver : ParameterResolverBase
         }
 
         return list.ToArray();
+    }
+    
+
+    public virtual object[] Resolve(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters,
+        HttpContext httpContext)
+    {
+        throw new System.NotImplementedException();
+    }
+    
+    protected void SetSampleParameterValue(ITypeConvertibleService typeConvertibleService, object parameter,
+        ParameterDescriptor parameterDescriptor, List<object> list)
+    {
+        var dict =
+            (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
+                typeof(IDictionary<string, object>));
+        var parameterVal = parameterDescriptor.ParameterInfo.GetDefaultValue();
+        if (dict.ContainsKey(parameterDescriptor.Name))
+        {
+            parameterVal = dict[parameterDescriptor.Name];
+        }
+
+        list.Add(parameterDescriptor.GetActualParameter(parameterVal));
     }
 }

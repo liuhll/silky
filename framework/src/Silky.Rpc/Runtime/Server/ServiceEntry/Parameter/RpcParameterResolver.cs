@@ -2,9 +2,9 @@
 
 namespace Silky.Rpc.Runtime.Server;
 
-public class RpcParameterResolver : IParameterResolver
+public class RpcParameterResolver : ParameterResolverBase
 {
-    public object[] Parser(ServiceEntry serviceEntry, RemoteInvokeMessage message)
+    public override object[] Parser(ServiceEntry serviceEntry, RemoteInvokeMessage message)
     {
         var parameters = serviceEntry.ConvertParameters(message.Parameters);
         return parameters;

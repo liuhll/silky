@@ -162,8 +162,10 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             var allResponseCodes = ResponsesCodeHelper.GetAllCodes();
             foreach (var responseCode in allResponseCodes)
             {
-                responses.Add(((int)responseCode.Key).ToString(), GenerateResponse(serviceEntry, schemaRepository, responseCode));
+                responses.Add(((int)responseCode.Key).ToString(),
+                    GenerateResponse(serviceEntry, schemaRepository, responseCode));
             }
+
             // responses.Add(((int)ResponsesCode.Success).ToString(), GenerateResponse(serviceEntry, schemaRepository));
             return responses;
         }
@@ -308,7 +310,9 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                         schemaRepository,
                         null,
                         formParameter.ParameterInfo);
+
                     properties.Add(name, schema);
+
                     if (formParameter.Type.GetCustomAttributes()
                         .Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
                     {
@@ -317,21 +321,41 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                 }
                 else
                 {
-                    foreach (var propertyInfo in formParameter.Type.GetProperties())
+                    if (formParameter.IsFile())
                     {
                         var name = _options.DescribeAllParametersInCamelCase
-                            ? propertyInfo.Name.ToCamelCase()
-                            : propertyInfo.Name;
-                        var schema = GenerateSchema(
+                            ? formParameter.Name.ToCamelCase()
+                            : formParameter.Name;
+                            var schema = GenerateSchema(
                             formParameter.Type,
                             schemaRepository,
-                            propertyInfo,
-                            null);
+                            null,
+                            formParameter.ParameterInfo);
                         properties.Add(name, schema);
-                        if (propertyInfo.GetCustomAttributes()
+                        if (formParameter.ParameterInfo.GetCustomAttributes()
                             .Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
                         {
                             requiredPropertyNames.Add(name);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var propertyInfo in formParameter.Type.GetProperties())
+                        {
+                            var name = _options.DescribeAllParametersInCamelCase
+                                ? propertyInfo.Name.ToCamelCase()
+                                : propertyInfo.Name;
+                            var schema = GenerateSchema(
+                                formParameter.Type,
+                                schemaRepository,
+                                propertyInfo,
+                                null);
+                            properties.Add(name, schema);
+                            if (propertyInfo.GetCustomAttributes()
+                                .Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
+                            {
+                                requiredPropertyNames.Add(name);
+                            }
                         }
                     }
                 }
@@ -472,7 +496,8 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                                  || apiParameter.Type.GetCustomAttributes().Any(attr =>
                                      RequiredAttributeTypes.Contains(attr.GetType()));
 
-                var schema = GenerateSchema(apiParameter.Type, schemaRespository, propertyInfo, apiParameter.ParameterInfo);
+                var schema = GenerateSchema(apiParameter.Type, schemaRespository, propertyInfo,
+                    apiParameter.ParameterInfo);
                 var parameter = new OpenApiParameter
                 {
                     Name = name,

@@ -7,7 +7,9 @@ using JetBrains.Annotations;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
+using Silky.Core;
 using Silky.Core.Runtime.Rpc;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core
 {
@@ -64,7 +66,9 @@ namespace Silky.Http.Core
         public async Task<object[]> Parser([NotNull] HttpRequest httpRequest, [NotNull] ServiceEntry serviceEntry)
         {
             var requestParameters = await ParserHttpRequest(httpRequest, serviceEntry);
-            return serviceEntry.ResolveParameters(requestParameters);
+            var httpParameterResolver =
+                EngineContext.Current.ResolveNamed<IParameterResolver>(ParameterType.Http.ToString());
+            return httpParameterResolver.Resolve(serviceEntry, requestParameters, httpRequest.HttpContext);
         }
 
         public async Task<IDictionary<ParameterFrom, object>> Parser(HttpRequest request,

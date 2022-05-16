@@ -7,13 +7,13 @@
 
 <!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>%(DocumentTitle)</title>
     <link rel="stylesheet" type="text/css" href="./swagger-ui.css">
-    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32"/>
-    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16"/>
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
     <style>
 
         html {
@@ -74,7 +74,6 @@
         function Fn() {
             return Function.apply(this, args);
         }
-
         Fn.prototype = Function.prototype;
 
         return new Fn();
@@ -185,18 +184,16 @@
 
         return request;
     }
-
     window.onload = function () {
         var configObject = JSON.parse('%(ConfigObject)');
         var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
 
-        configObject.onComplete = function () {
+  configObject.onComplete = function () {
             var accessToken = window.localStorage.getItem(tokenKey);
             if (accessToken) {
                 ui.preauthorizeApiKey("Bearer", accessToken);
             }
         };
-
         // Workaround for https://github.com/swagger-api/swagger-ui/issues/5945
         configObject.urls.forEach(function (item) {
             if (item.url.startsWith("http") || item.url.startsWith("/")) return;
@@ -209,11 +206,11 @@
 
         // If oauth2RedirectUrl isn't specified, use the built-in default
         if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-            configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
+            configObject.oauth2RedirectUrl = (new URL("oauth2-redirect.html", window.location.href)).href;
 
         // Apply mandatory parameters
         configObject.dom_id = "#swagger-ui";
-        configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset, HideEmptyTagsPlugin];
+        configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
         configObject.layout = "StandaloneLayout";
 
         // Parse and add interceptor functions

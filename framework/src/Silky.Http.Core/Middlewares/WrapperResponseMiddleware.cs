@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -20,7 +21,7 @@ namespace Silky.Http.Core.Middlewares
         private readonly RequestDelegate _next;
         private readonly GatewayOptions _gatewayOptions;
         private readonly ISerializer _serializer;
-        
+
         public WrapperResponseMiddleware(RequestDelegate next, IOptionsMonitor<GatewayOptions> gatewayOptions,
             ISerializer serializer)
         {
@@ -38,20 +39,28 @@ namespace Silky.Http.Core.Middlewares
             }
             else
             {
-                var originalBodyStream = context.Response.Body;
-                await using var bodyStream = new MemoryStream();
-                try
+                var serviceEntry = context.GetServiceEntry();
+                if (serviceEntry != null && typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType))
                 {
-                    context.Response.Body = bodyStream;
                     await _next.Invoke(context);
-                    context.Response.Body = originalBodyStream;
-                    var bodyAsText = await FormatResponse(bodyStream);
-                    await HandleResponseAsync(context, bodyAsText, context.Response.StatusCode);
                 }
-                catch (Exception exception)
+                else
                 {
-                    context.Response.Body = originalBodyStream;
-                    await HandleExceptionAsync(context, exception);
+                    var originalBodyStream = context.Response.Body;
+                    await using var bodyStream = new MemoryStream();
+                    try
+                    {
+                        context.Response.Body = bodyStream;
+                        await _next.Invoke(context);
+                        context.Response.Body = originalBodyStream;
+                        var bodyAsText = await FormatResponse(bodyStream);
+                        await HandleResponseAsync(context, bodyAsText, context.Response.StatusCode);
+                    }
+                    catch (Exception exception)
+                    {
+                        context.Response.Body = originalBodyStream;
+                        await HandleExceptionAsync(context, exception);
+                    }
                 }
             }
         }
@@ -84,6 +93,7 @@ namespace Silky.Http.Core.Middlewares
                         responseResultDto.ValidErrors = validationException.GetValidateErrors();
                     }
                 }
+
                 if (responseResultDto.ErrorMessage.IsNullOrEmpty())
                 {
                     responseResultDto.ErrorMessage = status.GetDisplay();

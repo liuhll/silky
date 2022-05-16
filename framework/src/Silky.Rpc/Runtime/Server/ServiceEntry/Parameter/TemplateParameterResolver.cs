@@ -5,7 +5,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server;
 
-public class TemplateParameterResolver : IParameterResolver
+public class TemplateParameterResolver : ParameterResolverBase
 {
     private readonly ITypeConvertibleService _typeConvertibleService;
 
@@ -14,7 +14,7 @@ public class TemplateParameterResolver : IParameterResolver
         _typeConvertibleService = typeConvertibleService;
     }
 
-    public object[] Parser(ServiceEntry serviceEntry, RemoteInvokeMessage message)
+    public override object[] Parser(ServiceEntry serviceEntry, RemoteInvokeMessage message)
     {
         var parameters = new List<object>();
         foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)

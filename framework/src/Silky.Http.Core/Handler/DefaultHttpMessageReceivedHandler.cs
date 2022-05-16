@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
@@ -78,11 +79,21 @@ namespace Silky.Http.Core.Handlers
                 var cancellationToken = serverCallContext.HttpContext.RequestAborted;
                 if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
                 {
-                    serverCallContext.WriteResponseHeaderCore();
-                    if (executeResult != null)
+                    if (executeResult is IActionResult actionResult)
                     {
-                        var responseData = _serializer.Serialize(executeResult);
-                        await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                        await actionResult.ExecuteResultAsync(new ActionContext
+                        {
+                            HttpContext = serverCallContext.HttpContext,
+                        });
+                    }
+                    else
+                    {
+                        serverCallContext.WriteResponseHeaderCore();
+                        if (executeResult != null)
+                        {
+                            var responseData = _serializer.Serialize(executeResult);
+                            await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                        }
                     }
                 }
 
