@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
@@ -32,12 +31,12 @@ public class HttpParameterResolver : ParameterResolverBase
             message.HttpParameters.Add(ParameterFrom.Path, _serializer.Serialize(pathData));
         }
 
-        var parameters = Resolve(serviceEntry, message.HttpParameters);
+        var parameters = Parser(serviceEntry, message.HttpParameters, null);
         parameters = serviceEntry.ConvertParameters(parameters);
         return parameters;
     }
 
-    public override object[] Resolve(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters,
+    public override object[] Parser(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters,
         HttpContext httpContext)
     {
         var list = new List<object>();
@@ -62,17 +61,21 @@ public class HttpParameterResolver : ParameterResolverBase
                     {
                         SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                     }
-                    else if (parameterDescriptor.IsMultipleFileParameter())
+                    else if (httpContext != null && parameterDescriptor.IsMultipleFileParameter())
                     {
                         list.Add(httpContext.Request.Form.Files);
                     }
-                    else if (parameterDescriptor.IsSingleFileParameter())
+                    else if (httpContext != null && parameterDescriptor.IsSingleFileParameter())
                     {
                         list.Add(httpContext.Request.Form.Files.GetFile(parameterDescriptor.Name));
                     }
-                    else
+                    else if (httpContext != null)
                     {
                         list.Add(parameterDescriptor.GetActualParameter(parameter, httpContext));
+                    }
+                    else
+                    {
+                        list.Add(parameterDescriptor.GetActualParameter(parameter));
                     }
 
                     break;

@@ -68,7 +68,7 @@ namespace Silky.Http.Core
             var requestParameters = await ParserHttpRequest(httpRequest, serviceEntry);
             var httpParameterResolver =
                 EngineContext.Current.ResolveNamed<IParameterResolver>(ParameterType.Http.ToString());
-            return httpParameterResolver.Resolve(serviceEntry, requestParameters, httpRequest.HttpContext);
+            return httpParameterResolver.Parser(serviceEntry, requestParameters, httpRequest.HttpContext);
         }
 
         public async Task<IDictionary<ParameterFrom, object>> Parser(HttpRequest request,
