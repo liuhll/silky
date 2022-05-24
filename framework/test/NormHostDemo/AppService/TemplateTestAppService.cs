@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using Microsoft.AspNetCore.Http;
+using Silky.Core.Runtime.Session;
 using Silky.Rpc.Runtime.Client;
 
 namespace NormHostDemo.AppService;
@@ -38,7 +39,7 @@ public class TemplateTestAppService : ITemplateTestAppService
         var result =
             await _invokeTemplate.PostForObjectAsync<dynamic>("api/another/test", new Dictionary<string, object>()
             {
-                { "input", new { Name = "张三", Address = "beijing" } }
+                { "input", new { Name = NullSession.Instance.UserName, Address = "beijing" } }
             });
         return result;
     }

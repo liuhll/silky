@@ -84,6 +84,7 @@ namespace Silky.Rpc
                 {
                     messageListener.Received += async (sender, message) =>
                     {
+
                         using var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
                         var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
                         rpcContextAccessor.RpcContext = RpcContext.Context;
