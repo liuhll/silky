@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IAnotherApplication;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using Mapster;
@@ -22,20 +21,18 @@ namespace NormHostDemo.AppService
     [ServiceKey("v1", 3)]
     public class TestAppService : ITestAppService
     {
-        private readonly IAnotherAppService _anotherAppService;
         private readonly IDistributedCache<TestOut> _distributedCache;
         private readonly IRepository<Test> _testRepository;
         private readonly ISerializer _serializer;
         private readonly ISession _session;
         private readonly IRpcContextAccessor _rpcContextAccessor;
 
-        public TestAppService(IAnotherAppService anotherAppService,
+        public TestAppService(
             IDistributedCache<TestOut> distributedCache,
             IRepository<Test> testRepository,
             ISerializer serializer,
             IRpcContextAccessor rpcContextAccessor)
         {
-            _anotherAppService = anotherAppService;
             _distributedCache = distributedCache;
             _testRepository = testRepository;
             _serializer = serializer;
@@ -47,15 +44,15 @@ namespace NormHostDemo.AppService
         public async Task<TestOut> Create(TestInput input)
         {
             var test = input.Adapt<Test>();
-           // throw new BusinessException("error",1010);
+            throw new BusinessException("error",1010);
           //  var result = await _testRepository.InsertNowAsync(test);
-          await _anotherAppService.ReturnNullTest();
-          return new TestOut()
-          {
-              Name = input.Name,
-              Address = input.Address,
-              Id = input.Ids.First()
-          };
+          // await _anotherAppService.ReturnNullTest();
+          // return new TestOut()
+          // {
+          //     Name = input.Name,
+          //     Address = input.Address,
+          //     Id = input.Ids.First()
+          // };
         }
 
         public Task CreateOrUpdateAsync(TestInput input)
@@ -77,9 +74,9 @@ namespace NormHostDemo.AppService
         [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
         public async Task<string> DeleteAsync(TestInput input)
         {
-            await _anotherAppService.DeleteOne(input.Name);
-            await _anotherAppService.DeleteTwo(input.Address);
-            // throw new BusinessException("test exception");
+            // await _anotherAppService.DeleteOne(input.Name);
+            // await _anotherAppService.DeleteTwo(input.Address);
+             throw new BusinessException("test exception");
             return "trying" + _serializer.Serialize(input);
         }
 

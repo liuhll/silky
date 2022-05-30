@@ -35,6 +35,7 @@ namespace ITestApplication.Test
         // Task CreateOrUpdateAsync(TestInput input);
 
         [AllowAnonymous]
+        [HttpGet("{id:long}")]
         Task<TestOut> Get(long id);
 
         [Obsolete]
@@ -62,7 +63,7 @@ namespace ITestApplication.Test
         // [HttpGet("{id:long}")]
         // [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
         //  [GetCachingIntercept("id:{0}")]
-        // [HttpGet("test/{id:long}")]
+        //[HttpGet("test1/{id:long}")]
         [HttpGet]
         [AllowAnonymous]
         Task<TestOut> GetById(long? id);
