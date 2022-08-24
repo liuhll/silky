@@ -10,6 +10,7 @@ using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels.Pool;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
 using Silky.Rpc.Configuration;
@@ -94,15 +95,6 @@ namespace Silky.DotNetty
                 group = new MultithreadEventLoopGroup();
             }
 
-            X509Certificate2 tlsCertificate = null;
-            string targetHost = null;
-            if (_rpcOptions.IsSsl)
-            {
-                tlsCertificate = new X509Certificate2(GetCertificateFile(), _rpcOptions.SslCertificatePassword);
-                targetHost = tlsCertificate.GetNameInfo(X509NameType.DnsName, false);
-            }
-
-            var workerGroup = new SingleThreadEventLoop();
             bootstrap
                 .Channel<TcpSocketChannel>()
                 .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
@@ -110,31 +102,32 @@ namespace Silky.DotNetty
                 .Option(ChannelOption.RcvbufAllocator, new AdaptiveRecvByteBufAllocator())
                 .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                 .Group(group)
-                .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
-                {
-                    var pipeline = c.Pipeline;
-                    if (tlsCertificate != null)
-                    {
-                        pipeline.AddLast("tls",
-                            new TlsHandler(
-                                stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true),
-                                new ClientTlsSettings(targetHost)));
-                    }
-
-                    pipeline.AddLast(new LengthFieldPrepender(4));
-                    pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-                    if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
-                    {
-                        pipeline.AddLast(new IdleStateHandler(
-                            _governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0,
-                            0));
-                        pipeline.AddLast(new ChannelInboundHandlerAdapter());
-                    }
-
-                    // pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
-                    pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
-                    pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
-                }));
+                // .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
+                // {
+                //     var pipeline = c.Pipeline;
+                //     if (tlsCertificate != null)
+                //     {
+                //         pipeline.AddLast("tls",
+                //             new TlsHandler(
+                //                 stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true),
+                //                 new ClientTlsSettings(targetHost)));
+                //     }
+                //
+                //     pipeline.AddLast(new LengthFieldPrepender(4));
+                //     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
+                //     if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
+                //     {
+                //         pipeline.AddLast(new IdleStateHandler(
+                //             _governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0,
+                //             0));
+                //         pipeline.AddLast(new ChannelInboundHandlerAdapter());
+                //     }
+                //
+                //     // pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
+                //     pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
+                //     pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
+                // }))
+                ;
             return bootstrap;
         }
 
@@ -159,12 +152,27 @@ namespace Silky.DotNetty
                     {
                         Logger.LogInformation(
                             $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}.");
-                        var bootstrap = CreateBootstrap();
-                        var channel = await bootstrap.ConnectAsync(rpcEndpoint.IPEndPoint);
-                        var pipeline = channel.Pipeline;
+
                         var messageListener = new ClientMessageListener();
-                        var messageSender = new DotNettyClientMessageSender(channel);
+
+                        var bootstrap = CreateBootstrap();
+                        X509Certificate2 tlsCertificate = null;
+                        string targetHost = null;
+                        if (_rpcOptions.IsSsl)
+                        {
+                            tlsCertificate =
+                                new X509Certificate2(GetCertificateFile(), _rpcOptions.SslCertificatePassword);
+                            targetHost = tlsCertificate.GetNameInfo(X509NameType.DnsName, false);
+                        }
+
+                        var handler =
+                            new SilkyClientChannelPoolHandler(tlsCertificate, targetHost, _transportMessageDecoder,
+                                _transportMessageEncoder);
+                        var pool = new FixedChannelPool(bootstrap.RemoteAddress(rpcEndpoint.IPEndPoint), handler, 1);
+                        var channel = await pool.AcquireAsync();
+                        var pipeline = channel.Pipeline;
                         pipeline.AddLast(new ClientHandler(messageListener, _rpcEndpointMonitor));
+                        var messageSender = new DotNettyClientMessageSender(channel);
                         var client = new DefaultTransportClient(messageSender, messageListener);
                         return client;
                     }
