@@ -22,6 +22,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
+using Silky.DotNetty.Abstraction;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
@@ -102,31 +103,6 @@ namespace Silky.DotNetty
                 .Option(ChannelOption.RcvbufAllocator, new AdaptiveRecvByteBufAllocator())
                 .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                 .Group(group)
-                // .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
-                // {
-                //     var pipeline = c.Pipeline;
-                //     if (tlsCertificate != null)
-                //     {
-                //         pipeline.AddLast("tls",
-                //             new TlsHandler(
-                //                 stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true),
-                //                 new ClientTlsSettings(targetHost)));
-                //     }
-                //
-                //     pipeline.AddLast(new LengthFieldPrepender(4));
-                //     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-                //     if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
-                //     {
-                //         pipeline.AddLast(new IdleStateHandler(
-                //             _governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0,
-                //             0));
-                //         pipeline.AddLast(new ChannelInboundHandlerAdapter());
-                //     }
-                //
-                //     // pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
-                //     pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
-                //     pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
-                // }))
                 ;
             return bootstrap;
         }
@@ -168,13 +144,53 @@ namespace Silky.DotNetty
                         var handler =
                             new SilkyClientChannelPoolHandler(tlsCertificate, targetHost, _transportMessageDecoder,
                                 _transportMessageEncoder);
-                        var pool = new FixedChannelPool(bootstrap.RemoteAddress(rpcEndpoint.IPEndPoint), handler, 1);
-                        var channel = await pool.AcquireAsync();
-                        var pipeline = channel.Pipeline;
-                        pipeline.AddLast(new ClientHandler(messageListener, _rpcEndpointMonitor));
-                        var messageSender = new DotNettyClientMessageSender(channel);
-                        var client = new DefaultTransportClient(messageSender, messageListener);
-                        return client;
+
+                        if (_rpcOptions.TransportClientPoolNumber <= 1)
+                        {
+                            var workerGroup = new SingleThreadEventLoop();
+                            bootstrap
+                                .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
+                                {
+                                    var pipeline = c.Pipeline;
+                                    if (tlsCertificate != null)
+                                    {
+                                        pipeline.AddLast("tls",
+                                            new TlsHandler(
+                                                stream => new SslStream(stream, true,
+                                                    (sender, certificate, chain, errors) => true),
+                                                new ClientTlsSettings(targetHost)));
+                                    }
+
+                                    pipeline.AddLast(new LengthFieldPrepender(4));
+                                    pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
+                                    if (_governanceOptions.EnableHeartbeat &&
+                                        _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
+                                    {
+                                        pipeline.AddLast(new IdleStateHandler(
+                                            _governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0,
+                                            0));
+                                        pipeline.AddLast(new ChannelInboundHandlerAdapter());
+                                    }
+
+                                    pipeline.AddLast(workerGroup, "encoder",
+                                        new EncoderHandler(_transportMessageEncoder));
+                                    pipeline.AddLast(workerGroup, "decoder",
+                                        new DecoderHandler(_transportMessageDecoder));
+                                }));
+                            var channel = await bootstrap.ConnectAsync(rpcEndpoint.IPEndPoint);
+                            var pipeline = channel.Pipeline;
+                            var messageSender = new DotNettyClientMessageSender(channel);
+                            pipeline.AddLast(new ClientHandler(messageListener, _rpcEndpointMonitor));
+                            var defaultTransportClient = new DefaultTransportClient(messageSender, messageListener);
+                            return defaultTransportClient;
+                        }
+
+                        var pool = new FixedChannelPool(bootstrap.RemoteAddress(rpcEndpoint.IPEndPoint), handler,
+                            _rpcOptions.TransportClientPoolNumber);
+                        var channelPoolTransportClient = new ChannelPoolTransportClient(pool, messageListener,
+                            _rpcEndpointMonitor,
+                            _rpcOptions.TransportClientPoolNumber);
+                        return channelPoolTransportClient;
                     }
                 )).Value;
         }

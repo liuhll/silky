@@ -15,7 +15,7 @@ namespace Silky.Rpc.Configuration
             SoBacklog = 128;
             ConnectTimeout = 500;
             RegisterFailureRetryCount = 5;
-
+            TransportClientPoolNumber = 5;
         }
 
         public string Host { get; set; }
@@ -30,6 +30,6 @@ namespace Silky.Rpc.Configuration
         public double ConnectTimeout { get; set; }
 
         public int RegisterFailureRetryCount { get; set; }
-
+        public int TransportClientPoolNumber { get; set; }
     }
 }

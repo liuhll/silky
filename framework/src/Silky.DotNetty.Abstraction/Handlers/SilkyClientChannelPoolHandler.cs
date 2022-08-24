@@ -12,7 +12,6 @@ namespace Silky.DotNetty.Handlers;
 
 public class SilkyClientChannelPoolHandler : IChannelPoolHandler
 {
-    private readonly SingleThreadEventLoop _workerGroup;
     private readonly X509Certificate2 _x509Certificate2;
     private readonly string _targetHost;
     private readonly ITransportMessageDecoder _transportMessageDecoder;
@@ -27,7 +26,6 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
         ITransportMessageDecoder transportMessageDecoder,
         ITransportMessageEncoder transportMessageEncoder)
     {
-        _workerGroup = new SingleThreadEventLoop();
         _x509Certificate2 = x509Certificate2;
         _targetHost = targetHost;
         _transportMessageDecoder = transportMessageDecoder;
@@ -47,6 +45,7 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
 
     public void ChannelCreated(IChannel channel)
     {
+        var workerGroup = new SingleThreadEventLoop();
         var pipeline = channel.Pipeline;
 
         if (_x509Certificate2 != null)
@@ -59,7 +58,7 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
 
         pipeline.AddLast(new LengthFieldPrepender(4));
         pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-        pipeline.AddLast(_workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
-        pipeline.AddLast(_workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
+        pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
+        pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
     }
 }
