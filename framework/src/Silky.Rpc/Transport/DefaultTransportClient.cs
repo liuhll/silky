@@ -17,8 +17,8 @@ namespace Silky.Rpc.Transport
     public class DefaultTransportClient : ITransportClient
     {
         private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
-        private readonly IMessageSender _messageSender;
-        private readonly IMessageListener _messageListener;
+        protected readonly IMessageSender _messageSender;
+        protected readonly IMessageListener _messageListener;
 
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
@@ -40,7 +40,7 @@ namespace Silky.Rpc.Transport
             task.SetResult(message);
         }
 
-        public async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
+        public virtual async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
             int timeout = Timeout.Infinite)
         {
             var transportMessage = new TransportMessage(message, messageId);

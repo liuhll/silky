@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime
@@ -9,10 +8,12 @@ namespace Silky.Rpc.Runtime
         public event ReceivedDelegate Received;
 
 
-        public Task OnReceived(IMessageSender sender, TransportMessage message)
+        public async Task OnReceived(IMessageSender sender, TransportMessage message)
         {
-            ThreadPool.QueueUserWorkItem(CallBack, new { Sender = sender, Message = message });
-            return Task.CompletedTask;
+            if (Received != null)
+            {
+                await Received(sender, message);
+            }
         }
 
         private async void CallBack(object state)

@@ -1,7 +1,7 @@
 rpc:
   host: 0.0.0.0
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
-  transportClientPoolNumber: 10
+  transportClientPoolNumber: 50
 #  isSSl: true
 #  sslCertificateName: test.silky-fk.com.pfx
 #  sslCertificatePassword: bdSpw3W7
