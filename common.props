@@ -21,5 +21,6 @@
 	
 	<EfCore5Version>5.0.7</EfCore5Version>
 
+    <DotNettyVersion>0.7.4</DotNettyVersion>
   </PropertyGroup>
 </Project>
