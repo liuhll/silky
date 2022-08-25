@@ -6,6 +6,7 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Pool;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core;
 using Silky.Rpc.Transport.Codec;
 
 namespace Silky.DotNetty.Handlers;
@@ -16,8 +17,7 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
     private readonly string _targetHost;
     private readonly ITransportMessageDecoder _transportMessageDecoder;
     private readonly ITransportMessageEncoder _transportMessageEncoder;
-
-
+    
     public ILogger<SilkyClientChannelPoolHandler> Logger { get; set; }
 
     public SilkyClientChannelPoolHandler(
@@ -30,7 +30,8 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
         _targetHost = targetHost;
         _transportMessageDecoder = transportMessageDecoder;
         _transportMessageEncoder = transportMessageEncoder;
-        Logger = NullLogger<SilkyClientChannelPoolHandler>.Instance;
+        Logger = EngineContext.Current.Resolve<ILogger<SilkyClientChannelPoolHandler>>() ??   
+                 NullLogger<SilkyClientChannelPoolHandler>.Instance;
     }
 
     public void ChannelReleased(IChannel channel)

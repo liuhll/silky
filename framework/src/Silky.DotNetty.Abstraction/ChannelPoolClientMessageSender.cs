@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,7 +5,6 @@ using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Pool;
 using Silky.Core.Runtime.Rpc;
-using Silky.Core.Threading;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Transport.Messages;

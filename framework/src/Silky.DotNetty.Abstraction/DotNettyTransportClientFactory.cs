@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
-using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Pool;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
-using Silky.Core.Threading;
 using Silky.DotNetty.Abstraction;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;

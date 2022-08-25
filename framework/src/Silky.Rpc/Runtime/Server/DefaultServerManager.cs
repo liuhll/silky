@@ -250,6 +250,10 @@ namespace Silky.Rpc.Runtime.Server
 
         public ServiceDescriptor GetServiceDescriptor(string serviceId)
         {
+            if (_serverCache == null)
+            {
+                return null;
+            }
             var serviceDescriptor = _serverCache.Values.SelectMany(p => p.Services)
                 .FirstOrDefault(p => p.Id == serviceId);
             return serviceDescriptor;
