@@ -10,10 +10,13 @@ namespace Silky.DotNetty.Handlers
     public class ClientHandler : ChannelHandlerAdapter
     {
         private readonly IMessageListener _messageListener;
+        private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
-        public ClientHandler(IMessageListener messageListener)
+        public ClientHandler(IMessageListener messageListener, 
+            IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _messageListener = messageListener;
+            _rpcEndpointMonitor = rpcEndpointMonitor;
         }
 
         public override async void ChannelRead(IChannelHandlerContext context, object message)
@@ -22,24 +25,24 @@ namespace Silky.DotNetty.Handlers
             await _messageListener.OnReceived(null, transportMessage);
         }
 
-        // public override void ChannelInactive(IChannelHandlerContext context)
-        // {
-        //     var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
-        //     if (remoteAddress != null)
-        //     {
-        //         _rpcEndpointMonitor.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
-        //     }
-        // }
-        //
-        // public override async Task CloseAsync(IChannelHandlerContext context)
-        // {
-        //     var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
-        //     if (remoteAddress != null)
-        //     {
-        //         _rpcEndpointMonitor.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
-        //     }
-        //
-        //     await base.CloseAsync(context);
-        // }
+        public override void ChannelInactive(IChannelHandlerContext context)
+        {
+            var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
+            if (remoteAddress != null)
+            {
+                _rpcEndpointMonitor.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
+            }
+        }
+        
+        public override async Task CloseAsync(IChannelHandlerContext context)
+        {
+            var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
+            if (remoteAddress != null)
+            {
+                _rpcEndpointMonitor.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
+            }
+        
+            await base.CloseAsync(context);
+        }
     }
 }

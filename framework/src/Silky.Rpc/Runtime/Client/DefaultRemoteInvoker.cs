@@ -71,7 +71,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 clientInvokeInfo =
                     invokeMonitor?.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
-                var client = _transportClientFactory.GetClient(selectedRpcEndpoint);
+                var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 foreach (var filter in filters)
                 {
                     filter.OnActionExecuting(remoteInvokeMessage);

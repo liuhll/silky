@@ -14,34 +14,31 @@ namespace Silky.DotNetty.Handlers;
 public class SilkyClientChannelPoolHandler : IChannelPoolHandler
 {
     private readonly X509Certificate2 _x509Certificate2;
-    private readonly string _targetHost;
     private readonly ITransportMessageDecoder _transportMessageDecoder;
     private readonly ITransportMessageEncoder _transportMessageEncoder;
-    
+
     public ILogger<SilkyClientChannelPoolHandler> Logger { get; set; }
 
     public SilkyClientChannelPoolHandler(
         X509Certificate2 x509Certificate2,
-        string targetHost,
         ITransportMessageDecoder transportMessageDecoder,
         ITransportMessageEncoder transportMessageEncoder)
     {
         _x509Certificate2 = x509Certificate2;
-        _targetHost = targetHost;
         _transportMessageDecoder = transportMessageDecoder;
         _transportMessageEncoder = transportMessageEncoder;
-        Logger = EngineContext.Current.Resolve<ILogger<SilkyClientChannelPoolHandler>>() ??   
+        Logger = EngineContext.Current.Resolve<ILogger<SilkyClientChannelPoolHandler>>() ??
                  NullLogger<SilkyClientChannelPoolHandler>.Instance;
     }
 
     public void ChannelReleased(IChannel channel)
     {
-        Logger.LogInformation("ChannelReleased. Channel ID:" + channel.Id);
+        Logger.LogDebug("ChannelReleased. Channel ID:" + channel.Id);
     }
 
     public void ChannelAcquired(IChannel channel)
     {
-        Logger.LogInformation("ChannelAcquired. Channel ID:" + channel.Id);
+        Logger.LogDebug("ChannelAcquired. Channel ID:" + channel.Id);
     }
 
     public void ChannelCreated(IChannel channel)
@@ -51,10 +48,11 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
 
         if (_x509Certificate2 != null)
         {
+            var targetHost = _x509Certificate2.GetNameInfo(X509NameType.DnsName, false);
             pipeline.AddLast("tls",
                 new TlsHandler(
                     stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true),
-                    new ClientTlsSettings(_targetHost)));
+                    new ClientTlsSettings(targetHost)));
         }
 
         pipeline.AddLast(new LengthFieldPrepender(4));

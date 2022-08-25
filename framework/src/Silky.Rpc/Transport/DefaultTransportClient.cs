@@ -16,7 +16,7 @@ namespace Silky.Rpc.Transport
 {
     public class DefaultTransportClient : ITransportClient
     {
-        private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
+        private static ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
         protected readonly IMessageSender _messageSender;
         protected readonly IMessageListener _messageListener;
 

@@ -5,7 +5,9 @@ using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Pool;
 using Silky.Core.Runtime.Rpc;
+using Silky.Core.Threading;
 using Silky.DotNetty.Handlers;
+using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Transport.Messages;
 
@@ -15,17 +17,27 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
 {
     private readonly IChannelPool _channelPool;
     private readonly IMessageListener _messageListener;
+    private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
+    private readonly SemaphoreSlim _semaphoreSlim;
 
-    public ChannelPoolClientMessageSender(IChannelPool channelPool, IMessageListener messageListener)
+
+    public ChannelPoolClientMessageSender(IChannelPool channelPool,
+        IMessageListener messageListener,
+        IRpcEndpointMonitor rpcEndpointMonitor, int transportClientPoolNumber)
     {
         _channelPool = channelPool;
         _messageListener = messageListener;
-        new SemaphoreSlim(1, 1);
+        _rpcEndpointMonitor = rpcEndpointMonitor;
+        _semaphoreSlim = new SemaphoreSlim(1, transportClientPoolNumber);
     }
 
     protected override async Task SendAsync(TransportMessage message)
     {
-        var channel = await _channelPool.AcquireAsync();
+        IChannel channel;
+        using (await _semaphoreSlim.LockAsync())
+        {
+            channel = await _channelPool.AcquireAsync();
+        }
         try
         {
             SetChannelClientHandler(channel);
@@ -42,7 +54,11 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
 
     protected override async Task SendAndFlushAsync(TransportMessage message)
     {
-        var channel = await _channelPool.AcquireAsync();
+        IChannel channel;
+        using (await _semaphoreSlim.LockAsync())
+        {
+            channel = await _channelPool.AcquireAsync();
+        }
         try
         {
             SetChannelClientHandler(channel);
@@ -59,9 +75,9 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
     private void SetChannelClientHandler(IChannel channel)
     {
         var pipeline = channel.Pipeline;
-        if (pipeline.Get("clientHandler") == null)
+        if (pipeline.Get("ClientHandler") == null)
         {
-            pipeline.AddLast("clientHandler", new ClientHandler(_messageListener));
+            pipeline.AddLast("ClientHandler", new ClientHandler(_messageListener, _rpcEndpointMonitor));
         }
     }
 
