@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Codecs.Compression;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
@@ -85,7 +86,7 @@ namespace Silky.DotNetty.Protocol.Tcp
                 tlsCertificate = new X509Certificate2(GetCertificateFile(), _rpcOptions.SslCertificatePassword);
             }
 
-            var workerGroup = new SingleThreadEventLoop();
+            // var workerGroup = new SingleThreadEventLoop();
             bootstrap
                 .Option(ChannelOption.SoBacklog, _rpcOptions.SoBacklog)
                 .Option(ChannelOption.TcpNodelay, true)
@@ -110,10 +111,11 @@ namespace Silky.DotNetty.Protocol.Tcp
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }
 
-                    // pipeline.AddLast(workerGroup, new TransportMessageChannelHandlerAdapter(_transportMessageDecoder));
-                    pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
-                    pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
-                    pipeline.AddLast(workerGroup, new ServerHandler(async (channelContext, message) =>
+                    pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
+                    pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
+                    pipeline.AddLast("encoder", new EncoderHandler(_transportMessageEncoder));
+                    pipeline.AddLast("decoder", new DecoderHandler(_transportMessageDecoder));
+                    pipeline.AddLast(new ServerHandler(async (channelContext, message) =>
                     {
                         if (message.IsInvokeMessage())
                         {

@@ -1,6 +1,7 @@
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using DotNetty.Codecs;
+using DotNetty.Codecs.Compression;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Pool;
@@ -43,7 +44,6 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
 
     public void ChannelCreated(IChannel channel)
     {
-        var workerGroup = new SingleThreadEventLoop();
         var pipeline = channel.Pipeline;
 
         if (_x509Certificate2 != null)
@@ -57,7 +57,9 @@ public class SilkyClientChannelPoolHandler : IChannelPoolHandler
 
         pipeline.AddLast(new LengthFieldPrepender(4));
         pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-        pipeline.AddLast(workerGroup, "encoder", new EncoderHandler(_transportMessageEncoder));
-        pipeline.AddLast(workerGroup, "decoder", new DecoderHandler(_transportMessageDecoder));
+        pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
+        pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
+        pipeline.AddLast("encoder", new EncoderHandler(_transportMessageEncoder));
+        pipeline.AddLast("decoder", new DecoderHandler(_transportMessageDecoder));
     }
 }
