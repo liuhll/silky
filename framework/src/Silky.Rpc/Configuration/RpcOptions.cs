@@ -12,7 +12,7 @@ namespace Silky.Rpc.Configuration
             Port = 2200;
             UseLibuv = true;
             IsSsl = false;
-            SoBacklog = 128;
+            SoBacklog = 1024;
             ConnectTimeout = 500;
             RegisterFailureRetryCount = 5;
             TransportClientPoolNumber = 50;
