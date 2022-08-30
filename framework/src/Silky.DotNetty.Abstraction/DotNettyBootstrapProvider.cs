@@ -14,10 +14,11 @@ using Silky.Rpc.Configuration;
 
 namespace Silky.DotNetty.Abstraction;
 
-internal class DotNettyBootstrapProvider : IBootstrapProvider, ITransientDependency
+internal class DotNettyBootstrapProvider : IDisposable, IBootstrapProvider, ITransientDependency
 {
     private readonly RpcOptions _rpcOptions;
     private readonly IHostEnvironment _hostEnvironment;
+    private IEventLoopGroup group;
 
     public DotNettyBootstrapProvider(IOptions<RpcOptions> rpcOptions,
         IHostEnvironment hostEnvironment)
@@ -28,7 +29,7 @@ internal class DotNettyBootstrapProvider : IBootstrapProvider, ITransientDepende
 
     public Bootstrap CreateClientBootstrap()
     {
-        IEventLoopGroup group;
+        
         var bootstrap = new Bootstrap();
         if (_rpcOptions.UseLibuv)
         {
@@ -77,5 +78,13 @@ internal class DotNettyBootstrapProvider : IBootstrapProvider, ITransientDepende
         }
 
         return certificateFileName;
+    }
+
+    public async void Dispose()
+    {
+        if (group != null)
+        {
+            await group.ShutdownGracefullyAsync();
+        }
     }
 }
