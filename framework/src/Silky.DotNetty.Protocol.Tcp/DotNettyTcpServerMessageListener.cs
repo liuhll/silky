@@ -86,7 +86,6 @@ namespace Silky.DotNetty.Protocol.Tcp
                 tlsCertificate = new X509Certificate2(GetCertificateFile(), _rpcOptions.SslCertificatePassword);
             }
 
-            // var workerGroup = new SingleThreadEventLoop();
             bootstrap
                 .Option(ChannelOption.SoBacklog, _rpcOptions.SoBacklog)
                 .Option(ChannelOption.TcpNodelay, true)

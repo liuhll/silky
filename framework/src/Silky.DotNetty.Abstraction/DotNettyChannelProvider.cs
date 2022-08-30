@@ -2,6 +2,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Codecs;
+using DotNetty.Codecs.Compression;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Channels;
@@ -41,7 +42,6 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
     {
         var bootstrap = _bootstrapProvider.CreateClientBootstrap();
         var tlsCertificate = _bootstrapProvider.GetX509Certificate2();
-        var workerGroup = new SingleThreadEventLoop();
         bootstrap
             .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
             {
@@ -58,6 +58,8 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
 
                 pipeline.AddLast(new LengthFieldPrepender(4));
                 pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
+                pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
+                pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
                 if (_governanceOptions.EnableHeartbeat &&
                     _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
                 {
@@ -66,10 +68,10 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
                         0));
                     pipeline.AddLast(new ChannelInboundHandlerAdapter());
                 }
-
-                pipeline.AddLast(workerGroup, "encoder",
+                
+                pipeline.AddLast("encoder",
                     new EncoderHandler(_transportMessageEncoder));
-                pipeline.AddLast(workerGroup, "decoder",
+                pipeline.AddLast("decoder",
                     new DecoderHandler(_transportMessageDecoder));
             }));
         var channel = await bootstrap.ConnectAsync(rpcEndpoint.IPEndPoint);
