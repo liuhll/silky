@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using Silky.DotNetty.Abstraction;
 using Silky.Rpc.Transport.Messages;
