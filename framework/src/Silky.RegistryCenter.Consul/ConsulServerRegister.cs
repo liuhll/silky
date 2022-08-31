@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Silky.Core.Exceptions;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Rpc.Endpoint;
-using Silky.Rpc.RegistryCenters;
 using Silky.Rpc.RegistryCenters.HeartBeat;
 using Silky.Rpc.Runtime.Server;
 
