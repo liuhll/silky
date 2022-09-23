@@ -33,7 +33,7 @@ namespace Silky.Codec.Message
 
         [Key(6)] public ValidError[] ValidateErrors { get; set; }
 
-        [Key(7)] public IDictionary<string, object> Attachments { get; set; }
+        [Key(7)] public IDictionary<string, string> Attachments { get; set; }
 
 
         public RemoteResultMessage GetMessage()

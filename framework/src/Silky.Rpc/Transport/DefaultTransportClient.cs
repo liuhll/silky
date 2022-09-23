@@ -79,7 +79,7 @@ namespace Silky.Rpc.Transport
             finally
             {
                 RpcContext.Context.SetResultAttachments(remoteResultMessage?.Attachments);
-                m_resultDictionary.Remove(id, out tcs);
+                m_resultDictionary.TryRemove(id, out tcs);
             }
         }
 

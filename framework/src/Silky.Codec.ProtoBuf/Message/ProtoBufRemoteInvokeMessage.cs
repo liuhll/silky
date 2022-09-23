@@ -25,6 +25,13 @@ namespace Silky.Codec.Message
             Value = item.Value == null ? null : new DynamicItem(item.Value);
         }
 
+        
+        public ParameterItem(KeyValuePair<string, string> item)
+        {
+            Key = item.Key.ToString();
+            Value = item.Value == null ? null : new DynamicItem(item.Value);
+        }
+
         public ParameterItem()
         {
         }
@@ -79,7 +86,7 @@ namespace Silky.Codec.Message
                 DictParameters = DictParameters?.ToDictionary(i => i.Key, i => i.Value?.Get()),
                 HttpParameters =
                     HttpParameters?.ToDictionary(i => i.Key.ConventTo<ParameterFrom>(), i => i.Value?.Get()),
-                Attachments = Attachments?.ToDictionary(i => i.Key, i => i.Value?.Get()),
+                Attachments = Attachments?.ToDictionary(i => i.Key, i => i.Value?.Get().ToString()),
             };
         }
     }

@@ -46,7 +46,7 @@ namespace Silky.Codec.Message
                 Status = Status,
                 Result = Result?.Get(),
                 ValidateErrors = ValidateErrors?.Select(p => (ValidError)p.Get()).ToArray(),
-                Attachments = Attachments?.ToDictionary(i => i.Key, i => i.Value?.Get()),
+                Attachments = Attachments?.ToDictionary(i => i.Key, i => i.Value?.Get().ToString()),
             };
         }
     }

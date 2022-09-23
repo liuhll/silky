@@ -73,7 +73,9 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
 
     private void SetClientPort(IChannel channel)
     {
-        var localAddress = channel.LocalAddress as IPEndPoint;
-        RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, localAddress?.Port);
+        if (channel.LocalAddress is IPEndPoint localAddress) 
+        {
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, localAddress.Port.ToString());
+        }
     }
 }

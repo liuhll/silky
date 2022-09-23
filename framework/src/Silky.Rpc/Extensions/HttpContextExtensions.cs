@@ -41,9 +41,8 @@ namespace Silky.Rpc.Extensions
 
         public static void SetHttpHandleAddressInfo(this HttpContext httpContext)
         {
-            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.IsGateway, true);
-
-
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.IsGateway, "true");
+            
             var clientHost = httpContext.Connection.RemoteIpAddress;
             var clientPort = httpContext.Connection.RemotePort;
 
@@ -55,9 +54,9 @@ namespace Silky.Rpc.Extensions
 
             var localRpcEndpoint = RpcEndpointHelper.GetLocalWebEndpointDescriptor();
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
-            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port.ToString());
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol,
-                localRpcEndpoint.ServiceProtocol);
+                localRpcEndpoint.ServiceProtocol.ToString());
         }
 
         public static void SetResultStatusCode(this HttpResponse httpResponse, StatusCode statusCode)

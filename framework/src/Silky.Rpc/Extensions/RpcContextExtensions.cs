@@ -23,14 +23,14 @@ namespace Silky.Rpc.Extensions
 
             var localRpcEndpointDescriptor = RpcEndpointHelper.GetLocalTcpEndpoint();
             rpcContext.SetInvokeAttachment(AttachmentKeys.ClientHost, localRpcEndpointDescriptor.Host);
-            rpcContext.SetInvokeAttachment(AttachmentKeys.ClientServiceProtocol, localRpcEndpointDescriptor.ServiceProtocol);
-            rpcContext.SetInvokeAttachment(AttachmentKeys.ClientPort, localRpcEndpointDescriptor.Port);
+            rpcContext.SetInvokeAttachment(AttachmentKeys.ClientServiceProtocol, localRpcEndpointDescriptor.ServiceProtocol.ToString());
+            rpcContext.SetInvokeAttachment(AttachmentKeys.ClientPort, localRpcEndpointDescriptor.Port.ToString());
             if (RpcContext.Context.GetLocalHost().IsNullOrEmpty())
             {
                 RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpointDescriptor.Host);
-                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpointDescriptor.Port);
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpointDescriptor.Port.ToString());
                 RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol,
-                    localRpcEndpointDescriptor.ServiceProtocol);
+                    localRpcEndpointDescriptor.ServiceProtocol.ToString());
             }
         }
         

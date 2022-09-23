@@ -84,21 +84,23 @@ namespace Silky.Rpc
                 {
                     messageListener.Received += async (sender, message) =>
                     {
-
                         using var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
+                        message.SetRpcMessageId();
+                        message.SetLocalRpcEndpoint();
+                        var serverDiagnosticListener = EngineContext.Current.Resolve<IServerDiagnosticListener>();
                         var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
                         rpcContextAccessor.RpcContext = RpcContext.Context;
                         rpcContextAccessor.RpcContext.RpcServices = serviceScope.ServiceProvider;
-                        Debug.Assert(message.IsInvokeMessage());
-                        message.SetRpcMessageId();
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
+                        Debug.Assert(message.IsInvokeMessage());
                         remoteInvokeMessage.SetRpcAttachments();
-                        var serverDiagnosticListener = EngineContext.Current.Resolve<IServerDiagnosticListener>();
                         var tracingTimestamp = serverDiagnosticListener.TracingBefore(remoteInvokeMessage, message.Id);
                         var handlePolicyBuilder = EngineContext.Current.Resolve<IHandlePolicyBuilder>();
                         var policy = handlePolicyBuilder.Build(remoteInvokeMessage);
-                        var context = new Context(PollyContextNames.ServerHandlerOperationKey);
-                        context[PollyContextNames.TracingTimestamp] = tracingTimestamp;
+                        var context = new Context(PollyContextNames.ServerHandlerOperationKey)
+                        {
+                            [PollyContextNames.TracingTimestamp] = tracingTimestamp
+                        };
                         var result = await policy.ExecuteAsync(async ct =>
                         {
                             var messageReceivedHandler = EngineContext.Current.Resolve<IServerMessageReceivedHandler>();

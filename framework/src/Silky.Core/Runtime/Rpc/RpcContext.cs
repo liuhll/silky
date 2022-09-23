@@ -3,18 +3,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using JetBrains.Annotations;
-using Newtonsoft.Json.Linq;
-using Silky.Core.Convertible;
-using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.Serialization;
 
 namespace Silky.Core.Runtime.Rpc
 {
     public class RpcContext
     {
-        private ConcurrentDictionary<string, object> invokeAttachments;
-        private ConcurrentDictionary<string, object> resultAttachments;
+        private ConcurrentDictionary<string, string> invokeAttachments;
+        private ConcurrentDictionary<string, string> resultAttachments;
         private static AsyncLocal<RpcContext> rpcContextThreadLocal = new();
 
         private RpcContext()
@@ -74,91 +71,25 @@ namespace Silky.Core.Runtime.Rpc
             resultAttachments.TryRemove(key, out _);
         }
 
-        public void SetInvokeAttachment([NotNull] string key, object value)
+        public void SetInvokeAttachment([NotNull] string key, string value)
         {
-            if (AttachmentKeys.RequestHeader.Equals(key))
-            {
-                var convertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-                value = convertibleService.Convert(value, typeof(IDictionary<string, object>));
-            }
-
-            if (value?.GetType().GetObjectDataType() == ObjectDataType.Complex
-                && !(value is IDictionary<string, object>)
-                && !(value is JObject)
-                && !(value is JArray)
-               )
-            {
-                throw new SilkyException("rpcContext attachments complex type parameters are not allowed");
-            }
-
             invokeAttachments.AddOrUpdate(key, value, (k, v) => value);
         }
+        
+        public void SetInvokeAttachment([NotNull] string key, object value)
+        {
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            var jsonValue = serializer.Serialize(value);
+            invokeAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+        }
+
 
         public void SetResultAttachment([NotNull] string key, object value)
         {
-            if (AttachmentKeys.ResponseHeader.Equals(key))
-            {
-                var convertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-                value = convertibleService.Convert(value, typeof(IDictionary<string, object>));
-            }
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            var jsonValue = serializer.Serialize(value);
 
-            if (value?.GetType().GetObjectDataType() == ObjectDataType.Complex
-                && !(value is IDictionary<string, object>)
-                && !(value is IDictionary<string, string>)
-                && !(value is IList<string>)
-                && !(value is JObject)
-                && !(value is JArray)
-               )
-            {
-                throw new SilkyException("rpcContext attachments complex type parameters are not allowed");
-            }
-
-            if (value is IDictionary<string, object> dict)
-            {
-                var resultAttachment = GetResultAttachment(key);
-                if (resultAttachment != null)
-                {
-                    var resultAttachmentValue = resultAttachment.ConventTo<IDictionary<string, object>>();
-                    foreach (var item in resultAttachmentValue)
-                    {
-                        if (!dict.ContainsKey(item.Key))
-                        {
-                            dict[item.Key] = item.Value;
-                        }
-                    }
-                }
-            }
-
-            if (value is IDictionary<string, string> dict1)
-            {
-                var resultAttachment = GetResultAttachment(key);
-                if (resultAttachment != null)
-                {
-                    var resultAttachmentValue = resultAttachment.ConventTo<IDictionary<string, string>>();
-                    foreach (var item in resultAttachmentValue)
-                    {
-                        if (!dict1.ContainsKey(item.Key))
-                        {
-                            dict1[item.Key] = item.Value;
-                        }
-                    }
-                }
-            }
-
-            if (value is List<string> list)
-            {
-                var resultAttachment = GetResultAttachment(key);
-                if (resultAttachment != null)
-                {
-                    var resultAttachmentValue = resultAttachment.ConventTo<List<string>>();
-                    foreach (var item in resultAttachmentValue)
-                    {
-                        list.AddIfNotContains(item);
-                    }
-                }
-            }
-
-            resultAttachments.AddOrUpdate(key, value, (k, v) => value);
+            resultAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
         }
 
         public bool HasInvokeAttachment([NotNull] string key)
@@ -171,19 +102,19 @@ namespace Silky.Core.Runtime.Rpc
             return resultAttachments.ContainsKey(key);
         }
 
-        public object GetInvokeAttachment([NotNull] string key)
+        public string GetInvokeAttachment([NotNull] string key)
         {
-            invokeAttachments.TryGetValue(key, out object result);
+            invokeAttachments.TryGetValue(key, out string result);
             return result;
         }
 
-        public object GetResultAttachment([NotNull] string key)
+        public string GetResultAttachment([NotNull] string key)
         {
-            resultAttachments.TryGetValue(key, out object result);
+            resultAttachments.TryGetValue(key, out string result);
             return result;
         }
 
-        public void SetInvokeAttachments(IDictionary<string, object> attachments)
+        public void SetInvokeAttachments(IDictionary<string, string> attachments)
         {
             foreach (var item in attachments)
             {
@@ -209,7 +140,7 @@ namespace Silky.Core.Runtime.Rpc
         }
 
 
-        public void SetResultAttachments(IDictionary<string, object> attachments)
+        public void SetResultAttachments(IDictionary<string, string> attachments)
         {
             if (attachments == null)
             {
@@ -222,12 +153,12 @@ namespace Silky.Core.Runtime.Rpc
             }
         }
 
-        public IDictionary<string, object> GetInvokeAttachments()
+        public IDictionary<string, string> GetInvokeAttachments()
         {
             return invokeAttachments;
         }
 
-        public IDictionary<string, object> GetResultAttachments()
+        public IDictionary<string, string> GetResultAttachments()
         {
             return resultAttachments;
         }

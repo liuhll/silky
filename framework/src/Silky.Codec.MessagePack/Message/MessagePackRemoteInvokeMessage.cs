@@ -35,7 +35,7 @@ namespace Silky.Codec.Message
 
         [Key(6)] public ParameterType ParameterType { get; set; }
 
-        [Key(7)] public IDictionary<string, object> Attachments { get; set; }
+        [Key(7)] public IDictionary<string, string> Attachments { get; set; }
 
         public RemoteInvokeMessage GetMessage()
         {

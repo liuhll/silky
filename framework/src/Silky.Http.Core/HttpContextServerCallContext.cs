@@ -106,7 +106,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
         var gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>();
         HttpContext.Response.ContentType = HttpContext.GetResponseContentType(gatewayOptions);
-        HttpContext.Response.SetHeaders();
+       // HttpContext.Response.SetHeaders();
         _statusCode = StatusCode.Success;
         HttpContext.Response.StatusCode = (int)_statusCode.GetHttpStatusCode();
         HttpContext.Response.SetResultStatusCode(_statusCode);

@@ -26,10 +26,11 @@ namespace Silky.DotNetty
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
         private readonly SilkyChannelPoolMap _silkyChannelPoolMap;
         private readonly IChannelProvider _channelProvider;
+
         private readonly IMessageListener _clientMessageListener;
-        
+
         // private ConcurrentDictionary<IRpcEndpoint, IChannel> m_channels = new();
-        private ConcurrentDictionary <IRpcEndpoint, ITransportClient> m_clients = new();
+        private ConcurrentDictionary<IRpcEndpoint, ITransportClient> m_clients = new();
 
         public DotNettyTransportClientFactory(IRpcEndpointMonitor rpcEndpointMonitor,
             SilkyChannelPoolMap silkyChannelPoolMap,
@@ -51,22 +52,23 @@ namespace Silky.DotNetty
             {
                 Logger.LogDebug(
                     $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}.");
+                
                 if (!m_clients.TryGetValue(rpcEndpoint, out var client))
                 {
-                    var messageListener = new ClientMessageListener();
                     if (_rpcOptions.UseTransportClientPool)
                     {
                         var pool = _silkyChannelPoolMap.Get(rpcEndpoint);
                         var messageSender =
-                            new ChannelPoolClientMessageSender(pool, messageListener, _rpcEndpointMonitor);
-                        client = new DefaultTransportClient(messageSender, messageListener);
+                            new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
+                        client = new DefaultTransportClient(messageSender, _clientMessageListener);
                     }
                     else
                     {
-                        var channel = await _channelProvider.Create(rpcEndpoint, messageListener, _rpcEndpointMonitor);
+                        var channel = await _channelProvider.Create(rpcEndpoint, _clientMessageListener, _rpcEndpointMonitor);
                         var messageSender = new DotNettyClientMessageSender(channel);
-                        client = new DefaultTransportClient(messageSender, messageListener);
+                        client = new DefaultTransportClient(messageSender, _clientMessageListener);
                     }
+
                     _ = m_clients.TryAdd(rpcEndpoint, client);
                     return client;
                 }
