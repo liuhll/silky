@@ -18,26 +18,20 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
     private readonly IChannelPool _channelPool;
     private readonly IMessageListener _messageListener;
     private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-    private readonly SemaphoreSlim _semaphoreSlim;
 
 
     public ChannelPoolClientMessageSender(IChannelPool channelPool,
         IMessageListener messageListener,
-        IRpcEndpointMonitor rpcEndpointMonitor, int transportClientPoolNumber)
+        IRpcEndpointMonitor rpcEndpointMonitor)
     {
         _channelPool = channelPool;
         _messageListener = messageListener;
         _rpcEndpointMonitor = rpcEndpointMonitor;
-        _semaphoreSlim = new SemaphoreSlim(1, transportClientPoolNumber);
     }
 
     protected override async Task SendAsync(TransportMessage message)
     {
-        IChannel channel;
-        using (await _semaphoreSlim.LockAsync())
-        {
-            channel = await _channelPool.AcquireAsync();
-        }
+        var channel = await _channelPool.AcquireAsync();
         try
         {
             SetChannelClientHandler(channel);
@@ -54,11 +48,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
 
     protected override async Task SendAndFlushAsync(TransportMessage message)
     {
-        IChannel channel;
-        using (await _semaphoreSlim.LockAsync())
-        {
-            channel = await _channelPool.AcquireAsync();
-        }
+        var channel = await _channelPool.AcquireAsync();
         try
         {
             SetChannelClientHandler(channel);

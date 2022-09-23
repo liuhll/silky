@@ -13,6 +13,7 @@ using Silky.DotNetty.Handlers;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
+using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport.Codec;
 
@@ -37,7 +38,7 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
         governanceOptions.OnChange((options, s) => _governanceOptions = options);
     }
 
-    public async Task<IChannel> Create(IRpcEndpoint rpcEndpoint, ClientMessageListener messageListener,
+    public async Task<IChannel> Create(IRpcEndpoint rpcEndpoint, IMessageListener messageListener,
         IRpcEndpointMonitor rpcEndpointMonitor)
     {
         var bootstrap = _bootstrapProvider.CreateClientBootstrap();

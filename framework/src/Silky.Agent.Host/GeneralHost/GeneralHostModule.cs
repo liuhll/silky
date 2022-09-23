@@ -27,7 +27,7 @@ namespace Microsoft.Extensions.Hosting
     [DependsOn(
         typeof(DotNettyTcpModule),
         typeof(RpcProxyModule),
-        typeof(RpcMonitorModule),
+        // typeof(RpcMonitorModule),
         typeof(RpcCachingInterceptorModule),
         typeof(TransactionTccModule),
         typeof(ValidationModule),

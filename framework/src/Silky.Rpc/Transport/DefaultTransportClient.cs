@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,15 +17,16 @@ namespace Silky.Rpc.Transport
 {
     public class DefaultTransportClient : ITransportClient
     {
-        private static ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
-        protected readonly IMessageSender _messageSender;
+        private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
         protected readonly IMessageListener _messageListener;
 
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
+        public IMessageSender MessageSender { get; set; }
+        
         public DefaultTransportClient(IMessageSender messageSender, IMessageListener messageListener)
         {
-            _messageSender = messageSender;
+            MessageSender = messageSender;
             _messageListener = messageListener;
             _messageListener.Received += MessageListenerOnReceived;
             Logger = EngineContext.Current.Resolve<ILogger<DefaultTransportClient>>() ??
@@ -53,10 +55,10 @@ namespace Silky.Rpc.Transport
                 "messageId:[{1}],serviceEntryId:[{2}]", Environment.NewLine, transportMessage.Id,
                 message.ServiceEntryId);
 
-            await _messageSender.SendMessageAsync(transportMessage);
+            await MessageSender.SendMessageAsync(transportMessage);
             return await callbackTask;
         }
-
+        
         private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id, string serviceEntryId,
             int timeout = Timeout.Infinite)
         {
@@ -77,7 +79,7 @@ namespace Silky.Rpc.Transport
             finally
             {
                 RpcContext.Context.SetResultAttachments(remoteResultMessage?.Attachments);
-                m_resultDictionary.TryRemove(id, out tcs);
+                m_resultDictionary.Remove(id, out tcs);
             }
         }
 
