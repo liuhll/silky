@@ -11,12 +11,11 @@ namespace Silky.Rpc.Runtime
 
         public Task OnReceived(IMessageSender sender, TransportMessage message)
         {
-            // if (Received != null)
-            // {
-            //     await Received(sender, message);
-            // }
-
-            return Received == null ? Task.CompletedTask : Received(sender, message);
+            if (Received != null)
+            {
+                return Received(sender, message);
+            }
+            return Task.CompletedTask;
             // ThreadPool.QueueUserWorkItem(CallBack, new { Sender = sender, Message = message });
             // return Task.CompletedTask;
         }

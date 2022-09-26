@@ -110,8 +110,8 @@ namespace Silky.DotNetty.Protocol.Tcp
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }
 
-                    pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
-                    pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
+                    // pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
+                    // pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
                     pipeline.AddLast("encoder", new EncoderHandler(_transportMessageEncoder));
                     pipeline.AddLast("decoder", new DecoderHandler(_transportMessageDecoder));
                     pipeline.AddLast(new ServerHandler(async (channelContext, message) =>

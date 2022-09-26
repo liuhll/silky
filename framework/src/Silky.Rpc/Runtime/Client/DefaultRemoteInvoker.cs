@@ -112,26 +112,19 @@ namespace Silky.Rpc.Runtime.Client
         private IRpcEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
         {
             var rpcEndpoints = _serverManager.GetRpcEndpoints(remoteInvokeMessage.ServiceId, ServiceProtocol.Tcp);
-            if (rpcEndpoints == null)
+            if (rpcEndpoints == null || !rpcEndpoints.Any())
             {
                 throw new NotFindServiceRouteException(
                     $"The service routing could not be found via [{remoteInvokeMessage.ServiceEntryId}]");
             }
-
-            if (!rpcEndpoints.Any(p => p.Enabled))
-            {
-                throw new NotFindServiceRouteAddressException(
-                    $"No available service provider can be found via [{remoteInvokeMessage.ServiceEntryId}]");
-            }
-
+            
             return rpcEndpoints;
         }
 
         private IRpcEndpoint SelectedRpcEndpoint(IRpcEndpoint[] rpcEndpoints, ShuntStrategy shuntStrategy,
             string serviceEntryId, string hashKey, out ShuntStrategy confirmedShuntStrategy)
         {
-            var remoteAddress = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.SelectedServerEndpoint)
-                ?.ToString();
+            var remoteAddress = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.SelectedServerEndpoint);
             IRpcEndpoint selectedRpcEndpoint;
             if (remoteAddress != null)
             {

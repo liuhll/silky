@@ -37,13 +37,25 @@ namespace Silky.Rpc.Endpoint.Selector
                     addressesPools.TryRemove(removeKey, out _);
                 }
             };
+
             _serverManager.OnUpdateRpcEndpoint += async (hostName, endpoints) =>
             {
                 var removeKeys = addressesPools.Where(p =>
                         p.Value.Item2.Any(r => r.Host.Equals(hostName)) ||
                         p.Value.Item2.Any(q => endpoints.Any(r => r.Equals(q))))
                     .Select(p => p.Key);
-                
+
+                foreach (var removeKey in removeKeys)
+                {
+                    addressesPools.TryRemove(removeKey, out _);
+                }
+            };
+            _serverManager.OnRemoveRpcEndpoint += async (hostName, endpoint) =>
+            {
+                var removeKeys = addressesPools.Where(p =>
+                        p.Value.Item2.Any(r => r.Host.Equals(hostName)) ||
+                        p.Value.Item2.Any(q => Equals(endpoint)))
+                    .Select(p => p.Key);
                 foreach (var removeKey in removeKeys)
                 {
                     addressesPools.TryRemove(removeKey, out _);
@@ -55,21 +67,21 @@ namespace Silky.Rpc.Endpoint.Selector
 
         protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
-            var selectAdderessItem = (0, context.AddressModels);
             var index = 0;
-            if (addressesPools.ContainsKey(context.MonitorId))
+
+            if (addressesPools.TryGetValue(context.MonitorId, out var selectAddressItem))
             {
-                selectAdderessItem = addressesPools.GetOrAdd(context.MonitorId, selectAdderessItem);
-                index = selectAdderessItem.Item1 >= selectAdderessItem.Item2.Count(p => p.Enabled)
-                    ? 0
-                    : selectAdderessItem.Item1;
+                index = selectAddressItem.Item1 >= selectAddressItem.Item2.Length ? 0 : selectAddressItem.Item1;
+            }
+            else
+            {
+                selectAddressItem = (0, context.AddressModels);
+                addressesPools.AddOrUpdate(context.MonitorId, selectAddressItem, (k, v) => selectAddressItem);
             }
 
-            var enableAddress = selectAdderessItem.Item2.Where(p => p.Enabled).ToArray();
-            var selectAdderess = enableAddress[index];
-            selectAdderessItem.Item1 = index + 1;
-            addressesPools.AddOrUpdate(context.MonitorId, selectAdderessItem, (k, v) => selectAdderessItem);
-            return selectAdderess;
+            var selectAddress = selectAddressItem.Item2[index];
+            selectAddressItem.Item1 = index + 1;
+            return selectAddress;
         }
     }
 }

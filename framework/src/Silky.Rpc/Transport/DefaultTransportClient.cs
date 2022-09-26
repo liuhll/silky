@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +37,7 @@ namespace Silky.Rpc.Transport
             TaskCompletionSource<TransportMessage> task;
             if (!m_resultDictionary.TryGetValue(message.Id, out task))
                 return;
-            Debug.Assert(message.IsResultMessage(), "The message type received by the service consumer is incorrect");
+            // Debug.Assert(message.IsResultMessage(), "The message type received by the service consumer is incorrect");
             task.SetResult(message);
         }
 

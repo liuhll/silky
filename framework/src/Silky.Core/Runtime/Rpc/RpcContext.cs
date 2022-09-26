@@ -75,21 +75,34 @@ namespace Silky.Core.Runtime.Rpc
         {
             invokeAttachments.AddOrUpdate(key, value, (k, v) => value);
         }
-        
+
         public void SetInvokeAttachment([NotNull] string key, object value)
         {
-            var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var jsonValue = serializer.Serialize(value);
-            invokeAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+            if (value is string stringValue)
+            {
+                invokeAttachments.AddOrUpdate(key, stringValue, (k, v) => stringValue);
+            }
+            else
+            {
+                var serializer = EngineContext.Current.Resolve<ISerializer>();
+                var jsonValue = serializer.Serialize(value);
+                invokeAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+            }
         }
 
 
         public void SetResultAttachment([NotNull] string key, object value)
         {
-            var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var jsonValue = serializer.Serialize(value);
-
-            resultAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+            if (value is string stringValue)
+            {
+                resultAttachments.AddOrUpdate(key, stringValue, (k, v) => stringValue);
+            }
+            else
+            {
+                var serializer = EngineContext.Current.Resolve<ISerializer>();
+                var jsonValue = serializer.Serialize(value);
+                resultAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+            }
         }
 
         public bool HasInvokeAttachment([NotNull] string key)

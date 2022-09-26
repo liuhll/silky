@@ -87,14 +87,13 @@ namespace Silky.Rpc
                         using var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
                         message.SetRpcMessageId();
                         message.SetLocalRpcEndpoint();
+                        var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
+                        remoteInvokeMessage.SetRpcAttachments();
                         var serverDiagnosticListener = EngineContext.Current.Resolve<IServerDiagnosticListener>();
+                        var tracingTimestamp = serverDiagnosticListener.TracingBefore(remoteInvokeMessage, message.Id);
                         var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
                         rpcContextAccessor.RpcContext = RpcContext.Context;
                         rpcContextAccessor.RpcContext.RpcServices = serviceScope.ServiceProvider;
-                        var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
-                        Debug.Assert(message.IsInvokeMessage());
-                        remoteInvokeMessage.SetRpcAttachments();
-                        var tracingTimestamp = serverDiagnosticListener.TracingBefore(remoteInvokeMessage, message.Id);
                         var handlePolicyBuilder = EngineContext.Current.Resolve<IHandlePolicyBuilder>();
                         var policy = handlePolicyBuilder.Build(remoteInvokeMessage);
                         var context = new Context(PollyContextNames.ServerHandlerOperationKey)

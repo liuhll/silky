@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -21,14 +22,24 @@ namespace Silky.Rpc.Endpoint
         private const string LOCAL_HOSTADRRESS = "localhost";
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
 
+        private static ConcurrentDictionary<string, string> _ipCache = new();
+
+        private static ConcurrentDictionary<string, IRpcEndpoint> _rpcEndpointCache = new();
+
         public static string GetHostIp(string hostAddress)
         {
+            if (_ipCache.TryGetValue($"HostIp_{hostAddress}", out var hostIp))
+            {
+                return hostIp;
+            }
+
             var result = hostAddress;
             if ((!IsValidAddress(hostAddress) && !IsLocalHost(hostAddress)) || IsAnyHost(hostAddress))
             {
                 result = GetAnyHostIp();
             }
 
+            _ = _ipCache.TryAdd($"HostIp_{hostAddress}", result);
             return result;
         }
 
@@ -78,7 +89,7 @@ namespace Silky.Rpc.Endpoint
         private static string GetAnyHostIp()
         {
             var result = "";
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            var nics = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in nics)
             {
                 if (adapter.OperationalStatus != OperationalStatus.Up)
@@ -108,38 +119,50 @@ namespace Silky.Rpc.Endpoint
 
         public static IRpcEndpoint GetLocalTcpEndpoint()
         {
+            if (_rpcEndpointCache.TryGetValue("LocalTcpEndpoint", out var localTcpEndpoint))
+            {
+                return localTcpEndpoint;
+            }
+
             var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
-            string host = GetHostIp(rpcOptions.Host);
-            int port = rpcOptions.Port;
+            var host = GetHostIp(rpcOptions.Host);
+            var port = rpcOptions.Port;
             var address = new RpcEndpoint(host, port, ServiceProtocol.Tcp);
+            _ = _rpcEndpointCache.TryAdd("LocalTcpEndpoint", address);
             return address;
         }
 
         public static bool IsLocalRpcAddress(string address)
         {
-            var localAddress = RpcEndpointHelper.GetLocalTcpEndpoint().GetAddress();
+            var localAddress = GetLocalTcpEndpoint().GetAddress();
             return localAddress.Equals(address);
         }
 
         public static string GetLocalAddress()
         {
-            string host = GetAnyHostIp();
+            var host = GetAnyHostIp();
             return host;
         }
 
 
         public static IRpcEndpoint GetRpcEndpoint(int port, ServiceProtocol serviceProtocol)
         {
-            string host = GetIp(GetAnyHostIp());
+            var host = GetIp(GetAnyHostIp());
             var address = new RpcEndpoint(host, port, serviceProtocol);
             return address;
         }
 
         public static IRpcEndpoint GetWsEndpoint()
         {
+            if (_rpcEndpointCache.TryGetValue("WsEndpoint", out var wsEndpoint))
+            {
+                return wsEndpoint;
+            }
+
             var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
-            string host = GetHostIp(GetAnyHostIp());
+            var host = GetHostIp(GetAnyHostIp());
             var address = new RpcEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
+            _rpcEndpointCache.TryAdd("WsEndpoint", wsEndpoint);
             return address;
         }
 

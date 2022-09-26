@@ -28,7 +28,7 @@ namespace GatewayDemo
             // services.AddSilkyMiniProfiler();
             // // services.AddDashboard();
             // services.AddSilkyIdentity();
-            // services.AddSilkySkyApm();
+            services.AddSilkySkyApm();
             // services.AddRouting();
             // services.AddMessagePackCodec();
             // var redisOptions = Configuration.GetRateLimitRedisOptions();
@@ -38,7 +38,7 @@ namespace GatewayDemo
             // services.AddMvc();
             // services.AddSilkyHttpCore();
             // services.AddTransient<IAuthorizationHandler, TestAuthorizationHandlerBase>();
-            services.AddSilkySkyApm();
+            // services.AddSilkySkyApm();
             services.AddSilkyHttpServices<TestAuthorizationHandler>();
             services.AddSilkyIdentity();
             // services.AddMessagePackCodec();

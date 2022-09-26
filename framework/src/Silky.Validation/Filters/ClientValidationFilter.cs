@@ -33,6 +33,8 @@ namespace Silky.Validation.Filters
             if (remoteInvokeMessage.ParameterType != ParameterType.Rpc) return;
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
             if (serviceEntry == null) return;
+            if (serviceEntry.IsLocal) return;
+
             _methodInvocationValidator.Validate(
                 new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);

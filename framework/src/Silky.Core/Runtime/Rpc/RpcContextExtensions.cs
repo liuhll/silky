@@ -48,7 +48,7 @@ namespace Silky.Core.Runtime.Rpc
         public static string GetLocalHost(this RpcContext rpcContext)
         {
             var localAddress = rpcContext.GetInvokeAttachment(AttachmentKeys.LocalAddress);
-            return localAddress?.ToString();
+            return localAddress;
         }
 
         public static int GetLocalPort(this RpcContext rpcContext)

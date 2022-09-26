@@ -29,7 +29,6 @@ namespace Silky.DotNetty
 
         private readonly IMessageListener _clientMessageListener;
 
-        // private ConcurrentDictionary<IRpcEndpoint, IChannel> m_channels = new();
         private ConcurrentDictionary<IRpcEndpoint, ITransportClient> m_clients = new();
 
         public DotNettyTransportClientFactory(IRpcEndpointMonitor rpcEndpointMonitor,
@@ -52,7 +51,7 @@ namespace Silky.DotNetty
             {
                 Logger.LogDebug(
                     $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}.");
-                
+
                 if (!m_clients.TryGetValue(rpcEndpoint, out var client))
                 {
                     if (_rpcOptions.UseTransportClientPool)
@@ -64,7 +63,8 @@ namespace Silky.DotNetty
                     }
                     else
                     {
-                        var channel = await _channelProvider.Create(rpcEndpoint, _clientMessageListener, _rpcEndpointMonitor);
+                        var channel =
+                            await _channelProvider.Create(rpcEndpoint, _clientMessageListener, _rpcEndpointMonitor);
                         var messageSender = new DotNettyClientMessageSender(channel);
                         client = new DefaultTransportClient(messageSender, _clientMessageListener);
                     }
