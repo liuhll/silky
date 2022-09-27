@@ -28,7 +28,6 @@ namespace Silky.DotNetty.Abstraction
             var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
             if (serviceEntryDescriptor?.GovernanceOptions.RetryTimes > 0)
             {
-               
                 policy = Policy<object>
                     .Handle<ChannelException>()
                     .Or<ConnectException>()
@@ -53,8 +52,16 @@ namespace Silky.DotNetty.Abstraction
             Context context, ServiceEntryDescriptor serviceEntryDescriptor)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();
-            _rpcEndpointMonitor.ChangeStatus(serviceAddressModel, false,
-                serviceEntryDescriptor.GovernanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+            if (outcome.Exception is CommunicationException || outcome.Exception is IOException || outcome.Exception is ChannelException)
+            {
+                _rpcEndpointMonitor.RemoveRpcEndpoint(serviceAddressModel);
+            }
+            else
+            {
+                _rpcEndpointMonitor.ChangeStatus(serviceAddressModel, false,
+                    serviceEntryDescriptor.GovernanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+            }
+
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,

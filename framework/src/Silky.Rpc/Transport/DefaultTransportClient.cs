@@ -34,8 +34,7 @@ namespace Silky.Rpc.Transport
 
         private async Task MessageListenerOnReceived(IMessageSender sender, TransportMessage message)
         {
-            TaskCompletionSource<TransportMessage> task;
-            if (!m_resultDictionary.TryGetValue(message.Id, out task))
+            if (!m_resultDictionary.TryGetValue(message.Id, out var task))
                 return;
             task.SetResult(message);
         }
