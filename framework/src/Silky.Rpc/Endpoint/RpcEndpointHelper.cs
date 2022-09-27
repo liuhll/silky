@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Silky.Core;
@@ -51,7 +53,7 @@ namespace Silky.Rpc.Endpoint
         public static IRpcEndpoint GetLocalWebEndpoint()
         {
             var server = EngineContext.Current.Resolve<IServer>();
-            Check.NotNull(server, nameof(server));
+
             var address = server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
             if (address.IsNullOrEmpty())
             {

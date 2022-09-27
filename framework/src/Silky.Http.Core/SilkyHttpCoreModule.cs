@@ -22,7 +22,6 @@ namespace Silky.Http.Core
         {
             application.UseSilkyWrapperResponse();
             application.UseSilkyWebSocketsProxy();
-            application.UseSilkyWebServer();
         }
 
         protected override void RegisterServices(ContainerBuilder builder)

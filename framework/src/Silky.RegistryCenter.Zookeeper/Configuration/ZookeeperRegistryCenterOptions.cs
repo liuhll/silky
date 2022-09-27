@@ -14,9 +14,9 @@ namespace Silky.RegistryCenter.Zookeeper.Configuration
 
         public double ConnectionTimeout { get; set; } = 10000;
 
-        public double SessionTimeout { get; set; } = 16000;
+        public double SessionTimeout { get; set; } = 20000;
 
-        public double OperatingTimeout { get; set; } = 20000;
+        public double OperatingTimeout { get; set; } = 30000;
 
         public string ConnectionStrings { get; set; }
 

@@ -47,7 +47,7 @@ namespace Silky.Rpc.RegistryCenters.HeartBeat
             }
             catch (Exception ex)
             {
-                _logger.LogException(ex);
+                _logger.LogWarning(ex.Message);
             }
         }
 

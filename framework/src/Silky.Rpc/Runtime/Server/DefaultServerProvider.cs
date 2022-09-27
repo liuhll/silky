@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
+using Silky.Core.Serialization;
 using Silky.Rpc.Endpoint;
 
 namespace Silky.Rpc.Runtime.Server
@@ -14,13 +15,16 @@ namespace Silky.Rpc.Runtime.Server
         private readonly IServer _server;
         private readonly IServiceManager _serviceManager;
         private readonly IServiceEntryManager _serviceEntryManager;
+        private readonly ISerializer _serializer;
 
         public DefaultServerProvider(IServiceManager serviceManager,
-            IServiceEntryManager serviceEntryManager)
+            IServiceEntryManager serviceEntryManager,
+            ISerializer serializer)
         {
             _serviceManager = serviceManager;
             _serviceEntryManager = serviceEntryManager;
-            Logger = NullLogger<DefaultServerProvider>.Instance;
+            _serializer = serializer;
+            Logger = EngineContext.Current.Resolve<ILogger<DefaultServerProvider>>();
             _server = new Server(EngineContext.Current.HostName);
         }
 
@@ -38,10 +42,12 @@ namespace Silky.Rpc.Runtime.Server
         public void AddHttpServices()
         {
             var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
-            if (webEndpoint != null)
+            if (webEndpoint == null)
             {
-                _server.Endpoints.Add(webEndpoint);
+                //throw new SilkyException("Failed to obtain http service rpcEndpoint");
+                return;
             }
+            _server.Endpoints.Add(webEndpoint);
         }
 
         public void AddWsServices()
@@ -57,12 +63,14 @@ namespace Silky.Rpc.Runtime.Server
 
         public IServer GetServer()
         {
-            if (_serviceEntryManager.HasHttpProtocolServiceEntry() && !_server.Endpoints.Any(p =>
-                    p.ServiceProtocol == ServiceProtocol.Http || p.ServiceProtocol == ServiceProtocol.Https))
-            {
-                throw new SilkyException("A server that supports file upload and download or ActionResult must be built through the http protocol host", StatusCode.ServerError);
-            }
-
+            Logger.LogDebug("server endpoints:" + _serializer.Serialize(_server.Endpoints.Select(p => p.ToString())));
+            // if (_serviceEntryManager.HasHttpProtocolServiceEntry() && !_server.Endpoints.Any(p =>
+            //         p.ServiceProtocol == ServiceProtocol.Http || p.ServiceProtocol == ServiceProtocol.Https))
+            // {
+            //     throw new SilkyException(
+            //         "A server that supports file upload and download or ActionResult must be built through the http protocol host",
+            //         StatusCode.ServerError);
+            // }
             return _server;
         }
     }

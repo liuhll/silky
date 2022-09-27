@@ -55,48 +55,6 @@ namespace Microsoft.AspNetCore.Builder
             });
         }
         
-        public static async void UseSilkyWebServer(this IApplicationBuilder application)
-        {
-            var options = EngineContext.Current.GetOptions<RpcOptions>();
-            var logger = EngineContext.Current.Resolve<ILogger<SilkyHttpCoreModule>>();
-            var serverRegisterProvider =
-                application.ApplicationServices.GetRequiredService<IServerProvider>();
-            var serverRouteRegister =
-                application.ApplicationServices.GetRequiredService<IServerRegister>();
-            var policy = Policy
-                .Handle<TimeoutException>()
-                .WaitAndRetryAsync(options.RegisterFailureRetryCount,
-                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                    async (exception, timeSpan, context) =>
-                    {
-                        if (exception != null)
-                        {
-                            logger.LogException(exception);
-                        }
-
-                        serverRegisterProvider.AddHttpServices();
-                        await serverRouteRegister.RegisterServer();
-                    });
-            await policy.ExecuteAsync(async () =>
-            {
-                serverRegisterProvider.AddHttpServices();
-                await serverRouteRegister.RegisterServer();
-            });
-
-            var invokeMonitor =
-                application.ApplicationServices.GetService<IInvokeMonitor>();
-            if (invokeMonitor != null)
-            {
-                await invokeMonitor.ClearCache();
-            }
-
-            var serverHandleMonitor =
-                application.ApplicationServices.GetService<IServerHandleMonitor>();
-            if (serverHandleMonitor != null)
-            {
-                await serverHandleMonitor.ClearCache();
-            }
-        }
 
         public static IApplicationBuilder UseSilkyWebSocketsProxy(this IApplicationBuilder application)
         {

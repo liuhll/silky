@@ -38,6 +38,7 @@ namespace Silky.Rpc
             services.AddDefaultMessageCodec();
             services.AddAuditing(configuration);
             services.TryAddSingleton<IHeartBeatService, DefaultHeartBeatService>();
+            services.TryAddSingleton<IServerProvider,DefaultServerProvider>();
         }
 
         protected override void RegisterServices(ContainerBuilder builder)
