@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -54,9 +55,10 @@ namespace Silky.Rpc.Runtime.Server
                 return serviceEntryDescriptor;
             }
 
-            serviceEntryDescriptor = _serverCache.Values
+            serviceEntryDescriptor = _serverCache?.Values
                 .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
                 .FirstOrDefault(p => p.Id == serviceEntryId);
+
             if (serviceEntryDescriptor != null)
             {
                 _serviceEntryDescriptorCacheForId.TryAdd(serviceEntryId, serviceEntryDescriptor);
@@ -72,7 +74,7 @@ namespace Silky.Rpc.Runtime.Server
                 return serviceEntryDescriptor;
             }
 
-            serviceEntryDescriptor = _serverCache.Values
+            serviceEntryDescriptor = _serverCache?.Values
                 .SelectMany(p => p.Services.SelectMany(p => p.ServiceEntries))
                 .FirstOrDefault(p => p.WebApi == api && p.HttpMethod == httpMethod);
             if (serviceEntryDescriptor != null)
@@ -135,7 +137,12 @@ namespace Silky.Rpc.Runtime.Server
         private async Task RemoveRpcEndpointHandler(IRpcEndpoint rpcEndpoint)
         {
             var needRemoveEndpointServerRoutes =
-                Servers.Where(p => p.Endpoints.Any(q => q.Host == rpcEndpoint.Host));
+                Servers?.Where(p => p.Endpoints.Any(q => q.Host == rpcEndpoint.Host));
+
+            if (needRemoveEndpointServerRoutes == null)
+            {
+                return;
+            }
 
             foreach (var needRemoveEndpointServerRoute in needRemoveEndpointServerRoutes)
             {
@@ -193,6 +200,8 @@ namespace Silky.Rpc.Runtime.Server
 
         public void Remove(string hostName)
         {
+            if (_serverCache == null)
+                return;
             _serverCache.TryRemove(hostName, out IServer server);
             if (server != null)
             {
@@ -205,7 +214,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public ServerDescriptor GetServerDescriptor(string hostName)
         {
-            return _serverCache.GetValueOrDefault(hostName)?.ConvertToDescriptor();
+            return _serverCache?.GetValueOrDefault(hostName)?.ConvertToDescriptor();
         }
 
         public IServer GetServer(string hostName)
@@ -213,11 +222,22 @@ namespace Silky.Rpc.Runtime.Server
             return _serverCache.GetValueOrDefault(hostName);
         }
 
-        public IReadOnlyList<ServerDescriptor> ServerDescriptors =>
-            _serverCache.Values.Select(p => p.ConvertToDescriptor()).ToArray();
+        public IReadOnlyList<ServerDescriptor> ServerDescriptors
+        {
+            get
+            {
+                if (_serverCache == null)
+                {
+                    return ImmutableArray<ServerDescriptor>.Empty;
+                }
+
+                return _serverCache.Values.Select(p => p.ConvertToDescriptor()).ToArray();
+            }
+        }
 
         public IServer GetSelfServer()
         {
+            Debug.Assert(_serverCache != null, "_serverCache != null");
             if (_serverCache.TryGetValue(EngineContext.Current.HostName, out var server))
             {
                 return server;
@@ -226,7 +246,7 @@ namespace Silky.Rpc.Runtime.Server
             return server;
         }
 
-        public IReadOnlyList<IServer> Servers => _serverCache.Values.ToArray();
+        public IReadOnlyList<IServer> Servers => _serverCache?.Values.ToArray();
 
         public IRpcEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol)
         {
@@ -235,11 +255,16 @@ namespace Silky.Rpc.Runtime.Server
                 return endpoints;
             }
 
-            endpoints = Servers.Where(p =>
+            endpoints = Servers?.Where(p =>
                     p.Services.Any(q => q.Id == serviceId))
                 .SelectMany(p => p.Endpoints.Where(e => e.ServiceProtocol == serviceProtocol))
                 .Where(p => p.Enabled)
                 .ToArray();
+            if (endpoints == null)
+            {
+                return Array.Empty<IRpcEndpoint>();
+            }
+
             if (endpoints.Any())
             {
                 _rpcRpcEndpointCache.TryAdd(serviceId, endpoints);
@@ -254,6 +279,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 return null;
             }
+
             var serviceDescriptor = _serverCache.Values.SelectMany(p => p.Services)
                 .FirstOrDefault(p => p.Id == serviceId);
             return serviceDescriptor;

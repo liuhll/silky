@@ -54,7 +54,7 @@ namespace Silky.Rpc.Runtime.Client
                 "The rpc request call start{0} serviceEntryId:[{1}]",
                 args: new[] { Environment.NewLine, remoteInvokeMessage.ServiceEntryId });
             var messageId = GuidGenerator.CreateGuidStrWithNoUnderline();
-            long? tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(remoteInvokeMessage, messageId);
+            var tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(remoteInvokeMessage, messageId);
             var rpcEndpoints = FindRpcEndpoint(remoteInvokeMessage);
             var selectedRpcEndpoint =
                 SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey,

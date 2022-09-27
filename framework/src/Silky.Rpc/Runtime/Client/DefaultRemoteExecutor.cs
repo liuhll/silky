@@ -48,8 +48,7 @@ namespace Silky.Rpc.Runtime.Client
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
 
-            IAsyncPolicy<object> policyObject;
-            if (!_policyCaches.TryGetValue(serviceEntry.Id, out policyObject))
+            if (!_policyCaches.TryGetValue(serviceEntry.Id, out var policyObject))
             {
                 policyObject = _invokePolicyBuilder.Build(serviceEntry.Id);
                 _policyCaches.TryAdd(serviceEntry.Id, policyObject);

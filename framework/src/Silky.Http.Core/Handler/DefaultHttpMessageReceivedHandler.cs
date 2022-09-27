@@ -69,13 +69,11 @@ namespace Silky.Http.Core.Handlers
                 _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry,
                     httpContext,
                     parameters);
-            object executeResult = null;
             var isHandleSuccess = true;
             var isFriendlyStatus = false;
             try
             {
-                executeResult =
-                    await _executor.Execute(serviceEntry, parameters, serviceKey);
+                var executeResult = await _executor.Execute(serviceEntry, parameters, serviceKey);
                 var cancellationToken = serverCallContext.HttpContext.RequestAborted;
                 if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
                 {
@@ -92,7 +90,7 @@ namespace Silky.Http.Core.Handlers
                         if (executeResult != null)
                         {
                             var responseData = _serializer.Serialize(executeResult);
-                            await serverCallContext.HttpContext.Response.WriteAsync(responseData);
+                            await serverCallContext.HttpContext.Response.WriteAsync(responseData, cancellationToken: cancellationToken);
                         }
                     }
                 }
