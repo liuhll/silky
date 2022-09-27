@@ -47,13 +47,12 @@ namespace Silky.Rpc.Runtime.Client
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
-
+            
             if (!_policyCaches.TryGetValue(serviceEntry.Id, out var policyObject))
             {
                 policyObject = _invokePolicyBuilder.Build(serviceEntry.Id);
                 _policyCaches.TryAdd(serviceEntry.Id, policyObject);
             }
-
             var policy = policyObject.WrapFallbackPolicy(serviceEntry.Id, parameters);
             var result = await policy
                 .ExecuteAsync(async () =>
@@ -63,7 +62,6 @@ namespace Silky.Rpc.Runtime.Client
                             hashKey);
                     return invokeResult.GetResult();
                 });
-
             return result;
         }
 

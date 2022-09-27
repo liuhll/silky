@@ -22,7 +22,11 @@ namespace Silky.DotNetty.Handlers
         public override async void ChannelRead(IChannelHandlerContext context, object message)
         {
             var transportMessage = (TransportMessage)message;
-            await _messageListener.OnReceived(null, transportMessage);
+            if (transportMessage.IsResultMessage())
+            {
+                await _messageListener.OnReceived(null, transportMessage);
+            }
+            
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)

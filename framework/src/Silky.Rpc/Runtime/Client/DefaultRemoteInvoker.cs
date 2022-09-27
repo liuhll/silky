@@ -76,9 +76,7 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     filter.OnActionExecuting(remoteInvokeMessage);
                 }
-
                 invokeResult = await client.SendAsync(remoteInvokeMessage, messageId);
-
                 foreach (var filter in filters)
                 {
                     filter.OnActionExecuted(invokeResult);

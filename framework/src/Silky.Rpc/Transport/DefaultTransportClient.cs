@@ -17,12 +17,12 @@ namespace Silky.Rpc.Transport
     public class DefaultTransportClient : ITransportClient
     {
         private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
-        protected readonly IMessageListener _messageListener;
 
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
         public IMessageSender MessageSender { get; set; }
-        
+        private readonly IMessageListener _messageListener;
+
         public DefaultTransportClient(IMessageSender messageSender, IMessageListener messageListener)
         {
             MessageSender = messageSender;
@@ -37,7 +37,6 @@ namespace Silky.Rpc.Transport
             TaskCompletionSource<TransportMessage> task;
             if (!m_resultDictionary.TryGetValue(message.Id, out task))
                 return;
-            // Debug.Assert(message.IsResultMessage(), "The message type received by the service consumer is incorrect");
             task.SetResult(message);
         }
 
@@ -57,7 +56,7 @@ namespace Silky.Rpc.Transport
             await MessageSender.SendMessageAsync(transportMessage);
             return await callbackTask;
         }
-        
+
         private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id, string serviceEntryId,
             int timeout = Timeout.Infinite)
         {

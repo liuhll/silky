@@ -12,7 +12,7 @@ public class MarkStopwatchLogger
     string _preMarkName = "start";
     public long _allTime { get; private set; }
     string _moudleName = "UnKnowMoudleName";
-    ConcurrentDictionary<string, long> _markSection = new ConcurrentDictionary<string, long>();
+    ConcurrentDictionary<string, long> _markSection = new ();
     bool _isAllowPrint = true;
 
     /// <summary>
