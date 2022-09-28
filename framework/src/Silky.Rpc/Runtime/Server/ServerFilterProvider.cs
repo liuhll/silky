@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,7 +25,8 @@ namespace Silky.Rpc.Runtime.Server
                 .GetCompareMethod(serviceEntry.MethodInfo, serviceEntry.MethodInfo.Name);
             var implementationMethodFilters = implementationMethod.GetCustomAttributes().OfType<IServerFilter>();
             serverFilters.AddRange(implementationMethodFilters);
-            return serverFilters.OrderBy(p => p.Order).ToArray();
+            var filters = serverFilters.OrderBy(p => p.Order).ToArray();
+            return filters;
         }
     }
 }

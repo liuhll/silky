@@ -65,17 +65,19 @@ namespace Silky.Rpc.Runtime.Client
 
             RemoteResultMessage invokeResult = null;
             var invokeMonitor = EngineContext.Current.Resolve<IInvokeMonitor>();
-            var filters = _clientFilterProvider.GetClientFilters(remoteInvokeMessage.ServiceEntryId);
+
             ClientInvokeInfo clientInvokeInfo = null;
             try
             {
                 clientInvokeInfo =
                     invokeMonitor?.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
-                var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
+
+                var filters = _clientFilterProvider.GetClientFilters(remoteInvokeMessage.ServiceEntryId);
                 foreach (var filter in filters)
                 {
                     filter.OnActionExecuting(remoteInvokeMessage);
                 }
+                var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 invokeResult = await client.SendAsync(remoteInvokeMessage, messageId);
                 foreach (var filter in filters)
                 {
@@ -85,14 +87,23 @@ namespace Silky.Rpc.Runtime.Client
             catch (Exception ex)
             {
                 sp.Stop();
-                invokeMonitor?.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
-                    sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
-
-                Logger.LogException(ex);
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
                     $"The rpc request call failed");
                 _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, messageId,
                     remoteInvokeMessage.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
+
+                invokeMonitor?.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
+                    sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
+
+                if (ex.IsFriendlyException())
+                {
+                    Logger.LogWarning(ex.Message);
+                }
+                else
+                {
+                    Logger.LogException(ex);
+                }
+
                 throw;
             }
 
@@ -115,7 +126,7 @@ namespace Silky.Rpc.Runtime.Client
                 throw new NotFindServiceRouteException(
                     $"The service routing could not be found via [{remoteInvokeMessage.ServiceEntryId}]");
             }
-            
+
             return rpcEndpoints;
         }
 

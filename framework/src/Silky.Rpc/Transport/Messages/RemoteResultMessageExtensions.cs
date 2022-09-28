@@ -24,6 +24,10 @@ namespace Silky.Rpc.Transport.Messages
             }
 
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteResultMessage.ServiceEntryId);
+            if (serviceEntry == null)
+            {
+                return result;
+            }
             result = remoteResultMessage.Result.GetType() == serviceEntry.ReturnType
                 ? remoteResultMessage.Result
                 : _typeConvertibleService.Convert(remoteResultMessage.Result, serviceEntry.ReturnType);

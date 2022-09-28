@@ -11,7 +11,7 @@ namespace Silky.Rpc.Transport.Messages
 
         public StatusCode StatusCode { get; set; } = StatusCode.Success;
 
-        public int Status { get; set; } = (int)StatusCode.Success;
+        public int Status => (int)StatusCode;
 
         public ValidError[] ValidateErrors { get; set; }
 

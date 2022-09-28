@@ -91,7 +91,7 @@ namespace Silky.Rpc.Runtime.Client
                         await _remoteInvoker.Invoke(remoteInvokeMessage,
                             serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
-                    return invokeResult.Result;
+                    return invokeResult.GetResult();
                 });
 
             return result;
@@ -123,7 +123,7 @@ namespace Silky.Rpc.Runtime.Client
                         await _remoteInvoker.Invoke(remoteInvokeMessage,
                             serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
-                    return invokeResult.Result;
+                    return invokeResult.GetResult();
                 });
 
             return result;
@@ -155,7 +155,7 @@ namespace Silky.Rpc.Runtime.Client
                         await _remoteInvoker.Invoke(remoteInvokeMessage,
                             serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
-                    return invokeResult.Result;
+                    return invokeResult.GetResult();
                 });
 
             return result;

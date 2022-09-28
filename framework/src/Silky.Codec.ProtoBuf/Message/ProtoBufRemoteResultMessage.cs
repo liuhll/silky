@@ -13,7 +13,6 @@ namespace Silky.Codec.Message
             ServiceEntryId = remoteResultMessage.ServiceEntryId;
             ExceptionMessage = remoteResultMessage.ExceptionMessage;
             StatusCode = remoteResultMessage.StatusCode;
-            Status = remoteResultMessage.Status;
             Result = remoteResultMessage.Result == null ? null : new DynamicItem(remoteResultMessage.Result);
             ValidateErrors = remoteResultMessage.ValidateErrors?.Select(i => new DynamicItem(i)).ToArray();
             Attachments = remoteResultMessage.Attachments?.Select(i => new ParameterItem(i)).ToArray();
@@ -28,7 +27,7 @@ namespace Silky.Codec.Message
 
         [ProtoMember(3)] public StatusCode StatusCode { get; set; } = StatusCode.Success;
         
-        [ProtoMember(4)] public int Status { get; set; } = (int)StatusCode.Success;
+        [ProtoMember(4)] public int Status => (int)StatusCode;
 
         [ProtoMember(5)] public DynamicItem Result { get; set; }
 
@@ -43,7 +42,6 @@ namespace Silky.Codec.Message
                 ServiceEntryId = ServiceEntryId,
                 ExceptionMessage = ExceptionMessage,
                 StatusCode = StatusCode,
-                Status = Status,
                 Result = Result?.Get(),
                 ValidateErrors = ValidateErrors?.Select(p => (ValidError)p.Get()).ToArray(),
                 Attachments = Attachments?.ToDictionary(i => i.Key, i => i.Value?.Get().ToString()),

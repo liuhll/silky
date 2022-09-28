@@ -37,7 +37,6 @@ namespace Silky.Rpc.Runtime.Server
             {
                 ServiceEntryId = message.ServiceEntryId,
                 StatusCode = StatusCode.Success,
-                Status = (int)StatusCode.Success,
             };
 
             var exception = ctx[PollyContextNames.Exception] as Exception;
@@ -47,7 +46,6 @@ namespace Silky.Rpc.Runtime.Server
             if (exception is RpcAuthenticationException || exception is NotFindLocalServiceEntryException)
             {
                 remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
-                remoteResultMessage.Status = exception.GetExceptionStatus();
                 remoteResultMessage.ExceptionMessage = exception.Message;
                 return remoteResultMessage;
             }
@@ -55,7 +53,6 @@ namespace Silky.Rpc.Runtime.Server
             if (!ctx.TryGetValue(PollyContextNames.ServiceEntry, out var ctxValue))
             {
                 remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
-                remoteResultMessage.Status = exception.GetExceptionStatus();
                 remoteResultMessage.ExceptionMessage = exception.GetExceptionMessage();
                 return remoteResultMessage;
             }
@@ -73,7 +70,6 @@ namespace Silky.Rpc.Runtime.Server
                 if (instance == null)
                 {
                     remoteResultMessage.StatusCode = StatusCode.NotFindFallbackInstance;
-                    remoteResultMessage.Status = (int)StatusCode.NotFindFallbackInstance;
                     remoteResultMessage.ExceptionMessage =
                         $"Failed to instantiate the instance of the fallback service;{Environment.NewLine}" +
                         $"Type:{serviceEntry.FallbackProvider.Type.FullName}";
@@ -93,7 +89,6 @@ namespace Silky.Rpc.Runtime.Server
                         parameters, serviceEntry);
 
                     remoteResultMessage.StatusCode = StatusCode.Success;
-                    remoteResultMessage.Status = (int)StatusCode.Success;
                     remoteResultMessage.Result = result;
                     remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                     _fallbackDiagnosticListener.TracingFallbackAfter(fallbackTracingTimestamp,
@@ -105,7 +100,6 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     Logger.LogException(ex);
                     remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
-                    remoteResultMessage.Status = exception.GetExceptionStatus();
                     remoteResultMessage.ExceptionMessage = ex.GetExceptionMessage();
                     _fallbackDiagnosticListener.TracingFallbackError(fallbackTracingTimestamp,
                         RpcContext.Context.GetMessageId(), serviceEntry.Id, ex.GetExceptionStatusCode(),
@@ -119,7 +113,6 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
-            remoteResultMessage.Status = exception.GetExceptionStatus();
             remoteResultMessage.ExceptionMessage = exception.GetExceptionMessage();
             remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
             return remoteResultMessage;
