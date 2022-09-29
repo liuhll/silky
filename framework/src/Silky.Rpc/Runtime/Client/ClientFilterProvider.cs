@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Silky.Core;
@@ -8,10 +6,9 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public class ClientFilterProvider : IScopedDependency
+    public class ClientFilterProvider : ISingletonDependency
     {
         private readonly IServiceEntryLocator _serviceEntryLocator;
-
 
         public ClientFilterProvider(IServiceEntryLocator serviceEntryLocator)
         {
@@ -20,15 +17,16 @@ namespace Silky.Rpc.Runtime.Client
 
         public IClientFilter[] GetClientFilters(string serviceEntryId)
         {
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
-            if (serviceEntry == null)
-            {
-                return Array.Empty<IClientFilter>();
-            }
             var clientFilters = new List<IClientFilter>();
-            var globalFilter = EngineContext.Current.ResolveAll<IClientFilter>().OrderBy(p => p.Order).ToArray();
+            var globalFilter = EngineContext.Current.ResolveAll<IClientFilter>();
             clientFilters.AddRange(globalFilter);
-            clientFilters.AddRange(serviceEntry.ClientFilters);
+
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
+            if (serviceEntry != null)
+            {
+                clientFilters.AddRange(serviceEntry.ClientFilters);
+            }
+
             var filters = clientFilters.OrderBy(p => p.Order).ToArray();
             return filters;
         }

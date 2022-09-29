@@ -9,7 +9,7 @@ using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServerFilterProvider : IScopedDependency
+    public class ServerFilterProvider : ISingletonDependency
     {
         public IServerFilter[] GetServerFilters(ServiceEntry serviceEntry, Type instanceType)
         {
