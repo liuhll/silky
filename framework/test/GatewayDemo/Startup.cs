@@ -41,6 +41,7 @@ namespace GatewayDemo
             // services.AddSilkySkyApm();
             services.AddSilkyHttpServices<TestAuthorizationHandler>();
             services.AddSilkyIdentity();
+            // services.AddAuditing();
             // services.AddMessagePackCodec();
             // services.AddHealthChecks()
             //     .AddSilkyRpc()
@@ -89,7 +90,7 @@ namespace GatewayDemo
             app.UseSilkyWebSocketsProxy();
             // app.UseSilkyWebServer();
             app.UseSilkyWrapperResponse();
-            // app.UseAuditing();
+            app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
                 //endpoints.MapHealthChecksUI();

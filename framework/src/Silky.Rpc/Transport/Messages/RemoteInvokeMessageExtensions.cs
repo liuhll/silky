@@ -17,11 +17,14 @@ namespace Silky.Rpc.Transport.Messages
                 {
                     continue;
                 }
-
                 RpcContext.Context.SetInvokeAttachment(messageAttachment.Key, messageAttachment.Value);
             }
 
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.IsGateway, isGateway.ToString());
+            var localRpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port.ToString());
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol.ToString());
         }
         
     }
