@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.Logging;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Runtime.Session;
 using Silky.Http.Core;
@@ -46,14 +47,12 @@ public class AuditingMiddleware
         if (serviceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
         {
             var userAgent = context.Request.Headers["User-Agent"];
-            var uaParser = Parser.GetDefault();
-            var clientInfo = uaParser.Parse(userAgent);
             var auditLogInfo = new AuditLogInfo()
             {
                 Url = context.Request.Path,
                 HttpMethod = context.Request.Method,
                 ExecutionTime = DateTimeOffset.Now,
-                BrowserInfo = clientInfo.String,
+                BrowserInfo = userAgent,
                 ClientId = context.Connection.Id,
                 ClientIpAddress = context.GetClientIp(),
                 CorrelationId = context.TraceIdentifier
