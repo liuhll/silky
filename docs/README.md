@@ -57,7 +57,7 @@ public class Program
 
 ## 在线示例
 
-- [http://demo.silky-fk.com/dashboard/index.html](http://demo.silky-fk.com/dashboard/index.html)
+- [Hero权限管理系统(https://hero.silky-fk.com)](https://hero.silky-fk.com)
 
 ## 加入我们
 
