@@ -196,7 +196,8 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                 title: '启动时',
                 collapsable: false,
                 children: [
-                    'startup/host'
+                    'startup/host',
+                    'startup/engine'
                 ]
             },
             {

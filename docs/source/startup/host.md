@@ -98,7 +98,7 @@ public static IHostBuilder RegisterSilkyServices<T>(this IHostBuilder builder)
 
 4.1 在执行`ConfigureAppConfiguration`方法时,主要完成加载本地配置文件和环境变量;
 
-4.2 在执行`ConfigureServices`方法时，主要实现必要的服务注册和 **服务引擎(IEngine)** 的构建;
+4.2 在执行`ConfigureServices`方法时，通过`IServiceCollection`的扩展方法`AddSilkyServices<T>()`实现必要的服务注册和 [**服务引擎(IEngine)**](/source/startup/engine.html) 的构建;
 
 4.3 在执行`ContainerBuilder`方法时，主要通过Autofac的`ContainerBuilder`实现服务的依赖注册;
 
