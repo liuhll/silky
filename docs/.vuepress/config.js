@@ -197,7 +197,8 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                 collapsable: false,
                 children: [
                     'startup/host',
-                    'startup/engine'
+                    'startup/engine',
+                    'startup/modularity'
                 ]
             },
             {
