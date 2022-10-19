@@ -233,8 +233,32 @@ internal sealed class SilkyEngine : IEngine, IModuleContainer
 
 ::: tip 提示
 
-熟悉[APB框架](https://github.com/abpframework/abp)的小伙伴应该可以看出来,Silky模块的设计主要是借鉴了APB框架,只是在一些细节方便不太一样。
+熟悉[APB框架](https://github.com/abpframework/abp)的小伙伴应该可以看出来,Silky模块的设计主要是借鉴了APB框架的模块设计,在一些细节方面做了调整。
 
 ::: 
 
 ## Silky的核心模块
+
+通过上面的介绍, 我们知道一个模块类的最重要的工作主要由两点: 1. 实现服务的注册; 2. 在应用启动时或是停止时执行指定的方法完成初始化任务或是释放资源的任务;
+
+如何判断是否是silky的核心模块呢? 核心模块的作用就是在应用启动时,通过`Initialize()`方法执行该模块的初始化资源的任务;
+
+通过查看源码，我们发现大部分silky模块在应用启动时并没有重写`Initialize()`方法,也就是说,大部分silky模块在应用启动过程中,并不需要做什么工作。
+
+如上图所示,我们看到silky框架定义的模块,由如上几个模块是在应用启动是完成了主机启动时的关键性作业;
+
+我们再根据模块的依赖关系,可以看到主机在应用启动时,通过模块初始化任务的一个执行顺序如下所示:
+
+```
+RpcModule --> DotNettyTcpModule | TransactionModule | WebSocketModule | [RpcMonitorModule] 
+
+--> GeneralHostModule(启动模块[StartUpModule])[DefaultGeneralHostModule|WebSocketHostModule|DefaultWebSocketHostModule] 
+
+```
+通过上述的依赖关系,我们可以知道:
+
+1. Rpc模块在应用启动时的最早被执行;
+
+2. 然后依次执行: DotNettyTcpModule | TransactionModule | WebSocketModule | [RpcMonitorModule] 等模块;
+
+3. 最后执行应用启动模块指定的初始化方法;
