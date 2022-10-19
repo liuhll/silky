@@ -71,7 +71,15 @@ namespace Silky.Rpc.Endpoint.Selector
 
             if (addressesPools.TryGetValue(context.MonitorId, out var selectAddressItem))
             {
-                index = selectAddressItem.Item1 >= selectAddressItem.Item2.Length ? 0 : selectAddressItem.Item1;
+                if (selectAddressItem.Item2.Length != context.AddressModels.Length)
+                {
+                    selectAddressItem = (0, context.AddressModels);
+                    addressesPools.AddOrUpdate(context.MonitorId, selectAddressItem, (k, v) => selectAddressItem);
+                }
+                else
+                {
+                    index = selectAddressItem.Item1 >= selectAddressItem.Item2.Length ? 0 : selectAddressItem.Item1;
+                }
             }
             else
             {
