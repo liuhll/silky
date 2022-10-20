@@ -89,6 +89,7 @@ namespace Silky.Rpc.Endpoint.Selector
 
             var selectAddress = selectAddressItem.Item2[index];
             selectAddressItem.Item1 = index + 1;
+            addressesPools.AddOrUpdate(context.MonitorId, selectAddressItem, (k, v) => selectAddressItem);
             return selectAddress;
         }
     }
