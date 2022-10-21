@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,9 +26,9 @@ namespace Microsoft.AspNetCore.Builder
             }
 
             var hostApplicationLifetime = endpoints.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
-            hostApplicationLifetime.ApplicationStarted.Register(() =>
+            hostApplicationLifetime.ApplicationStarted.Register(async () =>
             {
-                RegisterSilkyWebServer(endpoints.ServiceProvider);
+                await RegisterSilkyWebServer(endpoints.ServiceProvider);
             });
             return GetOrCreateServiceEntryDataSource(endpoints).DefaultBuilder;
         }
@@ -41,16 +42,16 @@ namespace Microsoft.AspNetCore.Builder
             }
 
             var hostApplicationLifetime = endpoints.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
-            hostApplicationLifetime.ApplicationStarted.Register(() =>
+            hostApplicationLifetime.ApplicationStarted.Register(async () =>
             {
-                RegisterSilkyWebServer(endpoints.ServiceProvider);
+                await RegisterSilkyWebServer(endpoints.ServiceProvider);
             });
             return GetOrCreateServiceEntryDescriptorDataSource(endpoints).DefaultBuilder;
             ;
         }
 
 
-        private static void RegisterSilkyWebServer(IServiceProvider serviceProvider)
+        private static async Task RegisterSilkyWebServer(IServiceProvider serviceProvider)
         {
             var serverRegisterProvider =
                 serviceProvider.GetRequiredService<IServerProvider>();
@@ -58,15 +59,21 @@ namespace Microsoft.AspNetCore.Builder
                 serviceProvider.GetRequiredService<IServerRegister>();
 
             serverRegisterProvider.AddHttpServices();
-            serverRouteRegister.RegisterServer().GetAwaiter().GetResult();
+            await serverRouteRegister.RegisterServer();
 
             var invokeMonitor =
                 serviceProvider.GetService<IInvokeMonitor>();
-            invokeMonitor?.ClearCache().GetAwaiter().GetResult();
-
+            if (invokeMonitor != null)
+            {
+                await invokeMonitor?.ClearCache();
+            }
+            
             var serverHandleMonitor =
                 serviceProvider.GetService<IServerHandleMonitor>();
-            serverHandleMonitor?.ClearCache().GetAwaiter().GetResult();
+            if (serverHandleMonitor != null)
+            {
+                await serverHandleMonitor?.ClearCache();
+            }
         }
 
         private static SilkyServiceEntryEndpointDataSource GetOrCreateServiceEntryDataSource(
