@@ -84,9 +84,11 @@ public abstract class SilkyModule : Autofac.Module, ISilkyModule, IDisposable
     public class InitSilkyHostedService : IHostedService
     {
         private readonly IModuleManager _moduleManager;
+        private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
         public InitSilkyHostedService(IServiceProvider serviceProvider,
-            IModuleManager moduleManager)
+            IModuleManager moduleManager,
+            IHostApplicationLifetime hostApplicationLifetime)
         {
             if (EngineContext.Current is SilkyEngine)
             {
@@ -94,6 +96,7 @@ public abstract class SilkyModule : Autofac.Module, ISilkyModule, IDisposable
             }
 
             _moduleManager = moduleManager;
+            _hostApplicationLifetime = hostApplicationLifetime;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -111,19 +114,25 @@ public abstract class SilkyModule : Autofac.Module, ISilkyModule, IDisposable
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var ver = $"{version.Major}.{version.Minor}.{version.Build}";
             Console.WriteLine($" :: Silky ::        {ver}");
-            await _moduleManager.InitializeModules();
+            _hostApplicationLifetime.ApplicationStarted.Register(async () =>
+            {
+                await _moduleManager.InitializeModules();
+            });
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _moduleManager.ShutdownModules();
+            _hostApplicationLifetime.ApplicationStopped.Register(async () =>
+            {
+                await _moduleManager.ShutdownModules();
+            });
         }
     }
 ```
 
-1. 任务启动时`StartAsync()`,在打印Silky的banner后,通过模块管理器`IModuleManager`执行初始化模块方法;
+1. 在后台任务`StartAsync()`,在打印Silky的banner后,在应用启动时注册一个回调方法,通过模块管理器`IModuleManager`执行初始化模块方法;
 
-2. 任务停止时`StopAsync()`,通过模块管理器`IModuleManager`执行关闭模块方法,一般用于各个模块的资源释放;
+2. 在后台任务`StopAsync()`,在应用停止后注册一个回调方法,通过模块管理器`IModuleManager`执行关闭模块方法,一般用于各个模块的资源释放;
 
 下面,我们查看模块管理器[ModuleManager](https://github.com/liuhll/silky/blob/main/framework/src/Silky.Core/Modularity/ModuleManager.cs)是如何初始化模块的:
 
