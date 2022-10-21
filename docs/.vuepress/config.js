@@ -198,7 +198,8 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                 children: [
                     'startup/host',
                     'startup/engine',
-                    'startup/modularity'
+                    'startup/modularity',
+                    'startup/service-serviceentry'
                 ]
             },
             {
