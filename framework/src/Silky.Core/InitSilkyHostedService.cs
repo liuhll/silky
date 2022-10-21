@@ -10,9 +10,11 @@ namespace Silky.Core
     public class InitSilkyHostedService : IHostedService
     {
         private readonly IModuleManager _moduleManager;
+        private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
         public InitSilkyHostedService(IServiceProvider serviceProvider,
-            IModuleManager moduleManager)
+            IModuleManager moduleManager,
+            IHostApplicationLifetime hostApplicationLifetime)
         {
             if (EngineContext.Current is SilkyEngine)
             {
@@ -20,6 +22,7 @@ namespace Silky.Core
             }
 
             _moduleManager = moduleManager;
+            _hostApplicationLifetime = hostApplicationLifetime;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -37,12 +40,18 @@ namespace Silky.Core
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var ver = $"{version.Major}.{version.Minor}.{version.Build}";
             Console.WriteLine($" :: Silky ::        {ver}");
-            await _moduleManager.InitializeModules();
+            _hostApplicationLifetime.ApplicationStarted.Register(async () =>
+            {
+                await _moduleManager.InitializeModules();
+            });
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _moduleManager.ShutdownModules();
+            _hostApplicationLifetime.ApplicationStopped.Register(async () =>
+            {
+                await _moduleManager.ShutdownModules();
+            });
         }
     }
 }

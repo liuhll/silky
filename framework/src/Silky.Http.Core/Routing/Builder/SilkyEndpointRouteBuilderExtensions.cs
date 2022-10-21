@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Http.Core;
@@ -23,7 +24,11 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(endpoints));
             }
 
-            RegisterSilkyWebServer(endpoints.ServiceProvider);
+            var hostApplicationLifetime = endpoints.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
+            hostApplicationLifetime.ApplicationStarted.Register(() =>
+            {
+                RegisterSilkyWebServer(endpoints.ServiceProvider);
+            });
             return GetOrCreateServiceEntryDataSource(endpoints).DefaultBuilder;
         }
 
@@ -35,8 +40,13 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(endpoints));
             }
 
-            RegisterSilkyWebServer(endpoints.ServiceProvider);
+            var hostApplicationLifetime = endpoints.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
+            hostApplicationLifetime.ApplicationStarted.Register(() =>
+            {
+                RegisterSilkyWebServer(endpoints.ServiceProvider);
+            });
             return GetOrCreateServiceEntryDescriptorDataSource(endpoints).DefaultBuilder;
+            ;
         }
 
 

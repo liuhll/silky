@@ -1,6 +1,5 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
@@ -44,9 +43,9 @@ namespace Silky.Rpc.Runtime.Server
             var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
             if (webEndpoint == null)
             {
-                //throw new SilkyException("Failed to obtain http service rpcEndpoint");
-                return;
+                throw new SilkyException("Failed to obtain http service rpcEndpoint");
             }
+
             _server.Endpoints.Add(webEndpoint);
         }
 
