@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Silky.Core.Runtime.Rpc;
 
 namespace Silky.Rpc.Runtime.Server
@@ -14,5 +15,7 @@ namespace Silky.Rpc.Runtime.Server
         public Type ServiceType { get; set; }
 
         public ServiceProtocol ServiceProtocol { get; set; }
+        
+        public IReadOnlyCollection<ServiceEntry> ServiceEntries { get; set; } 
     }
 }

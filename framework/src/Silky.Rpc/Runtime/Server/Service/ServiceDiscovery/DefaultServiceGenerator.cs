@@ -14,22 +14,28 @@ namespace Silky.Rpc.Runtime.Server
     {
         private readonly IIdGenerator _idGenerator;
         private readonly ITypeFinder _typeFinder;
+        private readonly IServiceEntryManager _serviceEntryManager;
 
         public DefaultServiceGenerator(IIdGenerator idGenerator,
-            ITypeFinder typeFinder)
+            ITypeFinder typeFinder,
+            IServiceEntryManager serviceEntryManager)
         {
             _idGenerator = idGenerator;
             _typeFinder = typeFinder;
+            _serviceEntryManager = serviceEntryManager;
         }
 
         public Service CreateService((Type, bool) serviceTypeInfo)
         {
+         
+            var serviceId = _idGenerator.GenerateServiceId(serviceTypeInfo.Item1);
             var serviceInfo = new Service()
             {
-                Id = _idGenerator.GenerateServiceId(serviceTypeInfo.Item1),
+                Id = serviceId,
                 ServiceType = serviceTypeInfo.Item1,
                 IsLocal = serviceTypeInfo.Item2,
-                ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceTypeInfo.Item1, serviceTypeInfo.Item2, true)
+                ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceTypeInfo.Item1, serviceTypeInfo.Item2, true),
+                ServiceEntries =  _serviceEntryManager.GetServiceEntries(serviceId)
             };
             serviceInfo.ServiceDescriptor = CreateServiceDescriptor(serviceInfo);
             return serviceInfo;
@@ -39,12 +45,14 @@ namespace Silky.Rpc.Runtime.Server
         {
             var wsPath = WebSocketResolverHelper.ParseWsPath(wsServiceType);
             var serviceId = WebSocketResolverHelper.Generator(wsPath);
+      
             var serviceInfo = new Service()
             {
                 Id = serviceId,
                 ServiceType = wsServiceType,
                 IsLocal = true,
-                ServiceProtocol = ServiceProtocol.Ws
+                ServiceProtocol = ServiceProtocol.Ws,
+                ServiceEntries =  _serviceEntryManager.GetServiceEntries(serviceId)
             };
             serviceInfo.ServiceDescriptor = CreateServiceDescriptor(serviceInfo);
             return serviceInfo;
@@ -52,17 +60,15 @@ namespace Silky.Rpc.Runtime.Server
 
         private ServiceDescriptor CreateServiceDescriptor(Service service)
         {
-            var serviceEntryManager = EngineContext.Current.Resolve<IServiceEntryManager>();
+           
             var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(service.ServiceType);
-            var serviceDescriptor = new ServiceDescriptor()
+            var serviceDescriptor = new ServiceDescriptor
             {
                 ServiceProtocol = service.ServiceProtocol,
                 Id = service.Id,
                 ServiceName = serviceBundleProvider.GetServiceName(service.ServiceType),
+                ServiceEntries = service.ServiceEntries.Select(p => p.ServiceEntryDescriptor).ToArray()
             };
-
-            serviceDescriptor.ServiceEntries = serviceEntryManager.GetServiceEntries(service.Id)
-                .Select(p => p.ServiceEntryDescriptor).ToArray();
 
             if (service.IsLocal)
             {
