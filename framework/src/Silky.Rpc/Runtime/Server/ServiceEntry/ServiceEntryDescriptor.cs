@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using Silky.Core;
 using Silky.Core.Runtime.Rpc;
+using Silky.Core.Serialization;
 using Silky.Rpc.Security;
 
 namespace Silky.Rpc.Runtime.Server
@@ -58,19 +60,34 @@ namespace Silky.Rpc.Runtime.Server
 
             if (model.Id != Id)
                 return false;
-            return model.Metadatas.Count == Metadatas.Count && model.Metadatas.All(metadata =>
-            {
-                object value;
-                if (!Metadatas.TryGetValue(metadata.Key, out value))
-                    return false;
 
-                if (metadata.Value == null && value == null)
-                    return true;
-                if (metadata.Value == null || value == null)
-                    return false;
+            return model.Metadatas.Count == Metadatas.Count
+                   && model.Metadatas.All(metadata =>
+                   {
+                       object value;
+                       if (!Metadatas.TryGetValue(metadata.Key, out value))
+                           return false;
 
-                return metadata.Value.Equals(value);
-            });
+                       if (metadata.Value == null && value == null)
+                           return true;
+                       if (metadata.Value == null || value == null)
+                           return false;
+
+                       var isEqualsMetadataVal = false;
+                       if (metadata.Value.GetType() != typeof(string))
+                       {
+                           var serializer = EngineContext.Current.Resolve<ISerializer>();
+                           isEqualsMetadataVal =
+                               serializer.Serialize(metadata.Value).Equals(serializer.Serialize(value));
+                       }
+                       else
+                       {
+                           isEqualsMetadataVal = metadata.Value.Equals(value);
+                       }
+
+
+                       return isEqualsMetadataVal;
+                   });
         }
 
         public static bool operator ==(ServiceEntryDescriptor model1, ServiceEntryDescriptor model2)
