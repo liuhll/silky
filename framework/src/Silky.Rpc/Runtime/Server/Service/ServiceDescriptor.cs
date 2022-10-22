@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
+using Silky.Core.Serialization;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -64,26 +66,47 @@ namespace Silky.Rpc.Runtime.Server
                 return false;
             }
 
-            return model.ServiceEntries.Count == ServiceEntries.Count
-                   && model.ServiceEntries.All(se =>
-                   {
-                       var thisServiceDesc = ServiceEntries.FirstOrDefault(p => p == se);
-                       return thisServiceDesc != null;
-                   })
-                   && model.Metadatas.Count == Metadatas.Count
-                   && model.Metadatas.All(metadata =>
-                   {
-                       object value;
-                       if (!Metadatas.TryGetValue(metadata.Key, out value))
-                           return false;
+            var isEqualsServiceEntriesCount = model.ServiceEntries.Count == ServiceEntries.Count;
 
-                       if (metadata.Value == null && value == null)
-                           return true;
-                       if (metadata.Value == null || value == null)
-                           return false;
+            var isEqualsServiceEntries = model.ServiceEntries.All(se =>
+            {
+                var thisServiceDesc = ServiceEntries.FirstOrDefault(p => p == se);
+                return thisServiceDesc != null;
+            });
 
-                       return metadata.Value.Equals(value);
-                   });
+            var isEqualsMetaDataCount = model.Metadatas.Count == Metadatas.Count;
+            var isEqualsMetaData = model.Metadatas.All(metadata =>
+            {
+                object value;
+                if (!Metadatas.TryGetValue(metadata.Key, out value))
+                    return false;
+
+                if (metadata.Value == null && value == null)
+                    return true;
+                if (metadata.Value == null || value == null)
+                    return false;
+
+                var isEqualsMetadataVal = false;
+                if (metadata.Value.GetType() != typeof(string))
+                {
+                    var serializer = EngineContext.Current.Resolve<ISerializer>();
+                    isEqualsMetadataVal = serializer.Serialize(metadata.Value).Equals(serializer.Serialize(value));
+                }
+                else
+                {
+                    isEqualsMetadataVal = metadata.Value.Equals(value);
+                }
+
+
+                return isEqualsMetadataVal;
+            });
+
+
+            var isEquals = isEqualsServiceEntriesCount
+                           && isEqualsServiceEntries
+                           && isEqualsMetaDataCount
+                           && isEqualsMetaData;
+            return isEquals;
         }
 
         public static bool operator ==(ServiceDescriptor model1, ServiceDescriptor model2)

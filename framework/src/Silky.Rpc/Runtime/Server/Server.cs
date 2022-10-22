@@ -33,13 +33,18 @@ namespace Silky.Rpc.Runtime.Server
                 return false;
             }
 
+            
             if (!HostName.Equals(model.HostName))
             {
                 return false;
             }
 
-            return Services.All(p => model.Services.Any(q => p == q))
-                   && Endpoints.All(p => model.Endpoints.Any(q => p == q));
+            return
+                Services.Count == model.Services.Count
+                && Services.All(p => model.Services.Any(p.Equals))
+                && Endpoints.Count == model.Endpoints.Count
+                && Endpoints.All(p => model.Endpoints.Any(p.Equals));
+            
         }
 
         public static bool operator ==(Server model1, Server model2)
