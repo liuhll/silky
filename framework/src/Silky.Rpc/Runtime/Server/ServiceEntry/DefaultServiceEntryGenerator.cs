@@ -108,6 +108,12 @@ namespace Silky.Rpc.Runtime.Server
                 parameterDescriptors,
                 isLocal,
                 _governanceOptions);
+
+            if (serviceEntry.NeedHttpProtocolSupport())
+            {
+                serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.NeedHttpProtocolSupport, true);
+            }
+            
             return serviceEntry;
         }
     }

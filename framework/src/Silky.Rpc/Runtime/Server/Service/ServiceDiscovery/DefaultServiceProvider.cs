@@ -39,12 +39,15 @@ namespace Silky.Rpc.Runtime.Server
                 services.Add(_serviceGenerator.CreateService(serviceTypeInfo));
             }
 
-            var wsServiceTypes = ServiceHelper.FindServiceLocalWsTypes(_typeFinder);
-            foreach (var wsServiceType in wsServiceTypes)
+            if (EngineContext.Current.IsContainWebSocketModule())
             {
-                services.Add(_serviceGenerator.CreateWsService(wsServiceType));
+                var wsServiceTypes = ServiceHelper.FindServiceLocalWsTypes(_typeFinder);
+                foreach (var wsServiceType in wsServiceTypes)
+                {
+                    services.Add(_serviceGenerator.CreateWsService(wsServiceType));
+                }
             }
-
+            
             return services;
         }
     }

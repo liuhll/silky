@@ -14,5 +14,11 @@ namespace Silky.Rpc.Runtime.Server
             };
             return descriptor;
         }
+
+        public static bool HasHttpProtocolServiceEntry(this IServer server)
+        {
+            var serviceEntries = server.Services.SelectMany(s => s.ServiceEntries);
+            return serviceEntries.Any(p => p.GetMetadata<bool>(ServiceEntryConstant.NeedHttpProtocolSupport));
+        }
     }
 }
