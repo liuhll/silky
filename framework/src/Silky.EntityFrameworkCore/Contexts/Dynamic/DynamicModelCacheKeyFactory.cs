@@ -29,5 +29,10 @@ namespace Silky.EntityFrameworkCore.Contexts.Dynamic
         {
             return (context.GetType(), cacheKey);
         }
+
+        public object Create(DbContext context, bool designTime)
+        {
+            return (context.GetType(), cacheKey);
+        }
     }
 }

@@ -2,7 +2,7 @@
 
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-        <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+        <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
         <Description>Rpc SkyApm Agent</Description>
     </PropertyGroup>
     <ItemGroup>

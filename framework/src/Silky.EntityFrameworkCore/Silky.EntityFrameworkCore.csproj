@@ -1,10 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
-        <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+        <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
         <Description>ef core</Description>
     </PropertyGroup>
     <ItemGroup>
+
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EfCore7Version)" Condition="'$(TargetFramework)' == 'net7.0'" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(EfCore7Version)" Condition="'$(TargetFramework)' == 'net7.0'" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="$(EfCore7Version)" Condition="'$(TargetFramework)' == 'net7.0'" />
+        
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EfCore6Version)" Condition="'$(TargetFramework)' == 'net6.0'" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(EfCore6Version)" Condition="'$(TargetFramework)' == 'net6.0'" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="$(EfCore6Version)" Condition="'$(TargetFramework)' == 'net6.0'" />
