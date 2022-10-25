@@ -50,8 +50,7 @@ namespace SilkyAppHost
 #endif            
             app.UseResponseCaching();
             app.UseSilkyWebSocketsProxy();
-            app.UseSilkyIdentity();
-            app.UseSilkyWebServer();           
+            app.UseSilkyIdentity();       
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapSilkyRpcServices();
