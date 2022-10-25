@@ -21,8 +21,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public DefaultServiceEntryGenerator(IIdGenerator idGenerator,
             IParameterProvider parameterProvider,
-            IOptionsMonitor<GovernanceOptions> governanceOptions,
-            ITypeFinder typeFinder)
+            IOptionsMonitor<GovernanceOptions> governanceOptions)
         {
             _idGenerator = idGenerator;
             _parameterProvider = parameterProvider;
