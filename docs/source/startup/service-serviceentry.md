@@ -1,5 +1,5 @@
 ---
-title: 应用服务与服务条目的解析
+title: 服务与服务条目的解析
 lang: zh-cn
 ---
 
@@ -12,6 +12,45 @@ lang: zh-cn
 在这里所指的 **服务** 是指在一个Silky应用中,对应用外提供访问能力的接口，它与传统MVC框架中的控制器概念相对应。
 
 在silky应用中,我们通过对接口添加`[ServiceRoute]`特性,就可以定义 **应用服务**,在该服务中定义的方法我们称之为 **服务条目**, **服务条目** 与之对应的概念是传统MVC中的 **Action**,在silky应用中,我们通过RPC调用的方式与其他微服务应用的服务条目进行远程通信;
+
+**应用服务** 的主要属性如下:
+
+| 属性名 | 名称  | 备注           |
+|:-------|:------|:--------------|
+| Id | 服务Id  | 由该服务的完全限定名生成 |
+| ServiceDescriptor | 服务描述符  | 将会以服务元数据的方式注册到服务注册中心 |
+| IsLocal | 是否是本地服务  | 在该应用内是否存在实现类,在运行时确定是由本地服务执行器执行还是通过RPC调用 |
+| ServiceType | 应用服务对应的类型`Type`  |  |
+| ServiceProtocol | 服务协议  | 该服务对应的服务协议 |
+| ServiceEntries | 该服务对应的所有的服务条目  | 该服务定义的所有方法 |
+
+**服务条目**的主要属性如下:
+
+| 属性名 | 名称  | 备注           |
+|:-------|:------|:--------------|
+| Id | 服务条目Id  | 该服务条目对应方法的完全限定名 + 参数名 + 对应的Http请求方法名 |
+| ServiceId | 服务Id  | 对应的服务Id |
+| ServiceType | 应用服务对应的类型`Type`  |
+| IsLocal | 是否是本地服务条目  | |  |
+| MethodExecutor | 方法执行者  | 该服务条目对应方法的ObjectMethodExecutor |
+| FallbackProvider | 失败重试提供器  | 可为空,当服务条目调用失败后,通过它可以获取到配置的失败回调的方法 |
+| SupportedRequestMediaTypes | 支持的http请求的媒体类型  |  |
+| SupportedResponseMediaTypes |  支持的http响应的媒体类型 |  |
+| Router |  对应的Http路由 | 主要包括路由模板、对应的Http方法、Http路径(WebAPI)、以及解析http Path参数  |
+| MethodInfo |  对应的方法 |   |
+| ReturnType |  服务条目对应方法返回值的类型 |   |
+| ParameterDescriptors |  参数描述符 | 用于描述和解释该方法对应的参数说明  |
+| CustomAttributes |  该服务条目所有的特性 |   |
+| ClientFilters |  客户端过滤器 |  非本地服务条目在执行RPC远程调用时根据客户端过滤器的排序依次执行过滤器方法 |
+| ClientFilters |  服务端过滤器 |  本地服务条目在执行实现的业务方法时根据服务端过滤器排序依次执行过滤器方法 |
+| AuthorizeData |  身份认证数据 |   |
+| GovernanceOptions |  服务条目在执行过程中的实现服务治理的参数配置 |  例如: 超时时间、负载均衡策略、是否允许服务熔断、发生非业务类异常N次后出现熔断、熔断时长、重试次数、是否禁用外网等等  |
+| ServiceEntryDescriptor |  服务条目描述符 | 该服务条目对应的服务条目描述符,将会以元数据的方式注册到服务注册中心  |
+
+
+
+
+
 
 在本节中,我们主要叙述在应用启动时,Silky是如何对应用内定义的服务以及服务条目进行解析。
 
@@ -300,3 +339,291 @@ public Service CreateWsService(Type wsServiceType)
 websocket服务生成服务Id的方法不一样,是通过该服务对应的websocket对应的webAPI的路径生成的,其他的属性赋值与普通应用服务的方式一致。
 
 ## 服务条目的解析
+
+在上面的源码解读中,我们看到,在应用服务解析过程中,应用服务所持有的服务条目是根据服务条目管理器根据`serviceId`提供的`_serviceEntryManager.GetServiceEntries(serviceId)`获取。
+
+服务条目如何解析和获取是由默认的服务条目管理器`DefaultServiceEntryManager`负责,服务条目管理器跟服务管理器一样,都是被注册为 **单例的**, 在整个应用生命周期,只会被创建一次。并且在构造器中实现服务条目的创建并对服务条目进行缓存。
+
+```csharp
+public class DefaultServiceEntryManager : IServiceEntryManager
+{
+    private IEnumerable<ServiceEntry> m_localServiceEntries;  //用于缓存本地服务条目
+    private IEnumerable<ServiceEntry> m_allServiceEntries;  // 用于缓存全部服务条目
+    private IChangeToken? _changeToken;
+
+    public DefaultServiceEntryManager(IEnumerable<IServiceEntryProvider> providers)
+    {
+        UpdateEntries(providers);
+    }
+
+    private void UpdateEntries(IEnumerable<IServiceEntryProvider> providers)
+    {
+        var allServiceEntries = new List<ServiceEntry>();
+        foreach (var provider in providers) // 遍历所有服务条目提供者,有服务条目服务者创建服务条目
+        {
+            var entries = provider.GetEntries();
+            foreach (var entry in entries)
+            {
+                if (allServiceEntries.Any(p => p.ServiceEntryDescriptor.Id == entry.ServiceEntryDescriptor.Id))
+                {
+                    throw new InvalidOperationException(
+                        $"Locally contains multiple service entries with Id: {entry.ServiceEntryDescriptor.Id}");
+                }
+                allServiceEntries.Add(entry);
+            }
+        }
+        if (allServiceEntries.GroupBy(p => p.Router).Any(p => p.Count() > 1))
+        {
+            throw new SilkyException(
+                "There is duplicate routing information, please check the service routing you set");
+        }
+        m_allServiceEntries = allServiceEntries;
+        m_localServiceEntries = allServiceEntries.Where(p => p.IsLocal);
+    }
+
+    public void Update(ServiceEntry serviceEntry)
+    {
+        m_allServiceEntries = m_allServiceEntries
+            .Where(p => !p.ServiceEntryDescriptor.Id.Equals(serviceEntry.ServiceEntryDescriptor.Id))
+            .Append(serviceEntry);
+        if (serviceEntry.IsLocal)
+        {
+            m_localServiceEntries = m_localServiceEntries
+                .Where(p => !p.ServiceEntryDescriptor.Id.Equals(serviceEntry.ServiceEntryDescriptor.Id))
+                .Append(serviceEntry);
+        }
+        OnUpdate?.Invoke(this, serviceEntry);
+    }
+
+   // 其他代码略...
+}
+```
+
+从上面的源码我们可以看到,在服务条目管理器`DefaultServiceEntryManager`被创建时,会调用`UpdateEntries(providers)`通过遍历所有的服务条目提供者生成服务条目，并对服务条目进行缓存，服务条目不允许重复。
+
+### 服务条目提供者
+
+与服务提供者一样,开发者也可以根据自己的约定实现自己的服务条目提供者,Silky框架实现了默认的服务提供者`DefaultServiceEntryProvider`。
+
+```csharp
+public class DefaultServiceEntryProvider : IServiceEntryProvider
+{
+    public IReadOnlyList<ServiceEntry> GetEntries()
+    {
+        var serviceTypeInfos = ServiceHelper.FindAllServiceTypes(_typeFinder);
+        if (!EngineContext.Current.IsContainHttpCoreModule())
+        {
+            serviceTypeInfos = serviceTypeInfos.Where(p =>
+                p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
+        }
+        var entries = new List<ServiceEntry>();
+        foreach (var serviceTypeInfo in serviceTypeInfos)
+        {
+            Logger.LogDebug("The Service were be found,type:{0},IsLocal:{1}", serviceTypeInfo.Item1.FullName,
+                serviceTypeInfo.Item2);
+            entries.AddRange(_serviceEntryGenerator.CreateServiceEntry(serviceTypeInfo));
+        }
+
+        return entries;
+    }
+   
+// 其他代码略...
+
+}
+```
+
+服务条目提供者创建服务条目的过程如下:
+
+1. 查找到所有的服务类型`IEnumerable<(Type, bool)> serviceTypeInfos`，其中：元组的第一个参数表示服务类型，第二个参数表示是否是本地服务;
+2. 是否包含`HttpCoreModule`模块,如果不包含,那么忽略标识了`[DashboardAppService]`的服务条目;
+3. 遍历所有的服务类型，通过服务条目生成器`IServiceEntryGenerator`创建该服务定义的所有服务条目;
+
+
+### 服务条目生成器
+
+服务条目生成器`DefaultServiceEntryGenerator`通过遍历服务类型定义的所有方法,以及该方法标识的`HttpMethod`,并且依次创建服务条目;
+
+```csharp
+public class DefaultServiceEntryGenerator : IServiceEntryGenerator
+{
+   public IEnumerable<ServiceEntry> CreateServiceEntry((Type, bool) serviceType)
+   {
+        var serviceBundleProvider = ServiceDiscoveryHelper.GetServiceBundleProvider(serviceType.Item1);
+        var methods = serviceType.Item1.GetTypeInfo().GetMethods();
+        foreach (var method in methods)
+        {
+            var httpMethodInfos = method.GetHttpMethodInfos();
+            foreach (var httpMethodInfo in httpMethodInfos)
+            {
+                yield return Create(method,
+                    serviceType.Item1,
+                    serviceType.Item2,
+                    serviceBundleProvider,
+                    httpMethodInfo);
+            }
+        }
+    }
+
+    private ServiceEntry Create(MethodInfo method,
+            Type serviceType,
+            bool isLocal,
+            IRouteTemplateProvider routeTemplateProvider,
+            HttpMethodInfo httpMethodInfo)
+        {
+            var serviceName = serviceType.Name;
+            var serviceEntryId = _idGenerator.GenerateServiceEntryId(method, httpMethodInfo.HttpMethod);
+            var serviceId = _idGenerator.GenerateServiceId(serviceType);
+            var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethodInfo);
+            if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
+            {
+                throw new SilkyException(
+                    $"It is not allowed to specify multiple HashKey,Method is {serviceType.FullName}.{method.Name}");
+            }
+            
+            var serviceEntryTemplate =
+                TemplateHelper.GenerateServerEntryTemplate(routeTemplateProvider.Template, parameterDescriptors,
+                    httpMethodInfo, _governanceOptions.ApiIsRESTfulStyle,
+                    method.Name);
+
+            var router = new Router(serviceEntryTemplate, serviceName, method, httpMethodInfo.HttpMethod);
+            Debug.Assert(method.DeclaringType != null);
+            var serviceEntryDescriptor = new ServiceEntryDescriptor()
+            {
+                Id = serviceEntryId,
+                ServiceId = serviceId,
+                ServiceName = routeTemplateProvider.GetServiceName(serviceType),
+                ServiceProtocol = ServiceHelper.GetServiceProtocol(serviceType, isLocal, false),
+                Method = method.Name,
+            };
+
+            var metaDataList = method.GetCustomAttributes<MetadataAttribute>();
+
+            foreach (var metaData in metaDataList)
+            {
+                serviceEntryDescriptor.Metadatas.Add(metaData.Key, metaData.Value);
+            }
+
+            var serviceEntry = new ServiceEntry(router,
+                serviceEntryDescriptor,
+                serviceType,
+                method,
+                parameterDescriptors,
+                isLocal,
+                _governanceOptions);
+
+            if (serviceEntry.NeedHttpProtocolSupport())
+            {
+                serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.NeedHttpProtocolSupport, true);
+            }
+            
+            return serviceEntry;
+        }
+
+   // 其他代码略...
+
+   
+}
+```
+
+如果一个方法被标识了多个`HttpMethod`,那么将会生成两个不同的服务条目,如果没有被标识`HttpMethod`特性,那么将会根据命名的规则默认返回对应的`HttpMethod`方法:
+
+```csharp
+        public static ICollection<HttpMethodInfo> GetHttpMethodInfos(this MethodInfo method)
+        {
+            var httpMethodAttributeInfo = method.GetHttpMethodAttributeInfos();
+            var httpMethods = new List<HttpMethodInfo>();
+
+            foreach (var httpMethodAttribute in httpMethodAttributeInfo.Item1)
+            {
+                var httpMethod = httpMethodAttribute.HttpMethods.First().To<HttpMethod>();
+                if (!httpMethodAttributeInfo.Item2)
+                {
+                    if (method.Name.StartsWith("Create"))
+                    {
+                        httpMethod = HttpMethod.Post;
+                    }
+
+                    if (method.Name.StartsWith("Update"))
+                    {
+                        httpMethod = HttpMethod.Put;
+                    }
+
+                    if (method.Name.StartsWith("Delete"))
+                    {
+                        httpMethod = HttpMethod.Delete;
+                    }
+
+                    if (method.Name.StartsWith("Search"))
+                    {
+                        httpMethod = HttpMethod.Get;
+                    }
+
+                    if (method.Name.StartsWith("Query"))
+                    {
+                        httpMethod = HttpMethod.Get;
+                    }
+
+                    if (method.Name.StartsWith("Get"))
+                    {
+                        httpMethod = HttpMethod.Get;
+                    }
+                }
+
+                httpMethods.Add(new HttpMethodInfo()
+                {
+                    IsSpecify = httpMethodAttributeInfo.Item2,
+                    Template = httpMethodAttribute.Template,
+                    HttpMethod = httpMethod
+                });
+            }
+
+            return httpMethods;
+        }
+```
+
+创建服务条目的过程如下所述:
+
+1. 通过Id生成器`IIdGenerator`依次生成服务Id和服务条目Id;
+2. 通过参数提供者获取该方法对应的参数描述符` _parameterProvider.GetParameterDescriptors(method, httpMethodInfo)`;
+3. 通过`TemplateHelper.GenerateServerEntryTemplate()`为该方法生成路由模板，并创建该方法对应的路由器`router`;
+4. 创建服务条目描述符,并根据方法的特性`[Metadata]`更新服务描述符的元数据;
+5. 调用服务条目的构造方法创建服务条目;
+6. 更新服务条目描述符的元数据;
+
+服务条目治理构造方法如下所示,在服务条目构造器中完成了如下一系列的任务:
+
+```csharp
+    internal ServiceEntry(IRouter router,
+            ServiceEntryDescriptor serviceEntryDescriptor,
+            Type serviceType,
+            MethodInfo methodInfo,
+            IReadOnlyList<ParameterDescriptor> parameterDescriptors,
+            bool isLocal,
+            GovernanceOptions governanceOptions)
+        {
+            Router = router;
+            _serviceEntryDescriptor = serviceEntryDescriptor;
+            ParameterDescriptors = parameterDescriptors;
+            _serviceType = serviceType;
+            IsLocal = isLocal;
+            MethodInfo = methodInfo;
+            CustomAttributes = MethodInfo.GetCustomAttributes(true);
+            (IsAsyncMethod, ReturnType) = MethodInfo.ReturnTypeInfo();
+            GovernanceOptions = new ServiceEntryGovernance(governanceOptions); // 根据服务治理配置创建服务条目治理属性
+
+            var governanceProvider = CustomAttributes.OfType<IGovernanceProvider>().FirstOrDefault();
+            ReConfiguration(governanceProvider); // 更新服务条目的服务治理配置属性
+
+            _methodExecutor = methodInfo.CreateExecutor(serviceType); // 创建方法执行器
+            Executor = CreateExecutor();  //创建服务条目执行器
+            AuthorizeData = CreateAuthorizeData(); // 解析服务条目的身份认证元数据
+
+            ClientFilters = CreateClientFilters();  // 解析客户端过滤器
+            ServerFilters = CreateServerFilters();  // 解析服务端过滤器
+            CreateFallBackExecutor();   // 创建失败回调执行器
+            CreateDefaultSupportedRequestMediaTypes();  // 创建默认的请求媒体类型 
+            CreateDefaultSupportedResponseMediaTypes(); // 创建默认的响应媒体类型
+            CreateCachingInterceptorDescriptors();  // 创建缓存拦截描述符
+        }
+```
+
