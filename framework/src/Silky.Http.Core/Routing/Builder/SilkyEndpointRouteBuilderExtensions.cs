@@ -56,20 +56,6 @@ namespace Microsoft.AspNetCore.Builder
             var serverRegisterProvider =
                 serviceProvider.GetRequiredService<IServerProvider>();
             serverRegisterProvider.AddHttpServices();
-
-            var invokeMonitor =
-                serviceProvider.GetService<IInvokeMonitor>();
-            if (invokeMonitor != null)
-            {
-                await invokeMonitor?.ClearCache();
-            }
-
-            var serverHandleMonitor =
-                serviceProvider.GetService<IServerHandleMonitor>();
-            if (serverHandleMonitor != null)
-            {
-                await serverHandleMonitor?.ClearCache();
-            }
         }
 
         private static SilkyServiceEntryEndpointDataSource GetOrCreateServiceEntryDataSource(
