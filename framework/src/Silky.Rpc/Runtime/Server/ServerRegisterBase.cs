@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
@@ -32,6 +33,28 @@ namespace Silky.Rpc.Runtime.Server
             await RemoveServiceCenterExceptRpcEndpoint(server);
             await RegisterServerToServiceCenter(server.ConvertToDescriptor());
             await CacheServers();
+        }
+
+        protected virtual async Task<bool> RepeatRegister()
+        {
+            var selfServerInfo = _serverManager.GetSelfServer();
+            var localServer = _serverProvider.GetServer();
+            var needRegister = false;
+            foreach (var endpoint in localServer.Endpoints)
+            {
+                if (!selfServerInfo.Endpoints.Any(e=> e.Equals(endpoint)))
+                {
+                    needRegister = true;
+                    break;
+                }
+            }
+
+            if (needRegister)
+            {
+                await RegisterServer();
+            }
+
+            return needRegister;
         }
 
         public virtual async Task RemoveSelf()

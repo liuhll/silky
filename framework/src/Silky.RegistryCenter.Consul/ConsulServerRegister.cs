@@ -39,7 +39,15 @@ namespace Silky.RegistryCenter.Consul
         protected override async Task CacheServers()
         {
             await CacheServersFromConsul();
-            _heartBeatService.Start(CacheServersFromConsul);
+            _heartBeatService.Start(HeartBeatServers);
+        }
+        
+        private async Task HeartBeatServers()
+        {
+            if (!await RepeatRegister())
+            {
+                await CacheServersFromConsul();
+            }
         }
 
         private async Task CacheServersFromConsul()

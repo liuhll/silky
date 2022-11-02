@@ -148,7 +148,15 @@ namespace Silky.RegistryCenter.Zookeeper
             await CacheServersFromZookeeper();
             if (_registryCenterOptions.EnableHeartBeat)
             {
-                _heartBeatService.Start(CacheServersFromZookeeper);
+                _heartBeatService.Start(HeartBeatServers);
+            }
+        }
+
+        private async Task HeartBeatServers()
+        {
+            if (!await RepeatRegister())
+            {
+                await CacheServersFromZookeeper();
             }
         }
 
