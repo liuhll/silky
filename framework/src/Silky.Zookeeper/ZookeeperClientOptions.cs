@@ -22,7 +22,7 @@ namespace Silky.Zookeeper
         /// </remarks>
         protected ZookeeperClientOptions()
         {
-            ConnectionTimeout = TimeSpan.FromSeconds(10);
+            ConnectionTimeout = TimeSpan.FromSeconds(5);
             SessionTimeout = TimeSpan.FromSeconds(20);
             OperatingTimeout = TimeSpan.FromSeconds(60);
             ReadOnly = false;

@@ -291,7 +291,7 @@ namespace Silky.Zookeeper
         /// <param name="client">zk客户端。</param>
         public static void WaitForRetry(this IZookeeperClient client)
         {
-            client.WaitUntilConnected(client.Options.OperatingTimeout);
+            client.WaitUntilConnected(client.Options.ConnectionTimeout);
         }
 
         /// <summary>

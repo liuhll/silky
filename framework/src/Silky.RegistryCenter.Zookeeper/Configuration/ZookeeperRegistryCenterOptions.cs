@@ -12,7 +12,7 @@ namespace Silky.RegistryCenter.Zookeeper.Configuration
 
         public bool EnableHeartBeat { get; set; } = true;
 
-        public double ConnectionTimeout { get; set; } = 10000;
+        public double ConnectionTimeout { get; set; } = 3000;
 
         public double SessionTimeout { get; set; } = 20000;
 
