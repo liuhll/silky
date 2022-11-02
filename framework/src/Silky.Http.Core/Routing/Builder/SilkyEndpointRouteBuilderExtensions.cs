@@ -55,11 +55,7 @@ namespace Microsoft.AspNetCore.Builder
         {
             var serverRegisterProvider =
                 serviceProvider.GetRequiredService<IServerProvider>();
-            var serverRouteRegister =
-                serviceProvider.GetRequiredService<IServerRegister>();
-
             serverRegisterProvider.AddHttpServices();
-            await serverRouteRegister.RegisterServer();
 
             var invokeMonitor =
                 serviceProvider.GetService<IInvokeMonitor>();
@@ -67,7 +63,7 @@ namespace Microsoft.AspNetCore.Builder
             {
                 await invokeMonitor?.ClearCache();
             }
-            
+
             var serverHandleMonitor =
                 serviceProvider.GetService<IServerHandleMonitor>();
             if (serverHandleMonitor != null)

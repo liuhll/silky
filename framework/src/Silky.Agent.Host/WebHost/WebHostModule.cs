@@ -10,7 +10,6 @@ using Silky.Http.RateLimit;
 using Silky.Http.Swagger;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Proxy;
-using Silky.Rpc.Monitor;
 using Silky.Transaction.Repository.Redis;
 using Silky.Transaction.Tcc;
 using Silky.Validation;
@@ -34,7 +33,8 @@ namespace Microsoft.Extensions.Hosting
         typeof(TransactionTccModule),
         typeof(RedisTransactionRepositoryModule)
     )]
-    public abstract class WebHostModule : StartUpModule
+    public abstract class WebHostModule : HostAgentModule
     {
+        
     }
 }
