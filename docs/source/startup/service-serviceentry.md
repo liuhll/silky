@@ -108,29 +108,47 @@ public class DefaultServiceManager : IServiceManager
 2. Silky框架中,通过默认的服务提供者`DefaultServiceProvider`扫描标识了`[ServiceRoute]`的接口,然后通过遍历所有的服务类型,通过默认的服务生成器`DefaultServiceGenerator`实现创建应用服务对象;
 
 ```csharp
-public IReadOnlyCollection<Service> GetServices()
+public class DefaultServiceGenerator : IServiceGenerator
 {
-    var serviceTypes = ServiceHelper.FindAllServiceTypes(_typeFinder);
-    if (!EngineContext.Current.IsContainHttpCoreModule()) // 如果不包含HttpCoreModule模块,则忽略标识了`[DashboardAppService]`的应用服务
+    private readonly IIdGenerator _idGenerator;
+    private readonly ITypeFinder _typeFinder;
+    private readonly IServiceEntryManager _serviceEntryManager;
+    public DefaultServiceGenerator(IIdGenerator idGenerator,
+        ITypeFinder typeFinder,
+        IServiceEntryManager serviceEntryManager)
     {
-        serviceTypes = serviceTypes.Where(p =>
-            p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
+        _idGenerator = idGenerator;
+        _typeFinder = typeFinder;
+        _serviceEntryManager = serviceEntryManager;
     }
-    var services = new List<Service>();
-    foreach (var serviceTypeInfo in serviceTypes)
-    {
-        services.Add(_serviceGenerator.CreateService(serviceTypeInfo));
-    }
-    if (EngineContext.Current.IsContainWebSocketModule())
-    {
-        var wsServiceTypes = ServiceHelper.FindServiceLocalWsTypes(_typeFinder);
-        foreach (var wsServiceType in wsServiceTypes)
-        {
-            services.Add(_serviceGenerator.CreateWsService(wsServiceType));
-        }
-    }
-    return services;
+
+   public IReadOnlyCollection<Service> GetServices()
+   {
+       var serviceTypes = ServiceHelper.FindAllServiceTypes(_typeFinder);
+       if (!EngineContext.Current.IsContainHttpCoreModule()) // 如果不包含HttpCoreModule模块,则忽略标识了`[DashboardAppService]`的应用服务
+       {
+           serviceTypes = serviceTypes.Where(p =>
+               p.Item1.GetCustomAttributes().OfType<DashboardAppServiceAttribute>().FirstOrDefault() == null);
+       }
+       var services = new List<Service>();
+       foreach (var serviceTypeInfo in serviceTypes)
+       {
+           services.Add(_serviceGenerator.CreateService(serviceTypeInfo));
+       }
+       if (EngineContext.Current.IsContainWebSocketModule())
+       {
+           var wsServiceTypes = ServiceHelper.FindServiceLocalWsTypes(_typeFinder);
+           foreach (var wsServiceType in wsServiceTypes)
+           {
+               services.Add(_serviceGenerator.CreateWsService(wsServiceType));
+           }
+       }
+       return services;
+   }
 }
+
+// 其他代码略...
+
 ```
 通过上述的代码我们看到：
 
@@ -627,3 +645,53 @@ public class DefaultServiceEntryGenerator : IServiceEntryGenerator
         }
 ```
 
+## 服务与服务条目的解析过程
+
+通过上文所述,我们知道服务与服务条目是在其 **管理器** 创建的时候进行构造解析的, **管理器**是单例的,也就是说在整个应用的生命周期中,服务与服务条目都只会被创建一次，并存在于应用的内存中。那么服务与服务条目是在服务条目的什么时候进行解析的呢?
+
+1. 我们看到在服务生成器`DefaultServiceGenerator`中看到,通过构造注入服务条目管理器接口`IServiceEntryManager`,也就是说,在生成服务之前必须要先创建服务条目管理器的实例，在解析服务之前需要先解析服务条目,也正是因为如此,所以可以在在解析服务的时候通过服务条目管理器`IServiceEntryManager`获取该服务对应的服务条目;
+
+```csharp
+public class DefaultServiceGenerator : IServiceGenerator
+{
+    private readonly IIdGenerator _idGenerator;
+    private readonly ITypeFinder _typeFinder;
+    private readonly IServiceEntryManager _serviceEntryManager;
+    
+    public DefaultServiceGenerator(IIdGenerator idGenerator,
+        ITypeFinder typeFinder,
+        IServiceEntryManager serviceEntryManager)
+    {
+        _idGenerator = idGenerator;
+        _typeFinder = typeFinder;
+        _serviceEntryManager = serviceEntryManager;
+    }
+}
+```
+
+2. 在Silky服务主机提供者`DefaultServerProvider` 中,我们看到通过构造注入应用服务管理器`IServiceManager`,也就是说在第一次获取Silky服务主机提供者的时候,需要创建应用服务管理器的实例,实现应用服务的解析；
+
+```csharp
+public class DefaultServerProvider : IServerProvider
+{
+    public ILogger<DefaultServerProvider> Logger { get; set; }
+    private readonly IServer _server;
+    private readonly IServiceManager _serviceManager;
+    private readonly ISerializer _serializer;
+
+    public DefaultServerProvider(IServiceManager serviceManager,
+        ISerializer serializer)
+    {
+        _serviceManager = serviceManager;
+        _serializer = serializer;
+        Logger = EngineContext.Current.Resolve<ILogger<DefaultServerProvider>>();
+        _server = new Server(EngineContext.Current.HostName);
+    }
+}
+```
+
+通过上述的描述,我们可以了解到,在应用启动过程中,在首次解析Silky服务主机提供者实例`DefaultServerProvider`的时候,Silky框架会首先进行服务条目的解析,然后再解析应用服务;由于其相应的服务管理器都是 **单例的**，在整个应用的生命周期中,服务与服务条目都只会被解析一次;
+
+服务和服务条目被解析成功后，也会存在相应的**描述符**,随着应用的启动,描述符将会作为silky服务主机的一部分,将会随着应用服务主机的描述符注册到服务注册中心，服务注册中心将会更新整个微服务集群的注册信息(包括新增微服务主机信息、支持的服务与服务条目、以及主机实例的的终结点等等元数据信息)，集群的其他微服务主机实例将会通过心跳或是订阅的方式获取到整个集群最新的元数据,并通过更新到内存中;
+
+接下来,我们将继续介绍在应用启动时,如何构建Silky服务主机(提供者)[Server](https://github.com/liuhll/silky/blob/main/framework/src/Silky.Rpc/Runtime/Server/Server.cs),并将其信息注册到服务注册中心;
