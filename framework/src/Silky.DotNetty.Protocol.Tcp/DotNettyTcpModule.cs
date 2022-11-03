@@ -3,7 +3,6 @@ using Autofac;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Modularity;
 using Silky.Rpc;
-using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.DotNetty.Protocol.Tcp
@@ -25,9 +24,9 @@ namespace Silky.DotNetty.Protocol.Tcp
             var messageListener =
                 applicationContext.ServiceProvider.GetRequiredService<DotNettyTcpServerMessageListener>();
             await messageListener.Listen();
-            var serverRegisterProvider =
+            var serverProvider =
                 applicationContext.ServiceProvider.GetRequiredService<IServerProvider>();
-            serverRegisterProvider.AddTcpServices();
+            serverProvider.AddTcpServices();
         }
     }
 }

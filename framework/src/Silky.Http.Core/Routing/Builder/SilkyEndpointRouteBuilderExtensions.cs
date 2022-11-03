@@ -4,13 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Silky.Core;
-using Silky.Http.Core;
 using Silky.Http.Core.Routing.Builder.Internal;
-using Silky.Rpc.Configuration;
-using Silky.Rpc.Endpoint;
-using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using IServiceProvider = System.IServiceProvider;
 
@@ -53,9 +47,9 @@ namespace Microsoft.AspNetCore.Builder
 
         private static async Task RegisterSilkyWebServer(IServiceProvider serviceProvider)
         {
-            var serverRegisterProvider =
+            var serverProvider =
                 serviceProvider.GetRequiredService<IServerProvider>();
-            serverRegisterProvider.AddHttpServices();
+            serverProvider.AddHttpServices();
         }
 
         private static SilkyServiceEntryEndpointDataSource GetOrCreateServiceEntryDataSource(
