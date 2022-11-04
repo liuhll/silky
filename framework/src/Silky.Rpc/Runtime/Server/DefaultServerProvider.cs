@@ -59,12 +59,12 @@ namespace Silky.Rpc.Runtime.Server
 
         public IServer GetServer()
         {
-            Logger.LogDebug("server endpoints:" + _serializer.Serialize(_server.Endpoints.Select(p => p.ToString())));
+            Logger.LogDebug($"{_server.HostName} server endpoints:" + _serializer.Serialize(_server.Endpoints.Select(p => p.ToString())));
             if (_server.HasHttpProtocolServiceEntry() && !_server.Endpoints.Any(p =>
                     p.ServiceProtocol == ServiceProtocol.Http || p.ServiceProtocol == ServiceProtocol.Https))
             {
                 throw new SilkyException(
-                    "A server that supports file upload and download or ActionResult must be built through the http protocol host",
+                    $"{_server.HostName} server that supports file upload and download or ActionResult must be built through the http protocol host",
                     StatusCode.ServerError);
             }
             return _server;

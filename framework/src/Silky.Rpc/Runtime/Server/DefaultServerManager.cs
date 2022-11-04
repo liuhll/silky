@@ -181,7 +181,7 @@ namespace Silky.Rpc.Runtime.Server
                 Logger.LogInformation(
                     "Update the server [{0}] data cache," +
                     "The instance endpoints of the server provider is: {1}[{2}]",
-                    server.HostName, Environment.NewLine, string.Join(',', server.Endpoints.Select(p => p.ToString())));
+                    server.HostName, Environment.NewLine, string.Join(';', server.Endpoints.Select(p => p.ToString())));
 
                 foreach (var rpcEndpoint in server.Endpoints)
                 {

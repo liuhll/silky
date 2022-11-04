@@ -65,9 +65,10 @@ namespace Silky.Rpc.Endpoint
 
         public override string ToString()
         {
-            return string.Concat(RpcEndpointHelper.GetIp(Host), ":", Port.ToString(), ":", ServiceProtocol.ToString());
+            return string.Concat(ServiceProtocol.ToString().ToLower(), "://", RpcEndpointHelper.GetIp(Host), ":",
+                Port.ToString());
         }
-        
+
         public static bool operator ==(RpcEndpoint model1, RpcEndpoint model2)
         {
             return Equals(model1, model2);
@@ -77,7 +78,7 @@ namespace Silky.Rpc.Endpoint
         {
             return !Equals(model1, model2);
         }
-        
+
         public override bool Equals([CanBeNull] object obj)
         {
             var endpoint = obj as IPEndPoint;
@@ -98,7 +99,5 @@ namespace Silky.Rpc.Endpoint
         {
             return ToString().GetHashCode();
         }
-
-   
     }
 }

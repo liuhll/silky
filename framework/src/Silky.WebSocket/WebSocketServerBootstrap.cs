@@ -48,7 +48,7 @@ namespace Silky.WebSocket
             {
                 _socketServer.Start();
                 _logger.LogInformation(
-                    "Ws server started successfully, server rpcEndpoint: {0}:{1}", _socketServer.Address,
+                    "Now Silky WebSocket Server listening on: {0}:{1}", _socketServer.Address,
                     _socketServer.Port.ToString());
             }
             catch (Exception ex)

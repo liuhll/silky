@@ -127,7 +127,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             {
                 m_boundChannel = await bootstrap.BindAsync(_hostRpcEndpoint.IPEndPoint);
                 Logger.LogInformation(
-                    "The server listener started successfully, the listening rpcEndpoint: {0}", _hostRpcEndpoint);
+                    "Now Silky RPC listening on: {0}", _hostRpcEndpoint.IPEndPoint);
             }
             catch (Exception ex)
             {
