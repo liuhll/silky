@@ -29,7 +29,7 @@ namespace Silky.HealthChecks.Rpc
 
         protected override ICollection<IServer> GetServers()
         {
-            return _serverManager.Servers?.Where(p => p.Endpoints.Any(e => e.ServiceProtocol == ServiceProtocol.Tcp))
+            return _serverManager.Servers?.Where(p => p.Endpoints.Any(e => e.ServiceProtocol == ServiceProtocol.Rpc))
                 .ToArray();
         }
 

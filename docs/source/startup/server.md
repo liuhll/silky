@@ -38,14 +38,14 @@ Silky服务主机的解析由默认主机服务提供者`DefaultServerProvider`�
             _server = new Server(EngineContext.Current.HostName);
         }
 
-        public void AddTcpServices()
+        public void AddRpcServices()
         {
-            var rpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+            var rpcEndpoint = EndpointHelper.GetLocalRpcEndpoint();
             _server.Endpoints.Add(rpcEndpoint);
-            var tcpServices = _serviceManager.GetLocalService(ServiceProtocol.Tcp);
-            foreach (var tcpService in tcpServices)
+            var rpcServices = _serviceManager.GetLocalService(ServiceProtocol.Rpc);
+            foreach (var rpcService in rpcServices)
             {
-                _server.Services.Add(tcpService.ServiceDescriptor);
+                _server.Services.Add(rpcService.ServiceDescriptor);
             }
         }
 
@@ -92,7 +92,7 @@ Silky服务主机的解析由默认主机服务提供者`DefaultServerProvider`�
 
 2. Server主机提供者的构造器中注入服务管理器`IServiceManager`,由此,我们也可以得知:在应用启动时获取主机提供者的时候,实现了[服务和服务条目的解析](service-serviceentry.html);
 
-3. 主机服务提供者`DefaultServerProvider`提供三个核心的方法`AddTcpServices()`、`AddHttpServices()`、`AddWsServices()`; 在应用启动时,在指定的时刻查找指定协议的服务和相应的服务终结点;
+3. 主机服务提供者`DefaultServerProvider`提供三个核心的方法`AddRpcServices()`、`AddHttpServices()`、`AddWsServices()`; 在应用启动时,在指定的时刻查找指定协议的服务和相应的服务终结点;
   
   3.1 由[web主机](https://learn.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-6.0)创建的Silky微服务应用,映射Silky路由的时候,调用`AddHttpServices()`方法,在应用启动成功时,添加该微服务应用的Http终结点;
   
@@ -155,7 +155,8 @@ public class DefaultServerProvider : IServerProvider
 如果是由[Web主机](https://learn.microsoft.com/zh-cn/aspnet/core/fundamentals/host/web-host?view=aspnetcore-6.0) 托管的Silky应用,那么在在此时才会首次获取`DefaultServerProvider`的实例,也就是在此时才会进行服务与服务条目的解析;
 :::
 
-  3.2  在模块`DotNettyTcpModule`初始化任务的过程中,从Ioc容器中获取到消息监听者`DotNettyTcpServerMessageListener`实例后,完成监听任务后，添加支持TCP协议的服务;
+  3.2  在模块`DotNettyTcpModule`初始化任务的过程中,从Ioc容器中获取到消息监听者`DotNettyTcpServerMessageListener`实例后,完成监听任务后，添加支持RPC
+  协议的服务;
   
   ```csharp
    [DependsOn(typeof(RpcModule), typeof(DotNettyModule))]
@@ -174,24 +175,24 @@ public class DefaultServerProvider : IServerProvider
             var serverProvider =
                 applicationContext.ServiceProvider.GetRequiredService<IServerProvider>();
             // 添加支持TCP协议的服务
-            serverProvider.AddTcpServices();
+            serverProvider.AddRpcServices();
         }
     }
   ```
 
-  通过上面的代码我们看到,只有在完成服务端消息监听任务之后,Silky服务主机才会完成添加支持TCP协议的服务,支持TCP协议的服务就是前文所述的[应用服务](service-serviceentry.html#应用服务的解析);Silky微服务之间的通信主要是由dotnetty实现的RPC框架完成的。
+  通过上面的代码我们看到,只有在完成服务端消息监听任务之后,Silky服务主机才会完成添加支持RPC协议的服务,支持RPC的服务就是前文所述的[应用服务](service-serviceentry.html#应用服务的解析);Silky微服务之间的通信主要是由dotnetty实现的RPC框架完成的。
   
   ```csharp
   public class DefaultServerProvider : IServerProvider
   {
-    public void AddTcpServices()
+    public void AddRpcServices()
     {
-        var rpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+        var rpcEndpoint = EndpointHelper.GetLocalRpcEndpoint();
         _server.Endpoints.Add(rpcEndpoint);
-        var tcpServices = _serviceManager.GetLocalService(ServiceProtocol.Tcp);
-        foreach (var tcpService in tcpServices)
+        var rpcServices = _serviceManager.GetLocalService(ServiceProtocol.Rpc);
+        foreach (var rpcService in rpcServices)
         {
-            _server.Services.Add(tcpService.ServiceDescriptor);
+            _server.Services.Add(rpcService.ServiceDescriptor);
         }
     }
 

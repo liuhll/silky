@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Rpc.Endpoint;
-using static Silky.Rpc.Endpoint.RpcEndpointHelper;
+using static Silky.Rpc.Endpoint.EndpointHelper;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -61,7 +61,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             if (EngineContext.Current.IsContainDotNettyTcpModule())
             {
-                var tcpEndpoint = GetLocalTcpEndpoint();
+                var tcpEndpoint = GetLocalRpcEndpoint();
                 await RemoveRpcEndpoint(EngineContext.Current.HostName, tcpEndpoint);
             }
 

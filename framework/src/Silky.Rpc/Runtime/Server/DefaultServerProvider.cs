@@ -24,20 +24,20 @@ namespace Silky.Rpc.Runtime.Server
             _server = new Server(EngineContext.Current.HostName);
         }
 
-        public void AddTcpServices()
+        public void AddRpcServices()
         {
-            var rpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+            var rpcEndpoint = EndpointHelper.GetLocalRpcEndpoint();
             _server.Endpoints.Add(rpcEndpoint);
-            var tcpServices = _serviceManager.GetLocalService(ServiceProtocol.Tcp);
-            foreach (var tcpService in tcpServices)
+            var rpcServices = _serviceManager.GetLocalService(ServiceProtocol.Rpc);
+            foreach (var rpcService in rpcServices)
             {
-                _server.Services.Add(tcpService.ServiceDescriptor);
+                _server.Services.Add(rpcService.ServiceDescriptor);
             }
         }
 
         public void AddHttpServices()
         {
-            var webEndpoint = RpcEndpointHelper.GetLocalWebEndpoint();
+            var webEndpoint = EndpointHelper.GetLocalWebEndpoint();
             if (webEndpoint == null)
             {
                 throw new SilkyException("Failed to obtain http service rpcEndpoint");
@@ -48,7 +48,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public void AddWsServices()
         {
-            var wsEndpoint = RpcEndpointHelper.GetWsEndpoint();
+            var wsEndpoint = EndpointHelper.GetWsEndpoint();
             _server.Endpoints.Add(wsEndpoint);
             var wsServices = _serviceManager.GetLocalService(ServiceProtocol.Ws);
             foreach (var wsService in wsServices)

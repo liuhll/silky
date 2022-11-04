@@ -54,7 +54,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             _rpcOptions = rpcOptions.Value;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange((options, s) => _governanceOptions = options);
-            _hostRpcEndpoint = RpcEndpointHelper.GetLocalTcpEndpoint();
+            _hostRpcEndpoint = EndpointHelper.GetLocalRpcEndpoint();
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
@@ -127,7 +127,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             {
                 m_boundChannel = await bootstrap.BindAsync(_hostRpcEndpoint.IPEndPoint);
                 Logger.LogInformation(
-                    "Now Silky RPC listening on: {0}", _hostRpcEndpoint.IPEndPoint);
+                    "Now Silky RPC server listening on: {0}", _hostRpcEndpoint.IPEndPoint);
             }
             catch (Exception ex)
             {

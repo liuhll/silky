@@ -15,7 +15,7 @@ namespace Silky.RegistryCenter.Nacos
         {
             var endpoint =
                 serverDescriptor.Endpoints.FirstOrDefault(p =>
-                    p.ServiceProtocol == ServiceProtocol.Tcp || p.ServiceProtocol.IsHttp()
+                    p.ServiceProtocol == ServiceProtocol.Rpc || p.ServiceProtocol.IsHttp()
                 );
             if (endpoint == null)
             {

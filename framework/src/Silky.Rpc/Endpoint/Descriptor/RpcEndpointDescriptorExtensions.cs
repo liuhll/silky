@@ -27,7 +27,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
 
         public static bool IsInstanceEndpoint(this RpcEndpointDescriptor rpcEndpointDescriptor)
         {
-            return rpcEndpointDescriptor.ServiceProtocol == ServiceProtocol.Tcp;
+            return rpcEndpointDescriptor.ServiceProtocol == ServiceProtocol.Rpc;
         }
     }
 }

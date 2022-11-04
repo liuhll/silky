@@ -15,7 +15,7 @@ namespace Silky.RegistryCenter.Consul
         public static AgentServiceRegistration CreateAgentServiceRegistration(this ServerDescriptor serverDescriptor)
         {
             var endpoint = serverDescriptor.Endpoints.FirstOrDefault(p =>
-                p.ServiceProtocol == ServiceProtocol.Tcp || p.ServiceProtocol.IsHttp());
+                p.ServiceProtocol == ServiceProtocol.Rpc || p.ServiceProtocol.IsHttp());
 
             if (endpoint == null)
             {
@@ -66,7 +66,7 @@ namespace Silky.RegistryCenter.Consul
         public static string GetInstanceId(this IServer server)
         {
             var endpoint = server.Endpoints.FirstOrDefault(p =>
-                p.ServiceProtocol == ServiceProtocol.Tcp || p.ServiceProtocol.IsHttp());
+                p.ServiceProtocol == ServiceProtocol.Rpc || p.ServiceProtocol.IsHttp());
 
             if (endpoint == null)
             {

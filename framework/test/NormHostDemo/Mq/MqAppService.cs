@@ -9,7 +9,7 @@ namespace NormHostDemo.Mq;
 public class MqAppService : IMqAppService
 {
     private readonly IPublishEndpoint _publishEndpoint;
-    protected readonly IBus _bus;
+    private readonly IBus _bus;
 
 
     public MqAppService(IPublishEndpoint publishEndpoint,

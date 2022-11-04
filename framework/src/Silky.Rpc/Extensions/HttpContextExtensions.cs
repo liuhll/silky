@@ -52,7 +52,7 @@ namespace Silky.Rpc.Extensions
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, clientPort.ToString());
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ClientPort, clientPort.ToString());
 
-            var localRpcEndpoint = RpcEndpointHelper.GetLocalWebEndpointDescriptor();
+            var localRpcEndpoint = EndpointHelper.GetLocalWebEndpointDescriptor();
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port.ToString());
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol,

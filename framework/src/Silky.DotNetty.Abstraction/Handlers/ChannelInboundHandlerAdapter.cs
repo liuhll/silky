@@ -30,7 +30,7 @@ namespace Silky.DotNetty.Handlers
                 {
                     _rpcEndpointMonitor?.ChangeStatus(remoteAddress.Address.MapToIPv4(),
                         remoteAddress.Port,
-                        ServiceProtocol.Tcp,
+                        ServiceProtocol.Rpc,
                         false);
                 }
             }
@@ -51,7 +51,7 @@ namespace Silky.DotNetty.Handlers
             {
                 _rpcEndpointMonitor?.ChangeStatus(remoteAddress.Address.MapToIPv4(),
                     remoteAddress.Port,
-                    ServiceProtocol.Tcp,
+                    ServiceProtocol.Rpc,
                     true);
             }
 

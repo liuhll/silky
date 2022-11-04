@@ -33,7 +33,7 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
         public Task<bool> IsHealth(IRpcEndpoint rpcEndpoint)
         {
             var address = rpcEndpoint.GetAddress();
-            if (rpcEndpoint.ServiceProtocol == ServiceProtocol.Tcp)
+            if (rpcEndpoint.ServiceProtocol == ServiceProtocol.Rpc)
             {
                 return IsHealth(address);
             }
@@ -44,7 +44,7 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
         public Task<bool> IsHealth(RpcEndpointDescriptor rpcEndpointDescriptor)
         {
             var address = rpcEndpointDescriptor.GetHostAddress();
-            if (rpcEndpointDescriptor.ServiceProtocol == ServiceProtocol.Tcp)
+            if (rpcEndpointDescriptor.ServiceProtocol == ServiceProtocol.Rpc)
             {
                 return IsHealth(address);
             }

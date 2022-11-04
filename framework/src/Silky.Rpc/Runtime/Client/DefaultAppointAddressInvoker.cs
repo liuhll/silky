@@ -41,7 +41,7 @@ namespace Silky.Rpc.Runtime.Client
 
             Check.NotNull(address, nameof(address));
             Check.NotNull(serviceEntry, nameof(serviceEntry));
-            if (RpcEndpointHelper.IsLocalRpcAddress(address))
+            if (EndpointHelper.IsLocalRpcAddress(address))
             {
                 return _localExecutor.Execute(serviceEntry, parameters, serviceKey);
             }

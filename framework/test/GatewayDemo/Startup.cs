@@ -85,7 +85,7 @@ namespace GatewayDemo
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
             app.UseResponseCaching();
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseSilkyIdentity();
             app.UseSilkyWebSocketsProxy();
             // app.UseSilkyWebServer();

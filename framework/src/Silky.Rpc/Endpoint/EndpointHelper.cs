@@ -17,7 +17,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Endpoint
 {
-    public static class RpcEndpointHelper
+    public static class EndpointHelper
     {
         private const string ANYHOST = "0.0.0.0";
         private const string LOCAL_IP_PATTERN = "127(\\.\\d{1,3}){3}$";
@@ -119,9 +119,9 @@ namespace Silky.Rpc.Endpoint
                 .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
         }
 
-        public static IRpcEndpoint GetLocalTcpEndpoint()
+        public static IRpcEndpoint GetLocalRpcEndpoint()
         {
-            if (_rpcEndpointCache.TryGetValue("LocalTcpEndpoint", out var localTcpEndpoint))
+            if (_rpcEndpointCache.TryGetValue("LocalRpcEndpoint", out var localTcpEndpoint))
             {
                 return localTcpEndpoint;
             }
@@ -130,13 +130,13 @@ namespace Silky.Rpc.Endpoint
             var host = GetHostIp(rpcOptions.Host);
             var port = rpcOptions.Port;
             var address = new RpcEndpoint(host, port, ServiceProtocol.Rpc);
-            _ = _rpcEndpointCache.TryAdd("LocalTcpEndpoint", address);
+            _ = _rpcEndpointCache.TryAdd("LocalRpcEndpoint", address);
             return address;
         }
 
         public static bool IsLocalRpcAddress(string address)
         {
-            var localAddress = GetLocalTcpEndpoint().GetAddress();
+            var localAddress = GetLocalRpcEndpoint().GetAddress();
             return localAddress.Equals(address);
         }
 
@@ -147,7 +147,7 @@ namespace Silky.Rpc.Endpoint
         }
 
 
-        public static IRpcEndpoint GetRpcEndpoint(int port, ServiceProtocol serviceProtocol)
+        public static IRpcEndpoint GetEndpoint(int port, ServiceProtocol serviceProtocol)
         {
             var host = GetIp(GetAnyHostIp());
             var address = new RpcEndpoint(host, port, serviceProtocol);

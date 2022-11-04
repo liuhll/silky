@@ -26,7 +26,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             await messageListener.Listen();
             var serverProvider =
                 applicationContext.ServiceProvider.GetRequiredService<IServerProvider>();
-            serverProvider.AddTcpServices();
+            serverProvider.AddRpcServices();
         }
     }
 }
