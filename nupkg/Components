@@ -45,3 +45,4 @@ src/Silky.Validation
 src/Silky.Validation.Fluent
 src/Silky.WebSocket
 src/Silky.Zookeeper
+src/Silky.MassTransit

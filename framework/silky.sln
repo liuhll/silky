@@ -122,6 +122,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".sln", ".sln", "{83BB8BED-C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Http.Auditing", "src\Silky.Http.Auditing\Silky.Http.Auditing.csproj", "{99C41850-29FF-4938-9F51-5862D0EC59EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.MassTransit", "src\Silky.MassTransit\Silky.MassTransit.csproj", "{D30CBA04-24E5-4E41-BDA2-7F0B576E504D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -348,6 +350,10 @@ Global
 		{99C41850-29FF-4938-9F51-5862D0EC59EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99C41850-29FF-4938-9F51-5862D0EC59EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99C41850-29FF-4938-9F51-5862D0EC59EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D30CBA04-24E5-4E41-BDA2-7F0B576E504D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D30CBA04-24E5-4E41-BDA2-7F0B576E504D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D30CBA04-24E5-4E41-BDA2-7F0B576E504D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D30CBA04-24E5-4E41-BDA2-7F0B576E504D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -408,6 +414,7 @@ Global
 		{A55DA184-5BF2-4DE8-B9E6-C8890F12F879} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{FEA0C318-FFED-4D39-8781-265718CA43DD} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{99C41850-29FF-4938-9F51-5862D0EC59EB} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{D30CBA04-24E5-4E41-BDA2-7F0B576E504D} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42B14424-34C2-4891-A02A-690A57FE2795}

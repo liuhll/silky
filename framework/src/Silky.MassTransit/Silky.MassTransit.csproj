@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
+        <Description>Silky expansion package for masstransit</Description>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="MassTransit" Version="$(MassTransitVersion)" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+      <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Producer" />
+    </ItemGroup>
+
+</Project>

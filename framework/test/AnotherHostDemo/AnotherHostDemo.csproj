@@ -5,6 +5,7 @@
         <OutputType>Exe</OutputType>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Silky.MassTransit\Silky.MassTransit.csproj" />
         <ProjectReference Include="..\..\src\Silky.WebSocket\Silky.WebSocket.csproj" />
         <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
@@ -13,6 +14,7 @@
 
     <ItemGroup>
         <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.7" />
     </ItemGroup>
 
     <ItemGroup>

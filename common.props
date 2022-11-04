@@ -24,5 +24,7 @@
 	<EfCore5Version>5.0.17</EfCore5Version>
 
     <DotNettyVersion>0.7.5</DotNettyVersion>
+
+    <MassTransitVersion>8.0.7</MassTransitVersion>
   </PropertyGroup>
 </Project>
