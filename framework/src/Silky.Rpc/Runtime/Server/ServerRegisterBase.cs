@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Rpc.Endpoint;
-using static Silky.Rpc.Endpoint.EndpointHelper;
+using static Silky.Rpc.Endpoint.SilkyEndpointHelper;
 
 namespace Silky.Rpc.Runtime.Server
 {

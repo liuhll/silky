@@ -54,7 +54,7 @@ namespace Silky.Rpc.Endpoint.Monitor
         public void ChangeStatus(IPAddress ipAddress, int port, ServiceProtocol serviceProtocol, bool isEnable,
             int unHealthCeilingTimes = 0)
         {
-            var rpcEndpoint = EndpointHelper.CreateRpcEndpoint(ipAddress.ToString(), port, serviceProtocol);
+            var rpcEndpoint = SilkyEndpointHelper.CreateRpcEndpoint(ipAddress.ToString(), port, serviceProtocol);
             ChangeStatus(rpcEndpoint, isEnable, unHealthCeilingTimes);
         }
 

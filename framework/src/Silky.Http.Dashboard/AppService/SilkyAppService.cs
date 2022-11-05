@@ -158,7 +158,7 @@ namespace Silky.Http.Dashboard.AppService
 
         private string GetWebSocketProxyAddress()
         {
-            var webEndpoint = EndpointHelper.GetLocalWebEndpoint();
+            var webEndpoint = SilkyEndpointHelper.GetLocalWebEndpoint();
             if (webEndpoint == null)
             {
                 return string.Empty;
@@ -442,7 +442,7 @@ namespace Silky.Http.Dashboard.AppService
 
         private bool IsLocalAddress(string address)
         {
-            var localAddress = EndpointHelper.GetLocalRpcEndpoint().GetAddress();
+            var localAddress = SilkyEndpointHelper.GetLocalRpcEndpoint().GetAddress();
             return localAddress.Equals(address);
         }
 

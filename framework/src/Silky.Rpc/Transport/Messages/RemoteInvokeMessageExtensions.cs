@@ -21,7 +21,7 @@ namespace Silky.Rpc.Transport.Messages
             }
 
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.IsGateway, isGateway.ToString());
-            var localRpcEndpoint = EndpointHelper.GetLocalRpcEndpoint();
+            var localRpcEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpoint.Host);
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpoint.Port.ToString());
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol, localRpcEndpoint.ServiceProtocol.ToString());

@@ -54,7 +54,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             _rpcOptions = rpcOptions.Value;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange((options, s) => _governanceOptions = options);
-            _hostSilkyEndpoint = EndpointHelper.GetLocalRpcEndpoint();
+            _hostSilkyEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));

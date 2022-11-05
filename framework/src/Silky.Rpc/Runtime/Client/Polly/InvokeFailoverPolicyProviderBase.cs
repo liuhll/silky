@@ -18,7 +18,7 @@ namespace Silky.Rpc.Runtime.Client
             var selectedServerPort = RpcContext.Context.GetSelectedServerPort();
             var selectedServerServiceProtocol = RpcContext.Context.GetSelectedServerServiceProtocol();
             var selectedServerEndpoint =
-                EndpointHelper.CreateRpcEndpoint(selectedHost, selectedServerPort, selectedServerServiceProtocol);
+                SilkyEndpointHelper.CreateRpcEndpoint(selectedHost, selectedServerPort, selectedServerServiceProtocol);
             return selectedServerEndpoint;
         }
         

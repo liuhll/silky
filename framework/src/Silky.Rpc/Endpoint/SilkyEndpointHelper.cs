@@ -15,7 +15,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Endpoint
 {
-    public static class EndpointHelper
+    public static class SilkyEndpointHelper
     {
         private const string ANYHOST = "0.0.0.0";
         private const string LOCAL_IP_PATTERN = "127(\\.\\d{1,3}){3}$";
