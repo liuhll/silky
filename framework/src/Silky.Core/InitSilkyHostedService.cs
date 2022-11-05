@@ -48,7 +48,7 @@ namespace Silky.Core
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            _hostApplicationLifetime.ApplicationStopped.Register(async () =>
+            _hostApplicationLifetime.ApplicationStopping.Register(async () =>
             {
                 await _moduleManager.ShutdownModules();
             });
