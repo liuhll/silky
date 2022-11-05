@@ -28,7 +28,7 @@ namespace Silky.Core.Runtime.Rpc
                 serviceProtocol = ServiceProtocol.Https;
             }
 
-            else if ("tcp".Equals(scheme, StringComparison.OrdinalIgnoreCase))
+            else if ("rpc".Equals(scheme, StringComparison.OrdinalIgnoreCase))
             {
                 serviceProtocol = ServiceProtocol.Rpc;
             }
@@ -67,7 +67,7 @@ namespace Silky.Core.Runtime.Rpc
             return serviceProtocol == ServiceProtocol.Ws || serviceProtocol == ServiceProtocol.Wss;
         }
 
-        public static bool IsTcp(this ServiceProtocol serviceProtocol)
+        public static bool IsRpc(this ServiceProtocol serviceProtocol)
         {
             return serviceProtocol == ServiceProtocol.Rpc;
         }

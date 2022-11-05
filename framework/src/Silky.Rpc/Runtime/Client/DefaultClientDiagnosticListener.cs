@@ -78,8 +78,8 @@ namespace Silky.Rpc.Runtime.Client
 
         public void TracingSelectInvokeAddress(long? tracingTimestamp, string serviceEntryId,
             ShuntStrategy shuntStrategy,
-            IRpcEndpoint[] rpcEndpoints,
-            IRpcEndpoint selectedRpcEndpoint)
+            ISilkyEndpoint[] rpcEndpoints,
+            ISilkyEndpoint selectedSilkyEndpoint)
         {
             if (tracingTimestamp != null &&
                 s_diagnosticListener.IsEnabled(RpcDiagnosticListenerNames.SelectInvokeAddress))
@@ -89,7 +89,7 @@ namespace Silky.Rpc.Runtime.Client
                     {
                         ServiceEntryId = serviceEntryId,
                         EnableRpcEndpoints = rpcEndpoints,
-                        SelectedRpcEndpoint = selectedRpcEndpoint,
+                        SelectedSilkyEndpoint = selectedSilkyEndpoint,
                         ShuntStrategy = shuntStrategy
                     });
             }

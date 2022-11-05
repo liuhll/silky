@@ -58,13 +58,13 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
         {
             var context = _silkySegmentContextFactory.GetExitContext(eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.RPC_SHUNTSTRATEGY, eventData.ShuntStrategy.ToString());
-            context.Span.AddTag(SilkyTags.RPC_SELECTEDADDRESS, eventData.SelectedRpcEndpoint.GetAddress());
+            context.Span.AddTag(SilkyTags.RPC_SELECTEDADDRESS, eventData.SelectedSilkyEndpoint.GetAddress());
             context.Span.AddLog(
                 LogEvent.Event("Rpc Client Invoke Select Address"),
                 LogEvent.Message($"Rpc Select Address  {Environment.NewLine}" +
                                  $"--> ServiceEntryId:{eventData.ServiceEntryId}.{Environment.NewLine}" +
                                  $"--> Enable Addresses:{_serializer.Serialize(eventData.EnableRpcEndpoints.Select(p => p.GetAddress()))}.{Environment.NewLine}" +
-                                 $"--> SelectedAddress:{eventData.SelectedRpcEndpoint.GetAddress()}"));
+                                 $"--> SelectedAddress:{eventData.SelectedSilkyEndpoint.GetAddress()}"));
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.EndRpcRequest)]

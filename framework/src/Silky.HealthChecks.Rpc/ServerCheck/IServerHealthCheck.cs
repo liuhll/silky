@@ -6,8 +6,8 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
 {
     public interface IServerHealthCheck
     {
-        Task<bool> IsHealth(IRpcEndpoint rpcEndpoint);
+        Task<bool> IsHealth(ISilkyEndpoint silkyEndpoint);
 
-        Task<bool> IsHealth(RpcEndpointDescriptor rpcEndpointDescriptor);
+        Task<bool> IsHealth(SilkyEndpointDescriptor silkyEndpointDescriptor);
     }
 }

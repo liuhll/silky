@@ -81,7 +81,7 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        protected abstract Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint);
+        protected abstract Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint);
 
         protected abstract Task CacheServers();
 

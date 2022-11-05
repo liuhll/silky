@@ -6,21 +6,21 @@ namespace Silky.Rpc.Endpoint.Monitor
 {
     public interface IRpcEndpointMonitor : ISingletonDependency
     {
-        void Monitor(IRpcEndpoint rpcEndpoint);
+        void Monitor(ISilkyEndpoint silkyEndpoint);
 
-        bool IsEnable(IRpcEndpoint rpcEndpoint);
+        bool IsEnable(ISilkyEndpoint silkyEndpoint);
 
-        void ChangeStatus(IRpcEndpoint rpcEndpoint, bool isEnable, int unHealthCeilingTimes = 0);
+        void ChangeStatus(ISilkyEndpoint silkyEndpoint, bool isEnable, int unHealthCeilingTimes = 0);
 
         void ChangeStatus(IPAddress mapToIPv4, int port, ServiceProtocol serviceProtocol, bool isEnable,
             int unHealthCeilingTimes = 0);
 
-        void RemoveRpcEndpoint(IRpcEndpoint rpcEndpoint);
+        void RemoveRpcEndpoint(ISilkyEndpoint silkyEndpoint);
 
         void RemoveRpcEndpoint(IPAddress ipAddress, int port);
 
         event StatusChangeEvent OnStatusChange;
-        event RemoveRpcEndpointEvent OnRemoveRpcEndpoint;
+        event RemoveSilkyEndpointEvent OnRemoveRpcEndpoint;
         event DisEnableEvent OnDisEnable;
         event AddMonitorEvent OnAddMonitor;
     }

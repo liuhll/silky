@@ -10,16 +10,16 @@ namespace Silky.RegistryCenter.Nacos
 {
     public static class InstanceExtensions
     {
-        public static IEnumerable<RpcEndpointDescriptor> GetEndpoints(this Instance instance)
+        public static IEnumerable<SilkyEndpointDescriptor> GetEndpoints(this Instance instance)
         {
-            var endpoints = new List<RpcEndpointDescriptor>();
+            var endpoints = new List<SilkyEndpointDescriptor>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             var serviceProtocolJsonString = instance.Metadata["ServiceProtocols"];
             var serviceProtocolInfos =
                 serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
             foreach (var serviceProtocolInfo in serviceProtocolInfos)
             {
-                var rpcEndpointDescriptor = new RpcEndpointDescriptor()
+                var rpcEndpointDescriptor = new SilkyEndpointDescriptor()
                 {
                     Host = instance.Ip,
                     Port = serviceProtocolInfo.Value,

@@ -7,10 +7,10 @@ namespace Silky.Rpc.Runtime.Server
     {
         string HostName { get; }
 
-        ICollection<IRpcEndpoint> Endpoints { get; set; }
+        ICollection<ISilkyEndpoint> Endpoints { get; set; }
 
         ICollection<ServiceDescriptor> Services { get; set; }
         
-        void RemoveEndpoint(IRpcEndpoint endpoint);
+        void RemoveEndpoint(ISilkyEndpoint endpoint);
     }
 }

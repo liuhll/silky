@@ -7,11 +7,11 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Endpoint
 {
-    public class RpcEndpoint : IRpcEndpoint
+    public class SilkyEndpoint : ISilkyEndpoint
     {
         private int m_fuseTimes;
 
-        public RpcEndpoint(
+        public SilkyEndpoint(
             [NotNull] string host,
             [NotNull] int port,
             ServiceProtocol serviceProtocol = ServiceProtocol.Rpc
@@ -22,7 +22,7 @@ namespace Silky.Rpc.Endpoint
             Port = port;
             ServiceProtocol = serviceProtocol;
             m_fuseTimes = 0;
-            Descriptor = new RpcEndpointDescriptor()
+            Descriptor = new SilkyEndpointDescriptor()
                 { Host = Host, Port = Port, ServiceProtocol = ServiceProtocol };
         }
 
@@ -61,7 +61,7 @@ namespace Silky.Rpc.Endpoint
 
         public int FuseTimes => m_fuseTimes;
 
-        public RpcEndpointDescriptor Descriptor { get; }
+        public SilkyEndpointDescriptor Descriptor { get; }
 
         public override string ToString()
         {
@@ -69,12 +69,12 @@ namespace Silky.Rpc.Endpoint
                 Port.ToString());
         }
 
-        public static bool operator ==(RpcEndpoint model1, RpcEndpoint model2)
+        public static bool operator ==(SilkyEndpoint model1, SilkyEndpoint model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(RpcEndpoint model1, RpcEndpoint model2)
+        public static bool operator !=(SilkyEndpoint model1, SilkyEndpoint model2)
         {
             return !Equals(model1, model2);
         }
@@ -85,7 +85,7 @@ namespace Silky.Rpc.Endpoint
             if (endpoint != null)
                 return endpoint.Address.MapToIPv4() == IPEndPoint.Address && endpoint.Port == IPEndPoint.Port;
 
-            var model = obj as RpcEndpoint;
+            var model = obj as SilkyEndpoint;
             if (model == null)
                 return false;
 

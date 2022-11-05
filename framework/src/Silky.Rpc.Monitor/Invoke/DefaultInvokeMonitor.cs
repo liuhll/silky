@@ -29,7 +29,7 @@ namespace Silky.Rpc.Monitor.Invoke
             Logger = NullLogger<DefaultInvokeMonitor>.Instance;
         }
 
-        public ClientInvokeInfo Monitor((string, IRpcEndpoint) item)
+        public ClientInvokeInfo Monitor((string, ISilkyEndpoint) item)
         {
             lock (_serverInstanceInvokeInfo)
             {
@@ -55,7 +55,7 @@ namespace Silky.Rpc.Monitor.Invoke
         }
 
 
-        public void ExecSuccess((string, IRpcEndpoint) item, double elapsedTotalMilliseconds,
+        public void ExecSuccess((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
             lock (_serverInstanceInvokeInfo)
@@ -79,7 +79,7 @@ namespace Silky.Rpc.Monitor.Invoke
             _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
         }
 
-        public void ExecFail((string, IRpcEndpoint) item, double elapsedTotalMilliseconds,
+        public void ExecFail((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
             lock (_serverInstanceInvokeInfo)
@@ -133,7 +133,7 @@ namespace Silky.Rpc.Monitor.Invoke
             return clientInvokeInfos;
         }
 
-        private string GetCacheKey((string, IRpcEndpoint) item)
+        private string GetCacheKey((string, ISilkyEndpoint) item)
         {
             var cacheKey =
                 $"InvokeSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2.GetAddress()}";

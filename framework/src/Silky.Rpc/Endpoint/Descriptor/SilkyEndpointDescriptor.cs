@@ -5,9 +5,9 @@ using Silky.Core.Utils;
 
 namespace Silky.Rpc.Endpoint.Descriptor
 {
-    public class RpcEndpointDescriptor
+    public class SilkyEndpointDescriptor
     {
-        public RpcEndpointDescriptor()
+        public SilkyEndpointDescriptor()
         {
             ProcessorTime = Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds;
             TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
@@ -25,7 +25,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
 
         public override bool Equals(object obj)
         {
-            var model = obj as RpcEndpointDescriptor;
+            var model = obj as SilkyEndpointDescriptor;
             if (model == null)
                 return false;
 
@@ -46,12 +46,12 @@ namespace Silky.Rpc.Endpoint.Descriptor
             return ToString().GetHashCode();
         }
 
-        public static bool operator ==(RpcEndpointDescriptor model1, RpcEndpointDescriptor model2)
+        public static bool operator ==(SilkyEndpointDescriptor model1, SilkyEndpointDescriptor model2)
         {
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(RpcEndpointDescriptor model1, RpcEndpointDescriptor model2)
+        public static bool operator !=(SilkyEndpointDescriptor model1, SilkyEndpointDescriptor model2)
         {
             return !Equals(model1, model2);
         }

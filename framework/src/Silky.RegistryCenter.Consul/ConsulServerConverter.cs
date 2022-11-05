@@ -23,7 +23,7 @@ namespace Silky.RegistryCenter.Consul
                 HostName = serverName,
                 Services = await _serviceProvider.GetServices(serverName)
             };
-            var endpoints = new List<RpcEndpointDescriptor>();
+            var endpoints = new List<SilkyEndpointDescriptor>();
             foreach (var agentService in agentServices)
             {
                 var rpcEndpointDescriptor = agentService.GetEndpointDescriptors();

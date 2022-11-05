@@ -29,7 +29,7 @@ namespace Silky.DotNetty
 
         private readonly IMessageListener _clientMessageListener;
 
-        private ConcurrentDictionary<IRpcEndpoint, ITransportClient> m_clients = new();
+        private ConcurrentDictionary<ISilkyEndpoint, ITransportClient> m_clients = new();
 
         public DotNettyTransportClientFactory(IRpcEndpointMonitor rpcEndpointMonitor,
             SilkyChannelPoolMap silkyChannelPoolMap,
@@ -45,18 +45,18 @@ namespace Silky.DotNetty
         }
 
 
-        public async Task<ITransportClient> GetClient(IRpcEndpoint rpcEndpoint)
+        public async Task<ITransportClient> GetClient(ISilkyEndpoint silkyEndpoint)
         {
             try
             {
                 Logger.LogDebug(
-                    $"Ready to create a client for the server rpcEndpoint: {rpcEndpoint.IPEndPoint}.");
+                    $"Ready to create a client for the server rpcEndpoint: {silkyEndpoint.IPEndPoint}.");
 
-                if (!m_clients.TryGetValue(rpcEndpoint, out var client))
+                if (!m_clients.TryGetValue(silkyEndpoint, out var client))
                 {
                     if (_rpcOptions.UseTransportClientPool)
                     {
-                        var pool = _silkyChannelPoolMap.Get(rpcEndpoint);
+                        var pool = _silkyChannelPoolMap.Get(silkyEndpoint);
                         var messageSender =
                             new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
                         client = new DefaultTransportClient(messageSender, _clientMessageListener);
@@ -64,18 +64,18 @@ namespace Silky.DotNetty
                     else
                     {
                         var channel =
-                            await _channelProvider.Create(rpcEndpoint, _clientMessageListener, _rpcEndpointMonitor);
+                            await _channelProvider.Create(silkyEndpoint, _clientMessageListener, _rpcEndpointMonitor);
                         var messageSender = new DotNettyClientMessageSender(channel);
                         client = new DefaultTransportClient(messageSender, _clientMessageListener);
                     }
 
-                    _ = m_clients.TryAdd(rpcEndpoint, client);
+                    _ = m_clients.TryAdd(silkyEndpoint, client);
                     return client;
                 }
 
                 if (_rpcOptions.UseTransportClientPool)
                 {
-                    var pool = _silkyChannelPoolMap.Get(rpcEndpoint);
+                    var pool = _silkyChannelPoolMap.Get(silkyEndpoint);
                     var messageSender =
                         new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
                     client.MessageSender = messageSender;

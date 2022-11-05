@@ -9,5 +9,5 @@ namespace Silky.DotNetty.Abstraction;
 
 public interface IChannelProvider 
 {
-    Task<IChannel> Create(IRpcEndpoint rpcEndpoint, IMessageListener messageListener, IRpcEndpointMonitor rpcEndpointMonitor);
+    Task<IChannel> Create(ISilkyEndpoint silkyEndpoint, IMessageListener messageListener, IRpcEndpointMonitor rpcEndpointMonitor);
 }

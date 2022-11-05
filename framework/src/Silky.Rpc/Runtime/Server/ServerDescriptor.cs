@@ -11,14 +11,14 @@ namespace Silky.Rpc.Runtime.Server
         {
             TimeStamp = DateTimeConverter.DateTimeToUnixTimestamp(DateTime.Now);
             Services = Array.Empty<ServiceDescriptor>();
-            Endpoints = Array.Empty<RpcEndpointDescriptor>();
+            Endpoints = Array.Empty<SilkyEndpointDescriptor>();
         }
 
         public string HostName { get; set; }
 
         public ServiceDescriptor[] Services { get; set; }
 
-        public RpcEndpointDescriptor[] Endpoints { get; set; }
+        public SilkyEndpointDescriptor[] Endpoints { get; set; }
 
         public long TimeStamp { get; set; }
 

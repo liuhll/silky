@@ -10,15 +10,15 @@ namespace Silky.RegistryCenter.Consul
 {
     public static class AgentServiceExtensions
     {
-        public static RpcEndpointDescriptor[] GetEndpointDescriptors(this AgentService agentService)
+        public static SilkyEndpointDescriptor[] GetEndpointDescriptors(this AgentService agentService)
         {
             var serviceProtocols = agentService.Meta["ServiceProtocols"];
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             var serviceProtocolInfos = serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocols);
-            var rpcEndpointDescriptors = new List<RpcEndpointDescriptor>();
+            var rpcEndpointDescriptors = new List<SilkyEndpointDescriptor>();
             foreach (var serviceProtocolInfo in serviceProtocolInfos)
             {
-                var rpcEndpointDescriptor = new RpcEndpointDescriptor()
+                var rpcEndpointDescriptor = new SilkyEndpointDescriptor()
                 {
                     Host = agentService.Address,
                     Port = serviceProtocolInfo.Value,

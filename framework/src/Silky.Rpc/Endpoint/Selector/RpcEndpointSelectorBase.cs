@@ -5,7 +5,7 @@ namespace Silky.Rpc.Endpoint.Selector
 {
     public abstract class RpcEndpointSelectorBase : IRpcEndpointSelector
     {
-        public IRpcEndpoint Select(RpcEndpointSelectContext context)
+        public ISilkyEndpoint Select(RpcEndpointSelectContext context)
         {
             Check.NotNull(context, nameof(context));
             if (context.AddressModels.Length == 1
@@ -19,6 +19,6 @@ namespace Silky.Rpc.Endpoint.Selector
 
         public abstract ShuntStrategy ShuntStrategy { get; }
 
-        protected abstract IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context);
+        protected abstract ISilkyEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context);
     }
 }

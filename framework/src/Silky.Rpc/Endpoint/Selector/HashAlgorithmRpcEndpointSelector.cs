@@ -8,7 +8,7 @@ namespace Silky.Rpc.Endpoint.Selector
 {
     public class HashAlgorithmRpcEndpointSelector : RpcEndpointSelectorBase
     {
-        private ConcurrentDictionary<string, ConsistentHash<IRpcEndpoint>> _consistentHashAddressPools = new();
+        private ConcurrentDictionary<string, ConsistentHash<ISilkyEndpoint>> _consistentHashAddressPools = new();
 
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
         private readonly IServerManager _serverManager;
@@ -65,12 +65,12 @@ namespace Silky.Rpc.Endpoint.Selector
 
         public override ShuntStrategy ShuntStrategy { get; } = ShuntStrategy.HashAlgorithm;
 
-        protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
+        protected override ISilkyEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
             Check.NotNullOrEmpty(context.Hash, nameof(context.Hash));
             var addressModels = _consistentHashAddressPools.GetOrAdd(context.MonitorId, v =>
             {
-                var consistentHash = new ConsistentHash<IRpcEndpoint>();
+                var consistentHash = new ConsistentHash<ISilkyEndpoint>();
                 foreach (var address in context.AddressModels)
                 {
                     consistentHash.Add(address);

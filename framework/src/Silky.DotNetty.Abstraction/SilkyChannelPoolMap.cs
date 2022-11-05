@@ -9,7 +9,7 @@ using Silky.Rpc.Transport.Codec;
 
 namespace Silky.DotNetty.Abstraction;
 
-public class SilkyChannelPoolMap : AbstractChannelPoolMap<IRpcEndpoint, FixedChannelPool>, ISingletonDependency
+public class SilkyChannelPoolMap : AbstractChannelPoolMap<ISilkyEndpoint, FixedChannelPool>, ISingletonDependency
 {
     private readonly ITransportMessageDecoder _transportMessageDecoder;
     private readonly ITransportMessageEncoder _transportMessageEncoder;
@@ -39,7 +39,7 @@ public class SilkyChannelPoolMap : AbstractChannelPoolMap<IRpcEndpoint, FixedCha
     }
 
 
-    protected override FixedChannelPool NewPool(IRpcEndpoint key)
+    protected override FixedChannelPool NewPool(ISilkyEndpoint key)
     {
         var bootstrap = _bootstrapProvider.CreateClientBootstrap();
         var tlsCertificate = _bootstrapProvider.GetX509Certificate2();

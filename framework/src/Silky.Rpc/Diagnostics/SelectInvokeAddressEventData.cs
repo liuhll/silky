@@ -5,8 +5,8 @@ namespace Silky.Rpc.Diagnostics
 {
     public class SelectInvokeAddressEventData
     {
-        public IRpcEndpoint[] EnableRpcEndpoints { get; set; }
-        public IRpcEndpoint SelectedRpcEndpoint { get; set; }
+        public ISilkyEndpoint[] EnableRpcEndpoints { get; set; }
+        public ISilkyEndpoint SelectedSilkyEndpoint { get; set; }
         public ShuntStrategy ShuntStrategy { get; set; }
         public string ServiceEntryId { get; set; }
     }

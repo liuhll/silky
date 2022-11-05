@@ -130,7 +130,7 @@ namespace Silky.Http.Core.Middlewares
             }
         }
 
-        private Uri CreateDestinationUri(IRpcEndpoint rpcEndpoint, string path)
+        private Uri CreateDestinationUri(ISilkyEndpoint silkyEndpoint, string path)
         {
             var scheme = "ws";
             if (_webSocketOptions.IsSsl)
@@ -138,7 +138,7 @@ namespace Silky.Http.Core.Middlewares
                 scheme = "wss";
             }
 
-            var wsAddress = $"{scheme}://{rpcEndpoint.Host}:{rpcEndpoint.Port}{path}";
+            var wsAddress = $"{scheme}://{silkyEndpoint.Host}:{silkyEndpoint.Port}{path}";
             return new Uri(wsAddress);
         }
 

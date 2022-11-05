@@ -25,7 +25,7 @@ namespace Silky.Rpc.Runtime.Server
 
         IReadOnlyList<IServer> Servers { get; }
 
-        IRpcEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
+        ISilkyEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
 
         IServer GetSelfServer();
 

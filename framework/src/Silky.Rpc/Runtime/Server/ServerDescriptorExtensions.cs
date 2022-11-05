@@ -10,7 +10,7 @@ namespace Silky.Rpc.Runtime.Server
             var server = new Server(serverDescriptor.HostName)
             {
                 Services = serverDescriptor.Services.ToArray(),
-                Endpoints = serverDescriptor.Endpoints.Select(p => p.ConvertToRpcEndpoint()).ToArray()
+                Endpoints = serverDescriptor.Endpoints.Select(p => p.ConvertToSilkyEndpoint()).ToArray()
             };
             return server;
         }

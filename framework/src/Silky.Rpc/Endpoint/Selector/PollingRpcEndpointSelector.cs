@@ -7,7 +7,7 @@ namespace Silky.Rpc.Endpoint.Selector
 {
     public class PollingRpcEndpointSelector : RpcEndpointSelectorBase
     {
-        private ConcurrentDictionary<string, (int, IRpcEndpoint[])> addressesPools = new();
+        private ConcurrentDictionary<string, (int, ISilkyEndpoint[])> addressesPools = new();
 
 
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
@@ -65,7 +65,7 @@ namespace Silky.Rpc.Endpoint.Selector
 
         public override ShuntStrategy ShuntStrategy { get; } = ShuntStrategy.Polling;
 
-        protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
+        protected override ISilkyEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
             var index = 0;
 

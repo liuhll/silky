@@ -181,7 +181,7 @@ namespace Silky.RegistryCenter.Zookeeper
             }
         }
 
-        protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
+        protected override async Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
         {
             var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)
@@ -190,10 +190,10 @@ namespace Silky.RegistryCenter.Zookeeper
 
                 var serviceCenterDescriptor = await GetRouteDescriptorAsync(zookeeperClient, routePath);
                 if (serviceCenterDescriptor != null &&
-                    serviceCenterDescriptor.Endpoints.Any(p => p.Equals(rpcEndpoint.Descriptor)))
+                    serviceCenterDescriptor.Endpoints.Any(p => p.Equals(silkyEndpoint.Descriptor)))
                 {
                     serviceCenterDescriptor.Endpoints = serviceCenterDescriptor.Endpoints
-                        .Where(p => !p.Equals(rpcEndpoint.Descriptor))
+                        .Where(p => !p.Equals(silkyEndpoint.Descriptor))
                         .ToArray();
                     var jsonString = _serializer.Serialize(serviceCenterDescriptor);
                     var data = jsonString.GetBytes();

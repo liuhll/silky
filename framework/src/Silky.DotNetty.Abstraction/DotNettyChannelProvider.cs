@@ -38,7 +38,7 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
         governanceOptions.OnChange((options, s) => _governanceOptions = options);
     }
 
-    public async Task<IChannel> Create(IRpcEndpoint rpcEndpoint, IMessageListener messageListener,
+    public async Task<IChannel> Create(ISilkyEndpoint silkyEndpoint, IMessageListener messageListener,
         IRpcEndpointMonitor rpcEndpointMonitor)
     {
         var bootstrap = _bootstrapProvider.CreateClientBootstrap();
@@ -75,7 +75,7 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
                 pipeline.AddLast("decoder",
                     new DecoderHandler(_transportMessageDecoder));
             }));
-        var channel = await bootstrap.ConnectAsync(rpcEndpoint.IPEndPoint);
+        var channel = await bootstrap.ConnectAsync(silkyEndpoint.IPEndPoint);
         var pipeline = channel.Pipeline;
         pipeline.AddLast("ClientHandler", new ClientHandler(messageListener, rpcEndpointMonitor));
         return channel;

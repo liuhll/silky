@@ -7,18 +7,18 @@ namespace Silky.Rpc.Endpoint.Monitor
 {
     public class DefaultRpcEndpointMonitor : IRpcEndpointMonitor
     {
-        private ConcurrentDictionary<IRpcEndpoint, CheckModel> m_checkEndpoints = new();
+        private ConcurrentDictionary<ISilkyEndpoint, CheckModel> m_checkEndpoints = new();
 
         public event StatusChangeEvent OnStatusChange;
-        public event RemoveRpcEndpointEvent OnRemoveRpcEndpoint;
+        public event RemoveSilkyEndpointEvent OnRemoveRpcEndpoint;
         public event DisEnableEvent OnDisEnable;
         public event AddMonitorEvent OnAddMonitor;
 
 
-        public void RemoveRpcEndpoint(IRpcEndpoint rpcEndpoint)
+        public void RemoveRpcEndpoint(ISilkyEndpoint silkyEndpoint)
         {
-            m_checkEndpoints.TryRemove(rpcEndpoint, out _);
-            OnRemoveRpcEndpoint?.Invoke(rpcEndpoint);
+            m_checkEndpoints.TryRemove(silkyEndpoint, out _);
+            OnRemoveRpcEndpoint?.Invoke(silkyEndpoint);
         }
 
         public void RemoveRpcEndpoint(IPAddress ipAddress, int port)
@@ -31,21 +31,21 @@ namespace Silky.Rpc.Endpoint.Monitor
             }
         }
 
-        public void Monitor(IRpcEndpoint rpcEndpoint)
+        public void Monitor(ISilkyEndpoint silkyEndpoint)
         {
-            if (!m_checkEndpoints.ContainsKey(rpcEndpoint))
+            if (!m_checkEndpoints.ContainsKey(silkyEndpoint))
             {
-                m_checkEndpoints.GetOrAdd(rpcEndpoint, new CheckModel(true, 0));
-                OnAddMonitor?.Invoke(rpcEndpoint);
+                m_checkEndpoints.GetOrAdd(silkyEndpoint, new CheckModel(true, 0));
+                OnAddMonitor?.Invoke(silkyEndpoint);
             }
         }
 
 
-        public bool IsEnable(IRpcEndpoint rpcEndpoint)
+        public bool IsEnable(ISilkyEndpoint silkyEndpoint)
         {
-            if (m_checkEndpoints.TryGetValue(rpcEndpoint, out var checkModel))
+            if (m_checkEndpoints.TryGetValue(silkyEndpoint, out var checkModel))
             {
-                return checkModel.IsEnable && rpcEndpoint.Enabled;
+                return checkModel.IsEnable && silkyEndpoint.Enabled;
             }
 
             return false;
@@ -58,34 +58,34 @@ namespace Silky.Rpc.Endpoint.Monitor
             ChangeStatus(rpcEndpoint, isEnable, unHealthCeilingTimes);
         }
 
-        public void ChangeStatus(IRpcEndpoint rpcEndpoint, bool isEnable, int unHealthCeilingTimes = 0)
+        public void ChangeStatus(ISilkyEndpoint silkyEndpoint, bool isEnable, int unHealthCeilingTimes = 0)
         {
-            if (m_checkEndpoints.TryGetValue(rpcEndpoint, out var healthCheckModel))
+            if (m_checkEndpoints.TryGetValue(silkyEndpoint, out var healthCheckModel))
             {
                 var newHealthCheckModel =
                     new CheckModel(isEnable, isEnable ? 0 : healthCheckModel.UnHealthTimes + 1);
-                m_checkEndpoints.TryUpdate(rpcEndpoint, newHealthCheckModel, healthCheckModel);
+                m_checkEndpoints.TryUpdate(silkyEndpoint, newHealthCheckModel, healthCheckModel);
                 healthCheckModel = newHealthCheckModel;
             }
             else
             {
                 healthCheckModel = new CheckModel(isEnable, isEnable ? 0 : 1);
-                m_checkEndpoints.TryAdd(rpcEndpoint, healthCheckModel);
+                m_checkEndpoints.TryAdd(silkyEndpoint, healthCheckModel);
             }
             if (!isEnable && healthCheckModel.UnHealthTimes >= unHealthCeilingTimes)
             {
-                OnRemoveRpcEndpoint?.Invoke(rpcEndpoint);
-                m_checkEndpoints.TryRemove(rpcEndpoint, out var value);
+                OnRemoveRpcEndpoint?.Invoke(silkyEndpoint);
+                m_checkEndpoints.TryRemove(silkyEndpoint, out var value);
             }
 
             if (healthCheckModel.IsEnable != isEnable)
             {
-                OnStatusChange?.Invoke(rpcEndpoint, isEnable);
+                OnStatusChange?.Invoke(silkyEndpoint, isEnable);
             }
 
             if (!isEnable)
             {
-                OnDisEnable?.Invoke(rpcEndpoint);
+                OnDisEnable?.Invoke(silkyEndpoint);
             }
         }
 

@@ -118,7 +118,7 @@ namespace Silky.Rpc.Runtime.Client
             return invokeResult;
         }
 
-        private IRpcEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
+        private ISilkyEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
         {
             var rpcEndpoints = _serverManager.GetRpcEndpoints(remoteInvokeMessage.ServiceId, ServiceProtocol.Rpc);
             if (rpcEndpoints == null || !rpcEndpoints.Any())
@@ -130,17 +130,17 @@ namespace Silky.Rpc.Runtime.Client
             return rpcEndpoints;
         }
 
-        private IRpcEndpoint SelectedRpcEndpoint(IRpcEndpoint[] rpcEndpoints, ShuntStrategy shuntStrategy,
+        private ISilkyEndpoint SelectedRpcEndpoint(ISilkyEndpoint[] rpcEndpoints, ShuntStrategy shuntStrategy,
             string serviceEntryId, string hashKey, out ShuntStrategy confirmedShuntStrategy)
         {
             var remoteAddress = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.SelectedServerEndpoint);
-            IRpcEndpoint selectedRpcEndpoint;
+            ISilkyEndpoint selectedSilkyEndpoint;
             if (remoteAddress != null)
             {
-                selectedRpcEndpoint =
+                selectedSilkyEndpoint =
                     rpcEndpoints.FirstOrDefault(p => p.GetAddress().Equals(remoteAddress) && p.Enabled);
 
-                if (selectedRpcEndpoint == null)
+                if (selectedSilkyEndpoint == null)
                 {
                     throw new NotFindServiceRouteAddressException(
                         $"Server [{serviceEntryId}] does not have a healthy designated service rpcEndpoint [{remoteAddress}]");
@@ -153,7 +153,7 @@ namespace Silky.Rpc.Runtime.Client
                 var addressSelector =
                     EngineContext.Current.ResolveNamed<IRpcEndpointSelector>(shuntStrategy.ToString());
 
-                selectedRpcEndpoint = addressSelector.Select(new RpcEndpointSelectContext(serviceEntryId,
+                selectedSilkyEndpoint = addressSelector.Select(new RpcEndpointSelectContext(serviceEntryId,
                     rpcEndpoints,
                     hashKey));
             }
@@ -166,11 +166,11 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     _serializer.Serialize(rpcEndpoints.Where(p => p.Enabled).Select(p => p.ToString())),
                     Environment.NewLine,
-                    selectedRpcEndpoint.ToString()
+                    selectedSilkyEndpoint.ToString()
                 });
-            RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor);
+            RpcContext.Context.SetRcpInvokeAddressInfo(selectedSilkyEndpoint.Descriptor);
             confirmedShuntStrategy = shuntStrategy;
-            return selectedRpcEndpoint;
+            return selectedSilkyEndpoint;
         }
     }
 }

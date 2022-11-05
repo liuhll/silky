@@ -15,7 +15,7 @@ namespace Silky.Rpc.Endpoint.Selector
 
         public override ShuntStrategy ShuntStrategy { get; } = ShuntStrategy.Random;
 
-        protected override IRpcEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
+        protected override ISilkyEndpoint SelectAddressByAlgorithm(RpcEndpointSelectContext context)
         {
             var index = _generate(0, context.AddressModels.Length);
             return context.AddressModels[index];

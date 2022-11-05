@@ -5,7 +5,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Endpoint
 {
-    public interface IRpcEndpoint
+    public interface ISilkyEndpoint
     {
         /// <summary>
         /// 地址(Ip或是域名)
@@ -49,6 +49,6 @@ namespace Silky.Rpc.Endpoint
         /// <summary>
         /// 地址描述符
         /// </summary>
-        RpcEndpointDescriptor Descriptor { get; }
+        SilkyEndpointDescriptor Descriptor { get; }
     }
 }

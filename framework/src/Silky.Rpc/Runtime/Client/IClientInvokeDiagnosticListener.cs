@@ -19,6 +19,6 @@ namespace Silky.Rpc.Runtime.Client
             Exception ex);
 
         void TracingSelectInvokeAddress(long? tracingTimestamp, string serviceEntryId, ShuntStrategy shuntStrategy,
-            IRpcEndpoint[] rpcEndpoints, IRpcEndpoint selectedRpcEndpoint);
+            ISilkyEndpoint[] rpcEndpoints, ISilkyEndpoint selectedSilkyEndpoint);
     }
 }

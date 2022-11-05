@@ -30,33 +30,33 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
             }
         }
 
-        public Task<bool> IsHealth(IRpcEndpoint rpcEndpoint)
+        public Task<bool> IsHealth(ISilkyEndpoint silkyEndpoint)
         {
-            var address = rpcEndpoint.GetAddress();
-            if (rpcEndpoint.ServiceProtocol == ServiceProtocol.Rpc)
+            var address = silkyEndpoint.GetAddress();
+            if (silkyEndpoint.ServiceProtocol == ServiceProtocol.Rpc)
             {
                 return IsHealth(address);
             }
 
-            return Task.FromResult<bool>(SocketCheck.TestConnection(rpcEndpoint.Host, rpcEndpoint.Port));
+            return Task.FromResult<bool>(SocketCheck.TestConnection(silkyEndpoint.Host, silkyEndpoint.Port));
         }
 
-        public Task<bool> IsHealth(RpcEndpointDescriptor rpcEndpointDescriptor)
+        public Task<bool> IsHealth(SilkyEndpointDescriptor silkyEndpointDescriptor)
         {
-            var address = rpcEndpointDescriptor.GetHostAddress();
-            if (rpcEndpointDescriptor.ServiceProtocol == ServiceProtocol.Rpc)
+            var address = silkyEndpointDescriptor.GetHostAddress();
+            if (silkyEndpointDescriptor.ServiceProtocol == ServiceProtocol.Rpc)
             {
                 return IsHealth(address);
             }
 
-            if (rpcEndpointDescriptor.ServiceProtocol.IsHttp())
+            if (silkyEndpointDescriptor.ServiceProtocol.IsHttp())
             {
-                return Task.FromResult<bool>(UrlCheck.UrlIsValid($"{rpcEndpointDescriptor.ServiceProtocol}://{address}",
+                return Task.FromResult<bool>(UrlCheck.UrlIsValid($"{silkyEndpointDescriptor.ServiceProtocol}://{address}",
                     out var _));
             }
 
-            return Task.FromResult<bool>(SocketCheck.TestConnection(rpcEndpointDescriptor.Host,
-                rpcEndpointDescriptor.Port));
+            return Task.FromResult<bool>(SocketCheck.TestConnection(silkyEndpointDescriptor.Host,
+                silkyEndpointDescriptor.Port));
         }
     }
 }

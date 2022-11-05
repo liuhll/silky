@@ -74,7 +74,7 @@ namespace Silky.RegistryCenter.Nacos
                 HostName = serverName,
                 Services = serviceDescriptors,
             };
-            var endpoints = new List<RpcEndpointDescriptor>();
+            var endpoints = new List<SilkyEndpointDescriptor>();
             foreach (var instance in serverInstances)
             {
                 var instanceEndpoints = instance.GetEndpoints();

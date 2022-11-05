@@ -38,14 +38,14 @@ namespace Silky.RegistryCenter.Nacos
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
 
-        protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
+        protected override async Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
         {
             var serverInstances = await _nacosNamingService.GetAllInstances(hostName);
 
             var unHealthInstance = serverInstances.FirstOrDefault(p => p.ServiceName == hostName
-                                                                       && p.Ip == rpcEndpoint.Host
+                                                                       && p.Ip == silkyEndpoint.Host
                                                                        && p.GetServiceProtocolInfos()
-                                                                           .ContainsKey(rpcEndpoint.ServiceProtocol));
+                                                                           .ContainsKey(silkyEndpoint.ServiceProtocol));
             if (unHealthInstance != null)
             {
                 await _nacosNamingService.DeregisterInstance(hostName, unHealthInstance);

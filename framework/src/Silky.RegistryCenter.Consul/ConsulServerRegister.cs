@@ -30,10 +30,10 @@ namespace Silky.RegistryCenter.Consul
             _heartBeatService = heartBeatService;
         }
 
-        protected override async Task RemoveRpcEndpoint(string hostName, IRpcEndpoint rpcEndpoint)
+        protected override async Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
         {
             using var consulClient = _consulClientFactory.CreateClient();
-            await consulClient.Agent.ServiceDeregister(rpcEndpoint.ToString());
+            await consulClient.Agent.ServiceDeregister(silkyEndpoint.ToString());
         }
 
         protected override async Task CacheServers()

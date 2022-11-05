@@ -6,12 +6,12 @@ namespace Silky.Rpc.Runtime.Client
 {
     public interface IInvokeMonitor
     {
-        ClientInvokeInfo Monitor((string, IRpcEndpoint) item);
+        ClientInvokeInfo Monitor((string, ISilkyEndpoint) item);
 
-        void ExecSuccess((string, IRpcEndpoint) item, double elapsedTotalMilliseconds,
+        void ExecSuccess((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo);
 
-        void ExecFail((string, IRpcEndpoint) item, double elapsedTotalMilliseconds, ClientInvokeInfo clientInvokeInfo);
+        void ExecFail((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds, ClientInvokeInfo clientInvokeInfo);
 
         Task ClearCache();
 
