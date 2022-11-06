@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Silky.Core;
+using Silky.Core.Utils;
 using Silky.Swagger.SwaggerGen.SwaggerGenerator;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 
@@ -14,16 +16,13 @@ namespace Silky.Swagger.SwaggerGen.DependencyInjection
     {
         private readonly SwaggerGenOptions _swaggerGenOptions;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IHostingEnvironment _hostingEnvironment;
 
         public ConfigureSwaggerGeneratorOptions(
             IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor,
-            IServiceProvider serviceProvider,
-            IHostingEnvironment hostingEnvironment)
+            IServiceProvider serviceProvider)
         {
             _swaggerGenOptions = swaggerGenOptionsAccessor.Value;
             _serviceProvider = serviceProvider;
-            _hostingEnvironment = hostingEnvironment;
         }
 
         public void Configure(SwaggerGeneratorOptions options)
@@ -46,11 +45,12 @@ namespace Silky.Swagger.SwaggerGen.DependencyInjection
 
             if (!options.SwaggerDocs.Any())
             {
-                options.SwaggerDocs.Add("v1",
-                    new OpenApiInfo { Title = _hostingEnvironment.ApplicationName, Version = "1.0" });
+                options.SwaggerDocs.Add(VersionHelper.GetCurrentVersion(),
+                    new OpenApiInfo
+                        { Title = EngineContext.Current.HostName, Version = VersionHelper.GetCurrentVersion() });
             }
         }
-
+        
         public void DeepCopy(SwaggerGeneratorOptions source, SwaggerGeneratorOptions target)
         {
             target.SwaggerDocs = new Dictionary<string, OpenApiInfo>(source.SwaggerDocs);

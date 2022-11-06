@@ -23,5 +23,7 @@ namespace Silky.RegistryCenter.Zookeeper.Configuration
         public int FuseTimes { get; set; } = 10;
 
         public string RoutePath { get; set; } = "/silky/server";
+
+        public string SwaggerDocPath { get; set; } = "/silky/swagger";
     }
 }

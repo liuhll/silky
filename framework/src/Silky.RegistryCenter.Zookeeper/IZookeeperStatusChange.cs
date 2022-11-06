@@ -3,7 +3,7 @@ using Silky.Zookeeper;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
-    internal interface IZookeeperStatusChange
+    public interface IZookeeperStatusChange
     {
         Task CreateSubscribeServersChange(IZookeeperClient zookeeperClient);
     }

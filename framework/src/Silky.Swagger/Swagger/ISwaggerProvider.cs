@@ -10,7 +10,8 @@ namespace Silky.Swagger
         OpenApiDocument GetSwagger(
             string documentName,
             string host = null,
-            string basePath = null);
+            string basePath = null,
+            bool onlyLocalServices = false);
     }
 
     public class UnknownSwaggerDocument : InvalidOperationException

@@ -12,6 +12,7 @@
         <ProjectReference Include="..\..\src\Silky.MassTransit\Silky.MassTransit.csproj" />
         <ProjectReference Include="..\..\src\Silky.ObjectMapper.Mapster\Silky.ObjectMapper.Mapster.csproj" />
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Swagger.Gen\Silky.Swagger.Gen.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
 

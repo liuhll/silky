@@ -12,6 +12,8 @@ namespace Silky.Rpc.Runtime.Server
 {
     public static class ServiceHelper
     {
+        private static readonly string RpcAppService = "Silky.Rpc";
+        
         internal static IEnumerable<Type> FindLocalServiceTypes(ITypeFinder typeFinder)
         {
             var types = typeFinder.GetaAllExportedTypes()
@@ -65,6 +67,15 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             return serviceTypes;
+        }
+
+        
+        public static IEnumerable<Assembly> ReadInterfaceAssemblies()
+        {
+            return FindAllServiceTypes(EngineContext.Current.TypeFinder).Select(p => p.Item1)
+                .Where(p => !p.Assembly.FullName.Contains(RpcAppService))
+                .GroupBy(p => p.Assembly)
+                .Select(p => p.Key);
         }
 
         public static IEnumerable<Type> FindServiceProxyTypes(ITypeFinder typeFinder)

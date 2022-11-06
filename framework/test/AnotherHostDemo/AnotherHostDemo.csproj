@@ -6,6 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.MassTransit\Silky.MassTransit.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Swagger.Gen\Silky.Swagger.Gen.csproj" />
         <ProjectReference Include="..\..\src\Silky.WebSocket\Silky.WebSocket.csproj" />
         <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
         <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
+        <Description>Generate swagger API document for Silky framework</Description>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+      <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
+      <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
+    </ItemGroup>
+</Project>

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.OpenApi.Models;
+using Silky.Core;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Logging;
 
 namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
@@ -34,21 +36,88 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
         }
 
 
-        public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+        public OpenApiDocument GetSwagger(string documentName,
+            string host = null,
+            string basePath = null,
+            bool onlyLocalServices = false)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
 
+            var registerCenterSwaggerProvider = EngineContext.Current.Resolve<IRegisterCenterSwaggerInfoProvider>();
+            if (onlyLocalServices || registerCenterSwaggerProvider == null)
+            {
+                return GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
+            }
+
+            var openApiDocument = registerCenterSwaggerProvider.GetSwagger(documentName).GetAwaiter().GetResult();
+            if (openApiDocument == null)
+            {
+                if (SwaggerGroupUtils.ReadLocalGroups().Contains(documentName))
+                {
+                    return GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
+                }
+
+                var localOpenApiDocument = GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
+
+                var remoteOpenApiDocuments = registerCenterSwaggerProvider.GetSwaggers().GetAwaiter().GetResult();
+                foreach (var remoteOpenApiDocument in remoteOpenApiDocuments)
+                {
+                    foreach (var path in remoteOpenApiDocument.Paths)
+                    {
+                        if (!localOpenApiDocument.Paths.ContainsKey(path.Key))
+                        {
+                            localOpenApiDocument.Paths.Add(path.Key,path.Value);
+                        }
+                       
+                    }
+
+                    foreach (var schema in remoteOpenApiDocument.Components.Schemas)
+                    {
+                        if (!localOpenApiDocument.Components.Schemas.ContainsKey(schema.Key))
+                        {
+                            localOpenApiDocument.Components.Schemas.Add(schema.Key,schema.Value);
+                        }
+                    }
+                }
+                
+                return localOpenApiDocument;      
+            }
+
+            openApiDocument.Info = info;
+            openApiDocument.Servers = GenerateServers(host, basePath);
+            openApiDocument.SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements);
+            openApiDocument.Components.SecuritySchemes =
+                new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
+            var schemaRepository = new SchemaRepository(documentName);
+            var filterContext =
+                new DocumentFilterContext(null, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                filter.Apply(openApiDocument, filterContext);
+            }
+
+            return openApiDocument;
+        }
+
+        private OpenApiDocument GetLocalSwagger(string documentName, string host, string basePath,
+            bool onlyLocalServices, OpenApiInfo info)
+        {
             var schemaRepository = new SchemaRepository(documentName);
             var entries = _serviceEntryManager.GetAllEntries()
                 .Where(serviceEntry => !(_options.IgnoreObsoleteActions &&
                                          serviceEntry.CustomAttributes.OfType<ObsoleteAttribute>().Any()))
-                .Where(serviceEntry => _options.DocInclusionPredicate(documentName, serviceEntry)).ToList();
+                .Where(serviceEntry => _options.DocInclusionPredicate(documentName, serviceEntry));
+            if (onlyLocalServices)
+            {
+                entries = entries.Where(p => p.IsLocal);
+            }
+
             var swaggerDoc = new OpenApiDocument
             {
                 Info = info,
                 Servers = GenerateServers(host, basePath),
-                Paths = GeneratePaths(entries, schemaRepository),
+                Paths = GeneratePaths(entries.ToList(), schemaRepository),
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
@@ -326,7 +395,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
                         var name = _options.DescribeAllParametersInCamelCase
                             ? formParameter.Name.ToCamelCase()
                             : formParameter.Name;
-                            var schema = GenerateSchema(
+                        var schema = GenerateSchema(
                             formParameter.Type,
                             schemaRepository,
                             null,

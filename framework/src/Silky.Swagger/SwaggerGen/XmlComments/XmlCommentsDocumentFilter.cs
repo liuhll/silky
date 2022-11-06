@@ -22,6 +22,10 @@ namespace Silky.Swagger.SwaggerGen.XmlComments
 
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
+            if (context.ServiceEntries == null)
+            {
+                return;
+            }
             // Collect (unique) controller names and types in a dictionary
             var appServiceNamesAndTypes = context.ServiceEntries
                 .Select(apiDesc => apiDesc as ServiceEntry)

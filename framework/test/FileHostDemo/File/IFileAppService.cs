@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Routing;
 
-namespace GatewayDemo.File;
+namespace FileHostDemo.File;
 
 [ServiceRoute]
 // [Authorize]

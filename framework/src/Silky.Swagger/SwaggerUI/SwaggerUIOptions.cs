@@ -51,7 +51,7 @@ namespace Silky.Swagger.SwaggerUI
         /// <summary>
         /// One or more Swagger JSON endpoints (url and name) to power the UI
         /// </summary>
-        public IEnumerable<UrlDescriptor> Urls { get; set; } = null;
+        public IList<UrlDescriptor> Urls { get; set; } = null;
 
         /// <summary>
         /// If set to true, enables deep linking for tags and operations

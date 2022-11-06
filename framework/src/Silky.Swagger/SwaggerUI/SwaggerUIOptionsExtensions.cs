@@ -46,6 +46,15 @@ namespace Microsoft.AspNetCore.Builder
             urls.Add(new UrlDescriptor { Url = url, Name = name });
             options.ConfigObject.Urls = urls;
         }
+        
+        // public static void AddIfNotContainsSwaggerEndpoint(this SwaggerUIOptions options, string url, string name)
+        // {
+        //     options.ConfigObject.Urls ??= new List<UrlDescriptor>();
+        //     if (options.ConfigObject.Urls.All(p => p.Name != name))
+        //     {
+        //         options.ConfigObject.Urls.Add(new UrlDescriptor { Url = url, Name = name });
+        //     }
+        // }
 
         /// <summary>
         /// Enables deep linking for tags and operations

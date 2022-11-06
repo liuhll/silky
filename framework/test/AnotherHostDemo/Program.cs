@@ -15,6 +15,7 @@ namespace AnotherHostDemo
             var hostBuilder = Host.CreateDefaultBuilder(args)
                     .ConfigureSilkyWebSocketDefaults()
                     .UseSerilogDefault()
+                    .RegisterSwaggerDocInfo()
                 ;
             if (hostBuilder.IsEnvironment("Apollo"))
             {

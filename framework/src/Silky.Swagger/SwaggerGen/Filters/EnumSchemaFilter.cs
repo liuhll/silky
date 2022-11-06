@@ -8,7 +8,7 @@ using Silky.Core.Serialization;
 using Silky.Swagger.SwaggerGen.SchemaGenerator;
 using Silky.Swagger.SwaggerGen.SwaggerGenerator;
 
-namespace Silky.Http.Swagger.Filters
+namespace Silky.Swagger.SwaggerGen.Filters
 {
     public class EnumSchemaFilter : ISchemaFilter
     {
