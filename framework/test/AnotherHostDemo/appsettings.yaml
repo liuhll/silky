@@ -37,7 +37,7 @@ serilog:
     override:
       Microsoft: Warning
       Microsoft.Hosting.Lifetime: Information
-      Silky.Rpc: Debug
+      Silky.Rpc: Information
   writeTo:
     - name: File
       args:

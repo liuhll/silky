@@ -38,7 +38,7 @@ distributedCache:
     configuration: 127.0.0.1:6379,defaultDatabase=0
 allowedHosts: "*"
 swaggerDocument:
-  organizationMode: Group
+  organizationMode: AllAndGroup
   injectMiniProfiler: true
   termsOfService: https://www.github.com/liuhll/silky
 gateway:

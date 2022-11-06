@@ -10,10 +10,11 @@ using Microsoft.OpenApi.Models;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Http.Swagger.Configuration;
-using Silky.Http.Swagger.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Swagger;
+using Silky.Swagger.Gen.Provider;
 using Silky.Swagger.SwaggerGen.DependencyInjection;
+using Silky.Swagger.SwaggerGen.Filters;
 using Silky.Swagger.SwaggerUI;
 
 namespace Silky.Http.Swagger.Builders
@@ -23,7 +24,6 @@ namespace Silky.Http.Swagger.Builders
         private static readonly IEnumerable<string> DocumentGroups;
         private static readonly IEnumerable<Assembly> ApplicationInterfaceAssemblies;
         private static readonly IEnumerable<Assembly> ProjectAssemblies;
-
 
         private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
         private static readonly string SilkyAppServicePrefix = "Silky.Http.Dashboard";
@@ -36,18 +36,10 @@ namespace Silky.Http.Swagger.Builders
             SilkyApiDisplayInSwagger =
                 EngineContext.Current.Configuration.GetValue<bool?>("dashboard:displayWebApiInSwagger") ?? false;
             ProjectAssemblies = EngineContext.Current.TypeFinder.GetAssemblies();
-            ApplicationInterfaceAssemblies = ReadInterfaceAssemblies();
+            ApplicationInterfaceAssemblies = ServiceHelper.ReadInterfaceAssemblies();
             DocumentGroups = ReadGroups(ApplicationInterfaceAssemblies);
         }
 
-        private static IEnumerable<Assembly> ReadInterfaceAssemblies()
-        {
-            return ServiceHelper
-                .FindAllServiceTypes(EngineContext.Current.TypeFinder).Select(p => p.Item1)
-                .Where(p => !p.Assembly.FullName.Contains(RpcAppService))
-                .GroupBy(p => p.Assembly)
-                .Select(p => p.Key);
-        }
 
         public static void BuildGen(SwaggerGenOptions swaggerGenOptions, IConfiguration configuration)
         {
@@ -102,7 +94,7 @@ namespace Silky.Http.Swagger.Builders
             // 配置路由模板
             swaggerOptions.RouteTemplate = RouteTemplate;
         }
-        
+
         public static void BuildUI(SwaggerUIOptions swaggerUIOptions, SwaggerDocumentOptions swaggerDocumentOptions)
         {
             // 配置分组终点路由
@@ -123,6 +115,7 @@ namespace Silky.Http.Swagger.Builders
             // 文档展开设置
             swaggerUIOptions.DocExpansion(swaggerDocumentOptions.DocExpansionState);
         }
+
         private static void AddDefaultInterceptor(SwaggerUIOptions swaggerUIOptions)
         {
             // 配置多语言和自动登录token
@@ -142,7 +135,6 @@ namespace Silky.Http.Swagger.Builders
                     applicationInterfaceAssemblies.Where(p => !p.FullName.Contains(SilkyAppServicePrefix));
             }
 
-
             switch (swaggerDocumentOptions.OrganizationMode)
             {
                 case OrganizationMode.Group:
@@ -157,6 +149,16 @@ namespace Silky.Http.Swagger.Builders
                     groups.AddRange(applicationInterfaceAssemblies
                         .Select(p => p.GetName().Name));
                     break;
+            }
+
+            var swaggerInfoProvider = EngineContext.Current.Resolve<ISwaggerInfoProvider>();
+            var registerCenterGroups = swaggerInfoProvider.GetGroups().GetAwaiter().GetResult();
+            foreach (var registerCenterGroup in registerCenterGroups)
+            {
+                if (!groups.Contains(registerCenterGroup))
+                {
+                    groups.Add(registerCenterGroup);
+                }
             }
 
             return groups;
@@ -268,7 +270,5 @@ namespace Silky.Http.Swagger.Builders
                 options.SwaggerEndpoint(routeTemplate, documentGroup);
             }
         }
-        
-        
     }
 }

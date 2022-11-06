@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using org.apache.zookeeper;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.RegistryCenter.Zookeeper.Watchers;
@@ -60,9 +61,9 @@ namespace Silky.RegistryCenter.Zookeeper
         protected override async Task RegisterServerToServiceCenter(ServerDescriptor serverDescriptor)
         {
             var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
+            var routePath = CreateRoutePath(serverDescriptor.HostName);
             foreach (var zookeeperClient in zookeeperClients)
             {
-                var routePath = CreateRoutePath(serverDescriptor.HostName);
                 // The latest routing data must be obtained from the service registry.
                 // When the service is expanded and contracted, the locally cached routing data is not the latest
                 var centreServiceRoute = await GetRouteDescriptorAsync(zookeeperClient, routePath);
@@ -94,7 +95,7 @@ namespace Silky.RegistryCenter.Zookeeper
         {
             var routePath = _registryCenterOptions.RoutePath;
             var allServers = await GetAllServers(zookeeperClient, routePath);
-            allServers.Add(EngineContext.Current.HostName);
+            allServers.AddIfNotContains(EngineContext.Current.HostName);
             var jonString = _serializer.Serialize(allServers);
             var data = jonString.GetBytes();
             await zookeeperClient.SetDataAsync(routePath, data);

@@ -13,9 +13,10 @@ namespace NormHostDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host
-                    .CreateDefaultBuilder(args)
-                    .ConfigureSilkyGeneralHostDefaults()
-                    .UseSerilogDefault()
+                .CreateDefaultBuilder(args)
+                .ConfigureSilkyGeneralHostDefaults()
+                .UseSerilogDefault()
+                .RegisterSwaggerDocInfo()
                 ;
             if (hostBuilder.IsEnvironment("Apollo"))
             {

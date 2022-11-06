@@ -58,12 +58,13 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
         private bool DefaultDocInclusionPredicate(string documentName, ServiceEntry serviceEntry)
         {
             return serviceEntry.ServiceEntryDescriptor.ServiceName == null ||
-                   serviceEntry.ServiceEntryDescriptor.ServiceName == documentName;
+                   serviceEntry.ServiceEntryDescriptor.ServiceName == documentName ||
+                   serviceEntry.ServiceEntryDescriptor.Id.Contains(documentName);
         }
 
         private string DefaultOperationIdSelector(ServiceEntry serviceEntry)
         {
-           return serviceEntry.ServiceEntryDescriptor.ServiceName + "." + serviceEntry.ServiceEntryDescriptor.Method;
+            return serviceEntry.ServiceEntryDescriptor.ServiceName + "." + serviceEntry.ServiceEntryDescriptor.Method;
         }
 
         private IList<string> DefaultTagsSelector(ServiceEntry serviceEntry)

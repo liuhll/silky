@@ -21,8 +21,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSwaggerGen(setupAction ?? (options =>
                     SwaggerDocumentBuilder.BuildGen(options, EngineContext.Current.Configuration)));
             }
-
+            
             return services;
         }
+        
     }
 }

@@ -2,7 +2,9 @@
   <PropertyGroup>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-
+    
+    <Nullable>enable</Nullable>
+    
     <License>MIT</License>
 
     <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>

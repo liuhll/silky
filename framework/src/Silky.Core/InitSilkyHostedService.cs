@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Silky.Core.Modularity;
+using Silky.Core.Utils;
 
 namespace Silky.Core
 {
@@ -37,9 +38,8 @@ namespace Silky.Core
                        __/ |
                       |___/
             ");
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var ver = $"{version.Major}.{version.Minor}.{version.Build}";
-            Console.WriteLine($" :: Silky ::        {ver}");
+         
+            Console.WriteLine($" :: Silky ::        {VersionHelper.GetSilkyVersion()}");
             _hostApplicationLifetime.ApplicationStarted.Register(async () =>
             {
                 await _moduleManager.InitializeModules();

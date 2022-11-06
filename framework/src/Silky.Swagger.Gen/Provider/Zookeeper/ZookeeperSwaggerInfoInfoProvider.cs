@@ -1,0 +1,113 @@
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using Silky.Core;
+using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.Serialization;
+using Silky.RegistryCenter.Zookeeper;
+using Silky.RegistryCenter.Zookeeper.Configuration;
+using Silky.Swagger.SwaggerUI;
+using Silky.Zookeeper;
+
+namespace Silky.Swagger.Gen.Provider.Zookeeper;
+
+public class ZookeeperSwaggerInfoInfoProvider : SwaggerInfoProviderBase, IRegisterCenterSwaggerInfoProvider
+{
+    private readonly IZookeeperClientFactory _zookeeperClientFactory;
+    private ZookeeperRegistryCenterOptions _registryCenterOptions;
+    private readonly ISerializer _serializer;
+
+    private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
+
+    public ILogger<ZookeeperSwaggerInfoInfoProvider> Logger { get; set; }
+
+
+    public ZookeeperSwaggerInfoInfoProvider(IZookeeperClientFactory zookeeperClientFactory,
+        ISerializer serializer,
+        IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions)
+    {
+        _zookeeperClientFactory = zookeeperClientFactory;
+        _serializer = serializer;
+        _registryCenterOptions = registryCenterOptions.CurrentValue;
+        Check.NotNullOrEmpty(_registryCenterOptions.SwaggerDocPath, nameof(_registryCenterOptions.SwaggerDocPath));
+        Logger = NullLogger<ZookeeperSwaggerInfoInfoProvider>.Instance;
+    }
+
+    public override async Task<string[]> GetGroups()
+    {
+        var zookeeperClient = _zookeeperClientFactory.GetZooKeeperClient();
+        return await GetDocuments(zookeeperClient);
+    }
+
+
+    public async Task<OpenApiDocument> GetSwagger(string documentName)
+    {
+        var zookeeperClient = _zookeeperClientFactory.GetZooKeeperClient();
+      
+        var documentPath = CreateSwaggerDocPath(documentName);
+        if (!await zookeeperClient.ExistsAsync(documentPath))
+        {
+            return null;
+        }
+
+        var datas = await zookeeperClient.GetDataAsync(documentPath);
+
+        if (datas == null || !datas.Any())
+        {
+            return null;
+        }
+
+        var jsonString = datas.ToArray().GetString();
+
+        return _serializer.Deserialize<OpenApiDocument>(jsonString, false);
+    }
+    
+
+    // private async Task UpdateSwaggerEndpoint(IZookeeperClient zookeeperClient)
+    // {
+    //     var swaggerUIOptions = EngineContext.Current.GetOptions<SwaggerUIOptions>();
+    //     var documents = await GetDocuments(zookeeperClient);
+    //     foreach (var document in documents)
+    //     {
+    //         var routeTemplate =
+    //             RouteTemplate.Replace("{documentName}", Uri.EscapeDataString(document));
+    //         swaggerUIOptions.AddIfNotContainsSwaggerEndpoint(routeTemplate, document);
+    //     }
+    // }
+
+    private async Task<string[]> GetDocuments(IZookeeperClient zookeeperClient)
+    {
+        if (!await zookeeperClient.ExistsAsync(_registryCenterOptions.SwaggerDocPath))
+        {
+            return Array.Empty<string>();
+        }
+
+        var children = await zookeeperClient.GetChildrenAsync(_registryCenterOptions.SwaggerDocPath);
+        if (children == null)
+        {
+            return Array.Empty<string>();
+        }
+
+        var groups = children.ToArray();
+        return groups;
+    }
+
+
+    private string CreateSwaggerDocPath(string child)
+    {
+        var routePath = _registryCenterOptions.SwaggerDocPath;
+        if (!routePath.EndsWith("/"))
+        {
+            routePath += "/";
+        }
+
+        routePath += child;
+        return routePath;
+    }
+}
