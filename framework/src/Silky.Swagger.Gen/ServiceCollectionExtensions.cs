@@ -9,7 +9,6 @@ using Silky.Core.Extensions;
 using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
 using Silky.Swagger;
-using Silky.Swagger.Gen;
 using Silky.Swagger.Gen.Provider;
 using Silky.Swagger.Gen.Provider.Zookeeper;
 using Silky.Swagger.Gen.Register;

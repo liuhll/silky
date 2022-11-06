@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GatewayDemo.File;
+namespace FileHostDemo.File;
 
 public class FileAppService : IFileAppService
 {

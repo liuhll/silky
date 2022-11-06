@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Swagger.Gen;
+namespace Silky.Swagger;
 
 public class SwaggerGroupUtils
 {
@@ -10,6 +11,14 @@ public class SwaggerGroupUtils
     {
         var groups = new List<string>();
         groups.AddRange(applicationInterfaceAssemblies
+            .Select(p => p.GetName().Name));
+        return groups;
+    }
+    
+    public static IEnumerable<string> ReadLocalGroups()
+    {
+        var groups = new List<string>();
+        groups.AddRange(ServiceHelper.ReadInterfaceAssemblies()
             .Select(p => p.GetName().Name));
         return groups;
     }

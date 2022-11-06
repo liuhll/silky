@@ -14,7 +14,7 @@ public abstract class SwaggerInfoRegisterBase : ISwaggerInfoRegister
 
     public async Task Register()
     {
-        var swaggerInfos = _swaggerProvider.GetSwaggers();
+        var swaggerInfos = _swaggerProvider.GetLocalSwaggers();
         foreach (var swaggerInfo in swaggerInfos)
         {
             await Register(swaggerInfo.Key, swaggerInfo.Value);

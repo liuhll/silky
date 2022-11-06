@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -49,7 +50,12 @@ public class ZookeeperSwaggerInfoInfoProvider : SwaggerInfoProviderBase, IRegist
     public async Task<OpenApiDocument> GetSwagger(string documentName)
     {
         var zookeeperClient = _zookeeperClientFactory.GetZooKeeperClient();
-      
+
+        return await GetSwagger(documentName, zookeeperClient);
+    }
+
+    public async Task<OpenApiDocument> GetSwagger(string documentName, IZookeeperClient zookeeperClient)
+    {
         var documentPath = CreateSwaggerDocPath(documentName);
         if (!await zookeeperClient.ExistsAsync(documentPath))
         {
@@ -67,7 +73,22 @@ public class ZookeeperSwaggerInfoInfoProvider : SwaggerInfoProviderBase, IRegist
 
         return _serializer.Deserialize<OpenApiDocument>(jsonString, false);
     }
-    
+
+
+    public async Task<IEnumerable<OpenApiDocument>> GetSwaggers()
+    {
+        var openApiDocuments = new List<OpenApiDocument>();
+        var zookeeperClient = _zookeeperClientFactory.GetZooKeeperClient();
+        var documents = await GetDocuments(zookeeperClient);
+        foreach (var document in documents)
+        {
+            var openApiDocument = await GetSwagger(document, zookeeperClient);
+            openApiDocuments.Add(openApiDocument);
+        }
+
+        return openApiDocuments;
+    }
+
 
     // private async Task UpdateSwaggerEndpoint(IZookeeperClient zookeeperClient)
     // {

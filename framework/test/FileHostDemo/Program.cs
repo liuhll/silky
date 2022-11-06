@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace GatewayDemo
+namespace FileHostDemo
 {
     public class Program
     {
@@ -14,12 +14,12 @@ namespace GatewayDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyGatewayDefaults(webBuilder =>
+                .ConfigureSilkyWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
                         .UseSerilogDefault();
                 });
-            
+
             if (hostBuilder.IsEnvironment("Apollo"))
             {
                 hostBuilder.AddApollo();

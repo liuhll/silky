@@ -1,0 +1,34 @@
+{
+  "RateLimiting": {
+    "Client": {
+      "EnableEndpointRateLimiting": false,
+      "StackBlockedRequests": false,
+      "ClientIdHeader": "X-ClientId",
+      "HttpStatusCode": 429,
+      "EndpointWhitelist": [
+        "get:/api/license",
+        "*:/api/status"
+      ],
+      "ClientWhitelist": [
+        "dev-id-1",
+        "dev-id-2"
+      ],
+      "GeneralRules": [
+        {
+          "Endpoint": "*",
+          "Period": "1s",
+          "Limit": 5
+        }
+      ],
+      "QuotaExceededResponse": {
+        "Content": "{{ \"data\":null,\"errorMessage\": \"Whoa! Calm down, cowboy! Quota exceeded. Maximum allowed: {0} per {1}. Please try again in {2} second(s).\",\"status\":\"514\",\"statusCode\":\"OverflowMaxRequest\" }}",
+        "ContentType": "application/json",
+        "StatusCode": 429
+      },
+      "Policies": {
+        "ClientRules": [
+        ]
+      }
+    }
+  }
+}

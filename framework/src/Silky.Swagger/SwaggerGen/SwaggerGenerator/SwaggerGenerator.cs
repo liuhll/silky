@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.OpenApi.Models;
 using Silky.Core;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Logging;
 
 namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
@@ -52,13 +53,41 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             var openApiDocument = registerCenterSwaggerProvider.GetSwagger(documentName).GetAwaiter().GetResult();
             if (openApiDocument == null)
             {
-                return GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
+                if (SwaggerGroupUtils.ReadLocalGroups().Contains(documentName))
+                {
+                    return GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
+                }
+
+                var localOpenApiDocument = GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
+
+                var remoteOpenApiDocuments = registerCenterSwaggerProvider.GetSwaggers().GetAwaiter().GetResult();
+                foreach (var remoteOpenApiDocument in remoteOpenApiDocuments)
+                {
+                    foreach (var path in remoteOpenApiDocument.Paths)
+                    {
+                        if (!localOpenApiDocument.Paths.ContainsKey(path.Key))
+                        {
+                            localOpenApiDocument.Paths.Add(path.Key,path.Value);
+                        }
+                       
+                    }
+
+                    foreach (var schema in remoteOpenApiDocument.Components.Schemas)
+                    {
+                        if (!localOpenApiDocument.Components.Schemas.ContainsKey(schema.Key))
+                        {
+                            localOpenApiDocument.Components.Schemas.Add(schema.Key,schema.Value);
+                        }
+                    }
+                }
+                
+                return localOpenApiDocument;      
             }
 
             openApiDocument.Info = info;
             openApiDocument.Servers = GenerateServers(host, basePath);
             openApiDocument.SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements);
-            openApiDocument.Components.SecuritySchemes = 
+            openApiDocument.Components.SecuritySchemes =
                 new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
             var schemaRepository = new SchemaRepository(documentName);
             var filterContext =
@@ -67,6 +96,7 @@ namespace Silky.Swagger.SwaggerGen.SwaggerGenerator
             {
                 filter.Apply(openApiDocument, filterContext);
             }
+
             return openApiDocument;
         }
 
