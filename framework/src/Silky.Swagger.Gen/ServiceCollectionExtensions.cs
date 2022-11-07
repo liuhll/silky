@@ -12,8 +12,10 @@ using Silky.Swagger.Abstraction;
 using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
 using Silky.Swagger.Abstraction.SwaggerGen.Filters;
 using Silky.Swagger.Gen.Provider;
+using Silky.Swagger.Gen.Provider.Consul;
 using Silky.Swagger.Gen.Provider.Zookeeper;
 using Silky.Swagger.Gen.Register;
+using Silky.Swagger.Gen.Register.Consul;
 using Silky.Swagger.Gen.Register.Zookeeper;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -26,13 +28,16 @@ public static class ServiceCollectionExtensions
         {
             case "zookeeper":
                 services.AddSingleton<ISwaggerInfoRegister, ZookeeperSwaggerInfoRegister>();
-                services.AddSingleton<ISwaggerInfoProvider, ZookeeperSwaggerInfoInfoProvider>();
-                services.AddScoped<IRegisterCenterSwaggerInfoProvider, ZookeeperSwaggerInfoInfoProvider>();
+                services.AddSingleton<ISwaggerInfoProvider, ZookeeperSwaggerInfoProvider>();
+                services.AddScoped<IRegisterCenterSwaggerInfoProvider, ZookeeperSwaggerInfoProvider>();
                 break;
             // case "nacos":
             //     break;
-            // case "consul":
-            //     break;
+            case "consul":
+                services.AddSingleton<ISwaggerInfoRegister, ConsulSwaggerInfoRegister>();
+                services.AddSingleton<ISwaggerInfoProvider,ConsulSwaggerInfoProvider>();
+                services.AddScoped<IRegisterCenterSwaggerInfoProvider, ConsulSwaggerInfoProvider>();
+                break;
             default:
                 throw new SilkyException(
                     $"The system does not provide a service registration center of type {registerType}");

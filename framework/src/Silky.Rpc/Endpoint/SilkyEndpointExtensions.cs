@@ -6,5 +6,6 @@ namespace Silky.Rpc.Endpoint
         {
             return $"{silkyEndpoint.Host}:{silkyEndpoint.Port}";
         }
+        
     }
 }

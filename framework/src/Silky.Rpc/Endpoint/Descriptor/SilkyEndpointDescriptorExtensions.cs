@@ -19,7 +19,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
             return SingletonDictionary<string, ISilkyEndpoint>.Instance[silkyEndpointDescriptor.ToString()];
         }
 
-        public static string GetHostAddress(this SilkyEndpointDescriptor silkyEndpointDescriptor)
+        public static string GetAddress(this SilkyEndpointDescriptor silkyEndpointDescriptor)
         {
             var address = $"{silkyEndpointDescriptor.Host}:{silkyEndpointDescriptor.Port}";
             return address;

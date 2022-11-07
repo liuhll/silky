@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silky.Core.Exceptions;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Rpc.Endpoint;
@@ -13,27 +14,32 @@ namespace Silky.RegistryCenter.Consul
     {
         private readonly IConsulClientFactory _consulClientFactory;
         private readonly IServerConverter _serverConverter;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceDescriptorProvider _serviceDescriptorProvider;
         private readonly IHeartBeatService _heartBeatService;
 
         public ConsulServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
             IConsulClientFactory consulClientFactory,
             IServerConverter serverConverter,
-            IServiceProvider serviceProvider,
+            IServiceDescriptorProvider serviceDescriptorProvider,
             IHeartBeatService heartBeatService)
             : base(serverManager, serverProvider)
         {
             _consulClientFactory = consulClientFactory;
             _serverConverter = serverConverter;
-            _serviceProvider = serviceProvider;
+            _serviceDescriptorProvider = serviceDescriptorProvider;
             _heartBeatService = heartBeatService;
         }
 
         protected override async Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
         {
             using var consulClient = _consulClientFactory.CreateClient();
-            await consulClient.Agent.ServiceDeregister(silkyEndpoint.ToString());
+            var serviceId = silkyEndpoint.GetAddress();
+            var result = await consulClient.Agent.ServiceDeregister(serviceId);
+            if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                Logger.LogWarning($"remove serviceId {serviceId} fail");
+            }
         }
 
         protected override async Task CacheServers()
@@ -41,7 +47,7 @@ namespace Silky.RegistryCenter.Consul
             await CacheServersFromConsul();
             _heartBeatService.Start(HeartBeatServers);
         }
-        
+
         private async Task HeartBeatServers()
         {
             if (!await RepeatRegister())
@@ -78,10 +84,10 @@ namespace Silky.RegistryCenter.Consul
             var serviceRegisterResult = await consulClient.Agent.ServiceRegister(agentServiceRegistration);
             if (serviceRegisterResult.StatusCode != HttpStatusCode.OK)
             {
-                throw new SilkyException("Register Server To ServiceCenter Consul Error");
+                throw new SilkyException($"Register {serverDescriptor.HostName} Server To ServiceCenter Consul Error");
             }
 
-            await _serviceProvider.PublishAsync(serverDescriptor.HostName, serverDescriptor.Services);
+            await _serviceDescriptorProvider.PublishAsync(serverDescriptor.HostName, serverDescriptor.Services);
         }
 
         protected override async Task RemoveServiceCenterExceptRpcEndpoint(IServer server)

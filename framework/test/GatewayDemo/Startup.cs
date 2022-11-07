@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Silky.Http.Core.Middlewares;
 
 
 namespace GatewayDemo

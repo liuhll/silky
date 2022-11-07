@@ -16,7 +16,7 @@ using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Provider.Zookeeper;
 
-public class ZookeeperSwaggerInfoInfoProvider : SwaggerInfoProviderBase, IRegisterCenterSwaggerInfoProvider
+public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenterSwaggerInfoProvider
 {
     private readonly IZookeeperClientFactory _zookeeperClientFactory;
     private ZookeeperRegistryCenterOptions _registryCenterOptions;
@@ -24,18 +24,18 @@ public class ZookeeperSwaggerInfoInfoProvider : SwaggerInfoProviderBase, IRegist
 
     private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
 
-    public ILogger<ZookeeperSwaggerInfoInfoProvider> Logger { get; set; }
+    public ILogger<ZookeeperSwaggerInfoProvider> Logger { get; set; }
 
 
-    public ZookeeperSwaggerInfoInfoProvider(IZookeeperClientFactory zookeeperClientFactory,
+    public ZookeeperSwaggerInfoProvider(IZookeeperClientFactory zookeeperClientFactory,
         ISerializer serializer,
-        IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions)
+        IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions)
     {
         _zookeeperClientFactory = zookeeperClientFactory;
         _serializer = serializer;
-        _registryCenterOptions = registryCenterOptions.CurrentValue;
+        _registryCenterOptions = registryCenterOptions.Value;
         Check.NotNullOrEmpty(_registryCenterOptions.SwaggerDocPath, nameof(_registryCenterOptions.SwaggerDocPath));
-        Logger = NullLogger<ZookeeperSwaggerInfoInfoProvider>.Instance;
+        Logger = NullLogger<ZookeeperSwaggerInfoProvider>.Instance;
     }
 
     public override async Task<string[]> GetGroups()

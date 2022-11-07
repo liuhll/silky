@@ -27,12 +27,12 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
     public ZookeeperSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         IZookeeperClientFactory zookeeperClientFactory,
         ISerializer serializer,
-        IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions) : base(
+        IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions) : base(
         swaggerProvider)
     {
         _zookeeperClientFactory = zookeeperClientFactory;
         _serializer = serializer;
-        _registryCenterOptions = registryCenterOptions.CurrentValue;
+        _registryCenterOptions = registryCenterOptions.Value;
         Check.NotNullOrEmpty(_registryCenterOptions.SwaggerDocPath, nameof(_registryCenterOptions.SwaggerDocPath));
         Logger = NullLogger<ZookeeperSwaggerInfoRegister>.Instance;
     }

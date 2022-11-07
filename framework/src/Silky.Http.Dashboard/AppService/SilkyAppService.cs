@@ -395,7 +395,7 @@ namespace Silky.Http.Dashboard.AppService
                     new GetServiceEntryInstanceOutput()
                     {
                         ServiceEntryId = serviceEntryId,
-                        Address = p.Descriptor.GetHostAddress(),
+                        Address = p.Descriptor.GetAddress(),
                         Enabled = p.Enabled,
                         IsHealth = _serverHealthCheck.IsHealth(p).GetAwaiter().GetResult(),
                         ServiceProtocol = p.ServiceProtocol

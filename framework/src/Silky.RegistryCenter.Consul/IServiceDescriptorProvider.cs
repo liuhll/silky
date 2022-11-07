@@ -3,7 +3,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.RegistryCenter.Consul
 {
-    public interface IServiceProvider
+    public interface IServiceDescriptorProvider
     {
         Task PublishAsync(string serverName, ServiceDescriptor[] serviceDescriptors);
 

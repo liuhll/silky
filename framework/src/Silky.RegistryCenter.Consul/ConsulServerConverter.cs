@@ -9,11 +9,11 @@ namespace Silky.RegistryCenter.Consul
 {
     public class ConsulServerConverter : IServerConverter
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceDescriptorProvider _serviceDescriptorProvider;
 
-        public ConsulServerConverter(IServiceProvider serviceProvider)
+        public ConsulServerConverter(IServiceDescriptorProvider serviceDescriptorProvider)
         {
-            _serviceProvider = serviceProvider;
+            _serviceDescriptorProvider = serviceDescriptorProvider;
         }
 
         public async Task<ServerDescriptor> Convert(string serverName, AgentService[] agentServices)
@@ -21,7 +21,7 @@ namespace Silky.RegistryCenter.Consul
             var serverDescriptor = new ServerDescriptor()
             {
                 HostName = serverName,
-                Services = await _serviceProvider.GetServices(serverName)
+                Services = await _serviceDescriptorProvider.GetServices(serverName)
             };
             var endpoints = new List<SilkyEndpointDescriptor>();
             foreach (var agentService in agentServices)

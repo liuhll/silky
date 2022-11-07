@@ -43,7 +43,7 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
 
         public Task<bool> IsHealth(SilkyEndpointDescriptor silkyEndpointDescriptor)
         {
-            var address = silkyEndpointDescriptor.GetHostAddress();
+            var address = silkyEndpointDescriptor.GetAddress();
             if (silkyEndpointDescriptor.ServiceProtocol == ServiceProtocol.Rpc)
             {
                 return IsHealth(address);
