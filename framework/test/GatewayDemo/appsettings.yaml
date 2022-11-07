@@ -22,7 +22,6 @@ registrycenter:
   clusterName: DEFAULT
   registerEnabled: true
   instanceEnabled: true
-  namingUseRpc: true
 
 #registrycenter:
 #  type: Consul
