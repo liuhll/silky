@@ -34,7 +34,7 @@ namespace Silky.RegistryCenter.Nacos
 
         public async Task AddServer()
         {
-            await _nacosConfigService.AddListener(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.GroupName, this);
+            await _nacosConfigService.AddListener(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.ServerGroupName, this);
             var servers = await GetAllServerNames();
             if (servers.Contains(EngineContext.Current.HostName))
             {
@@ -43,7 +43,7 @@ namespace Silky.RegistryCenter.Nacos
 
             var registerServers = servers.Concat(new[] { EngineContext.Current.HostName });
             var registerServersValue = _serializer.Serialize(registerServers);
-            var result = await _nacosConfigService.PublishConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.GroupName,
+            var result = await _nacosConfigService.PublishConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.ServerGroupName,
                 registerServersValue);
             if (!result)
             {
@@ -54,7 +54,7 @@ namespace Silky.RegistryCenter.Nacos
         public async Task<string[]> GetAllServerNames(int timeoutMs = 10000)
         {
             var registerServersValue =
-                await _nacosConfigService.GetConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.GroupName, timeoutMs);
+                await _nacosConfigService.GetConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.ServerGroupName, timeoutMs);
             if (registerServersValue.IsNullOrEmpty())
             {
                 return Array.Empty<string>();

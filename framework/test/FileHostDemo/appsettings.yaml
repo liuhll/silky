@@ -19,7 +19,6 @@ registrycenter:
 #    - http://127.0.0.1:8850/
 #  userName: nacos
 #  password: nacos
-#  groupName: DEFAULT_GROUP
 #  clusterName: DEFAULT
 #  registerEnabled: true
 #  instanceEnabled: true

@@ -39,7 +39,7 @@ namespace Silky.RegistryCenter.Nacos
             }
 
             var serviceConfigValue =
-                await _nacosConfigService.GetConfigAndSignListener(hostName, _nacosRegistryCenterOptions.GroupName,
+                await _nacosConfigService.GetConfigAndSignListener(hostName, _nacosRegistryCenterOptions.ServerGroupName,
                     timeoutMs,
                     new ServiceListener(hostName, this));
             if (serviceConfigValue.IsNullOrEmpty())
@@ -63,7 +63,7 @@ namespace Silky.RegistryCenter.Nacos
             }
             
             var serviceConfigValue = _serializer.Serialize(serviceDescriptors);
-            var result = await _nacosConfigService.PublishConfig(hostName, _nacosRegistryCenterOptions.GroupName,
+            var result = await _nacosConfigService.PublishConfig(hostName, _nacosRegistryCenterOptions.ServerGroupName,
                 serviceConfigValue);
             if (!result)
             {

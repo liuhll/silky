@@ -9,11 +9,13 @@ namespace Silky.RegistryCenter.Nacos.Configuration
 
         public string Type { get; } = "Nacos";
         
-        public string GroupName { get; set; } = "Silky";
-
+        public string ServerGroupName { get; set; } = "Server";
+        
+        public string ServerKey = "silky.servers";
+        
         public string SwaggerDocKey = "silky.swaggers";
 
-        public string ServerKey = "silky.servers";
+        public string SwaggerDocGroupName = "Swagger";
         
         public bool RegisterSwaggerDoc { get; set; } = true;
         

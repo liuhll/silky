@@ -36,7 +36,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
             var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames, false);
             var documentNamePublishResult = await _nacosConfigService.PublishConfig(
                 _nacosRegistryCenterOptions.SwaggerDocKey,
-                _nacosRegistryCenterOptions.GroupName,
+                _nacosRegistryCenterOptions.SwaggerDocGroupName,
                 registerDocumentNamesValue);
             if (!documentNamePublishResult)
             {
@@ -45,7 +45,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
 
             var openApiDocumentValue = _serializer.Serialize(openApiDocument, false);
             var openApiDocumentResult = await _nacosConfigService.PublishConfig(documentName,
-                _nacosRegistryCenterOptions.GroupName,
+                _nacosRegistryCenterOptions.SwaggerDocGroupName,
                 openApiDocumentValue);
             if (!openApiDocumentResult)
             {
@@ -60,7 +60,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
         {
             var allDocumentsValue =
                 await _nacosConfigService.GetConfig(_nacosRegistryCenterOptions.SwaggerDocKey,
-                    _nacosRegistryCenterOptions.GroupName, timeoutMs);
+                    _nacosRegistryCenterOptions.SwaggerDocGroupName, timeoutMs);
             if (allDocumentsValue.IsNullOrEmpty())
             {
                 return Array.Empty<string>();
