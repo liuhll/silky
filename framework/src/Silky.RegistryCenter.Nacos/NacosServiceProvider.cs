@@ -75,7 +75,7 @@ namespace Silky.RegistryCenter.Nacos
         public void UpdateService(string hostName, string configInfo)
         {
             var serviceDescriptors = _serializer.Deserialize<ServiceDescriptor[]>(configInfo);
-            m_services.TryAdd(hostName, serviceDescriptors);
+            m_services.AddOrUpdate(hostName, serviceDescriptors, (k, v) => serviceDescriptors);
         }
     }
 }
