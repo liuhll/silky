@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITestApplication", "test\IT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatewayDemo", "test\GatewayDemo\GatewayDemo.csproj", "{DC79E441-2703-4090-8D40-3BC1E23FCF85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Swagger", "src\Silky.Swagger\Silky.Swagger.csproj", "{63A9EAC9-60F9-479E-B015-B1B160DDAB37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Swagger.Abstraction", "src\Silky.Swagger.Abstraction\Silky.Swagger.Abstraction.csproj", "{63A9EAC9-60F9-479E-B015-B1B160DDAB37}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Http.Core", "src\Silky.Http.Core\Silky.Http.Core.csproj", "{545C0F48-6276-4BC3-B66C-D84C2A65A84C}"
 EndProject

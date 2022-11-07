@@ -8,13 +8,13 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
-using Silky.Swagger;
+using Silky.Swagger.Abstraction;
+using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
+using Silky.Swagger.Abstraction.SwaggerGen.Filters;
 using Silky.Swagger.Gen.Provider;
 using Silky.Swagger.Gen.Provider.Zookeeper;
 using Silky.Swagger.Gen.Register;
 using Silky.Swagger.Gen.Register.Zookeeper;
-using Silky.Swagger.SwaggerGen.DependencyInjection;
-using Silky.Swagger.SwaggerGen.Filters;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

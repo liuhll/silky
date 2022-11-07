@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
+using Silky.Swagger.Abstraction;
 
 namespace Silky.Swagger.Gen.Register;
 

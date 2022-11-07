@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
-using Silky.Swagger.SwaggerUI;
+using Silky.Swagger.Abstraction;
 using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Provider.Zookeeper;

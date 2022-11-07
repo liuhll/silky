@@ -8,6 +8,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
       <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
-      <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
+      <ProjectReference Include="..\Silky.Swagger.Abstraction\Silky.Swagger.Abstraction.csproj" />
     </ItemGroup>
 </Project>

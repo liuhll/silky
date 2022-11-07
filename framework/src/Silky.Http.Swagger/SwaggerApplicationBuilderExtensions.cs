@@ -2,8 +2,8 @@
 using Silky.Core;
 using Silky.Http.Swagger.Builders;
 using Silky.Http.Swagger.Configuration;
-using Silky.Swagger;
-using Silky.Swagger.SwaggerUI;
+using Silky.Swagger.Abstraction;
+using Silky.Swagger.Abstraction.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder
 {

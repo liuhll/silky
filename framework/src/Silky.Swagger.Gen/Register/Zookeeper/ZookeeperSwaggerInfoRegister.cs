@@ -12,6 +12,7 @@ using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
+using Silky.Swagger.Abstraction;
 using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Register.Zookeeper;

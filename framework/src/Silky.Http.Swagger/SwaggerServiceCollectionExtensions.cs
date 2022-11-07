@@ -3,8 +3,8 @@ using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Http.Swagger.Builders;
 using Silky.Http.Swagger.Configuration;
-using Silky.Swagger;
-using Silky.Swagger.SwaggerGen.DependencyInjection;
+using Silky.Swagger.Abstraction;
+using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

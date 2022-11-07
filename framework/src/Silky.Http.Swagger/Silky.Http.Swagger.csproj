@@ -7,6 +7,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
         <ProjectReference Include="..\Silky.Swagger.Gen\Silky.Swagger.Gen.csproj" />
-        <ProjectReference Include="..\Silky.Swagger\Silky.Swagger.csproj" />
+        <ProjectReference Include="..\Silky.Swagger.Abstraction\Silky.Swagger.Abstraction.csproj" />
     </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Silky.Http.Swagger.Internal;
-using Silky.Swagger.SwaggerUI;
+using Silky.Swagger.Abstraction.SwaggerUI;
 
 namespace Silky.Http.Swagger.Configuration
 {

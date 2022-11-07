@@ -5,7 +5,7 @@ using Silky.Core.Exceptions;
 using Silky.Http.Core;
 using Silky.Http.MiniProfiler;
 using Silky.RegistryCenter.Consul;
-using Silky.Swagger.SwaggerGen.DependencyInjection;
+using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
