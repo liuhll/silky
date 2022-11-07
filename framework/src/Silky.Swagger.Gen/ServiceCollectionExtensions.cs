@@ -13,9 +13,11 @@ using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
 using Silky.Swagger.Abstraction.SwaggerGen.Filters;
 using Silky.Swagger.Gen.Provider;
 using Silky.Swagger.Gen.Provider.Consul;
+using Silky.Swagger.Gen.Provider.Nacos;
 using Silky.Swagger.Gen.Provider.Zookeeper;
 using Silky.Swagger.Gen.Register;
 using Silky.Swagger.Gen.Register.Consul;
+using Silky.Swagger.Gen.Register.Nacos;
 using Silky.Swagger.Gen.Register.Zookeeper;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -31,8 +33,11 @@ public static class ServiceCollectionExtensions
                 services.AddSingleton<ISwaggerInfoProvider, ZookeeperSwaggerInfoProvider>();
                 services.AddScoped<IRegisterCenterSwaggerInfoProvider, ZookeeperSwaggerInfoProvider>();
                 break;
-            // case "nacos":
-            //     break;
+            case "nacos":
+                services.AddSingleton<ISwaggerInfoRegister, NacosSwaggerInfoRegister>();
+                services.AddSingleton<ISwaggerInfoProvider,NacosSwaggerInfoProvider>();
+                services.AddScoped<IRegisterCenterSwaggerInfoProvider, NacosSwaggerInfoProvider>();
+                break;
             case "consul":
                 services.AddSingleton<ISwaggerInfoRegister, ConsulSwaggerInfoRegister>();
                 services.AddSingleton<ISwaggerInfoProvider,ConsulSwaggerInfoProvider>();

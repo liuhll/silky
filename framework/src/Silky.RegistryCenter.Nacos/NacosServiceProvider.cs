@@ -31,7 +31,7 @@ namespace Silky.RegistryCenter.Nacos
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
 
-        public async Task<ServiceDescriptor[]> GetServices(string hostName, long timeoutMs = 5000)
+        public async Task<ServiceDescriptor[]> GetServices(string hostName, long timeoutMs = 10000)
         {
             if (m_services.TryGetValue(hostName, out var serviceDescriptors))
             {
@@ -52,8 +52,7 @@ namespace Silky.RegistryCenter.Nacos
             return serviceDescriptors;
         }
 
-        public async Task PublishServices(string hostName, ServiceDescriptor[] serviceDescriptors,
-            long timeoutMs = 5000)
+        public async Task PublishServices(string hostName, ServiceDescriptor[] serviceDescriptors)
         {
             if (m_services.TryGetValue(hostName, out var cacheServiceDescriptors))
             {
@@ -62,13 +61,13 @@ namespace Silky.RegistryCenter.Nacos
                     return;
                 }
             }
-
+            
             var serviceConfigValue = _serializer.Serialize(serviceDescriptors);
             var result = await _nacosConfigService.PublishConfig(hostName, _nacosRegistryCenterOptions.GroupName,
                 serviceConfigValue);
             if (!result)
             {
-                throw new SilkyException("Failed to publish service description information");
+                throw new SilkyException($"Failed to publish {hostName} service description information");
             }
         }
 

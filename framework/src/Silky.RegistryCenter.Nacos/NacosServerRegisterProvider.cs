@@ -11,7 +11,6 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
-using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Server;
 
@@ -22,22 +21,20 @@ namespace Silky.RegistryCenter.Nacos
         private readonly INacosConfigService _nacosConfigService;
         private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
         private readonly ISerializer _serializer;
-
-        private const string silky_servers = "silky_servers";
-
+        
 
         public NacosServerRegisterProvider(INacosConfigService nacosConfigService,
-            IOptionsMonitor<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
+            IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
             ISerializer serializer)
         {
             _nacosConfigService = nacosConfigService;
             _serializer = serializer;
-            _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
+            _nacosRegistryCenterOptions = nacosRegistryCenterOptions.Value;
         }
 
         public async Task AddServer()
         {
-            await _nacosConfigService.AddListener(silky_servers, _nacosRegistryCenterOptions.GroupName, this);
+            await _nacosConfigService.AddListener(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.GroupName, this);
             var servers = await GetAllServerNames();
             if (servers.Contains(EngineContext.Current.HostName))
             {
@@ -46,7 +43,7 @@ namespace Silky.RegistryCenter.Nacos
 
             var registerServers = servers.Concat(new[] { EngineContext.Current.HostName });
             var registerServersValue = _serializer.Serialize(registerServers);
-            var result = await _nacosConfigService.PublishConfig(silky_servers, _nacosRegistryCenterOptions.GroupName,
+            var result = await _nacosConfigService.PublishConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.GroupName,
                 registerServersValue);
             if (!result)
             {
@@ -54,10 +51,10 @@ namespace Silky.RegistryCenter.Nacos
             }
         }
 
-        public async Task<string[]> GetAllServerNames(int timeoutMs = 5000)
+        public async Task<string[]> GetAllServerNames(int timeoutMs = 10000)
         {
             var registerServersValue =
-                await _nacosConfigService.GetConfig(silky_servers, _nacosRegistryCenterOptions.GroupName, timeoutMs);
+                await _nacosConfigService.GetConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.GroupName, timeoutMs);
             if (registerServersValue.IsNullOrEmpty())
             {
                 return Array.Empty<string>();
