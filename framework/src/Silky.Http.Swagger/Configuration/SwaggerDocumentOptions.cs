@@ -12,7 +12,7 @@ namespace Silky.Http.Swagger.Configuration
 
         public SwaggerDocumentOptions()
         {
-            OrganizationMode = OrganizationMode.Group;
+            OrganizationMode = OrganizationMode.AllAndGroup;
             ShowMode = ShowMode.All;
             EnableMultipleServiceKey = true;
             ShowDashboardService = false;

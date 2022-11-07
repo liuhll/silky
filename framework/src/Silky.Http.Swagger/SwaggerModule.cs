@@ -12,7 +12,6 @@ namespace Silky.Http.Swagger
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSwaggerDocuments();
-     
             services.AddSwaggerInfoService(configuration);
         }
 

@@ -7,6 +7,8 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+      <ProjectReference Include="..\Silky.RegistryCenter.Consul\Silky.RegistryCenter.Consul.csproj" />
+      <ProjectReference Include="..\Silky.RegistryCenter.Nacos\Silky.RegistryCenter.Nacos.csproj" />
       <ProjectReference Include="..\Silky.RegistryCenter.Zookeeper\Silky.RegistryCenter.Zookeeper.csproj" />
       <ProjectReference Include="..\Silky.Swagger.Abstraction\Silky.Swagger.Abstraction.csproj" />
     </ItemGroup>

@@ -16,7 +16,6 @@ namespace NormHostDemo
                 .CreateDefaultBuilder(args)
                 .ConfigureSilkyGeneralHostDefaults()
                 .UseSerilogDefault()
-                .RegisterSwaggerDocInfo()
                 ;
             if (hostBuilder.IsEnvironment("Apollo"))
             {

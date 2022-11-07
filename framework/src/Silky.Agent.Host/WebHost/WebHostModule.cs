@@ -10,6 +10,7 @@ using Silky.Http.RateLimit;
 using Silky.Http.Swagger;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Proxy;
+using Silky.Swagger.Gen;
 using Silky.Transaction.Repository.Redis;
 using Silky.Transaction.Tcc;
 using Silky.Validation;
@@ -31,7 +32,8 @@ namespace Microsoft.Extensions.Hosting
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
         typeof(TransactionTccModule),
-        typeof(RedisTransactionRepositoryModule)
+        typeof(RedisTransactionRepositoryModule),
+        typeof(SwaggerGenModule)
     )]
     public abstract class WebHostModule : HostAgentModule
     {
