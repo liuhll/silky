@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -21,12 +22,14 @@ namespace Silky.Core.Modularity
 
         public async Task InitializeModules()
         {
+            using var scope = _serviceProvider.CreateScope();
             foreach (var module in _moduleContainer.Modules)
             {
                 try
                 {
                     Logger.LogInformation("Initialize the module {0}", module.Name);
-                    await module.Instance.Initialize(new ApplicationContext(_serviceProvider, _moduleContainer));
+                    await module.Instance.Initialize(
+                        new ApplicationContext(scope.ServiceProvider, _moduleContainer));
                 }
                 catch (Exception e)
                 {
@@ -34,14 +37,26 @@ namespace Silky.Core.Modularity
                     throw;
                 }
             }
+
+            Logger.LogInformation("Initialized all Silky modules.");
         }
 
         public async Task ShutdownModules()
         {
+            using var scope = _serviceProvider.CreateScope();
             foreach (var module in _moduleContainer.Modules)
             {
-                await module.Instance.Shutdown(new ApplicationContext(_serviceProvider, _moduleContainer));
+                try
+                {
+                    Logger.LogInformation("Shutdown the module {0}", module.Name);
+                    await module.Instance.Shutdown(new ApplicationContext(scope.ServiceProvider, _moduleContainer));
+                }
+                catch (Exception e)
+                {
+                    Logger.LogWarning($"Shutdown the {module.Name} module is an error, reason: {e.Message}");
+                }
             }
+            Logger.LogInformation("Shutdown all Silky modules.");
         }
     }
 }

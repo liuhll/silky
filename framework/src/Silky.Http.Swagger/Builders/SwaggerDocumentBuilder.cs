@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.Threading;
 using Silky.Http.Swagger.Configuration;
 using Silky.Rpc.Runtime.Server;
 using Silky.Swagger.Abstraction;
@@ -178,7 +179,7 @@ namespace Silky.Http.Swagger.Builders
         private static ICollection<string> GetRegisterCenterGroupGroups()
         {
             var swaggerInfoProvider = EngineContext.Current.Resolve<ISwaggerInfoProvider>();
-            var registerCenterGroups = swaggerInfoProvider.GetGroups().GetAwaiter().GetResult();
+            var registerCenterGroups = AsyncHelper.RunSync(()=> swaggerInfoProvider.GetGroups());
             return registerCenterGroups;
         }
 

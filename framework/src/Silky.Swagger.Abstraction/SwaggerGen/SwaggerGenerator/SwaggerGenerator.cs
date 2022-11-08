@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Silky.Core;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Logging;
+using Silky.Core.Threading;
 
 namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
 {
@@ -50,7 +51,8 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                 return GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
             }
 
-            var openApiDocument = registerCenterSwaggerProvider.GetSwagger(documentName).GetAwaiter().GetResult();
+            var openApiDocument =
+                AsyncHelper.RunSync(() => registerCenterSwaggerProvider.GetSwagger(documentName));
             if (openApiDocument == null)
             {
                 if (SwaggerGroupUtils.ReadLocalGroups().Contains(documentName))
@@ -60,28 +62,28 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
 
                 var localOpenApiDocument = GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
 
-                var remoteOpenApiDocuments = registerCenterSwaggerProvider.GetSwaggers().GetAwaiter().GetResult();
+                var remoteOpenApiDocuments = AsyncHelper.RunSync(() => registerCenterSwaggerProvider.GetSwaggers());
+                ;
                 foreach (var remoteOpenApiDocument in remoteOpenApiDocuments)
                 {
                     foreach (var path in remoteOpenApiDocument.Paths)
                     {
                         if (!localOpenApiDocument.Paths.ContainsKey(path.Key))
                         {
-                            localOpenApiDocument.Paths.Add(path.Key,path.Value);
+                            localOpenApiDocument.Paths.Add(path.Key, path.Value);
                         }
-                       
                     }
 
                     foreach (var schema in remoteOpenApiDocument.Components.Schemas)
                     {
                         if (!localOpenApiDocument.Components.Schemas.ContainsKey(schema.Key))
                         {
-                            localOpenApiDocument.Components.Schemas.Add(schema.Key,schema.Value);
+                            localOpenApiDocument.Components.Schemas.Add(schema.Key, schema.Value);
                         }
                     }
                 }
-                
-                return localOpenApiDocument;      
+
+                return localOpenApiDocument;
             }
 
             openApiDocument.Info = info;

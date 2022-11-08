@@ -9,6 +9,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Runtime.Rpc;
+using Silky.Core.Threading;
 using Silky.HealthChecks.Rpc.ServerCheck;
 using Silky.Http.Dashboard.AppService.Dtos;
 using Silky.Http.Dashboard.Configuration;
@@ -397,7 +398,7 @@ namespace Silky.Http.Dashboard.AppService
                         ServiceEntryId = serviceEntryId,
                         Address = p.Descriptor.GetAddress(),
                         Enabled = p.Enabled,
-                        IsHealth = _serverHealthCheck.IsHealth(p).GetAwaiter().GetResult(),
+                        IsHealth = AsyncHelper.RunSync(() => _serverHealthCheck.IsHealth(p)),
                         ServiceProtocol = p.ServiceProtocol
                     });
 
