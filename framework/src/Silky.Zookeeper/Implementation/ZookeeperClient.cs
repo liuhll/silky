@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using org.apache.zookeeper;
@@ -140,6 +143,7 @@ namespace Silky.Zookeeper.Implementation
             {
                 throw new Exception("failed to execute callback method for RetryUntilConnected");
             }
+
             return data;
         }
 
@@ -301,6 +305,15 @@ namespace Silky.Zookeeper.Implementation
 
             var node = GetOrAddNodeEntry(path);
             node.UnSubscribeChildrenChange(listener);
+        }
+
+        public async Task Authorize(AuthScheme authScheme, string auth = "")
+        {
+            await RetryUntilConnected(async () =>
+            {
+                ZooKeeper.addAuthInfo(authScheme.ToString().ToLower(), Encoding.UTF8.GetBytes(auth));
+                return 0;
+            });
         }
 
         #endregion Public Method

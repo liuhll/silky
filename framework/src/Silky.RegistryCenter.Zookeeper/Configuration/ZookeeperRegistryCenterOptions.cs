@@ -1,4 +1,5 @@
 using Silky.Rpc.Configuration;
+using Silky.Zookeeper;
 
 namespace Silky.RegistryCenter.Zookeeper.Configuration
 {
@@ -21,7 +22,11 @@ namespace Silky.RegistryCenter.Zookeeper.Configuration
         public string ConnectionStrings { get; set; }
 
         public int FuseTimes { get; set; } = 10;
-        
+
+        public AuthScheme Scheme { get; set; } = AuthScheme.World;
+
+        public string Auth { get; set; } = "anyone";
+
         public bool RegisterSwaggerDoc { get; set; } = true;
 
         public string RoutePath { get; set; } = "/silky/server";

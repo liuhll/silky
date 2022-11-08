@@ -64,6 +64,7 @@ namespace Silky.RegistryCenter.Zookeeper
             var routePath = CreateRoutePath(serverDescriptor.HostName);
             foreach (var zookeeperClient in zookeeperClients)
             {
+                await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
                 // The latest routing data must be obtained from the service registry.
                 // When the service is expanded and contracted, the locally cached routing data is not the latest
                 var centreServiceRoute = await GetRouteDescriptorAsync(zookeeperClient, routePath);
@@ -79,7 +80,8 @@ namespace Silky.RegistryCenter.Zookeeper
                 var data = jsonString.GetBytes();
                 if (!await zookeeperClient.ExistsAsync(routePath))
                 {
-                    await zookeeperClient.CreateRecursiveAsync(routePath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                    await zookeeperClient.CreateRecursiveAsync(routePath, data,
+                        AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
                     await RegisterServer(zookeeperClient);
                     Logger.LogDebug($"Node {routePath} does not exist and will be created");
                 }
@@ -94,6 +96,7 @@ namespace Silky.RegistryCenter.Zookeeper
         private async Task RegisterServer(IZookeeperClient zookeeperClient)
         {
             var routePath = _registryCenterOptions.RoutePath;
+            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
             var allServers = await GetAllServers(zookeeperClient, routePath);
             allServers.AddIfNotContains(EngineContext.Current.HostName);
             var jonString = _serializer.Serialize(allServers);
@@ -120,6 +123,7 @@ namespace Silky.RegistryCenter.Zookeeper
                 {
                     continue;
                 }
+                await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
 
                 foreach (var localEndpoint in server.Endpoints)
                 {
@@ -206,6 +210,7 @@ namespace Silky.RegistryCenter.Zookeeper
         private async Task<IEnumerable<ServerDescriptor>> GetServerRouteDescriptors(IZookeeperClient zookeeperClient)
         {
             var serverRouteDescriptors = new List<ServerDescriptor>();
+            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
             var children = await zookeeperClient.GetChildrenAsync(_registryCenterOptions.RoutePath);
             foreach (var child in children)
             {
@@ -223,13 +228,13 @@ namespace Silky.RegistryCenter.Zookeeper
         public async Task CreateSubscribeServersChange(IZookeeperClient zookeeperClient)
         {
             var serverPath = _registryCenterOptions.RoutePath;
-
+            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
             var watcher = new ServerWatcher(serverPath, this, _serializer);
             await zookeeperClient.SubscribeDataChange(serverPath, watcher.SubscribeServerChange);
             m_serverWatchers.AddOrUpdate(zookeeperClient, watcher, (k, v) => watcher);
             if (!await zookeeperClient.ExistsAsync(serverPath))
             {
-                await zookeeperClient.CreateRecursiveAsync(serverPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                await zookeeperClient.CreateRecursiveAsync(serverPath, null,  AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
                 return;
             }
 
@@ -242,6 +247,7 @@ namespace Silky.RegistryCenter.Zookeeper
 
         private async Task<List<string>> GetAllServers(IZookeeperClient zookeeperClient, string serverPath)
         {
+            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
             var allServers = new List<string>();
             var datas = await zookeeperClient.GetDataAsync(serverPath);
             if (datas == null)
@@ -275,6 +281,7 @@ namespace Silky.RegistryCenter.Zookeeper
         private async Task<ServerDescriptor> GetRouteDescriptorAsync(IZookeeperClient zookeeperClient,
             string routePath)
         {
+            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
             if (!await zookeeperClient.ExistsAsync(routePath))
             {
                 return null;

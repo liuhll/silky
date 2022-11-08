@@ -48,12 +48,12 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
     public async Task<OpenApiDocument> GetSwagger(string documentName)
     {
         var zookeeperClient = _zookeeperClientFactory.GetZooKeeperClient();
-
         return await GetSwagger(documentName, zookeeperClient);
     }
 
     public async Task<OpenApiDocument> GetSwagger(string documentName, IZookeeperClient zookeeperClient)
     {
+        await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
         var documentPath = CreateSwaggerDocPath(documentName);
         if (!await zookeeperClient.ExistsAsync(documentPath))
         {
@@ -102,6 +102,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
     private async Task<string[]> GetDocuments(IZookeeperClient zookeeperClient)
     {
+        await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
         if (!await zookeeperClient.ExistsAsync(_registryCenterOptions.SwaggerDocPath))
         {
             return Array.Empty<string>();

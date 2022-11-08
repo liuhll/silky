@@ -44,17 +44,21 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
         foreach (var zookeeperClient in zookeeperClients)
         {
             // await CreateSubscribeServersChange(zookeeperClient);
+            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
             var routePath = _registryCenterOptions.SwaggerDocPath;
             if (!await zookeeperClient.ExistsAsync(routePath))
             {
-                await zookeeperClient.CreateRecursiveAsync(routePath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+               
+                await zookeeperClient.CreateRecursiveAsync(routePath, null,
+                    AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
             }
 
             var jsonString = _serializer.Serialize(openApiDocument, false);
             var data = jsonString.GetBytes();
             if (!await zookeeperClient.ExistsAsync(swaggerDocPath))
             {
-                await zookeeperClient.CreateRecursiveAsync(swaggerDocPath, data, ZooDefs.Ids.OPEN_ACL_UNSAFE);
+                await zookeeperClient.CreateRecursiveAsync(swaggerDocPath, data,
+                    AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
                 Logger.LogDebug($"Node {swaggerDocPath} does not exist and will be created");
             }
             else
@@ -64,8 +68,8 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
             }
         }
     }
-    
-    
+
+
     private string CreateSwaggerDocPath(string child)
     {
         var routePath = _registryCenterOptions.SwaggerDocPath;
