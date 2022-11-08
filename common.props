@@ -19,7 +19,7 @@
 
     <RepositoryType>Github</RepositoryType>
 
-    <EfCore7Version>7.0.0-rc.2.22472.11</EfCore7Version>
+    <EfCore7Version>7.0.0</EfCore7Version>
     
 	<EfCore6Version>6.0.10</EfCore6Version>
 	

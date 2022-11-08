@@ -72,7 +72,7 @@ namespace Silky.Transaction.Schedule
                 try
                 {
                     var @lock = _distributedLockProvider.CreateLock(LockName.PhyDeleted);
-                    await using var handle = await @lock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
+                    await using var handle = await @lock.TryAcquireAsync();
                     if (handle != null)
                     {
                         var seconds = _transactionConfig.StoreDays * 24 * 60 * 60;
@@ -100,9 +100,8 @@ namespace Silky.Transaction.Schedule
         {
             try
             {
-                var @lock = _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecovery,
-                    EngineContext.Current.HostName));
-                await using var handle = await @lock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
+                var @lock = _distributedLockProvider.CreateLock(LockName.CleanRecovery);
+                await using var handle = await @lock.TryAcquireAsync();
                 if (handle != null)
                 {
                     var transactionList = await TransRepositoryStore.ListLimitByDelay(
@@ -116,10 +115,9 @@ namespace Silky.Transaction.Schedule
                     foreach (var transaction in transactionList)
                     {
                         var transactionLock =
-                            _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecoveryTransaction,
-                                transaction.TransId));
+                            _distributedLockProvider.CreateLock(string.Format(LockName.CleanRecoveryTransaction));
                         await using var transactionLockHandle =
-                            await transactionLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
+                            await transactionLock.TryAcquireAsync();
                         if (transactionLockHandle != null)
                         {
                             var exist = await TransRepositoryStore.ExistParticipantByTransId(transaction.TransId);
@@ -146,9 +144,8 @@ namespace Silky.Transaction.Schedule
         {
             try
             {
-                var @lock = _distributedLockProvider.CreateLock(string.Format(LockName.SelfTccRecovery,
-                    EngineContext.Current.HostName));
-                await using var handle = await @lock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
+                var @lock = _distributedLockProvider.CreateLock(LockName.SelfTccRecovery);
+                await using var handle = await @lock.TryAcquireAsync();
                 if (handle != null)
                 {
                     var participantList = await TransRepositoryStore.ListParticipant(
@@ -161,11 +158,9 @@ namespace Silky.Transaction.Schedule
 
                     foreach (var participant in participantList)
                     {
-                        var @participantLock = _distributedLockProvider.CreateLock(
-                            string.Format(LockName.ParticipantTccRecovery, participant.TransId,
-                                participant.ParticipantId));
+                        var @participantLock = _distributedLockProvider.CreateLock(LockName.ParticipantTccRecovery);
                         await using var participantHandle =
-                            await @participantLock.TryAcquireAsync(TimeSpan.FromMilliseconds(1000));
+                            await @participantLock.TryAcquireAsync();
                         if (participantHandle != null)
                         {
                             if (participant.ReTry > _transactionConfig.RetryMax)
