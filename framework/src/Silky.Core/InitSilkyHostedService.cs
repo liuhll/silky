@@ -40,6 +40,8 @@ namespace Silky.Core
             ");
          
             Console.WriteLine($" :: Silky ::        {VersionHelper.GetSilkyVersion()}");
+            Console.WriteLine($" :: Docs ::         https://docs.silky-fk.com\n");
+            
             _hostApplicationLifetime.ApplicationStarted.Register(async () =>
             {
                 await _moduleManager.InitializeModules();
