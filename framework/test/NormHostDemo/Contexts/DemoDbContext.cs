@@ -5,7 +5,7 @@ using Silky.EntityFrameworkCore.Contexts.Attributes;
 
 namespace NormHostDemo.Contexts
 {
-    [AppDbContext("DemoDbContext", DbProvider.MySql)]
+    [AppDbContext("DemoDbContext", DbProvider.MySqlOfficial)]
     public class DemoDbContext : SilkyDbContext<DemoDbContext>
     {
         public DemoDbContext(DbContextOptions<DemoDbContext> options) : base(options)

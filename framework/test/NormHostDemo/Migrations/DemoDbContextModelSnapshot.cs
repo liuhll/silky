@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NormHostDemo.Contexts;
 
+#nullable disable
+
 namespace NormHostDemo.Migrations
 {
     [DbContext(typeof(DemoDbContext))]
@@ -13,8 +15,8 @@ namespace NormHostDemo.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.7");
+                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("NormHostDemo.Tests.Test", b =>
                 {
