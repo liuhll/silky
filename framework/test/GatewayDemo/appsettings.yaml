@@ -58,7 +58,6 @@ governance:
   timeoutMillSeconds: 0
   maxConcurrentHandlingCount: 100
 dashboard:
-  displayWebApiInSwagger: true
   useAuth: true
 #  wrapperResponse: true
 #  dashboardLoginApi: /api/account/login
