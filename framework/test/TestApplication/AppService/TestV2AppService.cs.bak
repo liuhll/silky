@@ -6,7 +6,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 
-namespace NormHostDemo.AppService
+namespace TestApplication.AppService
 {
     [ServiceKey("v2", 1)]
     public class TestV2AppService : ITestAppService

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using Silky.Core.Reflection;
 
 namespace Silky.Core.DependencyInjection;
 

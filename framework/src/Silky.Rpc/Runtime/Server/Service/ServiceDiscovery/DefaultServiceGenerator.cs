@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Reflection;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Utils;

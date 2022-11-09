@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.Reflection;
 
 namespace Silky.Rpc.Runtime.Server
 {

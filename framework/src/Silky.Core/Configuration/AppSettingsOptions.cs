@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Silky.Core.Configuration
 {
     public class AppSettingsOptions
@@ -10,7 +8,6 @@ namespace Silky.Core.Configuration
         {
             DisplayFullErrorStack = false;
             AutoValidationParameters = true;
-            Services = new List<AppServiceOptions>();
         }
 
         /// <summary>
@@ -28,7 +25,6 @@ namespace Silky.Core.Configuration
         /// 是否自动校验输入参数
         /// </summary>
         public bool AutoValidationParameters { get; set; }
-
-        public ICollection<AppServiceOptions> Services { get; set; }
+        
     }
 }

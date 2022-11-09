@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Silky.Core.Configuration;
 
-namespace Silky.Core
+namespace Silky.Core.Reflection
 {
     public class SilkyAppTypeFinder : AppDomainTypeFinder
     {

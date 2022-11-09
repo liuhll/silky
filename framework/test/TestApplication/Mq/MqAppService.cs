@@ -4,7 +4,7 @@ using ITestApplication.Mq;
 using ITestApplication.Mq.Message;
 using MassTransit;
 
-namespace NormHostDemo.Mq;
+namespace TestApplication.Mq;
 
 public class MqAppService : IMqAppService
 {

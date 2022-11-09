@@ -47,7 +47,7 @@ serilog:
     override:
       Microsoft: Information
       Microsoft.Hosting.Lifetime: Information
-      Silky.Rpc: Information
+      Silky.Rpc: Debug
   writeTo:
     - name: File
       args:
@@ -57,7 +57,14 @@ serilog:
       args:
         outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u11}] {Message:lj} {NewLine}{Exception}{NewLine}"
         theme: "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"
-       
+  
+plugInSource:
+  appServicePlugIns:
+    - folder: ../../../../TestApplication/bin/Debug/net7.0
+      searchOption: TopDirectoryOnly
+#    - folder: ../../../../ITestApplication/bin/Debug/net7.0
+#      searchOption: TopDirectoryOnly
+  
 rabbitMq:
   host: 127.0.0.1
   port: 5672

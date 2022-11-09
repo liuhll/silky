@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 
-namespace NormHostDemo.AppService.DomainService;
+namespace TestApplication.AppService.DomainService;
 
 [InjectNamed("ATest")]
 public class ATestDomainService : ITestDomainService

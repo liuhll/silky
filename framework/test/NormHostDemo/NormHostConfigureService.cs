@@ -1,7 +1,6 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NormHostDemo.Contexts;
 using Silky.Core.Extensions;
 
 namespace NormHostDemo
@@ -10,7 +9,6 @@ namespace NormHostDemo
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "NormHostDemo");
             services.AddSilkySkyApm();
             services.AddJwt();
             // services.AddMessagePackCodec();

@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using Mapster;
-using NormHostDemo.AppService.DomainService;
 using NormHostDemo.Tests;
 using Silky.Caching;
 using Silky.Core;
@@ -15,8 +13,9 @@ using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Tcc;
+using TestApplication.AppService.DomainService;
 
-namespace NormHostDemo.AppService
+namespace TestApplication.AppService
 {
     [ServiceKey("v1", 3)]
     public class TestAppService : ITestAppService

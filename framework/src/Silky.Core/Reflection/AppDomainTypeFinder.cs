@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Runtime.Loader;
 using Silky.Core.Configuration;
 using Silky.Core.Extensions;
 
-namespace Silky.Core
+namespace Silky.Core.Reflection
 {
     public class AppDomainTypeFinder : ITypeFinder
     {
@@ -44,7 +45,6 @@ namespace Silky.Core
                 var assembly = Assembly.Load(assemblyName);
                 if (addedAssemblyNames.Contains(assembly.FullName))
                     continue;
-
                 assemblies.Add(assembly);
                 addedAssemblyNames.Add(assembly.FullName);
             }
@@ -52,13 +52,7 @@ namespace Silky.Core
 
         protected virtual bool Matches(string assemblyFullName)
         {
-            return !Matches(assemblyFullName, AssemblySkipLoadingPattern)
-                   && Matches(assemblyFullName, AssemblyRestrictToLoadingPattern);
-        }
-
-        protected virtual bool Matches(string assemblyFullName, string pattern)
-        {
-            return Regex.IsMatch(assemblyFullName, pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            return AssemblyHelper.Matches(assemblyFullName);
         }
 
         protected virtual void LoadMatchingAssemblies(string directoryPath)
@@ -213,50 +207,45 @@ namespace Silky.Core
 
         protected virtual void AddAppServiceAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
-            var appSettingsOptions = EngineContext.Current.GetOptions<AppSettingsOptions>();
-            foreach (var appService in appSettingsOptions.Services)
+            var appSettingsOptions =
+                EngineContext.Current.GetOptions<PlugInSourceOptions>(PlugInSourceOptions.PlugInSource);
+            foreach (var appService in appSettingsOptions.AppServicePlugIns)
             {
-                LoadServiceAssemblies(appService.AppServiceDirectory, appService.AppServicePattern,
-                    addedAssemblyNames, assemblies);
-                LoadServiceAssemblies(appService.AppServiceInterfaceDirectory,
-                    appService.AppServiceInterfacePattern,
+                LoadServiceAssemblies(appService.Folder, appService.Pattern, appService.SearchOption,
                     addedAssemblyNames, assemblies);
             }
         }
 
-        protected virtual void LoadServiceAssemblies(string directoryPath, string pattern,
-            List<string> loadedAssemblyNames, List<Assembly> assemblies)
+        protected virtual void LoadServiceAssemblies(string folder,
+            string pattern,
+            SearchOption searchOption,
+            List<string> loadedAssemblyNames,
+            List<Assembly> assemblies)
         {
-            if (directoryPath.IsNullOrWhiteSpace() || pattern.IsNullOrEmpty())
+            if (folder.IsNullOrWhiteSpace() || pattern.IsNullOrEmpty())
             {
                 return;
             }
 
-            if (!_fileProvider.DirectoryExists(directoryPath))
+            if (!_fileProvider.DirectoryExists(folder))
             {
                 return;
             }
 
-            foreach (var dllPath in _fileProvider.GetFiles(directoryPath, "*.dll", false))
+            var assemblyFiles = AssemblyHelper.GetAssemblyFiles(folder, searchOption);
+            if (!pattern.IsNullOrEmpty())
             {
-                try
-                {
-                    if (Matches(dllPath) && Matches(dllPath, pattern))
-                    {
-                        var dllFullPath = Path.GetFullPath(dllPath);
-                        var an = AssemblyName.GetAssemblyName(dllFullPath);
-                        if (loadedAssemblyNames.Contains(an.FullName))
-                            continue;
+                assemblyFiles = assemblyFiles.Where(a => AssemblyHelper.Matches(a, pattern));
+            }
 
-                        var assembly = Assembly.LoadFile(dllFullPath);
-                        assemblies.Add(assembly);
-                        loadedAssemblyNames.Add(assembly.FullName);
-                    }
-                }
-                catch (BadImageFormatException ex)
-                {
-                    Trace.TraceError(ex.ToString());
-                }
+            var loadAssemblies = assemblyFiles.Select(f=> AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.GetFullPath(f)));
+            foreach (var loadAssembly in loadAssemblies)
+            {
+                if (loadedAssemblyNames.Contains(loadAssembly.FullName))
+                    continue;
+                loadedAssemblyNames.Add(loadAssembly.FullName);
+                assemblies.Add(loadAssembly);
+                
             }
         }
 
@@ -269,11 +258,6 @@ namespace Silky.Core
         public bool LoadAppDomainAssemblies { get; set; } = true;
 
         public IList<string> AssemblyNames { get; set; } = new List<string>();
-
-        public string AssemblySkipLoadingPattern { get; set; } =
-            "^System|^mscorlib|^Microsoft|^AjaxControlToolkit|^Antlr3|^Autofac|^AutoMapper|^Castle|^ComponentArt|^CppCodeProvider|^DotNetOpenAuth|^EntityFramework|^EPPlus|^FluentValidation|^ImageResizer|^itextsharp|^log4net|^MaxMind|^MbUnit|^MiniProfiler|^Mono.Math|^MvcContrib|^Newtonsoft|^NHibernate|^nunit|^Org.Mentalis|^PerlRegex|^QuickGraph|^Recaptcha|^Remotion|^RestSharp|^Rhino|^Telerik|^Iesi|^TestDriven|^TestFu|^UserAgentStringLibrary|^VJSharpCodeProvider|^WebActivator|^WebDev|^WebGrease|^netstandard|^xunit";
-
-        public string AssemblyRestrictToLoadingPattern { get; set; } = ".*";
 
         #endregion
     }

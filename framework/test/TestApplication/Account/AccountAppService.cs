@@ -8,7 +8,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Jwt;
 
-namespace NormHostDemo.Account
+namespace TestApplication.Account
 {
     public class AccountAppService : IAccountAppService
     {

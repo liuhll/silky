@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITestApplication.Test;
-using Microsoft.AspNetCore.Http;
 using Silky.Core.Runtime.Session;
 using Silky.Rpc.Runtime.Client;
 
-namespace NormHostDemo.AppService;
+namespace TestApplication.AppService;
 
 public class TemplateTestAppService : ITemplateTestAppService
 {

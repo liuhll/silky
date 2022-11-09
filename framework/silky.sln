@@ -128,6 +128,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Swagger.Gen", "src\Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileHostDemo", "test\FileHostDemo\FileHostDemo.csproj", "{B9A22254-67FE-4D63-9C8C-A7C5B4DFAFD8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "test\TestApplication\TestApplication.csproj", "{28781C3F-C0AD-4D21-B385-F247E9CC4E32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -366,6 +368,10 @@ Global
 		{B9A22254-67FE-4D63-9C8C-A7C5B4DFAFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9A22254-67FE-4D63-9C8C-A7C5B4DFAFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9A22254-67FE-4D63-9C8C-A7C5B4DFAFD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28781C3F-C0AD-4D21-B385-F247E9CC4E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28781C3F-C0AD-4D21-B385-F247E9CC4E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28781C3F-C0AD-4D21-B385-F247E9CC4E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28781C3F-C0AD-4D21-B385-F247E9CC4E32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -429,6 +435,7 @@ Global
 		{D30CBA04-24E5-4E41-BDA2-7F0B576E504D} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{8B78E393-C113-461A-8E82-72F23AF7D08E} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{B9A22254-67FE-4D63-9C8C-A7C5B4DFAFD8} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
+		{28781C3F-C0AD-4D21-B385-F247E9CC4E32} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42B14424-34C2-4891-A02A-690A57FE2795}

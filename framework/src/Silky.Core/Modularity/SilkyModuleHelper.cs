@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 using Silky.Core.Extensions.Collections.Generic;
 
 namespace Silky.Core.Modularity
 {
     internal static class SilkyModuleHelper
     {
-        public static List<Type> FindAllModuleTypes(Type startupModuleType)
+        public static List<Type> FindAllModuleTypes(Type startupModuleType, ILogger logger)
         {
             var moduleTypes = new List<Type>();
+            logger.Log(LogLevel.Information, "Loaded Silky modules:");
             AddModuleAndDependenciesResursively(moduleTypes, startupModuleType);
             return moduleTypes;
         }

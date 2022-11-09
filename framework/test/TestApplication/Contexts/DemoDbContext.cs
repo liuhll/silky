@@ -3,7 +3,7 @@ using NormHostDemo.Tests;
 using Silky.EntityFrameworkCore.Contexts;
 using Silky.EntityFrameworkCore.Contexts.Attributes;
 
-namespace NormHostDemo.Contexts
+namespace TestApplication.Contexts
 {
     [AppDbContext("DemoDbContext", DbProvider.MySqlOfficial)]
     public class DemoDbContext : SilkyDbContext<DemoDbContext>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Autofac;
@@ -14,6 +15,8 @@ using Silky.Core.Extensions;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
+using Silky.Core.Modularity.PlugIns;
+using Silky.Core.Reflection;
 using Silky.Core.Runtime.Rpc;
 
 namespace Silky.Core
@@ -28,29 +31,41 @@ namespace Silky.Core
 
         public string HostName { get; private set; }
 
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration,
-            IHostEnvironment hostEnvironment)
+        internal SilkyEngine()
         {
-            _typeFinder = new SilkyAppTypeFinder();
-            ServiceProvider = services.BuildServiceProvider();
-            Configuration = configuration;
-            HostEnvironment = hostEnvironment;
             HostName = Assembly.GetEntryAssembly()?.GetName().Name;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+        }
 
+        void IEngine.SetHostEnvironment([NotNull] IHostEnvironment hostEnvironment)
+        {
+            Check.NotNull(hostEnvironment, nameof(hostEnvironment));
+            HostEnvironment = hostEnvironment;
+            _typeFinder = new SilkyAppTypeFinder();
+        }
+
+
+        void IEngine.SetConfiguration(IConfiguration configuration)
+        {
+            Check.NotNull(configuration, nameof(configuration));
+            Configuration = configuration;
+        }
+
+        void IEngine.ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            
             var configureServices = _typeFinder.FindClassesOfType<IConfigureService>();
-
             //create and sort instances of startup configurations
             var instances = configureServices
                 .Select(configureService => (IConfigureService)Activator.CreateInstance(configureService));
 
             //configure services
             foreach (var instance in instances)
-                instance.ConfigureServices(services, configuration);
+                instance.ConfigureServices(services, Configuration);
             // configure modules 
             foreach (var module in Modules)
-                module.Instance.ConfigureServices(services, configuration);
-
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                module.Instance.ConfigureServices(services, Configuration);
+            ServiceProvider = services.BuildServiceProvider();
         }
 
         public TOptions GetOptions<TOptions>()
@@ -59,10 +74,23 @@ namespace Silky.Core
             return Resolve<IOptions<TOptions>>()?.Value;
         }
 
+        public TOptions GetOptions<TOptions>(string optionName)
+            where TOptions : class, new()
+        {
+            var options = GetOptions<TOptions>();
+            if (options != null)
+            {
+                return options;
+            }
+
+            options = Configuration.GetSection(optionName).Get<TOptions>() ?? new TOptions();
+            return options;
+        }
+
         public TOptions GetOptionsMonitor<TOptions>()
             where TOptions : class, new()
         {
-            return Resolve<IOptionsMonitor<TOptions>>().CurrentValue;
+            return Resolve<IOptionsMonitor<TOptions>>()?.CurrentValue;
         }
 
         public TOptions GetOptionsMonitor<TOptions>(Action<TOptions, string> listener)
@@ -265,7 +293,8 @@ namespace Silky.Core
 
         public void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule
         {
-            Modules = moduleLoader.LoadModules(services, typeof(T));
+            var plugInSources = new PlugInSourceList();
+            Modules = moduleLoader.LoadModules(services, typeof(T), plugInSources);
         }
 
         public IServiceProvider ServiceProvider { get; set; }

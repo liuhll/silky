@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silky.Core.Modularity;
+using Silky.Core.Reflection;
 
 namespace Silky.Core
 {
@@ -21,10 +23,16 @@ namespace Silky.Core
 
         string HostName { get; }
 
-        void ConfigureServices(IServiceCollection services, IConfiguration configuration,
-            IHostEnvironment hostEnvironment);
+        internal void SetHostEnvironment([NotNull] IHostEnvironment hostEnvironment);
+
+        internal void SetConfiguration([NotNull] IConfiguration configuration);
+
+        internal void ConfigureServices(IServiceCollection services,IConfiguration configuration);
 
         TOptions GetOptions<TOptions>()
+            where TOptions : class, new();
+        
+        TOptions GetOptions<TOptions>(string optionName)
             where TOptions : class, new();
 
         TOptions GetOptionsMonitor<TOptions>()

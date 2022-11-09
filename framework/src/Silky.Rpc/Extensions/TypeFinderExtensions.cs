@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Silky.Core;
+using Silky.Core.Reflection;
 
 namespace Silky.Rpc.Extensions;
 

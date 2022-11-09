@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Silky.Core
+namespace Silky.Core.Reflection
 {
     public interface ITypeFinder
     {

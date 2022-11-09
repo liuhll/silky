@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Exceptions;
+using Silky.Core.Modularity.PlugIns;
 
 namespace Silky.Core.Modularity
 {
     public class ModuleLoader : IModuleLoader
     {
-        public ISilkyModuleDescriptor[] LoadModules(IServiceCollection services, Type startupModuleType)
+        public ISilkyModuleDescriptor[] LoadModules(
+            [NotNull]IServiceCollection services,
+            [NotNull]Type startupModuleType,
+            [NotNull]PlugInSourceList plugInSources)
         {
             Check.NotNull(services, nameof(services));
             Check.NotNull(startupModuleType, nameof(startupModuleType));
-            var modules = GetDescriptors(services, startupModuleType);
+            Check.NotNull(plugInSources, nameof(plugInSources));
 
+            var modules = GetDescriptors(services, startupModuleType);
             modules = SortByDependency(modules, startupModuleType);
             return modules.ToArray();
         }
@@ -64,7 +70,8 @@ namespace Silky.Core.Modularity
         private void FillModules(List<SilkyModuleDescriptor> modules, IServiceCollection services,
             Type startupModuleType)
         {
-            foreach (var moduleType in SilkyModuleHelper.FindAllModuleTypes(startupModuleType))
+            var logger = services.GetInitLogger<SilkyEngine>();
+            foreach (var moduleType in SilkyModuleHelper.FindAllModuleTypes(startupModuleType, logger))
             {
                 modules.Add(CreateModuleDescriptor(services, moduleType));
             }

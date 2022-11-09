@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Jwt\Silky.Jwt.csproj" />
+        <ProjectReference Include="..\..\src\Silky.MassTransit\Silky.MassTransit.csproj" />
+        <ProjectReference Include="..\..\src\Silky.ObjectMapper.Mapster\Silky.ObjectMapper.Mapster.csproj" />
+        <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Swagger.Gen\Silky.Swagger.Gen.csproj" />
+        <ProjectReference Include="..\..\src\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj" />
+        <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
+    </ItemGroup>
+
+</Project>
