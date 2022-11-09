@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Silky.Core.Configuration;
 using Silky.Core.Extensions;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
@@ -53,7 +54,6 @@ namespace Silky.Core
 
         void IEngine.ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            
             var configureServices = _typeFinder.FindClassesOfType<IConfigureService>();
             //create and sort instances of startup configurations
             var instances = configureServices
@@ -293,8 +293,31 @@ namespace Silky.Core
 
         public void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule
         {
-            var plugInSources = new PlugInSourceList();
+            var plugInSources = LoadPlugInModules();
             Modules = moduleLoader.LoadModules(services, typeof(T), plugInSources);
+        }
+
+        private PlugInSourceList LoadPlugInModules()
+        {
+            var plugInSources = new PlugInSourceList();
+            var plugInOptions = GetOptions<PlugInSourceOptions>(PlugInSourceOptions.PlugInSource);
+            if (plugInOptions.ModulePlugIn == null) return plugInSources;
+            if (plugInOptions.ModulePlugIn.Types != null)
+            {
+                plugInSources.AddTypes(plugInOptions.ModulePlugIn.Types);
+            }
+
+            if (plugInOptions.ModulePlugIn.FilePaths != null)
+            {
+                plugInSources.AddFiles(plugInOptions.ModulePlugIn.FilePaths);
+            }
+
+            if (plugInOptions.ModulePlugIn.Folders != null)
+            {
+                plugInSources.AddFolders(plugInOptions.ModulePlugIn.Folders);
+            }
+
+            return plugInSources;
         }
 
         public IServiceProvider ServiceProvider { get; set; }

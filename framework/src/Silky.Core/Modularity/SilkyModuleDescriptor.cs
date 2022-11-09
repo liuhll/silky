@@ -14,14 +14,15 @@ namespace Silky.Core.Modularity
         public ISilkyModule Instance { get; }
 
         public string Name { get; }
+        
+        public bool IsLoadedAsPlugIn { get; }
 
         public IReadOnlyList<ISilkyModuleDescriptor> Dependencies => _dependencies.ToImmutableList();
 
         private readonly List<ISilkyModuleDescriptor> _dependencies;
 
-        public SilkyModuleDescriptor(
-            [NotNull] Type type,
-            [NotNull] ISilkyModule instance)
+        public SilkyModuleDescriptor([NotNull] Type type,
+            [NotNull] ISilkyModule instance, bool isLoadedAsPlugIn)
         {
             Check.NotNull(type, nameof(type));
             Check.NotNull(instance, nameof(instance));
@@ -35,8 +36,8 @@ namespace Silky.Core.Modularity
             Type = type;
             Assembly = type.Assembly;
             Instance = instance;
+            IsLoadedAsPlugIn = isLoadedAsPlugIn;
             Name = Instance.Name;
-
             _dependencies = new List<ISilkyModuleDescriptor>();
         }
 

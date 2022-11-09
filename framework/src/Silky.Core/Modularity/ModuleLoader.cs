@@ -13,15 +13,15 @@ namespace Silky.Core.Modularity
     public class ModuleLoader : IModuleLoader
     {
         public ISilkyModuleDescriptor[] LoadModules(
-            [NotNull]IServiceCollection services,
-            [NotNull]Type startupModuleType,
-            [NotNull]PlugInSourceList plugInSources)
+            [NotNull] IServiceCollection services,
+            [NotNull] Type startupModuleType,
+            [NotNull] PlugInSourceList plugInSources)
         {
             Check.NotNull(services, nameof(services));
             Check.NotNull(startupModuleType, nameof(startupModuleType));
             Check.NotNull(plugInSources, nameof(plugInSources));
 
-            var modules = GetDescriptors(services, startupModuleType);
+            var modules = GetDescriptors(services, startupModuleType, plugInSources);
             modules = SortByDependency(modules, startupModuleType);
             return modules.ToArray();
         }
@@ -34,10 +34,13 @@ namespace Silky.Core.Modularity
             return sortedModules;
         }
 
-        private List<ISilkyModuleDescriptor> GetDescriptors(IServiceCollection services, Type startupModuleType)
+        private List<ISilkyModuleDescriptor> GetDescriptors(
+            IServiceCollection services,
+            Type startupModuleType,
+            PlugInSourceList plugInSources)
         {
             var modules = new List<SilkyModuleDescriptor>();
-            FillModules(modules, services, startupModuleType);
+            FillModules(modules, services, startupModuleType, plugInSources);
             SetDependencies(modules);
 
             return modules.Cast<ISilkyModuleDescriptor>().ToList();
@@ -67,19 +70,36 @@ namespace Silky.Core.Modularity
             }
         }
 
-        private void FillModules(List<SilkyModuleDescriptor> modules, IServiceCollection services,
-            Type startupModuleType)
+        private void FillModules(List<SilkyModuleDescriptor> modules,
+            IServiceCollection services,
+            Type startupModuleType,
+            PlugInSourceList plugInSources)
         {
             var logger = services.GetInitLogger<SilkyEngine>();
+
+            //All modules starting from the startup module
             foreach (var moduleType in SilkyModuleHelper.FindAllModuleTypes(startupModuleType, logger))
             {
                 modules.Add(CreateModuleDescriptor(services, moduleType));
             }
+
+            //Plugin modules
+            foreach (var moduleType in plugInSources.GetAllModules(logger))
+            {
+                if (modules.Any(m => m.Type == moduleType))
+                {
+                    continue;
+                }
+
+                modules.Add(CreateModuleDescriptor(services, moduleType, isLoadedAsPlugIn: true));
+            }
         }
 
-        private SilkyModuleDescriptor CreateModuleDescriptor(IServiceCollection services, Type moduleType)
+        private SilkyModuleDescriptor CreateModuleDescriptor(IServiceCollection services, Type moduleType,
+            bool isLoadedAsPlugIn = false)
         {
-            return new SilkyModuleDescriptor(moduleType, CreateAndRegisterModule(services, moduleType));
+            return new SilkyModuleDescriptor(moduleType, CreateAndRegisterModule(services, moduleType),
+                isLoadedAsPlugIn);
         }
 
         private ISilkyModule CreateAndRegisterModule(IServiceCollection services, Type moduleType)

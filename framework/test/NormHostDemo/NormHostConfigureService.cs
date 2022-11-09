@@ -2,6 +2,7 @@ using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Extensions;
+using TestApplication.Contexts;
 
 namespace NormHostDemo
 {
@@ -11,8 +12,8 @@ namespace NormHostDemo
         {
             services.AddSilkySkyApm();
             services.AddJwt();
-            // services.AddMessagePackCodec();
-            
+            services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "TestApplication");
+        
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, configurator) =>

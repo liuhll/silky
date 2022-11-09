@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 
 namespace Silky.Core.Configuration;
 
@@ -6,14 +6,14 @@ public class ModulePlugInOption
 {
     public ModulePlugInOption()
     {
-        Folders = new List<ModuleFolderPlugInOption>();
-        FilePaths = new List<string>();
-        Types = new List<string>();
+        Folders = Array.Empty<ModuleFolderPlugInOption>();
+        FilePaths = Array.Empty<string>();
+        Types = Array.Empty<string>();
     }
 
-    public ICollection<ModuleFolderPlugInOption> Folders { get; set; }
+    public ModuleFolderPlugInOption[] Folders { get; set; }
 
-    public ICollection<string> FilePaths { get; set; }
-    
-    public ICollection<string> Types { get; set; }
+    public string[] FilePaths { get; set; }
+
+    public string[] Types { get; set; }
 }

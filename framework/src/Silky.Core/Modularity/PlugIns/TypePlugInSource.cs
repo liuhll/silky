@@ -12,10 +12,10 @@ public class TypePlugInSource : IPlugInSource
 
     public TypePlugInSource(params string[] moduleTypeNames)
     {
-        _moduleTypes = LoadmoduleTypes(moduleTypeNames);
+        _moduleTypes = LoadModuleTypes(moduleTypeNames);
     }
 
-    private Type[] LoadmoduleTypes(params string[] moduleTypeNames)
+    private Type[] LoadModuleTypes(params string[] moduleTypeNames)
     {
         var moduleTypes = new List<Type>();
         foreach (var moduleTypeName in moduleTypeNames)
@@ -23,6 +23,11 @@ public class TypePlugInSource : IPlugInSource
             if (!moduleTypeNames.IsNullOrEmpty())
             {
                 var type = Type.GetType(moduleTypeName);
+                if (type == null)
+                {
+                    throw new SilkyException($"Cannot load plugin of {moduleTypeName} Type");
+                }
+
                 if (!SilkyModule.IsSilkyModule(type))
                 {
                     throw new SilkyException(type.FullName + "is not a module type ");

@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <!--    <Import Project="..\pfx.props" />-->
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
+        <ProjectReference Include="..\..\src\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\TestApplication\TestApplication.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'">
