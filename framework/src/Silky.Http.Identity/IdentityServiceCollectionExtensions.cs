@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Http.Identity;
 using Silky.Http.Identity.Authentication.Handlers;
@@ -49,7 +50,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
             services.TryAddSingleton<IAuthorizationHandler, TAuthorizationHandler>();
-            services.AddSilkyAuthorization();
+            services.AddSilkyAuthorization(configure);
             return services;
         }
 

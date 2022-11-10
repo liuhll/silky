@@ -9,6 +9,8 @@ namespace ITestApplication.Mq;
 [Authorize]
 public interface IMqAppService
 {
+    [Authorize("MqPublish")]
+    [Authorize("Mq")]
     [HttpPost]
     Task Publish(string data);
 
