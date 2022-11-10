@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Silky.Http.Identity.Authorization.Handlers;
+using Silky.Rpc.Extensions;
 
 namespace GatewayDemo.Authorization
 {
@@ -17,7 +18,7 @@ namespace GatewayDemo.Authorization
 
         protected async override Task<bool> PipelineAsync(AuthorizationHandlerContext context, HttpContext httpContext)
         {
-            // var serviceEntry = httpContext.GetServiceEntry();
+            var serviceEntryDescriptor = httpContext.GetServiceEntryDescriptor();
             // if (serviceEntry.Services.Id.Contains("ITestApplication"))
             // {
             //     _logger.LogInformation($"{serviceEntry.Id} has permission");

@@ -16,6 +16,12 @@ namespace Silky.Rpc.Extensions
             var serviceEntry = context.GetEndpoint()?.Metadata.GetMetadata<ServiceEntry>();
             return serviceEntry;
         }
+        
+        public static ServiceEntryDescriptor GetServiceEntryDescriptor(this HttpContext context)
+        {
+            var serviceEntryDescriptor = context.GetEndpoint()?.Metadata.GetMetadata<ServiceEntryDescriptor>();
+            return serviceEntryDescriptor;
+        }
 
         public static void SignoutToSwagger(this HttpContext httpContext)
         {
