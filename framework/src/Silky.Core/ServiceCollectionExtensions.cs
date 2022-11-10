@@ -26,13 +26,19 @@ namespace Silky.Core
             services.AddOptions<PlugInSourceOptions>()
                 .Bind(configuration.GetSection(PlugInSourceOptions.PlugInSource));
             var engine = EngineContext.Create();
-            engine.SetConfiguration(configuration);
             engine.SetHostEnvironment(hostEnvironment);
+            engine.SetConfiguration(configuration);
+            
             var moduleLoader = new ModuleLoader();
             engine.LoadModules<T>(services, moduleLoader);
             services.TryAddSingleton<IModuleLoader>(moduleLoader);
             engine.ConfigureServices(services, configuration);
             return engine;
+        }
+        
+        public static IServiceCollection ReplaceConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            return services.Replace(ServiceDescriptor.Singleton<IConfiguration>(configuration));
         }
     }
 }

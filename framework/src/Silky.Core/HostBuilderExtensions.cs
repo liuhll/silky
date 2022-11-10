@@ -1,24 +1,36 @@
-﻿using System.IO;
+﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Core.Modularity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Core.Configuration;
 using Silky.Core.Extensions;
 
 namespace Microsoft.Extensions.Hosting
 {
     public static class HostBuilderExtensions
     {
-        public static IHostBuilder RegisterSilkyServices<T>(this IHostBuilder builder) where T : StartUpModule
+        public static IHostBuilder RegisterSilkyServices<T>(
+            this IHostBuilder builder,
+            Action<SilkyApplicationCreationOptions> optionsAction = null)
+            where T : StartUpModule
         {
             IEngine engine = null;
             IServiceCollection services = null;
-            builder.UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .UseContentRoot(Directory.GetCurrentDirectory())
+            SilkyApplicationCreationOptions applicationCreationOptions = null;
+
+            builder
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureServices((hostBuilder, sc) =>
                 {
+                    applicationCreationOptions = new SilkyApplicationCreationOptions(sc);
+                    optionsAction?.Invoke(applicationCreationOptions);
+                    var configuration = ConfigurationHelper.BuildConfiguration(
+                        hostBuilder.HostingEnvironment,
+                        applicationCreationOptions.Configuration);
+                    hostBuilder.Configuration = configuration;
+                    sc.ReplaceConfiguration(configuration);
                     engine = sc.AddSilkyServices<T>(hostBuilder.Configuration,
                         hostBuilder.HostingEnvironment);
                     services = sc;
@@ -28,34 +40,7 @@ namespace Microsoft.Extensions.Hosting
                     engine.RegisterModules(services, builder);
                     engine.RegisterDependencies(builder);
                 })
-                .ConfigureAppConfiguration((hosting, config) =>
-                {
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true,
-                            true);
-
-                    // Adds YAML settings later
-                    config.AddYamlFile("appsettings.yml", optional: true, true)
-                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true,
-                            true)
-                        .AddYamlFile("appsettings.yaml", optional: true, true)
-                        .AddYamlFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true,
-                            true);
-
-                    // add RateLimit configfile
-                    config.AddJsonFile("ratelimit.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"ratelimit.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true,
-                            true);
-                    config.AddYamlFile("ratelimit.yml", optional: true, reloadOnChange: true)
-                        .AddYamlFile($"ratelimit.{hosting.HostingEnvironment.EnvironmentName}.yml", optional: true,
-                            true)
-                        .AddYamlFile("ratelimit.yaml", optional: true, reloadOnChange: true)
-                        .AddYamlFile($"ratelimit.{hosting.HostingEnvironment.EnvironmentName}.yaml", optional: true,
-                            true);
-                    config.AddEnvironmentVariables();
-                })
                 ;
-
             return builder;
         }
 
