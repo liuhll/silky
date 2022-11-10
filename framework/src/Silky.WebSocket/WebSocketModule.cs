@@ -77,15 +77,15 @@ namespace Silky.WebSocket
             return socketServer;
         }
 
-        public override async Task Initialize(ApplicationContext applicationContext)
+        public override async Task Initialize(ApplicationInitializationContext context)
         {
-            var typeFinder = applicationContext.ServiceProvider.GetRequiredService<ITypeFinder>();
+            var typeFinder = context.ServiceProvider.GetRequiredService<ITypeFinder>();
             var webSocketServices = GetWebSocketServices(typeFinder);
             var webSocketServerBootstrap =
-                applicationContext.ServiceProvider.GetRequiredService<WebSocketServerBootstrap>();
+                context.ServiceProvider.GetRequiredService<WebSocketServerBootstrap>();
             webSocketServerBootstrap.Initialize(webSocketServices);
             var serverProvider =
-                applicationContext.ServiceProvider.GetRequiredService<IServerProvider>();
+                context.ServiceProvider.GetRequiredService<IServerProvider>();
 
             serverProvider.AddWsServices();
         }

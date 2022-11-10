@@ -10,7 +10,7 @@ namespace Silky.Rpc.Extensions
 {
     public static class ApplicationContextExtensions
     {
-        public static bool IsAddRegistryCenterService(this ApplicationContext applicationContext,
+        public static bool IsAddRegistryCenterService(this ApplicationInitializationContext context,
             out string registryCenterType)
         {
             registryCenterType = EngineContext.Current.Configuration.GetValue<string>("RegistryCenter:Type");
@@ -19,7 +19,7 @@ namespace Silky.Rpc.Extensions
                 throw new SilkyException("You must specify a service registry module");
             }
 
-            return applicationContext.ServiceProvider.GetService<IServerRegister>() != null;
+            return context.ServiceProvider.GetService<IServerRegister>() != null;
         }
     }
 }

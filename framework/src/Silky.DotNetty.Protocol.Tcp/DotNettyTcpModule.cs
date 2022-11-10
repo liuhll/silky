@@ -19,13 +19,13 @@ namespace Silky.DotNetty.Protocol.Tcp
                 .PropertiesAutowired();
         }
 
-        public override async Task Initialize(ApplicationContext applicationContext)
+        public override async Task Initialize(ApplicationInitializationContext context)
         {
             var messageListener =
-                applicationContext.ServiceProvider.GetRequiredService<DotNettyTcpServerMessageListener>();
+                context.ServiceProvider.GetRequiredService<DotNettyTcpServerMessageListener>();
             await messageListener.Listen();
             var serverProvider =
-                applicationContext.ServiceProvider.GetRequiredService<IServerProvider>();
+                context.ServiceProvider.GetRequiredService<IServerProvider>();
             serverProvider.AddRpcServices();
         }
     }

@@ -38,7 +38,7 @@ namespace Silky.Transaction
                 ;
         }
 
-        public override async Task Initialize(ApplicationContext applicationContext)
+        public override async Task Initialize(ApplicationInitializationContext context)
         {
             if (!EngineContext.Current.IsRegistered(typeof(IDistributedLockProvider)))
             {

@@ -70,15 +70,20 @@ namespace Silky.Rpc
             RegisterServicesForParameterResolver(builder);
         }
 
-        public override async Task Initialize(ApplicationContext applicationContext)
+        public override Task PreInitialize(ApplicationInitializationContext context)
         {
-            if (!applicationContext.IsAddRegistryCenterService(out var registryCenterType))
+            if (!context.IsAddRegistryCenterService(out var registryCenterType))
             {
                 throw new SilkyException(
                     $"You did not specify the dependent {registryCenterType} service registry module");
             }
+            return Task.CompletedTask;
+        }
 
-            var messageListeners = applicationContext.ServiceProvider.GetServices<IServerMessageListener>();
+        public override async Task PostInitialize(ApplicationInitializationContext context)
+        {
+            
+            var messageListeners = context.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
                 foreach (var messageListener in messageListeners)
@@ -116,8 +121,7 @@ namespace Silky.Rpc
                 }
             }
         }
-
-
+        
         private void RegisterServicesForAddressSelector(ContainerBuilder builder)
         {
             builder.RegisterType<PollingRpcEndpointSelector>()

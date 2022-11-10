@@ -31,12 +31,12 @@ public abstract class HostAgentModule : StartUpModule
         }
     }
     
-    public override async Task Initialize(ApplicationContext applicationContext)
+    public override async Task Initialize(ApplicationInitializationContext context)
     {
         var options = EngineContext.Current.GetOptions<RpcOptions>();
         var logger = EngineContext.Current.Resolve<ILogger<HostAgentModule>>();
         var serverRouteRegister =
-            applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
+            context.ServiceProvider.GetRequiredService<IServerRegister>();
         var policy = Policy
             .Handle<TimeoutException>()
             .WaitAndRetryAsync(options.RegisterFailureRetryCount,
@@ -53,10 +53,10 @@ public abstract class HostAgentModule : StartUpModule
         await policy.ExecuteAsync(async () => { await serverRouteRegister.RegisterServer(); });
     }
 
-    public override async Task Shutdown(ApplicationContext applicationContext)
+    public override async Task Shutdown(ApplicationShutdownContext context)
     {
         var serverRegister =
-            applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
+            context.ServiceProvider.GetRequiredService<IServerRegister>();
         await serverRegister.RemoveSelf();
     }
 }

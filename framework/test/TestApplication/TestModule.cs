@@ -9,11 +9,11 @@ namespace TestApplication;
 
 public class TestModule : SilkyModule
 {
-    public override Task Initialize(ApplicationContext applicationContext)
+    public override Task Initialize(ApplicationInitializationContext context)
     {
-        if (applicationContext.HostEnvironment.IsDevelopment())
+        if (context.HostEnvironment.IsDevelopment())
         {
-            using var scope = applicationContext.ServiceProvider.CreateScope();
+            using var scope = context.ServiceProvider.CreateScope();
             var demoDbContext = scope.ServiceProvider.GetRequiredService<DemoDbContext>();
             return demoDbContext.Database.MigrateAsync();
         }

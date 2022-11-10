@@ -18,12 +18,12 @@ public class SwaggerGenModule : SilkyModule
         services.AddSwaggerInfoService(configuration);
     }
 
-    public override async Task Initialize(ApplicationContext applicationContext)
+    public override async Task Initialize(ApplicationInitializationContext context)
     {
         var registryCenterOptions = EngineContext.Current.Configuration.GetRegistryCenterOptions();
         if (registryCenterOptions.RegisterSwaggerDoc)
         {
-            var swaggerInfoRegister = applicationContext.ServiceProvider.GetRequiredService<ISwaggerInfoRegister>();
+            var swaggerInfoRegister = context.ServiceProvider.GetRequiredService<ISwaggerInfoRegister>();
             await swaggerInfoRegister.Register();
         }
     }

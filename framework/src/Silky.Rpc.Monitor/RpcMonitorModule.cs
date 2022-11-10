@@ -16,16 +16,16 @@ namespace Silky.Rpc.Monitor
             services.AddRpcSupervisor();
         }
 
-        public override async Task Initialize(ApplicationContext applicationContext)
+        public override async Task Initialize(ApplicationInitializationContext context)
         {
-            await applicationContext.ServiceProvider.GetRequiredService<IServerHandleMonitor>().ClearCache();
-            await applicationContext.ServiceProvider.GetRequiredService<IInvokeMonitor>().ClearCache();
+            await context.ServiceProvider.GetRequiredService<IServerHandleMonitor>().ClearCache();
+            await context.ServiceProvider.GetRequiredService<IInvokeMonitor>().ClearCache();
         }
 
-        public override async Task Shutdown(ApplicationContext applicationContext)
+        public override async Task Shutdown(ApplicationShutdownContext context)
         {
-            await applicationContext.ServiceProvider.GetRequiredService<IServerHandleMonitor>().ClearCache();
-            await applicationContext.ServiceProvider.GetRequiredService<IInvokeMonitor>().ClearCache();
+            await context.ServiceProvider.GetRequiredService<IServerHandleMonitor>().ClearCache();
+            await context.ServiceProvider.GetRequiredService<IInvokeMonitor>().ClearCache();
         }
     }
 }

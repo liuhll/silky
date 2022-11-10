@@ -24,6 +24,25 @@ namespace Silky.Core.Modularity
             Logger = NullLogger<ModuleManager>.Instance;
         }
 
+        public async Task PreInitializeModules()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            foreach (var module in _moduleContainer.Modules)
+            {
+                try
+                {
+                    Logger.LogDebug("PreInitialize the module {0}", module.Name);
+                    await module.Instance.PreInitialize(
+                        new ApplicationInitializationContext(scope.ServiceProvider, _hostEnvironment));
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError($"PreInitializing the {module.Name} module is an error, reason: {e.Message}");
+                    throw;
+                }
+            }
+        }
+
         public async Task InitializeModules()
         {
             using var scope = _serviceProvider.CreateScope();
@@ -31,9 +50,9 @@ namespace Silky.Core.Modularity
             {
                 try
                 {
-                    Logger.LogInformation("Initialize the module {0}", module.Name);
+                    Logger.LogDebug("Initialize the module {0}", module.Name);
                     await module.Instance.Initialize(
-                        new ApplicationContext(scope.ServiceProvider, _moduleContainer, _hostEnvironment));
+                        new ApplicationInitializationContext(scope.ServiceProvider, _hostEnvironment));
                 }
                 catch (Exception e)
                 {
@@ -41,8 +60,25 @@ namespace Silky.Core.Modularity
                     throw;
                 }
             }
+        }
 
-            Logger.LogInformation("Initialized all Silky modules.");
+        public async Task PostInitializeModules()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            foreach (var module in _moduleContainer.Modules)
+            {
+                try
+                {
+                    Logger.LogDebug("PostInitialize the module {0}", module.Name);
+                    await module.Instance.PostInitialize(
+                        new ApplicationInitializationContext(scope.ServiceProvider, _hostEnvironment));
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError($"PostInitializing the {module.Name} module is an error, reason: {e.Message}");
+                    throw;
+                }
+            }
         }
 
         public async Task ShutdownModules()
@@ -52,8 +88,8 @@ namespace Silky.Core.Modularity
             {
                 try
                 {
-                    Logger.LogInformation("Shutdown the module {0}", module.Name);
-                    await module.Instance.Shutdown(new ApplicationContext(scope.ServiceProvider, _moduleContainer,
+                    Logger.LogDebug("Shutdown the module {0}", module.Name);
+                    await module.Instance.Shutdown(new ApplicationShutdownContext(scope.ServiceProvider,
                         _hostEnvironment));
                 }
                 catch (Exception e)
@@ -61,8 +97,6 @@ namespace Silky.Core.Modularity
                     Logger.LogWarning($"Shutdown the {module.Name} module is an error, reason: {e.Message}");
                 }
             }
-
-            Logger.LogInformation("Shutdown all Silky modules.");
         }
     }
 }
