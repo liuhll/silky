@@ -126,7 +126,7 @@ namespace Silky.Core
         public ITypeFinder TypeFinder => _typeFinder;
 
 
-        public void ConfigureRequestPipeline(IApplicationBuilder application)
+        void IEngine.ConfigureRequestPipeline(IApplicationBuilder application)
         {
             ServiceProvider = application.ApplicationServices;
             var typeFinder = Resolve<ITypeFinder>();
@@ -259,7 +259,7 @@ namespace Silky.Core
             return serviceProvider;
         }
 
-        void IEngine.SetApplicationName([NotNull]string applicationName)
+        void IEngine.SetApplicationName([NotNull] string applicationName)
         {
             Check.NotNullOrWhiteSpace(applicationName, nameof(applicationName));
             HostName = applicationName;
