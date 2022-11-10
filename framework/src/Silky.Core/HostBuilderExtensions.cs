@@ -18,21 +18,21 @@ namespace Microsoft.Extensions.Hosting
         {
             IEngine engine = null;
             IServiceCollection services = null;
-            SilkyApplicationCreationOptions applicationCreationOptions = null;
+            SilkyApplicationCreationOptions options = null;
 
             builder
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureServices((hostBuilder, sc) =>
                 {
-                    applicationCreationOptions = new SilkyApplicationCreationOptions(sc);
-                    optionsAction?.Invoke(applicationCreationOptions);
+                    options = new SilkyApplicationCreationOptions(sc);
+                    optionsAction?.Invoke(options);
                     var configuration = ConfigurationHelper.BuildConfiguration(
                         hostBuilder.HostingEnvironment,
-                        applicationCreationOptions.Configuration);
+                        options.Configuration);
                     hostBuilder.Configuration = configuration;
                     sc.ReplaceConfiguration(configuration);
                     engine = sc.AddSilkyServices<T>(hostBuilder.Configuration,
-                        hostBuilder.HostingEnvironment, applicationCreationOptions);
+                        hostBuilder.HostingEnvironment, options);
                     services = sc;
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>

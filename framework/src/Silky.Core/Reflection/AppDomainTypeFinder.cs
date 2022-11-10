@@ -5,18 +5,23 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using JetBrains.Annotations;
 using Silky.Core.Configuration;
 using Silky.Core.Extensions;
 
 namespace Silky.Core.Reflection
 {
-    public class AppDomainTypeFinder : ITypeFinder
+    internal class AppDomainTypeFinder : ITypeFinder
     {
         private bool _ignoreReflectionErrors = true;
         protected ISilkyFileProvider _fileProvider;
+        protected AppServicePlugInSourceList _servicePlugInSources;
 
-        public AppDomainTypeFinder(ISilkyFileProvider fileProvider = null)
+        public AppDomainTypeFinder([NotNull] AppServicePlugInSourceList servicePlugInSources,
+            ISilkyFileProvider fileProvider = null)
         {
+            Check.NotNull(servicePlugInSources, nameof(servicePlugInSources));
+            _servicePlugInSources = servicePlugInSources;
             _fileProvider = fileProvider ?? CommonSilkyHelpers.DefaultFileProvider;
         }
 
@@ -207,9 +212,8 @@ namespace Silky.Core.Reflection
 
         protected virtual void AddAppServiceAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
-            var appSettingsOptions =
-                EngineContext.Current.GetOptions<PlugInSourceOptions>(PlugInSourceOptions.PlugInSource);
-            foreach (var appService in appSettingsOptions.AppServicePlugIns)
+            var appServiceSources = _servicePlugInSources.GetAppServiceSources();
+            foreach (var appService in appServiceSources)
             {
                 LoadServiceAssemblies(appService.Folder, appService.Pattern, appService.SearchOption,
                     addedAssemblyNames, assemblies);
@@ -238,14 +242,14 @@ namespace Silky.Core.Reflection
                 assemblyFiles = assemblyFiles.Where(a => AssemblyHelper.Matches(a, pattern));
             }
 
-            var loadAssemblies = assemblyFiles.Select(f=> AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.GetFullPath(f)));
+            var loadAssemblies =
+                assemblyFiles.Select(f => AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.GetFullPath(f)));
             foreach (var loadAssembly in loadAssemblies)
             {
                 if (loadedAssemblyNames.Contains(loadAssembly.FullName))
                     continue;
                 loadedAssemblyNames.Add(loadAssembly.FullName);
                 assemblies.Add(loadAssembly);
-                
             }
         }
 

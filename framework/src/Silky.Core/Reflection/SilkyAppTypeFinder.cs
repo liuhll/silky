@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using JetBrains.Annotations;
+using Silky.Core.Configuration;
 
 namespace Silky.Core.Reflection
 {
-    public class SilkyAppTypeFinder : AppDomainTypeFinder
+    internal class SilkyAppTypeFinder : AppDomainTypeFinder
     {
         private bool _binFolderAssembliesLoaded;
 
-        public SilkyAppTypeFinder(ISilkyFileProvider fileProvider = null) : base(fileProvider)
+        public SilkyAppTypeFinder([NotNull] AppServicePlugInSourceList servicePlugInSources,
+            ISilkyFileProvider fileProvider = null) : base(servicePlugInSources,
+            fileProvider)
         {
         }
 

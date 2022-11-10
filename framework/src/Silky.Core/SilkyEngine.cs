@@ -38,22 +38,33 @@ namespace Silky.Core
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
+        void IEngine.SetTypeFinder(IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
+            [NotNull] AppServicePlugInSourceList appServicePlugInSources)
+        {
+            Check.NotNull(fileProvider, nameof(fileProvider));
+            Check.NotNull(appServicePlugInSources, nameof(appServicePlugInSources));
+
+            _typeFinder = new SilkyAppTypeFinder(appServicePlugInSources, fileProvider);
+            services.AddSingleton(_typeFinder);
+        }
+
         void IEngine.SetHostEnvironment([NotNull] IHostEnvironment hostEnvironment)
         {
             Check.NotNull(hostEnvironment, nameof(hostEnvironment));
             HostEnvironment = hostEnvironment;
-            _typeFinder = new SilkyAppTypeFinder();
         }
 
 
-        void IEngine.SetConfiguration(IConfiguration configuration)
+        void IEngine.SetConfiguration([NotNull] IConfiguration configuration)
         {
             Check.NotNull(configuration, nameof(configuration));
             Configuration = configuration;
         }
 
-        void IEngine.ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        void IEngine.ConfigureServices([NotNull] IServiceCollection services, [NotNull] IConfiguration configuration)
         {
+            Check.NotNull(services, nameof(services));
+            Check.NotNull(configuration, nameof(configuration));
             var configureServices = _typeFinder.FindClassesOfType<IConfigureService>();
             //create and sort instances of startup configurations
             var instances = configureServices
@@ -248,6 +259,12 @@ namespace Silky.Core
             return serviceProvider;
         }
 
+        void IEngine.SetApplicationName([NotNull]string applicationName)
+        {
+            Check.NotNullOrWhiteSpace(applicationName, nameof(applicationName));
+            HostName = applicationName;
+        }
+
         public void RegisterDependencies(ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterInstance(this).As<IEngine>().SingleInstance();
@@ -299,8 +316,9 @@ namespace Silky.Core
             {
                 throw new SilkyException($"{startUpType.FullName} is not a Silky module type.");
             }
+
             LoadConfigPlugInModules(plugInSources);
-            
+
             Modules = moduleLoader.LoadModules(services, startUpType, plugInSources);
         }
 
