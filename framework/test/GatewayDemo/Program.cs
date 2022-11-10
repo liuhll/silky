@@ -15,11 +15,15 @@ namespace GatewayDemo
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
                 .ConfigureSilkyGatewayDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>()
-                        .UseSerilogDefault();
-                });
-            
+                    {
+                        webBuilder.UseStartup<Startup>()
+                            .UseSerilogDefault();
+                    },
+                    options =>
+                    {
+                        options.ApplicationName = "SilkyGateway";
+                    });
+
             if (hostBuilder.IsEnvironment("Apollo"))
             {
                 hostBuilder.AddApollo();

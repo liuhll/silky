@@ -13,9 +13,9 @@ namespace NormHostDemo
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host
-                .CreateDefaultBuilder(args)
-                .ConfigureSilkyGeneralHostDefaults()
-                .UseSerilogDefault()
+                    .CreateDefaultBuilder(args)
+                    .ConfigureSilkyGeneralHostDefaults(options => { options.ApplicationName = "NormHost"; })
+                    .UseSerilogDefault()
                 ;
             if (hostBuilder.IsEnvironment("Apollo"))
             {

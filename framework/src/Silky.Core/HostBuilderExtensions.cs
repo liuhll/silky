@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
 using Silky.Core;
 using Silky.Core.Modularity;
 using Microsoft.Extensions.DependencyInjection;
