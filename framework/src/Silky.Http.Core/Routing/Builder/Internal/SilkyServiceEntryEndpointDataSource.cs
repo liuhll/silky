@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ namespace Silky.Http.Core.Routing.Builder.Internal
         private readonly IServiceEntryManager _serviceEntryManager;
         private readonly List<Action<EndpointBuilder>> Conventions;
         private readonly ServiceEntryEndpointFactory _serviceEntryEndpointFactory;
-        private readonly object Lock = new ();
+        private readonly object Lock = new();
 
         public SilkyServiceEntryEndpointDataSource(IServiceEntryManager serviceEntryManager,
             ServiceEntryEndpointFactory serviceEntryEndpointFactory)
@@ -83,7 +84,7 @@ namespace Silky.Http.Core.Routing.Builder.Internal
         {
             lock (Lock)
             {
-                var serviceEntries = _serviceEntryManager.GetAllEntries();
+                var serviceEntries = _serviceEntryManager.GetAllEntries().Distinct().ToArray();
                 var endpoints = CreateEndpoints(serviceEntries, Conventions);
 
                 // See comments in DefaultActionDescriptorCollectionProvider. These steps are done

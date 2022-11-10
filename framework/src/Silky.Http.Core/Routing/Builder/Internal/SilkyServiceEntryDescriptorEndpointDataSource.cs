@@ -76,7 +76,7 @@ public class SilkyServiceEntryDescriptorEndpointDataSource : EndpointDataSource
         lock (Lock)
         {
             var serviceEntryDescriptors =
-                _serverManager.Servers.SelectMany(p => p.Services).SelectMany(p => p.ServiceEntries).ToArray();
+                _serverManager.Servers.SelectMany(p => p.Services).SelectMany(p => p.ServiceEntries).Distinct().ToArray();
 
             var endpoints = CreateEndpoints(serviceEntryDescriptors, Conventions);
 
