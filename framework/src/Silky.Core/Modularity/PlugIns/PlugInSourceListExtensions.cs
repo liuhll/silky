@@ -10,7 +10,7 @@ public static class PlugInSourceListExtensions
     public static void AddFolder(
         [NotNull] this PlugInSourceList list,
         [NotNull] string folder,
-        string pattern,
+        string pattern = null,
         SearchOption searchOption = SearchOption.TopDirectoryOnly)
     {
         Check.NotNull(list, nameof(list));

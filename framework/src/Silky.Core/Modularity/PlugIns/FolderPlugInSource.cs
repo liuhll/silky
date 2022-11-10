@@ -22,7 +22,7 @@ public class FolderPlugInSource : IPlugInSource
 
     public FolderPlugInSource(
         [NotNull] string folder,
-        string pattern,
+        string pattern = null,
         SearchOption searchOption = SearchOption.TopDirectoryOnly)
     {
         Check.NotNull(folder, nameof(folder));
@@ -61,7 +61,7 @@ public class FolderPlugInSource : IPlugInSource
     {
         var assemblyFiles = AssemblyHelper.GetAssemblyFiles(Folder, SearchOption);
 
-        if (Pattern.IsNullOrEmpty())
+        if (!Pattern.IsNullOrEmpty())
         {
             assemblyFiles = assemblyFiles.Where(a => AssemblyHelper.Matches(a, Pattern));
         }
