@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -13,7 +14,7 @@ namespace Silky.Core
     public static class ServiceCollectionExtensions
     {
         public static IEngine AddSilkyServices<T>(this IServiceCollection services, IConfiguration configuration,
-            IHostEnvironment hostEnvironment) where T : StartUpModule
+            IHostEnvironment hostEnvironment, SilkyApplicationCreationOptions options) where T : StartUpModule
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             CommonSilkyHelpers.DefaultFileProvider = new SilkyFileProvider(hostEnvironment);
@@ -28,15 +29,16 @@ namespace Silky.Core
             var engine = EngineContext.Create();
             engine.SetHostEnvironment(hostEnvironment);
             engine.SetConfiguration(configuration);
-            
+
             var moduleLoader = new ModuleLoader();
-            engine.LoadModules<T>(services, moduleLoader);
+            engine.LoadModules<T>(services, moduleLoader, options.PlugInSources);
             services.TryAddSingleton<IModuleLoader>(moduleLoader);
             engine.ConfigureServices(services, configuration);
             return engine;
         }
-        
-        public static IServiceCollection ReplaceConfiguration(this IServiceCollection services, IConfiguration configuration)
+
+        public static IServiceCollection ReplaceConfiguration(this IServiceCollection services,
+            IConfiguration configuration)
         {
             return services.Replace(ServiceDescriptor.Singleton<IConfiguration>(configuration));
         }

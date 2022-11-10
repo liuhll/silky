@@ -15,6 +15,11 @@ public class TypePlugInSource : IPlugInSource
         _moduleTypes = LoadModuleTypes(moduleTypeNames);
     }
 
+    public TypePlugInSource(params Type[] moduleTypes)
+    {
+        _moduleTypes = moduleTypes;
+    }
+
     private Type[] LoadModuleTypes(params string[] moduleTypeNames)
     {
         var moduleTypes = new List<Type>();

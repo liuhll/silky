@@ -32,7 +32,7 @@ namespace Microsoft.Extensions.Hosting
                     hostBuilder.Configuration = configuration;
                     sc.ReplaceConfiguration(configuration);
                     engine = sc.AddSilkyServices<T>(hostBuilder.Configuration,
-                        hostBuilder.HostingEnvironment);
+                        hostBuilder.HostingEnvironment, applicationCreationOptions);
                     services = sc;
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>

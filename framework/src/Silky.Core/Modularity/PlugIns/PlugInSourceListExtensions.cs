@@ -30,13 +30,21 @@ public static class PlugInSourceListExtensions
         }
     }
 
-    public static void AddTypes(
+    public static void AddTypeNames(
         [NotNull] this PlugInSourceList list,
         params string[] moduleTypeNames)
     {
         Check.NotNull(list, nameof(list));
 
         list.Add(new TypePlugInSource(moduleTypeNames));
+    }
+
+    public static void AddTypes(
+        [NotNull] this PlugInSourceList list,
+        params Type[] types)
+    {
+        Check.NotNull(list, nameof(list));
+        list.Add(new TypePlugInSource(types));
     }
 
     public static void AddFiles(

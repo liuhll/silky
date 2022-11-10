@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silky.Core.Modularity;
+using Silky.Core.Modularity.PlugIns;
 using Silky.Core.Reflection;
 
 namespace Silky.Core
@@ -27,11 +28,11 @@ namespace Silky.Core
 
         internal void SetConfiguration([NotNull] IConfiguration configuration);
 
-        internal void ConfigureServices(IServiceCollection services,IConfiguration configuration);
+        internal void ConfigureServices(IServiceCollection services, IConfiguration configuration);
 
         TOptions GetOptions<TOptions>()
             where TOptions : class, new();
-        
+
         TOptions GetOptions<TOptions>(string optionName)
             where TOptions : class, new();
 
@@ -67,6 +68,7 @@ namespace Silky.Core
 
         void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
 
-        void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule;
+        void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader,
+            [NotNull]PlugInSourceList plugInSources) where T : StartUpModule;
     }
 }

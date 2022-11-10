@@ -291,20 +291,22 @@ namespace Silky.Core
             }
         }
 
-        public void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader) where T : StartUpModule
+        public void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader,
+            [NotNull] PlugInSourceList plugInSources) where T : StartUpModule
         {
-            var plugInSources = LoadPlugInModules();
+            Check.NotNull(plugInSources, nameof(plugInSources));
+            LoadConfigPlugInModules(plugInSources);
             Modules = moduleLoader.LoadModules(services, typeof(T), plugInSources);
         }
 
-        private PlugInSourceList LoadPlugInModules()
+        private void LoadConfigPlugInModules(PlugInSourceList plugInSources)
         {
-            var plugInSources = new PlugInSourceList();
             var plugInOptions = GetOptions<PlugInSourceOptions>(PlugInSourceOptions.PlugInSource);
-            if (plugInOptions.ModulePlugIn == null) return plugInSources;
+
+            if (plugInOptions.ModulePlugIn == null) return;
             if (plugInOptions.ModulePlugIn.Types != null)
             {
-                plugInSources.AddTypes(plugInOptions.ModulePlugIn.Types);
+                plugInSources.AddTypeNames(plugInOptions.ModulePlugIn.Types);
             }
 
             if (plugInOptions.ModulePlugIn.FilePaths != null)
@@ -316,8 +318,6 @@ namespace Silky.Core
             {
                 plugInSources.AddFolders(plugInOptions.ModulePlugIn.Folders);
             }
-
-            return plugInSources;
         }
 
         public IServiceProvider ServiceProvider { get; set; }
