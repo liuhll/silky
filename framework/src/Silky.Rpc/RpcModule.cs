@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -82,7 +81,6 @@ namespace Silky.Rpc
 
         public override async Task PostInitialize(ApplicationInitializationContext context)
         {
-            
             var messageListeners = context.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
