@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Silky.Core;
-using Silky.Core.Extensions;
 using Silky.Core.Modularity;
 using TestApplication.Contexts;
 
 namespace TestApplication;
 
-public class TestModel : SilkyModule
+public class TestModule : SilkyModule
 {
     public override Task Initialize(ApplicationContext applicationContext)
     {
