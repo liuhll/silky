@@ -291,12 +291,17 @@ namespace Silky.Core
             }
         }
 
-        public void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader,
-            [NotNull] PlugInSourceList plugInSources) where T : StartUpModule
+        void IEngine.LoadModules(IServiceCollection services, Type startUpType, IModuleLoader moduleLoader,
+            [NotNull] PlugInSourceList plugInSources)
         {
             Check.NotNull(plugInSources, nameof(plugInSources));
+            if (!SilkyModule.IsSilkyModule(startUpType))
+            {
+                throw new SilkyException($"{startUpType.FullName} is not a Silky module type.");
+            }
             LoadConfigPlugInModules(plugInSources);
-            Modules = moduleLoader.LoadModules(services, typeof(T), plugInSources);
+            
+            Modules = moduleLoader.LoadModules(services, startUpType, plugInSources);
         }
 
         private void LoadConfigPlugInModules(PlugInSourceList plugInSources)

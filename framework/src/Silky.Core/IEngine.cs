@@ -30,6 +30,13 @@ namespace Silky.Core
 
         internal void ConfigureServices(IServiceCollection services, IConfiguration configuration);
 
+        public void RegisterDependencies(ContainerBuilder builder);
+
+        public void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
+
+        internal void LoadModules(IServiceCollection services, Type startUpType, IModuleLoader moduleLoader,
+            [NotNull] PlugInSourceList plugInSources);
+
         TOptions GetOptions<TOptions>()
             where TOptions : class, new();
 
@@ -63,12 +70,5 @@ namespace Silky.Core
         bool IsRegisteredWithName(string name, Type type);
 
         object ResolveUnregistered(Type type);
-
-        void RegisterDependencies(ContainerBuilder builder);
-
-        void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
-
-        void LoadModules<T>(IServiceCollection services, IModuleLoader moduleLoader,
-            [NotNull]PlugInSourceList plugInSources) where T : StartUpModule;
     }
 }

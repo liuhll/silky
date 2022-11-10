@@ -48,7 +48,7 @@ namespace Silky.Core.Modularity
                 !typeInfo.IsGenericType &&
                 typeof(ISilkyModule).GetTypeInfo().IsAssignableFrom(type);
         }
-
+        
         public virtual string Name { get; }
 
         public virtual Task PreInitialize(ApplicationInitializationContext context)

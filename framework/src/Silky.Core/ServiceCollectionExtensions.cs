@@ -31,7 +31,7 @@ namespace Silky.Core
             engine.SetConfiguration(configuration);
 
             var moduleLoader = new ModuleLoader();
-            engine.LoadModules<T>(services, moduleLoader, options.PlugInSources);
+            engine.LoadModules(services, typeof(StartUpModule), moduleLoader, options.PlugInSources);
             services.TryAddSingleton<IModuleLoader>(moduleLoader);
             engine.ConfigureServices(services, configuration);
             return engine;
