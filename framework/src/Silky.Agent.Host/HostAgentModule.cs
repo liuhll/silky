@@ -15,7 +15,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Microsoft.Extensions.Hosting;
 
-public abstract class HostAgentModule : StartUpModule
+public abstract class HostAgentModule : SilkyModule
 {
     public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {

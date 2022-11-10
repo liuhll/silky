@@ -4,7 +4,7 @@ using Silky.Core.Modularity;
 namespace Silky.Rpc.Tests
 {
     [DependsOn(typeof(RpcModule))]
-    public class SilkyRpcTestModule : StartUpModule
+    public class SilkyRpcTestModule : SilkyModule
     {
     }
 }

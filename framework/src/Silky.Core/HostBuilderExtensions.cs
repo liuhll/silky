@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.Hosting
         public static IHostBuilder RegisterSilkyServices<T>(
             this IHostBuilder builder,
             Action<SilkyApplicationCreationOptions> optionsAction = null)
-            where T : StartUpModule
+            where T : SilkyModule
         {
             IEngine engine = null;
             IServiceCollection services = null;

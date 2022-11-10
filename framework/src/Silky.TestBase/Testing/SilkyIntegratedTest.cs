@@ -13,7 +13,7 @@ using Silky.Core.Configuration;
 namespace Silky.TestBase.Testing
 {
     public abstract class SilkyIntegratedTest<TStartupModule> : SilkyTestBaseWithServiceProvider, IDisposable
-        where TStartupModule : StartUpModule
+        where TStartupModule : SilkyModule
     {
         protected IServiceScope TestServiceScope { get; }
 
