@@ -16,7 +16,7 @@ namespace ITestApplication.Filters
 
         public override void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage)
         {
-            Logger.LogDebug("test client filter");
+            Logger.LogInformation("test client filter");
         }
     }
 }

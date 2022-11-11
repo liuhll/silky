@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
@@ -7,12 +8,13 @@ using NormHostDemo.Tests;
 using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Runtime.Session;
 using Silky.Core.Serialization;
+using Silky.EntityFrameworkCore.Extensions;
 using Silky.EntityFrameworkCore.Repositories;
 using Silky.Rpc.Runtime.Server;
-using Silky.Transaction.Tcc;
 using TestApplication.AppService.DomainService;
 
 namespace TestApplication.AppService
@@ -39,87 +41,118 @@ namespace TestApplication.AppService
             _session = NullSession.Instance;
         }
 
-       // [UnitOfWork]
-        public async Task<TestOut> Create(TestInput input)
+        // [UnitOfWork]
+        public async Task<TestOut> CreateOrUpdateAsync(TestInput input)
         {
-            var test = input.Adapt<Test>();
-            throw new BusinessException("error",1010);
-          //  var result = await _testRepository.InsertNowAsync(test);
-          // await _anotherAppService.ReturnNullTest();
-          // return new TestOut()
-          // {
-          //     Name = input.Name,
-          //     Address = input.Address,
-          //     Id = input.Ids.First()
-          // };
-        }
+            if (input.Id.HasValue)
+            {
+                return await Update(input);
+            }
 
-        public Task CreateOrUpdateAsync(TestInput input)
-        {
-            throw new System.NotImplementedException();
+            var test = input.Adapt<Test>();
+            var result = await _testRepository.InsertNowAsync(test);
+            return result.Entity.Adapt<TestOut>();
         }
 
         public async Task<TestOut> Get(long id)
         {
-            var test = await _testRepository.FindAsync(id);
+            var test = await _testRepository.FindOrDefaultAsync(id);
+            if (test == null)
+            {
+                throw new UserFriendlyException($"不存在Id为{id}的数据");
+            }
             return test.Adapt<TestOut>();
         }
 
-        public async Task<string> Update(TestInput input)
+        public async Task<TestOut> Update(TestInput input)
         {
-            throw new BusinessException("test exception");
+            var entity = await _testRepository.FindOrDefaultAsync(input.Id);
+            if (entity == null)
+            {
+                throw new UserFriendlyException($"不存在Id为{input.Id}的数据");
+            }
+
+            entity = input.Adapt(entity);
+            var result = await _testRepository.UpdateAsync(entity);
+
+            return result.Entity.Adapt<TestOut>();
         }
 
-        [TccTransaction(ConfirmMethod = "DeleteConfirm", CancelMethod = "DeleteCancel")]
-        public async Task<string> DeleteAsync(TestInput input)
+
+        public async Task<string> DeleteAsync(long id)
         {
             // await _anotherAppService.DeleteOne(input.Name);
             // await _anotherAppService.DeleteTwo(input.Address);
-             throw new BusinessException("test exception");
-            return "trying" + _serializer.Serialize(input);
+            // throw new BusinessException("test exception");
+
+            var entity = await _testRepository.FindOrDefaultAsync(id);
+            if (entity == null)
+            {
+                throw new UserFriendlyException($"不存在Id为{id}的数据");
+            }
+
+            await _testRepository.DeleteAsync(entity);
+            await _distributedCache.RemoveAsync($"name:{entity.Name}");
+            return "删除数据成功";
         }
 
-        public async Task<string> DeleteConfirm(TestInput input)
+        public async Task<PagedList<TestOut>> Search1(string name, string address, int pageIndex = 1, int pageSize = 10)
         {
-            return "DeleteConfirm" + _serializer.Serialize(input);
+            return await _testRepository.AsQueryable(false)
+                .Where(!name.IsNullOrEmpty(), p => p.Name.Contains(name))
+                .Where(!address.IsNullOrEmpty(), p => p.Address.Contains(name))
+                .ProjectToType<TestOut>()
+                .ToPagedListAsync(pageIndex, pageSize);
         }
 
-        public async Task<string> DeleteCancel(TestInput input)
+        public async Task<PagedList<TestOut>> Search2(SearchInput query)
         {
-            return "DeleteCancel" + _serializer.Serialize(input);
+            return await _testRepository.AsQueryable(false)
+                .Where(!query.Name.IsNullOrEmpty(), p => p.Name.Contains(query.Name))
+                .Where(!query.Address.IsNullOrEmpty(), p => p.Address.Contains(query.Address))
+                .ProjectToType<TestOut>()
+                .ToPagedListAsync(query.PageIndex, query.PageSize);
         }
 
-        public Task<string> Search(TestInput query)
+        public Task<TestOut> Form(TestInput input)
         {
-            return Task.FromResult("Search");
-        }
-
-        public string Form(TestInput query)
-        {
-            return "Form";
+            return CreateOrUpdateAsync(input);
         }
 
         public async Task<TestOut> Get(string name)
         {
-            return new()
+            var entity = await _testRepository.FirstOrDefaultAsync(p => p.Name == name);
+            if (entity == null)
             {
-                Name = name + "v1"
-            };
+                throw new UserFriendlyException($"不存在名称为{name}的记录");
+            }
+
+            return entity.Adapt<TestOut>();
         }
 
-        public async Task<TestOut> GetById(long? id)
+        public Task<TestOut> GetById(long? id)
         {
-            return new()
+            if (!id.HasValue)
             {
-                Id = id ?? 0
-            };
+                throw new UserFriendlyException("Id的值不允许为空");
+            }
+
+            return Get(id.Value);
         }
 
-
-        public async Task<string> UpdatePart(TestInput input)
+        public async Task<TestOut> UpdatePart(TestUpdatePart input)
         {
-            return "UpdatePart";
+            var entity = await _testRepository.FindOrDefaultAsync(input.Id);
+            if (entity == null)
+            {
+                throw new UserFriendlyException($"不存在Id为{input.Id}的数据");
+            }
+
+            entity = input.Adapt(entity);
+            var result = await _testRepository.UpdateExcludeAsync(entity, new[] { "Name" });
+            return result.Entity.Adapt<TestOut>();
         }
+
 
         public async Task<IList<object>> GetObjectList()
         {
