@@ -24,6 +24,7 @@ public static class CacheKeyHelper
             {
                 Index = cacheKeyProviderDescriptor.Index,
                 PropName = cacheKeyProviderDescriptor.PropName,
+                CacheKeyType = cacheKeyProviderDescriptor.CacheKeyType,
                 Value = GetCacheKeyValue(cacheKeyProviderDescriptor, parameters)
             };
             cacheKeyProviders.Add(cacheKeyProvider);

@@ -99,6 +99,7 @@ namespace Silky.Rpc.Runtime.Server
                             {
                                 PropName = cacheKey.PropName,
                                 Index = cacheKey.Index,
+                                CacheKeyType = cacheKey.CacheKeyType,
                                 ParameterIndex = parameterDescriptor.Index,
                                 From = parameterDescriptor.From,
                                 IsSampleOrNullableType = parameterDescriptor.IsSampleOrNullableType,
