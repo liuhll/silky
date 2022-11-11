@@ -356,7 +356,7 @@ namespace Silky.Http.Dashboard.AppService
                     p =>
                         new ServiceEntryCacheTemplateOutput()
                         {
-                            KeyTemplete = p.KeyTemplete,
+                            KeyTemplate = p.KeyTemplate,
                             OnlyCurrentUserData = p.OnlyCurrentUserData,
                             CachingMethod = p.CachingMethod
                         }).ToArray(),

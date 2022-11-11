@@ -10,7 +10,7 @@ public class CachingInterceptorDescriptor
         IsRemoveMatchKeyProvider = false;
     }
 
-    public string KeyTemplete { get; set;}
+    public string KeyTemplate { get; set;}
 
     public bool OnlyCurrentUserData { get; set; }
 

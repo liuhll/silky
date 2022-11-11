@@ -7,29 +7,29 @@ namespace Silky.Rpc.Runtime.Server;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class RemoveCachingInterceptAttribute : Attribute, IRemoveCachingInterceptProvider
 {
-    public RemoveCachingInterceptAttribute([NotNull] string cacheName, [NotNull] string keyTemplete)
+    public RemoveCachingInterceptAttribute([NotNull] string cacheName, [NotNull] string keyTemplate)
     {
         Check.NotNullOrEmpty(cacheName, nameof(cacheName));
-        Check.NotNullOrEmpty(keyTemplete, nameof(keyTemplete));
+        Check.NotNullOrEmpty(keyTemplate, nameof(keyTemplate));
         CacheName = cacheName;
-        KeyTemplete = keyTemplete;
+        KeyTemplate = keyTemplate;
         OnlyCurrentUserData = false;
         IgnoreMultiTenancy = false;
         CachingMethod = CachingMethod.Remove;
     }
         
-    public RemoveCachingInterceptAttribute([NotNull] Type cacheType, [NotNull] string keyTemplete)
+    public RemoveCachingInterceptAttribute([NotNull] Type cacheType, [NotNull] string keyTemplate)
     {
         Check.NotNull(cacheType, nameof(cacheType));
-        Check.NotNullOrEmpty(keyTemplete, nameof(keyTemplete));
+        Check.NotNullOrEmpty(keyTemplate, nameof(keyTemplate));
         CacheName = cacheType.FullName;
-        KeyTemplete = keyTemplete;
+        KeyTemplate = keyTemplate;
         OnlyCurrentUserData = false;
         CachingMethod = CachingMethod.Remove;
     }
 
     public string CacheName { get; }
-    public string KeyTemplete { get; }
+    public string KeyTemplate { get; }
 
     public bool IgnoreMultiTenancy { get; set; }
     public CachingMethod CachingMethod { get; }

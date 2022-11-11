@@ -77,7 +77,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 var cachingInterceptorDescriptor = new CachingInterceptorDescriptor()
                 {
-                    KeyTemplete = cachingInterceptorProvider.KeyTemplete,
+                    KeyTemplate = cachingInterceptorProvider.KeyTemplate,
                     OnlyCurrentUserData = cachingInterceptorProvider.OnlyCurrentUserData,
                     IgnoreMultiTenancy = cachingInterceptorProvider.IgnoreMultiTenancy,
                     CachingMethod = cachingInterceptorProvider.CachingMethod,

@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Server
             ParameterFrom @from,
             ParameterInfo parameterInfo,
             int index,
-            string[] cacheKeyTempletes,
+            string[] cacheKeyTemplates,
             string name = null,
             string pathTemplate = null)
         {
@@ -25,7 +25,7 @@ namespace Silky.Rpc.Runtime.Server
             SampleName = Name.Split(":")[0];
             Type = parameterInfo.ParameterType;
             IsHashKey = DecideIsHashKey();
-            CacheKeys = CreateCacheKeys(cacheKeyTempletes);
+            CacheKeys = CreateCacheKeys(cacheKeyTemplates);
             PathTemplate = pathTemplate;
             Index = index;
             if (@from == ParameterFrom.Path && PathTemplate.IsNullOrEmpty())
@@ -34,7 +34,7 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        private IReadOnlyCollection<ICacheKeyProvider> CreateCacheKeys(string[] cacheKeyTempletes)
+        private IReadOnlyCollection<ICacheKeyProvider> CreateCacheKeys(string[] cacheKeyTemplates)
         {
             var cacheKeys = new List<ICacheKeyProvider>();
             var attributeInfoCacheKeyProviders = ParserAttributeCacheKeyProviders();
@@ -44,16 +44,16 @@ namespace Silky.Rpc.Runtime.Server
                 cacheKeys.AddRange(attributeInfoCacheKeyProviders);
             }
 
-            var namedCacheKeyProviders = ParserNamedCacheKeyProviders(cacheKeyTempletes);
+            var namedCacheKeyProviders = ParserNamedCacheKeyProviders(cacheKeyTemplates);
             cacheKeys.AddRange(namedCacheKeyProviders);
             return cacheKeys;
         }
 
-        private ICollection<ICacheKeyProvider> ParserNamedCacheKeyProviders(string[] cacheKeyTempletes)
+        private ICollection<ICacheKeyProvider> ParserNamedCacheKeyProviders(string[] cacheKeyTemplates)
         {
             var cacheKeys = new List<ICacheKeyProvider>();
             var cacheKeyParameters =
-                cacheKeyTempletes.SelectMany(p =>
+                cacheKeyTemplates.SelectMany(p =>
                     Regex.Matches(p, CacheKeyConstants.CacheKeyParameterRegex)
                         .Select(q => q.Value.Replace("{", "").Replace("}", "")));
             foreach (var cacheKeyParameter in cacheKeyParameters)

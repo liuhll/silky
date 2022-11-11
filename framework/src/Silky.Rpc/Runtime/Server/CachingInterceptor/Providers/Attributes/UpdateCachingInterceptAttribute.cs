@@ -7,16 +7,16 @@ namespace Silky.Rpc.Runtime.Server;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public class UpdateCachingInterceptAttribute : Attribute, IUpdateCachingInterceptProvider
 {
-    public UpdateCachingInterceptAttribute([NotNull] string keyTemplete)
+    public UpdateCachingInterceptAttribute([NotNull] string keyTemplate)
     {
-        Check.NotNullOrEmpty(keyTemplete, nameof(keyTemplete));
-        KeyTemplete = keyTemplete;
+        Check.NotNullOrEmpty(keyTemplate, nameof(keyTemplate));
+        KeyTemplate = keyTemplate;
         OnlyCurrentUserData = false;
         IgnoreMultiTenancy = false;
         CachingMethod = CachingMethod.Remove;
     }
 
-    public string KeyTemplete { get; }
+    public string KeyTemplate { get; }
 
     public bool OnlyCurrentUserData { get; set; }
     public bool IgnoreMultiTenancy { get; set; }

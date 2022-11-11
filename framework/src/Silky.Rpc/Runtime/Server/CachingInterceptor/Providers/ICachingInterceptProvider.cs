@@ -2,7 +2,7 @@
 
 public interface ICachingInterceptProvider
 {
-    string KeyTemplete { get; }
+    string KeyTemplate { get; }
 
     bool OnlyCurrentUserData { get; set; }
 

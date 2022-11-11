@@ -32,7 +32,7 @@ namespace Silky.Http.Dashboard.AppService.Dtos
 
     public class ServiceEntryCacheTemplateOutput
     {
-        public string KeyTemplete { get; set; }
+        public string KeyTemplate { get; set; }
 
         public bool OnlyCurrentUserData { get; set; }
 

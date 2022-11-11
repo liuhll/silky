@@ -31,7 +31,7 @@ public static class CacheKeyHelper
         }
 
         var templeteAgrs = cacheKeyProviders.OrderBy(p => p.Index).ToList().Select(ckp => ckp.Value).ToArray();
-        cachingInterceptKey = string.Format(cachingInterceptProvider.KeyTemplete, templeteAgrs);
+        cachingInterceptKey = string.Format(cachingInterceptProvider.KeyTemplate, templeteAgrs);
 
         if (!serviceKey.IsNullOrEmpty())
         {

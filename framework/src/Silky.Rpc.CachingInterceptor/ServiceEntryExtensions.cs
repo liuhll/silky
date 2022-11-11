@@ -18,11 +18,11 @@ namespace Silky.Rpc.CachingInterceptor
         {
             Check.NotNull(parameters, nameof(parameters));
             Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
-            var templete = cachingInterceptProvider.KeyTemplete;
+            var templete = cachingInterceptProvider.KeyTemplate;
             if (templete.IsNullOrEmpty())
             {
                 throw new SilkyException(
-                    "The KeyTemplete specified by the cache interception is not allowed to be empty",
+                    "The KeyTemplate specified by the cache interception is not allowed to be empty",
                     StatusCode.CachingInterceptError);
             }
 
