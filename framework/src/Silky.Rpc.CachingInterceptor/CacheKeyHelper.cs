@@ -89,13 +89,20 @@ public static class CacheKeyHelper
         {
             if (httpParameters.TryGetValue(cacheKeyProviderDescriptor.From, out var httpParameterValue))
             {
-                if (cacheKeyProviderDescriptor.IsSampleOrNullableType)
+                if (httpParameterValue == null)
                 {
-                    return httpParameterValue?.ToString();
+                    throw new SilkyException(
+                        $"Failed to get the value of the cache interception key:{cacheKeyProviderDescriptor.PropName}");
+                }
+
+                var httpParameterValueLine = httpParameterValue.ToString();
+                if (cacheKeyProviderDescriptor.IsSampleOrNullableType && !httpParameterValueLine.IsValidJson())
+                {
+                    return httpParameterValue.ToString();
                 }
 
                 var httpParameterDictValue =
-                    serializer.Deserialize<IDictionary<string, object>>(httpParameterValue.ToString());
+                    serializer.Deserialize<IDictionary<string, object>>(httpParameterValueLine);
                 if (httpParameterDictValue.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName,
                         out var cacheKeyValue))
                 {
@@ -124,6 +131,7 @@ public static class CacheKeyHelper
                 throw new SilkyException(
                     $"Failed to get the value of the cache interception key:{cacheKeyProviderDescriptor.PropName}");
             }
+
             var cacheKeyValue = cacheKeyValueProp.GetValue(parameterValue, null);
             return cacheKeyValue?.ToString();
         }

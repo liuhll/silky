@@ -37,7 +37,7 @@ namespace Silky.Rpc.Runtime.Server
                 ParameterInfo.GetCustomAttributes().OfType<ICacheKeyProvider>().FirstOrDefault();
             if (IsSampleOrNullableType && parameterInfoCacheKeyProvider != null)
             {
-                parameterInfoCacheKeyProvider.PropName = Name;
+                parameterInfoCacheKeyProvider.PropName = Name.Split(":")[0];
 
                 cacheKeys.Add(parameterInfoCacheKeyProvider);
             }
@@ -104,7 +104,6 @@ namespace Silky.Rpc.Runtime.Server
 
         public bool IsNullableType => Type.IsNullableType();
 
-        // public bool IsNullEnabled => Type.IsNullableType();
 
         public ParameterInfo ParameterInfo { get; }
 

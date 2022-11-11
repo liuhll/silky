@@ -24,7 +24,8 @@ public class HttpParameterResolver : ParameterResolverBase
     public override object[] Parser([NotNull] ServiceEntry serviceEntry, RemoteInvokeMessage message)
     {
         Check.NotNull(serviceEntry, nameof(serviceEntry));
-        if (serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path))
+        if (serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path) &&
+            message.HttpParameters.All(p => p.Key != ParameterFrom.Path))
         {
             var path = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.Path).ToString();
             var pathData = serviceEntry.Router.ParserRouteParameters(path);

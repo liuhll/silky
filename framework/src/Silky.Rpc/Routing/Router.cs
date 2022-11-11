@@ -62,7 +62,6 @@ namespace Silky.Rpc.Routing
                 {
                     continue;
                 }
-
                 routeParameters.Add(TemplateSegmentHelper.GetVariableName(routeSegment.Value), apiSegment);
             }
 

@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using JetBrains.Annotations;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Runtime.Rpc;
+using Silky.Rpc.Routing;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Http.Core
@@ -99,7 +102,17 @@ namespace Silky.Http.Core
             {
                 var streamReader = new StreamReader(request.Body);
                 var bodyData = await streamReader.ReadToEndAsync();
-                parameters.Add(ParameterFrom.Body, bodyData);
+                if (!bodyData.IsNullOrEmpty())
+                {
+                    parameters.Add(ParameterFrom.Body, bodyData);
+                }
+            }
+
+            if (Regex.IsMatch(serviceEntryDescriptor.WebApi, RouterConstants.PathRegex))
+            {
+                parameters.Add(ParameterFrom.Path,
+                    _serializer.Serialize(
+                        RoutePathHelper.ParserRouteParameters(serviceEntryDescriptor.WebApi, request.Path)));
             }
 
             return parameters;
