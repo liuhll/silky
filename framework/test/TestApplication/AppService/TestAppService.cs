@@ -96,13 +96,13 @@ namespace TestApplication.AppService
             return "删除数据成功";
         }
 
-        public async Task<PagedList<TestOut>> Search1(string name, string address, int pageIndex = 1, int pageSize = 10)
+        public async Task<PagedList<TestOut>> Search1(string name, string address, int? pageIndex, int? pageSize)
         {
             return await _testRepository.AsQueryable(false)
                 .Where(!name.IsNullOrEmpty(), p => p.Name.Contains(name))
                 .Where(!address.IsNullOrEmpty(), p => p.Address.Contains(name))
                 .ProjectToType<TestOut>()
-                .ToPagedListAsync(pageIndex, pageSize);
+                .ToPagedListAsync(pageIndex?? 1, pageSize ?? 10);
         }
 
         public async Task<PagedList<TestOut>> Search2(SearchInput query)

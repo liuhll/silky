@@ -9,14 +9,14 @@ namespace Silky.Rpc.Runtime.Server;
 public abstract class ParameterResolverBase : IParameterResolver
 {
     public abstract object[] Parser(ServiceEntry serviceEntry, RemoteInvokeMessage message);
-    
+
 
     public virtual object[] Parser(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters,
         HttpContext httpContext)
     {
         throw new System.NotImplementedException();
     }
-    
+
     protected void SetSampleParameterValue(ITypeConvertibleService typeConvertibleService, object parameter,
         ParameterDescriptor parameterDescriptor, List<object> list)
     {
@@ -29,6 +29,7 @@ public abstract class ParameterResolverBase : IParameterResolver
             parameterVal = dict[parameterDescriptor.Name];
         }
 
-        list.Add(parameterDescriptor.GetActualParameter(parameterVal));
+        list.Add(parameterDescriptor.GetActualParameter(parameterVal) ??
+                 parameterDescriptor.ParameterInfo.GetDefaultValue());
     }
 }
