@@ -25,7 +25,10 @@ public class MqAppService : IMqAppService
         {
             Data = data
         };
-        await _publishEndpoint.PublishForSilky(mqData);
+        await _publishEndpoint.PublishForSilky(mqData, context =>
+        {
+            context.Headers.Set("test","test");
+        });
     }
 
     public async Task Send(string data)
@@ -35,6 +38,9 @@ public class MqAppService : IMqAppService
             Data = data
         };
         var endpoint = await _bus.GetSendEndpoint(new Uri("exchange:events-listener"));
-        await endpoint.SendForSilky(mqData);
+        await endpoint.SendForSilky(mqData, context =>
+        {
+            context.Headers.Set("test1","test1");
+        });
     }
 }
