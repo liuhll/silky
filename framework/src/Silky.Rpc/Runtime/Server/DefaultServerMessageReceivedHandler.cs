@@ -94,12 +94,7 @@ namespace Silky.Rpc.Runtime.Server
                 isHandleSuccess = false;
                 if (ex is ValidationException validationException)
                 {
-                    remoteResultMessage.ValidateErrors = validationException.ValidationErrors.Select(vr =>
-                        new ValidError()
-                        {
-                            MemberNames = vr.MemberNames.ToArray(),
-                            ErrorMessage = vr.ErrorMessage
-                        }).ToArray();
+                    remoteResultMessage.ValidateErrors = validationException.ValidationErrors.ToArray();
                 }
 
                 if (ex.IsFriendlyException())

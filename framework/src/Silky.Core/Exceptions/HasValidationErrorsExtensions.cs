@@ -15,7 +15,11 @@ namespace Silky.Core.Exceptions
             Check.NotNull(exception, nameof(exception));
             Check.NotNull(validationError, nameof(validationError));
 
-            exception.ValidationErrors.Add(validationError);
+            exception.ValidationErrors.Add(new ValidError()
+            {
+                ErrorMessage = validationError.ErrorMessage,
+                MemberNames = validationError.MemberNames.ToArray(),
+            });
 
             return exception;
         }

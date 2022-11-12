@@ -5,6 +5,6 @@ namespace Silky.Core.Exceptions
 {
     public interface IHasValidationErrors
     {
-        IList<ValidationResult> ValidationErrors { get; }
+        IList<ValidError> ValidationErrors { get; }
     }
 }

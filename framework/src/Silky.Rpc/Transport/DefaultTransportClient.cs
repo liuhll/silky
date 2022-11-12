@@ -89,15 +89,8 @@ namespace Silky.Rpc.Transport
 
             if (remoteResultMessage.StatusCode == StatusCode.ValidateError)
             {
-                var validateException = new ValidationException(remoteResultMessage.ExceptionMessage);
-                if (remoteResultMessage.ValidateErrors != null)
-                {
-                    foreach (var validateError in remoteResultMessage.ValidateErrors)
-                    {
-                        validateException.WithValidationError(validateError.ErrorMessage,
-                            validateError.MemberNames);
-                    }
-                }
+                var validateException = new ValidationException(remoteResultMessage.ExceptionMessage,remoteResultMessage.ValidateErrors);
+                
 
                 throw validateException;
             }

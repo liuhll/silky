@@ -13,25 +13,36 @@ namespace Silky.Core.Exceptions
     {
         public ValidationException(string message) : base(message, StatusCode.ValidateError)
         {
-            ValidationErrors = new List<ValidationResult>();
+            ValidationErrors = Array.Empty<ValidError>();
             LogLevel = LogLevel.Warning;
         }
 
         public ValidationException(string message, Exception innerException) : base(message, innerException,
             StatusCode.ValidateError)
         {
-            ValidationErrors = new List<ValidationResult>();
+            ValidationErrors = Array.Empty<ValidError>();
             LogLevel = LogLevel.Warning;
         }
 
         public ValidationException(string message, IList<ValidationResult> validationErrors) : this(message)
+        {
+            ValidationErrors = validationErrors.Select(p => new ValidError()
+            {
+                MemberNames = p.MemberNames.ToArray(),
+                ErrorMessage = p.ErrorMessage,
+            }).ToArray();
+            LogLevel = LogLevel.Warning;
+        }
+
+        public ValidationException(string exceptionMessage, ValidError[] validationErrors) : base(exceptionMessage,
+            StatusCode.ValidateError)
         {
             ValidationErrors = validationErrors;
             LogLevel = LogLevel.Warning;
         }
 
 
-        public IList<ValidationResult> ValidationErrors { get; }
+        public IList<ValidError> ValidationErrors { get; }
 
         public LogLevel LogLevel { get; set; }
 
