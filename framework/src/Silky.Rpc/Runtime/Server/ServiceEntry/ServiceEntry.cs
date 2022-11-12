@@ -33,6 +33,9 @@ namespace Silky.Rpc.Runtime.Server
 
         public ObjectMethodExecutor MethodExecutor => _methodExecutor;
 
+        public ICollection<CachingInterceptorDescriptor> CachingInterceptorDescriptors =>
+            ServiceEntryDescriptor.CachingInterceptorDescriptors;
+
         [CanBeNull] public ObjectMethodExecutor FallbackMethodExecutor { get; private set; }
         [CanBeNull] public IFallbackProvider FallbackProvider { get; private set; }
 
@@ -94,7 +97,7 @@ namespace Silky.Rpc.Runtime.Server
                     foreach (var cacheKey in parameterDescriptor.CacheKeys)
                     {
                         cachingInterceptorDescriptor
-                            .CacheKeyProviders
+                            .CacheKeyProviderDescriptors
                             .Add(new CacheKeyProviderDescriptor()
                             {
                                 PropName = cacheKey.PropName,
@@ -107,6 +110,7 @@ namespace Silky.Rpc.Runtime.Server
                     }
                 }
 
+                cachingInterceptorProvider.CachingInterceptorDescriptor = cachingInterceptorDescriptor;
                 cachingInterceptorDescriptors.Add(cachingInterceptorDescriptor);
             }
 

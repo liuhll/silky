@@ -60,7 +60,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 if (IsSampleType && SampleName.Equals(cacheKeyParameter, StringComparison.OrdinalIgnoreCase))
                 {
-                    cacheKeys.Add(new NamedCacheKeyProvider(SampleName));
+                    cacheKeys.Add(new NamedCacheKeyProvider(SampleName, Index));
                     break;
                 }
 
@@ -69,7 +69,7 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     if (property.Name.Equals(cacheKeyParameter, StringComparison.OrdinalIgnoreCase))
                     {
-                        cacheKeys.Add(new NamedCacheKeyProvider(property.Name));
+                        cacheKeys.Add(new NamedCacheKeyProvider(property.Name, Index));
                         break;
                     }
                 }

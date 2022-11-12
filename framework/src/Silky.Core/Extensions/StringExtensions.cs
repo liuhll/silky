@@ -364,7 +364,14 @@ namespace Silky.Core.Extensions
 
             return encoding.GetBytes(str);
         }
-        
+
+        public static string RemoveCurlyBraces(this string str)
+        {
+            Check.NotNull(str, nameof(str));
+            return str.Replace("{", "")
+                .Replace("}", "");
+        }
+
         public static bool IsValidJson(this string text)
         {
             text = text.Trim();

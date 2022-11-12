@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using Silky.Core;
+using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Session;
@@ -14,11 +18,102 @@ public static class CacheKeyHelper
 {
     public static string GetCachingInterceptKey(object parameters,
         [NotNull] CachingInterceptorDescriptor cachingInterceptProvider, string serviceKey)
+    {
+        Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
+        var template = cachingInterceptProvider.KeyTemplate;
+        if (template.IsNullOrEmpty())
+        {
+            throw new SilkyException(
+                "The KeyTemplate specified by the cache interception is not allowed to be empty",
+                StatusCode.CachingInterceptError);
+        }
 
+        var cacheKeyProviders = GetCacheKeyProviders(cachingInterceptProvider, parameters);
+        return GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider, serviceKey);
+    }
+
+
+    public static string GetCachingInterceptKey([NotNull] ServiceEntry serviceEntry, [NotNull] object[] parameters,
+        [NotNull] ICachingInterceptProvider cachingInterceptProvider, string serviceKey)
+    {
+        Check.NotNull(serviceEntry, nameof(serviceEntry));
+        Check.NotNull(parameters, nameof(parameters));
+        Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
+        var template = cachingInterceptProvider.KeyTemplate;
+        if (template.IsNullOrEmpty())
+        {
+            throw new SilkyException(
+                "The KeyTemplate specified by the cache interception is not allowed to be empty",
+                StatusCode.CachingInterceptError);
+        }
+
+        var cacheKeyProviders = GetCacheKeyProviders(serviceEntry, cachingInterceptProvider, parameters);
+        return GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider.CachingInterceptorDescriptor,
+            serviceKey);
+    }
+
+
+    private static string GetCachingInterceptKey(CacheKeyProvider[] cacheKeyProviders,
+        CachingInterceptorDescriptor cachingInterceptProvider, string serviceKey)
+    {
+        var cachingInterceptKey = cachingInterceptProvider.GetCacheKeyType() == CacheKeyType.Attribute
+            ? ParserAttributeCacheKey(cacheKeyProviders, cachingInterceptProvider.KeyTemplate)
+            : ParserNamedCacheKey(cacheKeyProviders, cachingInterceptProvider.KeyTemplate);
+
+        if (!serviceKey.IsNullOrEmpty())
+        {
+            cachingInterceptKey = $"serviceKey:{serviceKey}:" + cachingInterceptKey;
+        }
+
+        if (!cachingInterceptProvider.OnlyCurrentUserData) return cachingInterceptKey;
+        var session = NullSession.Instance;
+        if (!session.IsLogin())
+        {
+            throw new SilkyException(
+                "If the cached data is specified to be related to the currently logged in user, then you must log in to the system to allow the use of cache interception",
+                StatusCode.CachingInterceptError);
+        }
+
+        cachingInterceptKey += $":userId:{session.UserId}";
+
+        return cachingInterceptKey;
+    }
+
+    private static string ParserNamedCacheKey(CacheKeyProvider[] cacheKeyProviders, string keyTemplate)
+    {
+        var keyTemplateParameters = Regex.Matches(keyTemplate, CacheKeyConstants.CacheKeyParameterRegex)
+            .Select(q => q.Value.RemoveCurlyBraces());
+        var index = 0;
+        foreach (var keyTemplateParameter in keyTemplateParameters)
+        {
+            var cacheKeyProvider = cacheKeyProviders.FirstOrDefault(p =>
+                p.PropName.Equals(keyTemplateParameter, StringComparison.OrdinalIgnoreCase));
+            if (cacheKeyProvider == null)
+            {
+                throw new SilkyException(
+                    $"Failed to parse parameter {keyTemplate} from cache key providers",
+                    StatusCode.CachingInterceptError);
+            }
+
+            keyTemplate = keyTemplate.Replace("{" + keyTemplateParameter + "}", cacheKeyProvider.Value);
+            index++;
+        }
+
+        return keyTemplate;
+    }
+
+    private static string ParserAttributeCacheKey(CacheKeyProvider[] cacheKeyProviders, string keyTemplate)
+    {
+        var templateArgs = cacheKeyProviders.Select(ckp => ckp.Value).ToArray();
+        var cachingInterceptKey = string.Format(keyTemplate, templateArgs);
+        return cachingInterceptKey;
+    }
+
+    private static CacheKeyProvider[] GetCacheKeyProviders(CachingInterceptorDescriptor cachingInterceptProvider,
+        object parameters)
     {
         var cacheKeyProviders = new List<CacheKeyProvider>();
-        var cachingInterceptKey = string.Empty;
-        foreach (var cacheKeyProviderDescriptor in cachingInterceptProvider.CacheKeyProviders)
+        foreach (var cacheKeyProviderDescriptor in cachingInterceptProvider.CacheKeyProviderDescriptors)
         {
             var cacheKeyProvider = new CacheKeyProvider()
             {
@@ -30,29 +125,49 @@ public static class CacheKeyHelper
             cacheKeyProviders.Add(cacheKeyProvider);
         }
 
-        var templeteAgrs = cacheKeyProviders.OrderBy(p => p.Index).ToList().Select(ckp => ckp.Value).ToArray();
-        cachingInterceptKey = string.Format(cachingInterceptProvider.KeyTemplate, templeteAgrs);
-
-        if (!serviceKey.IsNullOrEmpty())
-        {
-            cachingInterceptKey = $"serviceKey:{serviceKey}:" + cachingInterceptKey;
-        }
-
-        if (cachingInterceptProvider.OnlyCurrentUserData)
-        {
-            var session = NullSession.Instance;
-            if (!session.IsLogin())
-            {
-                throw new SilkyException(
-                    "If the cached data is specified to be related to the currently logged in user, then you must log in to the system to allow the use of cache interception",
-                    StatusCode.CachingInterceptError);
-            }
-
-            cachingInterceptKey = cachingInterceptKey + $":userId:{session.UserId}";
-        }
-
-        return cachingInterceptKey;
+        return cacheKeyProviders.OrderBy(p => p.Index).ToArray();
     }
+
+    private static CacheKeyProvider[] GetCacheKeyProviders(ServiceEntry serviceEntry,
+        ICachingInterceptProvider cachingInterceptProvider, object[] parameters)
+    {
+        var cacheKeyProviders = new List<CacheKeyProvider>();
+
+
+        foreach (var cacheKeyProviderDescriptor in cachingInterceptProvider.CachingInterceptorDescriptor
+                     .CacheKeyProviderDescriptors)
+        {
+            var cacheKeyProvider = new CacheKeyProvider()
+            {
+                Index = cacheKeyProviderDescriptor.Index,
+                PropName = cacheKeyProviderDescriptor.PropName,
+                CacheKeyType = cacheKeyProviderDescriptor.CacheKeyType,
+                Value = GetCacheKeyValue(serviceEntry, cacheKeyProviderDescriptor, parameters)
+            };
+            cacheKeyProviders.Add(cacheKeyProvider);
+        }
+
+        return cacheKeyProviders.ToArray();
+    }
+
+    private static string GetCacheKeyValue(ServiceEntry serviceEntry,
+        CacheKeyProviderDescriptor cacheKeyProviderDescriptor, object[] parameters)
+    {
+        if (cacheKeyProviderDescriptor.IsSampleOrNullableType)
+        {
+            return parameters[cacheKeyProviderDescriptor.ParameterIndex]?.ToString();
+        }
+
+        var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
+        var parameterDescriptor =
+            serviceEntry.ParameterDescriptors[cacheKeyProviderDescriptor.ParameterIndex];
+        var parameterValue =
+            typeConvertibleService.Convert(parameters[cacheKeyProviderDescriptor.ParameterIndex],
+                parameterDescriptor.Type);
+        var cacheKeyProp = parameterDescriptor.Type.GetProperty(cacheKeyProviderDescriptor.PropName);
+        return cacheKeyProp.GetValue(parameterValue)?.ToString();
+    }
+
 
     private static string GetCacheKeyValue(CacheKeyProviderDescriptor cacheKeyProviderDescriptor, object parameters)
     {
@@ -86,7 +201,7 @@ public static class CacheKeyHelper
             return cacheKeyValue;
         }
 
-        else if (parameters is IDictionary<ParameterFrom, object> httpParameters)
+        if (parameters is IDictionary<ParameterFrom, object> httpParameters)
         {
             if (httpParameters.TryGetValue(cacheKeyProviderDescriptor.From, out var httpParameterValue))
             {
@@ -119,13 +234,13 @@ public static class CacheKeyHelper
 
         else if (parameters is object[] sortedParameters)
         {
-            var sortedParameteValue = sortedParameters[cacheKeyProviderDescriptor.ParameterIndex];
+            var sortedParameterValue = sortedParameters[cacheKeyProviderDescriptor.ParameterIndex];
             if (cacheKeyProviderDescriptor.IsSampleOrNullableType)
             {
-                return sortedParameteValue?.ToString();
+                return sortedParameterValue?.ToString();
             }
 
-            dynamic parameterValue = sortedParameteValue;
+            dynamic parameterValue = sortedParameterValue;
             var cacheKeyValueProp = parameterValue.GetType().GetProperty(cacheKeyProviderDescriptor.PropName);
             if (cacheKeyValueProp == null)
             {

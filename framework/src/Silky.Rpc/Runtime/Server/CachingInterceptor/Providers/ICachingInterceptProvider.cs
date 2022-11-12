@@ -9,4 +9,6 @@ public interface ICachingInterceptProvider
     bool IgnoreMultiTenancy { get; set; }
 
     CachingMethod CachingMethod { get; }
+
+    public CachingInterceptorDescriptor CachingInterceptorDescriptor { get; internal set; }
 }

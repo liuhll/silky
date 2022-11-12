@@ -35,4 +35,6 @@ public class RemoveCachingInterceptAttribute : Attribute, IRemoveCachingIntercep
     public CachingMethod CachingMethod { get; }
 
     public bool OnlyCurrentUserData { get; set; }
+    
+    CachingInterceptorDescriptor ICachingInterceptProvider.CachingInterceptorDescriptor { get; set; }
 }

@@ -20,4 +20,6 @@ public class RemoveMatchKeyCachingInterceptAttribute : Attribute, IRemoveMatchKe
     public bool OnlyCurrentUserData { get; set; }
     public bool IgnoreMultiTenancy { get; set; }
     public CachingMethod CachingMethod { get; } = CachingMethod.Remove;
+    
+    CachingInterceptorDescriptor ICachingInterceptProvider.CachingInterceptorDescriptor { get; set; }
 }

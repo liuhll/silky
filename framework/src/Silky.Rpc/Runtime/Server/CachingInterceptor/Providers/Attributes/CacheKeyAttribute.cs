@@ -13,7 +13,9 @@ public class CacheKeyAttribute : Attribute, ICacheKeyProvider
     }
 
     public int Index { get; }
-    public string PropName { get; set; }
     
+    public string PropName { get; set; }
+
+
     public CacheKeyType CacheKeyType { get; }
 }

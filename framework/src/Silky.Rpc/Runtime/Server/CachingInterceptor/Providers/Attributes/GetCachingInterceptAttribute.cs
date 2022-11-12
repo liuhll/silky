@@ -22,4 +22,6 @@ public class GetCachingInterceptAttribute : Attribute, IGetCachingInterceptProvi
     public bool IgnoreMultiTenancy { get; set; }
 
     public CachingMethod CachingMethod { get; }
+
+    CachingInterceptorDescriptor ICachingInterceptProvider.CachingInterceptorDescriptor { get; set; }
 }

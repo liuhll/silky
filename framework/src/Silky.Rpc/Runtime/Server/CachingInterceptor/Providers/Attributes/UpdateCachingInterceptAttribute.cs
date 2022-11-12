@@ -21,4 +21,7 @@ public class UpdateCachingInterceptAttribute : Attribute, IUpdateCachingIntercep
     public bool OnlyCurrentUserData { get; set; }
     public bool IgnoreMultiTenancy { get; set; }
     public CachingMethod CachingMethod { get; }
+    
+    CachingInterceptorDescriptor ICachingInterceptProvider.CachingInterceptorDescriptor { get; set; }
+    
 }

@@ -29,6 +29,7 @@ namespace ITestApplication.Test
         [TestClientFilter(1)]
         [HttpPost]
         [HttpPut]
+        [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
         Task<TestOut> CreateOrUpdateAsync(TestInput input);
 
         // [HttpPost]
@@ -37,11 +38,12 @@ namespace ITestApplication.Test
 
         [AllowAnonymous]
         [HttpGet("{id:long}")]
-        [GetCachingIntercept("id:{0}")]
-        Task<TestOut> Get([CacheKey(0)] long id);
+        [GetCachingIntercept("id:{id}")]
+        Task<TestOut> Get( /*[CacheKey(0)]*/ long id);
 
         [Obsolete]
         [HttpPut("modify")]
+        [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
         Task<TestOut> Update(TestInput input);
 
         [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "id:{0}")]
@@ -50,7 +52,8 @@ namespace ITestApplication.Test
         Task<string> DeleteAsync([CacheKey(0)] long id);
 
         [HttpGet]
-        Task<PagedList<TestOut>> Search1([FromQuery] string name, [FromQuery] string address, [FromQuery] int? pageIndex,
+        Task<PagedList<TestOut>> Search1([FromQuery] string name, [FromQuery] string address,
+            [FromQuery] int? pageIndex,
             [FromQuery] int? pageSize);
 
         [HttpGet]
@@ -75,6 +78,7 @@ namespace ITestApplication.Test
 
         [HttpPatch]
         [Fallback(typeof(IUpdatePartFallBack))]
+        [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
         Task<TestOut> UpdatePart(TestUpdatePart input);
 
         Task<IList<object>> GetObjectList();
