@@ -27,6 +27,20 @@ public class TemplateTestAppService : ITemplateTestAppService
         return result;
     }
 
+    public async Task<dynamic> CallTest(string name, string address)
+    {
+        // var result =
+        //     await _invokeTemplate.PostForObjectAsync<dynamic>("api/another/test", new Dictionary<string, object>()
+        //     {
+        //         { "input", new { Name = name, Address = "beijing" } }
+        //     });
+        
+        var result =
+            await _invokeTemplate.PostForObjectAsync<dynamic>("api/another/test",  new { Name = name, Address = "beijing" });
+        
+        return result;
+    }
+
     public async Task<dynamic> CallTest()
     {
         // 1. 参数顺序与提供者一致

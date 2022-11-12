@@ -8,7 +8,6 @@ public interface ITemplateTestAppService
 {
     Task<string> CallCreateOne(string name);
 
-    Task<dynamic> CallTest();
+    Task<dynamic> CallTest(string name,string address);
 
-    // Task Upload([FromForm] IFormFile file);
 }
