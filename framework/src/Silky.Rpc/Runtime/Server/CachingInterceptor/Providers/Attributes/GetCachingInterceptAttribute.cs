@@ -24,4 +24,5 @@ public class GetCachingInterceptAttribute : Attribute, IGetCachingInterceptProvi
     public CachingMethod CachingMethod { get; }
 
     CachingInterceptorDescriptor ICachingInterceptProvider.CachingInterceptorDescriptor { get; set; }
+    
 }

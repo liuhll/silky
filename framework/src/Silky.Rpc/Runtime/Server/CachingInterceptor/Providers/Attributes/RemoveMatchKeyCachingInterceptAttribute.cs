@@ -22,4 +22,6 @@ public class RemoveMatchKeyCachingInterceptAttribute : Attribute, IRemoveMatchKe
     public CachingMethod CachingMethod { get; } = CachingMethod.Remove;
     
     CachingInterceptorDescriptor ICachingInterceptProvider.CachingInterceptorDescriptor { get; set; }
+    
+    public string CacheName { get; set; }
 }

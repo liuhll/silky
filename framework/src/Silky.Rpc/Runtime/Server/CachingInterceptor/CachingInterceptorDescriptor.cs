@@ -23,4 +23,6 @@ public class CachingInterceptorDescriptor
     public bool IsRemoveMatchKeyProvider { get; set; }
 
     public ICollection<CacheKeyProviderDescriptor> CacheKeyProviderDescriptors { get; set; }
+    
+    public bool? IgnoreWhenCacheKeyNull { get; set; }
 }

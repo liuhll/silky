@@ -29,7 +29,7 @@ namespace ITestApplication.Test
         [TestClientFilter(1)]
         [HttpPost]
         [HttpPut]
-        [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
+        [UpdateCachingIntercept("id:{id}")]
         Task<TestOut> CreateOrUpdateAsync(TestInput input);
 
         // [HttpPost]

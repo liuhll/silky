@@ -13,7 +13,8 @@ public class UpdateCachingInterceptAttribute : Attribute, IUpdateCachingIntercep
         KeyTemplate = keyTemplate;
         OnlyCurrentUserData = false;
         IgnoreMultiTenancy = false;
-        CachingMethod = CachingMethod.Remove;
+        IgnoreWhenCacheKeyNull = true;
+        CachingMethod = CachingMethod.Update;
     }
 
     public string KeyTemplate { get; }
@@ -21,7 +22,8 @@ public class UpdateCachingInterceptAttribute : Attribute, IUpdateCachingIntercep
     public bool OnlyCurrentUserData { get; set; }
     public bool IgnoreMultiTenancy { get; set; }
     public CachingMethod CachingMethod { get; }
-    
+
     CachingInterceptorDescriptor ICachingInterceptProvider.CachingInterceptorDescriptor { get; set; }
     
+    public bool IgnoreWhenCacheKeyNull { get; set; }
 }

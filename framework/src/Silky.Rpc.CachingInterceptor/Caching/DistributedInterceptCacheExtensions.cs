@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Silky.Core.Extensions;
 
 namespace Silky.Rpc.CachingInterceptor
 {
@@ -9,8 +10,24 @@ namespace Silky.Rpc.CachingInterceptor
             bool? hideErrors = null,
             CancellationToken token = default)
         {
-            cache.UpdateCacheName(cacheName);
+            if (!cacheName.IsNullOrEmpty())
+            {
+                cache.UpdateCacheName(cacheName);
+            }
+
             await cache.RemoveAsync(cacheKey, hideErrors, token);
+        }
+        
+        public static async Task RemoveMatchKeyAsync(this IDistributedInterceptCache cache, string cacheKey, string cacheName,
+            bool? hideErrors = null,
+            CancellationToken token = default)
+        {
+            if (!cacheName.IsNullOrEmpty())
+            {
+                cache.UpdateCacheName(cacheName);
+            }
+
+            await cache.RemoveMatchKeyAsync(cacheKey, hideErrors, token);
         }
     }
 }

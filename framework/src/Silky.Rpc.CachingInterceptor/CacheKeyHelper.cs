@@ -16,7 +16,7 @@ namespace Silky.Rpc.CachingInterceptor;
 
 public static class CacheKeyHelper
 {
-    public static string GetCachingInterceptKey(object parameters,
+    public static (string, bool) GetCachingInterceptKey(object parameters,
         [NotNull] CachingInterceptorDescriptor cachingInterceptProvider, string serviceKey)
     {
         Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
@@ -29,11 +29,13 @@ public static class CacheKeyHelper
         }
 
         var cacheKeyProviders = GetCacheKeyProviders(cachingInterceptProvider, parameters);
-        return GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider, serviceKey);
+        return (GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider, serviceKey),
+            cacheKeyProviders.Any(p => p.Value.IsNullOrEmpty()));
     }
 
 
-    public static string GetCachingInterceptKey([NotNull] ServiceEntry serviceEntry, [NotNull] object[] parameters,
+    public static (string, bool) GetCachingInterceptKey([NotNull] ServiceEntry serviceEntry,
+        [NotNull] object[] parameters,
         [NotNull] ICachingInterceptProvider cachingInterceptProvider, string serviceKey)
     {
         Check.NotNull(serviceEntry, nameof(serviceEntry));
@@ -48,14 +50,33 @@ public static class CacheKeyHelper
         }
 
         var cacheKeyProviders = GetCacheKeyProviders(serviceEntry, cachingInterceptProvider, parameters);
-        return GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider.CachingInterceptorDescriptor,
-            serviceKey);
+
+        return (GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider.CachingInterceptorDescriptor,
+                serviceKey),
+            cacheKeyProviders.Any(p => p.Value.IsNullOrEmpty()));
     }
 
 
     private static string GetCachingInterceptKey(CacheKeyProvider[] cacheKeyProviders,
         CachingInterceptorDescriptor cachingInterceptProvider, string serviceKey)
     {
+        if (cachingInterceptProvider.CachingMethod != CachingMethod.Update &&
+            cacheKeyProviders.Any(p => p.Value.IsNullOrEmpty()))
+        {
+            throw new SilkyException(
+                $"Failed to get parameter value of cache interception with {cachingInterceptProvider.KeyTemplate} - {cachingInterceptProvider.CachingMethod}.",
+                StatusCode.CachingInterceptError);
+        }
+
+        if (cachingInterceptProvider.CachingMethod == CachingMethod.Update &&
+            cachingInterceptProvider.IgnoreWhenCacheKeyNull == false &&
+            cacheKeyProviders.Any(p => p.Value.IsNullOrEmpty()))
+        {
+            throw new SilkyException(
+                $"Failed to get parameter value of cache interception with {cachingInterceptProvider.KeyTemplate} - {cachingInterceptProvider.CachingMethod}.",
+                StatusCode.CachingInterceptError);
+        }
+
         var cachingInterceptKey = cachingInterceptProvider.GetCacheKeyType() == CacheKeyType.Attribute
             ? ParserAttributeCacheKey(cacheKeyProviders, cachingInterceptProvider.KeyTemplate)
             : ParserNamedCacheKey(cacheKeyProviders, cachingInterceptProvider.KeyTemplate);
@@ -170,45 +191,52 @@ public static class CacheKeyHelper
 
 
     private static string GetCacheKeyValue(CacheKeyProviderDescriptor cacheKeyProviderDescriptor, object parameters)
+
     {
         var serializer = EngineContext.Current.Resolve<ISerializer>();
-        if (parameters is IDictionary<string, object> dictParameters)
+        switch (parameters)
         {
-            if (cacheKeyProviderDescriptor.IsSampleOrNullableType &&
-                dictParameters.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName, out var value))
-            {
+            case IDictionary<string, object> dictParameters when cacheKeyProviderDescriptor.IsSampleOrNullableType &&
+                                                                 dictParameters.TryOrdinalIgnoreCaseGetValue(
+                                                                     cacheKeyProviderDescriptor.PropName,
+                                                                     out var value):
                 return value?.ToString();
-            }
-
-            var cacheKeyValue = string.Empty;
-            foreach (var dictParameter in dictParameters)
+            case IDictionary<string, object> dictParameters when !cacheKeyProviderDescriptor.IsSampleOrNullableType:
             {
-                dynamic dictParameterValue = dictParameter.Value;
-                var cacheKeyValueProp = dictParameterValue.GetType().GetProperty(cacheKeyProviderDescriptor.PropName);
-                if (cacheKeyValueProp != null)
+                var cacheKeyValue = string.Empty;
+                foreach (var dictParameter in dictParameters)
                 {
-                    cacheKeyValue = cacheKeyValueProp.GetValue(dictParameterValue, null);
-                    break;
+                    if (dictParameter.Value.GetType() == typeof(string) && dictParameter.Value.ToString().IsValidJson())
+                    {
+                        var httpParameterDictValue =
+                            serializer.Deserialize<IDictionary<string, object>>(dictParameter.Value.ToString());
+                        if (httpParameterDictValue.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName,
+                                out var keyValue))
+                        {
+                            cacheKeyValue = keyValue?.ToString();
+                            break;
+                        }
+                    }
+
+                    dynamic dictParameterValue = dictParameter.Value;
+                    var cacheKeyValueProp =
+                        dictParameterValue.GetType().GetProperty(cacheKeyProviderDescriptor.PropName);
+                    if (cacheKeyValueProp != null)
+                    {
+                        cacheKeyValue = cacheKeyValueProp.GetValue(dictParameterValue, null);
+                        break;
+                    }
                 }
+
+                return cacheKeyValue;
             }
-
-            if (cacheKeyValue == null)
-            {
-                throw new SilkyException(
-                    $"Failed to get the value of the cache interception key:{cacheKeyProviderDescriptor.PropName}");
-            }
-
-            return cacheKeyValue;
-        }
-
-        if (parameters is IDictionary<ParameterFrom, object> httpParameters)
-        {
-            if (httpParameters.TryGetValue(cacheKeyProviderDescriptor.From, out var httpParameterValue))
+            case IDictionary<ParameterFrom, object> httpParameters
+                when httpParameters.TryGetValue(cacheKeyProviderDescriptor.From, out var httpParameterValue):
             {
                 if (httpParameterValue == null)
                 {
                     throw new SilkyException(
-                        $"Failed to get the value of the cache interception key:{cacheKeyProviderDescriptor.PropName}");
+                        $"Failed to get the value of the cache interception key value:{cacheKeyProviderDescriptor.From}");
                 }
 
                 var httpParameterValueLine = httpParameterValue.ToString();
@@ -224,35 +252,29 @@ public static class CacheKeyHelper
                 {
                     return cacheKeyValue?.ToString();
                 }
-                else
+
+                return null;
+            }
+            case object[] sortedParameters:
+            {
+                var sortedParameterValue = sortedParameters[cacheKeyProviderDescriptor.ParameterIndex];
+                if (cacheKeyProviderDescriptor.IsSampleOrNullableType)
                 {
-                    throw new SilkyException(
-                        $"Failed to get the value of the cache interception key:{cacheKeyProviderDescriptor.PropName}");
+                    return sortedParameterValue?.ToString();
                 }
+
+                dynamic parameterValue = sortedParameterValue;
+                var cacheKeyValueProp = parameterValue.GetType().GetProperty(cacheKeyProviderDescriptor.PropName);
+                if (cacheKeyValueProp == null)
+                {
+                    return cacheKeyValueProp;
+                }
+
+                var cacheKeyValue = cacheKeyValueProp.GetValue(parameterValue, null);
+                return cacheKeyValue?.ToString();
             }
+            default:
+                return null;
         }
-
-        else if (parameters is object[] sortedParameters)
-        {
-            var sortedParameterValue = sortedParameters[cacheKeyProviderDescriptor.ParameterIndex];
-            if (cacheKeyProviderDescriptor.IsSampleOrNullableType)
-            {
-                return sortedParameterValue?.ToString();
-            }
-
-            dynamic parameterValue = sortedParameterValue;
-            var cacheKeyValueProp = parameterValue.GetType().GetProperty(cacheKeyProviderDescriptor.PropName);
-            if (cacheKeyValueProp == null)
-            {
-                throw new SilkyException(
-                    $"Failed to get the value of the cache interception key:{cacheKeyProviderDescriptor.PropName}");
-            }
-
-            var cacheKeyValue = cacheKeyValueProp.GetValue(parameterValue, null);
-            return cacheKeyValue?.ToString();
-        }
-
-        throw new SilkyException(
-            $"Failed to get the value of the cache interception key:{cacheKeyProviderDescriptor.PropName}");
     }
 }

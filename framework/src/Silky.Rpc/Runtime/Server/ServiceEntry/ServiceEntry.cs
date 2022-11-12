@@ -91,6 +91,16 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     cachingInterceptorDescriptor.CacheName = removeCachingInterceptProvider.CacheName;
                 }
+                
+                if (cachingInterceptorProvider is IRemoveMatchKeyCachingInterceptProvider removeMatchKeyCachingInterceptProvider)
+                {
+                    cachingInterceptorDescriptor.CacheName = removeMatchKeyCachingInterceptProvider.CacheName;
+                }
+                
+                if (cachingInterceptorProvider is IUpdateCachingInterceptProvider updateCachingInterceptProvider)
+                {
+                    cachingInterceptorDescriptor.IgnoreWhenCacheKeyNull = updateCachingInterceptProvider.IgnoreWhenCacheKeyNull;
+                }
 
                 foreach (var parameterDescriptor in ParameterDescriptors)
                 {

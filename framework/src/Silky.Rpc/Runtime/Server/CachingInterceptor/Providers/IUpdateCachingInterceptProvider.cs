@@ -2,4 +2,5 @@
 
 public interface IUpdateCachingInterceptProvider : ICachingInterceptProvider
 {
+    public bool IgnoreWhenCacheKeyNull { get; set; }
 }

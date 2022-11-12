@@ -2,5 +2,5 @@
 
 public interface IRemoveCachingInterceptProvider : ICachingInterceptProvider
 {
-    string CacheName { get; }
+    string CacheName { get; set; }
 }
