@@ -152,19 +152,25 @@ namespace Silky.Rpc.Runtime.Server
             return serviceEntry.CustomAttributes.OfType<IGetCachingInterceptProvider>().FirstOrDefault();
         }
 
-        public static ICachingInterceptProvider UpdateCachingInterceptProvider(this ServiceEntry serviceEntry)
+        public static ICachingInterceptProvider[] GetUpdateCachingInterceptProviders(this ServiceEntry serviceEntry)
         {
-            return serviceEntry.CustomAttributes.OfType<IUpdateCachingInterceptProvider>().FirstOrDefault();
+            return serviceEntry.CustomAttributes.OfType<IUpdateCachingInterceptProvider>().ToArray();
         }
 
-        public static IReadOnlyCollection<IRemoveCachingInterceptProvider> RemoveCachingInterceptProviders(
+        public static IReadOnlyCollection<IRemoveCachingInterceptProvider> GetRemoveCachingInterceptProviders(
             this ServiceEntry serviceEntry)
         {
             return serviceEntry.CustomAttributes.OfType<IRemoveCachingInterceptProvider>().ToArray();
         }
+        
+        public static ICachingInterceptProvider[] GetAllRemoveCachingInterceptProviders(
+            this ServiceEntry serviceEntry)
+        {
+            return serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().Where(p=> p.CachingMethod == CachingMethod.Remove).ToArray();
+        }
 
-        public static IReadOnlyCollection<IRemoveMatchKeyCachingInterceptProvider>
-            RemoveMatchKeyCachingInterceptProviders(
+        public static IRemoveMatchKeyCachingInterceptProvider[]
+            GetRemoveMatchKeyCachingInterceptProviders(
                 this ServiceEntry serviceEntry)
         {
             return serviceEntry.CustomAttributes.OfType<IRemoveMatchKeyCachingInterceptProvider>().ToArray();

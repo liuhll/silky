@@ -4,7 +4,7 @@ using Silky.Core;
 
 namespace Silky.Rpc.Runtime.Server;
 
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class UpdateCachingInterceptAttribute : Attribute, IUpdateCachingInterceptProvider
 {
     public UpdateCachingInterceptAttribute([NotNull] string keyTemplate)
