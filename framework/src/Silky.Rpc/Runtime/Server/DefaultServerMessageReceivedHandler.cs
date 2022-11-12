@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -91,6 +92,16 @@ namespace Silky.Rpc.Runtime.Server
             catch (Exception ex)
             {
                 isHandleSuccess = false;
+                if (ex is ValidationException validationException)
+                {
+                    remoteResultMessage.ValidateErrors = validationException.ValidationErrors.Select(vr =>
+                        new ValidError()
+                        {
+                            MemberNames = vr.MemberNames.ToArray(),
+                            ErrorMessage = vr.ErrorMessage
+                        }).ToArray();
+                }
+
                 if (ex.IsFriendlyException())
                 {
                     Logger.LogWarning(ex.Message);

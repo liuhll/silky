@@ -11,5 +11,7 @@ namespace Silky.Rpc.Runtime.Server
         public object[] Parameters { get; set; }
 
         public string ServiceKey { get; set; }
+
+        public Exception Exception { get; set; }
     }
 }

@@ -34,6 +34,11 @@ namespace Silky.Rpc.Runtime.Server
                 filter.OnActionExecuting(rpcActionExecutingContext);
             }
 
+            if (rpcActionExecutingContext.Exception != null)
+            {
+                throw rpcActionExecutingContext.Exception;
+            }
+
             try
             {
                 if (serviceEntry.IsAsyncMethod)
@@ -55,9 +60,10 @@ namespace Silky.Rpc.Runtime.Server
                         ServiceEntry = serviceEntry,
                     });
                 }
+
                 throw;
             }
-            
+
             var rpcActionExecutedContext = new ServerExecutedContext()
             {
                 Result = result,
@@ -77,17 +83,20 @@ namespace Silky.Rpc.Runtime.Server
             return rpcActionExecutedContext.Result;
         }
 
-        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<ParameterFrom, object> parameters, string serviceKey)
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor,
+            IDictionary<ParameterFrom, object> parameters, string serviceKey)
         {
             throw new NotImplementedException();
         }
 
-        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters, string serviceKey = null)
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters,
+            string serviceKey = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters, string serviceKey = null)
+        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor,
+            IDictionary<string, object> parameters, string serviceKey = null)
         {
             throw new NotImplementedException();
         }

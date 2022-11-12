@@ -64,6 +64,7 @@ namespace Silky.Core.Exceptions
         {
             return exception.GetExceptionStatusCode().IsFriendlyStatus();
         }
+        
 
         public static bool IsUserFriendlyException(this Exception exception)
         {
