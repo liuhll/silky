@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Extensions.Collections.Generic;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -55,7 +54,8 @@ namespace Silky.Rpc.Runtime.Server
             var cacheKeyParameters =
                 cacheKeyTemplates.SelectMany(p =>
                     Regex.Matches(p, CacheKeyConstants.CacheKeyParameterRegex)
-                        .Select(q => q.Value.Replace("{", "").Replace("}", "")));
+                        .Select(q => q.Value.RemoveCurlyBraces()));
+
             foreach (var cacheKeyParameter in cacheKeyParameters)
             {
                 if (IsSampleType && SampleName.Equals(cacheKeyParameter, StringComparison.OrdinalIgnoreCase))

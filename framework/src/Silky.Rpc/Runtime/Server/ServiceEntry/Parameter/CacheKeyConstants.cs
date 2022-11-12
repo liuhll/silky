@@ -1,6 +1,8 @@
 namespace Silky.Rpc.Runtime.Server;
 
-internal class CacheKeyConstants
+public class CacheKeyConstants
 {
     public const string CacheKeyParameterRegex = @"\{\D*\}";
+    
+    public const string CacheKeyIndexRegex = @"\{\d+\}";
 }

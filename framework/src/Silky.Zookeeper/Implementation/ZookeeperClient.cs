@@ -311,7 +311,10 @@ namespace Silky.Zookeeper.Implementation
         {
             await RetryUntilConnected(async () =>
             {
-                ZooKeeper.addAuthInfo(authScheme.ToString().ToLower(), Encoding.UTF8.GetBytes(auth));
+                if (authScheme == AuthScheme.Auth || authScheme == AuthScheme.Digest)
+                {
+                    ZooKeeper.addAuthInfo(authScheme.ToString().ToLower(), Encoding.UTF8.GetBytes(auth));
+                }
                 return 0;
             });
         }

@@ -53,15 +53,13 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
     public async Task<OpenApiDocument> GetSwagger(string documentName, IZookeeperClient zookeeperClient)
     {
-        await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
         var documentPath = CreateSwaggerDocPath(documentName);
         if (!await zookeeperClient.ExistsAsync(documentPath))
         {
             return null;
         }
-
+        await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
         var datas = await zookeeperClient.GetDataAsync(documentPath);
-
         if (datas == null || !datas.Any())
         {
             return null;
@@ -102,12 +100,12 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
     private async Task<string[]> GetDocuments(IZookeeperClient zookeeperClient)
     {
-        await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
+      
         if (!await zookeeperClient.ExistsAsync(_registryCenterOptions.SwaggerDocPath))
         {
             return Array.Empty<string>();
         }
-
+        await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
         var children = await zookeeperClient.GetChildrenAsync(_registryCenterOptions.SwaggerDocPath);
         if (children == null)
         {

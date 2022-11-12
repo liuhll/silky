@@ -44,11 +44,11 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
         foreach (var zookeeperClient in zookeeperClients)
         {
             // await CreateSubscribeServersChange(zookeeperClient);
-            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
+        
             var routePath = _registryCenterOptions.SwaggerDocPath;
             if (!await zookeeperClient.ExistsAsync(routePath))
             {
-               
+                await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
                 await zookeeperClient.CreateRecursiveAsync(routePath, null,
                     AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
             }
@@ -57,12 +57,14 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
             var data = jsonString.GetBytes();
             if (!await zookeeperClient.ExistsAsync(swaggerDocPath))
             {
+                await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
                 await zookeeperClient.CreateRecursiveAsync(swaggerDocPath, data,
                     AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
                 Logger.LogDebug($"Node {swaggerDocPath} does not exist and will be created");
             }
             else
             {
+                await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
                 await zookeeperClient.SetDataAsync(swaggerDocPath, data);
                 Logger.LogDebug($"The cached swaggerdocInfo data of the {swaggerDocPath} node has been updated");
             }

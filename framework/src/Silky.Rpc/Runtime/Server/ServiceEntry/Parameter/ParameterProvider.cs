@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
@@ -17,15 +18,34 @@ namespace Silky.Rpc.Runtime.Server
         public IReadOnlyList<ParameterDescriptor> GetParameterDescriptors(MethodInfo methodInfo,
             HttpMethodInfo httpMethodInfo)
         {
+            var cacheKeyTemplates = methodInfo.GetCustomAttributes().OfType<ICachingInterceptProvider>()
+                .Select(p => p.KeyTemplate).ToArray();
+            if (cacheKeyTemplates.Any(t =>
+                    Regex.IsMatch(t, CacheKeyConstants.CacheKeyIndexRegex) &&
+                    Regex.IsMatch(t, CacheKeyConstants.CacheKeyParameterRegex)))
+            {
+                throw new SilkyException(
+                    "The cache interception template you set is incorrect, please do not mix the way the template is set.");
+            }
+
+            if (cacheKeyTemplates.Any(c =>
+                    Regex.Matches(c, CacheKeyConstants.CacheKeyParameterRegex).Select(p => p.Value).GroupBy(q => q)
+                        .Count() > 1))
+            {
+                throw new SilkyException(
+                    "Cache interception template parameters do not allow duplicate names.");
+            }
+
             var parameterDescriptors = new List<ParameterDescriptor>();
             var index = 0;
             foreach (var parameter in methodInfo.GetParameters())
             {
-                var parameterDescriptor = CreateParameterDescriptor(methodInfo, parameter, httpMethodInfo, index);
+                var parameterDescriptor =
+                    CreateParameterDescriptor(methodInfo, parameter, cacheKeyTemplates, httpMethodInfo, index);
                 if (parameterDescriptor.From == ParameterFrom.Body &&
                     parameterDescriptors.Any(p => p.From == ParameterFrom.Body))
                 {
-                    throw new SilkyException("Only one parameter of Request Body is allowed to be set");
+                    throw new SilkyException("Only one parameter of Request Body is allowed to be set.");
                 }
 
                 parameterDescriptors.Add(parameterDescriptor);
@@ -35,11 +55,13 @@ namespace Silky.Rpc.Runtime.Server
             return parameterDescriptors.ToImmutableList();
         }
 
-        private ParameterDescriptor CreateParameterDescriptor(MethodInfo methodInfo, ParameterInfo parameter,
-            HttpMethodInfo httpMethodInfo, int index)
+        private ParameterDescriptor CreateParameterDescriptor(
+            MethodInfo methodInfo,
+            ParameterInfo parameter,
+            string[] cacheKeyTemplates,
+            HttpMethodInfo httpMethodInfo,
+            int index)
         {
-            var cacheKeyTemplates = methodInfo.GetCustomAttributes().OfType<ICachingInterceptProvider>()
-                .Select(p => p.KeyTemplate).ToArray();
             var bindingSourceMetadata =
                 parameter.GetCustomAttributes().OfType<IBindingSourceMetadata>().FirstOrDefault();
             ParameterDescriptor parameterDescriptor = null;
