@@ -29,12 +29,7 @@ namespace Silky.Account.Application.Accounts
         {
             return _accountDomainService.Login(input);
         }
-
-        public Task<string> DashboardLogin(DashboardLoginInput input)
-        {
-            return _accountDomainService.DashboardLogin(input);
-        }
-
+        
         public Task<GetAccountOutput> GetLoginUserInfo()
         {
             return _accountDomainService.GetLoginUserInfo();

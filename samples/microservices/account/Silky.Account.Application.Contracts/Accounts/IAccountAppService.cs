@@ -30,9 +30,6 @@ namespace Silky.Account.Application.Contracts.Accounts
         [AllowAnonymous]
         Task<string> Login(LoginInput input);
         
-        [AllowAnonymous]
-        [HttpPost("dashboard/login")]
-        Task<string> DashboardLogin(DashboardLoginInput input);
 
         /// <summary>
         /// 获取当前登陆用户

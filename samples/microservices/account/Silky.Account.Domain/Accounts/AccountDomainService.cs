@@ -210,17 +210,6 @@ namespace Silky.Account.Domain.Accounts
 
             return userInfo.Adapt<GetAccountOutput>();
         }
-
-        public async Task<string> DashboardLogin(DashboardLoginInput input)
-        {
-
-            var payload = new Dictionary<string, object>()
-            {
-                { ClaimTypes.NameIdentifier, "dashboard" },
-                { ClaimTypes.Name, "Dashboard" },
-                { ClaimTypes.Role, "Dashboard" },
-            };
-            return _jwtTokenGenerator.Generate(payload);
-        }
+        
     }
 }
