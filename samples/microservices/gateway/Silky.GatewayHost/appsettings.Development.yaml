@@ -15,11 +15,9 @@ distributedCache:
 gateway:
   jwtSecret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW
 swaggerDocument:
-  organizationMode: Group
   termsOfService: https://www.github.com/liuhll/silky
 
 dashboard:
-  displayWebApiInSwagger: false
   useAuth: true
   wrapperResponse: true
   dashboardLoginApi: /api/account/dashboard/login

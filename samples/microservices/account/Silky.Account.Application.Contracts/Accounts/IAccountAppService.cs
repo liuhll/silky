@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Silky.Account.Application.Contracts.Accounts.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
