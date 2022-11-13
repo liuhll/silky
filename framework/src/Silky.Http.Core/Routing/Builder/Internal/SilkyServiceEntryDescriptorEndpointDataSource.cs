@@ -1,41 +1,38 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+
 using Microsoft.Extensions.Primitives;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Routing.Builder.Internal;
 
-public class SilkyServiceEntryDescriptorEndpointDataSource : EndpointDataSource
+internal class SilkyServiceEntryDescriptorEndpointDataSource : SilkyEndpointDataSourceBase
 {
-    private IChangeToken? _changeToken;
-    private List<Endpoint>? _endpoints;
+    
+  
     private CancellationTokenSource? _cancellationTokenSource;
     private readonly IServerManager _serverManager;
     private readonly List<Action<EndpointBuilder>> Conventions;
     private readonly ServiceEntryDescriptorEndpointFactory _serviceEntryDescriptorEndpointFactory;
-    private readonly object Lock = new();
+  
     
     private IDisposable _disposable;
 
     public SilkyServiceEntryDescriptorEndpointDataSource(IServerManager serverManager,
-        ServiceEntryDescriptorEndpointFactory serviceEntryDescriptorEndpointFactory)
+        ServiceEntryDescriptorEndpointFactory serviceEntryDescriptorEndpointFactory) : base()
     {
         _serverManager = serverManager;
         _serviceEntryDescriptorEndpointFactory = serviceEntryDescriptorEndpointFactory;
         Conventions = new List<Action<EndpointBuilder>>();
-        DefaultBuilder = new ServiceEntryDescriptorEndpointConventionBuilder(Lock, Conventions);
+        DefaultBuilder = new SilkyRpcServiceEndpointConventionBuilder(Lock, Conventions);
 
         Subscribe();
     }
-
-    public ServiceEntryDescriptorEndpointConventionBuilder DefaultBuilder { get; }
-
+    
     protected void Subscribe()
     {
         // IMPORTANT: this needs to be called by the derived class to avoid the fragile base class
@@ -49,29 +46,7 @@ public class SilkyServiceEntryDescriptorEndpointDataSource : EndpointDataSource
     }
 
     
-    public override IChangeToken GetChangeToken()
-    {
-        Initialize();
-        Debug.Assert(_changeToken != null);
-        Debug.Assert(_endpoints != null);
-        return _changeToken;
-    }
-
-    private void Initialize()
-    {
-        if (_endpoints == null)
-        {
-            lock (Lock)
-            {
-                if (_endpoints == null)
-                {
-                    UpdateEndpoints();
-                }
-            }
-        }
-    }
-
-    private void UpdateEndpoints()
+    protected override void UpdateEndpoints()
     {
         lock (Lock)
         {
@@ -112,14 +87,5 @@ public class SilkyServiceEntryDescriptorEndpointDataSource : EndpointDataSource
         return endpoints;
     }
 
-    public override IReadOnlyList<Endpoint> Endpoints
-    {
-        get
-        {
-            Initialize();
-            Debug.Assert(_changeToken != null);
-            Debug.Assert(_endpoints != null);
-            return _endpoints;
-        }
-    }
+
 }

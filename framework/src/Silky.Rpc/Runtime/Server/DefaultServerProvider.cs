@@ -2,6 +2,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Endpoint;
@@ -31,7 +32,7 @@ namespace Silky.Rpc.Runtime.Server
             var rpcServices = _serviceManager.GetLocalService(ServiceProtocol.Rpc);
             foreach (var rpcService in rpcServices)
             {
-                _server.Services.Add(rpcService.ServiceDescriptor);
+                _server.Services.AddIfNotContains(rpcService.ServiceDescriptor);
             }
         }
 
@@ -43,7 +44,7 @@ namespace Silky.Rpc.Runtime.Server
                 throw new SilkyException("Failed to obtain http service rpcEndpoint");
             }
 
-            _server.Endpoints.Add(webEndpoint);
+            _server.Endpoints.AddIfNotContains(webEndpoint);
         }
 
         public void AddWsServices()
@@ -53,7 +54,7 @@ namespace Silky.Rpc.Runtime.Server
             var wsServices = _serviceManager.GetLocalService(ServiceProtocol.Ws);
             foreach (var wsService in wsServices)
             {
-                _server.Services.Add(wsService.ServiceDescriptor);
+                _server.Services.AddIfNotContains(wsService.ServiceDescriptor);
             }
         }
 

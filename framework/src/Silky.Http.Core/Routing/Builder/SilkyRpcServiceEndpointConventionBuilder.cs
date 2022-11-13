@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    public class ServiceEntryEndpointConventionBuilder : IEndpointConventionBuilder
+    public class SilkyRpcServiceEndpointConventionBuilder : IEndpointConventionBuilder
     {
         private readonly object _lock;
         private readonly List<Action<EndpointBuilder>> _conventions;
 
-        public ServiceEntryEndpointConventionBuilder(object @lock, List<Action<EndpointBuilder>> conventions)
+        public SilkyRpcServiceEndpointConventionBuilder(object @lock, List<Action<EndpointBuilder>> conventions)
         {
             _lock = @lock;
             _conventions = conventions;

@@ -112,6 +112,11 @@ namespace Silky.Rpc.Runtime.Server
             {
                 serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.NeedHttpProtocolSupport, true);
             }
+
+            if (serviceEntry.IsSilkyAppService())
+            {
+                serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.IsSilkyAppService, true);
+            }
             
             return serviceEntry;
         }

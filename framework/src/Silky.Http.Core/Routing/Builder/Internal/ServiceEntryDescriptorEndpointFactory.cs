@@ -13,7 +13,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Routing.Builder.Internal;
 
-public class ServiceEntryDescriptorEndpointFactory
+internal class ServiceEntryDescriptorEndpointFactory
 {
     private RequestDelegate CreateRequestDelegate(ServiceEntryDescriptor serviceEntryDescriptor)
     {

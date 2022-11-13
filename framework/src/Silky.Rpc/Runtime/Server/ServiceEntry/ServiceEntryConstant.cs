@@ -5,5 +5,7 @@ namespace Silky.Rpc.Runtime.Server
         public const string DashboardUseAuth = "dashboard:useAuth";
 
         public const string NeedHttpProtocolSupport = "NeedHttpProtocolSupport";
+
+        public const string IsSilkyAppService = "IsSilkyAppService";
     }
 }

@@ -37,6 +37,7 @@ allowedHosts: "*"
 swaggerDocument:
   organizationMode: AllAndGroup
   injectMiniProfiler: true
+  showDashboardService: false
   termsOfService: https://www.github.com/liuhll/silky
 gateway:
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh

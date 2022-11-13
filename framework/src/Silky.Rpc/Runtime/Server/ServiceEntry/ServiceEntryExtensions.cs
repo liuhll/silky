@@ -193,6 +193,11 @@ namespace Silky.Rpc.Runtime.Server
 
             return false;
         }
+        
+        public static bool IsSilkyAppService(this ServiceEntry serviceEntry)
+        {
+            return "Silky.Http.Dashboard.AppService.ISilkyAppService".Equals(serviceEntry.ServiceType.FullName);
+        }
 
 
         private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,

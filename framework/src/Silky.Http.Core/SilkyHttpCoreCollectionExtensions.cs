@@ -13,6 +13,8 @@ namespace Silky.Http.Core
             services.AddSingleton<IMessageReceivedHandler, DefaultHttpMessageReceivedHandler>();
             services.AddSingleton<IParameterParser, DefaultHttpRequestParameterParser>();
             services.AddSingleton<SilkyServiceEntryEndpointDataSource>();
+            services.AddSingleton<SilkyDashboardEndpointDataSource>();
+            services.AddSingleton<SilkyRpcServiceEndpointDataSource>();
             services.AddSingleton<ServiceEntryEndpointFactory>();
 
             services.AddSingleton<SilkyServiceEntryDescriptorEndpointDataSource>();
