@@ -10,7 +10,6 @@ namespace Silky.StockHost
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSilkySkyApm();
-            services.AddMessagePackCodec();
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<StockDbContext>(); },
                 "Silky.Stock.Database.Migrations");

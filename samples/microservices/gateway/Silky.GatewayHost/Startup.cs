@@ -23,7 +23,6 @@ namespace Silky.GatewayHost
         {
             services.AddSilkyHttpServices();
             services.AddSilkySkyApm();
-            services.AddMessagePackCodec();
             services.AddHealthChecks()
                 .AddSilkyRpc();
             services
@@ -46,18 +45,19 @@ namespace Silky.GatewayHost
             app.UseSilkyRpcHealthCheck()
                 .UseHealthChecksPrometheusExporter("/metrics");
             app.UseRouting();
+            app.UseSilkyWebSocketsProxy();
             app.UseSilkyIdentity();
             app.UseSilkyWrapperResponse();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
             app.UseResponseCaching();
-            app.UseHttpsRedirection();
-            app.UseSilkyWebSocketsProxy();
-            app.UseSilkyHttpServer();
+            // app.UseHttpsRedirection();
+           
+       
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecksUI();
-                endpoints.MapSilkyRpcServices();
+                endpoints.MapSilkyTemplateServices();
             });
         }
     }

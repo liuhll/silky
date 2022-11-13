@@ -10,7 +10,6 @@ namespace Silky.OrderHost
         {
             
             services.AddSilkySkyApm();
-            services.AddMessagePackCodec();
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<OrderDbContext>(); },
                 "Silky.Order.Database.Migrations");

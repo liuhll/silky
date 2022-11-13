@@ -10,7 +10,6 @@ namespace Silky.AccountHost
         {
             services.AddSilkySkyApm();
             services.AddJwt();
-            services.AddMessagePackCodec();
             
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<UserDbContext>(); },

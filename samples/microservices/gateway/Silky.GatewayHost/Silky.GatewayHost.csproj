@@ -17,29 +17,24 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings.yml">
+        <None Update="appsettings.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.Production.yml">
+        <None Update="appsettings.Production.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.Development.yml">
+        <None Update="appsettings.Development.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.Apollo.yml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <None Update="appsettings.Apollo.yaml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\account\Silky.Account.Application.Contracts\Silky.Account.Application.Contracts.csproj" />
-        <ProjectReference Include="..\..\order\Silky.Order.Application.Contracts\Silky.Order.Application.Contracts.csproj" />
-        <ProjectReference Include="..\..\stock\Silky.Stock.Application.Contracts\Silky.Stock.Application.Contracts.csproj" />
-    </ItemGroup>
+    
     <ItemGroup>
         <None Remove="skyapm.json" />
     </ItemGroup>
     <ItemGroup>
-      <AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
+        <AdditionalDesignTimeBuildInput Remove="FakesAssemblies\**" />
     </ItemGroup>
 </Project>

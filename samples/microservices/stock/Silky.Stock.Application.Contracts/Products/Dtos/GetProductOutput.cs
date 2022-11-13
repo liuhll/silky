@@ -1,5 +1,4 @@
-
-using Silky.Caching;
+using Silky.Core;
 
 namespace Silky.Stock.Application.Contracts.Products.Dtos
 {

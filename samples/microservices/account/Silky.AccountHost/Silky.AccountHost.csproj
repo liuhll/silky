@@ -20,16 +20,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings.yml">
+        <None Update="appsettings.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.Production.yml">
+        <None Update="appsettings.Production.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.Development.yml">
+        <None Update="appsettings.Development.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.Apollo.yml">
+        <None Update="appsettings.Apollo.yaml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
