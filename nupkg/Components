@@ -35,7 +35,8 @@ src/Silky.SkyApm.Diagnostics.Abstraction
 src/Silky.SkyApm.Diagnostics.Rpc
 src/Silky.SkyApm.Diagnostics.Http
 src/Silky.SkyApm.Diagnostics.Transaction
-src/Silky.Swagger
+src/Silky.Swagger.Abstraction
+src/Silky.Swagger.Gen
 src/Silky.TestBase
 src/Silky.Transaction
 src/Silky.Transaction.Abstraction
