@@ -11,10 +11,10 @@ distributedCache:
     isEnabled: true
     configuration: 127.0.0.1:6379,defaultDatabase=0
 dashboard:
-  displayWebApiInSwagger: false
-  useAuth: true
-  wrapperResponse: true
-  dashboardLoginApi: /api/account/dashboard/login
+  tenantNameFiledName: tenantName
+  userNameFiledName: account
+  passwordFiledName: password
+  dashboardLoginApi: /api/account/login
   externalLinks:
     - title: "message.swagger"
       path: "http://localhost:5002"
