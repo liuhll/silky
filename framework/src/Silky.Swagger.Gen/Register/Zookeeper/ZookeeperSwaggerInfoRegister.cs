@@ -13,6 +13,7 @@ using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Serialization;
 using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Register.Zookeeper;
@@ -21,12 +22,12 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
 {
     private readonly IZookeeperClientFactory _zookeeperClientFactory;
     private ZookeeperRegistryCenterOptions _registryCenterOptions;
-    private readonly ISerializer _serializer;
+    private readonly ISwaggerSerializer _serializer;
     public ILogger<ZookeeperSwaggerInfoRegister> Logger { get; set; }
 
     public ZookeeperSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         IZookeeperClientFactory zookeeperClientFactory,
-        ISerializer serializer,
+        ISwaggerSerializer serializer,
         IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions) : base(
         swaggerProvider)
     {
@@ -53,7 +54,7 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
                     AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
             }
 
-            var jsonString = _serializer.Serialize(openApiDocument, false);
+            var jsonString = _serializer.Serialize(openApiDocument);
             var data = jsonString.GetBytes();
             if (!await zookeeperClient.ExistsAsync(swaggerDocPath))
             {

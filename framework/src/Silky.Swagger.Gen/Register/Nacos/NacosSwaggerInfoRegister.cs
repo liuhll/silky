@@ -9,18 +9,19 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Serialization;
 
 namespace Silky.Swagger.Gen.Register.Nacos;
 
 public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
 {
     private readonly INacosConfigService _nacosConfigService;
-    private readonly ISerializer _serializer;
+    private readonly ISwaggerSerializer _serializer;
     private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
 
     public NacosSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         INacosConfigService nacosConfigService,
-        ISerializer serializer, IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions) : base(swaggerProvider)
+        ISwaggerSerializer serializer, IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions) : base(swaggerProvider)
     {
         _nacosConfigService = nacosConfigService;
         _serializer = serializer;
@@ -33,7 +34,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
         if (!allDocumentNames.Contains(documentName))
         {
             var registerDocumentNames = allDocumentNames.Concat(new[] { documentName });
-            var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames, false);
+            var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames);
             var documentNamePublishResult = await _nacosConfigService.PublishConfig(
                 _nacosRegistryCenterOptions.SwaggerDocKey,
                 _nacosRegistryCenterOptions.SwaggerDocGroupName,
@@ -43,7 +44,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
                 throw new SilkyException($"swagger group {documentName} registration failed");
             }
 
-            var openApiDocumentValue = _serializer.Serialize(openApiDocument, false);
+            var openApiDocumentValue = _serializer.Serialize(openApiDocument);
             var openApiDocumentResult = await _nacosConfigService.PublishConfig(documentName,
                 _nacosRegistryCenterOptions.SwaggerDocGroupName,
                 openApiDocumentValue);

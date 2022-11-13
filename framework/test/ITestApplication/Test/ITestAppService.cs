@@ -53,8 +53,8 @@ namespace ITestApplication.Test
 
         [HttpGet]
         Task<PagedList<TestOut>> Search1([FromQuery] string name, [FromQuery] string address,
-            [FromQuery] int? pageIndex,
-            [FromQuery] int? pageSize);
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10);
 
         [HttpGet]
         Task<PagedList<TestOut>> Search2([FromQuery] SearchInput query);

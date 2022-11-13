@@ -12,6 +12,7 @@ using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Serialization;
 using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Provider.Zookeeper;
@@ -20,7 +21,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 {
     private readonly IZookeeperClientFactory _zookeeperClientFactory;
     private ZookeeperRegistryCenterOptions _registryCenterOptions;
-    private readonly ISerializer _serializer;
+    private readonly ISwaggerSerializer _serializer;
 
     private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
 
@@ -28,7 +29,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
 
     public ZookeeperSwaggerInfoProvider(IZookeeperClientFactory zookeeperClientFactory,
-        ISerializer serializer,
+        ISwaggerSerializer serializer,
         IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions)
     {
         _zookeeperClientFactory = zookeeperClientFactory;
@@ -67,7 +68,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
         var jsonString = datas.ToArray().GetString();
 
-        return _serializer.Deserialize<OpenApiDocument>(jsonString, false);
+        return _serializer.Deserialize<OpenApiDocument>(jsonString);
     }
 
 

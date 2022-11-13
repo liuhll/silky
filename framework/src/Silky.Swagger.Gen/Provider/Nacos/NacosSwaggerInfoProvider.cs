@@ -8,17 +8,18 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Serialization;
 
 namespace Silky.Swagger.Gen.Provider.Nacos;
 
 public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenterSwaggerInfoProvider
 {
     private readonly INacosConfigService _nacosConfigService;
-    private readonly ISerializer _serializer;
+    private readonly ISwaggerSerializer _serializer;
     private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
 
     public NacosSwaggerInfoProvider(INacosConfigService nacosConfigService,
-        ISerializer serializer,
+        ISwaggerSerializer serializer,
         IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions)
     {
         _nacosConfigService = nacosConfigService;
@@ -42,7 +43,7 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
                 return null;
             }
 
-            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentValue, false);
+            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentValue);
             return openApiDocument;
         }
         catch (Exception e)
