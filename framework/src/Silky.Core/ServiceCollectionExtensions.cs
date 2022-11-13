@@ -23,6 +23,9 @@ namespace Silky.Core
             services.TryAddSingleton<IInitLoggerFactory>(new DefaultInitLoggerFactory());
             services.AddHostedService<InitSilkyHostedService>();
             services.AddSingleton<ICancellationTokenProvider>(NullCancellationTokenProvider.Instance);
+            var moduleLoader = new ModuleLoader();
+            services.TryAddSingleton<IModuleLoader>(moduleLoader);
+
             services.AddOptions<AppSettingsOptions>()
                 .Bind(configuration.GetSection(AppSettingsOptions.AppSettings));
             services.AddOptions<PlugInSourceOptions>()
@@ -33,14 +36,11 @@ namespace Silky.Core
             {
                 engine.SetApplicationName(options.ApplicationName);
             }
+
             engine.SetHostEnvironment(hostEnvironment);
             engine.SetConfiguration(configuration);
             engine.SetTypeFinder(services, CommonSilkyHelpers.DefaultFileProvider, options.AppServicePlugInSources);
-            engine.SetTypeFinder(services, CommonSilkyHelpers.DefaultFileProvider, options.AppServicePlugInSources);
-
-            var moduleLoader = new ModuleLoader();
             engine.LoadModules(services, typeof(T), moduleLoader, options.ModulePlugInSources);
-            services.TryAddSingleton<IModuleLoader>(moduleLoader);
             engine.ConfigureServices(services, configuration);
             return engine;
         }
