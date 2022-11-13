@@ -110,48 +110,41 @@ namespace Silky.Rpc.CachingInterceptor
                 }
             }
 
-            if (updateCachingInterceptProviderDescriptors.Any())
+            await InvocationProceedAsync(invocation);
+
+            foreach (var updateCachingInterceptProviderDescriptor in
+                     updateCachingInterceptProviderDescriptors)
             {
-                await InvocationProceedAsync(invocation);
-                foreach (var updateCachingInterceptProviderDescriptor in
-                         updateCachingInterceptProviderDescriptors)
+                _distributedCache.SetIgnoreMultiTenancy(updateCachingInterceptProviderDescriptor
+                    .IgnoreMultiTenancy);
+                var updateCacheKeyInfo = CacheKeyHelper.GetCachingInterceptKey(parameters,
+                    updateCachingInterceptProviderDescriptor, serviceKey);
+                if (updateCacheKeyInfo.Item2)
                 {
-                    _distributedCache.SetIgnoreMultiTenancy(updateCachingInterceptProviderDescriptor
-                        .IgnoreMultiTenancy);
-                    var updateCacheKeyInfo = CacheKeyHelper.GetCachingInterceptKey(parameters,
-                        updateCachingInterceptProviderDescriptor, serviceKey);
-                    if (updateCacheKeyInfo.Item2)
-                    {
-                        await _distributedCache.RemoveAsync(updateCacheKeyInfo.Item1,
-                            updateCachingInterceptProviderDescriptor.CacheName);
-                    }
-                    else
-                    {
-                        _distributedCache.UpdateCacheName(updateCachingInterceptProviderDescriptor.CacheName);
-                        await _distributedCache.SetAsync(updateCacheKeyInfo.Item1, invocation.ReturnValue);
-                    }
+                    await _distributedCache.RemoveAsync(updateCacheKeyInfo.Item1,
+                        updateCachingInterceptProviderDescriptor.CacheName);
+                }
+                else
+                {
+                    _distributedCache.UpdateCacheName(updateCachingInterceptProviderDescriptor.CacheName);
+                    await _distributedCache.SetAsync(updateCacheKeyInfo.Item1, invocation.ReturnValue);
                 }
             }
 
-            await InvocationProceedAsync(invocation);
-
-            if (removeCachingInterceptorDescriptors.Any() && proceed == ProceedType.ForExec)
+            foreach (var removeCachingInterceptProvider in removeCachingInterceptorDescriptors)
             {
-                foreach (var removeCachingInterceptProvider in removeCachingInterceptorDescriptors)
+                _distributedCache.SetIgnoreMultiTenancy(removeCachingInterceptProvider.IgnoreMultiTenancy);
+                var removeCacheKeyInfo =
+                    CacheKeyHelper.GetCachingInterceptKey(parameters, removeCachingInterceptProvider, serviceKey);
+                if (removeCachingInterceptProvider.IsRemoveMatchKeyProvider)
                 {
-                    _distributedCache.SetIgnoreMultiTenancy(removeCachingInterceptProvider.IgnoreMultiTenancy);
-                    var removeCacheKeyInfo =
-                        CacheKeyHelper.GetCachingInterceptKey(parameters, removeCachingInterceptProvider, serviceKey);
-                    if (removeCachingInterceptProvider.IsRemoveMatchKeyProvider)
-                    {
-                        await _distributedCache.RemoveMatchKeyAsync(removeCacheKeyInfo.Item1,
-                            removeCachingInterceptProvider.CacheName);
-                    }
-                    else
-                    {
-                        await _distributedCache.RemoveAsync(removeCacheKeyInfo.Item1,
-                            removeCachingInterceptProvider.CacheName);
-                    }
+                    await _distributedCache.RemoveMatchKeyAsync(removeCacheKeyInfo.Item1,
+                        removeCachingInterceptProvider.CacheName);
+                }
+                else
+                {
+                    await _distributedCache.RemoveAsync(removeCacheKeyInfo.Item1,
+                        removeCachingInterceptProvider.CacheName);
                 }
             }
         }
@@ -226,63 +219,43 @@ namespace Silky.Rpc.CachingInterceptor
                 }
             }
 
-            if (updateCachingInterceptProviders.Any())
+            await InvocationProceedAsync(invocation);
+            
+            foreach (var updateCachingInterceptProvider in updateCachingInterceptProviders)
             {
-                await InvocationProceedAsync(invocation);
-                var index = 1;
-                foreach (var updateCachingInterceptProvider in updateCachingInterceptProviders)
+                var updateCacheKeyInfo =
+                    CacheKeyHelper.GetCachingInterceptKey(serviceEntry, parameters,
+                        updateCachingInterceptProvider,
+                        serviceKey);
+                _distributedCache.SetIgnoreMultiTenancy(updateCachingInterceptProvider.IgnoreMultiTenancy);
+
+                if (updateCacheKeyInfo.Item2)
                 {
-                    var updateCacheKeyInfo =
-                        CacheKeyHelper.GetCachingInterceptKey(serviceEntry, parameters,
-                            updateCachingInterceptProvider,
-                            serviceKey);
-                    Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
-                        MiniProfileConstant.Caching.State.UpdateCaching + index,
-                        $"The cacheKey for updating the cache data is[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{updateCacheKeyInfo.Item1}]");
-                    _distributedCache.SetIgnoreMultiTenancy(updateCachingInterceptProvider.IgnoreMultiTenancy);
-
-                    if (updateCacheKeyInfo.Item2)
-                    {
-                        await _distributedCache.RemoveAsync(updateCacheKeyInfo.Item1,
-                            updateCachingInterceptProvider.CachingInterceptorDescriptor.CacheName);
-                    }
-                    else
-                    {
-                        await _distributedCache.SetAsync(updateCacheKeyInfo.Item1, invocation.ReturnValue);
-                    }
-
-                    index++;
+                    await _distributedCache.RemoveAsync(updateCacheKeyInfo.Item1,
+                        updateCachingInterceptProvider.CachingInterceptorDescriptor.CacheName);
+                }
+                else
+                {
+                    await _distributedCache.SetAsync(updateCacheKeyInfo.Item1, invocation.ReturnValue);
                 }
             }
-
-            await InvocationProceedAsync(invocation);
-
-            if (removeCachingInterceptProviders.Any() && proceed == ProceedType.ForExec)
+            
+            foreach (var removeCachingInterceptProvider in removeCachingInterceptProviders)
             {
-                var index = 1;
+                _distributedCache.SetIgnoreMultiTenancy(removeCachingInterceptProvider.IgnoreMultiTenancy);
+                var removeCacheKeyInfo =
+                    CacheKeyHelper.GetCachingInterceptKey(serviceEntry, parameters, removeCachingInterceptProvider,
+                        serviceKey);
 
-                foreach (var removeCachingInterceptProvider in serviceEntry.GetAllRemoveCachingInterceptProviders())
+                if (removeCachingInterceptProvider.CachingInterceptorDescriptor.IsRemoveMatchKeyProvider)
                 {
-                    _distributedCache.SetIgnoreMultiTenancy(removeCachingInterceptProvider.IgnoreMultiTenancy);
-                    var removeCacheKeyInfo =
-                        CacheKeyHelper.GetCachingInterceptKey(serviceEntry, parameters, removeCachingInterceptProvider,
-                            serviceKey);
-
-                    if (removeCachingInterceptProvider.CachingInterceptorDescriptor.IsRemoveMatchKeyProvider)
-                    {
-                        await _distributedCache.RemoveMatchKeyAsync(removeCacheKeyInfo.Item1,
-                            ((IRemoveMatchKeyCachingInterceptProvider)removeCachingInterceptProvider).CacheName);
-                    }
-                    else
-                    {
-                        await _distributedCache.RemoveAsync(removeCacheKeyInfo.Item1,
-                            ((IRemoveCachingInterceptProvider)removeCachingInterceptProvider).CacheName);
-                    }
-
-                    Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
-                        MiniProfileConstant.Caching.State.RemoveCaching + index,
-                        $"Remove the cache with key {removeCacheKeyInfo.Item1}");
-                    index++;
+                    await _distributedCache.RemoveMatchKeyAsync(removeCacheKeyInfo.Item1,
+                        ((IRemoveMatchKeyCachingInterceptProvider)removeCachingInterceptProvider).CacheName);
+                }
+                else
+                {
+                    await _distributedCache.RemoveAsync(removeCacheKeyInfo.Item1,
+                        ((IRemoveCachingInterceptProvider)removeCachingInterceptProvider).CacheName);
                 }
             }
         }
