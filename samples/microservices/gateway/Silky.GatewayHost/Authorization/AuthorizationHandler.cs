@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Silky.Http.Identity.Authorization.Handlers;
 using Silky.Http.Identity.Authorization.Requirements;
-using Silky.Http.Identity.Extensions;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.GatewayHost.Authorization;
 

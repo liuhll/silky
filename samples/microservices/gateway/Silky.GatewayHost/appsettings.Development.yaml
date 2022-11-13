@@ -16,11 +16,13 @@ gateway:
   jwtSecret: jv1PZkwjLVCEygM7faLLvEhDGWmFqRUW
 swaggerDocument:
   termsOfService: https://www.github.com/liuhll/silky
+  showDashboardService: false
 
 dashboard:
-  useAuth: true
-  wrapperResponse: true
-  dashboardLoginApi: /api/account/dashboard/login
+  tenantNameFiledName: tenantName
+  userNameFiledName: account
+  passwordFiledName: password
+  dashboardLoginApi: /api/account/login
   externalLinks:
     - title: "message.swagger"
       path: "http://localhost:5002"
