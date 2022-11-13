@@ -6,6 +6,7 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
+using Silky.Transaction.Exceptions;
 
 namespace Silky.Transaction.Filters
 {
@@ -18,10 +19,13 @@ namespace Silky.Transaction.Filters
         private IParticipant participant;
 
         private readonly IServiceEntryLocator _serviceEntryLocator;
+        private readonly IServerManager _serverManager;
 
-        public TransactionFilter(IServiceEntryLocator serviceEntryLocator)
+        public TransactionFilter(IServiceEntryLocator serviceEntryLocator,
+            IServerManager serverManager)
         {
             _serviceEntryLocator = serviceEntryLocator;
+            _serverManager = serverManager;
         }
 
         public void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage)
@@ -29,7 +33,18 @@ namespace Silky.Transaction.Filters
             context = SilkyTransactionContextHolder.Instance.Get();
             if (context == null) return;
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
-            if (serviceEntry == null) return;
+            if (serviceEntry == null)
+            {
+                var serviceEntryDescriptor =
+                    _serverManager.GetServiceEntryDescriptor(remoteInvokeMessage.ServiceEntryId);
+                if (serviceEntryDescriptor.IsDistributeTransaction && !RpcContext.Context.IsGateway())
+                {
+                    throw new TransactionException(
+                        "Distributed transaction service does not support invoke through templateService, please call the service through interface proxy.");
+                }
+                return;
+            }
+
             if (!serviceEntry.IsTransactionServiceEntry()) return;
 
             participantId = context.ParticipantId;
