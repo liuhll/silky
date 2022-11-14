@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Routing.Template;
@@ -27,7 +29,7 @@ public class HttpParameterResolver : ParameterResolverBase
         if (serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path) &&
             message.HttpParameters.All(p => p.Key != ParameterFrom.Path))
         {
-            var path = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.Path).ToString();
+            var path = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.Path);
             var pathData = serviceEntry.Router.ParserRouteParameters(path);
             message.HttpParameters.Add(ParameterFrom.Path, _serializer.Serialize(pathData));
         }
@@ -98,13 +100,12 @@ public class HttpParameterResolver : ParameterResolverBase
                             (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
                                 typeof(IDictionary<string, object>));
                         var parameterName = TemplateSegmentHelper.GetVariableName(parameterDescriptor.Name);
-                        if (!pathVal.ContainsKey(parameterName))
+                        if (!pathVal.TryOrdinalIgnoreCaseGetValue(parameterName, out var parameterVal))
                         {
                             throw new SilkyException(
                                 "The path parameter is not allowed to be empty, please confirm whether the parameter you passed is correct");
                         }
 
-                        var parameterVal = pathVal[parameterName];
                         list.Add(parameterDescriptor.GetActualParameter(parameterVal));
                     }
                     else

@@ -8,6 +8,7 @@ using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Runtime.Session;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
