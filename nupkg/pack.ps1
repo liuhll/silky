@@ -9,12 +9,15 @@ Param(
 $packFolder = (Get-Item -Path "./" -Verbose).FullName
 $rootFolder = Join-Path $packFolder ".."
 $srcPath = Join-Path $packFolder "../framework"
+$templatePath = Join-Path $packFolder "../templates"
 
 
 
 $projects = (Get-Content "./Components")
 
-function Pack($projectFolder,$projectName) {  
+$templates = (Get-Content "./Templates")
+
+function Pack($projectFolder,$projectName,[bool]$isComponent=$true) {  
   Set-Location $projectFolder
   $releaseProjectFolder = (Join-Path $projectFolder "bin/Release")
   if (Test-Path $releaseProjectFolder)
@@ -24,11 +27,16 @@ function Pack($projectFolder,$projectName) {
   
    & dotnet restore
    & dotnet pack -c Release
-   if ($projectName) {
-    $projectPackPath = Join-Path $projectFolder ("/bin/Release/" + $projectName + ".*.nupkg")
-   }else {
-    $projectPackPath = Join-Path $projectFolder ("/bin/Release/" + $project + ".*.nupkg")
+
+   if(-not $projectName) {
+      $projectName = $project
    }
+
+  if($isComponent) {
+      $projectPackPath = Join-Path $projectFolder ("/bin/Release/" + $projectName + ".*.nupkg")
+    }else{
+      $projectPackPath = Join-Path $projectFolder ($projectName + ".*.nupkg")
+    }
    Move-Item -Force $projectPackPath $packFolder 
 }
 
@@ -40,6 +48,12 @@ if ($build) {
       Pack -projectFolder $projectFolder -projectName $projectName 
     }    
   }
+  foreach($template in $templates) {
+    $templateName = ($template -Split "/" )[-1]
+    $templateType = ($template -Split "/" )[-2]
+    $templateFolder = Join-Path $templatePath $templateType
+    Pack -projectFolder $templateFolder -projectName $templateName -isComponent $false
+  }
   Set-Location $packFolder
 }
 
@@ -50,8 +64,12 @@ if($push) {
 	}
 	[xml]$propsXml = Get-Content (Join-Path $rootFolder "common.props")
     $version = $propsXml.Project.PropertyGroup.Version
-	foreach($project in $projects) {
+	  foreach($project in $projects) {
       $projectName = ($project -Split "/" )[-1]
+      & dotnet nuget push ($projectName + "." + $version + ".nupkg") -s $repo -k $apikey --skip-duplicate
+    }
+  	foreach($template in $templates) {
+      $projectName = ($template -Split "/" )[-1]
       & dotnet nuget push ($projectName + "." + $version + ".nupkg") -s $repo -k $apikey --skip-duplicate
     }
 }
