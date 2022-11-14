@@ -36,8 +36,7 @@ namespace Silky.DotNetty.Handlers
             }
             if (evt is IdleStateEvent { State: IdleState.WriterIdle })
             {
-                var buffer = Unpooled.WrappedBuffer(HeartBeat.Semaphore.GetBytes());
-                await context.Channel.WriteAndFlushAsync(buffer);
+                await context.Channel.WriteAndFlushAsync(HeartBeat.Semaphore);
             }
             else
             {

@@ -25,8 +25,10 @@ namespace Silky.DotNetty.Handlers
         {
             try
             {
-                var transportMessage = (TransportMessage)message;
-                await _readMessageAction(context, transportMessage);
+                if (message is TransportMessage transportMessage)
+                {
+                    await _readMessageAction(context, transportMessage);
+                }
             }
             catch (Exception e)
             {

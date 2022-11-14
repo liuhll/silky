@@ -21,18 +21,18 @@ namespace Silky.DotNetty.Handlers
 
         public override async void ChannelRead(IChannelHandlerContext context, object message)
         {
-            var transportMessage = (TransportMessage)message;
-            if (transportMessage.IsResultMessage())
+            if (message is TransportMessage transportMessage)
             {
-                await _messageListener.OnReceived(null, transportMessage);
+                if (transportMessage.IsResultMessage())
+                {
+                    await _messageListener.OnReceived(null, transportMessage);
+                }
             }
-            
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-            var remoteAddress = context.Channel.RemoteAddress as IPEndPoint;
-            if (remoteAddress != null)
+            if (context.Channel.RemoteAddress is IPEndPoint remoteAddress)
             {
                 _rpcEndpointMonitor.RemoveRpcEndpoint(remoteAddress.Address.MapToIPv4(), remoteAddress.Port);
             }

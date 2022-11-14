@@ -4,7 +4,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
-using DotNetty.Codecs.Compression;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
@@ -24,7 +23,6 @@ using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Transport.Codec;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Protocol.Tcp
@@ -35,8 +33,6 @@ namespace Silky.DotNetty.Protocol.Tcp
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ISilkyEndpoint _hostSilkyEndpoint;
-        private readonly ITransportMessageDecoder _transportMessageDecoder;
-        private readonly ITransportMessageEncoder _transportMessageEncoder;
         private GovernanceOptions _governanceOptions;
         private IChannel m_boundChannel;
         private IEventLoopGroup m_bossGroup;
@@ -44,13 +40,9 @@ namespace Silky.DotNetty.Protocol.Tcp
 
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IOptionsMonitor<GovernanceOptions> governanceOptions,
-            IHostEnvironment hostEnvironment,
-            ITransportMessageDecoder transportMessageDecoder,
-            ITransportMessageEncoder transportMessageEncoder)
+            IHostEnvironment hostEnvironment)
         {
             _hostEnvironment = hostEnvironment;
-            _transportMessageDecoder = transportMessageDecoder;
-            _transportMessageEncoder = transportMessageEncoder;
             _rpcOptions = rpcOptions.Value;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange((options, s) => _governanceOptions = options);
@@ -112,8 +104,6 @@ namespace Silky.DotNetty.Protocol.Tcp
 
                     // pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
                     // pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
-                    pipeline.AddLast("encoder", new EncoderHandler(_transportMessageEncoder));
-                    pipeline.AddLast("decoder", new DecoderHandler(_transportMessageDecoder));
                     pipeline.AddLast(new ServerHandler(async (channelContext, message) =>
                     {
                         if (message.IsInvokeMessage())

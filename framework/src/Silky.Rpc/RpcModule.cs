@@ -33,8 +33,6 @@ namespace Silky.Rpc
                 .Bind(configuration.GetSection(GovernanceOptions.Governance));
             services.AddOptions<WebSocketOptions>()
                 .Bind(configuration.GetSection(WebSocketOptions.WebSocket));
-
-            services.AddDefaultMessageCodec();
             services.AddAuditing(configuration);
             services.TryAddSingleton<IHeartBeatService, DefaultHeartBeatService>();
             services.TryAddSingleton<IServerProvider, DefaultServerProvider>();
