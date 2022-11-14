@@ -10,10 +10,8 @@ namespace SilkyAppHost
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSilkyCaching()
-                .AddSilkySkyApm()
-                .AddMessagePackCodec();
-            
+            services.AddSilkySkyApm();
+
 #if (hosttype!="gateway")                  
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<DefaultContext>(); },

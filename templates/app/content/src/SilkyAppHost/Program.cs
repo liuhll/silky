@@ -18,7 +18,7 @@ namespace SilkyAppHost
 #elif(hosttype=="websockethost")
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureSilkyGeneralHostDefaults();
+                .ConfigureSilkyWebSocketDefaults();
 #elif(hosttype=="gateway")
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
