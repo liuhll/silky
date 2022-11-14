@@ -25,10 +25,18 @@ namespace Silky.Core
     internal sealed class SilkyEngine : IEngine, IModuleContainer
     {
         private ITypeFinder _typeFinder;
+        private Banner _banner;
+
 
         public IConfiguration Configuration { get; private set; }
 
         public IHostEnvironment HostEnvironment { get; private set; }
+
+        Banner IEngine.Banner
+        {
+            get => _banner;
+            set => _banner = value;
+        }
 
         public string HostName { get; private set; }
 
@@ -38,9 +46,10 @@ namespace Silky.Core
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
-        void IEngine.SetTypeFinder(IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
+        void IEngine.SetTypeFinder([NotNull] IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
             [NotNull] AppServicePlugInSourceList appServicePlugInSources)
         {
+            Check.NotNull(services, nameof(services));
             Check.NotNull(fileProvider, nameof(fileProvider));
             Check.NotNull(appServicePlugInSources, nameof(appServicePlugInSources));
 

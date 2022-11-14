@@ -18,6 +18,9 @@
         <None Update="appsettings.yaml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="banner.txt">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="6.0.1" />

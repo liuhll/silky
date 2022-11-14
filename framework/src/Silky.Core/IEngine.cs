@@ -22,30 +22,32 @@ namespace Silky.Core
         IConfiguration Configuration { get; }
 
         IHostEnvironment HostEnvironment { get; }
+        
+        internal  Banner Banner { get; set; }
 
         string HostName { get; }
 
-        internal void SetTypeFinder(IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
+        internal void SetTypeFinder([NotNull]IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
             AppServicePlugInSourceList appServicePlugInSources);
-        
+
         internal void SetHostEnvironment([NotNull] IHostEnvironment hostEnvironment);
 
         internal void SetConfiguration([NotNull] IConfiguration configuration);
 
-        internal void ConfigureServices([NotNull]IServiceCollection services, [NotNull]IConfiguration configuration);
+        internal void ConfigureServices([NotNull] IServiceCollection services, [NotNull] IConfiguration configuration);
 
         internal void LoadModules(IServiceCollection services, Type startUpType, IModuleLoader moduleLoader,
             [NotNull] PlugInSourceList plugInSources);
 
-        internal void SetApplicationName([NotNull]string applicationName);
-        
+        internal void SetApplicationName([NotNull] string applicationName);
+
         internal void ConfigureRequestPipeline(IApplicationBuilder application);
         
-        public void RegisterDependencies(ContainerBuilder builder);
+        void RegisterDependencies(ContainerBuilder builder);
 
-        public void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
-        
-        
+        void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
+
+
         TOptions GetOptions<TOptions>()
             where TOptions : class, new();
 
@@ -60,7 +62,7 @@ namespace Silky.Core
 
         TOptions GetOptionsSnapshot<TOptions>()
             where TOptions : class, new();
-        
+
         T Resolve<T>() where T : class;
 
         object Resolve(Type type);
@@ -77,6 +79,5 @@ namespace Silky.Core
         bool IsRegisteredWithName(string name, Type type);
 
         object ResolveUnregistered(Type type);
-        
     }
 }

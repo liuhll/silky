@@ -23,7 +23,7 @@ namespace Silky.Core
             {
                 EngineContext.Current.ServiceProvider = serviceProvider;
             }
-            
+
             _moduleManager = moduleManager;
             _hostApplicationLifetime = hostApplicationLifetime;
             _logger = logger;
@@ -31,20 +31,10 @@ namespace Silky.Core
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine(@"                                              
-   _____  _  _  _           
-  / ____|(_)| || |          
- | (___   _ | || | __ _   _ 
-  \___ \ | || || |/ /| | | |
-  ____) || || ||   < | |_| |
- |_____/ |_||_||_|\_\ \__, |
-                       __/ |
-                      |___/
-            ");
-
-            Console.WriteLine($" :: Silky ::        {VersionHelper.GetSilkyVersion()}");
-            Console.WriteLine($" :: Docs ::         https://docs.silky-fk.com\n");
             
+            var bannerPrinter = EngineContext.Current.Resolve<IBannerPrinter>();
+            bannerPrinter.Print();
+
             await _moduleManager.PreInitializeModules();
             _hostApplicationLifetime.ApplicationStarted.Register(async () =>
             {

@@ -21,6 +21,7 @@ namespace Silky.Core
             CommonSilkyHelpers.DefaultFileProvider = new SilkyFileProvider(hostEnvironment);
             services.TryAddSingleton(CommonSilkyHelpers.DefaultFileProvider);
             services.TryAddSingleton<IInitLoggerFactory>(new DefaultInitLoggerFactory());
+            services.TryAddTransient<IBannerPrinter, BannerPrinter>();
             services.AddHostedService<InitSilkyHostedService>();
             services.AddSingleton<ICancellationTokenProvider>(NullCancellationTokenProvider.Instance);
             var moduleLoader = new ModuleLoader();
@@ -36,7 +37,8 @@ namespace Silky.Core
             {
                 engine.SetApplicationName(options.ApplicationName);
             }
-
+            
+            engine.Banner = BannerHelper.BuildBanner(options);
             engine.SetHostEnvironment(hostEnvironment);
             engine.SetConfiguration(configuration);
             engine.SetTypeFinder(services, CommonSilkyHelpers.DefaultFileProvider, options.AppServicePlugInSources);
