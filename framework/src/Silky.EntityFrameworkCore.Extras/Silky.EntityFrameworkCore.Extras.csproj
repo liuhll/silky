@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\..\..\common.props" />
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
+        <Description>silky ef core expansion packgae</Description>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+      <ProjectReference Include="..\Silky.EntityFrameworkCore\Silky.EntityFrameworkCore.csproj" />
+    </ItemGroup>
+
+</Project>

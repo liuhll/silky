@@ -17,23 +17,23 @@ namespace Silky.EntityFrameworkCore.Contexts
     /// 默认应用数据库上下文
     /// </summary>
     /// <typeparam name="TDbContext">数据库上下文</typeparam>
-    public abstract class SilkyDbContext<TDbContext> : SilkyDbContext<TDbContext, MasterDbContextLocator>
+    public abstract class AbstractDbContext<TDbContext> : AbstractDbContext<TDbContext, MasterDbContextLocator>
         where TDbContext : DbContext
     {
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="options"></param>
-        protected SilkyDbContext(DbContextOptions<TDbContext> options) : base(options)
+        protected AbstractDbContext(DbContextOptions<TDbContext> options) : base(options)
         {
         }
     }
 
-    public abstract class SilkyDbContext<TDbContext, TDbContextLocator> : DbContext
+    public abstract class AbstractDbContext<TDbContext, TDbContextLocator> : DbContext
         where TDbContext : DbContext
         where TDbContextLocator : class, IDbContextLocator
     {
-        protected SilkyDbContext(DbContextOptions<TDbContext> options)
+        protected AbstractDbContext(DbContextOptions<TDbContext> options)
             : base(options)
         {
             ChangeTrackerEntities ??= new Dictionary<EntityEntry, PropertyValues>();
