@@ -17,17 +17,5 @@ namespace Silky.Rpc.CachingInterceptor
 
             await cache.RemoveAsync(cacheKey, hideErrors, token);
         }
-        
-        public static async Task RemoveMatchKeyAsync(this IDistributedInterceptCache cache, string cacheKey, string cacheName,
-            bool? hideErrors = null,
-            CancellationToken token = default)
-        {
-            if (!cacheName.IsNullOrEmpty())
-            {
-                cache.UpdateCacheName(cacheName);
-            }
-
-            await cache.RemoveMatchKeyAsync(cacheKey, hideErrors, token);
-        }
     }
 }

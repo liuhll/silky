@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Silky.Core;
+using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Runtime.Server;
 
@@ -22,7 +23,7 @@ public class RemoveCachingInterceptAttribute : Attribute, IRemoveCachingIntercep
     {
         Check.NotNull(cacheType, nameof(cacheType));
         Check.NotNullOrEmpty(keyTemplate, nameof(keyTemplate));
-        CacheName = cacheType.FullName;
+        CacheName = cacheType.GetCacheName();
         KeyTemplate = keyTemplate;
         OnlyCurrentUserData = false;
         CachingMethod = CachingMethod.Remove;

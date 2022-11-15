@@ -143,5 +143,28 @@ namespace Silky.Core.Extensions
 
         public static bool IsNullableType(this Type type) => type.GetTypeInfo().IsGenericType &&
                                                              type.GetGenericTypeDefinition() == typeof(Nullable<>);
+
+        public static string GetCacheName(this Type type)
+        {
+            var cacheNameAttribute = type.GetCustomAttributes().OfType<CacheNameAttribute>().FirstOrDefault();
+            if (cacheNameAttribute != null)
+            {
+                return cacheNameAttribute.Name;
+            }
+
+            if (type.IsGenericType)
+            {
+                var cacheName = type.Name + ".";
+                var genericTypes = type.GenericTypeArguments;
+                foreach (var genericType in genericTypes)
+                {
+                    cacheName += "." + genericType.FullName;
+                }
+
+                return cacheName;
+            }
+
+            return type.FullName.RemovePostFix("CacheItem");
+        }
     }
 }

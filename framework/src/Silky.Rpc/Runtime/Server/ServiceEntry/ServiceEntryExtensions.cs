@@ -127,13 +127,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             Check.NotNull(serviceEntry, nameof(serviceEntry));
             var returnType = serviceEntry.ReturnType;
-            var cacheNameAttribute = returnType.GetCustomAttributes().OfType<CacheNameAttribute>().FirstOrDefault();
-            if (cacheNameAttribute != null)
-            {
-                return cacheNameAttribute.Name;
-            }
-
-            return returnType.FullName.RemovePostFix("CacheItem");
+            return returnType.GetCacheName();
         }
 
         public static bool IsEnableAuditing(this ServiceEntry serviceEntry, bool isEnable)
@@ -162,11 +156,12 @@ namespace Silky.Rpc.Runtime.Server
         {
             return serviceEntry.CustomAttributes.OfType<IRemoveCachingInterceptProvider>().ToArray();
         }
-        
+
         public static ICachingInterceptProvider[] GetAllRemoveCachingInterceptProviders(
             this ServiceEntry serviceEntry)
         {
-            return serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>().Where(p=> p.CachingMethod == CachingMethod.Remove).ToArray();
+            return serviceEntry.CustomAttributes.OfType<ICachingInterceptProvider>()
+                .Where(p => p.CachingMethod == CachingMethod.Remove).ToArray();
         }
 
         public static IRemoveMatchKeyCachingInterceptProvider[]
@@ -193,7 +188,7 @@ namespace Silky.Rpc.Runtime.Server
 
             return false;
         }
-        
+
         public static bool IsSilkyAppService(this ServiceEntry serviceEntry)
         {
             return "Silky.Http.Dashboard.AppService.ISilkyAppService".Equals(serviceEntry.ServiceType.FullName);

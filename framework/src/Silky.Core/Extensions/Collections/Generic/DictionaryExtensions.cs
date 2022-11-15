@@ -128,5 +128,29 @@ namespace Silky.Core.Extensions.Collections.Generic
             value = null;
             return false;
         }
+        
+        public static bool TryOrdinalIgnoreCaseGetValue<K,V>(this IDictionary<K, V> dictionary, K k, out V value)
+        {
+            if (dictionary.Keys.Any(key => key.ToString().Equals(k.ToString(), StringComparison.OrdinalIgnoreCase)))
+            {
+                var key = dictionary.Keys.First(key => key.ToString().Equals(key.ToString(), StringComparison.OrdinalIgnoreCase));
+                value = dictionary[key];
+                return true;
+            }
+            value = default(V);
+            return false;
+        }
+        
+        public static bool TryOrdinalIgnoreCaseGetValue<V>(this IDictionary<string, V> dictionary, string k, out V value)
+        {
+            if (dictionary.Keys.Any(key => key.Equals(k, StringComparison.OrdinalIgnoreCase)))
+            {
+                var key = dictionary.Keys.First(key => key.ToString().Equals(key.ToString(), StringComparison.OrdinalIgnoreCase));
+                value = dictionary[key];
+                return true;
+            }
+            value = default(V);
+            return false;
+        }
     }
 }

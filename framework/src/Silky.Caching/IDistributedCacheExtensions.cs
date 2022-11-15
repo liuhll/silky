@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Caching.Distributed;
 using Silky.Core;
+using Silky.Core.Extensions;
 
 namespace Silky.Caching
 {
@@ -32,7 +33,7 @@ namespace Silky.Caching
         public static Task RemoveAsync([NotNull] this IDistributedCache distributedCache, [NotNull] Type cacheType,
             [NotNull] string key)
         {
-            return distributedCache.RemoveAsync(NormalizeKey(key, cacheType.FullName));
+            return distributedCache.RemoveAsync(NormalizeKey(key, cacheType.GetCacheName()));
         }
 
         public static async Task RemoveMatchKeyAsync([NotNull] this IDistributedCache distributedCache,
@@ -54,6 +55,7 @@ namespace Silky.Caching
                 await cacheSupportsMultipleItems.RemoveMatchKeyAsync(key, hideErrors, token);
             }
         }
+        
 
         public static async Task RemoveMatchKeyAsync([NotNull] this IDistributedCache distributedCache,
             [NotNull] string keyPattern, bool? hideErrors = null, CancellationToken token = default)
@@ -77,7 +79,7 @@ namespace Silky.Caching
             [NotNull] Type cacheType,
             [NotNull] string keyPattern, bool? hideErrors = null, CancellationToken token = default)
         {
-            return distributedCache.RemoveMatchKeyAsync(cacheType.FullName, keyPattern, hideErrors, token);
+            return distributedCache.RemoveMatchKeyAsync(cacheType.GetCacheName(), keyPattern, hideErrors, token);
         }
 
         private static IReadOnlyCollection<string> SearchKeys(string key, IDistributedCache distributedCache)

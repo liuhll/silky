@@ -240,19 +240,46 @@ public static class CacheKeyHelper
                         $"Failed to get the value of the cache interception key value:{cacheKeyProviderDescriptor.From}");
                 }
 
-                var httpParameterValueLine = httpParameterValue.ToString();
-                if (cacheKeyProviderDescriptor.IsSampleOrNullableType && !httpParameterValueLine.IsValidJson())
+                if (httpParameterValue is IDictionary<string, string> httpParameterDict)
                 {
-                    return httpParameterValue.ToString();
+                    if (httpParameterDict.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName,
+                            out var cacheKeyValue))
+                    {
+                        if (cacheKeyProviderDescriptor.IsSampleOrNullableType && !cacheKeyValue.IsValidJson())
+                        {
+                            return cacheKeyValue;
+                        }
+
+                        var httpParameterDictValue =
+                            serializer.Deserialize<IDictionary<string, object>>(cacheKeyValue);
+                        if (httpParameterDictValue.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName,
+                                out var cacheKeyPropValue))
+                        {
+                            return cacheKeyPropValue?.ToString();
+                        }
+                    }
                 }
 
-                var httpParameterDictValue =
-                    serializer.Deserialize<IDictionary<string, object>>(httpParameterValueLine);
-                if (httpParameterDictValue.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName,
-                        out var cacheKeyValue))
+                if (httpParameterValue.GetType() == typeof(string))
                 {
-                    return cacheKeyValue?.ToString();
+                    if (cacheKeyProviderDescriptor.IsSampleOrNullableType &&
+                        !httpParameterValue.ToString().IsValidJson())
+
+                    {
+                        return httpParameterValue.ToString();
+                    }
+
+                    var httpParameterValueLine = httpParameterValue.ToString();
+
+                    var httpParameterDictValue =
+                        serializer.Deserialize<IDictionary<string, object>>(httpParameterValueLine);
+                    if (httpParameterDictValue.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName,
+                            out var cacheKeyValue))
+                    {
+                        return cacheKeyValue?.ToString();
+                    }
                 }
+
 
                 return null;
             }

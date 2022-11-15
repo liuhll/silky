@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Routing.Template;
 
 namespace Silky.Rpc.Routing;
 
@@ -10,9 +9,9 @@ public static class RoutePathHelper
 {
     private const string separator = "/";
 
-    public static IDictionary<string, object> ParserRouteParameters(string routeTemplate, string path)
+    public static IDictionary<string, string> ParserRouteParameters(string routeTemplate, string path)
     {
-        var routeParameters = new Dictionary<string, object>();
+        var routeParameters = new Dictionary<string, string>();
         var api = TrimPrefix(path);
         routeTemplate = TrimPrefix(routeTemplate);
         var routeTemplateSegments = routeTemplate.Split(separator);

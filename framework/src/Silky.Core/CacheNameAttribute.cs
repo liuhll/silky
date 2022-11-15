@@ -29,7 +29,7 @@ namespace Silky.Core
                 return cacheNameAttribute.Name;
             }
 
-            return cacheItemType.FullName.RemovePostFix("CacheItem");
+            return cacheItemType.GetCacheName();
         }
     }
 }
