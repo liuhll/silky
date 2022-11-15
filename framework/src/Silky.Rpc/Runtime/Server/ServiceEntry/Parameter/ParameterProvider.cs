@@ -22,7 +22,7 @@ namespace Silky.Rpc.Runtime.Server
                 .Select(p => p.KeyTemplate).ToArray();
             if (cacheKeyTemplates.Any(t =>
                     Regex.IsMatch(t, CacheKeyConstants.CacheKeyIndexRegex) &&
-                    Regex.IsMatch(t, CacheKeyConstants.CacheKeyParameterRegex)))
+                    Regex.IsMatch(t, CacheKeyConstants.CacheKeyStringRegex)))
             {
                 throw new SilkyException(
                     "The cache interception template you set is incorrect, please do not mix the way the template is set.");
