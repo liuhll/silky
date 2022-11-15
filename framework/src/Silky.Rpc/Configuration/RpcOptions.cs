@@ -34,5 +34,6 @@ namespace Silky.Rpc.Configuration
         public int TransportClientPoolNumber { get; set; }
 
         public bool UseTransportClientPool { get; set; }
+
     }
 }

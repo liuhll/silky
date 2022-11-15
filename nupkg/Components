@@ -2,8 +2,6 @@ src/Silky.Agent.Host
 src/Silky.Caching
 src/Silky.Caching.StackExchangeRedis
 src/Silky.Castle
-src/Silky.Codec.MessagePack
-src/Silky.Codec.ProtoBuf
 src/Silky.Core
 src/Silky.DotNetty.Abstraction
 src/Silky.DotNetty.Protocol.Tcp

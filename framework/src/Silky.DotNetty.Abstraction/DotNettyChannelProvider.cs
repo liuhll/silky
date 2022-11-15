@@ -59,8 +59,6 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
 
                 pipeline.AddLast(new LengthFieldPrepender(4));
                 pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-                // pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
-                // pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
                 if (_governanceOptions.EnableHeartbeat &&
                     _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
                 {

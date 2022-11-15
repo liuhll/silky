@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
+using Silky.DotNetty.Abstraction;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
@@ -109,9 +110,7 @@ namespace Silky.DotNetty.Protocol.Tcp
                         pipeline.AddLast(
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }
-
-                    // pipeline.AddLast(ZlibCodecFactory.NewZlibEncoder(ZlibWrapper.Gzip));
-                    // pipeline.AddLast(ZlibCodecFactory.NewZlibDecoder(ZlibWrapper.Gzip));
+                    
                     pipeline.AddLast("encoder", new EncoderHandler(_transportMessageEncoder));
                     pipeline.AddLast("decoder", new DecoderHandler(_transportMessageDecoder));
                     pipeline.AddLast(new ServerHandler(async (channelContext, message) =>
