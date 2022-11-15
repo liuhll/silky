@@ -36,8 +36,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
         {
             SetChannelClientHandler(channel);
             SetClientPort(channel);
-            var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await channel.WriteAsync(buffer);
+            await channel.WriteAsync(message);
         }
         finally
         {
@@ -53,8 +52,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
         {
             SetChannelClientHandler(channel);
             SetClientPort(channel);
-            var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await channel.WriteAndFlushAsync(buffer);
+            await channel.WriteAndFlushAsync(message);
         }
         finally
         {

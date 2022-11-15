@@ -21,15 +21,13 @@ namespace Silky.DotNetty
         protected override async Task SendAsync(TransportMessage message)
         {
             SetClientPort();
-            var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await _channel.WriteAsync(buffer);
+            await _channel.WriteAsync(message);
         }
 
         protected override async Task SendAndFlushAsync(TransportMessage message)
         {
             SetClientPort();
-            var buffer = Unpooled.WrappedBuffer(message.Encode());
-            await _channel.WriteAndFlushAsync(buffer);
+            await _channel.WriteAndFlushAsync(message);
         }
 
         private void SetClientPort()

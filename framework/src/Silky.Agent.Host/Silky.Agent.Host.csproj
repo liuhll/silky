@@ -5,8 +5,6 @@
         <Description>The package contains the component package for building Silky microservice host</Description>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Codec.MessagePack\Silky.Codec.MessagePack.csproj" />
-        <ProjectReference Include="..\Silky.Codec.ProtoBuf\Silky.Codec.ProtoBuf.csproj" />
         <ProjectReference Include="..\Silky.DotNetty.Abstraction\Silky.DotNetty.Abstraction.csproj" />
         <ProjectReference Include="..\Silky.DotNetty.Protocol.Tcp\Silky.DotNetty.Protocol.Tcp.csproj" />
         <ProjectReference Include="..\Silky.Http.CorsAccessor\Silky.Http.CorsAccessor.csproj" />
