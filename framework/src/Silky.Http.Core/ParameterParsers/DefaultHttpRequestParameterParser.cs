@@ -18,13 +18,7 @@ namespace Silky.Http.Core
 {
     internal class DefaultHttpRequestParameterParser : IParameterParser
     {
-        private readonly ISerializer _serializer;
-
-        public DefaultHttpRequestParameterParser(ISerializer serializer)
-        {
-            _serializer = serializer;
-        }
-
+        
         private async Task<IDictionary<ParameterFrom, object>> ParserHttpRequest(HttpRequest request,
             ServiceEntry serviceEntry)
         {
@@ -33,21 +27,21 @@ namespace Silky.Http.Core
             {
                 var formValueProvider = new FormValueProvider(serviceEntry, request.Form);
                 var formData = formValueProvider.GetFormData();
-                parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
+                parameters.Add(ParameterFrom.Form, formData);
             }
 
             if (request.Query.Any())
             {
                 var queryValueProvider = new QueryStringValueProvider(serviceEntry, request.Query);
                 var queryData = queryValueProvider.GetQueryData();
-                parameters.Add(ParameterFrom.Query, _serializer.Serialize(queryData));
+                parameters.Add(ParameterFrom.Query, queryData);
             }
 
             if (request.Headers.Any())
             {
                 var headerData = request.Headers.ToDictionary(p => p.Key, p => p.Value.ToString());
                 RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RequestHeader, headerData);
-                parameters.Add(ParameterFrom.Header, _serializer.Serialize(headerData));
+                parameters.Add(ParameterFrom.Header, headerData);
             }
 
             if (!request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
@@ -60,7 +54,7 @@ namespace Silky.Http.Core
             if (serviceEntry != null && serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path))
             {
                 var pathData = serviceEntry.Router.ParserRouteParameters(request.Path);
-                parameters.Add(ParameterFrom.Path, _serializer.Serialize(pathData));
+                parameters.Add(ParameterFrom.Path, pathData);
             }
 
             return parameters;
@@ -82,20 +76,20 @@ namespace Silky.Http.Core
             if (request.HasFormContentType)
             {
                 var formData = request.Form.ToDictionary(p => p.Key, p => p.Value.ToString());
-                parameters.Add(ParameterFrom.Form, _serializer.Serialize(formData));
+                parameters.Add(ParameterFrom.Form, formData);
             }
 
             if (request.Query.Any())
             {
                 var queryData = request.Query.ToDictionary(p => p.Key, p => p.Value.ToString());
-                parameters.Add(ParameterFrom.Query, _serializer.Serialize(queryData));
+                parameters.Add(ParameterFrom.Query, queryData);
             }
 
             if (request.Headers.Any())
             {
                 var headerData = request.Headers.ToDictionary(p => p.Key, p => p.Value.ToString());
                 RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RequestHeader, headerData);
-                parameters.Add(ParameterFrom.Header, _serializer.Serialize(headerData));
+                parameters.Add(ParameterFrom.Header, headerData);
             }
 
             if (!request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
@@ -110,9 +104,7 @@ namespace Silky.Http.Core
 
             if (Regex.IsMatch(serviceEntryDescriptor.WebApi, RouterConstants.PathRegex))
             {
-                parameters.Add(ParameterFrom.Path,
-                    _serializer.Serialize(
-                        RoutePathHelper.ParserRouteParameters(serviceEntryDescriptor.WebApi, request.Path)));
+                parameters.Add(ParameterFrom.Path,RoutePathHelper.ParserRouteParameters(serviceEntryDescriptor.WebApi, request.Path));
             }
 
             return parameters;
