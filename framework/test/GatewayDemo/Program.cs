@@ -2,8 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Silky.Core;
-using Silky.Core.Configuration;
-using Silky.Core.Modularity.PlugIns;
 
 namespace GatewayDemo
 {

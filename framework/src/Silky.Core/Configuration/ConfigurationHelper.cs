@@ -9,6 +9,7 @@ namespace Silky.Core.Configuration;
 public static class ConfigurationHelper
 {
     public static IConfigurationRoot BuildConfiguration(
+        IConfigurationBuilder builder,
         IHostEnvironment hostEnvironment,
         SilkyConfigurationBuilderOptions? options = null,
         Action<IConfigurationBuilder> builderAction = null)
@@ -30,13 +31,13 @@ public static class ConfigurationHelper
             options.BasePath = Directory.GetCurrentDirectory();
         }
 
-        var builder = new ConfigurationBuilder()
+        builder
             .SetBasePath(options.BasePath).SetBasePath(options.BasePath);
 
         switch (options.FileType)
         {
             case ConfigurationFileType.Yaml:
-                builder = builder
+                builder
                     .AddYamlFile(options.FileName + ".yaml", optional: options.Optional,
                         reloadOnChange: options.ReloadOnChange);
                 if (!options.EnvironmentName.IsNullOrEmpty())
@@ -47,7 +48,7 @@ public static class ConfigurationHelper
 
                 break;
             case ConfigurationFileType.Json:
-                builder = builder
+                builder
                     .AddJsonFile(options.FileName + ".json", optional: options.Optional,
                         reloadOnChange: options.ReloadOnChange);
                 if (!options.EnvironmentName.IsNullOrEmpty())
@@ -71,12 +72,12 @@ public static class ConfigurationHelper
             }
         }
 
-        builder = builder.AddEnvironmentVariables(options.EnvironmentVariablesPrefix);
+        builder.AddEnvironmentVariables(options.EnvironmentVariablesPrefix);
         if (options.CommandLineArgs != null)
         {
-            builder = builder.AddCommandLine(options.CommandLineArgs);
+            builder.AddCommandLine(options.CommandLineArgs);
         }
-        
+
         builderAction?.Invoke(builder);
         return builder.Build();
     }

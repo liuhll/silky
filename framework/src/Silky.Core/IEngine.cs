@@ -45,7 +45,7 @@ namespace Silky.Core
         
         void RegisterDependencies(ContainerBuilder builder);
 
-        void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder);
+        void RegisterModules(ContainerBuilder containerBuilder);
 
 
         TOptions GetOptions<TOptions>()

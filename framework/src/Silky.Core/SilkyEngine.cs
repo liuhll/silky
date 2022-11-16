@@ -302,7 +302,7 @@ namespace Silky.Core
             return assembly;
         }
 
-        public void RegisterModules(IServiceCollection services, ContainerBuilder containerBuilder)
+        public void RegisterModules(ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterInstance(this).As<IModuleContainer>().SingleInstance();
             var assemblyNames = ((AppDomainTypeFinder)_typeFinder).AssemblyNames;

@@ -7,8 +7,6 @@ namespace Silky.Core.Configuration;
 
 public class SilkyApplicationCreationOptions
 {
-    [NotNull] public IServiceCollection Services { get; }
-
     [NotNull] public PlugInSourceList ModulePlugInSources { get; }
 
     [NotNull] public AppServicePlugInSourceList AppServicePlugInSources { get; }
@@ -24,9 +22,8 @@ public class SilkyApplicationCreationOptions
 
     public SilkyConfigurationBuilderOptions Configuration { get; set; }
 
-    public SilkyApplicationCreationOptions([NotNull] IServiceCollection services)
+    public SilkyApplicationCreationOptions()
     {
-        Services = Check.NotNull(services, nameof(services));
         ModulePlugInSources = new PlugInSourceList();
         AppServicePlugInSources = new AppServicePlugInSourceList();
         Configuration = new SilkyConfigurationBuilderOptions();
