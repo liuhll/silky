@@ -72,12 +72,11 @@ public static class ConfigurationHelper
         }
 
         builder = builder.AddEnvironmentVariables(options.EnvironmentVariablesPrefix);
-        builder = builder.AddEnvironmentVariables();
         if (options.CommandLineArgs != null)
         {
             builder = builder.AddCommandLine(options.CommandLineArgs);
         }
-
+        
         builderAction?.Invoke(builder);
         return builder.Build();
     }
