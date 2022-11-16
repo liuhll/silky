@@ -9,6 +9,6 @@ services:
     networks:
       - silky_service_net
 networks:
-  silky_test_service_net:
+  silky_service_net:
     external:
       name: silky_service_net
