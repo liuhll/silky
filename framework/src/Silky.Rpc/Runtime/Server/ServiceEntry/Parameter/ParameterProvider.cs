@@ -29,8 +29,10 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             if (cacheKeyTemplates.Any(c =>
-                    Regex.Matches(c, CacheKeyConstants.CacheKeyParameterRegex).Select(p => p.Value).GroupBy(q => q)
-                        .Count() > 1))
+                    Regex.Matches(c, CacheKeyConstants.CacheKeyParameterRegex)
+                        .Select(p => p.Value)
+                        .GroupBy(q => q)
+                        .Any(g => g.Count() > 1)))
             {
                 throw new SilkyException(
                     "Cache interception template parameters do not allow duplicate names.");
