@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Core.Logging;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Runtime.Session;
 using Silky.Http.Core;
@@ -14,7 +13,6 @@ using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
-using UAParser;
 using ISession = Silky.Core.Runtime.Session.ISession;
 
 namespace Silky.Http.Auditing.Middlewares;
@@ -42,9 +40,9 @@ public class AuditingMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        var serviceEntry = context.GetServiceEntry();
+        var serviceEntryDescriptor = context.GetServiceEntryDescriptor();
 
-        if (serviceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
+        if (serviceEntryDescriptor.IsEnableAuditing(_auditingOptions.IsEnabled))
         {
             var userAgent = context.Request.Headers["User-Agent"];
             var auditLogInfo = new AuditLogInfo()

@@ -117,6 +117,8 @@ namespace Silky.Rpc.Runtime.Server
             {
                 serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.IsSilkyAppService, true);
             }
+
+            serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.DisableAuditing,serviceEntry.DisableAuditing());
             
             return serviceEntry;
         }

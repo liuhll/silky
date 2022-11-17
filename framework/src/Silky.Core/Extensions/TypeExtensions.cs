@@ -154,7 +154,7 @@ namespace Silky.Core.Extensions
 
             if (type.IsGenericType)
             {
-                var cacheName = type.Name + ".";
+                var cacheName = type.Name;
                 var genericTypes = type.GenericTypeArguments;
                 foreach (var genericType in genericTypes)
                 {

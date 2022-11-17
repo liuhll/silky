@@ -7,5 +7,7 @@ namespace Silky.Rpc.Runtime.Server
         public const string NeedHttpProtocolSupport = "NeedHttpProtocolSupport";
 
         public const string IsSilkyAppService = "IsSilkyAppService";
+
+        public const string DisableAuditing = "DisableAuditing";
     }
 }
