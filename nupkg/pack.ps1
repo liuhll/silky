@@ -15,14 +15,26 @@ $projects = (Get-Content "./Components")
 
 $templates = (Get-Content "./Templates")
 
-function Pack($projectFolder,$projectName) {  
+[xml]$propsXml = Get-Content (Join-Path $rootFolder "common.props")
+$version = $propsXml.Project.PropertyGroup.Version
+
+function Pack($projectFolder,$projectName,[bool] $isTemplate = $false) {  
   Set-Location $projectFolder
   $releaseProjectFolder = (Join-Path $projectFolder "bin/Release")
   if (Test-Path $releaseProjectFolder)
   {
      Remove-Item -Force -Recurse $releaseProjectFolder
   }
-   & dotnet pack -c Release
+
+  if ($isTemplate) {
+    $tempatePropsXmlPath = Join-Path $projectFolder "content/common.props"
+    [xml]$tempatePropsXml = Get-Content ($tempatePropsXmlPath)
+    $tempatePropsXml.Project.PropertyGroup.SilkyVersion = $version
+    $tempatePropsXml.Save($tempatePropsXmlPath)
+   
+  }
+
+  & dotnet pack -c Release
 
    if(-not $projectName) {
       $projectName = $project
@@ -46,7 +58,7 @@ if ($build) {
     $templateName = ($template -Split "/" )[-1]
     $templateType = ($template -Split "/" )[-2]
     $templateFolder = Join-Path $templatePath $templateType
-    Pack -projectFolder $templateFolder -projectName $templateName
+    Pack -projectFolder $templateFolder -projectName $templateName -isTemplate $true
   }
   Set-Location $packFolder
 }
@@ -56,8 +68,7 @@ if($push) {
         Write-Warning -Message "未设置nuget仓库的APIKEY"
 		exit 1
 	}
-	[xml]$propsXml = Get-Content (Join-Path $rootFolder "common.props")
-    $version = $propsXml.Project.PropertyGroup.Version
+    
 	  foreach($project in $projects) {
       $projectName = ($project -Split "/" )[-1]
       & dotnet nuget push ($projectName + "." + $version + ".nupkg") -s $repo -k $apikey --skip-duplicate

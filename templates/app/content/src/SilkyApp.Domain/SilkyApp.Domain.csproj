@@ -7,6 +7,7 @@
         <PackageReference Include="Silky.ObjectMapper.Mapster" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.Caching" Version="$(SilkyVersion)" />
         <PackageReference Include="Silky.EntityFrameworkCore" Version="$(SilkyVersion)" />
+        <PackageReference Include="Silky.EntityFrameworkCore.Extras" Version="$(SilkyVersion)" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\SilkyApp.Application.Contracts\SilkyApp.Application.Contracts.csproj" />
