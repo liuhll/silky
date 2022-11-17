@@ -11,36 +11,30 @@ $rootFolder = Join-Path $packFolder ".."
 $srcPath = Join-Path $packFolder "../framework"
 $templatePath = Join-Path $packFolder "../templates"
 
-
-
 $projects = (Get-Content "./Components")
 
 $templates = (Get-Content "./Templates")
 
-function Pack($projectFolder,$projectName,[bool]$isComponent=$true) {  
+function Pack($projectFolder,$projectName) {  
   Set-Location $projectFolder
   $releaseProjectFolder = (Join-Path $projectFolder "bin/Release")
   if (Test-Path $releaseProjectFolder)
   {
      Remove-Item -Force -Recurse $releaseProjectFolder
   }
-  
-   & dotnet restore
    & dotnet pack -c Release
 
    if(-not $projectName) {
       $projectName = $project
    }
 
-  if($isComponent) {
-      $projectPackPath = Join-Path $projectFolder ("/bin/Release/" + $projectName + ".*.nupkg")
-    }else{
-      $projectPackPath = Join-Path $projectFolder ($projectName + ".*.nupkg")
-    }
-   Move-Item -Force $projectPackPath $packFolder 
+  $projectPackPath = Join-Path $projectFolder ("/bin/Release/" + $projectName + ".*.nupkg")
+  Move-Item -Force $projectPackPath $packFolder 
 }
 
 if ($build) {
+  Set-Location $srcPath
+  & dotnet restore silky.sln
   foreach($project in $projects) {
     if (-not $project.StartsWith("#")){
       $projectName = ($project -Split "/" )[-1]
@@ -52,7 +46,7 @@ if ($build) {
     $templateName = ($template -Split "/" )[-1]
     $templateType = ($template -Split "/" )[-2]
     $templateFolder = Join-Path $templatePath $templateType
-    Pack -projectFolder $templateFolder -projectName $templateName -isComponent $false
+    Pack -projectFolder $templateFolder -projectName $templateName
   }
   Set-Location $packFolder
 }
