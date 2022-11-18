@@ -137,6 +137,7 @@ namespace Silky.Http.Core.Handlers
             var sp = Stopwatch.StartNew();
             var parameters =
                 await _parameterParser.Parser(httpContext.Request, serviceEntryDescriptor);
+            RpcContext.Context.SetRequestParameters(_auditSerializer.Serialize(parameters));
             var messageId = GetMessageId(httpContext);
             var tracingTimestamp =
                 _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntryDescriptor.Id, false,
