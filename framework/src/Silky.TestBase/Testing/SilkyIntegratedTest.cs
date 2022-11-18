@@ -30,6 +30,7 @@ namespace Silky.TestBase.Testing
             Configuration = CreateConfigurationBuilder().Build();
             var hostEnvironment = CreateHostEnvironment();
             services.AddSingleton(Configuration);
+            services.AddSingleton(hostEnvironment);
 
             Engine = services.AddSilkyServices<TStartupModule>(Configuration, hostEnvironment,
                 new SilkyApplicationCreationOptions());
@@ -42,7 +43,6 @@ namespace Silky.TestBase.Testing
 
             Engine.RegisterDependencies(containerBuilder);
             Engine.RegisterModules(containerBuilder);
-
             var container = containerBuilder.Build();
             ServiceProvider = new AutofacServiceProvider(container);
             Engine.ServiceProvider = ServiceProvider;
