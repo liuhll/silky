@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class HostAgentCollectionExtensions
     {
-        public static IServiceCollection AddDefaultRegistryCenter(this IServiceCollection services, string registerType)
+        internal static IServiceCollection AddDefaultRegistryCenter(this IServiceCollection services, string registerType)
         {
             switch (registerType.ToLower())
             {
@@ -33,8 +33,8 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         public static IServiceCollection AddSilkyHttpServices(this IServiceCollection services,
-            Action<SwaggerGenOptions> setupAction = null,
-            Action<AuthorizationOptions> authorizationAction = null)
+            Action<SwaggerGenOptions> swaggerOptionAction = null,
+            Action<AuthorizationOptions> authorizationOptionAction = null)
         {
             var redisOptions = EngineContext.Current.Configuration.GetRateLimitRedisOptions();
             services
@@ -44,20 +44,20 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddResponseCaching()
                 .AddHttpContextAccessor()
                 .AddRouting()
-                .AddSilkyIdentity(authorizationAction)
+                .AddSilkyIdentity(authorizationOptionAction)
                 .AddSilkyMiniProfiler()
                 .AddSilkyCaching()
                 .AddSilkySkyApm()
                 .AddDashboard()
-                .AddSwaggerDocuments(setupAction);
+                .AddSwaggerDocuments(swaggerOptionAction);
             services.AddMvc();
 
             return services;
         }
 
         public static IServiceCollection AddSilkyHttpServices<TAuthorizationHandler>(this IServiceCollection services,
-            Action<SwaggerGenOptions> setupAction = null,
-            Action<AuthorizationOptions> authorizationAction = null)
+            Action<SwaggerGenOptions> swaggerOptionAction = null,
+            Action<AuthorizationOptions> authorizationOptionAction = null)
             where TAuthorizationHandler : class, IAuthorizationHandler
         {
             var redisOptions = EngineContext.Current.Configuration.GetRateLimitRedisOptions();
@@ -68,12 +68,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddResponseCaching()
                 .AddHttpContextAccessor()
                 .AddRouting()
-                .AddSilkyIdentity<TAuthorizationHandler>(authorizationAction)
+                .AddSilkyIdentity<TAuthorizationHandler>(authorizationOptionAction)
                 .AddSilkyMiniProfiler()
                 .AddSilkyCaching()
                 .AddSilkySkyApm()
                 .AddDashboard()
-                .AddSwaggerDocuments(setupAction);
+                .AddSwaggerDocuments(swaggerOptionAction);
             services.AddMvc();
 
             return services;
