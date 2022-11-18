@@ -22,7 +22,8 @@ namespace Silky.Rpc.Extensions
             var serviceEntryDescriptor = context.GetEndpoint()?.Metadata.GetMetadata<ServiceEntryDescriptor>();
             return serviceEntryDescriptor;
         }
-
+        
+       
         public static void SignoutToSwagger(this HttpContext httpContext)
         {
             httpContext.Response.Headers["access-token"] = "invalid_token";

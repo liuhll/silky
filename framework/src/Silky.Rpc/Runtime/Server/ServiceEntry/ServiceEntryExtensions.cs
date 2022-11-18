@@ -132,6 +132,10 @@ namespace Silky.Rpc.Runtime.Server
 
         public static bool IsEnableAuditing(this ServiceEntry serviceEntry, bool isEnable)
         {
+            if (serviceEntry == null)
+            {
+                return false;
+            }
             return isEnable && !serviceEntry.DisableAuditing();
         }
 

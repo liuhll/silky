@@ -63,7 +63,8 @@ namespace Silky.HealthChecks.Rpc
             var messageId = GetMessageId(_httpContextAccessor.HttpContext);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(HealthCheckConstants.HealthCheckServiceEntryId);
             var tracingTimestamp =
-                _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry, _httpContextAccessor.HttpContext,
+                _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry.Id, serviceEntry.IsLocal,
+                    _httpContextAccessor.HttpContext,
                     Array.Empty<object>());
             try
             {
@@ -142,13 +143,15 @@ namespace Silky.HealthChecks.Rpc
             }
             catch (Exception ex)
             {
-                _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId, serviceEntry,
+                _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId, serviceEntry.Id,
+                    serviceEntry.IsLocal,
                     _httpContextAccessor.HttpContext, ex, StatusCode.ServerError);
                 return HealthCheckResult.Unhealthy("health error", ex);
             }
             finally
             {
-                _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serviceEntry,
+                _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId, serviceEntry.Id,
+                    serviceEntry.IsLocal,
                     _httpContextAccessor.HttpContext, null);
             }
         }

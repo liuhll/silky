@@ -9,6 +9,10 @@ namespace Silky.Rpc.Runtime.Server
 
         public static bool IsEnableAuditing(this ServiceEntryDescriptor serviceEntryDescriptor, bool isEnabled)
         {
+            if (serviceEntryDescriptor == null)
+            {
+                return false;
+            }
             return isEnabled && !serviceEntryDescriptor.GetMetadata<bool>(ServiceEntryConstant.DisableAuditing);
         }
     }

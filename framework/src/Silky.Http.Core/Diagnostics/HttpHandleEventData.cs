@@ -9,7 +9,9 @@ namespace Silky.Http.Core.Diagnostics
 
         public HttpContext HttpContext { get; set; }
 
-        public ServiceEntry ServiceEntry { get; set; }
+        public string ServiceEntryId { get; set; }
+
+        public bool IsLocal { get;set; }
 
         public object[] Parameters { get; set; }
 

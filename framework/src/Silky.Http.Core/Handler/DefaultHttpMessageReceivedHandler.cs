@@ -1,11 +1,9 @@
 using System;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -50,6 +48,11 @@ namespace Silky.Http.Core.Handlers
             var parameters =
                 await _parameterParser.Parser(httpContext.Request, serviceEntry);
             RpcContext.Context.SetRequestParameters(_auditSerializer.Serialize(parameters));
+            var messageId = GetMessageId(httpContext);
+            var tracingTimestamp =
+                _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry.Id, serviceEntry.IsLocal,
+                    httpContext,
+                    parameters);
             var serviceKey = ResolveServiceKey(httpContext);
             if (!serviceKey.IsNullOrEmpty())
             {
@@ -62,13 +65,9 @@ namespace Silky.Http.Core.Handlers
             var rpcConnection = RpcContext.Context.Connection;
             var clientRpcEndpoint = rpcConnection.ClientHost;
             var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
-            var messageId = GetMessageId(httpContext);
             var serverHandleInfo =
                 serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
-            var tracingTimestamp =
-                _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry,
-                    httpContext,
-                    parameters);
+
             var isHandleSuccess = true;
             var isFriendlyStatus = false;
             try
@@ -90,12 +89,15 @@ namespace Silky.Http.Core.Handlers
                         if (executeResult != null)
                         {
                             var responseData = _serializer.Serialize(executeResult);
-                            await serverCallContext.HttpContext.Response.WriteAsync(responseData, cancellationToken: cancellationToken);
+                            await serverCallContext.HttpContext.Response.WriteAsync(responseData,
+                                cancellationToken: cancellationToken);
                         }
                     }
                 }
+
                 _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
-                    serviceEntry,
+                    serviceEntry.Id,
+                    serviceEntry.IsLocal,
                     httpContext,
                     executeResult);
             }
@@ -104,7 +106,8 @@ namespace Silky.Http.Core.Handlers
                 isHandleSuccess = false;
                 isFriendlyStatus = ex.IsFriendlyException();
                 _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId,
-                    serviceEntry,
+                    serviceEntry.Id,
+                    serviceEntry.IsLocal,
                     httpContext, ex,
                     ex.GetExceptionStatusCode());
                 throw;
@@ -131,10 +134,14 @@ namespace Silky.Http.Core.Handlers
             HttpContextServerCallContext serverCallContext,
             ServiceEntryDescriptor serviceEntryDescriptor)
         {
-            
             var sp = Stopwatch.StartNew();
             var parameters =
                 await _parameterParser.Parser(httpContext.Request, serviceEntryDescriptor);
+            var messageId = GetMessageId(httpContext);
+            var tracingTimestamp =
+                _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntryDescriptor.Id, false,
+                    httpContext,
+                    parameters);
             var serviceKey = ResolveServiceKey(httpContext);
             if (!serviceKey.IsNullOrEmpty())
             {
@@ -143,7 +150,7 @@ namespace Silky.Http.Core.Handlers
                     MiniProfileConstant.Route.State.FindServiceKey,
                     $"serviceKey => {serviceKey}");
             }
-            
+
             var clientRpcEndpoint = RpcContext.Context.Connection.ClientHost;
             var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
             var serverHandleInfo =
@@ -160,14 +167,25 @@ namespace Silky.Http.Core.Handlers
                     if (executeResult != null)
                     {
                         var responseData = _serializer.Serialize(executeResult);
-                        await serverCallContext.HttpContext.Response.WriteAsync(responseData, cancellationToken: cancellationToken);
+                        await serverCallContext.HttpContext.Response.WriteAsync(responseData,
+                            cancellationToken: cancellationToken);
                     }
                 }
+                _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
+                    serviceEntryDescriptor.Id,
+                    false,
+                    httpContext,
+                    executeResult);
             }
             catch (Exception ex)
             {
                 isHandleSuccess = false;
                 isFriendlyStatus = ex.IsFriendlyException();
+                _httpHandleDiagnosticListener.TracingError(tracingTimestamp, messageId,
+                    serviceEntryDescriptor.Id,
+                    false,
+                    httpContext, ex,
+                    ex.GetExceptionStatusCode());
                 throw;
             }
             finally
