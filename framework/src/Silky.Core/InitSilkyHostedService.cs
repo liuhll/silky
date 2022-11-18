@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silky.Core.Modularity;
-using Silky.Core.Utils;
 
 namespace Silky.Core
 {
