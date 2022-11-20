@@ -19,25 +19,18 @@
       "preferNameDirectory": true,
       "symbols": {
         "dockersupport": {
-         "type": "parameter",
-         "datatype": "bool",
-         "defaultValue": "true",
-         "isRequired": false,
-        "description": "Add docker support for Silky"
+          "type": "parameter",
+          "datatype": "bool",
+          "defaultValue": "true",
+          "isRequired": false,
+          "description": "Add docker support for Silky"
        },
        "infrastr": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "false",
         "isRequired": false,
-       "description": "Whether to include basic service orchestration files"
-      },
-      "sln": {
-        "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "true",
-        "isRequired": false,
-        "description": "Whether to include the solution file"
+       "description": "only include basic service orchestration files"
       },
       "env": {
         "type": "parameter",
@@ -47,12 +40,12 @@
         "isRequired": false,
         "description": "Set dotnet env"
       },
-      "new": {
+      "module": {
         "type": "parameter",
         "datatype": "bool",
-        "defaultValue": "true",
+        "defaultValue": "false",
         "isRequired": false,
-        "description": "Is New Project"
+        "description": "Is it a module project"
       },
       "type": {
         "type": "parameter",
@@ -60,6 +53,13 @@
         "defaultValue": "generalhost",
         "isRequired": false,
         "description": "Set the silky host type, optional values: webhost, generalhost ,wshost, gateway"
+      },
+      "includeinfr": {
+        "type": "parameter",
+        "datatype": "bool",
+        "defaultValue": "false",
+        "isRequired": false,
+       "description": "Whether to include the basic orchestration service."
       }
     },
     "sources": [
@@ -84,35 +84,35 @@
             ]
           },
           {
-            "condition": "!(infrastr)",
+            "condition": "!(includeinfr)",
             "exclude": [
               "infrastr/**"
+            ]
+          },
+          {
+            "condition": "(infrastr)",
+            "exclude": [
+              "src/**",
+              "Gateway.sln",
+              "Gateway.DockerCompose.sln",
+              "SilkyApp.DockerCompose.sln",
+              "SilkyApp.sln",
+              "docker-compose.yml",
+              "docker-compose.dcproj"
+            ],
+            "include": [
+              "infrastr/**",
+              "SilkyApp.Blank.sln"
             ]
           },
           {
             "condition": "!(dockersupport)",
             "exclude": [
               "SilkyApp.DockerCompose.sln",
+              "SilkyApp.Blank.sln",
               "docker-compose.yml",
-              "docker-compose.dcproj"
-            ]
-          },
-          {
-            "condition": "!(sln)",
-            "exclude": [
-              "SilkyApp.DockerCompose.sln",
-              "SilkyApp.sln",
-              "Gateway.sln",
-              "Gateway.DockerCompose.sln"
-            ]
-          },
-          {
-            "condition": "!(new)",
-            "exclude": [
-              ".dockerignore",
-              ".gitignore",
-              "common.props",
-              ".DS_Store"
+              "docker-compose.dcproj",
+              "SilkyApp.DockerCompose.sln"
             ]
           },
           {
@@ -125,7 +125,8 @@
               "src/SilkyApp.Domain.Shared/**",
               "src/SilkyApp.EntityFrameworkCore/**",
               "SilkyApp.DockerCompose.sln",
-              "SilkyApp.sln"
+              "SilkyApp.sln",
+              "SilkyApp.Blank.sln"
             ]
           },
           {
@@ -133,12 +134,36 @@
             "exclude": [
               "src/SilkyApp.GatewayHost/**",
               "Gateway.sln",
-              "Gateway.DockerCompose.sln"
+              "Gateway.DockerCompose.sln",
+              "SilkyApp.Blank.sln"
             ]
-          },{
-            "condition": "(type==generalhost || type==websockethost)",
+          },
+          {
+            "condition": "(type==generalhost || type==wshost)",
             "exclude": [
+              "Gateway.sln",
+              "Gateway.DockerCompose.sln",
+              "SilkyApp.Blank.sln",
               "src/SilkyAppHost/Startup.cs"
+            ]
+          },
+          {
+            "condition": "(module)",
+            "exclude": [
+              ".dockerignore",
+              ".gitignore",
+              ".env",
+              "common.props",
+              ".DS_Store",
+              "docker-compose.yml",
+              "docker-compose.dcproj",
+              "SilkyApp.sln",
+              "Gateway.sln",
+              "Gateway.DockerCompose.sln",
+              "SilkyApp.DockerCompose.sln",
+              "docker-compose.yml",
+              "docker-compose.dcproj",
+              "infrastr/**"
             ]
           }
         ]
