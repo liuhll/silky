@@ -1,15 +1,21 @@
 rpc:
-  host: 0.0.0.0
-  port: rpcPortValue
-  token: rpcTokenValue
+  port: 2200
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 governance:
   timeoutMillSeconds: 0
 registrycenter:
-  connectionStrings: registrycenterconnections
-  type: registrycentertype
+  type: Zookeeper
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+  scheme: Digest
+  auth: "silky:pass4Word"    
 distributedCache:
   redis:
     isEnabled: true
-    configuration: redisconfiguration
+    configuration: 127.0.0.1:6379,defaultDatabase=0
 connectionStrings:
   default: server=127.0.0.1;port=3306;database=SilkyApp;uid=root;pwd=qwe!P4ss;
+
+plugInSource:
+  modulePlugIn:
+    types:
+      - SilkyApp.EntityFrameworkCore.SilkyAppEfCoreModule,SilkyApp.EntityFrameworkCore

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Silky.EntityFrameworkCore.Contexts;
+using Silky.EntityFrameworkCore.Extras.Contexts;
 using Silky.EntityFrameworkCore.Contexts.Attributes;
 
 namespace SilkyApp.EntityFrameworkCore.DbContexts

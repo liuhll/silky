@@ -18,49 +18,6 @@
       "sourceName": "SilkyApp",
       "preferNameDirectory": true,
       "symbols": {
-        "rpcToken": {
-          "type": "parameter",
-          "defaultValue": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
-          "replaces": "rpcTokenValue",
-          "isRequired": false,
-          "description": "The rpc token for application"
-        },
-        "rpcPort": {
-          "type": "parameter",
-          "defaultValue": "2200",
-          "datatype": "int",
-          "replaces": "rpcPortValue",
-          "isRequired": false,
-          "description": "The rpc token for application"
-        },
-        "registrycentertype": {
-          "type": "parameter",
-          "defaultValue": "Zookeeper",
-          "replaces": "registrycentertype",
-          "isRequired": false,
-          "description": "The registrycenter type for application"
-        },
-        "registrycenterconnections": {
-          "type": "parameter",
-          "defaultValue": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186",
-          "replaces": "registrycenterconnections",
-          "isRequired": false,
-          "description": "The registrycenter connectionStrings for application"
-        },
-        "redisenable":{
-          "type": "parameter",
-          "defaultValue": "true",
-          "replaces": "redisenable",
-          "isRequired": false,
-          "description": "Set distributedcache redis is enable"
-        },
-        "redisconfiguration":{
-          "type": "parameter",
-          "defaultValue": "127.0.0.1:6379,defaultDatabase=0",
-          "replaces": "redisconfiguration",
-          "isRequired": false,
-          "description": "Set distributedcache configuration"
-        },
         "dockersupport": {
          "type": "parameter",
          "datatype": "bool",
@@ -68,21 +25,21 @@
          "isRequired": false,
         "description": "Add docker support for Silky"
        },
-       "includeinfrastr": {
+       "infrastr": {
         "type": "parameter",
         "datatype": "bool",
-        "defaultValue": "true",
+        "defaultValue": "false",
         "isRequired": false,
        "description": "Whether to include basic service orchestration files"
       },
-      "includesln": {
+      "sln": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "true",
         "isRequired": false,
         "description": "Whether to include the solution file"
       },
-      "dotnetenv": {
+      "env": {
         "type": "parameter",
         "datatype": "string",
         "defaultValue": "Development",
@@ -90,41 +47,33 @@
         "isRequired": false,
         "description": "Set dotnet env"
       },
-      "dockernetwork": {
-        "type": "parameter",
-        "datatype": "string",
-        "defaultValue": "silky_service_net",
-        "replaces": "silky_service_net",
-        "isRequired": false,
-        "description": "Set docker network"
-      },
-      "newsln": {
+      "new": {
         "type": "parameter",
         "datatype": "bool",
         "defaultValue": "true",
         "isRequired": false,
         "description": "Is New Project"
       },
-      "hosttype": {
+      "type": {
         "type": "parameter",
         "datatype": "string",
-        "defaultValue": "webhost",
+        "defaultValue": "generalhost",
         "isRequired": false,
-        "description": "Set the silky host type, optional values: webhost, generalhost ,websockethost, gateway"
+        "description": "Set the silky host type, optional values: webhost, generalhost ,wshost, gateway"
       }
     },
     "sources": [
       {
         "modifiers": [
           {
-            "condition": "(dotnetenv!=Apollo)",
+            "condition": "(env!=Apollo)",
             "exclude": [
               "src/SilkyAppHost/appsettings.Apollo.yml",
               "src/SilkyApp.GatewayHost/appsettings.Apollo.yml"
             ]
           },
           {
-            "condition": "(dotnetenv==Apollo)",
+            "condition": "(env==Apollo)",
             "exclude": [
               "src/SilkyAppHost/appsettings.Development.yml",
               "src/SilkyAppHost/appsettings.Production.yml",
@@ -135,20 +84,21 @@
             ]
           },
           {
-            "condition": "!(includeinfrastr)",
+            "condition": "!(infrastr)",
             "exclude": [
-              "docker-compose/infrastr/**"
+              "infrastr/**"
             ]
           },
           {
             "condition": "!(dockersupport)",
             "exclude": [
               "SilkyApp.DockerCompose.sln",
-              "docker-compose/SilkyApp/**"
+              "docker-compose.yml",
+              "docker-compose.dcproj"
             ]
           },
           {
-            "condition": "!(includesln)",
+            "condition": "!(sln)",
             "exclude": [
               "SilkyApp.DockerCompose.sln",
               "SilkyApp.sln",
@@ -157,7 +107,7 @@
             ]
           },
           {
-            "condition": "!(newsln)",
+            "condition": "!(new)",
             "exclude": [
               ".dockerignore",
               ".gitignore",
@@ -166,7 +116,7 @@
             ]
           },
           {
-            "condition": "(hosttype==gateway)",
+            "condition": "(type==gateway)",
             "exclude": [
               "src/SilkyApp.Application/**",
               "src/SilkyApp.Application.Contracts/**",
@@ -179,14 +129,14 @@
             ]
           },
           {
-            "condition": "(hosttype!=gateway)",
+            "condition": "(type!=gateway)",
             "exclude": [
               "src/SilkyApp.GatewayHost/**",
               "Gateway.sln",
               "Gateway.DockerCompose.sln"
             ]
           },{
-            "condition": "(hosttype==generalhost || hosttype==websockethost)",
+            "condition": "(type==generalhost || type==websockethost)",
             "exclude": [
               "src/SilkyAppHost/Startup.cs"
             ]

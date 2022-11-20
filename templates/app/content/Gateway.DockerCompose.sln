@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A1CA826E-EE44-42F5-9AA9-A4DBB6AB6A1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "docker-compose\SilkyApp\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyAppHost", "src\SilkyAppHost\SilkyAppHost.csproj", "{E78577B2-C1DE-4599-B7C0-74E2DF9A3D30}"
 EndProject

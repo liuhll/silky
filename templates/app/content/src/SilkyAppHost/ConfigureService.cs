@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-#if (hosttype!="gateway")   
+#if (typehost!="gateway")   
 using SilkyApp.EntityFrameworkCore.DbContexts;
 #endif
 
@@ -12,7 +12,7 @@ namespace SilkyAppHost
         {
             services.AddSilkySkyApm();
 
-#if (hosttype!="gateway")                  
+#if (typehost!="gateway")                  
             services.AddDatabaseAccessor(
                 options => { options.AddDbPool<DefaultContext>(); },
                 "SilkyApp.Database.Migrations");

@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyAppHost", "src\SilkyAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilkyApp.EntityFrameworkCore", "src\SilkyApp.EntityFrameworkCore\SilkyApp.EntityFrameworkCore.csproj", "{A77607B7-82D9-475A-BAE0-E9F2F12C4E07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "docker-compose\SilkyApp\docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docker-compose", "docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -11,15 +11,15 @@ namespace SilkyAppHost
             await CreateHostBuilder(args).Build().RunAsync();
         }
 
-#if (hosttype=="webhost")  
+#if (type=="webhost")  
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureSilkyWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-#elif(hosttype=="websockethost")
+#elif(type=="wshost")
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureSilkyWebSocketDefaults();
-#elif(hosttype=="gateway")
+#elif(type=="gateway")
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureSilkyGatewayDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });                
