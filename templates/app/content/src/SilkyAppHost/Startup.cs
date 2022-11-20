@@ -21,7 +21,7 @@ namespace SilkyAppHost
         {
             services
                 .AddSilkyHttpCore()
-#if (hosttype=="gateway")        
+#if (type=="gateway")        
                 .AddDashboard()    
 #endif           
                 .AddResponseCaching()
@@ -41,11 +41,11 @@ namespace SilkyAppHost
                 app.UseSwaggerDocuments();
                 app.UseMiniProfiler();
             }
-#if (hosttype=="gateway")   
+#if (type=="gateway")   
             app.UseDashboard();
 #endif           
             app.UseRouting();
-#if (hosttype=="gateway")             
+#if (type=="gateway")             
             app.UseSilkyWrapperResponse();
 #endif            
             app.UseResponseCaching();
