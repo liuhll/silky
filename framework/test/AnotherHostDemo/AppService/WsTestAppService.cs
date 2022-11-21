@@ -2,6 +2,7 @@
 using IAnotherApplication;
 using Silky.Core.Exceptions;
 using Silky.WebSocket;
+using WebSocketSharp;
 
 namespace AnotherHostDemo.AppService
 {
@@ -20,6 +21,22 @@ namespace AnotherHostDemo.AppService
             {
                 throw new BusinessException($"不存在businessId为{businessId}的会话");
             }
+        }
+        
+
+        protected override void OnMessage(MessageEventArgs e)
+        {
+            // foreach (var businessSessionInfo in BusinessSessionIds)
+            // {
+            //     foreach (var businessSessionId in businessSessionInfo.Value)
+            //     {
+            //         if (SessionManager.TryGetSession(businessSessionId, out var session))
+            //         {
+            //             SessionManager.SendTo($"message:{e.Data},sessionId:{session.ID},BusinessIds:{businessSessionInfo.Key}", businessSessionId);
+            //         }
+            //     }
+            // }
+            SessionManager.SendTo($"message:{e.Data},sessionId:{ID}", ID);
         }
     }
 }
