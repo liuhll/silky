@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -137,7 +138,8 @@ namespace Silky.Http.Core.Handlers
             var sp = Stopwatch.StartNew();
             var parameters =
                 await _parameterParser.Parser(httpContext.Request, serviceEntryDescriptor);
-            RpcContext.Context.SetRequestParameters(_auditSerializer.Serialize(parameters));
+            RpcContext.Context.SetRequestParameters(
+                _auditSerializer.Serialize(parameters.Where(k => k.Key != ParameterFrom.Header)));
             var messageId = GetMessageId(httpContext);
             var tracingTimestamp =
                 _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntryDescriptor.Id, false,
@@ -172,6 +174,7 @@ namespace Silky.Http.Core.Handlers
                             cancellationToken: cancellationToken);
                     }
                 }
+
                 _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
                     serviceEntryDescriptor.Id,
                     false,

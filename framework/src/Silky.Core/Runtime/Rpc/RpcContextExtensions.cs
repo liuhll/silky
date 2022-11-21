@@ -1,4 +1,6 @@
-﻿using Silky.Core.Extensions;
+﻿using System.Collections.Generic;
+using Silky.Core.Extensions;
+using Silky.Core.Serialization;
 
 namespace Silky.Core.Runtime.Rpc
 {
@@ -74,6 +76,19 @@ namespace Silky.Core.Runtime.Rpc
         public static void SetServiceKey(this RpcContext rpcContext, string serviceKey)
         {
             rpcContext.SetInvokeAttachment(AttachmentKeys.ServiceKey, serviceKey);
+        }
+
+        public static void SetRequestHeader(this RpcContext rpcContext, IDictionary<string, string> headers)
+        {
+            rpcContext.SetInvokeAttachment(AttachmentKeys.RequestHeader, headers);
+        }
+
+        public static IDictionary<string, string> GetRequestHeader(this RpcContext rpcContext)
+        {
+            var requestHeaders = rpcContext.GetInvokeAttachment(AttachmentKeys.RequestHeader);
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            return serializer.Deserialize<Dictionary<string, string>>(requestHeaders);
+
         }
 
         public static void SetRequestParameters(this RpcContext rpcContext, string requestParameters)
