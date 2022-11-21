@@ -4,12 +4,16 @@ rpc:
   transportClientPoolNumber: 50
   useTransportClientPool: true
   port: 2205
-#  isSSl: true
-#  sslCertificateName: test.silky-fk.com.pfx
-#  sslCertificatePassword: bdSpw3W7
+  isSSl: true
+  sslCertificateName: test.silky-fk.com.pfx
+  sslCertificatePassword: bdSpw3W7
 registrycenter:
   connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
   type: Zookeeper
+  scheme: Digest
+  routePath: /silkytest/route
+  swaggerDocPath:  /silkytest/swagger
+  auth: "silky:pass4Word"
 #registrycenter:
 #  type: Nacos
 #  namespace: silky
