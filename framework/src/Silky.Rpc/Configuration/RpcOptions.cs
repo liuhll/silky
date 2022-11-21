@@ -17,6 +17,7 @@ namespace Silky.Rpc.Configuration
             RegisterFailureRetryCount = 5;
             TransportClientPoolNumber = 50;
             UseTransportClientPool = true;
+            EnableMonitor = false;
         }
 
         public string Host { get; set; }
@@ -26,14 +27,11 @@ namespace Silky.Rpc.Configuration
         public string SslCertificateName { get; set; }
         public string SslCertificatePassword { get; set; }
         public int SoBacklog { get; set; }
-
         [NotNull] public string Token { get; set; }
         public double ConnectTimeout { get; set; }
-
         public int RegisterFailureRetryCount { get; set; }
         public int TransportClientPoolNumber { get; set; }
-
         public bool UseTransportClientPool { get; set; }
-
+        public bool EnableMonitor { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Silky.Http.MiniProfiler;
 using Silky.Http.RateLimit;
 using Silky.Http.Swagger;
 using Silky.Rpc.CachingInterceptor;
+using Silky.Rpc.Monitor;
 using Silky.Rpc.Proxy;
 using Silky.Swagger.Gen;
 using Silky.Transaction.Repository.Redis;
@@ -20,7 +21,7 @@ namespace Microsoft.Extensions.Hosting
     [DependsOn(
         typeof(DotNettyTcpModule),
         typeof(RpcProxyModule),
-        // typeof(RpcMonitorModule),
+        typeof(RpcMonitorModule),
         typeof(SilkyHttpCoreModule),
         typeof(SwaggerModule),
         typeof(MiniProfilerModule),

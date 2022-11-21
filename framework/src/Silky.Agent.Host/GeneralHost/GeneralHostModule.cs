@@ -3,6 +3,7 @@ using Silky.Core.Modularity;
 using Silky.DotNetty.Protocol.Tcp;
 using Silky.Validation.Fluent;
 using Silky.Rpc.CachingInterceptor;
+using Silky.Rpc.Monitor;
 using Silky.Rpc.Proxy;
 using Silky.Swagger.Gen;
 using Silky.Transaction.Repository.Redis;
@@ -14,7 +15,7 @@ namespace Microsoft.Extensions.Hosting
     [DependsOn(
         typeof(DotNettyTcpModule),
         typeof(RpcProxyModule),
-        // typeof(RpcMonitorModule),
+        typeof(RpcMonitorModule),
         typeof(RpcCachingInterceptorModule),
         typeof(TransactionTccModule),
         typeof(ValidationModule),
