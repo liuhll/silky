@@ -25,6 +25,14 @@
           "isRequired": false,
           "description": "Add docker support for Silky"
        },
+       "rpcport": {
+        "type": "parameter",
+        "datatype": "int",
+        "defaultValue": "2200",
+        "isRequired": false,
+        "replaces": "rpcPortValue",
+        "description": "Set the port for rpc listening"
+      },
        "infrastr": {
         "type": "parameter",
         "datatype": "bool",

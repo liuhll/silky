@@ -1,5 +1,5 @@
 rpc:
-  port: 2200
+  port: rpcPortValue
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
 governance:
   timeoutMillSeconds: 0
@@ -18,4 +18,4 @@ connectionStrings:
 plugInSource:
   modulePlugIn:
     types:
-      - SilkyApp.EntityFrameworkCore.SilkyAppEfCoreModule,SilkyApp.EntityFrameworkCore
+      - SilkyApp.EntityFrameworkCore.EfCoreModule,SilkyApp.EntityFrameworkCore
