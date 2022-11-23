@@ -70,7 +70,7 @@ namespace ITestApplication.Test
 
         // [HttpGet("{id:long}")]
         // [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
-        //  [GetCachingIntercept("id:{0}")]
+        //  [GetCachingIntercept("id:{0}")],OrderDetailDto[] orderDetails
         //[HttpGet("test1/{id:long}")]
         [HttpGet]
         [AllowAnonymous]
@@ -80,6 +80,9 @@ namespace ITestApplication.Test
         [Fallback(typeof(IUpdatePartFallBack))]
         [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
         Task<TestOut> UpdatePart(TestUpdatePart input);
+
+        [HttpGet]
+        Task<TestOut> TestFromHeader([FromHeader]string id);
 
         Task<IList<object>> GetObjectList();
 

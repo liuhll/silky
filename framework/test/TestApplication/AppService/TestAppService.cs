@@ -153,6 +153,11 @@ namespace TestApplication.AppService
             return result.Entity.Adapt<TestOut>();
         }
 
+        public Task<TestOut> TestFromHeader(string id)
+        {
+            throw new System.NotImplementedException();
+        }
+
 
         public async Task<IList<object>> GetObjectList()
         {

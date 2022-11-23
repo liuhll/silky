@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Silky.Core.Convertible;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.MethodExecutor;
 using Silky.Rpc.Transport.Messages;
 
@@ -24,9 +25,9 @@ public abstract class ParameterResolverBase : IParameterResolver
             (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
                 typeof(IDictionary<string, object>));
         var parameterVal = parameterDescriptor.ParameterInfo.GetDefaultValue();
-        if (dict.ContainsKey(parameterDescriptor.Name))
+        if (dict.TryOrdinalIgnoreCaseGetValue(parameterDescriptor.Name,out var dictValue))
         {
-            parameterVal = dict[parameterDescriptor.Name];
+            parameterVal = dictValue;
         }
 
         list.Add(parameterDescriptor.GetActualParameter(parameterVal) ??
