@@ -213,7 +213,7 @@ distributedCache:
     configuration: 127.0.0.1:6379,defaultDatabase=0
 ```
 
-4. Run the gateway project, check the address where the http service runs (for example: the http port is 5000), then open the *https://127.0.0.1:5001/index.html* swagger online document through the browser; When the service is added to the application service, the swagger document does not have any interface:
+4. Run the gateway project, check the address where the http service runs (for example: the https port is 7160), then open the *https://127.0.0.1:7160/index.html* swagger online document through the browser; When the service is added to the application service, the swagger document does not have any interface:
 
 
 ![noexistservice.png](docs/.vuepress/public/assets/imgs/noexistservice.png)

@@ -212,7 +212,7 @@ distributedCache:
     configuration: 127.0.0.1:6379,defaultDatabase=0
 ```
 
-4. 运行网关项目,查看http服务运行的地址(如: http端口为5000),那么通过浏览器打开*https://127.0.0.1:5001/index.html* swagger在线文档;在没有通过业务微服务添加啊啊应用服务的时候,swagger文档并不存在任何接口:
+4. 运行网关项目,查看http服务运行的地址(如: https端口为7160),那么通过浏览器打开*https://127.0.0.1:7160/index.html* swagger在线文档;在没有通过业务微服务添加啊啊应用服务的时候,swagger文档并不存在任何接口:
 
 
 ![noexistservice.png](docs/.vuepress/public/assets/imgs/noexistservice.png)
