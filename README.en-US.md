@@ -121,7 +121,8 @@ The silky microservice has the following advantages:
 - Learn the Silky framework through [Developer Documentation](http://docs.silky-fk.com/silky/);
 - Familiarize yourself with how to use the Silky framework to build a microservice application through [silky.samples project](http://docs.silky-fk.com/silky/dev-docs/quick-start.html);
 - Familiarize yourself with the relevant configuration properties of the Silky framework through the [Configuration](http://docs.silky-fk.com/config/) document;
-- Learn through station B [silky framework teaching] (https://space.bilibili.com/354560671/channel/seriesdetail?sid=2797330);
+- Learn through the [silky-samples](https://github.com/liuhll/silky-samples) example project;
+- Learn through Bilibili [silky framework teaching](https://space.bilibili.com/354560671/channel/seriesdetail?sid=2797330);
 
 ## Example project
 

@@ -119,6 +119,7 @@ silky微服务有着如下的优势：
 - 通过[开发者文档](http://docs.silky-fk.com/silky/)学习Silky框架;
 - 通过[silky.samples项目](http://docs.silky-fk.com/silky/dev-docs/quick-start.html)熟悉如何使用Silky框架构建一个微服务应用;
 - 通过[配置](http://docs.silky-fk.com/config/)文档熟悉Silky框架的相关配置属性;
+- 通过[silky-samples](https://github.com/liuhll/silky-samples)示例项目学习;
 - 通过B站[silky框架教学](https://space.bilibili.com/354560671/channel/seriesdetail?sid=2797330)学习;
 
 ## 示例项目
