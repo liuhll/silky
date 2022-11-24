@@ -1,10 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
+using Silky.Http.Core;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Handlers;
 using Silky.Http.Core.Routing.Builder.Internal;
 
-namespace Silky.Http.Core
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class SilkyHttpCoreCollectionExtensions
     {
