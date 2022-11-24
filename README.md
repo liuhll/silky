@@ -8,6 +8,7 @@
 [![NuGet](https://img.shields.io/nuget/v/silky.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Core)
 [![MyGet (nightly builds)](https://img.shields.io/myget/silky-preview/vpre/Silky.Core.svg?style=flat-square)](https://www.myget.org/feed/Packages/silky-preview)
 [![NuGet Download](https://img.shields.io/nuget/dt/Silky.Core.svg?style=flat-square)](https://www.nuget.org/packages/Silky.Core)
+[![Bilibili](https://img.shields.io/badge/bilibili-silky__fk-fb7299?logo=bilibili)](https://space.bilibili.com/354560671/channel/seriesdetail?sid=2797330)
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fliuhll%2Fsilky&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 <div align="center">
@@ -43,18 +44,23 @@ silky微服务有着如下的优势：
 
 ![silky微服务框架.png](./docs/.vuepress/public/assets/imgs/silky微服务框架.png)
 
-### 服务引擎+模块化设计
+### 服务引擎
 
 - 负责silky主机的初始化过程
 - 负责模块解析、依赖管理与加载
 - 服务注册与解析
 
+### 模块化/插件化设计
+- 模块与模块之间具有依赖关系
+- 支持插件化加载模块
+- 支持插件化加载应用服务
 
 ### RPC通信
 
 - 使用[Dotnetty](https://github.com/Azure/DotNetty)作为底层通信组件，使用TCP作为通信协议, 采用长链接方式提高系统吞吐量
 - 基于接口的动态代理
-- 支持JSON、MessagePack、ProtoBuf编解码方式
+- 支持通过模板调用
+- 支持JSON编解码方式
 - RPC通信过程中支持缓存拦截,提高通信性能
 - RPC调用监控
 
@@ -110,10 +116,10 @@ silky微服务有着如下的优势：
 
 ## 入门
 
-- 通过[开发者文档](http://docs.silky-fk.com/silky/)学习Silky框架。
-- 通过[silky.samples项目](http://docs.silky-fk.com/silky/dev-docs/quick-start.html)熟悉如何使用Silky框架构建一个微服务应用。
-- 通过[配置](http://docs.silky-fk.com/config/)文档熟悉Silky框架的相关配置属性。
-
+- 通过[开发者文档](http://docs.silky-fk.com/silky/)学习Silky框架;
+- 通过[silky.samples项目](http://docs.silky-fk.com/silky/dev-docs/quick-start.html)熟悉如何使用Silky框架构建一个微服务应用;
+- 通过[配置](http://docs.silky-fk.com/config/)文档熟悉Silky框架的相关配置属性;
+- 通过B站[silky框架教学](https://space.bilibili.com/354560671/channel/seriesdetail?sid=2797330)学习;
 
 ## 示例项目
 
@@ -133,130 +139,256 @@ https://hero.silky-fk.com/
 
 ## 快速开始
 
-### 1. 构建主机
+### 基础服务
 
-新建一个web或是控制台项目,通过 nuget安装`Silky.Agent.Host`包。
+推荐使用`docker-compose`安装部署基础服务.
 
-```pwsh
-PM> Install-Package Silky.Agent.Host
+1. 安装部署Zookeeper,将[docker-compose.zookeeper.yml](https://raw.githubusercontent.com/liuhll/silky/main/framework/test/docker-compose/infrastr/docker-compose.zookeeper.yml)拷贝并保持到本地,然后通过如下命令安装Zookeeper服务:
+
+```shell
+docker-compose -f docker-compose.zookeeper.ym up -d
 ```
 
-在`Main`方法中通过`HostBuilder`构建主机。
+2. 安装部署redis缓存服务, 将[docker-compose.redis.yml](https://raw.githubusercontent.com/liuhll/silky/main/framework/test/docker-compose/infrastr/docker-compose.redis.yml)拷贝并保持到本地,然后通过如下命令安装redis服务:
+
+```shell
+docker-compose -f docker-compose.redis.ym up -d
+```
+
+### 创建网关
+
+1. 创建一个**空的WebApplication**项目命名为**Gateway**,安装`Silky.Agent.Host`包,并在`Program.cs`类中新增创建托管网关应用主机的代码;
 
 ```csharp
-public class Program
-{
-  public static Task Main(string[] args)
-  {
-    return CreateHostBuilder(args).Build().RunAsync();
-  }
+using Gateway;
 
-  private static IHostBuilder CreateHostBuilder(string[] args) =>
-    Host.CreateDefaultBuilder(args)
-      .ConfigureSilkyWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>();});
-   
-}
+var hostBuilder = Host.CreateDefaultBuilder()
+    .ConfigureSilkyGatewayDefaults(webHostBuilder => webHostBuilder.UseStartup<Startup>());
+await hostBuilder.Build().RunAsync();
+
 ```
 
-在`Startup`中配置服务依赖注入，以及配置中间件。
+2. 新增`Startup.cs`类,并添加如下代码;
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
+namespace Gateway;
+
+public class Startup
 {
-  services.AddSilkyHttpCore()
-    .AddSwaggerDocuments()
-    .AddRouting();
-}
-
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-  if (env.IsDevelopment())
-  {
-    app.UseDeveloperExceptionPage();
-    app.UseSwaggerDocuments();
-  }
-
-  app.UseRouting();
-
-  app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
-}
-```
-
-### 2. 更新配置
-
-在配置文件中指定服务注册中心的类型和服务注册中心配置属性以及`SilkyRpc`框架的配置。如果使用使用分布式事务必须要使用redis作为分布式缓存。
-
-其中,在同一个微服务集群中,`Rpc:Token`的值必须相同。`Rpc:Port`的缺省值是`2200`,`Rpc:Host`的缺省值为`0.0.0.0`。
-
-在`appsettings.json`中新增如下配置:
-
-```json
-  {
-    "RegistryCenter": {
-    "Type": "Zookeeper",
-    "ConnectionStrings": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186"
-  },
-  "DistributedCache": {
-    "Redis": {
-      "IsEnabled": true,
-      "Configuration": "127.0.0.1:6379,defaultDatabase=0"
+    public void ConfigureService(IServiceCollection services)
+    {
+        services.AddSilkyHttpServices()
+            .AddRouting()
+            .AddSwaggerDocuments()
+            .AddMiniProfiler();
     }
-  },
-  "Rpc": {
-    "Token": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
-    "Port": 2200
-  }
-  }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseSwaggerDocuments();
+            app.UseMiniProfiler();
+        }
+
+        app.UseRouting();
+        app.UseEndpoints(endpoints => { endpoints.MapSilkyRpcServices(); });
+    }
+}
 ```
 
-### 3. 定义一个服务接口
+3. 删除`.json`的配置文件,并新增`appsetiings.yaml`配置文件，并添加如下配置:
 
-一般地,我们需要将服务接口单独定义在一个项目中,方便被服务消费者引用。
+```yaml
+rpc:
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+ 
+registrycenter:
+  type: Zookeeper
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+```
 
-创建一个接口,并通过`[ServiceRoute]`特性标识为该接口是一个应用服务。
+4. 运行网关项目,查看http服务运行的地址(如: http端口为5000),那么通过浏览器打开*https://127.0.0.1:5001/index.html* swagger在线文档;在没有通过业务微服务添加啊啊应用服务的时候,swagger文档并不存在任何接口:
+
+
+![noexistservice.png](docs/.vuepress/public/assets/imgs/noexistservice.png)
+
+
+### 业务微服务
+
+1. 创建一个名为**DemoHost**控制台项目,安装`Silky.Agent.Host`包,并在`Program.cs`类中新增创建托管应用主机的代码;
+
+```csharp
+using Microsoft.Extensions.Hosting;
+
+var hostBuilder = Host.CreateDefaultBuilder().ConfigureSilkyGeneralHostDefaults();
+await hostBuilder.Build().RunAsync();                      
+```
+
+2. 新增`appsettings.yaml`配置文件，并添加如下配置:
+
+```yaml
+rpc:
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+  port: 2200
+ 
+registrycenter:
+  type: Zookeeper
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+```
+
+3. 添加一个示例服务，新增文件夹**Hello**,并添加`IHellAppService`接口:
 
 ```csharp
 [ServiceRoute]
-public interface IGreetingAppService
-{   
-    Task<string> Get();
+public interface IHelloAppService
+{
+    Task<string> SayHi([FromQuery]string name);
 }
 ```
 
-### 4. 提供者实现服务
-
-创建一个类,通过继承服务接口即可实现接口定义的方法。
+4. 添加`HellAppService`类,并实现`IHellAppService`接口:
 
 ```csharp
-public class GreetingAppService : IGreetingAppService
+public class HelloAppService : IHelloAppService
 {
-  public Task<string> Get()
-  {
-    return Task.FromResult("Hello World");
-  }
+    public Task<string> SayHi(string name)
+    {
+        return Task.FromResult($"Hello {name ?? "World"}");
+    }
 }
 ```
 
+5. 运行**DemoHost**项目,并通过浏览器刷新Swagger在线文档,即可看到如下接口,通过swagger文档可以在线调试webapi:
 
-### 5. 消费者通过RPC远程调用服务
+![helloservice.png](docs/.vuepress/public/assets/imgs/helloservice.png)
 
-其他微服务应用只需要通过引用应用服务接口项目,通过接口代理与服务提供者通过`SilkyRpc`框架进行通信。
+## 服务与服务之间的调用方式
 
-### 6. Swagger在线文档
+1. 通过引用其他微服务应用的应用接口类库(其他微服务可以将应用接口打包成nuget包后,通过nuget包安装其他微服务应用的应用接口的nuget包),通过构造注入的接口的方式,直接使用接口所定义的方法，即可通过接口生成的动态代理与服务提供者实现RPC通信:
 
-运行程序后,打开浏览器,输入`http://127.0.0.1:5000/index.html` 即可查看swagger在线文档,并且通过api进行调试。
+例如: 在[Silky.Hero](https://github.com/liuhll/silky.hero)项目中的权限管理器[PermissionManager.cs](https://github.com/liuhll/silky.hero/blob/main/services/Silky.Permission/src/Silky.Permission.Domain/Permission/PermissionManager.cs)
 
+```csharp
+public class PermissionManager : IPermissionManager, IScopedDependency
+{
+    private readonly IUserAppService _userAppService;
+    private readonly IRoleAppService _roleAppService;
+
+    public PermissionManager(IUserAppService userAppService,
+        IRoleAppService roleAppService)
+    {
+        _userAppService = userAppService;
+        _roleAppService = roleAppService;
+    }
+
+    public async Task<ICollection<string>> GetUserRoleNamesAsync(long userId)
+    {
+        var userRoleOutput = await _userAppService.GetRolesAsync(userId);
+        return userRoleOutput.RoleNames;
+    }
+
+    public async Task<ICollection<long>> GetUserRoleIdsAsync(long userId)
+    {
+        var userRoleIds = await _userAppService.GetRoleIdsAsync(userId);
+        return userRoleIds;
+    }
+
+    public async Task<ICollection<string>> GetRolePermissionsAsync(long roleId)
+    {
+        var rolePermissions = await _roleAppService.GetPermissionsAsync(roleId);
+        return rolePermissions;
+    }
+}
+```
+
+2. 通过模板调用接口`IInvokeTemplate`提供的API,实现远程服务调用,该接口支持通过服务条目Id或是WebAPI的方式路由到具体的服务提供者方法;
+
+例如: 在[Silky.Hero](https://github.com/liuhll/silky.hero)项目中,网关的权限认证处理器[AuthorizationHandler](https://github.com/liuhll/silky.hero/blob/main/services/Silky.Gateway/src/Silky.GatewayHost/Authorization/AuthorizationHandler.cs)通过`IInvokeTemplate`调用权限应用服务提供的权限服务判断当前请求的接口是否有访问权限:
+
+```csharp
+
+public class AuthorizationHandler : SilkyAuthorizationHandlerBase
+{
+    private readonly IInvokeTemplate _invokeTemplate;
+
+    private const string CheckPermissionServiceEntryId =
+        "Silky.Permission.Application.Contracts.Permission.IPermissionAppService.CheckPermissionAsync.permissionName_Get";
+
+    private const string CheckRoleServiceEntryId =
+        "Silky.Permission.Application.Contracts.Permission.IPermissionAppService.CheckRoleAsync.roleName_Get";
+
+    public AuthorizationHandler(IInvokeTemplate invokeTemplate)
+    {
+        _invokeTemplate = invokeTemplate;
+    }
+
+    protected override async Task<bool> PolicyPipelineAsync(AuthorizationHandlerContext context,
+        HttpContext httpContext,
+        IAuthorizationRequirement requirement)
+    {
+        if (requirement is PermissionRequirement permissionRequirement)
+        {
+            if (EngineContext.Current.HostEnvironment.EnvironmentName == SilkyHeroConsts.DemoEnvironment &&
+                httpContext.Request.Method != "GET")
+            {
+                throw new UserFriendlyException("演示环境不允许修改数据");
+            }
+
+            var serviceEntryDescriptor = httpContext.GetServiceEntryDescriptor();
+            if (serviceEntryDescriptor.GetMetadata<bool>("IsSilkyAppService"))
+            {
+                // todo 
+                return true;
+            }
+
+            return await _invokeTemplate.InvokeForObjectByServiceEntryId<bool>(CheckPermissionServiceEntryId,
+                permissionRequirement.PermissionName);
+        }
+
+        return true;
+    }
+
+    protected override async Task<bool> PipelineAsync(AuthorizationHandlerContext context, HttpContext httpContext)
+    {
+        var serviceEntryDescriptor = httpContext.GetServiceEntryDescriptor();
+        var roles = serviceEntryDescriptor
+            .AuthorizeData
+            .Where(p => !p.Roles.IsNullOrEmpty())
+            .SelectMany(p => p.Roles?.Split(","))
+            .ToList();
+        foreach (var role in roles)
+        {
+            if (!await _invokeTemplate.InvokeForObjectByServiceEntryId<bool>(CheckRoleServiceEntryId, role))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
+
+> 备注:
+>
+> 使用模板调用的方式优势在于微服务应用与应用之间不用引用其他微服务应用定义的应用接口,应用与应用完全解耦,互相不依赖；缺点在于并不支持分布式事务的使用场景;
 
 ## 通过项目模板快速创建应用
 
-silky提供了两个项目模板可以快速的创建应用，开发者可以根据需要选择合适的项目模板来创建应用。
+silky提供了模板`silky.app`模板可以快速的创建应用，开发者可以在安装模板后使用模块快速创建silky微服务应用。
 
 ```pwsh
 
-# 以模块的方式创建微服务应用,适用于将所有的应用放在同一个仓库
-> dotnet new --install Silky.Module.Template
-
-# 以独立应用的方式创建微服务应用,将每个微服务应用单独存放一个仓库
 > dotnet new --install Silky.App.Template
 ```
 
@@ -264,10 +396,56 @@ silky提供了两个项目模板可以快速的创建应用，开发者可以根
 
 ```pwsh
 
-dotnet new silky.app -in -p:i -n Demo
+PS> dotnet new silky.app -h
+Silky App (C#)
+作者: Liuhll
 
+Usage:
+  dotnet new silky.app [options] [模板选项]
+
+Options:
+  -n, --name <name>       正在创建的输出名称。如未指定名称，则使用输出目录的名称。
+  -o, --output <output>   要放置生成的输出的位置。
+  --dry-run               如果运行给定命令行将导致模板创建，则显示将发生情况的摘要。
+  --force                 强制生成内容 (即使它会更改现有文件)。
+  --no-update-check       在实例化模板时，禁用对模板包更新的检查。
+  --project <project>     应用于上下文评估的项目。
+  -lang, --language <C#>  指定要实例化的模板语言。
+  --type <project>        指定要实例化的模板类型。
+
+模板选项:
+  -t, --param:type <param:type>  Set the silky host type, optional values: webhost, generalhost ,wshost, gateway
+                                 类型: string
+                                 默认: generalhost
+  -do, --dockersupport           Add docker support for Silky
+                                 类型: bool
+                                 默认: true
+  -r, --rpcport <rpcport>        Set the port for rpc listening
+                                 类型: int
+                                 默认: 2200
+  -in, --infrastr                only include basic service orchestration files
+                                 类型: bool
+                                 默认: false
+  -e, --env <env>                Set dotnet env
+                                 类型: string
+                                 默认: Development
+  -m, --module                   Is it a module project
+                                 类型: bool
+                                 默认: false
+  -p:i, --includeinfr            Whether to include the basic orchestration service.
+                                 类型: bool
 ```
 
+示例:
+
+```pwsh
+
+# 创建网关
+> dotnet new silky.app -t gateway -n Silky.Gateway
+
+# 创建业务微服务
+> dotnet new silky.app -t generalhost -n Silky.Demo
+```
 
 ## 贡献
 - 贡献的最简单的方法之一就是讨论问题（issue）。你也可以通过提交的 Pull Request 代码变更作出贡献。
