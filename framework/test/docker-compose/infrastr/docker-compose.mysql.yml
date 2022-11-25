@@ -8,6 +8,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "qwe!P4ss"
       MYSQL_PASSWORD: "qwe!P4ss"
+      MYSQL_USER: silky
     volumes:
       - ./.mysql/data:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d
