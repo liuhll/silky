@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
+using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
@@ -214,6 +215,7 @@ namespace Silky.Transaction.Schedule
                 EngineContext.Current.ResolveNamed<ITransactionRecoveryService>(_transactionConfig
                     .TransactionType
                     .ToString());
+            RpcContext.Context.SetInvokeAttachments(participant.InvokeAttachments);
             if (stage == ActionStage.Trying || stage == ActionStage.Canceling)
             {
                 await transactionRecoveryService.Cancel(participant);

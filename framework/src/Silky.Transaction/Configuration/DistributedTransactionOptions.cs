@@ -15,9 +15,9 @@ namespace Silky.Transaction.Configuration
 
         public int ScheduledInitDelay { get; set; } = 10;
 
-        public int RecoverDelayTime { get; set; } = 120;
+        public int RecoverDelayTime { get; set; } = 60 * 60 * 24 * 3;
 
-        public int CleanDelayTime { get; set; } = 120;
+        public int CleanDelayTime { get; set; } = 60 * 60 * 24 * 3;
 
         public int Limit { get; set; } = 100;
 

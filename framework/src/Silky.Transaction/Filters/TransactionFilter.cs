@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Utils;
@@ -42,6 +44,7 @@ namespace Silky.Transaction.Filters
                     throw new TransactionException(
                         "Distributed transaction service does not support invoke through templateService, please call the service through interface proxy.");
                 }
+
                 return;
             }
 
@@ -102,6 +105,7 @@ namespace Silky.Transaction.Filters
                 ServiceEntryId = serviceEntryId,
                 ServiceKey = serviceKey,
                 Parameters = parameters,
+                InvokeAttachments = RpcContext.Context.GetInvokeAttachments().ToDictionary(p => p.Key, p => p.Value),
                 Role = TransactionRole.Participant
                 // Status = context.Action
             };

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Silky.Core;
 using Silky.Core.DynamicProxy;
@@ -23,6 +24,8 @@ namespace Silky.Transaction.Abstraction.Participant
 
         public string ServiceKey { get; set; }
         public object[] Parameters { get; set; }
+
+        public Dictionary<string, string> InvokeAttachments { get; set; }
 
         public string HostName { get; set; }
         public string ParticipantRefId { get; set; }

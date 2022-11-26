@@ -13,6 +13,7 @@
         <ProjectReference Include="..\..\src\Silky.SkyApm.Agent\Silky.SkyApm.Agent.csproj" />
         <ProjectReference Include="..\..\src\Silky.Swagger.Gen\Silky.Swagger.Gen.csproj" />
         <ProjectReference Include="..\..\src\Silky.Transaction.Tcc\Silky.Transaction.Tcc.csproj" />
+        <ProjectReference Include="..\IAnotherApplication\IAnotherApplication.csproj" />
         <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />
     </ItemGroup>
     <ItemGroup>

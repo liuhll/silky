@@ -10,6 +10,7 @@ using Silky.Core.Utils;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Extensions;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Repository;
@@ -150,7 +151,8 @@ namespace Silky.Transaction.Tcc.Executor
                 ServiceEntryId = serviceEntry.Id,
                 Status = ActionStage.PreTry,
                 ServiceKey = serviceKey,
-                Parameters = parameters
+                Parameters = parameters,
+                InvokeAttachments = RpcContext.Context.GetInvokeAttachments().ToDictionary(p=> p.Key,p=> p.Value),
             };
             if (participantId.IsNullOrEmpty())
             {

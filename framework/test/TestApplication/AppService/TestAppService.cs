@@ -83,14 +83,14 @@ namespace TestApplication.AppService
         {
             // await _anotherAppService.DeleteOne(input.Name);
             // await _anotherAppService.DeleteTwo(input.Address);
-            // throw new BusinessException("test exception");
-
+            // // throw new BusinessException("test exception");
+            //
             var entity = await _testRepository.FindOrDefaultAsync(id);
             if (entity == null)
             {
                 throw new UserFriendlyException($"不存在Id为{id}的数据");
             }
-
+            
             await _testRepository.DeleteAsync(entity);
             await _distributedCache.RemoveAsync($"name:{entity.Name}");
             return "删除数据成功";
