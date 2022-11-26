@@ -2,26 +2,28 @@ version: "3.7"
 
 services:
   apollo-configservice:
-    image:  apolloconfig/apollo-configservice
+    image:  apolloconfig/apollo-configservice:2.0.1
     container_name: apollo-configservice
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:mysql://silky.mysql:3306/ApolloConfigDB?characterEncoding=utf8"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://apollo-mysql:3306/ApolloConfigDB?characterEncoding=utf8"
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: qwe!P4ss
       eureka.service.url: http://apollo-configservice:8080/eureka/
       EUREKA_INSTANCE_IP_ADDRESS: ${EUREKA_INSTANCE_IP_ADDRESS:-apollo-configservice}
     restart: always
+    depends_on:
+      - apollo-mysql
     ports:
       - "8080:8080"      
     volumes:
-      - ./logs/apollo-configservice:/opt/logs
+      - ./.apollo/logs/apollo-configservice:/opt/logs
     networks:
       - silky_service_net     
   apollo-adminservice:
-    image: apolloconfig/apollo-adminservice
+    image: apolloconfig/apollo-adminservice:2.0.1
     container_name: apollo-adminservice
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:mysql://silky.mysql:3306/ApolloConfigDB?characterEncoding=utf8"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://apollo-mysql:3306/ApolloConfigDB?characterEncoding=utf8"
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: qwe!P4ss
       eureka.service.url: http://apollo-configservice:8080/eureka/
@@ -29,17 +31,18 @@ services:
     restart: always
     depends_on: 
       - apollo-configservice
+      - apollo-mysql
     ports:
       - "8090:8090"       
     volumes:
-      - ./logs/apollo-adminservice:/opt/logs
+      - ./.apollo/logs/apollo-adminservice:/opt/logs
     networks:
       - silky_service_net       
   apollo-portal:
-    image: apolloconfig/apollo-portal
+    image: apolloconfig/apollo-portal:2.0.1
     container_name: apollo-portal
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:mysql://silky.mysql:3306/ApolloPortalDB?characterEncoding=utf8"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://apollo-mysql:3306/ApolloPortalDB?characterEncoding=utf8"
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: qwe!P4ss
       APOLLO_PORTAL_ENVS: dev,pro
@@ -49,12 +52,30 @@ services:
     depends_on: 
       - apollo-configservice
       - apollo-adminservice
+      - apollo-mysql
     ports:
       - "8070:8070"       
     volumes:
-      - ./logs/apollo-portal:/opt/logs
+      - ./.apollo/logs/apollo-portal:/opt/logs
     networks:
-      - silky_service_net                    
+      - silky_service_net 
+  apollo-mysql:
+    image: mysql:5.7
+    container_name: apollo-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "qwe!P4ss"
+      MYSQL_PASSWORD: "qwe!P4ss"
+      MYSQL_USER: silky
+    volumes:
+      - ./.apollo/.mysql/data:/var/lib/mysql
+      - ./.apollo/sql:/docker-entrypoint-initdb.d
+
+    ports:
+      - "33306:3306"
+    networks:
+      - silky_service_net                         
 networks:
   silky_service_net:
     external:

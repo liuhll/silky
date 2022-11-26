@@ -11,7 +11,6 @@ services:
       MYSQL_USER: silky
     volumes:
       - ./.mysql/data:/var/lib/mysql
-      - ./sql:/docker-entrypoint-initdb.d
 
     ports:
       - "3306:3306"
