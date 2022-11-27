@@ -147,13 +147,13 @@ https://hero.silky-fk.com/
 1. 安装部署Zookeeper,将[docker-compose.zookeeper.yml](https://raw.githubusercontent.com/liuhll/silky/main/framework/test/docker-compose/infrastr/docker-compose.zookeeper.yml)拷贝并保持到本地,然后通过如下命令安装Zookeeper服务:
 
 ```shell
-docker-compose -f docker-compose.zookeeper.ym up -d
+docker-compose -f docker-compose.zookeeper.yml up -d
 ```
 
 2. 安装部署redis缓存服务, 将[docker-compose.redis.yml](https://raw.githubusercontent.com/liuhll/silky/main/framework/test/docker-compose/infrastr/docker-compose.redis.yml)拷贝并保持到本地,然后通过如下命令安装redis服务:
 
 ```shell
-docker-compose -f docker-compose.redis.ym up -d
+docker-compose -f docker-compose.redis.yml up -d
 ```
 
 ### 创建网关

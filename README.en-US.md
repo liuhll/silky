@@ -148,13 +148,13 @@ It is recommended to use `docker-compose` to install and deploy basic services.
 1. Install and deploy Zookeeper, [docker-compose.zookeeper.yml](https://raw.githubusercontent.com/liuhll/silky/main/framework/test/docker-compose/infrastr/docker-compose.zookeeper.yml ) copy and keep it locally, and then install the Zookeeper service through the following command:
 
 ```shell
-docker-compose -f docker-compose.zookeeper.ym up -d
+docker-compose -f docker-compose.zookeeper.yml up -d
 ```
 
 2. Install and deploy redis cache service, set [docker-compose.redis.yml](https://raw.githubusercontent.com/liuhll/silky/main/framework/test/docker-compose/infrastr/docker-compose.redis .yml) and keep it locally, then install the redis service with the following command:
 
 ```shell
-docker-compose -f docker-compose.redis.ym up -d
+docker-compose -f docker-compose.redis.yml up -d
 ```
 
 ### Create Gateway
