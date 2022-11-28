@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -29,8 +30,12 @@ namespace Silky.HealthChecks.Rpc
 
         protected override ICollection<IServer> GetServers()
         {
-            return _serverManager.Servers?.Where(p => p.Endpoints.Any(e => e.ServiceProtocol == ServiceProtocol.Rpc))
-                .ToArray();
+            if (_serverManager.Servers == null)
+            {
+                return Array.Empty<IServer>();
+            }
+            return _serverManager.Servers.Where(p => p.Endpoints.Any(e => e.ServiceProtocol == ServiceProtocol.Rpc))
+                .ToList();
         }
 
         private string GetMessageId(HttpContext httpContext)

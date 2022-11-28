@@ -6,26 +6,26 @@ rpc:
   isSSl: true
   sslCertificateName: test.silky-fk.com.pfx
   sslCertificatePassword: bdSpw3W7
-registrycenter:
-  type: Zookeeper
-  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
-  scheme: Digest
-  auth: "silky:pass4Word"
-  routePath: /silkytest/route
-  swaggerDocPath:  /silkytest/swagger
-  
 #registrycenter:
-#  type: Nacos
-#  namespace: silky
-#  serverAddresses:
-#    - http://127.0.0.1:8848/
-#    - http://127.0.0.1:8849/
-#    - http://127.0.0.1:8850/
-#  userName: nacos
-#  password: nacos
-#  clusterName: DEFAULT
-#  registerEnabled: true
-#  instanceEnabled: true
+#  type: Zookeeper
+#  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+#  scheme: Digest
+#  auth: "silky:pass4Word"
+#  routePath: /silkytest/route
+#  swaggerDocPath:  /silkytest/swagger
+  
+registrycenter:
+  type: Nacos
+  namespace: silky
+  serverAddresses:
+    - http://127.0.0.1:8848/
+    - http://127.0.0.1:8849/
+    - http://127.0.0.1:8850/
+  userName: nacos
+  password: nacos
+  clusterName: DEFAULT
+  registerEnabled: true
+  instanceEnabled: true
 
 #registrycenter:
 #  type: Consul

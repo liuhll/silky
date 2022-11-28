@@ -53,7 +53,7 @@ namespace Silky.Rpc.Extensions
             var clientHost = httpContext.Connection.RemoteIpAddress;
             var clientPort = httpContext.Connection.RemotePort;
 
-            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ClientHost, clientHost.MapToIPv4().ToString());
+            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ClientHost, clientHost?.MapToIPv4().ToString());
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ClientServiceProtocol,
                 ServiceProtocol.Http.ToString());
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, clientPort.ToString());

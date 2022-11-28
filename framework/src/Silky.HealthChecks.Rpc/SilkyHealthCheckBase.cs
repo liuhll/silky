@@ -59,7 +59,7 @@ namespace Silky.HealthChecks.Rpc
             CancellationToken cancellationToken = new CancellationToken())
         {
             _currentRpcToken.SetRpcToken();
-            _httpContextAccessor.HttpContext.SetHttpHandleAddressInfo();
+            _httpContextAccessor.HttpContext?.SetHttpHandleAddressInfo();
             var messageId = GetMessageId(_httpContextAccessor.HttpContext);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(HealthCheckConstants.HealthCheckServiceEntryId);
             var tracingTimestamp =
@@ -75,19 +75,8 @@ namespace Silky.HealthChecks.Rpc
                 {
                     foreach (var endpoint in server.Endpoints)
                     {
-                        if (HealthCheckType == HealthCheckType.Rpc && endpoint.ServiceProtocol == ServiceProtocol.Rpc)
-                        {
-                            var serverHealthData = await GetServerHealthData(endpoint, server.HostName);
-                            healthData[endpoint.GetAddress()] = serverHealthData;
-                        }
-
-                        if (HealthCheckType == HealthCheckType.Getway &&
-                            (endpoint.ServiceProtocol == ServiceProtocol.Http ||
-                             endpoint.ServiceProtocol == ServiceProtocol.Https))
-                        {
-                            var serverHealthData = await GetServerHealthData(endpoint, server.HostName);
-                            healthData[endpoint.GetAddress()] = serverHealthData;
-                        }
+                        var serverHealthData = await GetServerHealthData(endpoint, server.HostName);
+                        healthData[endpoint.GetAddress()] = serverHealthData;
                     }
                 }
 
@@ -117,7 +106,7 @@ namespace Silky.HealthChecks.Rpc
                 if (healthData.Values.All(p => ((ServerHealthData)p).Health))
                 {
                     return HealthCheckResult.Healthy(
-                        $"There are a total of {healthData.Count} Rpc service provider instances." +
+                        $"There are a total of {healthData.Count} {HealthCheckType} service provider instances." +
                         $"{Environment.NewLine} server detail:{detail}.",
                         healthData);
                 }
@@ -125,7 +114,7 @@ namespace Silky.HealthChecks.Rpc
                 if (healthData.Values.All(p => !((ServerHealthData)p).Health))
                 {
                     return HealthCheckResult.Unhealthy(
-                        $"There are a total of {healthData.Count} Rpc service provider instances, and all service provider instances are unhealthy." +
+                        $"There are a total of {healthData.Count} {HealthCheckType} service provider instances, and all service provider instances are unhealthy." +
                         $"{Environment.NewLine} server detail:{detail}.",
                         null, healthData);
                 }
@@ -134,7 +123,7 @@ namespace Silky.HealthChecks.Rpc
                     .Select(p => (ServerHealthData)p).ToArray();
 
                 return HealthCheckResult.Degraded(
-                    $"There are a total of {healthData.Count}  Rpc service provider instances," +
+                    $"There are a total of {healthData.Count}  {HealthCheckType} service provider instances," +
                     $" of which {unHealthData.Count()}" +
                     $" service instances are unhealthy{Environment.NewLine}." +
                     $" unhealthy instances:{string.Join(",", unHealthData.Select(p => p.Address))}." +

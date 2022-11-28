@@ -28,7 +28,7 @@ namespace Silky.Rpc.Runtime.Server
         private readonly ConcurrentDictionary<(string, HttpMethod), ServiceEntryDescriptor>
             _serviceEntryDescriptorCacheForApi = new();
 
-        private readonly ConcurrentDictionary<string, ISilkyEndpoint[]> _rpcRpcEndpointCache = new();
+        private readonly ConcurrentDictionary<string, ISilkyEndpoint[]?> _rpcRpcEndpointCache = new();
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
         private readonly object _lock;
@@ -134,14 +134,14 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        private async Task RemoveRpcEndpointHandler(ISilkyEndpoint silkyEndpoint)
+        private Task RemoveRpcEndpointHandler(ISilkyEndpoint silkyEndpoint)
         {
             var needRemoveEndpointServerRoutes =
                 Servers?.Where(p => p.Endpoints.Any(q => q.Host == silkyEndpoint.Host));
 
             if (needRemoveEndpointServerRoutes == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             foreach (var needRemoveEndpointServerRoute in needRemoveEndpointServerRoutes)
@@ -152,6 +152,7 @@ namespace Silky.Rpc.Runtime.Server
             }
 
             RemoveRpcEndpointCache(silkyEndpoint);
+            return Task.CompletedTask;
         }
 
 
@@ -219,16 +220,16 @@ namespace Silky.Rpc.Runtime.Server
 
         public IServer GetServer(string hostName)
         {
-            return _serverCache.GetValueOrDefault(hostName);
+            return _serverCache?.GetValueOrDefault(hostName);
         }
 
-        public IReadOnlyList<ServerDescriptor> ServerDescriptors
+        public ServerDescriptor[]? ServerDescriptors
         {
             get
             {
                 if (_serverCache == null)
                 {
-                    return ImmutableArray<ServerDescriptor>.Empty;
+                    return Array.Empty<ServerDescriptor>();
                 }
 
                 return _serverCache.Values.Select(p => p.ConvertToDescriptor()).ToArray();
@@ -246,11 +247,11 @@ namespace Silky.Rpc.Runtime.Server
             return server;
         }
 
-        public IReadOnlyList<IServer> Servers => _serverCache?.Values.ToArray();
+        public IServer[]? Servers => _serverCache?.Values.ToArray();
 
-        public ISilkyEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol)
+        public ISilkyEndpoint[]? GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol)
         {
-            if (_rpcRpcEndpointCache.TryGetValue(serviceId, out ISilkyEndpoint[] endpoints))
+            if (_rpcRpcEndpointCache.TryGetValue(serviceId, out ISilkyEndpoint[]? endpoints))
             {
                 return endpoints;
             }

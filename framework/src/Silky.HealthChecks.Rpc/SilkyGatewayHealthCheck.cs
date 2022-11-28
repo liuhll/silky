@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -28,9 +29,13 @@ public class SilkyGatewayHealthCheck : SilkyHealthCheckBase
 
     protected override ICollection<IServer> GetServers()
     {
+        if (_serverManager.Servers == null)
+        {
+            return Array.Empty<IServer>();
+;        }
         return _serverManager.Servers.Where(p =>
                 p.Endpoints.Any(e =>
                     e.ServiceProtocol == ServiceProtocol.Http || e.ServiceProtocol == ServiceProtocol.Https))
-            .ToArray();
+            .ToList();
     }
 }

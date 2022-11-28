@@ -21,11 +21,11 @@ namespace Silky.Rpc.Runtime.Server
 
         IServer GetServer(string hostName);
 
-        IReadOnlyList<ServerDescriptor> ServerDescriptors { get; }
+        ServerDescriptor[]? ServerDescriptors { get; }
 
-        IReadOnlyList<IServer> Servers { get; }
+        IServer[]? Servers { get; }
 
-        ISilkyEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
+        ISilkyEndpoint[]? GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
 
         IServer GetSelfServer();
 
