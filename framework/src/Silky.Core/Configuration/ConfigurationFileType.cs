@@ -4,5 +4,8 @@ public enum ConfigurationFileType
 {
     Yaml,
     
-    Json    
+    Yml,
+    
+    Json,
+    
 }

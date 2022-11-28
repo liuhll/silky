@@ -45,7 +45,16 @@ public static class ConfigurationHelper
                     builder.AddYamlFile($"{options.FileName}.{options.EnvironmentName}.yaml",
                         optional: options.Optional, reloadOnChange: options.ReloadOnChange);
                 }
-
+                break;
+            case ConfigurationFileType.Yml:
+                builder
+                    .AddYamlFile(options.FileName + ".yml", optional: options.Optional,
+                        reloadOnChange: options.ReloadOnChange);
+                if (!options.EnvironmentName.IsNullOrEmpty())
+                {
+                    builder.AddYamlFile($"{options.FileName}.{options.EnvironmentName}.yml",
+                        optional: options.Optional, reloadOnChange: options.ReloadOnChange);
+                }
                 break;
             case ConfigurationFileType.Json:
                 builder
@@ -53,7 +62,7 @@ public static class ConfigurationHelper
                         reloadOnChange: options.ReloadOnChange);
                 if (!options.EnvironmentName.IsNullOrEmpty())
                 {
-                    builder.AddYamlFile($"{options.FileName}.{options.EnvironmentName}.json",
+                    builder.AddJsonFile($"{options.FileName}.{options.EnvironmentName}.json",
                         optional: options.Optional, reloadOnChange: options.ReloadOnChange);
                 }
 
