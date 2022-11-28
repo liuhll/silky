@@ -28,7 +28,7 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Collections
                 _rpcContext.GetInvokeAttachments().Remove(key);
             }
 
-            _rpcContext.GetInvokeAttachments().Add(key, value);
+            _rpcContext.GetInvokeAttachments()[key] = value;
         }
 
         public string Get(string key)

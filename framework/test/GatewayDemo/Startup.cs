@@ -26,7 +26,7 @@ namespace GatewayDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSilkySkyApm();
-            
+
             // services
             //     .AddSilkyHttpCore()
             //     .AddDashboard()
@@ -38,7 +38,7 @@ namespace GatewayDemo
             //     .AddSwaggerDocuments();
 
             services.AddSilkyHttpServices<TestAuthorizationHandler>();
-            
+
             services.AddCorsAccessor();
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
@@ -54,6 +54,10 @@ namespace GatewayDemo
                 //options.MimeTypes = new[] { "*/*", "image/svg+xml" };
                 //options.ExcludedMimeTypes = new[] { "image/*", "audio/*", "video/*" };
             });
+
+            services.AddHealthChecks()
+                .AddSilkyRpc()
+                .AddSilkyGateway();
             // services
             //     .AddHealthChecksUI()
             //     .AddInMemoryStorage();
@@ -71,9 +75,9 @@ namespace GatewayDemo
 
             //  app.UseSerilogRequestLogging();
             app.UseDashboard();
-            // app.UseSilkyRpcHealthCheck()
-            //     .UseSilkyGatewayHealthCheck()
-            //     .UseHealthChecksPrometheusExporter("/metrics");
+            app.UseSilkyRpcHealthCheck()
+                .UseSilkyGatewayHealthCheck()
+                .UseHealthChecksPrometheusExporter("/metrics");
 
             app.UseRouting();
             // app.UseClientRateLimiting();
