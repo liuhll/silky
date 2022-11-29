@@ -72,6 +72,7 @@ namespace Silky.Http.Dashboard.AppService
         {
             var serverDescriptors = _serverManager
                 .ServerDescriptors
+                .OrderBy(p => p.HostName)
                 .Where(p => p.Endpoints.Any(e => e.IsInstanceEndpoint()))
                 .Select(p => new GetHostOutput()
                 {
@@ -154,7 +155,7 @@ namespace Silky.Http.Dashboard.AppService
                 }
             }
 
-            return webSocketServiceOutputs.ToPagedList(input.PageIndex, input.PageSize);
+            return webSocketServiceOutputs.OrderBy(p => p.HostName).ToPagedList(input.PageIndex, input.PageSize);
         }
 
         private string GetWebSocketProxyAddress()
@@ -181,6 +182,7 @@ namespace Silky.Http.Dashboard.AppService
                     ServiceId = s.Id,
                     ServiceProtocol = s.ServiceProtocol
                 }))
+                .OrderBy(p => p.ServiceName)
                 .Distinct()
                 .ToArray();
         }
@@ -233,7 +235,7 @@ namespace Silky.Http.Dashboard.AppService
                         p.ServiceName.Contains(input.SearchKey) ||
                         p.Id.Contains(input.SearchKey) ||
                         p.WebApi.Contains(input.SearchKey)
-                    )
+                    ).OrderBy(p => p.ServiceName)
                 ;
             return serviceEntries.ToPagedList(input.PageIndex, input.PageSize);
         }
@@ -247,7 +249,7 @@ namespace Silky.Http.Dashboard.AppService
                     ServiceId = p.Id,
                     ServiceName = p.ServiceDescriptor.ServiceName,
                     ServiceProtocol = p.ServiceProtocol
-                }).Distinct().ToList();
+                }).Distinct().OrderBy(p => p.ServiceName).ToList();
             return services;
         }
 
