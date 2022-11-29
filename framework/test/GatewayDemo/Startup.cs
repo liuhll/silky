@@ -85,7 +85,6 @@ namespace GatewayDemo
             app.UseResponseCaching();
             // app.UseHttpsRedirection();
             app.UseSilkyWebSocketsProxy();
-            // app.UseSilkyWebServer();
             app.UseSilkyWrapperResponse();
             app.UseSilkyIdentity();
             app.UseAuditing();

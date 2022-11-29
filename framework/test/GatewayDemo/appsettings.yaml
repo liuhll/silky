@@ -13,25 +13,25 @@ rpc:
 #  auth: "silky:pass4Word"
 #  routePath: /silkytest/route
 #  swaggerDocPath:  /silkytest/swagger
-  
+
 #registrycenter:
-#  type: Nacos
-#  namespace: silky
-#  serverAddresses:
-#    - http://127.0.0.1:8848/
-#    - http://127.0.0.1:8849/
-#    - http://127.0.0.1:8850/
-#  userName: nacos
-#  password: nacos
-#  clusterName: DEFAULT
-#  registerEnabled: true
-#  instanceEnabled: true
-  
+#  type: Consul
+#  address: http://127.0.0.1:8500
+  #  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
 
 registrycenter:
-  type: Consul
-  address: http://127.0.0.1:8500
-#  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
+  type: Nacos
+  namespace: silky
+  serverAddresses:
+    - http://127.0.0.1:8848/
+    - http://127.0.0.1:8849/
+    - http://127.0.0.1:8850/
+  userName: nacos
+  password: nacos
+  clusterName: DEFAULT
+  registerEnabled: true
+  instanceEnabled: true
+  
 distributedCache:
   redis:
     isEnabled: true
@@ -40,7 +40,7 @@ allowedHosts: "*"
 swaggerDocument:
   organizationMode: AllAndGroup
   injectMiniProfiler: true
-  showDashboardService: true
+  showDashboardService: false
   termsOfService: https://www.github.com/liuhll/silky
 gateway:
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
