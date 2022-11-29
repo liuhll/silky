@@ -2,8 +2,6 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using Silky.Core;
 using Silky.Core.Exceptions;
-using Silky.Http.Core;
-using Silky.Http.MiniProfiler;
 using Silky.RegistryCenter.Consul;
 using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
 

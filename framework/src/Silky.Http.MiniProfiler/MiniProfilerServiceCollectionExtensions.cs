@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.MiniProfiler;
+using Silky.Http.MiniProfiler;
 
-namespace Silky.Http.MiniProfiler
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class MiniProfilerServiceCollectionExtensions
     {

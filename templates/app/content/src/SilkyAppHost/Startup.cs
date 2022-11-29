@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Silky.Http.Core;
-using Silky.Http.MiniProfiler;
 
 namespace SilkyAppHost
 {
@@ -30,6 +28,17 @@ namespace SilkyAppHost
                 .AddSilkyIdentity()
                 .AddSilkyMiniProfiler()
                 .AddSwaggerDocuments();
+
+#if (type=="gateway")
+           services
+               .AddHealthChecks()
+               .AddSilkyRpc()
+               .AddSilkyGateway();
+
+            services
+               .AddHealthChecksUI()
+               .AddInMemoryStorage();
+#endif   
             
         }
 
@@ -54,6 +63,9 @@ namespace SilkyAppHost
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapSilkyRpcServices();
+#if (type=="gateway") 
+                endpoints.MapHealthChecksUI();
+#endif
             });
         }
     }

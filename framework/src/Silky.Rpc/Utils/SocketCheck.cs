@@ -12,7 +12,7 @@ namespace Silky.Rpc.Utils
     {
         private static ILogger<IRpcEndpointMonitor> _logger = NullLogger<IRpcEndpointMonitor>.Instance;
 
-        public static bool TestConnection(string host, int port, int millisecondsTimeout = 500)
+        public static bool TestConnection(string host, int port, int millisecondsTimeout = 2000)
         {
             Socket socket = null;
             try
@@ -38,7 +38,7 @@ namespace Silky.Rpc.Utils
             }
         }
 
-        public static bool TestConnection(IPEndPoint ipEndPoint, int millisecondsTimeout = 500)
+        public static bool TestConnection(IPEndPoint ipEndPoint, int millisecondsTimeout = 2000)
         {
             Socket socket = null;
             try
@@ -62,7 +62,7 @@ namespace Silky.Rpc.Utils
             }
         }
 
-        public static bool TestConnection(IPAddress iPAddress, int port, int millisecondsTimeout = 500)
+        public static bool TestConnection(IPAddress iPAddress, int port, int millisecondsTimeout = 2000)
         {
             Socket socket = null;
             try

@@ -14,6 +14,9 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="6.0.5" Condition="'$(type)' == 'gateway'" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.5" Condition="'$(type)' == 'gateway'" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="6.0.5" Condition="'$(type)' == 'gateway'" />
     </ItemGroup>
 
     <ItemGroup>
