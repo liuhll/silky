@@ -13,8 +13,14 @@ namespace Silky.RegistryCenter.Consul.Configuration
 
         public bool RegisterSwaggerDoc { get; set; } = true;
 
-        public int HeartBeatIntervalSecond { get; set; } = 10;
-        
+        public double HeartBeatIntervalSecond { get; set; } = 15;
+
+        public double HealthCheckIntervalSecond { get; set; } = 10;
+
+        public double HealthCheckTimeoutSecond { get; set; } = 1;
+
+        public bool HealthCheck { get; set; } = true;
+
         public string RoutePath { get; set; } = "silky/services";
 
         public string SwaggerDocPath { get; set; } = "silky/swagger";

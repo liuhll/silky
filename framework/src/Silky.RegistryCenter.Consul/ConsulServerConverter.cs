@@ -16,7 +16,7 @@ namespace Silky.RegistryCenter.Consul
             _serviceDescriptorProvider = serviceDescriptorProvider;
         }
 
-        public async Task<ServerDescriptor> Convert(string serverName, AgentService[] agentServices)
+        public async Task<ServerDescriptor> Convert(string serverName, params AgentService[] agentServices)
         {
             var serverDescriptor = new ServerDescriptor()
             {

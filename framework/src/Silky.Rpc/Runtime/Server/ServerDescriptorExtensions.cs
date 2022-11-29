@@ -1,4 +1,5 @@
 using System.Linq;
+using Silky.Core.Exceptions;
 using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Runtime.Server
@@ -13,6 +14,21 @@ namespace Silky.Rpc.Runtime.Server
                 Endpoints = serverDescriptor.Endpoints.Select(p => p.ConvertToSilkyEndpoint()).ToArray()
             };
             return server;
+        }
+        
+        public static SilkyEndpointDescriptor GetRegisterEndpoint(this ServerDescriptor serverDescriptor)
+        {
+            var endpoint = serverDescriptor
+                .Endpoints
+                .OrderBy(p => p.ServiceProtocol)
+                .FirstOrDefault();
+
+            if (endpoint == null)
+            {
+                throw new SilkyException("RpcEndpoint does not exist");
+            }
+
+            return endpoint;
         }
     }
 }

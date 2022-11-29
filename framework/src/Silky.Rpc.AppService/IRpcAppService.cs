@@ -18,8 +18,7 @@ namespace Silky.Rpc.AppService
 
         [ProhibitExtranet]
         Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos();
-
-        [ProhibitExtranet]
+        
         [Governance(TimeoutMillSeconds = 2000)]
         Task<bool> IsHealth();
     }

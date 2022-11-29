@@ -6,6 +6,6 @@ namespace Silky.RegistryCenter.Consul
 {
     public interface IServerConverter
     {
-        Task<ServerDescriptor> Convert(string serverName, AgentService[] agentServices);
+        Task<ServerDescriptor> Convert(string serverName, params AgentService[] agentServices);
     }
 }

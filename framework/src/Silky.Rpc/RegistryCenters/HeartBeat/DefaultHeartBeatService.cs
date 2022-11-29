@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
-using Silky.Core.Logging;
 
 namespace Silky.Rpc.RegistryCenters.HeartBeat
 {
@@ -31,7 +30,7 @@ namespace Silky.Rpc.RegistryCenters.HeartBeat
             if (EngineContext.Current.Configuration.GetSection("registrycenter:heartbeatintervalsecond").Exists())
             {
                 var heartBeatInterval =
-                    EngineContext.Current.Configuration.GetValue<int>("registrycenter:heartbeatintervalsecond");
+                    EngineContext.Current.Configuration.GetValue<double>("registrycenter:heartbeatintervalsecond");
 
                 return heartBeatInterval;
             }

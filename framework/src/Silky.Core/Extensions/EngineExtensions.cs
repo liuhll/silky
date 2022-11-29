@@ -18,7 +18,7 @@ namespace Silky.Core.Extensions
             Check.NotNull(engine, nameof(engine));
             return engine.ContainModule("SilkyHttpCore");
         }
-
+        
         public static bool IsContainWebSocketModule([NotNull] this IEngine engine)
         {
             Check.NotNull(engine, nameof(engine));

@@ -93,9 +93,17 @@ public class ConsulSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCente
             throw new SilkyException("Get services from consul error");
         }
 
-        var openApiDocumentJsonString = getKvResult.Response.Value.GetString();
-        var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentJsonString);
-        return openApiDocument;
+        try
+        {
+            var openApiDocumentJsonString = getKvResult.Response.Value.GetString();
+            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentJsonString);
+            return openApiDocument;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+       
     }
 
     private string CreateSwaggerDocPath(string child)

@@ -15,7 +15,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.Rpc.Endpoint
 {
-    public static class  SilkyEndpointHelper
+    public static class SilkyEndpointHelper
     {
         private const string ANYHOST = "0.0.0.0";
         private const string LOCAL_IP_PATTERN = "127(\\.\\d{1,3}){3}$";
@@ -72,7 +72,7 @@ namespace Silky.Rpc.Endpoint
 
             string host;
 
-            if (url.Contains("+") || url.Contains("[::]") || url.Contains("*"))
+            if (url.Contains("+") || url.Contains("[::]") || url.Contains("*") || url.Equals("0.0.0.0"))
             {
                 host = GetAnyHostIp();
             }
@@ -140,7 +140,7 @@ namespace Silky.Rpc.Endpoint
 
         public static string GetLocalAddress()
         {
-            var host = GetAnyHostIp();
+            var host = GetHostIp(ANYHOST);
             return host;
         }
 
@@ -160,7 +160,8 @@ namespace Silky.Rpc.Endpoint
             }
 
             var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
-            var host = GetHostIp(GetAnyHostIp());
+            var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
+            var host = GetHostIp(rpcOptions.Host);
             var address = new SilkyEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
             _rpcEndpointCache.TryAdd("WsEndpoint", wsEndpoint);
             return address;

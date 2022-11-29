@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Consul;
@@ -13,25 +14,18 @@ namespace Silky.RegistryCenter.Consul
 {
     internal static class ServerDescriptorExtensions
     {
-        public static AgentServiceRegistration CreateAgentServiceRegistration(this ServerDescriptor serverDescriptor)
+        public static AgentServiceRegistration CreateAgentServiceRegistration(this ServerDescriptor serverDescriptor,
+            ConsulRegistryCenterOptions consulRegistryCenterOptions)
         {
-            var endpoint = serverDescriptor.Endpoints.FirstOrDefault(p =>
-                p.ServiceProtocol == ServiceProtocol.Rpc || p.ServiceProtocol.IsHttp());
-
-            if (endpoint == null)
-            {
-                throw new SilkyException("RpcEndpoint does not exist");
-            }
-
-            var serviceProtocols = new Dictionary<ServiceProtocol, int>();
+            var endpoint = serverDescriptor.GetRegisterEndpoint();
+            var endpoints = new Dictionary<ServiceProtocol, string>();
             foreach (var rpcEndpointDescriptor in serverDescriptor.Endpoints)
             {
-                serviceProtocols[rpcEndpointDescriptor.ServiceProtocol] =
-                    rpcEndpointDescriptor.Port;
+                endpoints[rpcEndpointDescriptor.ServiceProtocol] = rpcEndpointDescriptor.GetAddress();
             }
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var serviceProtocolJsonString = serializer.Serialize(serviceProtocols);
+            var endpointsJsonString = serializer.Serialize(endpoints);
 
             var agentServiceRegistration = new AgentServiceRegistration()
             {
@@ -44,21 +38,29 @@ namespace Silky.RegistryCenter.Consul
                 {
                     { "ProcessorTime", endpoint.ProcessorTime.ToString() },
                     { "TimeStamp", endpoint.TimeStamp.ToString() },
-                    { "ServiceProtocols", serviceProtocolJsonString },
-                    { "HostName", EngineContext.Current.HostName }
+                    { "Endpoints", endpointsJsonString },
+                    { "HostName", EngineContext.Current.HostName },
+                    { "HealthCheck", consulRegistryCenterOptions.HealthCheck.ToString() }
                 },
                 Tags = new[]
                 {
                     EngineContext.Current.HostName,
                     ConsulRegistryCenterOptions.SilkyServer
-                }
+                },
             };
 
-            var httpEndpoint = serverDescriptor.Endpoints.FirstOrDefault(p => p.ServiceProtocol.IsHttp());
-            if (httpEndpoint != null)
+            if (consulRegistryCenterOptions.HealthCheck)
             {
-                agentServiceRegistration.Meta["HttpHost"] = httpEndpoint.Host;
+                agentServiceRegistration.Check = new AgentServiceCheck()
+                {
+                    Name = $"{serverDescriptor.HostName} - {endpoint.GetAddress()}",
+                    TCP = endpoint.GetAddress(),
+                    Interval = TimeSpan.FromSeconds(consulRegistryCenterOptions.HealthCheckIntervalSecond),
+                    Timeout = TimeSpan.FromSeconds(consulRegistryCenterOptions.HealthCheckTimeoutSecond),
+                    Notes = $"Check {serverDescriptor.HostName} {endpoint.GetAddress()} health through tcl protocol "
+                };
             }
+
 
             return agentServiceRegistration;
         }

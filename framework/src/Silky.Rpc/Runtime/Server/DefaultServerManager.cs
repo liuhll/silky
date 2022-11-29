@@ -170,7 +170,7 @@ namespace Silky.Rpc.Runtime.Server
             lock (_lock)
             {
                 var cacheServer = _serverCache.GetValueOrDefault(server.HostName);
-                if (server.Equals(cacheServer))
+               if (server.Equals(cacheServer))
                 {
                     Logger.LogDebug(
                         "The cached server data of [{0}] is consistent with the routing data of the service registry, no need to update",

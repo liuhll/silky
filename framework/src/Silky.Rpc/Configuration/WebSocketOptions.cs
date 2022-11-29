@@ -3,7 +3,7 @@
     public class WebSocketOptions
     {
         internal static string WebSocket = "WebSocket";
-
+        
         public int Port { get; set; } = 3000;
 
         public bool IsSsl { get; set; } = false;

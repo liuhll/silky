@@ -593,6 +593,11 @@ namespace Silky.Http.Dashboard.AppService
             return externalRoutes.ToArray();
         }
 
+        public Task Health()
+        {
+            return Task.CompletedTask;
+        }
+
 
         private GetExternalRouteOutput CreateExternalRoute(string path)
         {

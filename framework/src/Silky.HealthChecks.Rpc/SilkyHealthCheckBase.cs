@@ -75,6 +75,11 @@ namespace Silky.HealthChecks.Rpc
                 {
                     foreach (var endpoint in server.Endpoints)
                     {
+                        if (!endpoint.ServiceProtocol.IsHttp() && endpoint.ServiceProtocol != ServiceProtocol.Rpc)
+                        {
+                            continue;
+                        }
+
                         var serverHealthData = await GetServerHealthData(endpoint, server.HostName);
                         healthData[endpoint.GetAddress()] = serverHealthData;
                     }

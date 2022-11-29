@@ -67,5 +67,8 @@ namespace Silky.Http.Dashboard.AppService
         IReadOnlyCollection<GetProfileOutput> GetProfiles();
         
         IReadOnlyCollection<GetExternalRouteOutput> GetExternalRoutes();
+
+        [AllowAnonymous]
+        Task Health();
     }
 }

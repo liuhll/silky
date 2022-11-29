@@ -51,7 +51,7 @@ namespace Silky.Rpc.Endpoint.Descriptor
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(SilkyEndpointDescriptor model1, SilkyEndpointDescriptor model2)
+        public static bool operator !=(SilkyEndpointDescriptor? model1, SilkyEndpointDescriptor model2)
         {
             return !Equals(model1, model2);
         }

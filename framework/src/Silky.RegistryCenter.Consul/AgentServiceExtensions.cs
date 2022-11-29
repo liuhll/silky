@@ -12,34 +12,25 @@ namespace Silky.RegistryCenter.Consul
     {
         public static SilkyEndpointDescriptor[] GetEndpointDescriptors(this AgentService agentService)
         {
-            var serviceProtocols = agentService.Meta["ServiceProtocols"];
+            var endpoints = agentService.Meta["Endpoints"];
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var serviceProtocolInfos = serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocols);
+            var endpointInfos = serializer.Deserialize<Dictionary<ServiceProtocol, string>>(endpoints);
             var rpcEndpointDescriptors = new List<SilkyEndpointDescriptor>();
-            foreach (var serviceProtocolInfo in serviceProtocolInfos)
+            foreach (var endpointInfo in endpointInfos)
             {
                 var rpcEndpointDescriptor = new SilkyEndpointDescriptor()
                 {
-                    Host = agentService.Address,
-                    Port = serviceProtocolInfo.Value,
-                    ServiceProtocol = serviceProtocolInfo.Key,
+                    Host = endpointInfo.Value.Split(":")[0],
+                    Port = endpointInfo.Value.Split(":")[1].To<int>(),
+                    ServiceProtocol = endpointInfo.Key,
                     TimeStamp = agentService.Meta["TimeStamp"].To<long>(),
                     ProcessorTime = agentService.Meta["ProcessorTime"].To<double>(),
                 };
-                if (serviceProtocolInfo.Key.IsHttp() && agentService.Meta["HttpHost"] != null)
-                {
-                    rpcEndpointDescriptor.Host = agentService.Meta["HttpHost"];
-                }
-
                 rpcEndpointDescriptors.Add(rpcEndpointDescriptor);
             }
 
             return rpcEndpointDescriptors.ToArray();
         }
-
-        public static string GetServerName(this AgentService agentService)
-        {
-            return agentService.Meta["HostName"];
-        }
+        
     }
 }
