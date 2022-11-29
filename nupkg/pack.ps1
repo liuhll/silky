@@ -1,5 +1,5 @@
 Param(
-  [parameter(Mandatory=$false)][string]$repo="",
+  [parameter(Mandatory=$false)][string]$repo="https://api.nuget.org/v3/index.json",
   [parameter(Mandatory=$false)][bool]$push=$false,
   [parameter(Mandatory=$false)][string]$apikey,
   [parameter(Mandatory=$false)][bool]$build=$true
