@@ -14,36 +14,31 @@ namespace Silky.RegistryCenter.Nacos
         {
             var endpoints = new List<SilkyEndpointDescriptor>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var serviceProtocolJsonString = instance.Metadata["ServiceProtocols"];
-            var serviceProtocolInfos =
-                serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
-            foreach (var serviceProtocolInfo in serviceProtocolInfos)
+            var endpointsJsonString = instance.Metadata["Endpoints"];
+            var endpointInfos =
+                serializer.Deserialize<Dictionary<ServiceProtocol, string>>(endpointsJsonString);
+            foreach (var endpointInfo in endpointInfos)
             {
                 var rpcEndpointDescriptor = new SilkyEndpointDescriptor()
                 {
-                    Host = instance.Ip,
-                    Port = serviceProtocolInfo.Value,
-                    ServiceProtocol = serviceProtocolInfo.Key,
+                    Host = endpointInfo.Value.Split(":")[0],
+                    Port = endpointInfo.Value.Split(":")[1].To<int>(),
+                    ServiceProtocol = endpointInfo.Key,
                     TimeStamp = instance.Metadata["TimeStamp"].To<long>(),
                     ProcessorTime = instance.Metadata["ProcessorTime"].To<double>(),
                 };
-                if (serviceProtocolInfo.Key.IsHttp() && instance.Metadata["HttpHost"] != null)
-                {
-                    rpcEndpointDescriptor.Host = instance.Metadata["HttpHost"];
-                }
-
                 endpoints.Add(rpcEndpointDescriptor);
             }
 
             return endpoints;
         }
 
-        public static Dictionary<ServiceProtocol, int> GetServiceProtocolInfos(this Instance instance)
+        public static Dictionary<ServiceProtocol, string> GetServiceProtocolInfos(this Instance instance)
         {
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var serviceProtocolJsonString = instance.Metadata["ServiceProtocols"];
+            var endpointsJsonString = instance.Metadata["Endpoints"];
             var serviceProtocolInfos =
-                serializer.Deserialize<Dictionary<ServiceProtocol, int>>(serviceProtocolJsonString);
+                serializer.Deserialize<Dictionary<ServiceProtocol, string>>(endpointsJsonString);
             return serviceProtocolInfos;
         }
     }

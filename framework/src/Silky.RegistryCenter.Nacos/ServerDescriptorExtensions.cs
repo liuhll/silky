@@ -5,31 +5,27 @@ using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
+using Silky.Rpc.Endpoint.Descriptor;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.RegistryCenter.Nacos
 {
     public static class ServerDescriptorExtensions
     {
+        
         public static Instance GetInstance(this ServerDescriptor serverDescriptor)
         {
-            var endpoint =
-                serverDescriptor.Endpoints.FirstOrDefault(p =>
-                    p.ServiceProtocol == ServiceProtocol.Rpc || p.ServiceProtocol.IsHttp()
-                );
-            if (endpoint == null)
-            {
-                throw new SilkyException("RpcEndpoint does not exist");
-            }
+            var endpoint = serverDescriptor.GetRegisterEndpoint();
+           
 
-            var serviceProtocols = new Dictionary<ServiceProtocol, int>();
+            var endpoints = new Dictionary<ServiceProtocol, string>();
             foreach (var rpcEndpointDescriptor in serverDescriptor.Endpoints)
             {
-                serviceProtocols[rpcEndpointDescriptor.ServiceProtocol] = rpcEndpointDescriptor.Port;
+                endpoints[rpcEndpointDescriptor.ServiceProtocol] = rpcEndpointDescriptor.GetAddress();
             }
 
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            var serviceProtocolJsonString = serializer.Serialize(serviceProtocols);
+            var endpointJsonString = serializer.Serialize(endpoints);
             var instance = new Instance()
             {
                 Ip = endpoint.Host,
@@ -40,16 +36,10 @@ namespace Silky.RegistryCenter.Nacos
                 {
                     { "ProcessorTime", endpoint.ProcessorTime.ToString() },
                     { "TimeStamp", endpoint.TimeStamp.ToString() },
-                    { "ServiceProtocols", serviceProtocolJsonString }
+                    { "Endpoints", endpointJsonString },
+                    { "HostName", EngineContext.Current.HostName }
                 }
             };
-
-            var httpEndpoint = serverDescriptor.Endpoints.FirstOrDefault(p => p.ServiceProtocol.IsHttp());
-            if (httpEndpoint != null)
-            {
-                instance.Metadata["HttpHost"] = httpEndpoint.Host;
-            }
-
             return instance;
         }
     }
