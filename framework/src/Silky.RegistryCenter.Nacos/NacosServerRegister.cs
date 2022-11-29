@@ -68,8 +68,6 @@ namespace Silky.RegistryCenter.Nacos
                 var serverListener = new ServerListener(this);
                 m_serverListeners.TryAdd(serverName, serverListener);
                 await _nacosNamingService.Subscribe(serverName, _nacosRegistryCenterOptions.ServerGroupName, serverListener);
-                var serverInstances = await _nacosNamingService.GetAllInstances(serverName);
-                await UpdateServer(serverName, serverInstances);
             }
         }
 
