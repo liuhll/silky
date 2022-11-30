@@ -1,6 +1,8 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Nacos.V2;
 using Nacos.V2.Naming.Event;
+using Silky.Core.Threading;
 
 namespace Silky.RegistryCenter.Nacos.Listeners
 {
@@ -8,9 +10,12 @@ namespace Silky.RegistryCenter.Nacos.Listeners
     {
         private readonly NacosServerRegister _serverRegister;
 
+        protected SemaphoreSlim SyncSemaphore { get; }
+
         public ServerListener(NacosServerRegister serverRegister)
         {
             _serverRegister = serverRegister;
+            SyncSemaphore = new SemaphoreSlim(1, 1);
         }
 
         public async Task OnEvent(IEvent @event)
@@ -20,9 +25,11 @@ namespace Silky.RegistryCenter.Nacos.Listeners
             {
                 return;
             }
-
-            await _serverRegister.CreateServerListener(instancesChangeEvent.ServiceName);
-            await _serverRegister.UpdateServer(instancesChangeEvent.ServiceName, instancesChangeEvent.Hosts);
+            using (await SyncSemaphore.LockAsync())
+            {
+                await _serverRegister.UpdateServer(instancesChangeEvent.ServiceName, instancesChangeEvent.GroupName,
+                    instancesChangeEvent.Hosts);
+            }
         }
     }
 }

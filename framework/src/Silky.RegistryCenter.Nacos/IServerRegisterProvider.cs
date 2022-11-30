@@ -7,11 +7,7 @@ namespace Silky.RegistryCenter.Nacos
 {
     public interface IServerRegisterProvider
     {
-        Task AddServer();
-
-        Task<IList<string>> GetAllServerNames(int timeoutMs = 10000);
-
-        ServerDescriptor GetServerDescriptor(string serverName, List<Instance> serverInstances,
-            ServiceDescriptor[] serviceDescriptors);
+        
+        Task<ServerDescriptor[]> GetServerDescriptor(List<Instance> serverInstances);
     }
 }

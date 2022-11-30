@@ -19,24 +19,27 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddNacosV2Naming(EngineContext.Current.Configuration, sectionName: section);
             services.AddNacosV2Config(EngineContext.Current.Configuration, sectionName: section);
-            services.AddSingleton<IServerRegister, NacosServerRegister>();
-            services.AddSingleton<IServiceProvider, NacosServiceProvider>();
-            services.AddSingleton<IServerRegisterProvider, NacosServerRegisterProvider>();
-            services.AddSingleton<IRegisterCenterHealthProvider, NocasRegisterCenterHealthProvider>();
-
+            services.AddNacosRegistryCenterCore();
             return services;
         }
 
         public static IServiceCollection AddNacosRegistryCenter(this IServiceCollection services,
-            Action<NacosRegistryCenterOptions> optionsAccs)
+            Action<NacosRegistryCenterOptions> optionsAction)
         {
-            services.Configure(optionsAccs);
+            services.Configure(optionsAction);
 
             var options = new NacosRegistryCenterOptions();
-            optionsAccs.Invoke(options);
+            optionsAction.Invoke(options);
 
             services.AddNacosV2Naming(options.BuildSdkOptions());
             services.AddNacosV2Config(options.BuildSdkOptions());
+            services.AddNacosRegistryCenterCore();
+
+            return services;
+        }
+
+        private static IServiceCollection AddNacosRegistryCenterCore(this IServiceCollection services)
+        {
             services.AddSingleton<IServerRegister, NacosServerRegister>();
             services.AddSingleton<IServiceProvider, NacosServiceProvider>();
             services.AddSingleton<IServerRegisterProvider, NacosServerRegisterProvider>();

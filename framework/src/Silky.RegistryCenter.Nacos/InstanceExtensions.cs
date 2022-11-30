@@ -8,7 +8,7 @@ using Silky.Rpc.Endpoint.Descriptor;
 
 namespace Silky.RegistryCenter.Nacos
 {
-    public static class InstanceExtensions
+    internal static class InstanceExtensions
     {
         public static IEnumerable<SilkyEndpointDescriptor> GetEndpoints(this Instance instance)
         {
@@ -31,6 +31,11 @@ namespace Silky.RegistryCenter.Nacos
             }
 
             return endpoints;
+        }
+
+        public static string GetServerName(this Instance instance)
+        {
+            return instance.Metadata["HostName"];
         }
 
         public static Dictionary<ServiceProtocol, string> GetServiceProtocolInfos(this Instance instance)

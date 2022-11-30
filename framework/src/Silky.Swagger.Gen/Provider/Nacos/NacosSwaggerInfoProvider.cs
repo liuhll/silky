@@ -37,7 +37,7 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
         try
         {
             var openApiDocumentValue =
-                await _nacosConfigService.GetConfig(documentName, _nacosRegistryCenterOptions.SwaggerDocGroupName, 10000);
+                await _nacosConfigService.GetConfig(documentName, _nacosRegistryCenterOptions.ServerGroupName, 10000);
             if (openApiDocumentValue.IsNullOrEmpty())
             {
                 return null;
@@ -75,7 +75,7 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
         {
             var allDocumentsValue =
                 await _nacosConfigService.GetConfig(_nacosRegistryCenterOptions.SwaggerDocKey,
-                    _nacosRegistryCenterOptions.SwaggerDocGroupName, timeoutMs);
+                    _nacosRegistryCenterOptions.ServerGroupName, timeoutMs);
             if (allDocumentsValue.IsNullOrEmpty())
             {
                 return Array.Empty<string>();
