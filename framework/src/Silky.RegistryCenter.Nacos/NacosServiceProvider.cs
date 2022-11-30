@@ -52,7 +52,7 @@ namespace Silky.RegistryCenter.Nacos
             return serviceDescriptors;
         }
 
-        public async Task PublishServices(string hostName, ServiceDescriptor[] serviceDescriptors)
+        public async Task  PublishServices(string hostName, ServiceDescriptor[] serviceDescriptors)
         {
             if (m_services.TryGetValue(hostName, out var cacheServiceDescriptors))
             {

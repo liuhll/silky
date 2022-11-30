@@ -2,7 +2,7 @@ namespace Silky.Transaction
 {
     public static class LockName
     {
-        public const string SelfTccRecovery = "SelfTccRecovery_{0}";
+        public const string SelfTccRecovery = "SelfTccRecovery";
 
         public const string ParticipantTccRecovery = "ParticipantTccRecovery";
 

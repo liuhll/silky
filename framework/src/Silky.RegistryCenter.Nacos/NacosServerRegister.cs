@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Medallion.Threading;
 using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
@@ -67,7 +68,8 @@ namespace Silky.RegistryCenter.Nacos
             {
                 var serverListener = new ServerListener(this);
                 m_serverListeners.TryAdd(serverName, serverListener);
-                await _nacosNamingService.Subscribe(serverName, _nacosRegistryCenterOptions.ServerGroupName, serverListener);
+                await _nacosNamingService.Subscribe(serverName, _nacosRegistryCenterOptions.ServerGroupName,
+                    serverListener);
             }
         }
 

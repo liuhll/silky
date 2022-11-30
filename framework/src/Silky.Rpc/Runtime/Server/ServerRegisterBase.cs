@@ -34,7 +34,7 @@ namespace Silky.Rpc.Runtime.Server
             await RegisterServerToServiceCenter(server.ConvertToDescriptor());
             await CacheServers();
         }
-
+        
         protected virtual async Task<bool> RepeatRegister()
         {
             var selfServerInfo = _serverManager.GetSelfServer();
@@ -42,7 +42,7 @@ namespace Silky.Rpc.Runtime.Server
             var needRegister = false;
             foreach (var endpoint in localServer.Endpoints)
             {
-                if (!selfServerInfo.Endpoints.Any(e=> e.Equals(endpoint)))
+                if (!selfServerInfo.Endpoints.Any(e => e.Equals(endpoint)))
                 {
                     needRegister = true;
                     break;

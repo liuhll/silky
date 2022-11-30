@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Medallion.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -29,19 +30,22 @@ namespace Silky.RegistryCenter.Zookeeper
         private ConcurrentDictionary<IZookeeperClient, ServerWatcher> m_serverWatchers = new();
         private ZookeeperRegistryCenterOptions _registryCenterOptions;
         private readonly IHeartBeatService _heartBeatService;
+        private readonly IDistributedLockProvider _distributedLockProvider;
 
         public ZookeeperServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
             IZookeeperClientFactory zookeeperClientFactory,
             IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions,
             ISerializer serializer,
-            IHeartBeatService heartBeatService)
+            IHeartBeatService heartBeatService,
+            IDistributedLockProvider distributedLockProvider)
             : base(serverManager,
                 serverProvider)
         {
             _zookeeperClientFactory = zookeeperClientFactory;
             _serializer = serializer;
             _heartBeatService = heartBeatService;
+            _distributedLockProvider = distributedLockProvider;
             _registryCenterOptions = registryCenterOptions.CurrentValue;
             Check.NotNullOrEmpty(_registryCenterOptions.RoutePath, nameof(_registryCenterOptions.RoutePath));
             Logger = NullLogger<ZookeeperServerRegister>.Instance;
@@ -96,20 +100,35 @@ namespace Silky.RegistryCenter.Zookeeper
 
         private async Task RegisterServer(IZookeeperClient zookeeperClient)
         {
-            var routePath = _registryCenterOptions.RoutePath;
-            var allServers = await GetAllServers(zookeeperClient, routePath);
-            allServers.AddIfNotContains(EngineContext.Current.HostName);
-            var jonString = _serializer.Serialize(allServers);
-            var data = jonString.GetBytes();
-            await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
-            await zookeeperClient.SetDataAsync(routePath, data);
-            var serverRoutePath = CreateRoutePath(EngineContext.Current.HostName);
-            if (!m_serviceRouteWatchers.ContainsKey((serverRoutePath, zookeeperClient)))
+            async Task AddServerRouteWatcher()
             {
-                var serverRouteWatcher = new ServerRouteWatcher(serverRoutePath, _serverManager, _serializer);
-                await zookeeperClient.SubscribeDataChange(serverRoutePath, serverRouteWatcher.HandleNodeDataChange);
-                m_serviceRouteWatchers.GetOrAdd((serverRoutePath, zookeeperClient), serverRouteWatcher);
+                var serverRoutePath = CreateRoutePath(EngineContext.Current.HostName);
+                if (!m_serviceRouteWatchers.ContainsKey((serverRoutePath, zookeeperClient)))
+                {
+                    var serverRouteWatcher = new ServerRouteWatcher(serverRoutePath, _serverManager, _serializer);
+                    await zookeeperClient.SubscribeDataChange(serverRoutePath, serverRouteWatcher.HandleNodeDataChange);
+                    m_serviceRouteWatchers.GetOrAdd((serverRoutePath, zookeeperClient), serverRouteWatcher);
+                }
             }
+
+            var routePath = _registryCenterOptions.RoutePath;
+            await using (await _distributedLockProvider.AcquireLockAsync("AddServerNameToZookeeper"))
+            {
+                var allServers = await GetAllServers(zookeeperClient, routePath);
+                if (allServers.Contains(EngineContext.Current.HostName))
+                {
+                    await AddServerRouteWatcher();
+                    return;
+                }
+
+                allServers.Add(EngineContext.Current.HostName);
+                var jonString = _serializer.Serialize(allServers);
+                var data = jonString.GetBytes();
+                await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
+                await zookeeperClient.SetDataAsync(routePath, data);
+            }
+
+            await AddServerRouteWatcher();
         }
 
         protected override async Task RemoveServiceCenterExceptRpcEndpoint(IServer server)
@@ -235,7 +254,8 @@ namespace Silky.RegistryCenter.Zookeeper
             if (!await zookeeperClient.ExistsAsync(serverPath))
             {
                 await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
-                await zookeeperClient.CreateRecursiveAsync(serverPath, null,  AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
+                await zookeeperClient.CreateRecursiveAsync(serverPath, null,
+                    AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
                 return;
             }
 
@@ -286,6 +306,7 @@ namespace Silky.RegistryCenter.Zookeeper
             {
                 return null;
             }
+
             await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
             var data = await zookeeperClient.GetDataAsync(routePath);
             if (data == null || !data.Any())

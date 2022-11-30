@@ -1,5 +1,6 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -19,7 +20,7 @@ namespace Silky.Rpc.Extensions
                 throw new SilkyException("You must specify a service registry module");
             }
 
-            return context.ServiceProvider.GetService<IServerRegister>() != null;
+            return context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IServerRegister));
         }
     }
 }

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Medallion.Threading;
 using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Rpc.Endpoint.Descriptor;
@@ -21,46 +23,54 @@ namespace Silky.RegistryCenter.Nacos
         private readonly INacosConfigService _nacosConfigService;
         private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
         private readonly ISerializer _serializer;
-        
+        private readonly IDistributedLockProvider _distributedLockProvider;
 
         public NacosServerRegisterProvider(INacosConfigService nacosConfigService,
             IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
-            ISerializer serializer)
+            ISerializer serializer,
+            IDistributedLockProvider distributedLockProvider)
         {
             _nacosConfigService = nacosConfigService;
             _serializer = serializer;
+            _distributedLockProvider = distributedLockProvider;
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.Value;
         }
 
         public async Task AddServer()
         {
-            await _nacosConfigService.AddListener(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.ServerGroupName, this);
-            var servers = await GetAllServerNames();
-            if (servers.Contains(EngineContext.Current.HostName))
+            await using (await _distributedLockProvider.AcquireLockAsync("AddServerNameToNacos"))
             {
-                return;
-            }
+                await _nacosConfigService.AddListener(_nacosRegistryCenterOptions.ServerKey,
+                    _nacosRegistryCenterOptions.ServerGroupName, this);
+                var servers = await GetAllServerNames();
+                if (servers.Contains(EngineContext.Current.HostName))
+                {
+                    return;
+                }
 
-            var registerServers = servers.Concat(new[] { EngineContext.Current.HostName });
-            var registerServersValue = _serializer.Serialize(registerServers);
-            var result = await _nacosConfigService.PublishConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.ServerGroupName,
-                registerServersValue);
-            if (!result)
-            {
-                throw new SilkyException($"{EngineContext.Current.HostName} registration failed");
+                servers.Add(EngineContext.Current.HostName);
+                var registerServersValue = _serializer.Serialize(servers);
+                var result = await _nacosConfigService.PublishConfig(_nacosRegistryCenterOptions.ServerKey,
+                    _nacosRegistryCenterOptions.ServerGroupName,
+                    registerServersValue);
+                if (!result)
+                {
+                    throw new SilkyException($"{EngineContext.Current.HostName} registration failed");
+                }
             }
         }
 
-        public async Task<string[]> GetAllServerNames(int timeoutMs = 10000)
+        public async Task<IList<string>> GetAllServerNames(int timeoutMs = 10000)
         {
             var registerServersValue =
-                await _nacosConfigService.GetConfig(_nacosRegistryCenterOptions.ServerKey, _nacosRegistryCenterOptions.ServerGroupName, timeoutMs);
+                await _nacosConfigService.GetConfig(_nacosRegistryCenterOptions.ServerKey,
+                    _nacosRegistryCenterOptions.ServerGroupName, timeoutMs);
             if (registerServersValue.IsNullOrEmpty())
             {
-                return Array.Empty<string>();
+                return new List<string>();
             }
 
-            return _serializer.Deserialize<string[]>(registerServersValue);
+            return _serializer.Deserialize<IList<string>>(registerServersValue);
         }
 
         public ServerDescriptor GetServerDescriptor(string serverName, List<Instance> serverInstances,

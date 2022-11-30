@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Medallion.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Silky.Core;
@@ -84,7 +85,7 @@ namespace Silky.RegistryCenter.Consul
             {
                 var serverInstances = serverInfo.ToList();
                 if (_consulRegistryCenterOptions.HealthCheck && isHeartBeat &&
-                    serverInfo.All(s => bool.Parse(s.Meta["HealthCheck"])) && EngineContext.Current.IsGateway())
+                    serverInfo.All(s => bool.Parse(s.Meta["HealthCheck"])))
                 {
                     var unHealthServiceIds = await _healthCheckService.Check(consulClient, serverInfo.Key);
                     serverInstances = serverInstances.Where(s => !unHealthServiceIds.Contains(s.ID)).ToList();

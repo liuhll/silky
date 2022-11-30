@@ -8,10 +8,11 @@
     <ItemGroup>
         <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Polly" Version="7.2.1" />
+        <PackageReference Include="Polly" Version="7.2.3" />
     </ItemGroup>
 
 </Project>

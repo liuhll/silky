@@ -14,7 +14,7 @@ namespace Silky.Rpc.Configuration
             IsSsl = false;
             SoBacklog = 1024;
             ConnectTimeout = 300;
-            RegisterFailureRetryCount = 5;
+            RegisterFailureRetryCount = 10;
             TransportClientPoolNumber = 50;
             UseTransportClientPool = true;
             EnableMonitor = false;

@@ -6,6 +6,7 @@ using Silky.Http.CorsAccessor;
 using Silky.Http.MiniProfiler;
 using Silky.Http.RateLimit;
 using Silky.Http.Swagger;
+using Silky.Lock.Redis;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Monitor;
 using Silky.Rpc.Proxy;
@@ -30,7 +31,8 @@ namespace Microsoft.Extensions.Hosting
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
         typeof(TransactionTccModule),
-        typeof(RedisTransactionRepositoryModule)
+        typeof(RedisTransactionRepositoryModule),
+        typeof(RedisLockModule)
     )]
     public abstract class GatewayHostModule : HostAgentModule
     {

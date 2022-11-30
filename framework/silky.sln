@@ -128,6 +128,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "test\Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.EntityFrameworkCore.Extras", "src\Silky.EntityFrameworkCore.Extras\Silky.EntityFrameworkCore.Extras.csproj", "{EF6A8D0F-EE23-49B7-943E-48A130809BE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silky.Lock.Redis", "src\Silky.Lock.Redis\Silky.Lock.Redis.csproj", "{438B1491-B73B-4B6E-A0E9-93440D5BDC8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -366,6 +368,10 @@ Global
 		{EF6A8D0F-EE23-49B7-943E-48A130809BE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF6A8D0F-EE23-49B7-943E-48A130809BE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF6A8D0F-EE23-49B7-943E-48A130809BE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{438B1491-B73B-4B6E-A0E9-93440D5BDC8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{438B1491-B73B-4B6E-A0E9-93440D5BDC8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{438B1491-B73B-4B6E-A0E9-93440D5BDC8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{438B1491-B73B-4B6E-A0E9-93440D5BDC8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -429,6 +435,7 @@ Global
 		{B9A22254-67FE-4D63-9C8C-A7C5B4DFAFD8} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{28781C3F-C0AD-4D21-B385-F247E9CC4E32} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{EF6A8D0F-EE23-49B7-943E-48A130809BE2} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
+		{438B1491-B73B-4B6E-A0E9-93440D5BDC8C} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42B14424-34C2-4891-A02A-690A57FE2795}

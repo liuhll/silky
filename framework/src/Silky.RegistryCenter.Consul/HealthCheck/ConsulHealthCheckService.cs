@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Consul;
+using Medallion.Threading;
 using Silky.Core;
 using Silky.Rpc.Configuration;
 
@@ -12,9 +13,11 @@ public class ConsulHealthCheckService : IHealthCheckService
     private ConcurrentDictionary<string, int> _serverInstanceUnHealthCache = new();
 
     private GovernanceOptions _governanceOptions;
+    private readonly IDistributedLockProvider _distributedLockProvider;
 
-    public ConsulHealthCheckService()
+    public ConsulHealthCheckService(IDistributedLockProvider distributedLockProvider)
     {
+        _distributedLockProvider = distributedLockProvider;
         _governanceOptions = EngineContext.Current.GetOptionsMonitor<GovernanceOptions>(((options, s) =>
         {
             _governanceOptions = options;
@@ -25,6 +28,9 @@ public class ConsulHealthCheckService : IHealthCheckService
     public async Task<string[]> Check(IConsulClient consulClient, string service)
     {
         var unHealthServiceIds = new List<string>();
+        await using var handle = await _distributedLockProvider.TryAcquireLockAsync($"ConsulHealthCheck:{service}");
+
+        if (handle == null) return unHealthServiceIds.ToArray();
         var result = await consulClient.Health.Checks(service);
         foreach (var healthCheck in result.Response)
         {

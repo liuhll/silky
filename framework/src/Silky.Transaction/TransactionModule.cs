@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Medallion.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,9 +39,9 @@ namespace Silky.Transaction
                 ;
         }
 
-        public override async Task Initialize(ApplicationInitializationContext context)
+        public override async Task PreInitialize(ApplicationInitializationContext context)
         {
-            if (!EngineContext.Current.IsRegistered(typeof(IDistributedLockProvider)))
+            if (!context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IDistributedLockProvider)))
             {
                 throw new SilkyException(
                     "You must specify the implementation of IDistributedLockProvider in the Transaction.Repository project of the distributed transaction");

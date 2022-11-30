@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Medallion.Threading;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Nacos.V2;
@@ -18,30 +19,38 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
     private readonly INacosConfigService _nacosConfigService;
     private readonly ISwaggerSerializer _serializer;
     private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
+    private readonly IDistributedLockProvider _distributedLockProvider;
 
     public NacosSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         INacosConfigService nacosConfigService,
-        ISwaggerSerializer serializer, IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions) : base(swaggerProvider)
+        ISwaggerSerializer serializer, IDistributedLockProvider distributedLockProvider,
+        IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions) : base(swaggerProvider)
     {
         _nacosConfigService = nacosConfigService;
         _serializer = serializer;
+        _distributedLockProvider = distributedLockProvider;
         _nacosRegistryCenterOptions = nacosRegistryCenterOptions.Value;
     }
 
     protected override async Task Register(string documentName, OpenApiDocument openApiDocument)
     {
-        var allDocumentNames = await GetAllDocumentNames();
-        if (!allDocumentNames.Contains(documentName))
+        await using var handle =
+            await _distributedLockProvider.TryAcquireLockAsync($"RegisterSwaggerForNacos:{documentName}");
+        if (handle != null)
         {
-            var registerDocumentNames = allDocumentNames.Concat(new[] { documentName });
-            var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames);
-            var documentNamePublishResult = await _nacosConfigService.PublishConfig(
-                _nacosRegistryCenterOptions.SwaggerDocKey,
-                _nacosRegistryCenterOptions.SwaggerDocGroupName,
-                registerDocumentNamesValue);
-            if (!documentNamePublishResult)
+            var allDocumentNames = await GetAllDocumentNames();
+            if (!allDocumentNames.Contains(documentName))
             {
-                throw new SilkyException($"swagger group {documentName} registration failed");
+                var registerDocumentNames = allDocumentNames.Concat(new[] { documentName });
+                var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames);
+                var documentNamePublishResult = await _nacosConfigService.PublishConfig(
+                    _nacosRegistryCenterOptions.SwaggerDocKey,
+                    _nacosRegistryCenterOptions.SwaggerDocGroupName,
+                    registerDocumentNamesValue);
+                if (!documentNamePublishResult)
+                {
+                    throw new SilkyException($"swagger group {documentName} registration failed");
+                }
             }
 
             var openApiDocumentValue = _serializer.Serialize(openApiDocument);
