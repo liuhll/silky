@@ -15,7 +15,7 @@ namespace Silky.RegistryCenter.Nacos
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<ServerDescriptor[]> GetServerDescriptor(List<Instance> serverInstances)
+        public async Task<ServerDescriptor[]> GetServerDescriptors(List<Instance> serverInstances)
         {
             var serverDict = new Dictionary<string, ServerDescriptor>();
             foreach (var serverInstance in serverInstances)

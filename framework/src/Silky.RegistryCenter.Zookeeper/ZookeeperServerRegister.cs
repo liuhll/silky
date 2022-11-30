@@ -196,11 +196,7 @@ namespace Silky.RegistryCenter.Zookeeper
                                         serviceRouteDescriptors.ToArray();
                 if (serverDescriptors.Any())
                 {
-                    foreach (var serviceRouteDescriptor in serverDescriptors)
-                    {
-                        _serverManager.Update(serviceRouteDescriptor);
-                    }
-
+                    _serverManager.UpdateAll(serverDescriptors.ToArray());
                     break;
                 }
             }

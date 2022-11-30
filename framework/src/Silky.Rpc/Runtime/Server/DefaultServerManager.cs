@@ -163,6 +163,56 @@ namespace Silky.Rpc.Runtime.Server
             Update(server);
         }
 
+        public void UpdateAll([NotNull] ServerDescriptor[] serverDescriptors)
+        {
+            Check.NotNull(serverDescriptors, nameof(serverDescriptors));
+            Initialize();
+
+            foreach (var serverDescriptor in serverDescriptors)
+            {
+                var cacheServer = _serverCache.GetValueOrDefault(serverDescriptor.HostName);
+                var server = serverDescriptor.ConvertToServer();
+                if (server.Equals(cacheServer))
+                {
+                    Logger.LogDebug(
+                        "The cached server data of [{0}] is consistent with the routing data of the service registry, no need to update",
+                        server.HostName);
+                    continue;
+                }
+
+                _serverCache.AddOrUpdate(server.HostName, server, (k, v) => server);
+                Logger.LogInformation(
+                    "Update the server [{0}] data cache," +
+                    "The instance endpoints of the server provider is: {1}[{2}]",
+                    server.HostName, Environment.NewLine, string.Join(';', server.Endpoints.Select(p => p.ToString())));
+
+                foreach (var rpcEndpoint in server.Endpoints)
+                {
+                    _rpcEndpointMonitor.Monitor(rpcEndpoint);
+                    RemoveRpcEndpointCache(rpcEndpoint);
+                }
+
+                OnUpdateRpcEndpoint?.Invoke(server.HostName, server.Endpoints.ToArray());
+            }
+
+            var allCacheServerNames = _serverCache.Keys;
+            var newServerNames = serverDescriptors.Select(p => p.HostName).Distinct();
+
+            var needRemoveServerNames = allCacheServerNames.Except(newServerNames).ToArray();
+
+            foreach (var needRemoveServerName in needRemoveServerNames)
+            {
+                _serverCache.TryRemove(needRemoveServerName, out _);
+                Logger.LogInformation(
+                    "Remove the server [{0}] route data cache.", needRemoveServerName);
+            }
+
+            var oldCancellationTokenSource = _cancellationTokenSource;
+            _cancellationTokenSource = new CancellationTokenSource();
+            _changeToken = new CancellationChangeToken(_cancellationTokenSource.Token);
+            oldCancellationTokenSource?.Cancel();
+        }
+
         public void Update([NotNull] IServer server)
         {
             Check.NotNull(server, nameof(server));
@@ -170,7 +220,7 @@ namespace Silky.Rpc.Runtime.Server
             lock (_lock)
             {
                 var cacheServer = _serverCache.GetValueOrDefault(server.HostName);
-               if (server.Equals(cacheServer))
+                if (server.Equals(cacheServer))
                 {
                     Logger.LogDebug(
                         "The cached server data of [{0}] is consistent with the routing data of the service registry, no need to update",

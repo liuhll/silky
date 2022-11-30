@@ -63,11 +63,8 @@ namespace Silky.RegistryCenter.Nacos
                 groupName.Equals(_nacosRegistryCenterOptions.ServerGroupName))
             {
                 var serverDescriptors =
-                    await _serverRegisterProvider.GetServerDescriptor(instances);
-                foreach (var serverDescriptor in serverDescriptors)
-                {
-                    _serverManager.Update(serverDescriptor);
-                }
+                    await _serverRegisterProvider.GetServerDescriptors(instances);
+                _serverManager.UpdateAll(serverDescriptors);
             }
         }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -81,6 +82,8 @@ namespace Silky.RegistryCenter.Consul
 
             var allServerInfos = allServerInstances.GroupBy(p => p.Service);
 
+
+            var serverDescriptors = new List<ServerDescriptor>();
             foreach (var serverInfo in allServerInfos)
             {
                 var serverInstances = serverInfo.ToList();
@@ -92,8 +95,10 @@ namespace Silky.RegistryCenter.Consul
                 }
 
                 var serverDescriptor = await _serverConverter.Convert(serverInfo.Key, serverInstances.ToArray());
-                _serverManager.Update(serverDescriptor);
+                serverDescriptors.Add(serverDescriptor);
             }
+
+            _serverManager.UpdateAll(serverDescriptors.ToArray());
         }
 
         protected override async Task RegisterServerToServiceCenter(ServerDescriptor serverDescriptor)

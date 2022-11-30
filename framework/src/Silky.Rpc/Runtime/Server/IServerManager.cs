@@ -10,6 +10,8 @@ namespace Silky.Rpc.Runtime.Server
     public interface IServerManager
     {
         void Update([NotNull] ServerDescriptor serverDescriptor);
+        
+        void UpdateAll([NotNull] ServerDescriptor[] serverDescriptors);
 
         void Update([NotNull] IServer server);
 
@@ -38,5 +40,6 @@ namespace Silky.Rpc.Runtime.Server
         event OnUpdateRpcEndpoint OnUpdateRpcEndpoint;
         
         IChangeToken GetChangeToken();
+        
     }
 }
