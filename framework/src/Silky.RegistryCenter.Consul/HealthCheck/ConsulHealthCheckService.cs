@@ -41,6 +41,7 @@ public class ConsulHealthCheckService : IHealthCheckService
             }
             else if (healthCheck.Status.Equals(HealthStatus.Critical))
             {
+                unHealthServiceIds.Add(healthCheck.ServiceID);
                 unHealthCount += 1;
             }
 
@@ -48,7 +49,6 @@ public class ConsulHealthCheckService : IHealthCheckService
             if (unHealthCount >= _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving)
             {
                 await consulClient.Agent.ServiceDeregister(healthCheck.ServiceID);
-                unHealthServiceIds.Add(healthCheck.ServiceID);
                 _serverInstanceUnHealthCache.TryRemove(healthCheck.ServiceID, out _);
             }
         }
