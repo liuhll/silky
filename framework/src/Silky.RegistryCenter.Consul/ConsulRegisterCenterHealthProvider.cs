@@ -20,7 +20,7 @@ namespace Silky.RegistryCenter.Consul
             var registryCenterHealthResult = new Dictionary<string, RegistryCenterHealthCheckModel>();
             var consulServerAddress = _consulRegistryCenterOptions.Address.ToString();
 
-            if (UrlCheck.UrlIsValid(consulServerAddress, out var exMessage))
+            if (UrlUtil.IsHealth(consulServerAddress, out var exMessage))
             {
                 registryCenterHealthResult.Add(consulServerAddress, new RegistryCenterHealthCheckModel(true));
             }

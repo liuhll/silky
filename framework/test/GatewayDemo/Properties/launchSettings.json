@@ -14,10 +14,11 @@
       "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "index.html",
-      "applicationUrl": "http://127.0.0.1:8002;https://127.0.0.1:8001",
+      "applicationUrl": "http://localhost:8002;https://localhost:8001",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS":"http://+:8002;https://+:8001"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://[::]:8002;https://[::]:8001"
       }
     }
   }

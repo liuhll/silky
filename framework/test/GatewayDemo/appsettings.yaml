@@ -47,9 +47,9 @@ gateway:
 healthChecksUI:
   healthChecks:
     - name: silkyrpc
-      uri: http://127.0.0.1:8002/silkyrpc/healthz
+      uri: http://localhost:8002/silkyrpc/healthz
     - name: silkygateway
-      uri: http://127.0.0.1:8002/silkygateway/healthz
+      uri: http://localhost:8002/silkygateway/healthz
   evaluationTimeinSeconds: 30
   minimumSecondsBetweenFailureNotifications: 60
 governance:

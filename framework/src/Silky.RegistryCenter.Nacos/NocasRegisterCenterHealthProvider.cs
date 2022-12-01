@@ -21,7 +21,7 @@ namespace Silky.RegistryCenter.Nacos
             var nocasServerAddresses = _nacosRegistryCenterOptions.ServerAddresses;
             foreach (var nocasServerAddress in nocasServerAddresses)
             {
-                if (UrlCheck.UrlIsValid(nocasServerAddress, out var exMessage))
+                if (UrlUtil.IsHealth(nocasServerAddress, out var exMessage))
                 {
                     registryCenterHealthResult.Add(nocasServerAddress, new RegistryCenterHealthCheckModel(true));
                 }

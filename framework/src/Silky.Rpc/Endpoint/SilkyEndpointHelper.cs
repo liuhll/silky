@@ -12,6 +12,7 @@ using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint.Descriptor;
+using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Endpoint
 {
@@ -36,7 +37,7 @@ namespace Silky.Rpc.Endpoint
             var result = hostAddress;
             if ((!IsValidAddress(hostAddress) && !IsLocalHost(hostAddress)) || IsAnyHost(hostAddress))
             {
-                result = GetAnyHostIp();
+                result = HostAddressUtil.GetLocalHostAnyIp();
             }
 
             _ = _ipCache.TryAdd($"HostIp_{hostAddress}", result);
@@ -59,62 +60,15 @@ namespace Silky.Rpc.Endpoint
                 return null;
             }
 
-            var addressDescriptor = ParseRpcEndpointDescriptor(address);
+            var addressDescriptor = ParserSilkyEndpoint(address);
             return addressDescriptor;
         }
 
-        private static ISilkyEndpoint ParseRpcEndpointDescriptor(string address)
+        private static ISilkyEndpoint ParserSilkyEndpoint(string address)
         {
-            var addressSegments = address.Split("://");
-            var scheme = addressSegments.First();
-            var url = addressSegments.Last();
-            var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(scheme);
-
-            string host;
-
-            if (url.Contains("+") || url.Contains("[::]") || url.Contains("*") || url.Equals("0.0.0.0"))
-            {
-                host = GetAnyHostIp();
-            }
-            else
-            {
-                var domainAndPort = url.Split(":");
-                host = domainAndPort[0];
-            }
-
-            var port = url.Split(":").Last().To<int>();
-            return new SilkyEndpoint(host, port, serviceProtocol);
-        }
-
-        private static string GetAnyHostIp()
-        {
-            var result = "";
-            var nics = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (NetworkInterface adapter in nics)
-            {
-                if (adapter.OperationalStatus != OperationalStatus.Up)
-                    continue;
-                IPInterfaceProperties pix = adapter.GetIPProperties();
-                if (pix.GatewayAddresses.Count == 0)
-                    continue;
-                UnicastIPAddressInformationCollection ipCollection = pix.UnicastAddresses;
-                foreach (UnicastIPAddressInformation ipaddr in ipCollection)
-                {
-                    if (ipaddr.Address.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        result = ipaddr.Address.ToString();
-                        break;
-                    }
-                }
-            }
-
-            if (!result.IsNullOrEmpty())
-            {
-                return result;
-            }
-
-            return Dns.GetHostEntry(Dns.GetHostName()).AddressList
-                .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
+            var urlInfo = UrlUtil.Parser(address);
+            var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(urlInfo.Item1);
+            return new SilkyEndpoint(urlInfo.Item2, urlInfo.Item3, serviceProtocol);
         }
 
         public static ISilkyEndpoint GetLocalRpcEndpoint()
@@ -147,7 +101,7 @@ namespace Silky.Rpc.Endpoint
 
         public static ISilkyEndpoint GetEndpoint(int port, ServiceProtocol serviceProtocol)
         {
-            var host = GetIp(GetAnyHostIp());
+            var host = GetIp(HostAddressUtil.GetLocalHostAnyIp());
             var address = new SilkyEndpoint(host, port, serviceProtocol);
             return address;
         }
