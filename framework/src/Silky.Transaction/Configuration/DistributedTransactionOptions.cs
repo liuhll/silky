@@ -1,5 +1,4 @@
-﻿using Silky.Lock;
-using Silky.Transaction.Abstraction;
+﻿using Silky.Transaction.Abstraction;
 
 namespace Silky.Transaction.Configuration
 {

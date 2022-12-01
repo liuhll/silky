@@ -1,7 +1,6 @@
 ﻿using Silky.Caching.StackExchangeRedis;
 using Silky.Core.Modularity;
 using Silky.DotNetty.Protocol.Tcp;
-using Silky.Lock.Redis;
 using Silky.Validation.Fluent;
 using Silky.Rpc.CachingInterceptor;
 using Silky.Rpc.Monitor;
@@ -23,8 +22,7 @@ namespace Microsoft.Extensions.Hosting
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
         typeof(RedisTransactionRepositoryModule),
-        typeof(SwaggerGenModule),
-        typeof(RedisLockModule)
+        typeof(SwaggerGenModule)
     )]
     public abstract class GeneralHostModule : HostAgentModule
     {

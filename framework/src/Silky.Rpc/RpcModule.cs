@@ -4,8 +4,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Medallion.Threading;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
@@ -79,11 +77,7 @@ namespace Silky.Rpc
                 throw new SilkyException(
                     $"You did not specify the dependent {registryCenterType} service registry module");
             }
-
-            return !context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IDistributedLockProvider))
-                ? throw new SilkyException(
-                    "You must specify the implementation of IDistributedLockProvider in the Silky.RegistryCenter project of the distributed transaction")
-                : Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         public override async Task PostInitialize(ApplicationInitializationContext context)

@@ -8,7 +8,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
     </ItemGroup>
 
     <ItemGroup>

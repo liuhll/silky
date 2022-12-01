@@ -1,5 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using Silky.Caching.StackExchangeRedis;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.RegistryCenter.Consul;
@@ -9,7 +11,8 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class HostAgentCollectionExtensions
     {
-        internal static IServiceCollection AddDefaultRegistryCenter(this IServiceCollection services, string registerType)
+        internal static IServiceCollection AddDefaultRegistryCenter(this IServiceCollection services,
+            string registerType, IConfiguration configuration)
         {
             switch (registerType.ToLower())
             {
@@ -21,6 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     break;
                 case "consul":
                     services.AddConsulRegistryCenter();
+                    services.AddRedisCaching(configuration.GetRedisCacheOptions());
                     break;
                 default:
                     throw new SilkyException(

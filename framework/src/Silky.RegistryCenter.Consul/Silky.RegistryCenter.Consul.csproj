@@ -9,11 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Consul" Version="1.6.10.3" />
+        <PackageReference Include="DistributedLock" Version="$(DistributedLockVersion)" />
     </ItemGroup>
 </Project>

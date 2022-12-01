@@ -27,7 +27,7 @@ public abstract class HostAgentModule : SilkyModule
                 throw new SilkyException("You did not specify the service registry type");
             }
 
-            services.AddDefaultRegistryCenter(registerType);
+            services.AddDefaultRegistryCenter(registerType,configuration);
         }
     }
     

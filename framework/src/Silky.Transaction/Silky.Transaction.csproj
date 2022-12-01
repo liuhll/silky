@@ -4,10 +4,11 @@
         <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
         <Description>Encapsulating the basic package of Silky distributed transaction</Description>
     </PropertyGroup>
-
+    <ItemGroup>
+        <PackageReference Include="DistributedLock" Version="$(DistributedLockVersion)" />
+    </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Caching\Silky.Caching.csproj" />
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
         <ProjectReference Include="..\Silky.Transaction.Abstraction\Silky.Transaction.Abstraction.csproj" />
     </ItemGroup>

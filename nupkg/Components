@@ -17,8 +17,7 @@ src/Silky.Http.MiniProfiler
 src/Silky.Http.RateLimit
 src/Silky.Http.Swagger
 src/Silky.Jwt
-src/Silky.Lock
-src/Silky.Lock.Redis
+src/Silky.DistributedLock.Redis
 src/Silky.Logging.Serilog
 src/Silky.ObjectMapper.AutoMapper
 src/Silky.ObjectMapper.Mapster

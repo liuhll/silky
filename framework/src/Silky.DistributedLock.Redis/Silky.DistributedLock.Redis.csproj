@@ -5,7 +5,9 @@
         <Description>Silky DistributedLock For Redis</Description>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Silky.Lock\Silky.Lock.csproj" />
+        <PackageReference Include="DistributedLock" Version="$(DistributedLockVersion)" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="..\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj" />
     </ItemGroup>
 </Project>

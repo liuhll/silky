@@ -3,9 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Silky.Caching.StackExchangeRedis;
 using Silky.Core.Modularity;
 
-namespace Silky.Lock.Redis;
+namespace Silky.DistributedLock.Redis;
 
-[DependsOn(typeof(LockModule))]
 public class RedisLockModule : SilkyModule
 {
     public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)

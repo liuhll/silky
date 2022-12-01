@@ -6,10 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Caching;
 using Silky.Castle;
-using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
-using Silky.Lock;
 using Silky.Rpc;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Configuration;
@@ -18,7 +16,7 @@ using Silky.Transaction.Schedule;
 
 namespace Silky.Transaction
 {
-    [DependsOn(typeof(RpcModule), typeof(LockModule), typeof(CachingModule))]
+    [DependsOn(typeof(RpcModule), typeof(CachingModule))]
     public class TransactionModule : SilkyModule
     {
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
