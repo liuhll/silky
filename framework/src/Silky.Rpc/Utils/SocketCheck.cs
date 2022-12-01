@@ -26,7 +26,7 @@ namespace Silky.Rpc.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{host}: {port} connection is abnormal, reason: {ex.Message}");
+                _logger.LogError("{Host}: {Port} connection is abnormal, reason: {ExMessage}", host, port, ex.Message);
                 return false;
             }
             finally
@@ -50,7 +50,7 @@ namespace Silky.Rpc.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{ipEndPoint}Connection abnormal, reason=>{ex.Message}");
+                _logger.LogError("{IpEndPoint}Connection abnormal, reason=>{ExMessage}", ipEndPoint, ex.Message);
                 return false;
             }
             finally
@@ -74,7 +74,7 @@ namespace Silky.Rpc.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{iPAddress.ToString()}:{port}Connection abnormal, reason=>{ex.Message}");
+                _logger.LogError("{S}:{Port}Connection abnormal, reason=>{ExMessage}", iPAddress.ToString(), port, ex.Message);
                 return false;
             }
             finally

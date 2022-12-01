@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Descriptor;
@@ -11,22 +12,27 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
     public class DefaultServerHealthCheck : IServerHealthCheck
     {
         private readonly IAppointAddressInvoker _appointAddressInvoker;
+        private readonly ILogger<DefaultServerHealthCheck> _logger;
 
-        public DefaultServerHealthCheck(IAppointAddressInvoker appointAddressInvoker)
+        public DefaultServerHealthCheck(IAppointAddressInvoker appointAddressInvoker,
+            ILogger<DefaultServerHealthCheck> logger)
         {
             _appointAddressInvoker = appointAddressInvoker;
+            _logger = logger;
         }
 
-        private Task<bool> IsHealth(string address)
+        private async Task<bool> IsHealth(string address)
         {
             try
             {
                 return
-                    _appointAddressInvoker.Invoke<bool>(address, HealthCheckConstants.HealthCheckServiceEntryId, Array.Empty<object>());
+                    await _appointAddressInvoker.Invoke<bool>(address, HealthCheckConstants.HealthCheckServiceEntryId,
+                        Array.Empty<object>());
             }
             catch (Exception e)
             {
-                return Task.FromResult<bool>(false);
+                _logger.LogWarning("Address[{0}] UnHealth, exception messagess {1}", address, e.Message);
+                return false;
             }
         }
 
@@ -51,7 +57,8 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
 
             if (silkyEndpointDescriptor.ServiceProtocol.IsHttp())
             {
-                return Task.FromResult<bool>(UrlCheck.UrlIsValid($"{silkyEndpointDescriptor.ServiceProtocol}://{address}",
+                return Task.FromResult<bool>(UrlCheck.UrlIsValid(
+                    $"{silkyEndpointDescriptor.ServiceProtocol}://{address}",
                     out var _));
             }
 
