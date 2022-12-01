@@ -5,7 +5,7 @@ using Silky.Core.Modularity;
 
 namespace Silky.DistributedLock.Redis;
 
-public class RedisLockModule : SilkyModule
+public class RedisDistributedLockModule : SilkyModule
 {
     public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {

@@ -24,7 +24,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     break;
                 case "consul":
                     services.AddConsulRegistryCenter();
-                    services.AddRedisCaching(configuration.GetRedisCacheOptions());
                     break;
                 default:
                     throw new SilkyException(

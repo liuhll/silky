@@ -1,6 +1,8 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Medallion.Threading;
 using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
@@ -19,17 +21,23 @@ namespace Silky.RegistryCenter.Nacos
         private readonly IServiceProvider _serviceProvider;
         private readonly IServerRegisterProvider _serverRegisterProvider;
 
+        private ConcurrentDictionary<string, ServerListener> m_serverListeners = new();
+        private IDistributedLockProvider _distributedLockProvider;
+
+
         public NacosServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
             IServiceProvider serviceProvider,
             INacosNamingService nacosNamingService,
             IOptionsMonitor<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
-            IServerRegisterProvider serverRegisterProvider)
+            IServerRegisterProvider serverRegisterProvider,
+            IDistributedLockProvider distributedLockProvider)
             : base(serverManager,
                 serverProvider)
         {
             _nacosNamingService = nacosNamingService;
             _serverRegisterProvider = serverRegisterProvider;
+            _distributedLockProvider = distributedLockProvider;
             _serviceProvider = serviceProvider;
             _nacosRegistryCenterOptions = nacosRegistryCenterOptions.CurrentValue;
         }
@@ -50,38 +58,50 @@ namespace Silky.RegistryCenter.Nacos
 
         protected override async Task CacheServers()
         {
-            var serverListener = new ServerListener(this);
-            await _nacosNamingService.Subscribe(_nacosRegistryCenterOptions.ServiceName,
-                _nacosRegistryCenterOptions.ServerGroupName,
-                serverListener);
-        }
-
-
-        internal async Task UpdateServer(string serviceName, string groupName, List<Instance> instances)
-        {
-            if (serviceName.Equals(_nacosRegistryCenterOptions.ServiceName) &&
-                groupName.Equals(_nacosRegistryCenterOptions.ServerGroupName))
+            var serverNames = await _serverRegisterProvider.GetAllServerNames();
+            foreach (var serverName in serverNames)
             {
-                var serverDescriptors =
-                    await _serverRegisterProvider.GetServerDescriptors(instances);
-                _serverManager.UpdateAll(serverDescriptors);
+                await CreateServerListener(serverName);
             }
         }
 
         protected override async Task RegisterServerToServiceCenter(ServerDescriptor serverDescriptor)
         {
-            await _serviceProvider.PublishServices(serverDescriptor.HostName, serverDescriptor.Services);
-            var instance = serverDescriptor.GetInstance();
-
-            await _nacosNamingService.RegisterInstance(
-                _nacosRegistryCenterOptions.ServiceName,
-                _nacosRegistryCenterOptions.ServerGroupName,
-                instance);
+            await _serverRegisterProvider.AddServer();
+            await using (await _distributedLockProvider.AcquireLockAsync(
+                             $"RegisterServerToServiceCenterForNacos:{serverDescriptor.HostName}"))
+            {
+                await _serviceProvider.PublishServices(serverDescriptor.HostName, serverDescriptor.Services);
+                var instance = serverDescriptor.GetInstance();
+                await _nacosNamingService.RegisterInstance(
+                    serverDescriptor.HostName,
+                    _nacosRegistryCenterOptions.ServerGroupName,
+                    instance);
+            }
         }
 
 
         protected override async Task RemoveServiceCenterExceptRpcEndpoint(IServer server)
         {
+        }
+
+        internal async Task CreateServerListener(string serverName)
+        {
+            if (!m_serverListeners.ContainsKey(serverName))
+            {
+                var serverListener = new ServerListener(this);
+                m_serverListeners.TryAdd(serverName, serverListener);
+                await _nacosNamingService.Subscribe(serverName, _nacosRegistryCenterOptions.ServerGroupName,
+                    serverListener);
+            }
+        }
+
+
+        internal async Task UpdateServer(string serverName, List<Instance> instances)
+        {
+            var serverDescriptor =
+                await _serverRegisterProvider.GetServerDescriptor(serverName, instances);
+            _serverManager.Update(serverDescriptor);
         }
     }
 }

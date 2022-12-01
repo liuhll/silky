@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Medallion.Threading;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Nacos.V2;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Swagger.Abstraction;
 using Silky.Swagger.Gen.Serialization;

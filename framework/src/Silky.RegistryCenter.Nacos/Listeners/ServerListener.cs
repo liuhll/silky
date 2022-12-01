@@ -25,9 +25,10 @@ namespace Silky.RegistryCenter.Nacos.Listeners
             {
                 return;
             }
+
             using (await SyncSemaphore.LockAsync())
             {
-                await _serverRegister.UpdateServer(instancesChangeEvent.ServiceName, instancesChangeEvent.GroupName,
+                await _serverRegister.UpdateServer(instancesChangeEvent.ServiceName,
                     instancesChangeEvent.Hosts);
             }
         }
