@@ -30,20 +30,12 @@ namespace Silky.SkyApm.Agent.Configuration
 
             builder.AddSkyWalkingDefaultConfig(_configuration);
 
-            builder.AddJsonFile("appsettings.json", true)
-                .AddJsonFile($"appsettings.{_environmentProvider.EnvironmentName}.json", true);
-
             builder.AddJsonFile("skywalking.json", true)
                 .AddJsonFile($"skywalking.{_environmentProvider.EnvironmentName}.json", true);
 
             builder.AddJsonFile("skyapm.json", true)
                 .AddJsonFile($"skyapm.{_environmentProvider.EnvironmentName}.json", true);
 
-            builder.AddYamlFile("appsettings.yml", optional: true)
-                .AddYamlFile($"appsettings.{_environmentProvider.EnvironmentName}.yml", optional: true);
-
-            builder.AddYamlFile("appsettings.yaml", optional: true)
-                .AddYamlFile($"appsettings.{_environmentProvider.EnvironmentName}.yaml", optional: true);
 
             if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(CONFIG_FILE_PATH_COMPATIBLE)))
             {

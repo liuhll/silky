@@ -18,7 +18,7 @@ namespace Silky.Rpc.SkyApm.Configuration
             var defaultConfig = new Dictionary<string, string>
             {
                 { "SkyWalking:Namespace", configuration?.GetSection("SkyWalking:Namespace").Value ?? string.Empty },
-                { "SkyWalking:ServiceName", configuration?.GetSection("SkyWalking:ServiceName").Value ?? "My_Service" },
+                { "SkyWalking:ServiceName", configuration?.GetSection("SkyWalking:ServiceName").Value ?? EngineContext.Current.HostName },
                 {
                     "Skywalking:ServiceInstanceName",
                     configuration?.GetSection("SkyWalking:ServiceInstanceName").Value ??
