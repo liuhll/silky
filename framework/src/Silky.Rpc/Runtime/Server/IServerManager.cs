@@ -27,7 +27,7 @@ namespace Silky.Rpc.Runtime.Server
 
         IServer[]? Servers { get; }
 
-        ISilkyEndpoint[]? GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
+        ISilkyEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
 
         IServer GetSelfServer();
 

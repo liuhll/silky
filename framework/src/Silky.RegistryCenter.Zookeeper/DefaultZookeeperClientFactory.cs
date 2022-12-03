@@ -82,7 +82,7 @@ namespace Silky.RegistryCenter.Zookeeper
                         case Watcher.Event.KeeperState.Disconnected:
                         case Watcher.Event.KeeperState.Expired:
                             if (client.WaitForKeeperState(Watcher.Event.KeeperState.SyncConnected,
-                                zookeeperClientOptions.ConnectionTimeout))
+                                    zookeeperClientOptions.ConnectionTimeout))
                             {
                                 if (healthCheckModel.HealthType == HealthType.Disconnected)
                                 {

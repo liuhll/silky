@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
+using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
@@ -28,7 +29,8 @@ namespace Silky.Rpc.Runtime.Server
         private readonly ConcurrentDictionary<(string, HttpMethod), ServiceEntryDescriptor>
             _serviceEntryDescriptorCacheForApi = new();
 
-        private readonly ConcurrentDictionary<string, ISilkyEndpoint[]?> _rpcRpcEndpointCache = new();
+
+        private readonly ConcurrentDictionary<string, ISilkyEndpoint[]> _rpcRpcEndpointCache = new();
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
 
         private readonly object _lock;
@@ -41,7 +43,7 @@ namespace Silky.Rpc.Runtime.Server
         public DefaultServerManager(IRpcEndpointMonitor rpcEndpointMonitor)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
-            _rpcEndpointMonitor.OnRemoveRpcEndpoint += RemoveRpcEndpointHandler;
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += RemoveSilkyEndpointHandler;
             _rpcEndpointMonitor.OnStatusChange += HealthChangeHandler;
             Logger = NullLogger<DefaultServerManager>.Instance;
 
@@ -117,24 +119,24 @@ namespace Silky.Rpc.Runtime.Server
 
         private async Task HealthChangeHandler(ISilkyEndpoint silkyEndpoint, bool isHealth)
         {
-            RemoveRpcEndpointCache(silkyEndpoint);
+            RemoveSilkyEndpointCache(silkyEndpoint);
             if (isHealth)
             {
                 silkyEndpoint.InitFuseTimes();
             }
         }
 
-        private void RemoveRpcEndpointCache(ISilkyEndpoint silkyEndpoint)
+        private void RemoveSilkyEndpointCache(ISilkyEndpoint silkyEndpoint)
         {
             var needRemoveRpcEndpointKvs =
-                _rpcRpcEndpointCache.Where(p => p.Value.Any(q => q.Host == silkyEndpoint.Host));
+                _rpcRpcEndpointCache.Where(p => p.Value.Any(q => q.GetAddress() == silkyEndpoint.GetAddress() || q.Host == silkyEndpoint.Host));
             foreach (var needRemoveRpcEndpointKv in needRemoveRpcEndpointKvs)
             {
                 _rpcRpcEndpointCache.TryRemove(needRemoveRpcEndpointKv.Key, out _);
             }
         }
 
-        private Task RemoveRpcEndpointHandler(ISilkyEndpoint silkyEndpoint)
+        private Task RemoveSilkyEndpointHandler(ISilkyEndpoint silkyEndpoint)
         {
             var needRemoveEndpointServerRoutes =
                 Servers?.Where(p => p.Endpoints.Any(q => q.Host == silkyEndpoint.Host));
@@ -151,7 +153,7 @@ namespace Silky.Rpc.Runtime.Server
                 OnRemoveRpcEndpoint?.Invoke(needRemoveEndpointServerRoute.HostName, silkyEndpoint);
             }
 
-            RemoveRpcEndpointCache(silkyEndpoint);
+            RemoveSilkyEndpointCache(silkyEndpoint);
             return Task.CompletedTask;
         }
 
@@ -189,7 +191,7 @@ namespace Silky.Rpc.Runtime.Server
                 foreach (var rpcEndpoint in server.Endpoints)
                 {
                     _rpcEndpointMonitor.Monitor(rpcEndpoint);
-                    RemoveRpcEndpointCache(rpcEndpoint);
+                    RemoveSilkyEndpointCache(rpcEndpoint);
                 }
 
                 OnUpdateRpcEndpoint?.Invoke(server.HostName, server.Endpoints.ToArray());
@@ -237,7 +239,7 @@ namespace Silky.Rpc.Runtime.Server
                 foreach (var rpcEndpoint in server.Endpoints)
                 {
                     _rpcEndpointMonitor.Monitor(rpcEndpoint);
-                    RemoveRpcEndpointCache(rpcEndpoint);
+                    RemoveSilkyEndpointCache(rpcEndpoint);
                 }
 
                 OnUpdateRpcEndpoint?.Invoke(server.HostName, server.Endpoints.ToArray());
@@ -299,29 +301,41 @@ namespace Silky.Rpc.Runtime.Server
 
         public IServer[]? Servers => _serverCache?.Values.ToArray();
 
-        public ISilkyEndpoint[]? GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol)
+        public ISilkyEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol)
         {
-            if (_rpcRpcEndpointCache.TryGetValue(serviceId, out ISilkyEndpoint[]? endpoints))
+            ISilkyEndpoint[] CacheSilkyEndpoints()
             {
+                var endpoints = Servers?.Where(p =>
+                        p.Services.Any(q => q.Id == serviceId))
+                    .SelectMany(p => p.Endpoints.Where(e => e.ServiceProtocol == serviceProtocol))
+                    .Where(p => p.Enabled)
+                    .ToArray();
+                if (endpoints == null)
+                {
+                    return Array.Empty<ISilkyEndpoint>();
+                }
+
+                if (endpoints.Any())
+                {
+                    _rpcRpcEndpointCache.AddOrUpdate(serviceId, endpoints, (k, v) => v = endpoints);
+                }
+
                 return endpoints;
             }
 
-            endpoints = Servers?.Where(p =>
-                    p.Services.Any(q => q.Id == serviceId))
-                .SelectMany(p => p.Endpoints.Where(e => e.ServiceProtocol == serviceProtocol))
-                .Where(p => p.Enabled)
-                .ToArray();
-            if (endpoints == null)
+            if (_rpcRpcEndpointCache.TryGetValue(serviceId, out var endpoints))
             {
-                return Array.Empty<ISilkyEndpoint>();
+                var remoteAddress = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.SelectedServerEndpoint);
+                if (!remoteAddress.IsNullOrEmpty() &&
+                    !endpoints.Any(e => e.GetAddress().Equals(remoteAddress) && e.Enabled))
+                {
+                    return CacheSilkyEndpoints();
+                }
+
+                return endpoints;
             }
 
-            if (endpoints.Any())
-            {
-                _rpcRpcEndpointCache.TryAdd(serviceId, endpoints);
-            }
-
-            return endpoints;
+            return CacheSilkyEndpoints();
         }
 
         public ServiceDescriptor GetServiceDescriptor(string serviceId)

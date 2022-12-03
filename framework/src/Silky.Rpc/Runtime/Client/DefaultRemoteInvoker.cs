@@ -77,6 +77,7 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     filter.OnActionExecuting(remoteInvokeMessage);
                 }
+
                 var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 invokeResult = await client.SendAsync(remoteInvokeMessage, messageId);
                 foreach (var filter in filters)
@@ -124,7 +125,7 @@ namespace Silky.Rpc.Runtime.Client
             if (rpcEndpoints == null || !rpcEndpoints.Any())
             {
                 throw new NotFindServiceRouteException(
-                    $"The service routing could not be found via [{remoteInvokeMessage.ServiceEntryId}]");
+                    $"The service routing could not be found via [{remoteInvokeMessage.ServiceId}]");
             }
 
             return rpcEndpoints;

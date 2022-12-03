@@ -20,6 +20,9 @@
 
     <ItemGroup>
         <PackageReference Include="ZooKeeperNetEx" Version="3.4.12.4" />
+	</ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
     </ItemGroup>
 
 </Project>

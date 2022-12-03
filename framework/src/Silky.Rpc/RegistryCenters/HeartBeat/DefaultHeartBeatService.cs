@@ -9,7 +9,7 @@ namespace Silky.Rpc.RegistryCenters.HeartBeat
 {
     public class DefaultHeartBeatService : IHeartBeatService
     {
-        private Timer _heartBeatTimer;
+        private Timer _heartBeatTimer = null;
         private readonly ILogger<DefaultHeartBeatService> _logger;
 
         public DefaultHeartBeatService(ILogger<DefaultHeartBeatService> logger)

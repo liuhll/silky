@@ -22,8 +22,7 @@ namespace Silky.Zookeeper.Implementation
     {
         #region Field
 
-        private readonly ConcurrentDictionary<string, NodeEntry> _nodeEntries =
-            new ConcurrentDictionary<string, NodeEntry>();
+        private readonly ConcurrentDictionary<string, NodeEntry> _nodeEntries = new();
 
         private ConnectionStateChangeHandler _connectionStateChangeHandler;
 

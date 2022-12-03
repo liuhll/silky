@@ -11,6 +11,6 @@
         <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Transaction\Silky.SkyApm.Diagnostics.Transaction.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="1.3.0" />
+        <PackageReference Include="SkyAPM.Agent.GeneralHost" Version="$(SkyAPMVersion)"  />
     </ItemGroup>
 </Project>

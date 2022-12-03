@@ -9,7 +9,4 @@
         <ProjectReference Include="..\Silky.SkyApm.Diagnostics.Abstraction\Silky.SkyApm.Diagnostics.Abstraction.csproj" />
         <ProjectReference Include="..\Silky.Transaction.Abstraction\Silky.Transaction.Abstraction.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="SkyAPM.Abstractions" Version="1.3.0" />
-    </ItemGroup>
 </Project>

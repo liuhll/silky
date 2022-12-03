@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
 
 namespace Silky.Rpc.Utils

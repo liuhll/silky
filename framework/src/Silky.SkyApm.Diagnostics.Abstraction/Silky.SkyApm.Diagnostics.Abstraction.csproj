@@ -6,9 +6,9 @@
         <Description>Silky Abstraction SkyApm Diagnostics</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="SkyAPM.Abstractions" Version="1.3.0" />
-        <PackageReference Include="SkyAPM.Core" Version="1.3.0" />
-        <PackageReference Include="SkyAPM.Utilities.DependencyInjection" Version="1.3.0" />
+        <PackageReference Include="SkyAPM.Abstractions" Version="$(SkyAPMVersion)" />
+        <PackageReference Include="SkyAPM.Core" Version="$(SkyAPMVersion)" />
+        <PackageReference Include="SkyAPM.Utilities.DependencyInjection" Version="$(SkyAPMVersion)" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />

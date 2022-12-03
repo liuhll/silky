@@ -65,7 +65,7 @@ namespace Silky.Rpc.Endpoint
 
         public override string ToString()
         {
-            return string.Concat(ServiceProtocol.ToString().ToLower(), "://", SilkyEndpointHelper.GetIp(Host), ":",
+            return string.Concat(ServiceProtocol.ToString().ToLower(), "://", Host, ":",
                 Port.ToString());
         }
 

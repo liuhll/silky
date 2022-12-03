@@ -95,7 +95,7 @@ namespace Silky.Rpc.Runtime.Server
             return Equals(model1, model2);
         }
 
-        public static bool operator !=(ServiceEntryDescriptor model1, ServiceEntryDescriptor model2)
+        public static bool operator !=(ServiceEntryDescriptor? model1, ServiceEntryDescriptor? model2)
         {
             return !Equals(model1, model2);
         }

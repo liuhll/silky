@@ -30,10 +30,14 @@ namespace Silky.Rpc.Utils
             var address = addressSegments.Last();
             var domainAndPort = address.TrimEnd('/').Split(":");
             string host;
-            if (address.Contains("+") || address.Contains("[::]") || address.Contains("*") ||
+            if (address.Contains("+") || address.Contains("*") ||
                 address.Contains("0.0.0.0"))
             {
                 host = HostAddressUtil.GetLocalHostAnyIp();
+            }
+            else if (address.Contains("[::]")) 
+            {
+                host = "localhost";
             }
             else
             {
@@ -41,9 +45,9 @@ namespace Silky.Rpc.Utils
             }
 
             int port;
-            if (domainAndPort.Length == 2)
+            if (domainAndPort.Length >= 2)
             {
-                port = domainAndPort[1].To<int>();
+                port = domainAndPort.Last().To<int>();
             }
             else
             {

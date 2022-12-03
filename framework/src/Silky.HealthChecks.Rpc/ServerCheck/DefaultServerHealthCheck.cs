@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silky.Core.Runtime.Rpc;
@@ -36,34 +37,60 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
             }
         }
 
-        public Task<bool> IsHealth(ISilkyEndpoint silkyEndpoint)
+        public async Task<bool> IsHealth(ISilkyEndpoint silkyEndpoint)
         {
             var address = silkyEndpoint.GetAddress();
             if (silkyEndpoint.ServiceProtocol == ServiceProtocol.Rpc)
             {
-                return IsHealth(address);
+                return await IsHealth(address);
             }
 
-            return Task.FromResult<bool>(SocketCheck.TestConnection(silkyEndpoint.Host, silkyEndpoint.Port));
+            if (silkyEndpoint.ServiceProtocol.IsHttp())
+            {
+                if (await IsHealthGateway(silkyEndpoint.ToString()))
+                {
+                    return true;
+                }
+            }
+
+            return SocketCheck.TestConnection(silkyEndpoint.Host, silkyEndpoint.Port);
         }
 
-        public Task<bool> IsHealth(SilkyEndpointDescriptor silkyEndpointDescriptor)
+        private async Task<bool> IsHealthGateway(string url)
+        {
+            try
+            {
+                using var httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri(url);
+                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+                await httpClient.GetAsync("/api/silky/health");
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning($"address is unhealth, reason:{e.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> IsHealth(SilkyEndpointDescriptor silkyEndpointDescriptor)
         {
             var address = silkyEndpointDescriptor.GetAddress();
             if (silkyEndpointDescriptor.ServiceProtocol == ServiceProtocol.Rpc)
             {
-                return IsHealth(address);
+                return await IsHealth(address);
             }
 
             if (silkyEndpointDescriptor.ServiceProtocol.IsHttp())
             {
-                return Task.FromResult<bool>(UrlUtil.IsHealth(
-                    $"{silkyEndpointDescriptor.ServiceProtocol}://{address}",
-                    out var _));
+                if (await IsHealthGateway(silkyEndpointDescriptor.ToString()))
+                {
+                    return true;
+                }
             }
 
-            return Task.FromResult<bool>(SocketCheck.TestConnection(silkyEndpointDescriptor.Host,
-                silkyEndpointDescriptor.Port));
+            return SocketCheck.TestConnection(silkyEndpointDescriptor.Host,
+                silkyEndpointDescriptor.Port);
         }
     }
 }

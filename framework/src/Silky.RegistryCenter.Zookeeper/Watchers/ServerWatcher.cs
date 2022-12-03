@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using org.apache.zookeeper;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
+using Silky.Core.Threading;
 using Silky.Zookeeper;
 
 namespace Silky.RegistryCenter.Zookeeper.Watchers
@@ -14,6 +16,7 @@ namespace Silky.RegistryCenter.Zookeeper.Watchers
         protected string SubDirectoryPath { get; }
         private readonly ZookeeperServerRegister _zookeeperServerRegister;
         private readonly ISerializer _serializer;
+        private SemaphoreSlim SyncSemaphore { get; }
 
         public ServerWatcher(string subDirectoryPath,
             ZookeeperServerRegister zookeeperServerRegister,
@@ -22,6 +25,7 @@ namespace Silky.RegistryCenter.Zookeeper.Watchers
             SubDirectoryPath = subDirectoryPath;
             _zookeeperServerRegister = zookeeperServerRegister;
             _serializer = serializer;
+            SyncSemaphore = new SemaphoreSlim(1, 1);
         }
 
 
@@ -34,27 +38,31 @@ namespace Silky.RegistryCenter.Zookeeper.Watchers
                 nodeData = args.CurrentData.ToArray();
             }
 
-            switch (eventType)
+            using (await SyncSemaphore.LockAsync())
             {
-                case Watcher.Event.EventType.NodeCreated:
-                case Watcher.Event.EventType.NodeDeleted:
-                    break;
-                case Watcher.Event.EventType.NodeDataChanged:
-                    Check.NotNull(nodeData, nameof(nodeData));
-                    if (!nodeData.Any())
-                    {
-                        return;
-                    }
+                switch (eventType)
+                {
+                   
+                    case Watcher.Event.EventType.NodeDeleted:
+                        break;
+                    case Watcher.Event.EventType.NodeCreated:
+                    case Watcher.Event.EventType.NodeDataChanged:
+                        Check.NotNull(nodeData, nameof(nodeData));
+                        if (!nodeData.Any())
+                        {
+                            return;
+                        }
 
-                    var jonString = nodeData.GetString();
-                    var allServers = _serializer.Deserialize<List<string>>(jonString);
-                    foreach (var server in allServers)
-                    {
-                        await _zookeeperServerRegister.CreateSubscribeDataChange(client, server);
-                        await _zookeeperServerRegister.UpdateServerRouteCache(client, server);
-                    }
+                        var jonString = nodeData.GetString();
+                        var allServers = _serializer.Deserialize<List<string>>(jonString);
+                        foreach (var server in allServers)
+                        {
+                            await _zookeeperServerRegister.CreateSubscribeDataChange(client, server);
+                            await _zookeeperServerRegister.UpdateServerRouteCache(client, server);
+                        }
 
-                    break;
+                        break;
+                }
             }
         }
     }
