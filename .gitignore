@@ -264,3 +264,4 @@ package-lock.json
 
 **/logs/*
 !./framework/src/Silky.Http.Dashboard/wwwroot/dist
+!**/test.silky-fk.com.pfx
