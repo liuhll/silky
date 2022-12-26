@@ -35,7 +35,6 @@ namespace Microsoft.Extensions.Hosting
         typeof(RedisCachingModule),
         typeof(TransactionTccModule),
         typeof(RedisTransactionRepositoryModule),
-        typeof(SwaggerGenModule),
         typeof(RedisDistributedLockModule)
     )]
     public abstract class WebHostModule : HostAgentModule
