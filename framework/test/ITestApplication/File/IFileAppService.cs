@@ -17,7 +17,7 @@ public interface IFileAppService
 
     public Task PostFormWithFile(FormWithFile formWithFile);
 
-    public Task<FileResult> Download();
+    public Task<IActionResult> Download();
 }
 
 public class FormWithFile

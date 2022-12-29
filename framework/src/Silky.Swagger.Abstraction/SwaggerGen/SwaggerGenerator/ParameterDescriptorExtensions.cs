@@ -34,7 +34,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
 
         internal static bool IsFromForm(this ParameterDescriptor apiParameter)
         {
-            return apiParameter.From == ParameterFrom.Form;
+            return apiParameter.From == ParameterFrom.Form || apiParameter.From == ParameterFrom.File;
         }
     }
 }

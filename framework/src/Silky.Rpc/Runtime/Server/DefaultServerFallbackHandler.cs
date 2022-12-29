@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
@@ -87,9 +88,13 @@ namespace Silky.Rpc.Runtime.Server
                     var parameters = serviceEntry.ConvertParameters(message.Parameters);
                     result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithAuditingAsync(instance,
                         parameters, serviceEntry);
+                    remoteResultMessage.Result = result;
+                    if (result is FileContentResult)
+                    {
+                        remoteResultMessage.IsFile = true;
+                    }
 
                     remoteResultMessage.StatusCode = StatusCode.Success;
-                    remoteResultMessage.Result = result;
                     remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
                     _fallbackDiagnosticListener.TracingFallbackAfter(fallbackTracingTimestamp,
                         RpcContext.Context.GetMessageId(), serviceEntry.Id, result,

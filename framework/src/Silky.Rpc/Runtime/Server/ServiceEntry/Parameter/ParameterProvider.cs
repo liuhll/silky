@@ -136,7 +136,11 @@ namespace Silky.Rpc.Runtime.Server
                 else if (parameter.IsFormFileType())
                 {
                     parameterDescriptor =
-                        new ParameterDescriptor(ParameterFrom.Form, parameter, index, cacheKeyTemplates);
+                        new ParameterDescriptor(ParameterFrom.File, parameter, index, cacheKeyTemplates);
+                }
+                else if (parameter.HasFileType())
+                {
+                    parameterDescriptor = new ParameterDescriptor(ParameterFrom.Form, parameter, index, cacheKeyTemplates);
                 }
                 else
                 {

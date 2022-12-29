@@ -40,12 +40,18 @@ namespace Silky.Http.Core.Middlewares
             else
             {
                 var serviceEntry = context.GetServiceEntry();
+                var serviceEntryDescriptor = context.GetServiceEntryDescriptor();
                 if (serviceEntry != null && typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType))
+                {
+                    await _next.Invoke(context);
+                }
+                else if (serviceEntryDescriptor != null && serviceEntryDescriptor.IsActionResult)
                 {
                     await _next.Invoke(context);
                 }
                 else
                 {
+                    
                     var originalBodyStream = context.Response.Body;
                     await using var bodyStream = new MemoryStream();
                     try

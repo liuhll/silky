@@ -1,7 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Convertible;
+using Silky.Core.MethodExecutor;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -21,7 +25,6 @@ namespace Silky.Rpc.Runtime.Server
             {
                 return null;
             }
-
             return parameterDescriptor.Type?.GetType() == parameter.GetType()
                 ? parameter
                 : _typeConvertibleService.Convert(parameter, parameterDescriptor.Type);
@@ -45,6 +48,25 @@ namespace Silky.Rpc.Runtime.Server
 
             return parameterValue;
         }
+        
+        
+        public static object GetActualParameter(this ParameterDescriptor parameterDescriptor, object parameter, IList<IFormFile> silkyFiles)
+        {
+            var parameterValue = parameterDescriptor.GetActualParameter(parameter);
+            if (parameterDescriptor.HasFileProp(out var filePropName))
+            {
+                parameterValue.GetType().GetProperty(filePropName)
+                    .SetValue(parameterValue, silkyFiles.Single(p=> p.Name.Equals(filePropName,StringComparison.OrdinalIgnoreCase)));
+            }
+            if (parameterDescriptor.HasFilesProp(out var filesPropName))
+            {
+                var files = new FormFileCollection();
+                files.AddRange(silkyFiles);
+                parameterValue.GetType().GetProperty(filesPropName)
+                    .SetValue(parameterValue, files);
+            }
+            return parameterValue;
+        }
 
         private static bool HasFileProp([NotNull] this ParameterDescriptor parameterDescriptor, out string filePropName)
         {
@@ -53,7 +75,7 @@ namespace Silky.Rpc.Runtime.Server
             filePropName = null;
             foreach (var prop in props)
             {
-                if (prop.PropertyType == typeof(IFormFile))
+                if (typeof(IFormFile).IsAssignableFrom(prop.PropertyType))
                 {
                     hasFileProp = true;
                     filePropName = prop.Name;
@@ -72,7 +94,7 @@ namespace Silky.Rpc.Runtime.Server
             filesPropName = null;
             foreach (var prop in props)
             {
-                if (prop.PropertyType == typeof(IFormFileCollection))
+                if (typeof(IFormFileCollection).IsAssignableFrom(prop.PropertyType))
                 {
                     hasFileProp = true;
                     filesPropName = prop.Name;
@@ -85,8 +107,8 @@ namespace Silky.Rpc.Runtime.Server
 
         public static bool IsFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
         {
-            return parameterDescriptor.Type == typeof(IFormFile) ||
-                   parameterDescriptor.Type == typeof(IFormFileCollection);
+            return typeof(IFormFile).IsAssignableFrom(parameterDescriptor.Type) ||
+                   typeof(IFormFileCollection).IsAssignableFrom(parameterDescriptor.Type);
         }
 
         public static bool IsSupportFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
@@ -96,12 +118,18 @@ namespace Silky.Rpc.Runtime.Server
 
         public static bool IsSingleFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
         {
-            return parameterDescriptor.Type == typeof(IFormFile);
+            return typeof(IFormFile).IsAssignableFrom(parameterDescriptor.Type);
         }
 
         public static bool IsMultipleFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
         {
-            return parameterDescriptor.Type == typeof(IFormFileCollection);
+            return typeof(IFormFileCollection).IsAssignableFrom(parameterDescriptor.Type);
         }
+        
+        public static bool HasFileType([NotNull] this ParameterDescriptor parameterDescriptor)
+        {
+            return parameterDescriptor.ParameterInfo.HasFileType();
+        }
+        
     }
 }

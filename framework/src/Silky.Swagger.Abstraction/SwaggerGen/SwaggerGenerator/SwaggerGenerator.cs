@@ -308,7 +308,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                 .FirstOrDefault(paramDesc => paramDesc.From == ParameterFrom.Body);
 
             var formParameters = serviceEntry.ParameterDescriptors
-                .Where(paramDesc => paramDesc.From == ParameterFrom.Form);
+                .Where(paramDesc => paramDesc.From == ParameterFrom.Form || paramDesc.From == ParameterFrom.File);
             if (bodyParameter != null)
             {
                 requestBody = GenerateRequestBodyFromBodyParameter(serviceEntry, schemaRepository, bodyParameter);

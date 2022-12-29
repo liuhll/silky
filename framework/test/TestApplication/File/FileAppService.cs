@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using ITestApplication.File;
 using Microsoft.AspNetCore.Http;
@@ -22,8 +23,12 @@ public class FileAppService : IFileAppService
         throw new System.NotImplementedException();
     }
 
-    public Task<FileResult> Download()
+    public async Task<IActionResult> Download()
     {
-        throw new System.NotImplementedException();
+        var bytes = System.IO.File.ReadAllBytes("./Contents/测试.xlsx").ToArray();
+        return new FileContentResult(bytes, "application/octet-stream")
+        {
+            FileDownloadName = "测试文件.xlsx",
+        };
     }
 }

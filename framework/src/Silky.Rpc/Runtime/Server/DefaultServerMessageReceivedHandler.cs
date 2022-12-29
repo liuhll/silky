@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Silky.Core;
@@ -85,8 +86,12 @@ namespace Silky.Rpc.Runtime.Server
                 var parameters = parameterResolver.Parser(serviceEntry, message);
 
                 var result = await serviceEntry.Executor(_serviceKeyExecutor.ServiceKey, parameters);
-
                 remoteResultMessage.Result = result;
+                if (result is FileContentResult)
+                {
+                    remoteResultMessage.IsFile = true;
+                }
+              
                 remoteResultMessage.StatusCode = StatusCode.Success;
             }
             catch (Exception ex)

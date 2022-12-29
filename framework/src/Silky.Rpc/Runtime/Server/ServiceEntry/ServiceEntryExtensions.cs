@@ -67,7 +67,6 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     dictionaryParms[parameter.Name] = typeConvertibleService.Convert(parameters[index], parameter.Type);
                 }
-
                 index++;
             }
 
@@ -80,12 +79,11 @@ namespace Silky.Rpc.Runtime.Server
             {
                 if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type)
                 {
-                    if (serviceEntry.ParameterDescriptors[i].Type == typeof(IFormFile) ||
-                        serviceEntry.ParameterDescriptors[i].Type == typeof(IFormFileCollection))
+                    if (typeof(IFormFile).IsAssignableFrom(serviceEntry.ParameterDescriptors[i].Type) ||
+                        typeof(IFormFileCollection).IsAssignableFrom(serviceEntry.ParameterDescriptors[i].Type))
                     {
                         continue;
                     }
-
                     var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
                     parameters[i] =
                         typeConvertibleService.Convert(parameters[i], serviceEntry.ParameterDescriptors[i].Type);
@@ -136,6 +134,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 return false;
             }
+
             return isEnable && !serviceEntry.DisableAuditing();
         }
 

@@ -169,12 +169,21 @@ namespace Silky.Http.Core.Handlers
                     serverCallContext.WriteResponseHeaderCore();
                     if (executeResult != null)
                     {
-                        var responseData = _serializer.Serialize(executeResult);
-                        await serverCallContext.HttpContext.Response.WriteAsync(responseData,
-                            cancellationToken: cancellationToken);
+                        if (executeResult is IActionResult actionResult)
+                        {
+                            await actionResult.ExecuteResultAsync(new ActionContext()
+                            {
+                                HttpContext = serverCallContext.HttpContext
+                            });
+                        }
+                        else
+                        {
+                            var responseData = _serializer.Serialize(executeResult);
+                            await serverCallContext.HttpContext.Response.WriteAsync(responseData,
+                                cancellationToken: cancellationToken);
+                        }
                     }
                 }
-
                 _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
                     serviceEntryDescriptor.Id,
                     false,
@@ -192,6 +201,7 @@ namespace Silky.Http.Core.Handlers
                     ex.GetExceptionStatusCode());
                 throw;
             }
+
             finally
             {
                 sp.Stop();

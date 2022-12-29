@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
@@ -80,6 +81,20 @@ namespace Silky.Rpc.Runtime.Client
 
                 var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 invokeResult = await client.SendAsync(remoteInvokeMessage, messageId);
+                if (invokeResult.IsFile)
+                {
+                    var silkyFileContentResult = _serializer.Deserialize<SilkyFileContentResult>(invokeResult.Result.ToString());
+                    var fileContentResult = new FileContentResult(silkyFileContentResult.FileContents,
+                        silkyFileContentResult.ContentType)
+                    {
+                        LastModified = silkyFileContentResult.LastModified,
+                        EntityTag = silkyFileContentResult.EntityTag,
+                        EnableRangeProcessing = silkyFileContentResult.EnableRangeProcessing,
+                        FileDownloadName = silkyFileContentResult.FileDownloadName,
+                        
+                    };
+                    invokeResult.Result = fileContentResult;
+                }
                 foreach (var filter in filters)
                 {
                     filter.OnActionExecuted(invokeResult);

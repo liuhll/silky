@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
 using Silky.Core.Extensions;
@@ -66,10 +67,16 @@ namespace Silky.Rpc.Runtime.Server
 
             ClientFilters = CreateClientFilters();
             ServerFilters = CreateServerFilters();
+            SetIsActionResult();
             CreateFallBackExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
             CreateCachingInterceptorDescriptors();
+        }
+
+        private void SetIsActionResult()
+        {
+            _serviceEntryDescriptor.IsActionResult = typeof(IActionResult).IsAssignableFrom(ReturnType);
         }
 
         private void CreateCachingInterceptorDescriptors()

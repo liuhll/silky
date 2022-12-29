@@ -19,19 +19,29 @@ namespace Silky.Core.MethodExecutor
 
         public static bool IsFormFileType(this ParameterInfo parameterInfo)
         {
-            if (parameterInfo.ParameterType == typeof(IFormFileCollection) ||
-                parameterInfo.ParameterType == typeof(IFormFile))
+            if (typeof(IFormFileCollection).IsAssignableFrom(parameterInfo.ParameterType) ||
+                typeof(IFormFile).IsAssignableFrom(parameterInfo.ParameterType))
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        public static bool HasFileType(this ParameterInfo parameterInfo)
+        {
+            if (parameterInfo.IsSampleOrNullableType())
+            {
+                return false;
             }
             var props = parameterInfo.ParameterType.GetProperties();
             var hasFileProp = false;
             foreach (var prop in props)
             {
-                if (prop.PropertyType == typeof(IFormFileCollection) || prop.PropertyType == typeof(IFormFile))
+                if (typeof(IFormFileCollection).IsAssignableFrom(prop.PropertyType) ||
+                    typeof(IFormFile).IsAssignableFrom(prop.PropertyType))
                 {
                     hasFileProp = true;
-
                     break;
                 }
             }

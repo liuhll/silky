@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
+using Silky.Core.MethodExecutor;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Rpc.Routing.Template;
@@ -43,7 +46,7 @@ public class HttpParameterResolver : ParameterResolverBase
 
     public override object[] Parser(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters,
         HttpContext httpContext)
-    {
+    { 
         var list = new List<object>();
         var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
         foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
@@ -80,28 +83,47 @@ public class HttpParameterResolver : ParameterResolverBase
                     }
                     else
                     {
-                        if (parameterDescriptor.Type.IsAssignableFrom(typeof(IFormFile)))
+                        if (parameterDescriptor.HasFileType())
                         {
-                            var fileString = ((JObject)parameter).Value<string>(); //_serializer.Serialize(parameter);
-                            var formFiles = _serializer.Deserialize<IFormFileCollection>(fileString,
-                                typeNameHandling: TypeNameHandling.Auto);
-                            list.Add(formFiles.GetFile(parameterDescriptor.Name));
-                            
-                        }
-                        else if (parameterDescriptor.Type.IsAssignableFrom(typeof(IFormFileCollection)))
-                        {
-                            var formFiles = _serializer.Deserialize<IFormFileCollection>(_serializer.Serialize(parameter),
-                                typeNameHandling: TypeNameHandling.Auto);
-                            list.Add(formFiles);
+                            var fileParameter = parameters[ParameterFrom.File];
+                            var silkyFiles = GetFormFiles(fileParameter.ToString());
+                            list.Add(parameterDescriptor.GetActualParameter(parameter,silkyFiles));
                         }
                         else
                         {
                             list.Add(parameterDescriptor.GetActualParameter(parameter));
                         }
-
-                       
                     }
 
+                    break;
+                case ParameterFrom.File:
+                    if (httpContext != null)
+                    {
+                        if (parameterDescriptor.IsMultipleFileParameter())
+                        {
+                            list.Add(httpContext.Request.Form.Files);
+                        }
+                        else
+                        {
+                            list.Add(httpContext.Request.Form.Files.GetFile(parameterDescriptor.Name));
+                        }
+                    }
+                    else
+                    {
+                        var formFiles = GetFormFiles(parameter.ToString());
+                        if (parameterDescriptor.IsSingleFileParameter())
+                        {
+                            var file = formFiles.Single(p => p.Name == parameterDescriptor.Name);
+                            list.Add(file);
+                        }
+                        else
+                        {
+                            var files = new FormFileCollection();
+                            files.AddRange(formFiles);
+                            list.Add(files);
+                        }
+                    }
+                    
                     break;
                 case ParameterFrom.Header:
                     if (parameterDescriptor.IsSampleOrNullableType)
@@ -153,5 +175,26 @@ public class HttpParameterResolver : ParameterResolverBase
         }
 
         return list.ToArray();
+    }
+
+    private IList<IFormFile> GetFormFiles(string fileParameter)
+    {
+        var silkyFiles = _serializer.Deserialize<SilkyFormFile[]>(fileParameter);
+        var formFiles = new List<IFormFile>();
+        foreach (var silkyFile in silkyFiles)
+        {
+            var formFile = new FormFile(
+                new FileBufferingReadStream(new MemoryStream(silkyFile.Buffer), 65536), 0,
+                silkyFile.Length,
+                silkyFile.Name, silkyFile.FileName)
+            {
+                Headers = silkyFile.Headers ?? new HeaderDictionary(),
+                ContentDisposition = silkyFile.ContentDisposition,
+                ContentType = silkyFile.ContentType
+            };
+            formFiles.Add(formFile);
+        }
+
+        return formFiles;
     }
 }

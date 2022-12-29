@@ -17,6 +17,8 @@ namespace Silky.Rpc.Transport.Messages
 
         public object Result { get; set; }
 
+        public bool IsFile { get; set; } = false;
+
         public IDictionary<string, string> Attachments { get; set; }
     }
 }
