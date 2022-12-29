@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Swagger.Abstraction;
-using Silky.Swagger.Gen.Serialization;
 using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Provider.Zookeeper;
@@ -21,7 +21,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 {
     private readonly IZookeeperClientFactory _zookeeperClientFactory;
     private ZookeeperRegistryCenterOptions _registryCenterOptions;
-    private readonly ISwaggerSerializer _serializer;
+    private readonly ISerializer _serializer;
 
     private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
 
@@ -29,7 +29,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
 
     public ZookeeperSwaggerInfoProvider(IZookeeperClientFactory zookeeperClientFactory,
-        ISwaggerSerializer serializer,
+        ISerializer serializer,
         IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions)
     {
         _zookeeperClientFactory = zookeeperClientFactory;
@@ -68,7 +68,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
         var jsonString = datas.ToArray().GetString();
 
-        return _serializer.Deserialize<OpenApiDocument>(jsonString);
+        return _serializer.Deserialize<OpenApiDocument>(jsonString,typeNameHandling: TypeNameHandling.Auto);
     }
 
 

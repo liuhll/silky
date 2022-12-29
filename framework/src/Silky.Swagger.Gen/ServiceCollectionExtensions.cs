@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
@@ -20,7 +19,6 @@ using Silky.Swagger.Gen.Register;
 using Silky.Swagger.Gen.Register.Consul;
 using Silky.Swagger.Gen.Register.Nacos;
 using Silky.Swagger.Gen.Register.Zookeeper;
-using Silky.Swagger.Gen.Serialization;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -65,12 +63,10 @@ public static class ServiceCollectionExtensions
         {
             services.AddSwaggerInfoService(registerType);
         }
-        services.TryAddTransient<ISwaggerSerializer, SwaggerSerializer>(); 
     }
 
     public static void AddSwaggerRegisterInfoGen(this IServiceCollection services, IConfiguration configuration)
     {
-        services.TryAddTransient<ISwaggerSerializer, SwaggerSerializer>();  
         if (!services.IsAdded(typeof(ISwaggerProvider)))
         {
             services.AddSwaggerGen(options =>

@@ -7,9 +7,11 @@ namespace Silky.Core.Serialization
 {
     public class DefaultSerializer : ISerializer, ITransientDependency
     {
-        public string Serialize(object instance, bool camelCase = true, bool indented = false)
+        public string Serialize(object instance, bool camelCase = true, bool indented = false,
+            TypeNameHandling typeNameHandling = TypeNameHandling.None)
         {
             var settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = typeNameHandling;
 
             if (camelCase)
             {
@@ -28,10 +30,11 @@ namespace Silky.Core.Serialization
             return JsonConvert.SerializeObject(instance, settings);
         }
 
-        public T Deserialize<T>(string jsonString, bool camelCase = true)
+        public T Deserialize<T>(string jsonString, bool camelCase = true,
+            TypeNameHandling typeNameHandling = TypeNameHandling.None)
         {
             var settings = new JsonSerializerSettings();
-
+            settings.TypeNameHandling = typeNameHandling;
             if (camelCase)
             {
                 settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -44,10 +47,11 @@ namespace Silky.Core.Serialization
             return JsonConvert.DeserializeObject<T>(jsonString, settings);
         }
 
-        public object Deserialize(Type type, string jsonString, bool camelCase = true)
+        public object Deserialize(Type type, string jsonString, bool camelCase = true,
+            TypeNameHandling typeNameHandling = TypeNameHandling.None)
         {
             var settings = new JsonSerializerSettings();
-
+            settings.TypeNameHandling = typeNameHandling;
             if (camelCase)
             {
                 settings.ContractResolver = new CamelCasePropertyNamesContractResolver();

@@ -1,19 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using org.apache.zookeeper;
+using Newtonsoft.Json;
 using Silky.Core;
 using Silky.Core.Extensions;
-using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Swagger.Abstraction;
-using Silky.Swagger.Gen.Serialization;
 using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Register.Zookeeper;
@@ -22,12 +18,12 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
 {
     private readonly IZookeeperClientFactory _zookeeperClientFactory;
     private ZookeeperRegistryCenterOptions _registryCenterOptions;
-    private readonly ISwaggerSerializer _serializer;
+    private readonly ISerializer _serializer;
     public ILogger<ZookeeperSwaggerInfoRegister> Logger { get; set; }
 
     public ZookeeperSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         IZookeeperClientFactory zookeeperClientFactory,
-        ISwaggerSerializer serializer,
+        ISerializer serializer,
         IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions) : base(
         swaggerProvider)
     {
@@ -54,7 +50,7 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
                     AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
             }
 
-            var jsonString = _serializer.Serialize(openApiDocument);
+            var jsonString = _serializer.Serialize(openApiDocument,typeNameHandling: TypeNameHandling.Auto);
             var data = jsonString.GetBytes();
             if (!await zookeeperClient.ExistsAsync(swaggerDocPath))
             {
