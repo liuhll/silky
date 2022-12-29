@@ -9,16 +9,24 @@ using JetBrains.Annotations;
 using Silky.Core.Serialization;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Silky.Core;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Transport.Messages;
+using StackExchange.Profiling.Internal;
 
 namespace Silky.Http.Core
 {
     internal class DefaultHttpRequestParameterParser : IParameterParser
     {
-        
+        private readonly ISerializer _serializer;
+
+        public DefaultHttpRequestParameterParser(ISerializer serializer)
+        {
+            _serializer = serializer;
+        }
+
         private async Task<IDictionary<ParameterFrom, object>> ParserHttpRequest(HttpRequest request,
             ServiceEntry serviceEntry)
         {
@@ -76,6 +84,22 @@ namespace Silky.Http.Core
             if (request.HasFormContentType)
             {
                 var formData = request.Form.ToDictionary(p => p.Key, p => p.Value.ToString());
+
+                if (request.Form.Files.Any())
+                {
+                    // formData["form:files"] =
+                    //     _serializer.Serialize(request.Form.Files, typeNameHandling: TypeNameHandling.Auto);
+                    
+                    foreach (var file in request.Form.Files)
+                    {
+                        var buffer = new byte[file.Length];
+                        await using var steam =  file.OpenReadStream();
+                        var read = await steam.ReadAsync(buffer);
+                        
+                        
+                    }
+                }
+         
                 parameters.Add(ParameterFrom.Form, formData);
             }
 
@@ -104,7 +128,8 @@ namespace Silky.Http.Core
 
             if (Regex.IsMatch(serviceEntryDescriptor.WebApi, RouterConstants.PathRegex))
             {
-                parameters.Add(ParameterFrom.Path,RoutePathHelper.ParserRouteParameters(serviceEntryDescriptor.WebApi, request.Path));
+                parameters.Add(ParameterFrom.Path,
+                    RoutePathHelper.ParserRouteParameters(serviceEntryDescriptor.WebApi, request.Path));
             }
 
             return parameters;

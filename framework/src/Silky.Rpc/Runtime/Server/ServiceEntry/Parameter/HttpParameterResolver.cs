@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
@@ -78,7 +80,26 @@ public class HttpParameterResolver : ParameterResolverBase
                     }
                     else
                     {
-                        list.Add(parameterDescriptor.GetActualParameter(parameter));
+                        if (parameterDescriptor.Type.IsAssignableFrom(typeof(IFormFile)))
+                        {
+                            var fileString = ((JObject)parameter).Value<string>(); //_serializer.Serialize(parameter);
+                            var formFiles = _serializer.Deserialize<IFormFileCollection>(fileString,
+                                typeNameHandling: TypeNameHandling.Auto);
+                            list.Add(formFiles.GetFile(parameterDescriptor.Name));
+                            
+                        }
+                        else if (parameterDescriptor.Type.IsAssignableFrom(typeof(IFormFileCollection)))
+                        {
+                            var formFiles = _serializer.Deserialize<IFormFileCollection>(_serializer.Serialize(parameter),
+                                typeNameHandling: TypeNameHandling.Auto);
+                            list.Add(formFiles);
+                        }
+                        else
+                        {
+                            list.Add(parameterDescriptor.GetActualParameter(parameter));
+                        }
+
+                       
                     }
 
                     break;

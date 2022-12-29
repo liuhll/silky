@@ -18,5 +18,7 @@ namespace Silky.Rpc.Transport.Messages
         public ParameterType ParameterType { get; set; }
 
         public IDictionary<string, string> Attachments { get; set; }
+
+        public SilkyFormFile[] Files { get; set; }
     }
 }
