@@ -14,6 +14,7 @@ using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing.Template;
 using Silky.Rpc.Transport.Messages;
 
@@ -180,21 +181,6 @@ public class HttpParameterResolver : ParameterResolverBase
     private IList<IFormFile> GetFormFiles(string fileParameter)
     {
         var silkyFiles = _serializer.Deserialize<SilkyFormFile[]>(fileParameter);
-        var formFiles = new List<IFormFile>();
-        foreach (var silkyFile in silkyFiles)
-        {
-            var formFile = new FormFile(
-                new FileBufferingReadStream(new MemoryStream(silkyFile.Buffer), 65536), 0,
-                silkyFile.Length,
-                silkyFile.Name, silkyFile.FileName)
-            {
-                Headers = silkyFile.Headers ?? new HeaderDictionary(),
-                ContentDisposition = silkyFile.ContentDisposition,
-                ContentType = silkyFile.ContentType
-            };
-            formFiles.Add(formFile);
-        }
-
-        return formFiles;
+        return silkyFiles.ConventToFormFiles();
     }
 }

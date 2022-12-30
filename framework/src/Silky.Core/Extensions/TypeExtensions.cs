@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
 using Silky.Core.Convertible;
 
 namespace Silky.Core.Extensions
@@ -31,6 +32,21 @@ namespace Silky.Core.Extensions
             }
 
             return ObjectDataType.Complex;
+        }
+
+        public static bool IsFormFileType(this Type type)
+        {
+            return typeof(IFormFile).IsAssignableFrom(type) || typeof(IFormFileCollection).IsAssignableFrom(type);
+        }
+        
+        public static bool IsSingleFormFileType(this Type type)
+        {
+            return typeof(IFormFile).IsAssignableFrom(type);
+        }
+        
+        public static bool IsMultipleFormFileType(this Type type)
+        {
+            return typeof(IFormFileCollection).IsAssignableFrom(type);
         }
 
         public static bool IsSample(this Type type)

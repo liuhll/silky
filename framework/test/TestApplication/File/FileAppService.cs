@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ITestApplication.File;
@@ -8,19 +10,28 @@ namespace TestApplication.File;
 
 public class FileAppService : IFileAppService
 {
-    public Task PostFile(IFormFile file)
+    public async Task PostFile(IFormFile file)
     {
-        throw new System.NotImplementedException();
+        var filePath = Path.GetTempFileName();
+        await using var stream = System.IO.File.Create(filePath);
+        await file.CopyToAsync(stream);
     }
 
-    public Task PostFiles(IFormFileCollection files)
+    public async Task PostFiles(IFormFileCollection files)
     {
-        throw new System.NotImplementedException();
+        foreach (var file in files)
+        {
+            var filePath = Path.GetTempFileName();
+            await using var stream = System.IO.File.Create(filePath);
+            await file.CopyToAsync(stream);
+        }
     }
 
-    public Task PostFormWithFile(FormWithFile formWithFile)
+    public async Task PostFormWithFile(FormWithFile formWithFile)
     {
-        throw new System.NotImplementedException();
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(),formWithFile.Name);
+        await using var stream = System.IO.File.Create(filePath);
+        await formWithFile.File.CopyToAsync(stream);
     }
 
     public async Task<IActionResult> Download()

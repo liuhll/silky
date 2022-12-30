@@ -17,6 +17,7 @@ namespace Silky.Rpc.Runtime.Client
     {
         private readonly IRemoteInvoker _remoteInvoker;
         private readonly IInvokePolicyBuilder _invokePolicyBuilder;
+        private readonly IFileParameterConverter _fileParameterConverter;
 
         private ConcurrentDictionary<string, IAsyncPolicy<object>> _policyCaches = new();
 
@@ -24,10 +25,12 @@ namespace Silky.Rpc.Runtime.Client
         public ILogger<DefaultRemoteExecutor> Logger { get; set; }
 
         public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker,
-            IInvokePolicyBuilder invokePolicyBuilder)
+            IInvokePolicyBuilder invokePolicyBuilder,
+            IFileParameterConverter fileParameterConverter)
         {
             _remoteInvoker = remoteInvoker;
             _invokePolicyBuilder = invokePolicyBuilder;
+            _fileParameterConverter = fileParameterConverter;
             Logger = NullLogger<DefaultRemoteExecutor>.Instance;
         }
 
@@ -37,7 +40,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 ServiceEntryId = serviceEntry.ServiceEntryDescriptor.Id,
                 ServiceId = serviceEntry.ServiceId,
-                Parameters = parameters,
+                Parameters = _fileParameterConverter.Convert(parameters),
                 ParameterType = ParameterType.Rpc,
             };
             string hashKey = null;
@@ -72,7 +75,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 ServiceEntryId = serviceEntryDescriptor.Id,
                 ServiceId = serviceEntryDescriptor.ServiceId,
-                Parameters = parameters,
+                Parameters = _fileParameterConverter.Convert(parameters),
                 ParameterType = ParameterType.Rpc
             };
             string hashKey = null;
@@ -104,7 +107,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 ServiceEntryId = serviceEntryDescriptor.Id,
                 ServiceId = serviceEntryDescriptor.ServiceId,
-                DictParameters = parameters,
+                DictParameters = _fileParameterConverter.Convert(parameters),
                 ParameterType = ParameterType.Dict
             };
             string hashKey = null;
@@ -136,7 +139,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 ServiceEntryId = serviceEntryDescriptor.Id,
                 ServiceId = serviceEntryDescriptor.ServiceId,
-                HttpParameters = parameters,
+                HttpParameters = _fileParameterConverter.Convert(parameters),
                 ParameterType = ParameterType.Http
             };
             string hashKey = null;

@@ -11,6 +11,7 @@ using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Http;
 using Silky.Core;
 using Silky.Core.Runtime.Rpc;
+using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Transport.Messages;
 
@@ -85,24 +86,11 @@ namespace Silky.Http.Core
                 parameters.Add(ParameterFrom.Form, formData);
                 if (request.Form.Files.Any())
                 {
-                    // formData["form:files"] =
-                    //     _serializer.Serialize(request.Form.Files, typeNameHandling: TypeNameHandling.Auto);
                     var files = new List<SilkyFormFile>();
                     foreach (var file in request.Form.Files)
                     {
-                        var buffer = new byte[file.Length];
-                        await using var steam =  file.OpenReadStream();
-                        _ = await steam.ReadAsync(buffer);
-                        files.Add(new SilkyFormFile()
-                        {
-                            FileName = file.FileName,
-                            Headers = (HeaderDictionary)file.Headers,
-                            Name = file.Name,
-                            Length = file.Length,
-                            Buffer = buffer,
-                            ContentDisposition = file.ContentDisposition,
-                            ContentType = file.ContentType
-                        });
+                        var silkyFile = file.ConventToSilkyFile();
+                        files.Add(silkyFile);
                     }
                     parameters.Add(ParameterFrom.File,files);
                 }

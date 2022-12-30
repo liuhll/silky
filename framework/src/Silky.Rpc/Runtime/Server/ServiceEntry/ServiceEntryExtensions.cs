@@ -8,7 +8,10 @@ using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Serialization;
 using Silky.Rpc.Auditing;
+using Silky.Rpc.Extensions;
+using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -67,6 +70,7 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     dictionaryParms[parameter.Name] = typeConvertibleService.Convert(parameters[index], parameter.Type);
                 }
+
                 index++;
             }
 
@@ -75,15 +79,25 @@ namespace Silky.Rpc.Runtime.Server
 
         public static object[] ConvertParameters(this ServiceEntry serviceEntry, object[] parameters)
         {
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
             for (int i = 0; i < parameters.Length; i++)
             {
-                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type)
+                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type && !serviceEntry.ParameterDescriptors[i].Type.IsInstanceOfType(parameters[i]))
                 {
-                    if (typeof(IFormFile).IsAssignableFrom(serviceEntry.ParameterDescriptors[i].Type) ||
-                        typeof(IFormFileCollection).IsAssignableFrom(serviceEntry.ParameterDescriptors[i].Type))
+                    if (serviceEntry.ParameterDescriptors[i].IsSingleFileParameter())
                     {
+                        var silkyFormFile = serializer.Deserialize<SilkyFormFile>(parameters[i].ToString());
+                        parameters[i] = silkyFormFile.ConventToFormFile(); 
                         continue;
                     }
+
+                    if (serviceEntry.ParameterDescriptors[i].IsMultipleFileParameter())
+                    {
+                        var silkyFormFile = serializer.Deserialize<SilkyFormFile[]>(parameters[i].ToString());
+                        parameters[i] = silkyFormFile.ConventToFileCollection();
+                        continue;
+                    }
+
                     var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
                     parameters[i] =
                         typeConvertibleService.Convert(parameters[i], serviceEntry.ParameterDescriptors[i].Type);
