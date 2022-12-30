@@ -43,7 +43,8 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
                 return null;
             }
 
-            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentValue,typeNameHandling: TypeNameHandling.Auto);
+            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentValue, camelCase: false,
+                typeNameHandling: TypeNameHandling.Auto);
             return openApiDocument;
         }
         catch (Exception e)
@@ -81,7 +82,7 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
                 return Array.Empty<string>();
             }
 
-            return _serializer.Deserialize<string[]>(allDocumentsValue,typeNameHandling: TypeNameHandling.Auto);
+            return _serializer.Deserialize<string[]>(allDocumentsValue,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
         }
         catch (Exception e)
         {

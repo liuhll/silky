@@ -50,7 +50,7 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
                     AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
             }
 
-            var jsonString = _serializer.Serialize(openApiDocument,typeNameHandling: TypeNameHandling.Auto);
+            var jsonString = _serializer.Serialize(openApiDocument,camelCase: false,typeNameHandling: TypeNameHandling.Auto);
             var data = jsonString.GetBytes();
             if (!await zookeeperClient.ExistsAsync(swaggerDocPath))
             {

@@ -37,7 +37,7 @@ public class ConsulSwaggerInfoRegister : SwaggerInfoRegisterBase
     protected override async Task Register(string documentName, OpenApiDocument openApiDocument)
     {
         using var consulClient = _consulClientFactory.CreateClient();
-        var openApiDocumentJsonString = _serializer.Serialize(openApiDocument, typeNameHandling: TypeNameHandling.Auto);
+        var openApiDocumentJsonString = _serializer.Serialize(openApiDocument,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
         var servicesPutResult = await consulClient.KV.Put(
             new KVPair(CreateServicePath(_consulRegistryCenterOptions.SwaggerDocPath, documentName))
             {

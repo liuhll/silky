@@ -68,7 +68,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
         var jsonString = datas.ToArray().GetString();
 
-        return _serializer.Deserialize<OpenApiDocument>(jsonString,typeNameHandling: TypeNameHandling.Auto);
+        return _serializer.Deserialize<OpenApiDocument>(jsonString,camelCase: false,typeNameHandling: TypeNameHandling.Auto);
     }
 
 

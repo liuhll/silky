@@ -96,7 +96,7 @@ public class ConsulSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCente
         try
         {
             var openApiDocumentJsonString = getKvResult.Response.Value.GetString();
-            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentJsonString,
+            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentJsonString, camelCase: false,
                 typeNameHandling: TypeNameHandling.Auto);
             return openApiDocument;
         }

@@ -35,7 +35,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
         if (!allDocumentNames.Contains(documentName))
         {
             var registerDocumentNames = allDocumentNames.Concat(new[] { documentName });
-            var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames, typeNameHandling: TypeNameHandling.Auto);
+            var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
             var documentNamePublishResult = await _nacosConfigService.PublishConfig(
                 _nacosRegistryCenterOptions.SwaggerDocKey,
                 _nacosRegistryCenterOptions.ServerGroupName,
@@ -46,7 +46,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
             }
         }
 
-        var openApiDocumentValue = _serializer.Serialize(openApiDocument, typeNameHandling: TypeNameHandling.Auto);
+        var openApiDocumentValue = _serializer.Serialize(openApiDocument,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
         var openApiDocumentResult = await _nacosConfigService.PublishConfig(documentName,
             _nacosRegistryCenterOptions.ServerGroupName,
             openApiDocumentValue);
@@ -68,7 +68,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
                 return Array.Empty<string>();
             }
 
-            return _serializer.Deserialize<string[]>(allDocumentsValue, typeNameHandling: TypeNameHandling.Auto);
+            return _serializer.Deserialize<string[]>(allDocumentsValue,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
         }
         catch (Exception e)
         {
