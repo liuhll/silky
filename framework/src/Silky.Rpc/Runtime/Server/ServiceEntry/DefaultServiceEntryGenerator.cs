@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Silky.Core.Exceptions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
@@ -71,11 +72,6 @@ namespace Silky.Rpc.Runtime.Server
             var serviceEntryId = _idGenerator.GenerateServiceEntryId(method, httpMethodInfo.HttpMethod);
             var serviceId = _idGenerator.GenerateServiceId(serviceType);
             var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethodInfo);
-            if (parameterDescriptors.Count(p => p.IsHashKey) > 1)
-            {
-                throw new SilkyException(
-                    $"It is not allowed to specify multiple HashKey,Method is {serviceType.FullName}.{method.Name}");
-            }
             
             var serviceEntryTemplate =
                 TemplateHelper.GenerateServerEntryTemplate(routeTemplateProvider.Template, parameterDescriptors,
@@ -118,8 +114,9 @@ namespace Silky.Rpc.Runtime.Server
                 serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.IsSilkyAppService, true);
             }
 
-            serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.DisableAuditing,serviceEntry.DisableAuditing());
-            
+            serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.DisableAuditing, serviceEntry.DisableAuditing());
+            serviceEntryDescriptor.IsActionResult = typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType);
+
             return serviceEntry;
         }
     }

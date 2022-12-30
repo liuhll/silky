@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
@@ -19,8 +21,7 @@ namespace Silky.Rpc.Runtime.Client
         private readonly IInvokePolicyBuilder _invokePolicyBuilder;
         private readonly IFileParameterConverter _fileParameterConverter;
 
-        private ConcurrentDictionary<string, IAsyncPolicy<object>> _policyCaches = new();
-
+        private readonly ConcurrentDictionary<string, IAsyncPolicy<object>> _policyCaches = new();
 
         public ILogger<DefaultRemoteExecutor> Logger { get; set; }
 
@@ -46,16 +47,17 @@ namespace Silky.Rpc.Runtime.Client
             string hashKey = null;
             if (serviceEntry.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
             {
-                hashKey = serviceEntry.GetHashKeyValue(parameters.ToArray());
+                hashKey = GetHashKeyValue();
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
-            
+
             if (!_policyCaches.TryGetValue(serviceEntry.Id, out var policyObject))
             {
                 policyObject = _invokePolicyBuilder.Build(serviceEntry.Id);
                 _policyCaches.TryAdd(serviceEntry.Id, policyObject);
             }
+
             var policy = policyObject.WrapFallbackPolicy(serviceEntry.Id, parameters);
             var result = await policy
                 .ExecuteAsync(async () =>
@@ -81,7 +83,7 @@ namespace Silky.Rpc.Runtime.Client
             string hashKey = null;
             if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
             {
-                //  hashKey = serviceEntryDescriptor.GetHashKeyValue(parameters.ToArray());
+                hashKey = GetHashKeyValue();
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
@@ -113,7 +115,7 @@ namespace Silky.Rpc.Runtime.Client
             string hashKey = null;
             if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
             {
-                //  hashKey = serviceEntryDescriptor.GetHashKeyValue(parameters.ToArray());
+                hashKey = GetHashKeyValue();
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
@@ -145,7 +147,7 @@ namespace Silky.Rpc.Runtime.Client
             string hashKey = null;
             if (serviceEntryDescriptor.GovernanceOptions.ShuntStrategy == ShuntStrategy.HashAlgorithm)
             {
-                //  hashKey = serviceEntryDescriptor.GetHashKeyValue(parameters.ToArray());
+                hashKey = GetHashKeyValue();
                 Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.HashKey,
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
@@ -162,6 +164,12 @@ namespace Silky.Rpc.Runtime.Client
                 });
 
             return result;
+        }
+
+        private string GetHashKeyValue()
+        {
+            var headers = RpcContext.Context.GetRequestHeader();
+            return headers.TryOrdinalIgnoreCaseGetValue(HashShuntStrategyAttribute.HashKey, out var hashKey) ? hashKey : default;
         }
     }
 }

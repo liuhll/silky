@@ -23,7 +23,6 @@ namespace Silky.Rpc.Runtime.Server
             Name = !name.IsNullOrEmpty() ? name : parameterInfo.Name;
             SampleName = Name.Split(":")[0];
             Type = parameterInfo.ParameterType;
-            IsHashKey = DecideIsHashKey();
             CacheKeys = CreateCacheKeys(cacheKeyTemplates);
             PathTemplate = pathTemplate;
             Index = index;
@@ -111,34 +110,11 @@ namespace Silky.Rpc.Runtime.Server
 
             return cacheKeys;
         }
-
-        private bool DecideIsHashKey()
-        {
-            var hashKeyProvider = ParameterInfo.GetCustomAttributes().OfType<IHashKeyProvider>();
-            if (hashKeyProvider.Any())
-            {
-                if (IsSampleOrNullableType)
-                {
-                    return true;
-                }
-            }
-
-            var propsHashKeyProvider = Type.GetProperties()
-                .SelectMany(p => p.GetCustomAttributes().OfType<IHashKeyProvider>());
-            if (propsHashKeyProvider.Count() > 1)
-            {
-                throw new SilkyException("It is not allowed to specify multiple HashKey");
-            }
-
-            return false;
-        }
-
+        
         public ParameterFrom From { get; }
 
         public Type Type { get; }
-
-        public bool IsHashKey { get; }
-
+        
         public int Index { get; }
 
         public string Name { get; }

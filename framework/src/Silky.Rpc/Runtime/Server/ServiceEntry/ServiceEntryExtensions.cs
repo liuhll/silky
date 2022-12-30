@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Core;
 using Silky.Core.Convertible;
-using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Rpc.Auditing;
@@ -17,42 +15,6 @@ namespace Silky.Rpc.Runtime.Server
 {
     public static class ServiceEntryExtensions
     {
-        public static string GetHashKeyValue(this ServiceEntry serviceEntry, object[] parameterValues)
-        {
-            var hashKey = string.Empty;
-            if (!serviceEntry.ParameterDescriptors.Any())
-            {
-                hashKey = serviceEntry.Router.RoutePath + serviceEntry.Router.HttpMethod;
-            }
-
-            var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-            if (serviceEntry.ParameterDescriptors.Any(p => p.IsHashKey))
-            {
-                var index = 0;
-                foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
-                {
-                    if (parameterDescriptor.IsHashKey)
-                    {
-                        hashKey = GetHashKey(parameterValues, parameterDescriptor, index, typeConvertibleService);
-                        break;
-                    }
-
-                    index++;
-                }
-            }
-            else
-            {
-                var index = 0;
-                foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
-                {
-                    hashKey = GetHashKey(parameterValues, parameterDescriptor, index, typeConvertibleService);
-                    break;
-                }
-            }
-
-            return hashKey;
-        }
-
         public static IDictionary<string, object> CreateDictParameters(this ServiceEntry serviceEntry,
             [NotNull] object[] parameters)
         {
@@ -82,12 +44,13 @@ namespace Silky.Rpc.Runtime.Server
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             for (int i = 0; i < parameters.Length; i++)
             {
-                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type && !serviceEntry.ParameterDescriptors[i].Type.IsInstanceOfType(parameters[i]))
+                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type &&
+                    !serviceEntry.ParameterDescriptors[i].Type.IsInstanceOfType(parameters[i]))
                 {
                     if (serviceEntry.ParameterDescriptors[i].IsSingleFileParameter())
                     {
                         var silkyFormFile = serializer.Deserialize<SilkyFormFile>(parameters[i].ToString());
-                        parameters[i] = silkyFormFile.ConventToFormFile(); 
+                        parameters[i] = silkyFormFile.ConventToFormFile();
                         continue;
                     }
 
@@ -209,47 +172,6 @@ namespace Silky.Rpc.Runtime.Server
         public static bool IsSilkyAppService(this ServiceEntry serviceEntry)
         {
             return "Silky.Http.Dashboard.AppService.ISilkyAppService".Equals(serviceEntry.ServiceType.FullName);
-        }
-
-
-        private static string GetHashKey(object[] parameterValues, ParameterDescriptor parameterDescriptor, int index,
-            ITypeConvertibleService typeConvertibleService)
-        {
-            string hashKey;
-            if (parameterDescriptor.IsSampleOrNullableType)
-            {
-                var propVal = parameterValues[index];
-                if (propVal == null)
-                {
-                    throw new SilkyException("The value specified by hashKey is not allowed to be empty");
-                }
-
-                hashKey = propVal.ToString();
-            }
-            else
-            {
-                var parameterValue =
-                    typeConvertibleService.Convert(parameterValues[index], parameterDescriptor.Type);
-                var hashKeyProp = parameterDescriptor.Type
-                    .GetProperties().First();
-                var hashKeyProviderProps = parameterDescriptor.Type
-                    .GetProperties()
-                    .Where(p => p.GetCustomAttributes().OfType<IHashKeyProvider>().Any());
-                if (hashKeyProviderProps.Any())
-                {
-                    hashKeyProp = hashKeyProviderProps.First();
-                }
-
-                var propValue = hashKeyProp.GetValue(parameterValue);
-                if (propValue == null)
-                {
-                    throw new SilkyException("The value of the attribute specified by hashKey cannot be empty");
-                }
-
-                hashKey = propValue.ToString();
-            }
-
-            return hashKey;
         }
     }
 }

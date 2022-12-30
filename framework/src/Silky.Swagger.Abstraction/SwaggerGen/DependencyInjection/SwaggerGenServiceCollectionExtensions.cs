@@ -38,6 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
             services.TryAddTransient<IOperationFilter, AddServiceKeyOperationFilter>();
+            services.TryAddTransient<IOperationFilter, AddHashRouteHeaderOperationFilter>();
 
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 

@@ -2,11 +2,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Routing;
+using Silky.Rpc.Runtime;
 
 namespace ITestApplication.File;
 
 [ServiceRoute]
 // [Authorize]
+[HashShuntStrategy]
 public interface IFileAppService
 {
     [HttpPost("single")]

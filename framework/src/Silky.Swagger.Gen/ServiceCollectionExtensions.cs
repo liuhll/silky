@@ -83,6 +83,7 @@ public static class ServiceCollectionExtensions
                 }
                 
                 options.MultipleServiceKey();
+                options.AddHashRouteHeader();
                 options.SchemaFilter<EnumSchemaFilter>();
                
                 LoadXmlComments(options);

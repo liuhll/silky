@@ -5,8 +5,7 @@ namespace ITestApplication.Test.Dtos
 {
     public class TestInput
     {
-       
-        [HashKey]
+        
         [Required(ErrorMessage = "名称不允许为空")]
         public string Name { get; set; }
 

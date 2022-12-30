@@ -436,6 +436,11 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.OperationFilter<AddServiceKeyOperationFilter>();
         }
 
+        public static void AddHashRouteHeader(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.OperationFilter<AddHashRouteHeaderOperationFilter>();
+        }
+
         /// <summary>
         /// Generate polymorphic schemas (i.e. "oneOf") based on discovered subtypes.
         /// Deprecated: Use the \"UseOneOfForPolymorphism\" and \"UseAllOfForInheritance\" settings instead

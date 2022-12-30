@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
@@ -100,7 +101,7 @@ namespace Silky.Http.Core.Middlewares
                 client.Options.SetRequestHeader("businessId", businessId);
             }
 
-            var hashKey = GetKeyValue(context, "hashKey");
+            var hashKey = GetKeyValue(context, AttachmentKeys.HashKey);
             if (hashKey.IsNullOrEmpty())
             {
                 if (!businessId.IsNullOrEmpty())
@@ -145,7 +146,7 @@ namespace Silky.Http.Core.Middlewares
         private string GetKeyValue(HttpContext context, string key)
         {
             string val = null;
-            if (context.Request.Headers.TryGetValue(key, out var headerKeyVal))
+            if (context.Request.Headers.TryOrdinalIgnoreCaseGetValue(key, out var headerKeyVal))
             {
                 val = headerKeyVal.ToString();
             }

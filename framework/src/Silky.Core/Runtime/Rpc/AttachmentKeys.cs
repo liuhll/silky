@@ -49,5 +49,7 @@ namespace Silky.Core.Runtime.Rpc
         public const string RequestParameters = "RequestParameters";
 
         public const string ValidationParametersInClient = "ValidationParametersInClient";
+
+        public const string HashKey = "HashKey";
     }
 }

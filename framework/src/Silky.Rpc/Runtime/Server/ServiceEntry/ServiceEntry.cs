@@ -12,6 +12,7 @@ using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
+using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Security;
@@ -67,17 +68,12 @@ namespace Silky.Rpc.Runtime.Server
 
             ClientFilters = CreateClientFilters();
             ServerFilters = CreateServerFilters();
-            SetIsActionResult();
             CreateFallBackExecutor();
             CreateDefaultSupportedRequestMediaTypes();
             CreateDefaultSupportedResponseMediaTypes();
             CreateCachingInterceptorDescriptors();
         }
-
-        private void SetIsActionResult()
-        {
-            _serviceEntryDescriptor.IsActionResult = typeof(IActionResult).IsAssignableFrom(ReturnType);
-        }
+        
 
         private void CreateCachingInterceptorDescriptors()
         {
@@ -228,6 +224,12 @@ namespace Silky.Rpc.Runtime.Server
                 GovernanceOptions.ProhibitExtranet = true;
             }
 
+            if (_serviceType.GetCustomAttributes().OfType<HashShuntStrategyAttribute>().Any() ||
+                CustomAttributes.OfType<HashShuntStrategyAttribute>().Any())
+            {
+                GovernanceOptions.ShuntStrategy = ShuntStrategy.HashAlgorithm;
+            }
+            
             UpdateServiceEntryDescriptor(GovernanceOptions);
         }
 
@@ -236,13 +238,9 @@ namespace Silky.Rpc.Runtime.Server
             ServiceEntryDescriptor.IsAllowAnonymous = serviceEntryGovernance.IsAllowAnonymous;
             ServiceEntryDescriptor.ProhibitExtranet = serviceEntryGovernance.ProhibitExtranet;
             ServiceEntryDescriptor.IsDistributeTransaction = this.IsTransactionServiceEntry();
-            if (!serviceEntryGovernance.ProhibitExtranet)
-            {
-                ServiceEntryDescriptor.WebApi = Router.RoutePath;
-                ServiceEntryDescriptor.HttpMethod = Router.HttpMethod;
-                ServiceEntryDescriptor.RouteOrder = Router.RouteTemplate.Order;
-            }
-
+            ServiceEntryDescriptor.WebApi = Router.RoutePath;
+            ServiceEntryDescriptor.HttpMethod = Router.HttpMethod;
+            ServiceEntryDescriptor.RouteOrder = Router.RouteTemplate.Order;
             ServiceEntryDescriptor.GovernanceOptions = serviceEntryGovernance;
         }
 

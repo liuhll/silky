@@ -77,6 +77,13 @@ namespace Silky.Core.Runtime.Rpc
         {
             rpcContext.SetInvokeAttachment(AttachmentKeys.ServiceKey, serviceKey);
         }
+        
+        public static void SetHashKey(this RpcContext rpcContext, string hashKey)
+        {
+            var headers = rpcContext.GetRequestHeader() ?? new Dictionary<string, string>();
+            headers[AttachmentKeys.HashKey] = hashKey;
+            rpcContext.SetRequestHeader(headers);
+        }
 
         public static void SetRequestHeader(this RpcContext rpcContext, IDictionary<string, string> headers)
         {
