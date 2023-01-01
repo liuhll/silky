@@ -2,11 +2,12 @@
 using NormHostDemo.Tests;
 using Silky.EntityFrameworkCore.Contexts;
 using Silky.EntityFrameworkCore.Contexts.Attributes;
+using Silky.EntityFrameworkCore.Extras.Contexts;
 
 namespace TestApplication.Contexts
 {
-    [AppDbContext("DemoDbContext", DbProvider.MySqlOfficial)]
-    public class DemoDbContext : AbstractDbContext<DemoDbContext>
+    [AppDbContext("DemoDbContext", DbProvider.MySql)]
+    public class DemoDbContext : SilkyDbContext<DemoDbContext>
     {
         public DemoDbContext(DbContextOptions<DemoDbContext> options) : base(options)
         {
