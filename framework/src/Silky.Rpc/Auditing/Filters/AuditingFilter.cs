@@ -5,6 +5,7 @@ using Silky.Core;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Auditing.Filters;

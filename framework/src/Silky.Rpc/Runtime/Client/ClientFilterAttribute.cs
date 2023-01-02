@@ -1,4 +1,5 @@
 using System;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client

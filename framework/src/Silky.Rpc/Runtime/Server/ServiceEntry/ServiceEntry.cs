@@ -13,6 +13,7 @@ using Silky.Core.MethodExecutor;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint.Selector;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Security;

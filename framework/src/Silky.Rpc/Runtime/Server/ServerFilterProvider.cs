@@ -6,6 +6,7 @@ using System.Reflection;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
+using Silky.Rpc.Filters;
 
 namespace Silky.Rpc.Runtime.Server
 {

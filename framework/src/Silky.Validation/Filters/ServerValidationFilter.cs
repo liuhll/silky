@@ -4,6 +4,7 @@ using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Validation.Filters;

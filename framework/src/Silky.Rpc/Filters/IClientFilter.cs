@@ -1,8 +1,8 @@
 using Silky.Rpc.Transport.Messages;
 
-namespace Silky.Rpc.Runtime.Client
+namespace Silky.Rpc.Filters
 {
-    public interface IClientFilter
+    public interface IClientFilter : IFilterMetadata
     {
         int Order { get; }
 

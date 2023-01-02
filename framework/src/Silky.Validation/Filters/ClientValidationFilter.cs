@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Runtime.Rpc;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;

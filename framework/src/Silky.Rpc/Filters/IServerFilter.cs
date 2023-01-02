@@ -1,6 +1,6 @@
-namespace Silky.Rpc.Runtime.Server
+namespace Silky.Rpc.Filters
 {
-    public interface IServerFilter
+    public interface IServerFilter : IFilterMetadata
     {
         int Order { get; }
 
@@ -8,6 +8,6 @@ namespace Silky.Rpc.Runtime.Server
 
         void OnActionExecuted(ServerExecutedContext context);
 
-        void OnActionException(ServerExceptionContext context);
+        void OnActionException(ServerExceptionContext context);  
     }
 }

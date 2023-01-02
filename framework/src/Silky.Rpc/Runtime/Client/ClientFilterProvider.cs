@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
