@@ -3,16 +3,13 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters
 {
-    public class ServerExecutingContext
+    public class ServerExecutingContext : ServiceEntryContext
     {
-        public ServiceEntry ServiceEntry { get; set; }
+        public ServerExecutingContext(ServiceEntryContext context) : base(context)
+        {
+            InstanceType = context.ServiceInstance.GetType();
+        }
 
-        public Type InstanceType { get; set; }
-
-        public object[] Parameters { get; set; }
-
-        public string ServiceKey { get; set; }
-
-        public Exception Exception { get; set; }
+        public Type InstanceType { get; private set; }
     }
 }
