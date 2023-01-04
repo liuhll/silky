@@ -3,22 +3,20 @@ using System.Linq;
 using Silky.Core;
 using Silky.Core.DbContext;
 using Silky.Core.DbContext.UnitOfWork;
-using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Rpc.Filters;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.EntityFrameworkCore.UnitOfWork
 {
-    public class EfCoreUnitOfWorkServerFilter : IServerFilter, IScopedDependency
+    public class EfCoreUnitOfWorkServerFilter : IServerFilter
     {
         private readonly ISilkyDbContextPool _silkyDbContextPool;
         private UnitOfWorkAttribute _unitOfWorkAttribute;
         private bool _isManualSaveChanges;
 
-        public EfCoreUnitOfWorkServerFilter()
+        public EfCoreUnitOfWorkServerFilter(ISilkyDbContextPool silkyDbContextPool)
         {
-            _silkyDbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>();
+            _silkyDbContextPool = silkyDbContextPool;
         }
 
         public int Order { get; } = Int32.MaxValue;

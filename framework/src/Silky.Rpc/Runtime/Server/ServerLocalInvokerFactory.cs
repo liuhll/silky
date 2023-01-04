@@ -21,9 +21,8 @@ internal class ServerLocalInvokerFactory : IServerLocalInvokerFactory, ISingleto
     {
         if (serviceEntryContext == null)
             throw new ArgumentNullException(nameof(serviceEntryContext));
-        var filters = _serverFilterProvider.GetServerFilters(serviceEntryContext.ServiceEntry,
-            serviceEntryContext.ServiceInstance.GetType());
-        var invoker = new LocalInvoker(_logger,serviceEntryContext, filters);
+        var filterFactoryResult = FilterFactory.GetAllServerFilters(_serverFilterProvider, serviceEntryContext);
+        var invoker = new LocalInvoker(_logger,serviceEntryContext, filterFactoryResult.Filters);
         return invoker;
     }
-}
+}  

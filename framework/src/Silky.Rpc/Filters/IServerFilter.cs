@@ -1,6 +1,6 @@
 namespace Silky.Rpc.Filters
 {
-    public interface IServerFilter : IFilterMetadata
+    public interface IServerFilter : IServerFilterMetadata
     {
         void OnActionExecuting(ServerExecutingContext context);
 

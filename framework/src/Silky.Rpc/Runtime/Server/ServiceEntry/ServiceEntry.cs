@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
 using Silky.Core.Extensions;
@@ -17,6 +16,7 @@ using Silky.Rpc.Filters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Security;
+using FilterDescriptor = Silky.Rpc.Filters.FilterDescriptor;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -74,7 +74,7 @@ namespace Silky.Rpc.Runtime.Server
             CreateDefaultSupportedResponseMediaTypes();
             CreateCachingInterceptorDescriptors();
         }
-        
+
 
         private void CreateCachingInterceptorDescriptors()
         {
@@ -95,15 +95,17 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     cachingInterceptorDescriptor.CacheName = removeCachingInterceptProvider.CacheName;
                 }
-                
-                if (cachingInterceptorProvider is IRemoveMatchKeyCachingInterceptProvider removeMatchKeyCachingInterceptProvider)
+
+                if (cachingInterceptorProvider is IRemoveMatchKeyCachingInterceptProvider
+                    removeMatchKeyCachingInterceptProvider)
                 {
                     cachingInterceptorDescriptor.CacheName = removeMatchKeyCachingInterceptProvider.CacheName;
                 }
-                
+
                 if (cachingInterceptorProvider is IUpdateCachingInterceptProvider updateCachingInterceptProvider)
                 {
-                    cachingInterceptorDescriptor.IgnoreWhenCacheKeyNull = updateCachingInterceptProvider.IgnoreWhenCacheKeyNull;
+                    cachingInterceptorDescriptor.IgnoreWhenCacheKeyNull =
+                        updateCachingInterceptProvider.IgnoreWhenCacheKeyNull;
                 }
 
                 foreach (var parameterDescriptor in ParameterDescriptors)
@@ -131,28 +133,53 @@ namespace Silky.Rpc.Runtime.Server
             ServiceEntryDescriptor.CachingInterceptorDescriptors = cachingInterceptorDescriptors;
         }
 
-        private IReadOnlyCollection<IServerFilter> CreateServerFilters()
+        private IReadOnlyCollection<FilterDescriptor> CreateServerFilters()
         {
-            var serviceEntryServerFilters = CustomAttributes.OfType<IServerFilter>()
+            var filterDescriptors = new List<FilterDescriptor>();
+            var serviceEntryServerFilters = CustomAttributes.OfType<ServerFilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
-            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<IServerFilter>()
+
+            foreach (var serviceEntryServerFilter in serviceEntryServerFilters)
+            {
+                filterDescriptors.Add(new FilterDescriptor(serviceEntryServerFilter, FilterScope.ServiceEntry));
+            }
+
+            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<ServerFilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
-            var serverFilters = new List<IServerFilter>();
-            serverFilters.AddRange(serviceEntryServerFilters);
-            serverFilters.AddRange(serviceServerFilters);
-            return serverFilters.ToArray();
+            
+            foreach (var serviceServerFilter in serviceServerFilters)
+            {
+                filterDescriptors.Add(new FilterDescriptor(serviceServerFilter, FilterScope.AppService));
+            }
+
+            var serverFilterFactories = EngineContext.Current.ResolveAll<IServerFilterFactory>();
+            foreach (var serverFilterFactory in serverFilterFactories)
+            {
+                filterDescriptors.Add(new FilterDescriptor(serverFilterFactory, FilterScope.Global));
+            }
+            
+            return filterDescriptors.ToArray();
         }
 
-        private IReadOnlyCollection<IClientFilter> CreateClientFilters()
+        private IReadOnlyCollection<FilterDescriptor> CreateClientFilters()
         {
+            var filterDescriptors = new List<FilterDescriptor>();
             var serviceEntryClientFilters = CustomAttributes.OfType<IClientFilter>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
+            foreach (var serviceEntryClientFilter in serviceEntryClientFilters)
+            {
+                filterDescriptors.Add(new FilterDescriptor(serviceEntryClientFilter,FilterScope.ServiceEntry));
+            }
+            
             var serviceClientFilters = ServiceType.GetCustomAttributes().OfType<IClientFilter>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
-            var clientFilters = new List<IClientFilter>();
-            clientFilters.AddRange(serviceEntryClientFilters);
-            clientFilters.AddRange(serviceClientFilters);
-            return clientFilters.ToArray();
+            
+            foreach (var serviceClientFilter in serviceClientFilters)
+            {
+                filterDescriptors.Add(new FilterDescriptor(serviceClientFilter,FilterScope.AppService));
+            }
+            
+            return filterDescriptors.ToArray();
         }
 
         private IReadOnlyCollection<IAuthorizeData> CreateAuthorizeData()
@@ -230,7 +257,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 GovernanceOptions.ShuntStrategy = ShuntStrategy.HashAlgorithm;
             }
-            
+
             UpdateServiceEntryDescriptor(GovernanceOptions);
         }
 
@@ -315,9 +342,9 @@ namespace Silky.Rpc.Runtime.Server
 
         public IReadOnlyCollection<object> CustomAttributes { get; }
 
-        public IReadOnlyCollection<IClientFilter> ClientFilters { get; private set; }
+        public IReadOnlyCollection<FilterDescriptor> ClientFilters { get; private set; }
 
-        public IReadOnlyCollection<IServerFilter> ServerFilters { get; private set; }
+        public IReadOnlyCollection<FilterDescriptor> ServerFilters { get; private set; }
 
         public IReadOnlyCollection<IAuthorizeData> AuthorizeData { get; }
 

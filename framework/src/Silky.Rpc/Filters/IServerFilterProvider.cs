@@ -1,9 +1,8 @@
-using System;
-using Silky.Rpc.Runtime.Server;
+using System.Collections.Generic;
 
 namespace Silky.Rpc.Filters;
 
 public interface IServerFilterProvider
 {
-    IFilterMetadata[] GetServerFilters(ServiceEntry serviceEntry, Type instanceType);
+    void ProviderFilters(List<FilterItem> filterItems);
 }

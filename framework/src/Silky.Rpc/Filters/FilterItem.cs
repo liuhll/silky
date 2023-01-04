@@ -14,7 +14,7 @@ public class FilterItem
         Descriptor = descriptor;
     }
     
-    public FilterItem(FilterDescriptor descriptor, IFilterMetadata filter)
+    public FilterItem(FilterDescriptor descriptor, IServerFilterMetadata filter)
         : this(descriptor)
     {
         if (filter == null)

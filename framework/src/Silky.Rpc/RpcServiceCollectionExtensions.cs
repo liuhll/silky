@@ -31,7 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddOptions<AuditingOptions>()
                     .Bind(configuration.GetSection(AuditingOptions.Auditing));
                 services.AddSingleton<IAuditSerializer, JsonNetAuditSerializer>();
-                services.AddScoped<IServerFilter, AuditingFilter>();
+                services.AddScoped<IServerFilter, AuditingServerFilter>();
                 return services;
             }
     }

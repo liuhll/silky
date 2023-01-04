@@ -8,11 +8,11 @@ public class LocalInvoker : ILocalInvoker
 {
     private readonly ILogger _logger;
     private readonly ServiceEntryContext _serviceEntryContext;
-    private readonly IFilterMetadata[] _filters;
+    private readonly IServerFilterMetadata[] _filters;
     private object _result;
     
     public LocalInvoker(ILogger logger, ServiceEntryContext serviceEntryContext,
-        IFilterMetadata[] filters)
+        IServerFilterMetadata[] filters)
     {
         _logger = logger;
         _serviceEntryContext = serviceEntryContext;

@@ -5,14 +5,12 @@ using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Filters;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Validation.Filters;
 
-public class ServerValidationFilter : IServerFilter, IScopedDependency
+public class ServerValidationFilter : IServerFilter
 {
-    public int Order { get; } = Int32.MaxValue;
-
+    
     private readonly IMethodInvocationValidator _methodInvocationValidator;
     private AppSettingsOptions _appSettingsOptions;
 
@@ -36,8 +34,5 @@ public class ServerValidationFilter : IServerFilter, IScopedDependency
     public void OnActionExecuted(ServerExecutedContext context)
     {
     }
-
-    public void OnActionException(ServerExceptionContext context)
-    {
-    }
+    
 }

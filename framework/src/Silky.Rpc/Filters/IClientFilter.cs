@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Mvc.Filters;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Filters
 {
-    public interface IClientFilter : IFilterMetadata
+    public interface IClientFilter : IClientFilterMetadata, IOrderedFilter
     {
         int Order { get; }
 

@@ -11,5 +11,7 @@ namespace Silky.Rpc.Filters
         }
 
         public Type InstanceType { get; private set; }
+        
+        public virtual object Result { get; set; }
     }
 }

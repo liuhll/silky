@@ -17,7 +17,7 @@ public class FilterDescriptor
         Scope = filterScope;
 
 
-        if (Filter is IOrderedFilter orderedFilter)
+        if (Filter is IOrderedServerFilter orderedFilter)
         {
             Order = orderedFilter.Order;
         }

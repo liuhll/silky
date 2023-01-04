@@ -10,17 +10,15 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Auditing.Filters;
 
-public class AuditingFilter : IServerFilter
+public class AuditingServerFilter : IServerFilter
 {
-    public int Order { get; } = 9999;
-
     private readonly AuditingOptions _auditingOptions;
     private readonly IAuditSerializer _auditSerializer;
 
     private AuditLogActionInfo _auditLogActionInfo;
     private Stopwatch _stopwatch;
 
-    public AuditingFilter(
+    public AuditingServerFilter(
         IOptions<AuditingOptions> auditingOptions,
         IAuditSerializer auditSerializer)
     {
