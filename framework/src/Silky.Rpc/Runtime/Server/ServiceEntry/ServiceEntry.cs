@@ -20,7 +20,7 @@ using FilterDescriptor = Silky.Rpc.Filters.FilterDescriptor;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServiceEntry
+    public class ServiceEntry : IServerFilterMetadata
     {
         private readonly ObjectMethodExecutor _methodExecutor;
 
@@ -146,7 +146,7 @@ namespace Silky.Rpc.Runtime.Server
 
             var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<ServerFilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
-            
+
             foreach (var serviceServerFilter in serviceServerFilters)
             {
                 filterDescriptors.Add(new FilterDescriptor(serviceServerFilter, FilterScope.AppService));
@@ -157,7 +157,8 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filterDescriptors.Add(new FilterDescriptor(serverFilterFactory, FilterScope.Global));
             }
-            
+
+            filterDescriptors.Add(new FilterDescriptor(this, FilterScope.ServiceEntry))  ;
             return filterDescriptors.ToArray();
         }
 
@@ -168,17 +169,17 @@ namespace Silky.Rpc.Runtime.Server
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
             foreach (var serviceEntryClientFilter in serviceEntryClientFilters)
             {
-                filterDescriptors.Add(new FilterDescriptor(serviceEntryClientFilter,FilterScope.ServiceEntry));
+                filterDescriptors.Add(new FilterDescriptor(serviceEntryClientFilter, FilterScope.ServiceEntry));
             }
-            
+
             var serviceClientFilters = ServiceType.GetCustomAttributes().OfType<IClientFilter>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
-            
+
             foreach (var serviceClientFilter in serviceClientFilters)
             {
-                filterDescriptors.Add(new FilterDescriptor(serviceClientFilter,FilterScope.AppService));
+                filterDescriptors.Add(new FilterDescriptor(serviceClientFilter, FilterScope.AppService));
             }
-            
+
             return filterDescriptors.ToArray();
         }
 

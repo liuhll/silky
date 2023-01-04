@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-public class ServerExceptionContext : ServiceEntryContext
+public class ServerExceptionContext : FilterContext
 {
     private Exception? _exception;
     private ExceptionDispatchInfo? _exceptionDispatchInfo;
 
 
-    public ServerExceptionContext(ServiceEntryContext context) : base(context)
+    public ServerExceptionContext(ServiceEntryContext context,IList<IFilterMetadata> filters) : base(context,filters)
     {
     }
 

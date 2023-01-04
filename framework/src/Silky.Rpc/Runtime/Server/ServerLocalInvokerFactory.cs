@@ -9,20 +9,24 @@ internal class ServerLocalInvokerFactory : IServerLocalInvokerFactory, ISingleto
 {
     private readonly ILogger _logger;
     private readonly IServerFilterProvider _serverFilterProvider;
+    private readonly IServiceEntryContextAccessor _serviceEntryContextAccessor;
 
     public ServerLocalInvokerFactory(ILoggerFactory loggerFactory,
-        IServerFilterProvider serverFilterProvider)
+        IServerFilterProvider serverFilterProvider,
+        IServiceEntryContextAccessor? serviceEntryContextAccessor)
     {
         _serverFilterProvider = serverFilterProvider;
+        _serviceEntryContextAccessor = serviceEntryContextAccessor ?? ServiceEntryContextAccessor.Null;
+      
         _logger = loggerFactory.CreateLogger<LocalInvoker>();
     }
 
-    public ILocalInvoker CreateInvoker(ServiceEntryContext serviceEntryContext)
+    public LocalInvoker CreateInvoker(ServiceEntryContext serviceEntryContext)
     {
         if (serviceEntryContext == null)
             throw new ArgumentNullException(nameof(serviceEntryContext));
         var filterFactoryResult = FilterFactory.GetAllServerFilters(_serverFilterProvider, serviceEntryContext);
-        var invoker = new LocalInvoker(_logger,serviceEntryContext, filterFactoryResult.Filters);
+        var invoker = new ServiceEntryLocalInvoker(_logger,serviceEntryContext,_serviceEntryContextAccessor, filterFactoryResult.Filters);
         return invoker;
     }
 }  

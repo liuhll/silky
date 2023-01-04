@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-public class ResultExecutedContext : ServiceEntryContext
+public class ResultExecutedContext : FilterContext
 {
-    public ResultExecutedContext(ServiceEntryContext context,object result) : base(context)
+    public ResultExecutedContext(ServiceEntryContext context, IList<IFilterMetadata> filters, object result) :
+        base(context, filters)
     {
         if (result == null)
         {
@@ -14,8 +16,8 @@ public class ResultExecutedContext : ServiceEntryContext
 
         Result = result;
     }
-    
+
     public virtual bool Canceled { get; set; }
-    
+
     public virtual object Result { get; }
 }
