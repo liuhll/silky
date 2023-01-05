@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Silky.Rpc.Filters;
 using IFilterMetadata = Silky.Rpc.Filters.IFilterMetadata;
@@ -317,7 +316,7 @@ internal class ServiceEntryLocalInvoker : LocalInvoker
             catch (Exception exception)
             {
                 invoker._serviceEntryExecutedContext =
-                    new ServerExecutedContextSealed(invoker._serviceEntryExecutedContext, invoker._filters)
+                    new ServerExecutedContextSealed(invoker._serviceEntryContext, invoker._filters)
                     {
                         ExceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception),
                     };

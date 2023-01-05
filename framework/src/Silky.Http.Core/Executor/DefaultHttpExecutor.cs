@@ -8,7 +8,6 @@ namespace Silky.Http.Core.Executor
     public class DefaultHttpExecutor : IHttpExecutor
     {
         private readonly IExecutor _executor;
-
         public DefaultHttpExecutor(IExecutor executor)
         {
             _executor = executor;

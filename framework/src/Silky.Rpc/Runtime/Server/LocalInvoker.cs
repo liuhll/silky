@@ -23,10 +23,10 @@ public abstract partial class LocalInvoker
     // https://blogs.msdn.microsoft.com/ericlippert/2008/05/14/mutating-readonly-structs/
     protected FilterCursor _cursor;
 
-
     private ExceptionContextSealed? _exceptionContext;
     private ServerResultExecutingContextSealed? _resultExecutingContext;
     private ServerResultExecutedContextSealed? _resultExecutedContext;
+    private ServerAuthorizationFilterContextSealed? _authorizationContext;
 
     protected LocalInvoker(ILogger logger,
         ServiceEntryContext serviceEntryContext,
@@ -191,6 +191,99 @@ public abstract partial class LocalInvoker
         switch (next)
         {
             case State.InvokeBegin:
+            {
+                goto case State.AuthorizationBegin;
+            }
+            case State.AuthorizationBegin:
+            {
+                _cursor.Reset();
+                goto case State.AuthorizationNext;
+            }
+            case State.AuthorizationNext:
+            {
+                var current = _cursor.GetNextFilter<IServerAuthorizationFilter, IAsyncServerAuthorizationFilter>();
+                if (current.FilterAsync != null)
+                {
+                    if (_authorizationContext == null)
+                    {
+                        _authorizationContext = new ServerAuthorizationFilterContextSealed(_serviceEntryContext, _filters);
+                    }
+                    state = current.FilterAsync;
+                    goto case State.AuthorizationAsyncBegin;
+                }
+                else if (current.Filter != null)
+                {
+                    if (_authorizationContext == null)
+                    {
+                        _authorizationContext = new ServerAuthorizationFilterContextSealed(_serviceEntryContext, _filters);
+                    }
+
+                    state = current.Filter;
+                    goto case State.AuthorizationSync;
+                }
+                else
+                {
+                    goto case State.AuthorizationEnd;
+                }
+            }
+            case State.AuthorizationAsyncBegin:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_authorizationContext != null);
+                
+                var filter = (IAsyncServerAuthorizationFilter)state;
+                var authorizationContext = _authorizationContext;
+                var task = filter.OnAuthorizationAsync(authorizationContext);
+                if (!task.IsCompletedSuccessfully)
+                {
+                    next = State.AuthorizationAsyncEnd;
+                    return task;
+                }
+
+                goto case State.AuthorizationAsyncEnd;
+            }
+            case State.AuthorizationAsyncEnd:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_authorizationContext != null);
+                
+                var filter = (IAsyncServerAuthorizationFilter)state;
+                var authorizationContext = _authorizationContext;
+                if (authorizationContext.Result != null)
+                {
+                    goto case State.AuthorizationShortCircuit;
+                }
+
+                goto case State.AuthorizationNext;
+            }
+            case State.AuthorizationSync:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_authorizationContext != null);
+
+                var filter = (IServerAuthorizationFilter)state;
+                var authorizationContext = _authorizationContext;
+                
+                filter.OnAuthorization(authorizationContext);
+                
+                if (authorizationContext.Result != null)
+                {
+                    goto case State.AuthorizationShortCircuit;
+                }
+
+                goto case State.AuthorizationNext;
+            }
+            case State.AuthorizationShortCircuit:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_authorizationContext != null);
+                Debug.Assert(_authorizationContext.Result != null);
+                
+                isCompleted = true;
+                _result = _authorizationContext.Result;
+                return InvokeAlwaysRunResultFilters();
+            }
+            case State.AuthorizationEnd:
             {
                 goto case State.ExceptionBegin;
             }
@@ -494,8 +587,6 @@ public abstract partial class LocalInvoker
                 if (resultExecutedContext == null || resultExecutingContext.Cancel)
                 {
                     // Short-circuited by not calling next || Short-circuited by setting Cancel == true
-
-
                     _resultExecutedContext = new ServerResultExecutedContextSealed(
                         _serviceEntryContext,
                         _filters,
@@ -787,14 +878,13 @@ public abstract partial class LocalInvoker
     private enum State
     {
         InvokeBegin,
-
-        // AuthorizationBegin,
-        // AuthorizationNext,
-        // AuthorizationAsyncBegin,
-        // AuthorizationAsyncEnd,
-        // AuthorizationSync,
-        // AuthorizationShortCircuit,
-        // AuthorizationEnd,
+        AuthorizationBegin,
+        AuthorizationNext,
+        AuthorizationAsyncBegin,
+        AuthorizationAsyncEnd,
+        AuthorizationSync,
+        AuthorizationShortCircuit,
+        AuthorizationEnd,
         ExceptionBegin,
         ExceptionNext,
         ExceptionAsyncBegin,
@@ -821,7 +911,6 @@ public abstract partial class LocalInvoker
     private enum Scope
     {
         Invoker,
-
         // Resource,
         Exception,
         Result,
@@ -852,6 +941,13 @@ public abstract partial class LocalInvoker
             IList<IFilterMetadata> filters,
             object result)
             : base(serviceEntryContext, filters, result)
+        {
+        }
+    }
+    
+    private  sealed class ServerAuthorizationFilterContextSealed : ServerAuthorizationFilterContext
+    {
+        public ServerAuthorizationFilterContextSealed(ServiceEntryContext context, IList<IFilterMetadata> filters) : base(context, filters)
         {
         }
     }

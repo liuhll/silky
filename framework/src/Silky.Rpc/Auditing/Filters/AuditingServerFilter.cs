@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Runtime.Rpc;
@@ -10,13 +11,11 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Auditing.Filters;
 
-public class AuditingServerFilter : IServerFilter
+public class AuditingServerFilter : IAsyncServerFilter
 {
     private readonly AuditingOptions _auditingOptions;
     private readonly IAuditSerializer _auditSerializer;
 
-    private AuditLogActionInfo _auditLogActionInfo;
-    private Stopwatch _stopwatch;
 
     public AuditingServerFilter(
         IOptions<AuditingOptions> auditingOptions,
@@ -26,14 +25,16 @@ public class AuditingServerFilter : IServerFilter
         _auditingOptions = auditingOptions.Value;
     }
 
-    public void OnActionExecuting(ServerExecutingContext context)
+
+    public async Task OnActionExecutionAsync(ServerExecutingContext context, ServerExecutionDelegate next)
     {
         if (!context.ServiceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
         {
             return;
         }
-        _stopwatch = Stopwatch.StartNew();
-        _auditLogActionInfo = new AuditLogActionInfo()
+
+        var stopwatch = Stopwatch.StartNew();
+        var auditLogActionInfo = new AuditLogActionInfo()
         {
             Parameters = _auditSerializer.Serialize(context.Parameters),
             ExecutionTime = DateTimeOffset.Now,
@@ -45,18 +46,11 @@ public class AuditingServerFilter : IServerFilter
             ServiceKey = context.ServiceKey,
             IsDistributedTransaction = context.ServiceEntry.IsTransactionServiceEntry(),
         };
-    }
 
-    public void OnActionExecuted(ServerExecutedContext context)
-    {
-        if (!context.ServiceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
-        {
-            return;
-        }
-        _stopwatch.Stop();
-        _auditLogActionInfo.ExecutionDuration = (int)_stopwatch.ElapsedMilliseconds;
-         
-        RpcContext.Context.SetAuditingActionLog(_auditLogActionInfo);
+        var result = await next();
+        stopwatch.Stop();
+        auditLogActionInfo.ExceptionMessage = result.Exception?.Message;
+        auditLogActionInfo.ExecutionDuration = (int)stopwatch.ElapsedMilliseconds;
+        RpcContext.Context.SetAuditingActionLog(auditLogActionInfo);
     }
-    
 }
