@@ -17,7 +17,7 @@ namespace Silky.Rpc.Runtime.Client
 {
     internal class DefaultRemoteExecutor : IRemoteExecutor
     {
-        private readonly IRemoteInvoker _remoteInvoker;
+        private readonly IRemoteCaller _remoteCaller;
         private readonly IInvokePolicyBuilder _invokePolicyBuilder;
         private readonly IFileParameterConverter _fileParameterConverter;
 
@@ -25,11 +25,11 @@ namespace Silky.Rpc.Runtime.Client
 
         public ILogger<DefaultRemoteExecutor> Logger { get; set; }
 
-        public DefaultRemoteExecutor(IRemoteInvoker remoteInvoker,
+        public DefaultRemoteExecutor(IRemoteCaller remoteCaller,
             IInvokePolicyBuilder invokePolicyBuilder,
             IFileParameterConverter fileParameterConverter)
         {
-            _remoteInvoker = remoteInvoker;
+            _remoteCaller = remoteCaller;
             _invokePolicyBuilder = invokePolicyBuilder;
             _fileParameterConverter = fileParameterConverter;
             Logger = NullLogger<DefaultRemoteExecutor>.Instance;
@@ -63,7 +63,7 @@ namespace Silky.Rpc.Runtime.Client
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
-                        await _remoteInvoker.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
+                        await _remoteCaller.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
                             hashKey);
                     return invokeResult.GetResult();
                 });
@@ -93,7 +93,7 @@ namespace Silky.Rpc.Runtime.Client
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
-                        await _remoteInvoker.Invoke(remoteInvokeMessage,
+                        await _remoteCaller.Invoke(remoteInvokeMessage,
                             serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
                     return invokeResult.GetResult();
@@ -125,7 +125,7 @@ namespace Silky.Rpc.Runtime.Client
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
-                        await _remoteInvoker.Invoke(remoteInvokeMessage,
+                        await _remoteCaller.Invoke(remoteInvokeMessage,
                             serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
                     return invokeResult.GetResult();
@@ -157,7 +157,7 @@ namespace Silky.Rpc.Runtime.Client
                 .ExecuteAsync(async () =>
                 {
                     var invokeResult =
-                        await _remoteInvoker.Invoke(remoteInvokeMessage,
+                        await _remoteCaller.Invoke(remoteInvokeMessage,
                             serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
                             hashKey);
                     return invokeResult.GetResult();

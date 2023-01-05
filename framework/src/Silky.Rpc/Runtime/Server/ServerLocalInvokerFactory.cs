@@ -33,7 +33,7 @@ internal class ServerLocalInvokerFactory : IServerLocalInvokerFactory, ISingleto
         if (!_cacheFilters.TryGetValue(serviceEntryContext.ServiceEntry.Id,out var cachedFilterItems))
         {
             var filterFactoryResult = FilterFactory.GetAllServerFilters(_serverFilterProvider, serviceEntryContext);
-            filters = filterFactoryResult.Filters;
+            filters = (IServerFilterMetadata[])filterFactoryResult.Filters;
             _cacheFilters.TryAdd(serviceEntryContext.ServiceEntry.Id, filterFactoryResult.CacheableFilters);
         }
         else

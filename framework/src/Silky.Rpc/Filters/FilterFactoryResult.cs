@@ -4,7 +4,7 @@ internal readonly struct FilterFactoryResult
 {
     public FilterFactoryResult(
         FilterItem[] cacheableFilters,
-        IServerFilterMetadata[] filters)
+        IFilterMetadata[] filters)
     {
         CacheableFilters = cacheableFilters;
         Filters = filters;
@@ -12,5 +12,5 @@ internal readonly struct FilterFactoryResult
 
     public FilterItem[] CacheableFilters { get; }
 
-    public IServerFilterMetadata[] Filters { get; }
+    public IFilterMetadata[] Filters { get; }
 }

@@ -15,13 +15,14 @@ using Silky.Core.Utils;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    internal class DefaultRemoteInvoker : IRemoteInvoker
+    internal class DefaultRemoteCaller : IRemoteCaller
     {
         private readonly IServerManager _serverManager;
 
@@ -29,9 +30,9 @@ namespace Silky.Rpc.Runtime.Client
         private readonly ISerializer _serializer;
         private readonly ClientFilterProvider _clientFilterProvider;
         private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
-        public ILogger<DefaultRemoteInvoker> Logger { get; set; }
+        public ILogger<DefaultRemoteCaller> Logger { get; set; }
 
-        public DefaultRemoteInvoker(IServerManager serverManager,
+        public DefaultRemoteCaller(IServerManager serverManager,
             ITransportClientFactory transportClientFactory,
             ISerializer serializer,
             ClientFilterProvider clientFilterProvider,
@@ -44,7 +45,7 @@ namespace Silky.Rpc.Runtime.Client
             _clientFilterProvider = clientFilterProvider;
             _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
 
-            Logger = NullLogger<DefaultRemoteInvoker>.Instance;
+            Logger = NullLogger<DefaultRemoteCaller>.Instance;
         }
 
         public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,

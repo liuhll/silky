@@ -1,9 +1,8 @@
 using System;
 using Silky.Core.DependencyInjection;
-using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 
-namespace Silky.Rpc.Runtime.Client
+namespace Silky.Rpc.Filters
 {
     public class ClientFilterProvider : ISingletonDependency
     {
