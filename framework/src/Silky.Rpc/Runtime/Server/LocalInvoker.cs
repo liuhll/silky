@@ -429,7 +429,12 @@ public abstract partial class LocalInvoker
                     Rethrow(exceptionContext);
                     Debug.Fail("unreachable");
                 }
-
+                var task = InvokeResultFilters();
+                if (!task.IsCompletedSuccessfully)
+                {
+                    next = State.InvokeEnd;
+                    return task;
+                }
                 goto case State.InvokeEnd;
             }
             case State.ActionBegin:
@@ -819,7 +824,39 @@ public abstract partial class LocalInvoker
     
     private Task InvokeResultFilters()
     {
-        return Task.CompletedTask;
+        try
+        {
+            var next = State.ResultBegin;
+            var scope = Scope.Invoker;
+            var state = (object?)null;
+            var isCompleted = false;
+
+            while (!isCompleted)
+            {
+                var lastTask = ResultNext<IServerResultFilter, IAsyncServerResultFilter>(ref next, ref scope, ref state, ref isCompleted);
+                if (!lastTask.IsCompletedSuccessfully)
+                {
+                    return Awaited(this, lastTask, next, scope, state, isCompleted);
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            // Wrap non task-wrapped exceptions in a Task,
+            // as this isn't done automatically since the method is not async.
+            return Task.FromException(ex);
+        }
+        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state, bool isCompleted)
+        {
+            await lastTask;
+
+            while (!isCompleted)
+            {
+                await invoker.ResultNext<IServerResultFilter, IAsyncServerResultFilter>(ref next, ref scope, ref state, ref isCompleted);
+            }
+        }
     }
 
     protected abstract Task InvokeInnerFilterAsync();
