@@ -81,29 +81,38 @@ internal static class FilterFactory
             }
             return filters;
         }
+        
+    }
 
-        // var serverFilters = new List<IServerFilterMetadata>();
-        // foreach (var filterItem in filterItems)
-        // {
-        //     if (filterItem.Filter != null)
-        //     {
-        //         serverFilters.Add(filterItem.Filter);
-        //     }
-        //     else
-        //     {
-        //         var filter = filterItem.Descriptor.Filter;
-        //         if (!(filter is IServerFilterFactory filterFactory))
-        //         {
-        //             filterItem.Filter = (IServerFilterMetadata)filter;
-        //             filterItem.IsReusable = true;
-        //         }
-        //         else
-        //         {
-        //             filterItem.Filter = filterFactory.CreateInstance(services);
-        //             filterItem.IsReusable = filterFactory.IsReusable;
-        //         }
-        //
-        //     }
-        // }
+    public static IServerFilterMetadata[] CreateUncachedFilters(IServerFilterProvider serverFilterProvider, ServiceEntryContext serviceEntryContext, FilterItem[] cachedFilterItems)
+    {
+        if (serverFilterProvider == null)
+        {
+            throw new ArgumentNullException(nameof(serverFilterProvider));
+        }
+
+        if (serviceEntryContext == null)
+        {
+            throw new ArgumentNullException(nameof(serviceEntryContext));
+        }
+
+        if (cachedFilterItems == null)
+        {
+            throw new ArgumentNullException(nameof(cachedFilterItems));
+        }
+        var filterItems = new List<FilterItem>(cachedFilterItems.Length);
+        
+        // Deep copy the cached filter items as filter providers could modify them
+        for (var i = 0; i < cachedFilterItems.Length; i++)
+        {
+            var filterItem = cachedFilterItems[i];
+            filterItems.Add(
+                new FilterItem(filterItem.Descriptor)
+                {
+                    Filter = filterItem.Filter,
+                    IsReusable = filterItem.IsReusable
+                });
+        }
+        return CreateUncachedFiltersCore(serverFilterProvider, serviceEntryContext, filterItems);
     }
 }
