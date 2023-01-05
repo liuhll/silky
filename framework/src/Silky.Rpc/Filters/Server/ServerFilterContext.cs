@@ -4,9 +4,9 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-public abstract class FilterContext : ServiceEntryContext
+public abstract class ServerFilterContext : ServiceEntryContext
 {
-    public FilterContext(ServiceEntryContext context,IList<IFilterMetadata> filters) : base(context)
+    public ServerFilterContext(ServiceEntryContext context,IList<IFilterMetadata> filters) : base(context)
     {
         if (filters == null)
         {

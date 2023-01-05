@@ -4,7 +4,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters
 {
-    public class ServerExecutingContext : FilterContext
+    public class ServerExecutingContext : ServerFilterContext
     {
         public ServerExecutingContext(ServiceEntryContext context, IList<IFilterMetadata> filters,
             IDictionary<string, object> serviceEntryArguments) : base(context,

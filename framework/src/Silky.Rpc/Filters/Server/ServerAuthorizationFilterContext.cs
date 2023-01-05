@@ -3,7 +3,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-public class ServerAuthorizationFilterContext : FilterContext
+public class ServerAuthorizationFilterContext : ServerFilterContext
 {
     public ServerAuthorizationFilterContext(ServiceEntryContext context, 
         IList<IFilterMetadata> filters) 

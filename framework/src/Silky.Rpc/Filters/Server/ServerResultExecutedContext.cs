@@ -5,7 +5,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-public class ServerResultExecutedContext : FilterContext
+public class ServerResultExecutedContext : ServerFilterContext
 {
     private Exception? _exception;
     private ExceptionDispatchInfo? _exceptionDispatchInfo;

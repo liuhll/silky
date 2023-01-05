@@ -15,4 +15,8 @@
         <PackageReference Include="DistributedLock" Version="$(DistributedLockVersion)" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Filters\Client" />
+    </ItemGroup>
+
 </Project>
