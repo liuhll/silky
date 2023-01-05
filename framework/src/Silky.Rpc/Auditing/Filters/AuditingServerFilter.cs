@@ -58,17 +58,5 @@ public class AuditingServerFilter : IServerFilter
          
         RpcContext.Context.SetAuditingActionLog(_auditLogActionInfo);
     }
-
-    public void OnActionException(ServerExceptionContext context)
-    {
-        if (!context.ServiceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
-        {
-            return;
-        }
-
-        _stopwatch.Stop();
-        _auditLogActionInfo.ExecutionDuration = (int)_stopwatch.ElapsedMilliseconds;
-        _auditLogActionInfo.ExceptionMessage = context.Exception.Message;
-        RpcContext.Context.SetAuditingActionLog(_auditLogActionInfo);
-    }
+    
 }

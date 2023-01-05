@@ -7,13 +7,13 @@ namespace Silky.Rpc.Runtime.Server
     [AttributeUsage(AttributeTargets.Class | System.AttributeTargets.Interface | System.AttributeTargets.Method,
         AllowMultiple = true,
         Inherited = true)]
-    public abstract class ServerFilterAttribute :
+    public abstract class FilterAttribute :
         Attribute,
         IServerFilter,
-        IAsyncServerServerFilter,
-        IOrderedServerFilter,
-        IResultServerFilter,
-        IAsyncResultFilter,
+        IAsyncServerFilter,
+        IOrderedFilter,
+        IServerResultFilter,
+        IAsyncServerResultFilter,
         IServerFilterMetadata
     {
         
@@ -39,17 +39,17 @@ namespace Silky.Rpc.Runtime.Server
             this.OnActionExecuted(await next());
         }
 
-        public virtual void OnResultExecuting(ResultExecutingContext context)
+        public virtual void OnResultExecuting(ServerResultExecutingContext context)
         {
            
         }
 
-        public virtual void OnResultExecuted(ResultExecutedContext context)
+        public virtual void OnResultExecuted(ServerResultExecutedContext context)
         {
             
         }
 
-        public virtual async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        public virtual async Task OnResultExecutionAsync(ServerResultExecutingContext context, ResultExecutionDelegate next)
         {
             if (context == null)
                 throw new ArgumentNullException(nameof (context));

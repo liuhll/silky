@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc.Filters;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Filters

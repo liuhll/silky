@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silky.Rpc.Filters;
 using IFilterMetadata = Silky.Rpc.Filters.IFilterMetadata;
-using ResultExecutedContext = Silky.Rpc.Filters.ResultExecutedContext;
-using ResultExecutingContext = Silky.Rpc.Filters.ResultExecutingContext;
 
 
 namespace Silky.Rpc.Runtime.Server;
@@ -23,12 +22,11 @@ public abstract partial class LocalInvoker
     // Do not make this readonly, it's mutable. We don't want to make a copy.
     // https://blogs.msdn.microsoft.com/ericlippert/2008/05/14/mutating-readonly-structs/
     protected FilterCursor _cursor;
-    protected object? _instance;
 
 
     private ExceptionContextSealed? _exceptionContext;
-    private ResultExecutingContextSealed? _resultExecutingContext;
-    private ResultExecutedContextSealed? _resultExecutedContext;
+    private ServerResultExecutingContextSealed? _resultExecutingContext;
+    private ServerResultExecutedContextSealed? _resultExecutedContext;
 
     protected LocalInvoker(ILogger logger,
         ServiceEntryContext serviceEntryContext,
@@ -67,7 +65,7 @@ public abstract partial class LocalInvoker
         }
 
         return ReleaseResourcesCore(scope).AsTask();
-        
+
         static async Task Awaited(LocalInvoker invoker, Task task, IDisposable? scope)
         {
             try
@@ -79,7 +77,6 @@ public abstract partial class LocalInvoker
                 await invoker.ReleaseResourcesCore(scope);
             }
         }
-
     }
 
     internal ValueTask ReleaseResourcesCore(IDisposable? scope)
@@ -176,7 +173,9 @@ public abstract partial class LocalInvoker
             // as this isn't done automatically since the method is not async.
             return Task.FromException(ex);
         }
-        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state, bool isCompleted)
+
+        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state,
+            bool isCompleted)
         {
             await lastTask;
 
@@ -202,7 +201,7 @@ public abstract partial class LocalInvoker
             }
             case State.ExceptionNext:
             {
-                var current = _cursor.GetNextFilter<IExceptionServerFilter, IAsyncExceptionServerFilter>();
+                var current = _cursor.GetNextFilter<IServerExceptionFilter, IAsyncServerExceptionFilter>();
                 if (current.FilterAsync != null)
                 {
                     state = current.FilterAsync;
@@ -240,7 +239,7 @@ public abstract partial class LocalInvoker
             {
                 Debug.Assert(state != null);
 
-                var filter = (IAsyncExceptionServerFilter)state;
+                var filter = (IAsyncServerExceptionFilter)state;
                 var exceptionContext = _exceptionContext;
 
                 // When we get here we're 'unwinding' the stack of exception filters. If we have an unhandled exception,
@@ -263,7 +262,7 @@ public abstract partial class LocalInvoker
             {
                 Debug.Assert(state != null);
                 Debug.Assert(_exceptionContext != null);
-                
+
                 goto case State.ExceptionEnd;
             }
             case State.ExceptionSyncBegin:
@@ -281,12 +280,13 @@ public abstract partial class LocalInvoker
             {
                 Debug.Assert(state != null);
 
-                var filter = (IExceptionServerFilter)state;
+                var filter = (IServerExceptionFilter)state;
                 var exceptionContext = _exceptionContext;
                 if (exceptionContext?.Exception != null && !exceptionContext.ExceptionHandled)
                 {
                     filter.OnException(exceptionContext);
                 }
+
                 goto case State.ExceptionEnd;
             }
             case State.ExceptionInside:
@@ -323,6 +323,7 @@ public abstract partial class LocalInvoker
                     isCompleted = true;
                     return Task.CompletedTask;
                 }
+
                 if (exceptionContext != null)
                 {
                     if (exceptionContext.Result != null ||
@@ -335,6 +336,7 @@ public abstract partial class LocalInvoker
                     Rethrow(exceptionContext);
                     Debug.Fail("unreachable");
                 }
+
                 goto case State.InvokeEnd;
             }
             case State.ActionBegin:
@@ -365,6 +367,7 @@ public abstract partial class LocalInvoker
                     next = State.InvokeEnd;
                     return task;
                 }
+
                 goto case State.InvokeEnd;
             }
             case State.InvokeEnd:
@@ -379,7 +382,302 @@ public abstract partial class LocalInvoker
 
     private Task InvokeAlwaysRunResultFilters()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var next = State.ResultBegin;
+            var scope = Scope.Invoker;
+            var state = (object?)null;
+            var isCompleted = false;
+
+            while (!isCompleted)
+            {
+                var lastTask =
+                    ResultNext<IAlwaysRunServerResultFilter, IAsyncAlwaysRunServerResultFilter>(ref next, ref scope,
+                        ref state, ref isCompleted);
+                if (!lastTask.IsCompletedSuccessfully)
+                {
+                    return Awaited(this, lastTask, next, scope, state, isCompleted);
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            // Wrap non task-wrapped exceptions in a Task,
+            // as this isn't done automatically since the method is not async.
+            return Task.FromException(ex);
+        }
+
+        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state,
+            bool isCompleted)
+        {
+            await lastTask;
+
+            while (!isCompleted)
+            {
+                await invoker.ResultNext<IAlwaysRunServerResultFilter, IAsyncAlwaysRunServerResultFilter>(ref next,
+                    ref scope, ref state, ref isCompleted);
+            }
+        }
+    }
+
+    private Task ResultNext<TFilter, TFilterAsync>(ref State next, ref Scope scope, ref object? state,
+        ref bool isCompleted)
+        where TFilter : class, IServerResultFilter
+        where TFilterAsync : class, IAsyncServerResultFilter
+    {
+        var resultFilterKind = typeof(TFilter) == typeof(IAlwaysRunServerResultFilter)
+            ? FilterTypeConstants.AlwaysRunResultFilter
+            : FilterTypeConstants.ResultFilter;
+        switch (next)
+        {
+            case State.ResultBegin:
+            {
+                _cursor.Reset();
+                goto case State.ResultNext;
+            }
+            case State.ResultNext:
+            {
+                var current = _cursor.GetNextFilter<TFilter, TFilterAsync>();
+                if (current.FilterAsync != null)
+                {
+                    if (_resultExecutingContext == null)
+                    {
+                        _resultExecutingContext =
+                            new ServerResultExecutingContextSealed(_serviceEntryContext, _filters, _result!);
+                    }
+
+                    state = current.FilterAsync;
+                    goto case State.ResultAsyncBegin;
+                }
+                else if (current.Filter != null)
+                {
+                    if (_resultExecutingContext == null)
+                    {
+                        _resultExecutingContext =
+                            new ServerResultExecutingContextSealed(_serviceEntryContext, _filters, _result!);
+                    }
+
+                    state = current.Filter;
+                    goto case State.ResultSyncBegin;
+                }
+                else
+                {
+                    goto case State.ResultInside;
+                }
+            }
+            case State.ResultAsyncBegin:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_resultExecutingContext != null);
+                var filter = (TFilterAsync)state;
+                var resultExecutingContext = _resultExecutingContext;
+
+                var task = filter.OnResultExecutionAsync(resultExecutingContext,
+                    InvokeNextResultFilterAwaitedAsync<TFilter, TFilterAsync>);
+                if (!task.IsCompletedSuccessfully)
+                {
+                    next = State.ResultAsyncEnd;
+                    return task;
+                }
+
+                goto case State.ResultAsyncEnd;
+            }
+            case State.ResultAsyncEnd:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_resultExecutingContext != null);
+                var filter = (TFilterAsync)state;
+                var resultExecutingContext = _resultExecutingContext;
+                var resultExecutedContext = _resultExecutedContext;
+                if (resultExecutedContext == null || resultExecutingContext.Cancel)
+                {
+                    // Short-circuited by not calling next || Short-circuited by setting Cancel == true
+
+
+                    _resultExecutedContext = new ServerResultExecutedContextSealed(
+                        _serviceEntryContext,
+                        _filters,
+                        resultExecutingContext.Result)
+                    {
+                        Canceled = true,
+                    };
+                }
+
+                goto case State.ResultEnd;
+            }
+
+            case State.ResultSyncBegin:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_resultExecutingContext != null);
+
+                var filter = (TFilter)state;
+                var resultExecutingContext = _resultExecutingContext;
+                filter.OnResultExecuting(resultExecutingContext);
+                if (_resultExecutingContext.Cancel)
+                {
+                    _resultExecutedContext = new ServerResultExecutedContextSealed(
+                        resultExecutingContext,
+                        _filters,
+                        resultExecutingContext.Result)
+                    {
+                        Canceled = true,
+                    };
+
+                    goto case State.ResultEnd;
+                }
+
+                var task = InvokeNextResultFilterAsync<TFilter, TFilterAsync>();
+                if (!task.IsCompletedSuccessfully)
+                {
+                    next = State.ResultSyncEnd;
+                    return task;
+                }
+
+                goto case State.ResultSyncEnd;
+            }
+            case State.ResultSyncEnd:
+            {
+                Debug.Assert(state != null);
+                Debug.Assert(_resultExecutingContext != null);
+                Debug.Assert(_resultExecutedContext != null);
+                var filter = (TFilter)state;
+                var resultExecutedContext = _resultExecutedContext;
+                filter.OnResultExecuted(resultExecutedContext);
+                goto case State.ResultEnd;
+            }
+            case State.ResultInside:
+            {
+                if (_resultExecutingContext != null)
+                {
+                    _result = _resultExecutingContext.Result;
+                }
+
+                if (_result == null)
+                {
+                    // The empty result is always flowed back as the 'executed' result if we don't have one.
+                    _result = default;
+                }
+
+                goto case State.ResultEnd;
+            }
+
+            case State.ResultEnd:
+            {
+                var result = _result;
+                isCompleted = true;
+
+                if (scope == Scope.Result)
+                {
+                    if (_resultExecutedContext == null)
+                    {
+                        _resultExecutedContext =
+                            new ServerResultExecutedContextSealed(_serviceEntryContext, _filters, result!);
+                    }
+
+                    return Task.CompletedTask;
+                }
+
+                Rethrow(_resultExecutedContext!);
+                return Task.CompletedTask;
+            }
+            default:
+                throw new InvalidOperationException(); // Unreachable.
+        }
+    }
+
+
+    private Task<ServerResultExecutedContext> InvokeNextResultFilterAwaitedAsync<TFilter, TFilterAsync>()
+        where TFilter : class, IServerResultFilter
+        where TFilterAsync : class, IAsyncServerResultFilter
+    {
+        Debug.Assert(_resultExecutingContext != null);
+        if (_resultExecutingContext.Cancel)
+        {
+            // If we get here, it means that an async filter set cancel == true AND called next().
+            // This is forbidden.
+            return Throw();
+        }
+
+        var task = InvokeNextResultFilterAsync<TFilter, TFilterAsync>();
+        if (!task.IsCompletedSuccessfully)
+        {
+            return Awaited(this, task);
+        }
+
+        Debug.Assert(_resultExecutedContext != null);
+        return Task.FromResult<ServerResultExecutedContext>(_resultExecutedContext);
+        static async Task<ServerResultExecutedContext> Awaited(LocalInvoker invoker, Task task)
+        {
+            await task;
+
+            Debug.Assert(invoker._resultExecutedContext != null);
+            return invoker._resultExecutedContext;
+        }
+#pragma warning disable CS1998
+        static async Task<ServerResultExecutedContext> Throw()
+        {
+            throw new InvalidOperationException($"Invoke {typeof(IAsyncServerResultFilter).Name} Fail");
+        }
+#pragma warning restore CS1998
+    }
+
+    private Task InvokeNextResultFilterAsync<TFilter, TFilterAsync>()
+        where TFilter : class, IServerResultFilter
+        where TFilterAsync : class, IAsyncServerResultFilter
+    {
+        try
+        {
+            var next = State.ResultNext;
+            var state = (object?)null;
+            var scope = Scope.Result;
+            var isCompleted = false;
+            while (!isCompleted)
+            {
+                var lastTask = ResultNext<TFilter, TFilterAsync>(ref next, ref scope, ref state, ref isCompleted);
+                if (!lastTask.IsCompletedSuccessfully)
+                {
+                    return Awaited(this, lastTask, next, scope, state, isCompleted);
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            _resultExecutedContext = new ServerResultExecutedContextSealed(_serviceEntryContext, _filters, _result!)
+            {
+                ExceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception),
+            };
+        }
+
+        Debug.Assert(_resultExecutedContext != null);
+
+        return Task.CompletedTask;
+
+        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state,
+            bool isCompleted)
+        {
+            try
+            {
+                await lastTask;
+
+                while (!isCompleted)
+                {
+                    await invoker.ResultNext<TFilter, TFilterAsync>(ref next, ref scope, ref state, ref isCompleted);
+                }
+            }
+            catch (Exception exception)
+            {
+                invoker._resultExecutedContext = new ServerResultExecutedContextSealed(invoker._serviceEntryContext,
+                    invoker._filters, invoker._result!)
+                {
+                    ExceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception),
+                };
+            }
+
+            Debug.Assert(invoker._resultExecutedContext != null);
+        }
     }
 
     private static void Rethrow(ExceptionContextSealed context)
@@ -405,15 +703,83 @@ public abstract partial class LocalInvoker
         }
     }
 
+    private static void Rethrow(ServerResultExecutedContextSealed context)
+    {
+        if (context == null)
+        {
+            return;
+        }
+
+        if (context.ExceptionHandled)
+        {
+            return;
+        }
+
+        if (context.ExceptionDispatchInfo != null)
+        {
+            context.ExceptionDispatchInfo.Throw();
+        }
+
+        if (context.Exception != null)
+        {
+            throw context.Exception;
+        }
+    }
+    
     private Task InvokeResultFilters()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     protected abstract Task InvokeInnerFilterAsync();
+
     private Task InvokeNextExceptionFilterAsync()
     {
-        return Task.CompletedTask;
+        try
+        {
+            var next = State.ExceptionNext;
+            var state = (object?)null;
+            var scope = Scope.Exception;
+            var isCompleted = false;
+
+            while (!isCompleted)
+            {
+                var lastTask = Next(ref next, ref scope, ref state, ref isCompleted);
+                if (!lastTask.IsCompletedSuccessfully)
+                {
+                    return Awaited(this, lastTask, next, scope, state, isCompleted);
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            // Wrap non task-wrapped exceptions in a Task,
+            // as this isn't done automatically since the method is not async.
+            return Task.FromException(ex);
+        }
+
+        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state,
+            bool isCompleted)
+        {
+            try
+            {
+                await lastTask;
+
+                while (!isCompleted)
+                {
+                    await invoker.Next(ref next, ref scope, ref state, ref isCompleted);
+                }
+            }
+            catch (Exception exception)
+            {
+                invoker._exceptionContext = new ExceptionContextSealed(invoker._serviceEntryContext, invoker._filters)
+                {
+                    ExceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception),
+                };
+            }
+        }
     }
 
     public object Result => _result;
@@ -429,16 +795,6 @@ public abstract partial class LocalInvoker
         // AuthorizationSync,
         // AuthorizationShortCircuit,
         // AuthorizationEnd,
-        // ResourceBegin,
-        // ResourceNext,
-        // ResourceAsyncBegin,
-        // ResourceAsyncEnd,
-        // ResourceSyncBegin,
-        // ResourceSyncEnd,
-        // ResourceShortCircuit,
-        // ResourceInside,
-        // ResourceInsideEnd,
-        // ResourceEnd,
         ExceptionBegin,
         ExceptionNext,
         ExceptionAsyncBegin,
@@ -479,9 +835,19 @@ public abstract partial class LocalInvoker
         }
     }
 
-    private sealed class ResultExecutedContextSealed : ResultExecutedContext
+    private static class FilterTypeConstants
     {
-        public ResultExecutedContextSealed(
+        public const string AuthorizationFilter = "Authorization Filter";
+        public const string ResourceFilter = "Resource Filter";
+        public const string ActionFilter = "Action Filter";
+        public const string ExceptionFilter = "Exception Filter";
+        public const string ResultFilter = "Result Filter";
+        public const string AlwaysRunResultFilter = "Always Run Result Filter";
+    }
+
+    private sealed class ServerResultExecutedContextSealed : ServerResultExecutedContext
+    {
+        public ServerResultExecutedContextSealed(
             ServiceEntryContext serviceEntryContext,
             IList<IFilterMetadata> filters,
             object result)
@@ -490,9 +856,9 @@ public abstract partial class LocalInvoker
         }
     }
 
-    private sealed class ResultExecutingContextSealed : ResultExecutingContext
+    private sealed class ServerResultExecutingContextSealed : ServerResultExecutingContext
     {
-        public ResultExecutingContextSealed(
+        public ServerResultExecutingContextSealed(
             ServiceEntryContext serviceEntryContext,
             IList<IFilterMetadata> filters,
             object result)

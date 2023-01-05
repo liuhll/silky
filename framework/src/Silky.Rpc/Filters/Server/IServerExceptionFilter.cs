@@ -1,6 +1,6 @@
 ﻿namespace Silky.Rpc.Filters;
 
-public interface IExceptionServerFilter : IServerFilterMetadata
+public interface IServerExceptionFilter : IServerFilterMetadata
 {
     void OnException(ServerExceptionContext context);
 }

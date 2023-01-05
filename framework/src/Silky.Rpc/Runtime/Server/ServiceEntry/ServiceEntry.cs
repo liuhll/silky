@@ -136,7 +136,7 @@ namespace Silky.Rpc.Runtime.Server
         private IReadOnlyCollection<FilterDescriptor> CreateServerFilters()
         {
             var filterDescriptors = new List<FilterDescriptor>();
-            var serviceEntryServerFilters = CustomAttributes.OfType<ServerFilterAttribute>()
+            var serviceEntryServerFilters = CustomAttributes.OfType<FilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
 
             foreach (var serviceEntryServerFilter in serviceEntryServerFilters)
@@ -144,7 +144,7 @@ namespace Silky.Rpc.Runtime.Server
                 filterDescriptors.Add(new FilterDescriptor(serviceEntryServerFilter, FilterScope.ServiceEntry));
             }
 
-            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<ServerFilterAttribute>()
+            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<FilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
 
             foreach (var serviceServerFilter in serviceServerFilters)

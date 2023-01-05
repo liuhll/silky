@@ -2,7 +2,7 @@ namespace Silky.Rpc.Runtime.Server;
 
 public class ServiceEntryContext
 {
-    public ServiceEntryContext(ServiceEntryContext context)
+    protected ServiceEntryContext(ServiceEntryContext context)
     {
         ServiceEntry = context.ServiceEntry;
         Parameters = context.Parameters;

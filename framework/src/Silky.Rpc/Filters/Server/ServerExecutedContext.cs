@@ -10,7 +10,7 @@ namespace Silky.Rpc.Filters
         private Exception? _exception;
         private ExceptionDispatchInfo? _exceptionDispatchInfo;
 
-        public ServerExecutedContext(ServiceEntryContext context,IList<IFilterMetadata> filters)
+        public ServerExecutedContext(ServiceEntryContext context, IList<IFilterMetadata> filters)
             : base(context,filters)
         {
         }
@@ -48,7 +48,10 @@ namespace Silky.Rpc.Filters
         }
 
         public virtual bool ExceptionHandled { get; set; }
+        
+        public virtual bool Canceled { get; set; }
 
         public virtual object Result { get; set; } = default;
+        
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Silky.Rpc.Filters;
 
-public interface IAsyncServerServerFilter : IServerFilterMetadata
+public interface IAsyncServerFilter : IServerFilterMetadata
 {
     Task OnActionExecutionAsync(ServerExecutingContext context, ServerExecutionDelegate next);
 }

@@ -3,9 +3,9 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-public class ResultExecutingContext : FilterContext
+public class ServerResultExecutingContext : FilterContext
 {
-    public ResultExecutingContext(ServiceEntryContext context, IList<IFilterMetadata> filters, object result) : base(
+    public ServerResultExecutingContext(ServiceEntryContext context, IList<IFilterMetadata> filters, object result) : base(
         context, filters)
     {
         Result = result;
