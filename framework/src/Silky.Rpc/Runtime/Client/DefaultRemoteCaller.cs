@@ -40,8 +40,8 @@ namespace Silky.Rpc.Runtime.Client
             Logger = NullLogger<DefaultRemoteCaller>.Instance;
         }
 
-        public async Task<object> InvokeAsync(RemoteInvokeMessage remoteInvokeMessage,
-            ShuntStrategy shuntStrategy, string hashKey = null)
+        public async Task<object?> InvokeAsync(RemoteInvokeMessage remoteInvokeMessage,
+            ShuntStrategy shuntStrategy, string? hashKey = null)
         {
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
                 "The rpc request call start{0} serviceEntryId:[{1}]",

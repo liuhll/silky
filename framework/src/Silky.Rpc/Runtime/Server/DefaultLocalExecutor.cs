@@ -14,7 +14,7 @@ namespace Silky.Rpc.Runtime.Server
             _serverLocalInvokerFactory = serverLocalInvokerFactory;
         }
 
-        public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
+        public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string? serviceKey = null)
         {
             var instance = EngineContext.Current.ResolveServiceInstance(serviceKey, serviceEntry.ServiceType);
             var localInvoker =

@@ -28,7 +28,7 @@ internal abstract partial class RemoteInvokerBase : IRemoteInvoker
     private ClientResultExecutedContextSealed? _resultExecutedContext;
     private ClientAuthorizationFilterContextSealed? _authorizationContext;
 
-    public RemoteResultMessage RemoteResult => _result;
+    public RemoteResultMessage RemoteResult => _result!;
 
     protected RemoteInvokerBase(ILogger logger,
         ClientInvokeContext clientInvokeContext,

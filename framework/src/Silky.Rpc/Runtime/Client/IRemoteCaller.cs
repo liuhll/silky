@@ -7,7 +7,7 @@ namespace Silky.Rpc.Runtime.Client
 {
     internal interface IRemoteCaller : IScopedDependency
     {
-        Task<object> InvokeAsync(RemoteInvokeMessage remoteInvokeMessage, ShuntStrategy shuntStrategy,
-            string hashKey = null);
+        Task<object?> InvokeAsync(RemoteInvokeMessage remoteInvokeMessage, ShuntStrategy shuntStrategy,
+            string? hashKey = null);
     }
 }

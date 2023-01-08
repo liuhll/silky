@@ -10,7 +10,7 @@ public class ServiceEntryContext
         ServiceInstance = context.ServiceInstance;
     }
     
-    public ServiceEntryContext(ServiceEntry serviceEntry, object[] parameters, string serviceKey, object instance)
+    public ServiceEntryContext(ServiceEntry serviceEntry, object[] parameters, string? serviceKey, object instance)
     {
         ServiceEntry = serviceEntry;
         Parameters = parameters;
@@ -24,5 +24,5 @@ public class ServiceEntryContext
     
     public object[] Parameters { get; set; }
 
-    public string ServiceKey { get; set; }
+    public string? ServiceKey { get; set; }
 }
