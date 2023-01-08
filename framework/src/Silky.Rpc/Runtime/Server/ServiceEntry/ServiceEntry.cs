@@ -20,7 +20,7 @@ using FilterDescriptor = Silky.Rpc.Filters.FilterDescriptor;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServiceEntry
+    public class ServiceEntry 
     {
         private readonly ObjectMethodExecutor _methodExecutor;
 
@@ -136,7 +136,7 @@ namespace Silky.Rpc.Runtime.Server
         private FilterDescriptor[] CreateServerFilters()
         {
             var filterDescriptors = new List<FilterDescriptor>();
-            var serviceEntryServerFilters = CustomAttributes.OfType<ServerFilterAttribute>()
+            var serviceEntryServerFilters = CustomAttributes.OfType<IServerFilterMetadata>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
 
             foreach (var serviceEntryServerFilter in serviceEntryServerFilters)
@@ -144,7 +144,7 @@ namespace Silky.Rpc.Runtime.Server
                 filterDescriptors.Add(new FilterDescriptor(serviceEntryServerFilter, FilterScope.ServiceEntry));
             }
 
-            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<ServerFilterAttribute>()
+            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<IServerFilterMetadata>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
 
             foreach (var serviceServerFilter in serviceServerFilters)
@@ -157,7 +157,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filterDescriptors.Add(new FilterDescriptor(serverFilterFactory, FilterScope.Global));
             }
-
+            
             return filterDescriptors.ToArray();
         }
 
