@@ -6,24 +6,24 @@ using Silky.Rpc.Filters;
 
 namespace Silky.Rpc.Runtime.Server;
 
-internal class ServerLocalInvokerFactory : IServerLocalInvokerFactory, ISingletonDependency
+internal class DefaultServerLocalInvokerFactory : IServerLocalInvokerFactory, ISingletonDependency
 {
     private readonly ILogger _logger;
-    private readonly IServerFilterProvider _serverFilterProvider;
+    private readonly IFilterProvider _filterProvider;
     private readonly IServiceEntryContextAccessor _serviceEntryContextAccessor;
     private ConcurrentDictionary<string, FilterItem[]> _cacheFilters = new(); 
 
-    public ServerLocalInvokerFactory(ILoggerFactory loggerFactory,
-        IServerFilterProvider serverFilterProvider,
+    public DefaultServerLocalInvokerFactory(ILoggerFactory loggerFactory,
+        IFilterProvider filterProvider,
         IServiceEntryContextAccessor? serviceEntryContextAccessor)
     {
-        _serverFilterProvider = serverFilterProvider;
+        _filterProvider = filterProvider;
         _serviceEntryContextAccessor = serviceEntryContextAccessor ?? ServiceEntryContextAccessor.Null;
       
-        _logger = loggerFactory.CreateLogger<LocalInvoker>();
+        _logger = loggerFactory.CreateLogger<LocalInvokerBase>();
     }
 
-    public LocalInvoker CreateInvoker(ServiceEntryContext serviceEntryContext)
+    public ILocalInvoker CreateInvoker(ServiceEntryContext serviceEntryContext)
     {
         if (serviceEntryContext == null)
             throw new ArgumentNullException(nameof(serviceEntryContext));
@@ -32,15 +32,15 @@ internal class ServerLocalInvokerFactory : IServerLocalInvokerFactory, ISingleto
 
         if (!_cacheFilters.TryGetValue(serviceEntryContext.ServiceEntry.Id,out var cachedFilterItems))
         {
-            var filterFactoryResult = FilterFactory.GetAllServerFilters(_serverFilterProvider, serviceEntryContext);
+            var filterFactoryResult = ServerFilterFactory.GetAllFilters(_filterProvider, serviceEntryContext);
             filters = (IServerFilterMetadata[])filterFactoryResult.Filters;
             _cacheFilters.TryAdd(serviceEntryContext.ServiceEntry.Id, filterFactoryResult.CacheableFilters);
         }
         else
         {
-            filters = FilterFactory.CreateUncachedFilters(_serverFilterProvider, serviceEntryContext, cachedFilterItems);
+            filters = ServerFilterFactory.CreateUncachedFilters(_filterProvider, cachedFilterItems);
         }
-        var invoker = new ServiceEntryLocalInvoker(_logger,serviceEntryContext,_serviceEntryContextAccessor, filters);
+        var invoker = new LocalInvoker(_logger,serviceEntryContext,_serviceEntryContextAccessor, filters);
         return invoker;
     }
 }  

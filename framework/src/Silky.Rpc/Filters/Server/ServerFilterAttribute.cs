@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using Silky.Rpc.Filters;
 
-namespace Silky.Rpc.Runtime.Server
+namespace Silky.Rpc.Filters
 {
-    [AttributeUsage(AttributeTargets.Class | System.AttributeTargets.Interface | System.AttributeTargets.Method,
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Method,
         AllowMultiple = true,
         Inherited = true)]
-    public abstract class FilterAttribute :
+    public abstract class ServerFilterAttribute :
         Attribute,
         IServerFilter,
         IAsyncServerFilter,
@@ -19,15 +18,15 @@ namespace Silky.Rpc.Runtime.Server
         
         public int Order { get; set; }
 
-        public virtual void OnActionExecuting(ServerExecutingContext context)
+        public virtual void OnActionExecuting(ServerInvokeExecutingContext context)
         {
         }
 
-        public virtual void OnActionExecuted(ServerExecutedContext context)
+        public virtual void OnActionExecuted(ServerInvokeExecutedContext context)
         {
         }
 
-        public virtual async Task OnActionExecutionAsync(ServerExecutingContext context, ServerExecutionDelegate next)
+        public virtual async Task OnActionExecutionAsync(ServerInvokeExecutingContext context, ServerExecutionDelegate next)
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
@@ -49,7 +48,7 @@ namespace Silky.Rpc.Runtime.Server
             
         }
 
-        public virtual async Task OnResultExecutionAsync(ServerResultExecutingContext context, ResultExecutionDelegate next)
+        public virtual async Task OnResultExecutionAsync(ServerResultExecutingContext context, ServerResultExecutionDelegate next)
         {
             if (context == null)
                 throw new ArgumentNullException(nameof (context));

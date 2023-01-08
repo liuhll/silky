@@ -22,7 +22,7 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 
         public int Order { get; } = Int32.MaxValue - 1;
         
-        public async Task OnActionExecutionAsync(ServerExecutingContext context, ServerExecutionDelegate next)
+        public async Task OnActionExecutionAsync(ServerInvokeExecutingContext context, ServerExecutionDelegate next)
         {
             var instanceMethod = context.InstanceType?.GetCompareMethod(context.ServiceEntry.MethodInfo,
                 context.ServiceEntry.MethodInfo.Name);

@@ -5,13 +5,13 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-public class ServerExceptionContext : ServerFilterContext
+public class ServerInvokeExceptionContext : ServerFilterContext
 {
     private Exception? _exception;
     private ExceptionDispatchInfo? _exceptionDispatchInfo;
 
 
-    public ServerExceptionContext(ServiceEntryContext context,IList<IFilterMetadata> filters) : base(context,filters)
+    public ServerInvokeExceptionContext(ServiceEntryContext context,IList<IFilterMetadata> filters) : base(context,filters)
     {
     }
 

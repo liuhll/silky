@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Rpc.Runtime.Client;
-using Silky.Rpc.Transport.Messages;
+using Silky.Rpc.Filters;
 
 namespace ITestApplication.Filters
 {
@@ -9,12 +8,12 @@ namespace ITestApplication.Filters
     {
         public ILogger<TestClientFilterAttribute> Logger { get; set; }
 
-        public TestClientFilterAttribute(int order) : base(order)
+        public TestClientFilterAttribute(int order)
         {
             Logger = NullLogger<TestClientFilterAttribute>.Instance;
         }
 
-        public override void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage)
+        public override void OnActionExecuting(ClientInvokeExecutingContext context)
         {
             Logger.LogInformation("test client filter");
         }

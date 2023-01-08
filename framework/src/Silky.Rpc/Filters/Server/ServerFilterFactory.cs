@@ -5,10 +5,10 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters;
 
-internal static class FilterFactory
+internal static class ServerFilterFactory
 {
-    public static FilterFactoryResult GetAllServerFilters(
-        IServerFilterProvider filterProvider,
+    public static FilterFactoryResult GetAllFilters(
+        IFilterProvider filterProvider,
         ServiceEntryContext context)
     {
         if (filterProvider == null)
@@ -21,7 +21,7 @@ internal static class FilterFactory
             throw new ArgumentNullException(nameof(context));
         }
         
-        var staticFilterItems = new FilterItem[context.ServiceEntry.ServerFilters.Count];
+        var staticFilterItems = new FilterItem[context.ServiceEntry.ServerFilters.Length];
 
         var orderedFilters = context.ServiceEntry.ServerFilters
             .OrderBy(
@@ -36,7 +36,7 @@ internal static class FilterFactory
 
         var allFilterItems = new List<FilterItem>(staticFilterItems);
         
-        var filters = CreateUncachedFiltersCore(filterProvider, context, allFilterItems);
+        var filters = CreateUncachedFiltersCore(filterProvider, allFilterItems);
         for (var i = 0; i < staticFilterItems.Length; i++)
         {
             var item = staticFilterItems[i];
@@ -49,8 +49,7 @@ internal static class FilterFactory
     }
 
     private static IServerFilterMetadata[] CreateUncachedFiltersCore(
-        IServerFilterProvider filterProvider,
-        ServiceEntryContext context,
+        IFilterProvider filterProvider,
         List<FilterItem> filterItems)
     {
         filterProvider.ProviderFilters(filterItems);
@@ -84,18 +83,13 @@ internal static class FilterFactory
         
     }
 
-    public static IServerFilterMetadata[] CreateUncachedFilters(IServerFilterProvider serverFilterProvider, ServiceEntryContext serviceEntryContext, FilterItem[] cachedFilterItems)
+    public static IServerFilterMetadata[] CreateUncachedFilters(IFilterProvider filterProvider, FilterItem[] cachedFilterItems)
     {
-        if (serverFilterProvider == null)
+        if (filterProvider == null)
         {
-            throw new ArgumentNullException(nameof(serverFilterProvider));
+            throw new ArgumentNullException(nameof(filterProvider));
         }
-
-        if (serviceEntryContext == null)
-        {
-            throw new ArgumentNullException(nameof(serviceEntryContext));
-        }
-
+        
         if (cachedFilterItems == null)
         {
             throw new ArgumentNullException(nameof(cachedFilterItems));
@@ -113,6 +107,6 @@ internal static class FilterFactory
                     IsReusable = filterItem.IsReusable
                 });
         }
-        return CreateUncachedFiltersCore(serverFilterProvider, serviceEntryContext, filterItems);
+        return CreateUncachedFiltersCore(filterProvider, filterItems);
     }
 }

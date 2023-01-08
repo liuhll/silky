@@ -2,5 +2,5 @@
 
 public interface IServerExceptionFilter : IServerFilterMetadata
 {
-    void OnException(ServerExceptionContext context);
+    void OnException(ServerInvokeExceptionContext context);
 }

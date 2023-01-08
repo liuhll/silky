@@ -26,7 +26,7 @@ public class AuditingServerFilter : IAsyncServerFilter
     }
 
 
-    public async Task OnActionExecutionAsync(ServerExecutingContext context, ServerExecutionDelegate next)
+    public async Task OnActionExecutionAsync(ServerInvokeExecutingContext context, ServerExecutionDelegate next)
     {
         if (!context.ServiceEntry.IsEnableAuditing(_auditingOptions.IsEnabled))
         {

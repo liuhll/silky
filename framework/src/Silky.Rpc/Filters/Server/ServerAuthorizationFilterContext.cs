@@ -5,7 +5,7 @@ namespace Silky.Rpc.Filters;
 
 public class ServerAuthorizationFilterContext : ServerFilterContext
 {
-    public ServerAuthorizationFilterContext(ServiceEntryContext context, 
+    public ServerAuthorizationFilterContext(ServiceEntryContext context,
         IList<IFilterMetadata> filters) 
         : base(context, filters)
     {

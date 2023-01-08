@@ -1,9 +1,10 @@
 using System;
+using Silky.Rpc.Filters;
 
 namespace Silky.Rpc.Routing
 {
     [AttributeUsage(AttributeTargets.Interface)]
-    public class ServiceRouteAttribute : Attribute, IRouteTemplateProvider
+    public class ServiceRouteAttribute : Attribute, IRouteTemplateProvider, IClientFilterMetadata, IServerFilterMetadata
     {
         public ServiceRouteAttribute()
             : this("api/{appservice}")

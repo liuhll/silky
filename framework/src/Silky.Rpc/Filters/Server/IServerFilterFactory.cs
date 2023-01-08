@@ -6,5 +6,5 @@ public interface IServerFilterFactory : IServerFilterMetadata
 {
     bool IsReusable { get; }
     
-    IFilterMetadata CreateInstance(IServiceProvider serviceProvider);
+    IServerFilterMetadata CreateInstance(IServiceProvider serviceProvider);
 }

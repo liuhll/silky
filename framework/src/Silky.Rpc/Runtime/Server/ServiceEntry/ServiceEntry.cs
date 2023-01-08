@@ -20,7 +20,7 @@ using FilterDescriptor = Silky.Rpc.Filters.FilterDescriptor;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServiceEntry : IServerFilterMetadata
+    public class ServiceEntry
     {
         private readonly ObjectMethodExecutor _methodExecutor;
 
@@ -133,10 +133,10 @@ namespace Silky.Rpc.Runtime.Server
             ServiceEntryDescriptor.CachingInterceptorDescriptors = cachingInterceptorDescriptors;
         }
 
-        private IReadOnlyCollection<FilterDescriptor> CreateServerFilters()
+        private FilterDescriptor[] CreateServerFilters()
         {
             var filterDescriptors = new List<FilterDescriptor>();
-            var serviceEntryServerFilters = CustomAttributes.OfType<FilterAttribute>()
+            var serviceEntryServerFilters = CustomAttributes.OfType<ServerFilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
 
             foreach (var serviceEntryServerFilter in serviceEntryServerFilters)
@@ -144,7 +144,7 @@ namespace Silky.Rpc.Runtime.Server
                 filterDescriptors.Add(new FilterDescriptor(serviceEntryServerFilter, FilterScope.ServiceEntry));
             }
 
-            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<FilterAttribute>()
+            var serviceServerFilters = ServiceType.GetCustomAttributes().OfType<ServerFilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
 
             foreach (var serviceServerFilter in serviceServerFilters)
@@ -158,27 +158,34 @@ namespace Silky.Rpc.Runtime.Server
                 filterDescriptors.Add(new FilterDescriptor(serverFilterFactory, FilterScope.Global));
             }
 
-            filterDescriptors.Add(new FilterDescriptor(this, FilterScope.ServiceEntry))  ;
             return filterDescriptors.ToArray();
         }
 
-        private IReadOnlyCollection<FilterDescriptor> CreateClientFilters()
+        private FilterDescriptor[] CreateClientFilters()
         {
             var filterDescriptors = new List<FilterDescriptor>();
-            var serviceEntryClientFilters = CustomAttributes.OfType<IClientFilter>()
+            var serviceEntryClientFilters = CustomAttributes.OfType<ClientFilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
             foreach (var serviceEntryClientFilter in serviceEntryClientFilters)
             {
                 filterDescriptors.Add(new FilterDescriptor(serviceEntryClientFilter, FilterScope.ServiceEntry));
             }
 
-            var serviceClientFilters = ServiceType.GetCustomAttributes().OfType<IClientFilter>()
+            var serviceClientFilters = ServiceType.GetCustomAttributes().OfType<ClientFilterAttribute>()
                 .Where(p => p.GetType().IsClass && !p.GetType().IsAbstract);
 
             foreach (var serviceClientFilter in serviceClientFilters)
             {
                 filterDescriptors.Add(new FilterDescriptor(serviceClientFilter, FilterScope.AppService));
             }
+
+            var clientFilterFactories = EngineContext.Current.ResolveAll<IClientFilterFactory>();
+            foreach (var clientFilterFactory in clientFilterFactories)
+            {
+                filterDescriptors.Add(new FilterDescriptor(clientFilterFactory, FilterScope.Global));
+            }
+
+            filterDescriptors.Add(new FilterDescriptor(new RemoteInvokeBehavior(), FilterScope.ServiceEntry));
 
             return filterDescriptors.ToArray();
         }
@@ -343,9 +350,9 @@ namespace Silky.Rpc.Runtime.Server
 
         public IReadOnlyCollection<object> CustomAttributes { get; }
 
-        public IReadOnlyCollection<FilterDescriptor> ClientFilters { get; private set; }
+        public FilterDescriptor[] ClientFilters { get; private set; }
 
-        public IReadOnlyCollection<FilterDescriptor> ServerFilters { get; private set; }
+        public FilterDescriptor[] ServerFilters { get; private set; }
 
         public IReadOnlyCollection<IAuthorizeData> AuthorizeData { get; }
 

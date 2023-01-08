@@ -6,8 +6,8 @@ namespace Silky.Castle.Adapter
     public class SilkyAsyncDeterminationInterceptor<TInterceptor> : AsyncDeterminationInterceptor
         where TInterceptor : ISilkyInterceptor
     {
-        public SilkyAsyncDeterminationInterceptor(TInterceptor abpInterceptor)
-            : base(new CastleAsyncSilkyInterceptorAdapter<TInterceptor>(abpInterceptor))
+        public SilkyAsyncDeterminationInterceptor(TInterceptor silkyInterceptor)
+            : base(new CastleAsyncSilkyInterceptorAdapter<TInterceptor>(silkyInterceptor))
         {
         }
     }

@@ -61,7 +61,7 @@ namespace Silky.Transaction.Tcc.Executor
             return participant;
         }
 
-        public async Task GlobalConfirm(ITransaction currentTransaction)
+        public async Task GlobalConfirm(ITransaction? currentTransaction)
         {
             Logger.LogDebug("tcc transaction confirm .......！start");
             if (currentTransaction == null || currentTransaction.Participants.IsNullOrEmpty())
@@ -93,7 +93,7 @@ namespace Silky.Transaction.Tcc.Executor
             }
         }
 
-        public async Task GlobalCancel(ITransaction currentTransaction)
+        public async Task GlobalCancel(ITransaction? currentTransaction)
         {
             Logger.LogDebug("tcc transaction cancel .......！start");
             if (currentTransaction == null || currentTransaction.Participants.IsNullOrEmpty())
@@ -109,7 +109,7 @@ namespace Silky.Transaction.Tcc.Executor
             }
         }
 
-        private IParticipant BuildParticipant(ISilkyMethodInvocation invocation,
+        private IParticipant? BuildParticipant(ISilkyMethodInvocation invocation,
             string participantId,
             string participantRefId,
             TransactionRole transactionRole,

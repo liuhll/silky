@@ -4,5 +4,5 @@ namespace Silky.Rpc.Filters;
 
 public interface IAsyncServerResultFilter
 {
-    Task OnResultExecutionAsync(ServerResultExecutingContext context, ResultExecutionDelegate next);
+    Task OnResultExecutionAsync(ServerResultExecutingContext context, ServerResultExecutionDelegate next);
 }

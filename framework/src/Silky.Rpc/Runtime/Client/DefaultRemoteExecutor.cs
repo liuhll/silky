@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -60,13 +59,8 @@ namespace Silky.Rpc.Runtime.Client
 
             var policy = policyObject.WrapFallbackPolicy(serviceEntry.Id, parameters);
             var result = await policy
-                .ExecuteAsync(async () =>
-                {
-                    var invokeResult =
-                        await _remoteCaller.Invoke(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
-                            hashKey);
-                    return invokeResult.GetResult();
-                });
+                .ExecuteAsync(async () => await _remoteCaller.InvokeAsync(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
+                    hashKey));
             return result;
         }
 
@@ -90,14 +84,9 @@ namespace Silky.Rpc.Runtime.Client
 
             var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id);
             var result = await policy
-                .ExecuteAsync(async () =>
-                {
-                    var invokeResult =
-                        await _remoteCaller.Invoke(remoteInvokeMessage,
-                            serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
-                            hashKey);
-                    return invokeResult.GetResult();
-                });
+                .ExecuteAsync(async () => await _remoteCaller.InvokeAsync(remoteInvokeMessage,
+                    serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
+                    hashKey));
 
             return result;
         }
@@ -122,14 +111,9 @@ namespace Silky.Rpc.Runtime.Client
 
             var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id);
             var result = await policy
-                .ExecuteAsync(async () =>
-                {
-                    var invokeResult =
-                        await _remoteCaller.Invoke(remoteInvokeMessage,
-                            serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
-                            hashKey);
-                    return invokeResult.GetResult();
-                });
+                .ExecuteAsync(async () => await _remoteCaller.InvokeAsync(remoteInvokeMessage,
+                    serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
+                    hashKey));
 
             return result;
         }
@@ -154,14 +138,9 @@ namespace Silky.Rpc.Runtime.Client
 
             var policy = _invokePolicyBuilder.Build(serviceEntryDescriptor.Id);
             var result = await policy
-                .ExecuteAsync(async () =>
-                {
-                    var invokeResult =
-                        await _remoteCaller.Invoke(remoteInvokeMessage,
-                            serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
-                            hashKey);
-                    return invokeResult.GetResult();
-                });
+                .ExecuteAsync(async () => await _remoteCaller.InvokeAsync(remoteInvokeMessage,
+                    serviceEntryDescriptor.GovernanceOptions.ShuntStrategy,
+                    hashKey));
 
             return result;
         }
@@ -169,7 +148,9 @@ namespace Silky.Rpc.Runtime.Client
         private string GetHashKeyValue()
         {
             var headers = RpcContext.Context.GetRequestHeader();
-            return headers.TryOrdinalIgnoreCaseGetValue(HashShuntStrategyAttribute.HashKey, out var hashKey) ? hashKey : default;
+            return headers.TryOrdinalIgnoreCaseGetValue(HashShuntStrategyAttribute.HashKey, out var hashKey)
+                ? hashKey
+                : default;
         }
     }
 }

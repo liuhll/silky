@@ -11,7 +11,7 @@ public class AuditingServerFilterFactory : IServerFilterFactory, ISingletonDepen
 {
     public bool IsReusable { get; } = false;
     
-    public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+    public IServerFilterMetadata CreateInstance(IServiceProvider serviceProvider)
     {
         return new AuditingServerFilter(serviceProvider.GetService<IOptions<AuditingOptions>>(),
             serviceProvider.GetService<IAuditSerializer>());

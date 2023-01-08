@@ -42,7 +42,7 @@ namespace Silky.Transaction.Abstraction
 
         [JsonIgnore] public IReadOnlyCollection<IParticipant> Participants => m_participants.ToImmutableArray();
 
-        public void RegisterParticipant(IParticipant participant)
+        public void RegisterParticipant(IParticipant? participant)
         {
             if (participant != null)
             {
@@ -51,7 +51,7 @@ namespace Silky.Transaction.Abstraction
             }
         }
 
-        public void RemoveParticipant(IParticipant participant)
+        public void RemoveParticipant(IParticipant? participant)
         {
             if (participant != null)
             {

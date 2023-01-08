@@ -11,7 +11,7 @@ public class ServerValidationFilterFactory : IServerFilterFactory, ISingletonDep
 {
     public bool IsReusable { get; } = true;
 
-    public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+    public IServerFilterMetadata CreateInstance(IServiceProvider serviceProvider)
     {
         return new ServerValidationFilter(serviceProvider.GetRequiredService<IMethodInvocationValidator>(),
             serviceProvider.GetRequiredService<IOptionsMonitor<AppSettingsOptions>>());

@@ -2,9 +2,9 @@ namespace Silky.Rpc.Filters
 {
     public interface IServerFilter : IServerFilterMetadata
     {
-        void OnActionExecuting(ServerExecutingContext context);
+        void OnActionExecuting(ServerInvokeExecutingContext context);
 
-        void OnActionExecuted(ServerExecutedContext context);
+        void OnActionExecuted(ServerInvokeExecutedContext context);
         
     }
 }

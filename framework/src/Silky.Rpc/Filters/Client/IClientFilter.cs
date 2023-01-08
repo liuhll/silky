@@ -1,13 +1,9 @@
-using Silky.Rpc.Transport.Messages;
-
 namespace Silky.Rpc.Filters
 {
-    public interface IClientFilter : IClientFilterMetadata, IOrderedFilter
+    public interface IClientFilter : IClientFilterMetadata
     {
-        int Order { get; }
+        void OnActionExecuting(ClientInvokeExecutingContext context);
 
-        void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage);
-
-        void OnActionExecuted(RemoteResultMessage context);
+        void OnActionExecuted(ClientInvokeExecutedContext context);
     }
 }

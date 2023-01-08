@@ -5,12 +5,12 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters
 {
-    public class ServerExecutedContext : ServerFilterContext
+    public class ServerInvokeExecutedContext : ServerFilterContext
     {
         private Exception? _exception;
         private ExceptionDispatchInfo? _exceptionDispatchInfo;
 
-        public ServerExecutedContext(ServiceEntryContext context, IList<IFilterMetadata> filters)
+        public ServerInvokeExecutedContext(ServiceEntryContext context, IList<IFilterMetadata> filters)
             : base(context,filters)
         {
         }
@@ -51,7 +51,7 @@ namespace Silky.Rpc.Filters
         
         public virtual bool Canceled { get; set; }
 
-        public virtual object Result { get; set; } = default;
+        public virtual object? Result { get; set; } = default;
         
     }
 }

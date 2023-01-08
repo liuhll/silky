@@ -18,8 +18,8 @@ public class TccTestAppService : ITccTestAppService
     [TccTransaction(ConfirmMethod = "TestConfirm",CancelMethod = "TestCancel")]
     public async Task<string> Test(TestTccInput input)
     {
-        await _anotherAppService.DeleteOne(input.Name);
-        await _anotherAppService.DeleteTwo(input.Address);
+       var one = await _anotherAppService.DeleteOne(input.Name);
+       var two = await _anotherAppService.DeleteTwo(input.Address);
         return "Tcc for Try";
     }
     

@@ -15,7 +15,7 @@ namespace Silky.Rpc.Transport.Messages
 
         public ValidError[] ValidateErrors { get; set; }
 
-        public object Result { get; set; }
+        public object? Result { get; set; }
 
         public bool IsFile { get; set; } = false;
 

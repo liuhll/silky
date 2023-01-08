@@ -10,7 +10,7 @@ public class EfCoreUnitOfWorkServerFilterFactory : IServerFilterFactory, ISingle
 {
     public bool IsReusable { get; } = false;
     
-    public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+    public IServerFilterMetadata CreateInstance(IServiceProvider serviceProvider)
     {
         return new EfCoreUnitOfWorkServerFilter(serviceProvider.GetRequiredService<ISilkyDbContextPool>());
     }

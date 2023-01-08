@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
 using Silky.Core.Extensions;
@@ -8,7 +9,6 @@ namespace Silky.Validation.Filters;
 
 public class ServerValidationFilter : IServerFilter
 {
-    
     private readonly IMethodInvocationValidator _methodInvocationValidator;
     private AppSettingsOptions _appSettingsOptions;
 
@@ -20,7 +20,7 @@ public class ServerValidationFilter : IServerFilter
         appSettingsOptions.OnChange((options, s) => _appSettingsOptions = options);
     }
 
-    public void OnActionExecuting(ServerExecutingContext context)
+    public void OnActionExecuting(ServerInvokeExecutingContext context)
     {
         if (!_appSettingsOptions.AutoValidationParameters) return;
         if (RpcContext.Context.GetInvokeAttachment(AttachmentKeys.ValidationParametersInClient)?.ConventTo<bool>() ==
@@ -29,8 +29,7 @@ public class ServerValidationFilter : IServerFilter
             new MethodInvocationValidationContext(context.ServiceEntry.MethodInfo, context.Parameters));
     }
 
-    public void OnActionExecuted(ServerExecutedContext context)
+    public void OnActionExecuted(ServerInvokeExecutedContext context)
     {
     }
-    
 }

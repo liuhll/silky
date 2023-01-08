@@ -1,8 +1,6 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
@@ -11,11 +9,9 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
-using Silky.Core.Utils;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
-using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
@@ -25,114 +21,44 @@ namespace Silky.Rpc.Runtime.Client
     internal class DefaultRemoteCaller : IRemoteCaller
     {
         private readonly IServerManager _serverManager;
-
-        private readonly ITransportClientFactory _transportClientFactory;
         private readonly ISerializer _serializer;
-        private readonly ClientFilterProvider _clientFilterProvider;
-        private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
+        private readonly IClientRemoteInvokerFactory _clientRemoteInvokerFactory;
+        private readonly ITransportClientFactory _transportClientFactory;
+
         public ILogger<DefaultRemoteCaller> Logger { get; set; }
 
         public DefaultRemoteCaller(IServerManager serverManager,
-            ITransportClientFactory transportClientFactory,
             ISerializer serializer,
-            ClientFilterProvider clientFilterProvider,
-            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener)
+            IClientRemoteInvokerFactory clientRemoteInvokerFactory,
+            ITransportClientFactory transportClientFactory)
         {
             _serverManager = serverManager;
-
-            _transportClientFactory = transportClientFactory;
             _serializer = serializer;
-            _clientFilterProvider = clientFilterProvider;
-            _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
+            _clientRemoteInvokerFactory = clientRemoteInvokerFactory;
+            _transportClientFactory = transportClientFactory;
 
             Logger = NullLogger<DefaultRemoteCaller>.Instance;
         }
 
-        public async Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage,
+        public async Task<object> InvokeAsync(RemoteInvokeMessage remoteInvokeMessage,
             ShuntStrategy shuntStrategy, string hashKey = null)
         {
-            var sp = Stopwatch.StartNew();
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
                 "The rpc request call start{0} serviceEntryId:[{1}]",
                 args: new[] { Environment.NewLine, remoteInvokeMessage.ServiceEntryId });
-            var messageId = GuidGenerator.CreateGuidStrWithNoUnderline();
-            var tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(remoteInvokeMessage, messageId);
+
             var rpcEndpoints = FindRpcEndpoint(remoteInvokeMessage);
             var selectedRpcEndpoint =
                 SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey,
                     out var confirmedShuntStrategy);
-            _clientInvokeDiagnosticListener.TracingSelectInvokeAddress(tracingTimestamp,
-                remoteInvokeMessage.ServiceEntryId, confirmedShuntStrategy,
-                rpcEndpoints, selectedRpcEndpoint);
+            var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
+            var remoteInvoker =
+                _clientRemoteInvokerFactory.CreateInvoker(new ClientInvokeContext(remoteInvokeMessage,
+                    confirmedShuntStrategy,
+                    hashKey), client);
 
-            RemoteResultMessage invokeResult = null;
-            var invokeMonitor = EngineContext.Current.Resolve<IInvokeMonitor>();
-
-            ClientInvokeInfo clientInvokeInfo = null;
-            try
-            {
-                clientInvokeInfo =
-                    invokeMonitor?.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
-
-                var filters = _clientFilterProvider.GetClientFilters(remoteInvokeMessage.ServiceEntryId);
-                foreach (var filter in filters)
-                {
-                    filter.OnActionExecuting(remoteInvokeMessage);
-                }
-
-                var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
-                invokeResult = await client.SendAsync(remoteInvokeMessage, messageId);
-                if (invokeResult.IsFile)
-                {
-                    var silkyFileContentResult = _serializer.Deserialize<SilkyFileContentResult>(invokeResult.Result.ToString());
-                    var fileContentResult = new FileContentResult(silkyFileContentResult.FileContents,
-                        silkyFileContentResult.ContentType)
-                    {
-                        LastModified = silkyFileContentResult.LastModified,
-                        EntityTag = silkyFileContentResult.EntityTag,
-                        EnableRangeProcessing = silkyFileContentResult.EnableRangeProcessing,
-                        FileDownloadName = silkyFileContentResult.FileDownloadName,
-                        
-                    };
-                    invokeResult.Result = fileContentResult;
-                }
-                foreach (var filter in filters)
-                {
-                    filter.OnActionExecuted(invokeResult);
-                }
-            }
-            catch (Exception ex)
-            {
-                sp.Stop();
-                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
-                    $"The rpc request call failed");
-                _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, messageId,
-                    remoteInvokeMessage.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
-
-                invokeMonitor?.ExecFail((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
-                    sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
-
-                if (ex.IsFriendlyException())
-                {
-                    Logger.LogWarning(ex.Message);
-                }
-                else
-                {
-                    Logger.LogException(ex);
-                }
-
-                throw;
-            }
-
-            sp.Stop();
-            invokeMonitor?.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
-                sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
-            Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
-                MiniProfileConstant.Rpc.State.Success,
-                $"The rpc request call succeeded");
-            _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
-                remoteInvokeMessage.ServiceEntryId, invokeResult);
-            return invokeResult;
+            await remoteInvoker.InvokeAsync();
+            return remoteInvoker.RemoteResult.Result;
         }
 
         private ISilkyEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
