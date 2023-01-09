@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using IAnotherApplication;
+using IAnotherApplication.Dtos;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
 using Silky.Transaction.Tcc;
@@ -15,19 +16,24 @@ public class TccTestAppService : ITccTestAppService
         _anotherAppService = anotherAppService;
     }
 
-    [TccTransaction(ConfirmMethod = "TestConfirm",CancelMethod = "TestCancel")]
+    [TccTransaction(ConfirmMethod = "TestConfirm", CancelMethod = "TestCancel")]
     public async Task<string> Test(TestTccInput input)
     {
-       var one = await _anotherAppService.DeleteOne(input.Name);
-       var two = await _anotherAppService.DeleteTwo(input.Address);
+        var one = await _anotherAppService.DeleteOne(input.Name);
+        var two = await _anotherAppService.DeleteTwo(input.Address);
+        var test = await _anotherAppService.Test(new TestDto()
+        {
+            Name = input.Name,
+            Address = input.Address
+        });
         return "Tcc for Try";
     }
-    
+
     public async Task<string> TestConfirm(TestTccInput input)
     {
         return "Tcc for Confirm";
     }
-    
+
     public async Task<string> TestCancel(TestTccInput input)
     {
         return "Tcc for Cancel";
