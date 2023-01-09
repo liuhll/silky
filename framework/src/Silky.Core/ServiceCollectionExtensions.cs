@@ -26,18 +26,12 @@ namespace Silky.Core
             services.AddSingleton<ICancellationTokenProvider>(NullCancellationTokenProvider.Instance);
             var moduleLoader = new ModuleLoader();
             services.TryAddSingleton<IModuleLoader>(moduleLoader);
-
-            services.AddOptions<AppSettingsOptions>()
-                .Bind(configuration.GetSection(AppSettingsOptions.AppSettings));
+            
             services.AddOptions<PlugInSourceOptions>()
                 .Bind(configuration.GetSection(PlugInSourceOptions.PlugInSource));
 
             var engine = EngineContext.Create();
-            if (!options.ApplicationName.IsNullOrWhiteSpace())
-            {
-                engine.SetApplicationName(options.ApplicationName);
-            }
-            
+            engine.SetApplicationOptions(options);
             engine.Banner = BannerHelper.BuildBanner(options);
             engine.SetHostEnvironment(hostEnvironment);
             engine.SetConfiguration(configuration);

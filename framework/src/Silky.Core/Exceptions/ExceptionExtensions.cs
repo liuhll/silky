@@ -11,20 +11,10 @@ namespace Silky.Core.Exceptions
 {
     public static class ExceptionExtensions
     {
-        private static AppSettingsOptions _appSettingsOptions;
-
-        static ExceptionExtensions()
-        {
-            _appSettingsOptions = EngineContext.Current.GetOptionsMonitor<AppSettingsOptions>((options, name) =>
-            {
-                _appSettingsOptions = options;
-            });
-        }
-
         public static string GetExceptionMessage(this Exception exception)
         {
             var message = exception.IsTimeoutException() ? "Request execution timed out" : exception.Message;
-            if (!exception.IsFriendlyException() && _appSettingsOptions.DisplayFullErrorStack)
+            if (!exception.IsFriendlyException() && EngineContext.Current.ApplicationOptions.DisplayFullErrorStack)
             {
                 message += Environment.NewLine + " Stack information:" + Environment.NewLine + exception.StackTrace;
                 if (exception.InnerException != null)

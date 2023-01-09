@@ -15,6 +15,8 @@ namespace Silky.Core
 {
     public interface IEngine
     {
+        SilkyApplicationCreationOptions ApplicationOptions { get; }
+        
         IServiceProvider ServiceProvider { get; set; }
 
         ITypeFinder TypeFinder { get; }
@@ -39,7 +41,7 @@ namespace Silky.Core
         internal void LoadModules(IServiceCollection services, Type startUpType, IModuleLoader moduleLoader,
             [NotNull] PlugInSourceList plugInSources);
 
-        internal void SetApplicationName([NotNull] string applicationName);
+        internal void SetApplicationOptions([NotNull] SilkyApplicationCreationOptions applicationOptions);
 
         internal void ConfigureRequestPipeline(IApplicationBuilder application);
         

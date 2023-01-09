@@ -1,6 +1,5 @@
 using System.Reflection;
 using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Modularity.PlugIns;
 
 namespace Silky.Core.Configuration;
@@ -10,6 +9,13 @@ public class SilkyApplicationCreationOptions
     [NotNull] public PlugInSourceList ModulePlugInSources { get; }
 
     [NotNull] public AppServicePlugInSourceList AppServicePlugInSources { get; }
+    
+    public bool DisplayFullErrorStack { get; set; }
+    
+    public bool LogEntityFrameworkCoreSqlExecuteCommand { get; set; }
+
+    
+    public bool AutoValidationParameters { get; set; }
 
 
     public string ApplicationName { get; set; }
@@ -24,6 +30,9 @@ public class SilkyApplicationCreationOptions
 
     public SilkyApplicationCreationOptions()
     {
+        DisplayFullErrorStack = false;
+        AutoValidationParameters = true;
+        LogEntityFrameworkCoreSqlExecuteCommand = false;
         ModulePlugInSources = new PlugInSourceList();
         AppServicePlugInSources = new AppServicePlugInSourceList();
         Configuration = new SilkyConfigurationBuilderOptions();

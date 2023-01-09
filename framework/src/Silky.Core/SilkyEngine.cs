@@ -135,6 +135,15 @@ namespace Silky.Core
         public ITypeFinder TypeFinder => _typeFinder;
 
 
+        void IEngine.SetApplicationOptions(SilkyApplicationCreationOptions applicationOptions)
+        {
+            ApplicationOptions = applicationOptions;
+            if (!ApplicationOptions.ApplicationName.IsNullOrEmpty())
+            {
+                HostName = ApplicationOptions.ApplicationName;
+            }
+        }
+
         void IEngine.ConfigureRequestPipeline(IApplicationBuilder application)
         {
             ServiceProvider = application.ApplicationServices;
@@ -267,12 +276,7 @@ namespace Silky.Core
 
             return serviceProvider;
         }
-
-        void IEngine.SetApplicationName([NotNull] string applicationName)
-        {
-            Check.NotNullOrWhiteSpace(applicationName, nameof(applicationName));
-            HostName = applicationName;
-        }
+        
 
         public void RegisterDependencies(ContainerBuilder containerBuilder)
         {
@@ -352,6 +356,9 @@ namespace Silky.Core
             }
         }
 
+
+        public SilkyApplicationCreationOptions ApplicationOptions { get; private set; }
+        
         public IServiceProvider ServiceProvider { get; set; }
 
         public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; private set; }
