@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using GatewayDemo.ClientFilters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Silky.Core;
@@ -24,6 +25,7 @@ namespace GatewayDemo
                     {
                         options.ApplicationName = "SilkyGateway";
                         options.BannerMode = BannerMode.CONSOLE;
+                        options.Filter.Clients.Add(new TestGlobalClientFilter());
                     });
 
             if (hostBuilder.IsEnvironment("Apollo"))

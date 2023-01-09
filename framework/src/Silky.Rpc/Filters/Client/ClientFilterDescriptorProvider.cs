@@ -40,6 +40,10 @@ public class ClientFilterDescriptorProvider : IClientFilterDescriptorProvider, I
                 filterDescriptors.Add(new FilterDescriptor(clientFilterFactory, FilterScope.Global));
             }
             filterDescriptors.Add(new FilterDescriptor(new RemoteInvokeBehavior(), FilterScope.ServiceEntry));
+            foreach (var clientFilter in EngineContext.Current.ApplicationOptions.Filter.Clients)
+            {
+                filterDescriptors.Add(new FilterDescriptor(clientFilter, FilterScope.Global));
+            }
             filters = filterDescriptors.ToArray();
         }
         _clientFilterCache.TryAdd(serviceEntryId, filters);

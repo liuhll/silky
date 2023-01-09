@@ -158,6 +158,11 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filterDescriptors.Add(new FilterDescriptor(serverFilterFactory, FilterScope.Global));
             }
+
+            foreach (var serverFilter in EngineContext.Current.ApplicationOptions.Filter.Servers)
+            {
+                filterDescriptors.Add(new FilterDescriptor(serverFilter, FilterScope.Global));
+            }
             
             return filterDescriptors.ToArray();
         }
@@ -184,6 +189,11 @@ namespace Silky.Rpc.Runtime.Server
             foreach (var clientFilterFactory in clientFilterFactories)
             {
                 filterDescriptors.Add(new FilterDescriptor(clientFilterFactory, FilterScope.Global));
+            }
+            
+            foreach (var clientFilter in EngineContext.Current.ApplicationOptions.Filter.Clients)
+            {
+                filterDescriptors.Add(new FilterDescriptor(clientFilter, FilterScope.Global));
             }
 
             filterDescriptors.Add(new FilterDescriptor(new RemoteInvokeBehavior(), FilterScope.ServiceEntry));

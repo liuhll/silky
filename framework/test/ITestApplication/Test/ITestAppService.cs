@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ITestApplication.Filters;
 using ITestApplication.Test.Dtos;
 using ITestApplication.Test.Fallback;
 using Silky.Rpc.Runtime.Server;
-using Silky.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
@@ -26,7 +24,6 @@ namespace ITestApplication.Test
         //[UnitOfWork]
         // [Fallback(typeof(ICreateFallback))]
         //  [Authorize(Roles = "Administrator, PowerUser")]
-        [TestClientFilter(1)]
         [HttpPost]
         [HttpPut]
         [UpdateCachingIntercept("id:{id}")]

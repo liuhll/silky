@@ -1,5 +1,6 @@
 using System.Reflection;
 using JetBrains.Annotations;
+using Silky.Core.FilterMetadata;
 using Silky.Core.Modularity.PlugIns;
 
 namespace Silky.Core.Configuration;
@@ -9,7 +10,8 @@ public class SilkyApplicationCreationOptions
     [NotNull] public PlugInSourceList ModulePlugInSources { get; }
 
     [NotNull] public AppServicePlugInSourceList AppServicePlugInSources { get; }
-    
+
+    [NotNull] public FilterOptions Filter { get; }
     public bool DisplayFullErrorStack { get; set; }
     
     public bool LogEntityFrameworkCoreSqlExecuteCommand { get; set; }
@@ -18,7 +20,7 @@ public class SilkyApplicationCreationOptions
     public bool AutoValidationParameters { get; set; }
 
 
-    public string ApplicationName { get; set; }
+    public string? ApplicationName { get; set; }
 
     public BannerMode BannerMode { get; set; }
 
@@ -36,7 +38,8 @@ public class SilkyApplicationCreationOptions
         ModulePlugInSources = new PlugInSourceList();
         AppServicePlugInSources = new AppServicePlugInSourceList();
         Configuration = new SilkyConfigurationBuilderOptions();
-        ApplicationName = Assembly.GetEntryAssembly()?.GetName().Name;
+        Filter = new FilterOptions();
+        ApplicationName = Assembly.GetEntryAssembly()?.GetName()?.Name;
         BannerMode = BannerMode.CONSOLE;
         DocUrl = "https://docs.silky-fk.com";
     }
