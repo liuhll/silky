@@ -71,13 +71,7 @@ namespace Silky.Rpc.Runtime.Server
                     }
                 }
 
-
-                var tokenValidator = EngineContext.Current.Resolve<ITokenValidator>();
-                if (!tokenValidator.Validate())
-                {
-                    throw new RpcAuthenticationException("rpc token is illegal");
-                }
-
+                
                 context[PollyContextNames.ServiceEntry] = serviceEntry;
 
                 var parameterResolver =

@@ -14,7 +14,7 @@ namespace Silky.Rpc.Runtime.Server
             _serviceEntryCache = serviceEntryCache;
         }
 
-        public ServiceEntry GetServiceEntryById(string id)
+        public ServiceEntry? GetServiceEntryById(string id)
         {
             if (_serviceEntryCache.TryGetServiceEntry(id, out ServiceEntry serviceEntry))
             {
@@ -31,7 +31,7 @@ namespace Silky.Rpc.Runtime.Server
             return serviceEntry;
         }
 
-        public ServiceEntry GetLocalServiceEntryById(string id)
+        public ServiceEntry? GetLocalServiceEntryById(string id)
         {
             if (_serviceEntryCache.TryGetLocalServiceEntry(id, out ServiceEntry serviceEntry))
             {

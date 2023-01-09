@@ -21,7 +21,7 @@ namespace Silky.Transaction
             CURRENT_LOCAL.Value = context;
         }
 
-        public TransactionContext Get()
+        public TransactionContext? Get()
         {
             return CURRENT_LOCAL.Value;
         }

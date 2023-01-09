@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
 
@@ -8,79 +7,21 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class DefaultLocalExecutor : ILocalExecutor
     {
-        private readonly ServerFilterProvider _serverFilterProvider;
+        private readonly IServerLocalInvokerFactory _serverLocalInvokerFactory;
 
-        public DefaultLocalExecutor(ServerFilterProvider serverFilterProvider)
+        public DefaultLocalExecutor(IServerLocalInvokerFactory serverLocalInvokerFactory)
         {
-            _serverFilterProvider = serverFilterProvider;
+            _serverLocalInvokerFactory = serverLocalInvokerFactory;
         }
 
-        public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
+        public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string? serviceKey = null)
         {
             var instance = EngineContext.Current.ResolveServiceInstance(serviceKey, serviceEntry.ServiceType);
-            var filters = _serverFilterProvider.GetServerFilters(serviceEntry, instance.GetType());
-            var rpcActionExecutingContext = new ServerExecutingContext()
-            {
-                ServiceEntry = serviceEntry,
-                Parameters = parameters,
-                ServiceKey = serviceKey,
-                InstanceType = instance.GetType()
-            };
-
-            object result;
-
-            foreach (var filter in filters)
-            {
-                filter.OnActionExecuting(rpcActionExecutingContext);
-            }
-
-            if (rpcActionExecutingContext.Exception != null)
-            {
-                throw rpcActionExecutingContext.Exception;
-            }
-
-            try
-            {
-                if (serviceEntry.IsAsyncMethod)
-                {
-                    result = await serviceEntry.MethodExecutor.ExecuteAsync(instance, parameters.ToArray());
-                }
-                else
-                {
-                    result = serviceEntry.MethodExecutor.Execute(instance, parameters.ToArray());
-                }
-            }
-            catch (Exception ex)
-            {
-                foreach (var filter in filters)
-                {
-                    filter.OnActionException(new ServerExceptionContext()
-                    {
-                        Exception = ex,
-                        ServiceEntry = serviceEntry,
-                    });
-                }
-
-                throw;
-            }
-
-            var rpcActionExecutedContext = new ServerExecutedContext()
-            {
-                Result = result,
-                ServiceEntry = serviceEntry,
-            };
-
-            foreach (var filter in filters)
-            {
-                filter.OnActionExecuted(rpcActionExecutedContext);
-            }
-
-            if (rpcActionExecutedContext.Exception != null)
-            {
-                throw rpcActionExecutedContext.Exception;
-            }
-
-            return rpcActionExecutedContext.Result;
+            var localInvoker =
+                _serverLocalInvokerFactory.CreateInvoker(new ServiceEntryContext(serviceEntry, parameters, serviceKey,
+                    instance));
+             await localInvoker.InvokeAsync();
+             return localInvoker.Result;
         }
 
         public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor,

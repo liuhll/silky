@@ -178,7 +178,7 @@ namespace Silky.Core
             return sp.GetAutofacRoot().ResolveNamed(name, type);
         }
 
-        public object ResolveServiceInstance(string serviceKey, Type serviceType)
+        public object ResolveServiceInstance(string? serviceKey, Type serviceType)
         {
             object instance = null;
             if (!serviceKey.IsNullOrEmpty())

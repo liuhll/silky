@@ -1,13 +1,11 @@
-using System.Threading.Tasks;
-using Silky.Core.DependencyInjection;
-using Silky.Rpc.Endpoint.Selector;
+﻿using System.Threading.Tasks;
 using Silky.Rpc.Transport.Messages;
 
-namespace Silky.Rpc.Runtime.Client
+namespace Silky.Rpc.Runtime.Client;
+
+public interface IRemoteInvoker
 {
-    internal interface IRemoteInvoker : ITransientDependency
-    {
-        Task<RemoteResultMessage> Invoke(RemoteInvokeMessage remoteInvokeMessage, ShuntStrategy shuntStrategy,
-            string hashKey = null);
-    }
+    Task InvokeAsync();
+
+    RemoteResultMessage RemoteResult { get; }
 }

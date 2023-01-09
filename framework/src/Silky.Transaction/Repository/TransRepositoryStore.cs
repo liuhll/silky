@@ -40,7 +40,7 @@ namespace Silky.Transaction.Repository
             return transaction is { Status: ActionStage.Delete } ? null : transaction;
         }
 
-        public static async Task UpdateTransactionStatus(ITransaction transaction)
+        public static async Task UpdateTransactionStatus(ITransaction? transaction)
         {
             if (transaction != null)
             {
@@ -48,7 +48,7 @@ namespace Silky.Transaction.Repository
             }
         }
 
-        public static async Task CreateParticipant(IParticipant participant)
+        public static async Task CreateParticipant(IParticipant? participant)
         {
             if (participant != null)
             {

@@ -1,18 +1,16 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
-using Silky.Core.DependencyInjection;
 using Silky.Core.Runtime.Rpc;
-using Silky.Rpc.Runtime.Client;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Validation.Filters
 {
-    public class ClientValidationFilter : IClientFilter, IScopedDependency
+    public class ClientValidationFilter : IClientFilter
     {
-        public int Order { get; } = Int32.MaxValue;
-
         private readonly IMethodInvocationValidator _methodInvocationValidator;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private AppSettingsOptions _appSettingsOptions;
@@ -26,22 +24,23 @@ namespace Silky.Validation.Filters
             _appSettingsOptions = appSettingsOptions.CurrentValue;
             appSettingsOptions.OnChange((options, s) => _appSettingsOptions = options);
         }
-
-        public void OnActionExecuting(RemoteInvokeMessage remoteInvokeMessage)
+        
+        public void OnActionExecuting(ClientInvokeExecutingContext context)
         {
+            var remoteInvokeMessage = context.RemoteInvokeMessage;
             if (!_appSettingsOptions.AutoValidationParameters) return;
             if (remoteInvokeMessage.ParameterType != ParameterType.Rpc) return;
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
             if (serviceEntry == null) return;
             if (serviceEntry.IsLocal) return;
-
             _methodInvocationValidator.Validate(
                 new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);
         }
 
-        public void OnActionExecuted(RemoteResultMessage context)
+        public void OnActionExecuted(ClientInvokeExecutedContext context)
         {
+            
         }
     }
 }

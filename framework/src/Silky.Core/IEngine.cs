@@ -68,7 +68,7 @@ namespace Silky.Core
         object Resolve(Type type);
         object ResolveNamed(string name, Type type);
 
-        object ResolveServiceInstance(string serviceKey, Type serviceType);
+        object ResolveServiceInstance(string? serviceKey, Type serviceType);
 
         T ResolveNamed<T>(string name);
 

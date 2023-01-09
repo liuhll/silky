@@ -1,11 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport
 {
-    public interface ITransportClient
+    public interface ITransportClient : IClientFilterMetadata
     {
         Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
             int timeout = Timeout.Infinite);

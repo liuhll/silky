@@ -25,6 +25,6 @@ namespace Silky.Transaction.Abstraction
 
         [JsonIgnore] IReadOnlyCollection<IParticipant> Participants { get; }
 
-        void RegisterParticipant(IParticipant participant);
+        void RegisterParticipant(IParticipant? participant);
     }
 }

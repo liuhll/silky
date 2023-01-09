@@ -79,7 +79,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Client
                         $"--> Spend Time: {eventData.ElapsedTimeMs}ms.{Environment.NewLine}" +
                         $"--> ServiceEntryId: {eventData.ServiceEntryId}.{Environment.NewLine}" +
                         $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
-                        $"--> Result: {_serializer.Serialize(eventData.Result)}"));
+                        $"--> RemoteResult: {_serializer.Serialize(eventData.Result)}"));
 
                 context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
                 context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");

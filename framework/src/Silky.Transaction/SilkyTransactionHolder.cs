@@ -27,7 +27,7 @@ namespace Silky.Transaction
             CURRENT.Value = transaction;
         }
 
-        public ITransaction CurrentTransaction => CURRENT.Value;
+        public ITransaction? CurrentTransaction => CURRENT.Value;
 
 
         public void Remove()
@@ -35,19 +35,20 @@ namespace Silky.Transaction
             CURRENT.Value = null;
         }
 
-        public async Task CacheParticipant(IParticipant participant)
+        public Task CacheParticipant(IParticipant? participant)
         {
-            if (participant == null) return;
+            if (participant == null) return Task.CompletedTask;
             ParticipantCacheManager.Instance.CacheParticipant(participant);
+            return Task.CompletedTask;
         }
 
-        public void RegisterParticipantByNested(string participantId, IParticipant participant)
+        public void RegisterParticipantByNested(string participantId, IParticipant? participant)
         {
             if (participant == null) return;
             ParticipantCacheManager.Instance.CacheParticipant(participantId, participant);
         }
 
-        public void RegisterStarterParticipant(IParticipant participant)
+        public void RegisterStarterParticipant(IParticipant? participant)
         {
             if (participant == null) return;
             if (CurrentTransaction != null)

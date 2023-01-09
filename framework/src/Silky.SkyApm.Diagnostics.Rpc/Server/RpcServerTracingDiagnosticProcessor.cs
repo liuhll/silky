@@ -68,7 +68,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
                         $"--> ServiceEntryId:{eventData.ServiceEntryId}.{Environment.NewLine}" +
                         $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
                         $"--> ResultAttachments: {_serializer.Serialize(RpcContext.Context.GetResultAttachments())}.{Environment.NewLine}" +
-                        $"--> Result: {_serializer.Serialize(eventData.Result)}"));
+                        $"--> RemoteResult: {_serializer.Serialize(eventData.Result)}"));
                 context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
                 context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
                 _silkySegmentContextFactory.ReleaseContext(context);
