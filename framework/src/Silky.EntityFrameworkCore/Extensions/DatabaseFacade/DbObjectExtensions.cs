@@ -42,12 +42,7 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         static DbObjectExtensions()
         {
             IsDevelopment = EngineContext.Current.HostEnvironment.IsDevelopment();
-            AppSettingsOptions appsettings = default;
-            appsettings = EngineContext.Current.GetOptionsMonitor<AppSettingsOptions>(((options, s) =>
-            {
-                appsettings = options;
-            }));
-            IsLogEntityFrameworkCoreSqlExecuteCommand = appsettings.LogEntityFrameworkCoreSqlExecuteCommand ?? false;
+            IsLogEntityFrameworkCoreSqlExecuteCommand = EngineContext.Current.ApplicationOptions.LogEntityFrameworkCoreSqlExecuteCommand;
         }
 
         /// <summary>

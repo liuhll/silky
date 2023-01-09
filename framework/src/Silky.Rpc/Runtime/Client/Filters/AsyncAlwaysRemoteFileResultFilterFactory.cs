@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.DependencyInjection;
+using Silky.Core.FilterMetadata;
 using Silky.Core.Serialization;
 using Silky.Rpc.Filters;
 

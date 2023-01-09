@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Filters

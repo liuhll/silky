@@ -2,6 +2,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.DbContext;
 using Silky.Core.DependencyInjection;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Filters;
 
 namespace Silky.EntityFrameworkCore.UnitOfWork;

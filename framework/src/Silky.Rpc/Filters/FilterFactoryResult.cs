@@ -1,3 +1,5 @@
+using Silky.Core.FilterMetadata;
+
 namespace Silky.Rpc.Filters;
 
 internal readonly struct FilterFactoryResult

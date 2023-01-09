@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Filters;
-using IFilterMetadata = Silky.Rpc.Filters.IFilterMetadata;
+using IFilterMetadata = Silky.Core.FilterMetadata.IFilterMetadata;
 
 
 namespace Silky.Rpc.Runtime.Server;

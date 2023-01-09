@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Silky.Core.FilterMetadata;
 
 namespace Silky.Rpc.Filters;
 

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.FilterMetadata;
 using Silky.Core.MethodExecutor;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;

@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Transport.Messages;

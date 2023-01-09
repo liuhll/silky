@@ -1,4 +1,6 @@
-﻿namespace Silky.Rpc.Filters;
+﻿using Silky.Core.FilterMetadata;
+
+namespace Silky.Rpc.Filters;
 
 public interface IServerExceptionFilter : IServerFilterMetadata
 {

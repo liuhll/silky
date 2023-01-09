@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Silky.Core.DependencyInjection;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Filters;
 
 namespace Silky.Rpc.Runtime.Server;

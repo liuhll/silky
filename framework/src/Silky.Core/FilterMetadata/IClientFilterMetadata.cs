@@ -1,4 +1,4 @@
-namespace Silky.Rpc.Filters;
+namespace Silky.Core.FilterMetadata;
 
 public interface IClientFilterMetadata : IFilterMetadata
 {

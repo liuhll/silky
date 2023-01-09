@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport.Messages;
 

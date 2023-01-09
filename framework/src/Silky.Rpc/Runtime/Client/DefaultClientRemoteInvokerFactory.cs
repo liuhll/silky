@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silky.Core.DependencyInjection;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Transport;

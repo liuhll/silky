@@ -11,7 +11,7 @@ namespace Silky.Rpc.CachingInterceptor
     {
         protected override void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterType<DefaultExecutor>()
+            builder.RegisterType< DefaultExecutor>()
                 .As<IExecutor>()
                 .InstancePerDependency()
                 .AddInterceptors(

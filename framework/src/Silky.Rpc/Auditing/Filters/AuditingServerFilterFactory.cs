@@ -2,6 +2,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Silky.Core.DependencyInjection;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Filters;
 

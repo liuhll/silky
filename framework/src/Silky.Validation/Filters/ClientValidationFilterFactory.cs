@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Silky.Core.Configuration;
 using Silky.Core.DependencyInjection;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 using IServiceProvider = System.IServiceProvider;
@@ -15,7 +16,6 @@ public class ClientValidationFilterFactory : IClientFilterFactory, ISingletonDep
     public IClientFilterMetadata CreateInstance(IServiceProvider serviceProvider)
     {
         return new ClientValidationFilter(serviceProvider.GetRequiredService<IMethodInvocationValidator>(),
-            serviceProvider.GetRequiredService<IOptionsMonitor<AppSettingsOptions>>(),
             serviceProvider.GetRequiredService<IServiceEntryLocator>());
     }
 }

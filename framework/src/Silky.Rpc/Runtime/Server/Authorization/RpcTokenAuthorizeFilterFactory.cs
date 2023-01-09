@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.DependencyInjection;
+using Silky.Core.FilterMetadata;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Security;
 

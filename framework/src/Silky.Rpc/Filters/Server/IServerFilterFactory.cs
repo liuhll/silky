@@ -1,4 +1,5 @@
 using System;
+using Silky.Core.FilterMetadata;
 
 namespace Silky.Rpc.Filters;
 
