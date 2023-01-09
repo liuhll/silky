@@ -30,10 +30,6 @@ namespace Silky.Core
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            
-            var bannerPrinter = EngineContext.Current.Resolve<IBannerPrinter>();
-            bannerPrinter.Print();
-
             await _moduleManager.PreInitializeModules();
             _hostApplicationLifetime.ApplicationStarted.Register(async () =>
             {

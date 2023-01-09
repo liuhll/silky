@@ -25,11 +25,14 @@ namespace Microsoft.Extensions.Hosting
                 {
                     engine = services.AddSilkyServices<T>(hostBuilder.Configuration,
                         hostBuilder.HostingEnvironment, options);
+                    var bannerPrinter = engine.Resolve<IBannerPrinter>();
+                    bannerPrinter.Print();
+ 
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
-                    engine.RegisterModules(builder);
-                    engine.RegisterDependencies(builder);
+                    engine!.RegisterModules(builder);
+                    engine!.RegisterDependencies(builder);
                 }).ConfigureAppConfiguration((hostBuilder, configurationBuilder) =>
                 {
                     hostBuilder.Configuration = ConfigurationHelper

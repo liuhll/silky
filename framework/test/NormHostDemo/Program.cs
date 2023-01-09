@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Silky.Core;
 
 namespace NormHostDemo
 {
@@ -14,7 +15,11 @@ namespace NormHostDemo
         {
             var hostBuilder = Host
                     .CreateDefaultBuilder(args)
-                    .ConfigureSilkyGeneralHostDefaults(options => { options.ApplicationName = "NormHost"; })
+                    .ConfigureSilkyGeneralHostDefaults(options =>
+                    {
+                        options.ApplicationName = "NormHost";
+                        options.BannerMode = BannerMode.CONSOLE;
+                    })
                     .UseSerilogDefault()
                 ;
             if (hostBuilder.IsEnvironment("Apollo"))
