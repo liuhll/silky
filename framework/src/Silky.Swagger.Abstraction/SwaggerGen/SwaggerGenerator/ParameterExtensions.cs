@@ -7,34 +7,34 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
 {
     public static class ParameterExtensions
     {
-        public static ParameterInfo ParameterInfo(this RpcParameter apiRpcParameter)
+        public static ParameterInfo ParameterInfo(this RpcParameter rpcParameter)
         {
-            return apiRpcParameter?.ParameterInfo;
+            return rpcParameter?.ParameterInfo;
         }
 
 
-        public static IEnumerable<object> CustomAttributes(this RpcParameter apiRpcParameter)
+        public static IEnumerable<object> CustomAttributes(this RpcParameter rpcParameter)
         {
-            var parameterInfo = apiRpcParameter.ParameterInfo();
+            var parameterInfo = rpcParameter.ParameterInfo();
             if (parameterInfo != null) return parameterInfo.GetCustomAttributes(true);
 
             return Enumerable.Empty<object>();
         }
 
 
-        internal static bool IsFromPath(this RpcParameter apiRpcParameter)
+        internal static bool IsFromPath(this RpcParameter rpcParameter)
         {
-            return apiRpcParameter.From == ParameterFrom.Path;
+            return rpcParameter.From == ParameterFrom.Path;
         }
 
-        internal static bool IsFromBody(this RpcParameter apiRpcParameter)
+        internal static bool IsFromBody(this RpcParameter rpcParameter)
         {
-            return apiRpcParameter.From == ParameterFrom.Body;
+            return rpcParameter.From == ParameterFrom.Body;
         }
 
-        internal static bool IsFromForm(this RpcParameter apiRpcParameter)
+        internal static bool IsFromForm(this RpcParameter rpcParameter)
         {
-            return apiRpcParameter.From == ParameterFrom.Form || apiRpcParameter.From == ParameterFrom.File;
+            return rpcParameter.From == ParameterFrom.Form || rpcParameter.From == ParameterFrom.File;
         }
     }
 }
