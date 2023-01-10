@@ -8,9 +8,9 @@ using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ParameterDescriptor
+    public class RpcParameter
     {
-        public ParameterDescriptor(
+        public RpcParameter(
             ParameterFrom @from,
             ParameterInfo parameterInfo,
             int index,

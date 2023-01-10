@@ -47,13 +47,13 @@ namespace Silky.Rpc.Runtime.Server
             ServiceEntryDescriptor serviceEntryDescriptor,
             Type serviceType,
             MethodInfo methodInfo,
-            IReadOnlyList<ParameterDescriptor> parameterDescriptors,
+            IReadOnlyList<RpcParameter> parameters,
             bool isLocal,
             GovernanceOptions governanceOptions)
         {
             Router = router;
             _serviceEntryDescriptor = serviceEntryDescriptor;
-            ParameterDescriptors = parameterDescriptors;
+            Parameters = parameters;
             _serviceType = serviceType;
             IsLocal = isLocal;
             MethodInfo = methodInfo;
@@ -109,7 +109,7 @@ namespace Silky.Rpc.Runtime.Server
                         updateCachingInterceptProvider.IgnoreWhenCacheKeyNull;
                 }
 
-                foreach (var parameterDescriptor in ParameterDescriptors)
+                foreach (var parameterDescriptor in Parameters)
                 {
                     foreach (var cacheKey in parameterDescriptor.CacheKeys)
                     {
@@ -330,7 +330,7 @@ namespace Silky.Rpc.Runtime.Server
 
         private void CreateDefaultSupportedRequestMediaTypes()
         {
-            if (ParameterDescriptors.Any(p => p.From == ParameterFrom.Form) || this.NeedHttpProtocolSupport())
+            if (Parameters.Any(p => p.From == ParameterFrom.Form) || this.NeedHttpProtocolSupport())
             {
                 SupportedRequestMediaTypes.Add("multipart/form-data");
             }
@@ -357,7 +357,7 @@ namespace Silky.Rpc.Runtime.Server
 
         public Type ReturnType { get; }
 
-        public IReadOnlyList<ParameterDescriptor> ParameterDescriptors { get; }
+        public IReadOnlyList<RpcParameter> Parameters { get; }
 
         public IReadOnlyCollection<object> CustomAttributes { get; }
 

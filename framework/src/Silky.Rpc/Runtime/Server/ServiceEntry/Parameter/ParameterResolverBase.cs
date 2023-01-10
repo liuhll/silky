@@ -19,18 +19,18 @@ public abstract class ParameterResolverBase : IParameterResolver
     }
 
     protected void SetSampleParameterValue(ITypeConvertibleService typeConvertibleService, object parameter,
-        ParameterDescriptor parameterDescriptor, List<object> list)
+        RpcParameter rpcParameter, List<object> list)
     {
         var dict =
             (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
                 typeof(IDictionary<string, object>));
-        var parameterVal = parameterDescriptor.ParameterInfo.GetDefaultValue();
-        if (dict.TryOrdinalIgnoreCaseGetValue(parameterDescriptor.Name,out var dictValue))
+        var parameterVal = rpcParameter.ParameterInfo.GetDefaultValue();
+        if (dict.TryOrdinalIgnoreCaseGetValue(rpcParameter.Name,out var dictValue))
         {
             parameterVal = dictValue;
         }
 
-        list.Add(parameterDescriptor.GetActualParameter(parameterVal) ??
-                 parameterDescriptor.ParameterInfo.GetDefaultValue());
+        list.Add(rpcParameter.GetActualParameter(parameterVal) ??
+                 rpcParameter.ParameterInfo.GetDefaultValue());
     }
 }

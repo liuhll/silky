@@ -71,10 +71,10 @@ namespace Silky.Rpc.Runtime.Server
             var serviceName = serviceType.Name;
             var serviceEntryId = _idGenerator.GenerateServiceEntryId(method, httpMethodInfo.HttpMethod);
             var serviceId = _idGenerator.GenerateServiceId(serviceType);
-            var parameterDescriptors = _parameterProvider.GetParameterDescriptors(method, httpMethodInfo);
+            var parameters = _parameterProvider.GetParameters(method, httpMethodInfo);
             
             var serviceEntryTemplate =
-                TemplateHelper.GenerateServerEntryTemplate(routeTemplateProvider.Template, parameterDescriptors,
+                TemplateHelper.GenerateServerEntryTemplate(routeTemplateProvider.Template, parameters,
                     httpMethodInfo, _governanceOptions.ApiIsRESTfulStyle,
                     method.Name);
 
@@ -100,7 +100,7 @@ namespace Silky.Rpc.Runtime.Server
                 serviceEntryDescriptor,
                 serviceType,
                 method,
-                parameterDescriptors,
+                parameters,
                 isLocal,
                 _governanceOptions);
 

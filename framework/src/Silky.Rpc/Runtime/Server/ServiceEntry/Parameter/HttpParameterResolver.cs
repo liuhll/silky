@@ -32,7 +32,7 @@ public class HttpParameterResolver : ParameterResolverBase
     public override object[] Parser([NotNull] ServiceEntry serviceEntry, RemoteInvokeMessage message)
     {
         Check.NotNull(serviceEntry, nameof(serviceEntry));
-        if (serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path) &&
+        if (serviceEntry.Parameters.Any(p => p.From == ParameterFrom.Path) &&
             message.HttpParameters.All(p => p.Key != ParameterFrom.Path))
         {
             var path = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.Path);
@@ -50,7 +50,7 @@ public class HttpParameterResolver : ParameterResolverBase
     { 
         var list = new List<object>();
         var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-        foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+        foreach (var parameterDescriptor in serviceEntry.Parameters)
         {
             #region 获取参数
 

@@ -15,7 +15,7 @@ namespace Silky.Rpc.Runtime.Server
 {
     public class ParameterProvider : IParameterProvider
     {
-        public IReadOnlyList<ParameterDescriptor> GetParameterDescriptors(MethodInfo methodInfo,
+        public IReadOnlyList<RpcParameter> GetParameters(MethodInfo methodInfo,
             HttpMethodInfo httpMethodInfo)
         {
             var cacheKeyTemplates = methodInfo.GetCustomAttributes().OfType<ICachingInterceptProvider>()
@@ -38,26 +38,26 @@ namespace Silky.Rpc.Runtime.Server
                     "Cache interception template parameters do not allow duplicate names.");
             }
 
-            var parameterDescriptors = new List<ParameterDescriptor>();
+            var rpcParameters = new List<RpcParameter>();
             var index = 0;
             foreach (var parameter in methodInfo.GetParameters())
             {
                 var parameterDescriptor =
                     CreateParameterDescriptor(methodInfo, parameter, cacheKeyTemplates, httpMethodInfo, index);
                 if (parameterDescriptor.From == ParameterFrom.Body &&
-                    parameterDescriptors.Any(p => p.From == ParameterFrom.Body))
+                    rpcParameters.Any(p => p.From == ParameterFrom.Body))
                 {
                     throw new SilkyException("Only one parameter of Request Body is allowed to be set.");
                 }
 
-                parameterDescriptors.Add(parameterDescriptor);
+                rpcParameters.Add(parameterDescriptor);
                 index += 1;
             }
 
-            return parameterDescriptors.ToImmutableList();
+            return rpcParameters.ToImmutableList();
         }
 
-        private ParameterDescriptor CreateParameterDescriptor(
+        private RpcParameter CreateParameterDescriptor(
             MethodInfo methodInfo,
             ParameterInfo parameter,
             string[] cacheKeyTemplates,
@@ -66,7 +66,7 @@ namespace Silky.Rpc.Runtime.Server
         {
             var bindingSourceMetadata =
                 parameter.GetCustomAttributes().OfType<IBindingSourceMetadata>().FirstOrDefault();
-            ParameterDescriptor parameterDescriptor = null;
+            RpcParameter rpcParameter = null;
             if (bindingSourceMetadata != null)
             {
                 var parameterFrom = bindingSourceMetadata.BindingSource.Id.To<ParameterFrom>();
@@ -81,7 +81,7 @@ namespace Silky.Rpc.Runtime.Server
                     throw new SilkyException($"Route type parameters are not allowed to be complex data types");
                 }
 
-                parameterDescriptor = new ParameterDescriptor(parameterFrom, parameter, index, cacheKeyTemplates);
+                rpcParameter = new RpcParameter(parameterFrom, parameter, index, cacheKeyTemplates);
             }
             else
             {
@@ -92,9 +92,9 @@ namespace Silky.Rpc.Runtime.Server
                             p.HttpMethods.Contains(httpMethodInfo.HttpMethod.ToString().ToUpper()));
                     if (httpMethodAttribute == null)
                     {
-                        parameterDescriptor = parameter.IsSampleType()
-                            ? new ParameterDescriptor(ParameterFrom.Path, parameter, index, cacheKeyTemplates)
-                            : new ParameterDescriptor(ParameterFrom.Query, parameter, index, cacheKeyTemplates);
+                        rpcParameter = parameter.IsSampleType()
+                            ? new RpcParameter(ParameterFrom.Path, parameter, index, cacheKeyTemplates)
+                            : new RpcParameter(ParameterFrom.Query, parameter, index, cacheKeyTemplates);
                     }
                     else
                     {
@@ -108,8 +108,8 @@ namespace Silky.Rpc.Runtime.Server
                                 if (TemplateSegmentHelper.IsVariable(routeTemplateSegment)
                                     && TemplateSegmentHelper.GetVariableName(routeTemplateSegment) == parameter.Name)
                                 {
-                                    parameterDescriptor =
-                                        new ParameterDescriptor(ParameterFrom.Path, parameter,
+                                    rpcParameter =
+                                        new RpcParameter(ParameterFrom.Path, parameter,
                                             index,
                                             cacheKeyTemplates,
                                             TemplateSegmentHelper.GetSegmentVal(routeTemplateSegment),
@@ -121,36 +121,36 @@ namespace Silky.Rpc.Runtime.Server
 
                             if (!parameterFromPath)
                             {
-                                parameterDescriptor = new ParameterDescriptor(ParameterFrom.Query, parameter, index,
+                                rpcParameter = new RpcParameter(ParameterFrom.Query, parameter, index,
                                     cacheKeyTemplates);
                             }
                         }
                         else
                         {
-                            parameterDescriptor = parameter.IsSampleType()
-                                ? new ParameterDescriptor(ParameterFrom.Path, parameter, index, cacheKeyTemplates)
-                                : new ParameterDescriptor(ParameterFrom.Query, parameter, index, cacheKeyTemplates);
+                            rpcParameter = parameter.IsSampleType()
+                                ? new RpcParameter(ParameterFrom.Path, parameter, index, cacheKeyTemplates)
+                                : new RpcParameter(ParameterFrom.Query, parameter, index, cacheKeyTemplates);
                         }
                     }
                 }
                 else if (parameter.IsFormFileType())
                 {
-                    parameterDescriptor =
-                        new ParameterDescriptor(ParameterFrom.File, parameter, index, cacheKeyTemplates);
+                    rpcParameter =
+                        new RpcParameter(ParameterFrom.File, parameter, index, cacheKeyTemplates);
                 }
                 else if (parameter.HasFileType())
                 {
-                    parameterDescriptor = new ParameterDescriptor(ParameterFrom.Form, parameter, index, cacheKeyTemplates);
+                    rpcParameter = new RpcParameter(ParameterFrom.Form, parameter, index, cacheKeyTemplates);
                 }
                 else
                 {
-                    parameterDescriptor = httpMethodInfo.HttpMethod == HttpMethod.Get
-                        ? new ParameterDescriptor(ParameterFrom.Query, parameter, index, cacheKeyTemplates)
-                        : new ParameterDescriptor(ParameterFrom.Body, parameter, index, cacheKeyTemplates);
+                    rpcParameter = httpMethodInfo.HttpMethod == HttpMethod.Get
+                        ? new RpcParameter(ParameterFrom.Query, parameter, index, cacheKeyTemplates)
+                        : new RpcParameter(ParameterFrom.Body, parameter, index, cacheKeyTemplates);
                 }
             }
 
-            return parameterDescriptor;
+            return rpcParameter;
         }
     }
 }

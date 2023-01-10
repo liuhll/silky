@@ -182,7 +182,7 @@ public static class CacheKeyHelper
 
         var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
         var parameterDescriptor =
-            serviceEntry.ParameterDescriptors[cacheKeyProviderDescriptor.ParameterIndex];
+            serviceEntry.Parameters[cacheKeyProviderDescriptor.ParameterIndex];
         var parameterValue =
             typeConvertibleService.Convert(parameters[cacheKeyProviderDescriptor.ParameterIndex],
                 parameterDescriptor.Type);

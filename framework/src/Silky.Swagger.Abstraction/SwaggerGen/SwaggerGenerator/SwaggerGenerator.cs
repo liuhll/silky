@@ -304,17 +304,17 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
         {
             OpenApiRequestBody requestBody = null;
             RequestBodyFilterContext filterContext = null;
-            var bodyParameter = serviceEntry.ParameterDescriptors
+            var bodyParameter = serviceEntry.Parameters
                 .FirstOrDefault(paramDesc => paramDesc.From == ParameterFrom.Body);
 
-            var formParameters = serviceEntry.ParameterDescriptors
+            var formParameters = serviceEntry.Parameters
                 .Where(paramDesc => paramDesc.From == ParameterFrom.Form || paramDesc.From == ParameterFrom.File);
             if (bodyParameter != null)
             {
                 requestBody = GenerateRequestBodyFromBodyParameter(serviceEntry, schemaRepository, bodyParameter);
 
                 filterContext = new RequestBodyFilterContext(
-                    bodyParameterDescription: bodyParameter,
+                    bodyRpcParameterDescription: bodyParameter,
                     formParameterDescriptions: null,
                     schemaGenerator: _schemaGenerator,
                     schemaRepository: schemaRepository);
@@ -324,7 +324,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                 requestBody = GenerateRequestBodyFromFormParameters(serviceEntry, schemaRepository, formParameters);
 
                 filterContext = new RequestBodyFilterContext(
-                    bodyParameterDescription: null,
+                    bodyRpcParameterDescription: null,
                     formParameterDescriptions: formParameters,
                     schemaGenerator: _schemaGenerator,
                     schemaRepository: schemaRepository);
@@ -342,7 +342,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
         }
 
         private OpenApiRequestBody GenerateRequestBodyFromFormParameters(ServiceEntry serviceEntry,
-            SchemaRepository schemaRepository, IEnumerable<ParameterDescriptor> formParameters)
+            SchemaRepository schemaRepository, IEnumerable<RpcParameter> formParameters)
         {
             var contentTypes = InferRequestContentTypes(serviceEntry);
             contentTypes = contentTypes.Any() ? contentTypes : new[] { "multipart/form-data" };
@@ -364,7 +364,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
             };
         }
 
-        private OpenApiSchema GenerateSchemaFromFormParameters(IEnumerable<ParameterDescriptor> formParameters,
+        private OpenApiSchema GenerateSchemaFromFormParameters(IEnumerable<RpcParameter> formParameters,
             SchemaRepository schemaRepository)
         {
             var properties = new Dictionary<string, OpenApiSchema>();
@@ -441,16 +441,16 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
         }
 
         private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(ServiceEntry serviceEntry,
-            SchemaRepository schemaRepository, ParameterDescriptor bodyParameter)
+            SchemaRepository schemaRepository, RpcParameter bodyRpcParameter)
         {
             var contentTypes = InferRequestContentTypes(serviceEntry);
             var isRequired =
-                bodyParameter.Type.CustomAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+                bodyRpcParameter.Type.CustomAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
             var schema = GenerateSchema(
-                bodyParameter.Type,
+                bodyRpcParameter.Type,
                 schemaRepository,
                 null,
-                bodyParameter.ParameterInfo);
+                bodyRpcParameter.ParameterInfo);
             return new OpenApiRequestBody
             {
                 Content = contentTypes
@@ -481,7 +481,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
         private IList<OpenApiParameter> GenerateParameters(ServiceEntry serviceEntry,
             SchemaRepository schemaRespository)
         {
-            var applicableApiParameters = serviceEntry.ParameterDescriptors
+            var applicableApiParameters = serviceEntry.Parameters
                 .Where(apiParam =>
                     apiParam.From == ParameterFrom.Path ||
                     apiParam.From == ParameterFrom.Query ||
@@ -492,37 +492,37 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                 .ToList();
         }
 
-        private IEnumerable<OpenApiParameter> GenerateParameter(ParameterDescriptor apiParameter,
+        private IEnumerable<OpenApiParameter> GenerateParameter(RpcParameter apiRpcParameter,
             SchemaRepository schemaRespository)
         {
             var parameters = new List<OpenApiParameter>();
-            if (apiParameter.IsSampleOrNullableType)
+            if (apiRpcParameter.IsSampleOrNullableType)
             {
-                parameters.Add(GenerateSampleParameter(apiParameter, schemaRespository));
+                parameters.Add(GenerateSampleParameter(apiRpcParameter, schemaRespository));
             }
             else
             {
-                parameters.AddRange(GenerateComplexParameter(apiParameter, schemaRespository));
+                parameters.AddRange(GenerateComplexParameter(apiRpcParameter, schemaRespository));
             }
 
             return parameters;
         }
 
 
-        private OpenApiParameter GenerateSampleParameter(ParameterDescriptor apiParameter,
+        private OpenApiParameter GenerateSampleParameter(RpcParameter apiRpcParameter,
             SchemaRepository schemaRespository)
         {
             var name = _options.DescribeAllParametersInCamelCase
-                ? apiParameter.Name.ToCamelCase()
-                : apiParameter.Name;
+                ? apiRpcParameter.Name.ToCamelCase()
+                : apiRpcParameter.Name;
 
-            var location = ParameterLocationMap[apiParameter.From];
-            var isRequired = (apiParameter.From == ParameterFrom.Path)
-                             || apiParameter.Type.GetCustomAttributes()
+            var location = ParameterLocationMap[apiRpcParameter.From];
+            var isRequired = (apiRpcParameter.From == ParameterFrom.Path)
+                             || apiRpcParameter.Type.GetCustomAttributes()
                                  .Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
-            var schema = GenerateSchema(apiParameter.Type, schemaRespository, null,
-                apiParameter.ParameterInfo);
+            var schema = GenerateSchema(apiRpcParameter.Type, schemaRespository, null,
+                apiRpcParameter.ParameterInfo);
             var parameter = new OpenApiParameter
             {
                 Name = location == ParameterLocation.Path ? name.ToLower() : name,
@@ -532,11 +532,11 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
             };
 
             var filterContext = new ParameterFilterContext(
-                apiParameter,
+                apiRpcParameter,
                 _schemaGenerator,
                 schemaRespository,
                 null,
-                apiParameter.ParameterInfo);
+                apiRpcParameter.ParameterInfo);
 
             foreach (var filter in _options.ParameterFilters)
             {
@@ -546,11 +546,11 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
             return parameter;
         }
 
-        private IEnumerable<OpenApiParameter> GenerateComplexParameter(ParameterDescriptor apiParameter,
+        private IEnumerable<OpenApiParameter> GenerateComplexParameter(RpcParameter apiRpcParameter,
             SchemaRepository schemaRespository)
         {
             var parameters = new List<OpenApiParameter>();
-            var propertyInfos = apiParameter.Type.GetProperties();
+            var propertyInfos = apiRpcParameter.Type.GetProperties();
             foreach (var propertyInfo in propertyInfos)
             {
                 // if (!propertyInfo.PropertyType.IsSampleOrNullableType())
@@ -558,17 +558,17 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                 //     throw new SilkyException("Specifying QString parameters does not allow specifying complex type parameters");
                 // }
 
-                var name = apiParameter.From == ParameterFrom.Path ? apiParameter.Name : propertyInfo.Name;
+                var name = apiRpcParameter.From == ParameterFrom.Path ? apiRpcParameter.Name : propertyInfo.Name;
                 name = _options.DescribeAllParametersInCamelCase
                     ? name.ToCamelCase()
                     : name;
-                var location = ParameterLocationMap[apiParameter.From];
-                var isRequired = (apiParameter.From == ParameterFrom.Path)
-                                 || apiParameter.Type.GetCustomAttributes().Any(attr =>
+                var location = ParameterLocationMap[apiRpcParameter.From];
+                var isRequired = (apiRpcParameter.From == ParameterFrom.Path)
+                                 || apiRpcParameter.Type.GetCustomAttributes().Any(attr =>
                                      RequiredAttributeTypes.Contains(attr.GetType()));
 
-                var schema = GenerateSchema(apiParameter.Type, schemaRespository, propertyInfo,
-                    apiParameter.ParameterInfo);
+                var schema = GenerateSchema(apiRpcParameter.Type, schemaRespository, propertyInfo,
+                    apiRpcParameter.ParameterInfo);
                 var parameter = new OpenApiParameter
                 {
                     Name = name,
@@ -578,11 +578,11 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                 };
 
                 var filterContext = new ParameterFilterContext(
-                    apiParameter,
+                    apiRpcParameter,
                     _schemaGenerator,
                     schemaRespository,
                     null,
-                    apiParameter.ParameterInfo);
+                    apiRpcParameter.ParameterInfo);
 
                 foreach (var filter in _options.ParameterFilters)
                 {

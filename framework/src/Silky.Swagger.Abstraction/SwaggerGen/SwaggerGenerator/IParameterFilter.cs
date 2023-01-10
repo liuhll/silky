@@ -12,20 +12,20 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
     public class ParameterFilterContext
     {
         public ParameterFilterContext(
-            ParameterDescriptor apiParameterDescription,
+            RpcParameter apiRpcParameterDescription,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
             PropertyInfo propertyInfo = null,
             ParameterInfo parameterInfo = null)
         {
-            ApiParameterDescription = apiParameterDescription;
+            ApiRpcParameterDescription = apiRpcParameterDescription;
             SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
             PropertyInfo = propertyInfo;
             ParameterInfo = parameterInfo;
         }
 
-        public ParameterDescriptor ApiParameterDescription { get; }
+        public RpcParameter ApiRpcParameterDescription { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
 

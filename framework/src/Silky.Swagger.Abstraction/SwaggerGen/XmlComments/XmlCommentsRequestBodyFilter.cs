@@ -16,7 +16,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.XmlComments
 
         public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
         {
-            var bodyParameterDescription = context.BodyParameterDescription;
+            var bodyParameterDescription = context.BodyRpcParameterDescription;
 
             if (bodyParameterDescription == null) return;
 
@@ -26,12 +26,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.XmlComments
                 ApplyPropertyTags(requestBody, propertyInfo);
                 return;
             }
-            // var parameterInfo = bodyParameterDescription.ParameterInfo();
-            // if (parameterInfo != null)
-            // {
-            //     ApplyParamTags(requestBody, parameterInfo);
-            //     return;
-            // }
+  
         }
 
         private void ApplyPropertyTags(OpenApiRequestBody requestBody, PropertyInfo propertyInfo)

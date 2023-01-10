@@ -9,38 +9,38 @@ using Silky.Core.MethodExecutor;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public static class ParameterDescriptorExtensions
+    public static class RpcParameterExtensions
     {
         private static ITypeConvertibleService _typeConvertibleService;
 
-        static ParameterDescriptorExtensions()
+        static RpcParameterExtensions()
         {
             _typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
         }
 
-        public static object GetActualParameter([NotNull] this ParameterDescriptor parameterDescriptor,
+        public static object GetActualParameter([NotNull] this RpcParameter rpcParameter,
             object parameter)
         {
             if (parameter == null)
             {
                 return null;
             }
-            return parameterDescriptor.Type?.GetType() == parameter.GetType()
+            return rpcParameter.Type?.GetType() == parameter.GetType()
                 ? parameter
-                : _typeConvertibleService.Convert(parameter, parameterDescriptor.Type);
+                : _typeConvertibleService.Convert(parameter, rpcParameter.Type);
         }
 
-        public static object GetActualParameter([NotNull] this ParameterDescriptor parameterDescriptor,
+        public static object GetActualParameter([NotNull] this RpcParameter rpcParameter,
             object parameter, HttpContext context)
         {
-            var parameterValue = parameterDescriptor.GetActualParameter(parameter);
-            if (parameterDescriptor.HasFileProp(out var filePropName))
+            var parameterValue = rpcParameter.GetActualParameter(parameter);
+            if (rpcParameter.HasFileProp(out var filePropName))
             {
                 parameterValue.GetType().GetProperty(filePropName)
                     .SetValue(parameterValue, context.Request.Form.Files.GetFile(filePropName));
             }
 
-            if (parameterDescriptor.HasFilesProp(out var filesPropName))
+            if (rpcParameter.HasFilesProp(out var filesPropName))
             {
                 parameterValue.GetType().GetProperty(filesPropName)
                     .SetValue(parameterValue, context.Request.Form.Files);
@@ -50,15 +50,15 @@ namespace Silky.Rpc.Runtime.Server
         }
         
         
-        public static object GetActualParameter(this ParameterDescriptor parameterDescriptor, object parameter, IList<IFormFile> silkyFiles)
+        public static object GetActualParameter(this RpcParameter rpcParameter, object parameter, IList<IFormFile> silkyFiles)
         {
-            var parameterValue = parameterDescriptor.GetActualParameter(parameter);
-            if (parameterDescriptor.HasFileProp(out var filePropName))
+            var parameterValue = rpcParameter.GetActualParameter(parameter);
+            if (rpcParameter.HasFileProp(out var filePropName))
             {
                 parameterValue.GetType().GetProperty(filePropName)
                     .SetValue(parameterValue, silkyFiles.Single(p=> p.Name.Equals(filePropName,StringComparison.OrdinalIgnoreCase)));
             }
-            if (parameterDescriptor.HasFilesProp(out var filesPropName))
+            if (rpcParameter.HasFilesProp(out var filesPropName))
             {
                 var files = new FormFileCollection();
                 files.AddRange(silkyFiles);
@@ -68,9 +68,9 @@ namespace Silky.Rpc.Runtime.Server
             return parameterValue;
         }
 
-        private static bool HasFileProp([NotNull] this ParameterDescriptor parameterDescriptor, out string filePropName)
+        private static bool HasFileProp([NotNull] this RpcParameter rpcParameter, out string filePropName)
         {
-            var props = parameterDescriptor.Type.GetProperties();
+            var props = rpcParameter.Type.GetProperties();
             var hasFileProp = false;
             filePropName = null;
             foreach (var prop in props)
@@ -86,10 +86,10 @@ namespace Silky.Rpc.Runtime.Server
             return hasFileProp;
         }
 
-        private static bool HasFilesProp([NotNull] this ParameterDescriptor parameterDescriptor,
+        private static bool HasFilesProp([NotNull] this RpcParameter rpcParameter,
             out string filesPropName)
         {
-            var props = parameterDescriptor.Type.GetProperties();
+            var props = rpcParameter.Type.GetProperties();
             var hasFileProp = false;
             filesPropName = null;
             foreach (var prop in props)
@@ -105,30 +105,30 @@ namespace Silky.Rpc.Runtime.Server
             return hasFileProp;
         }
 
-        public static bool IsFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool IsFileParameter([NotNull] this RpcParameter rpcParameter)
         {
-            return typeof(IFormFile).IsAssignableFrom(parameterDescriptor.Type) ||
-                   typeof(IFormFileCollection).IsAssignableFrom(parameterDescriptor.Type);
+            return typeof(IFormFile).IsAssignableFrom(rpcParameter.Type) ||
+                   typeof(IFormFileCollection).IsAssignableFrom(rpcParameter.Type);
         }
 
-        public static bool IsSupportFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool IsSupportFileParameter([NotNull] this RpcParameter rpcParameter)
         {
-            return parameterDescriptor.IsFileParameter() || parameterDescriptor.HasFileProp(out var propName);
+            return rpcParameter.IsFileParameter() || rpcParameter.HasFileProp(out var propName);
         }
 
-        public static bool IsSingleFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool IsSingleFileParameter([NotNull] this RpcParameter rpcParameter)
         {
-            return typeof(IFormFile).IsAssignableFrom(parameterDescriptor.Type);
+            return typeof(IFormFile).IsAssignableFrom(rpcParameter.Type);
         }
 
-        public static bool IsMultipleFileParameter([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool IsMultipleFileParameter([NotNull] this RpcParameter rpcParameter)
         {
-            return typeof(IFormFileCollection).IsAssignableFrom(parameterDescriptor.Type);
+            return typeof(IFormFileCollection).IsAssignableFrom(rpcParameter.Type);
         }
         
-        public static bool HasFileType([NotNull] this ParameterDescriptor parameterDescriptor)
+        public static bool HasFileType([NotNull] this RpcParameter rpcParameter)
         {
-            return parameterDescriptor.ParameterInfo.HasFileType();
+            return rpcParameter.ParameterInfo.HasFileType();
         }
         
     }

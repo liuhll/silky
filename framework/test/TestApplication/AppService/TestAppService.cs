@@ -9,6 +9,7 @@ using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Runtime.Session;
 using Silky.Core.Serialization;
@@ -110,6 +111,7 @@ namespace TestApplication.AppService
             return await _testRepository.AsQueryable(false)
                 .Where(!query.Name.IsNullOrEmpty(), p => p.Name.Contains(query.Name))
                 .Where(!query.Address.IsNullOrEmpty(), p => p.Address.Contains(query.Address))
+                .Where(!query.Ids.IsNullOrEmpty(),p=> query.Ids.Contains(p.Id))
                 .ProjectToType<TestOut>()
                 .ToPagedListAsync(query.PageIndex, query.PageSize);
         }

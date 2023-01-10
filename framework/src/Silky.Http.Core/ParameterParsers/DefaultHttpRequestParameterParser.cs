@@ -58,7 +58,7 @@ namespace Silky.Http.Core
                 parameters.Add(ParameterFrom.Body, bodyData);
             }
 
-            if (serviceEntry != null && serviceEntry.ParameterDescriptors.Any(p => p.From == ParameterFrom.Path))
+            if (serviceEntry != null && serviceEntry.Parameters.Any(p => p.From == ParameterFrom.Path))
             {
                 var pathData = serviceEntry.Router.ParserRouteParameters(request.Path);
                 parameters.Add(ParameterFrom.Path, pathData);

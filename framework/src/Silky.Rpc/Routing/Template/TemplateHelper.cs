@@ -27,7 +27,7 @@ namespace Silky.Rpc.Routing.Template
         private const string constraintRemovePostFix = "Async";
 
         public static string GenerateServerEntryTemplate(string routeTemplate,
-            IReadOnlyList<ParameterDescriptor> parameterDescriptors,
+            IReadOnlyList<RpcParameter> parameters,
             HttpMethodInfo httpMethodInfo,
             bool isRestful,
             string methodName)
@@ -57,7 +57,7 @@ namespace Silky.Rpc.Routing.Template
                     }
 
                     serverEntryTemplate = $"{routeTemplate}/{methodEntryTemplate}";
-                    var parameterPathTemplate = GetParametersTemplate(parameterDescriptors);
+                    var parameterPathTemplate = GetParametersTemplate(parameters);
                     if (!parameterPathTemplate.IsNullOrEmpty())
                     {
                         serverEntryTemplate += "/" + parameterPathTemplate;
@@ -89,7 +89,7 @@ namespace Silky.Rpc.Routing.Template
                 }
 
                 serverEntryTemplate = $"{routeTemplate}/{methodEntryTemplate}";
-                var parameterPathTemplate = GetParametersTemplate(parameterDescriptors);
+                var parameterPathTemplate = GetParametersTemplate(parameters);
                 if (!parameterPathTemplate.IsNullOrEmpty())
                 {
                     serverEntryTemplate += "/" + parameterPathTemplate;
@@ -99,9 +99,9 @@ namespace Silky.Rpc.Routing.Template
             return serverEntryTemplate;
         }
 
-        private static string GetParametersTemplate(IReadOnlyList<ParameterDescriptor> parameterDescriptors)
+        private static string GetParametersTemplate(IReadOnlyList<RpcParameter> parameters)
         {
-            var pathParameters = parameterDescriptors.Where(p => p.From == ParameterFrom.Path);
+            var pathParameters = parameters.Where(p => p.From == ParameterFrom.Path);
             if (pathParameters.Any())
             {
                 var parameterPathTemplate =

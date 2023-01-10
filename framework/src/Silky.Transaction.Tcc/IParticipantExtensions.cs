@@ -48,9 +48,9 @@ namespace Silky.Transaction.Tcc
                     {
                         var actualParameters = new List<object>();
                         var i = 0;
-                        if (!serviceEntry.ParameterDescriptors.IsNullOrEmpty())
+                        if (!serviceEntry.Parameters.IsNullOrEmpty())
                         {
-                            foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+                            foreach (var parameterDescriptor in serviceEntry.Parameters)
                             {
                                 actualParameters.Add(
                                     parameterDescriptor.GetActualParameter(localParticipant.Parameters[i]));

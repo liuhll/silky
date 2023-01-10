@@ -6,6 +6,8 @@ public class SearchInput
     
     public string Address { get; set; }
 
+    public long[] Ids { get; set; }
+
     public int PageSize { get; set; } = 10;
 
     public int PageIndex { get; set; } = 1;

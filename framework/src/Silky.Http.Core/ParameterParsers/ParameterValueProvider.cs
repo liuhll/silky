@@ -17,7 +17,7 @@ public abstract class ParameterValueProvider
     protected IDictionary<string, Type> GetKeysFromParameter(ParameterFrom @from)
     {
         var keys = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-        var @params = _serviceEntry.ParameterDescriptors.Where(p => p.From == from);
+        var @params = _serviceEntry.Parameters.Where(p => p.From == from);
         foreach (var param in @params)
         {
             if (param.IsSampleOrNullableType)

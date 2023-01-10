@@ -330,14 +330,14 @@ internal class LocalInvoker : LocalInvokerBase
     private Task BindArgumentsAsync()
     {
         var serviceEntry = _serviceEntryContext.ServiceEntry;
-        if (serviceEntry.ParameterDescriptors.Count == 0)
+        if (serviceEntry.Parameters.Count == 0)
         {
             return Task.CompletedTask;
         }
 
-        for (var index = 0; index < serviceEntry.ParameterDescriptors.Count; index++)
+        for (var index = 0; index < serviceEntry.Parameters.Count; index++)
         {
-            var parameterDescriptor = serviceEntry.ParameterDescriptors[index];
+            var parameterDescriptor = serviceEntry.Parameters[index];
             _arguments[parameterDescriptor.Name] = _serviceEntryContext.Parameters[index];
         }
 

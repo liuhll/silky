@@ -24,7 +24,7 @@ public class TemplateParameterResolver : ParameterResolverBase
     public override object[] Parser(ServiceEntry serviceEntry, RemoteInvokeMessage message)
     {
         var parameters = new List<object>();
-        foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+        foreach (var parameterDescriptor in serviceEntry.Parameters)
         {
             if (message.DictParameters.TryGetValue(parameterDescriptor.Name, out var parameterVal))
             {

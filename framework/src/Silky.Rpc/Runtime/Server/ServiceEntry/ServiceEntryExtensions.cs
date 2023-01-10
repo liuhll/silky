@@ -22,7 +22,7 @@ namespace Silky.Rpc.Runtime.Server
             var dictionaryParms = new Dictionary<string, object>();
             var index = 0;
             var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-            foreach (var parameter in serviceEntry.ParameterDescriptors)
+            foreach (var parameter in serviceEntry.Parameters)
             {
                 if (parameter.IsSampleOrNullableType)
                 {
@@ -44,17 +44,17 @@ namespace Silky.Rpc.Runtime.Server
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             for (int i = 0; i < parameters.Length; i++)
             {
-                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.ParameterDescriptors[i].Type &&
-                    !serviceEntry.ParameterDescriptors[i].Type.IsInstanceOfType(parameters[i]))
+                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.Parameters[i].Type &&
+                    !serviceEntry.Parameters[i].Type.IsInstanceOfType(parameters[i]))
                 {
-                    if (serviceEntry.ParameterDescriptors[i].IsSingleFileParameter())
+                    if (serviceEntry.Parameters[i].IsSingleFileParameter())
                     {
                         var silkyFormFile = serializer.Deserialize<SilkyFormFile>(parameters[i].ToString());
                         parameters[i] = silkyFormFile.ConventToFormFile();
                         continue;
                     }
 
-                    if (serviceEntry.ParameterDescriptors[i].IsMultipleFileParameter())
+                    if (serviceEntry.Parameters[i].IsMultipleFileParameter())
                     {
                         var silkyFormFile = serializer.Deserialize<SilkyFormFile[]>(parameters[i].ToString());
                         parameters[i] = silkyFormFile.ConventToFileCollection();
@@ -63,7 +63,7 @@ namespace Silky.Rpc.Runtime.Server
 
                     var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
                     parameters[i] =
-                        typeConvertibleService.Convert(parameters[i], serviceEntry.ParameterDescriptors[i].Type);
+                        typeConvertibleService.Convert(parameters[i], serviceEntry.Parameters[i].Type);
                 }
             }
 
@@ -158,7 +158,7 @@ namespace Silky.Rpc.Runtime.Server
                 return true;
             }
 
-            foreach (var parameterDescriptor in serviceEntry.ParameterDescriptors)
+            foreach (var parameterDescriptor in serviceEntry.Parameters)
             {
                 if (parameterDescriptor.IsSupportFileParameter())
                 {

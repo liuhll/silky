@@ -12,20 +12,20 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
     public class RequestBodyFilterContext
     {
         public RequestBodyFilterContext(
-            ParameterDescriptor bodyParameterDescription,
-            IEnumerable<ParameterDescriptor> formParameterDescriptions,
+            RpcParameter bodyRpcParameterDescription,
+            IEnumerable<RpcParameter> formParameterDescriptions,
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository)
         {
-            BodyParameterDescription = bodyParameterDescription;
+            BodyRpcParameterDescription = bodyRpcParameterDescription;
             FormParameterDescriptions = formParameterDescriptions;
             SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
         }
 
-        public ParameterDescriptor BodyParameterDescription { get; }
+        public RpcParameter BodyRpcParameterDescription { get; }
 
-        public IEnumerable<ParameterDescriptor> FormParameterDescriptions { get; }
+        public IEnumerable<RpcParameter> FormParameterDescriptions { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
 
