@@ -115,15 +115,15 @@ namespace Silky.Core.Runtime.Rpc
             return resultAttachments.ContainsKey(key);
         }
 
-        public string GetInvokeAttachment([NotNull] string key)
+        public string? GetInvokeAttachment([NotNull] string key)
         {
             invokeAttachments.TryGetValue(key, out string result);
             return result;
         }
 
-        public string GetResultAttachment([NotNull] string key)
+        public string? GetResultAttachment([NotNull] string key)
         {
-            resultAttachments.TryGetValue(key, out string result);
+            resultAttachments.TryGetValue(key, out string? result);
             return result;
         }
 

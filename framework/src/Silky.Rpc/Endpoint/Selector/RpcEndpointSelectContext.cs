@@ -6,7 +6,7 @@ namespace Silky.Rpc.Endpoint.Selector
     public class RpcEndpointSelectContext
     {
         public RpcEndpointSelectContext([NotNull] string monitorId, [NotNull] ISilkyEndpoint[] addressModels,
-            string hash = null)
+            string? hash = null)
         {
             Check.NotNullOrEmpty(monitorId, nameof(monitorId));
             Check.NotNull(addressModels, nameof(addressModels));
@@ -17,7 +17,7 @@ namespace Silky.Rpc.Endpoint.Selector
 
         [NotNull] public string MonitorId { get; }
 
-        public string Hash { get; }
+        public string? Hash { get; }
 
         [NotNull] public ISilkyEndpoint[] AddressModels { get; }
     }

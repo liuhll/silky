@@ -18,13 +18,13 @@ internal class RemoteInvoker : RemoteInvokerBase
     
     public RemoteInvoker(ILogger logger, ClientInvokeContext context,
         IClientInvokeContextAccessor clientInvokeContextAccessor,
-        IClientInvokeDiagnosticListener clientInvokeDiagnosticListener,
+        string messageId,
         ITransportClient client,
         IClientFilterMetadata[] filters)
         : base(logger,
             context,
             clientInvokeContextAccessor,
-            clientInvokeDiagnosticListener,
+            messageId,
             client, 
             filters)
     {
@@ -234,8 +234,7 @@ internal class RemoteInvoker : RemoteInvokerBase
 
     private async Task InvokeRemoteCallMethodAsync()
     {
-        var messageId = GuidGenerator.CreateGuidStrWithNoUnderline();
-        var result = await _client.SendAsync(_clientInvokeContext.RemoteInvokeMessage, messageId);
+        var result = await _client.SendAsync(_clientInvokeContext.RemoteInvokeMessage, _messageId!);
         _result = result;
     }
 

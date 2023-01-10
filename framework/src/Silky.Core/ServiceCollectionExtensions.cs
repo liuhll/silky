@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Silky.Core.Configuration;
-using Silky.Core.Extensions;
 using Silky.Core.Logging;
 using Silky.Core.Modularity;
 using Silky.Core.Threading;

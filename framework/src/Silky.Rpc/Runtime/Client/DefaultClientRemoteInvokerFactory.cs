@@ -16,7 +16,6 @@ public class DefaultClientRemoteInvokerFactory : IClientRemoteInvokerFactory, IS
     private readonly IFilterProvider _filterProvider;
     private ConcurrentDictionary<string, FilterItem[]> _cacheFilters = new();
     private readonly IClientInvokeContextAccessor _clientInvokeContextAccessor;
-    private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
     private readonly IClientFilterDescriptorProvider _clientFilterDescriptorProvider;
 
 
@@ -27,14 +26,13 @@ public class DefaultClientRemoteInvokerFactory : IClientRemoteInvokerFactory, IS
         IClientFilterDescriptorProvider clientFilterDescriptorProvider)
     {
         _filterProvider = filterProvider;
-        _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
         _clientFilterDescriptorProvider = clientFilterDescriptorProvider;
         _clientInvokeContextAccessor = clientInvokeContextAccessor ?? ClientInvokeContextAccessor.Null;
 
         _logger = loggerFactory.CreateLogger<RemoteInvokerBase>();
     }
 
-    public IRemoteInvoker CreateInvoker(ClientInvokeContext context, ITransportClient client)
+    public IRemoteInvoker CreateInvoker(ClientInvokeContext context, ITransportClient client, string messageId)
     {
         if (context == null)
             throw new ArgumentNullException(nameof(context));
@@ -44,7 +42,8 @@ public class DefaultClientRemoteInvokerFactory : IClientRemoteInvokerFactory, IS
         IClientFilterMetadata[] filters;
         if (!_cacheFilters.TryGetValue(context.RemoteInvokeMessage.ServiceEntryId, out var cachedFilterItems))
         {
-            var filterFactoryResult = ClientFilterFactory.GetAllFilters(_filterProvider, clientFilterDescriptors.ToArray());
+            var filterFactoryResult =
+                ClientFilterFactory.GetAllFilters(_filterProvider, clientFilterDescriptors.ToArray());
             filters = (IClientFilterMetadata[])filterFactoryResult.Filters;
             _cacheFilters.TryAdd(context.RemoteInvokeMessage.ServiceEntryId, filterFactoryResult.CacheableFilters);
         }
@@ -53,7 +52,7 @@ public class DefaultClientRemoteInvokerFactory : IClientRemoteInvokerFactory, IS
             filters = ClientFilterFactory.CreateUncachedFilters(_filterProvider, cachedFilterItems);
         }
 
-        var invoker = new RemoteInvoker(_logger, context, _clientInvokeContextAccessor, _clientInvokeDiagnosticListener,
+        var invoker = new RemoteInvoker(_logger, context, _clientInvokeContextAccessor,messageId,
             client, filters);
         return invoker;
     }

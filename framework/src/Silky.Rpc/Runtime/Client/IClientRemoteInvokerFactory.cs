@@ -4,5 +4,5 @@ namespace Silky.Rpc.Runtime.Client;
 
 public interface IClientRemoteInvokerFactory
 {
-    public IRemoteInvoker CreateInvoker(ClientInvokeContext context, ITransportClient client);
+    public IRemoteInvoker CreateInvoker(ClientInvokeContext context, ITransportClient client, string messageId);
 }

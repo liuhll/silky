@@ -4,7 +4,10 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.FilterMetadata;
+using Silky.Core.Utils;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Transport;
@@ -20,8 +23,8 @@ internal abstract partial class RemoteInvokerBase : IRemoteInvoker
     protected readonly IClientFilterMetadata[] _filters;
     protected readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
     protected readonly ITransportClient _client;
+    protected readonly string _messageId;
     protected FilterCursor _cursor;
-
     protected RemoteResultMessage _result;
 
     private ClientInvokeExceptionContextSealed? _exceptionContext;
@@ -34,7 +37,7 @@ internal abstract partial class RemoteInvokerBase : IRemoteInvoker
     protected RemoteInvokerBase(ILogger logger,
         ClientInvokeContext clientInvokeContext,
         IClientInvokeContextAccessor clientInvokeContextAccessor,
-        IClientInvokeDiagnosticListener clientInvokeDiagnosticListener,
+        string messageId,
         ITransportClient client,
         IClientFilterMetadata[] filters)
     {
@@ -42,11 +45,10 @@ internal abstract partial class RemoteInvokerBase : IRemoteInvoker
         _clientInvokeContext = clientInvokeContext ?? throw new ArgumentNullException(nameof(clientInvokeContext));
         _clientInvokeContextAccessor = clientInvokeContextAccessor ??
                                        throw new ArgumentNullException(nameof(clientInvokeContextAccessor));
+        _messageId = messageId ?? throw new ArgumentNullException(nameof(messageId));
         _filters = filters ?? throw new ArgumentNullException(nameof(filters));
-        _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener ??
-                                          throw new ArgumentNullException(nameof(clientInvokeDiagnosticListener));
         _client = client ?? throw new ArgumentNullException(nameof(client));
-
+        
         _cursor = new FilterCursor(filters);
     }
 
