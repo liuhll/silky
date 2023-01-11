@@ -33,8 +33,12 @@ namespace Silky.Rpc.Runtime.Server
                 var rpcParameterProperties = rpcParameter.Type.GetProperties();
                 foreach (var item in jObjectParameter)
                 {
-                    var rpcParameterProperty = rpcParameterProperties.Single(p =>
+                    var rpcParameterProperty = rpcParameterProperties.SingleOrDefault(p =>
                         p.Name.Equals(item.Key, StringComparison.OrdinalIgnoreCase));
+                    if (rpcParameterProperty == null)
+                    {
+                        continue;
+                    }
                     if (rpcParameterProperty.PropertyType.IsEnumerable())
                     {
                         jObjectParameter[item.Key] =
