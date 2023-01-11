@@ -435,7 +435,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             swaggerGenOptions.OperationFilter<AddServiceKeyOperationFilter>();
         }
-
+        
         public static void AddHashRouteHeader(this SwaggerGenOptions swaggerGenOptions)
         {
             swaggerGenOptions.OperationFilter<AddHashRouteHeaderOperationFilter>();

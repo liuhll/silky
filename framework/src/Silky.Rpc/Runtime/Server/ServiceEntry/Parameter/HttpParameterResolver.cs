@@ -66,7 +66,7 @@ public class HttpParameterResolver : ParameterResolverBase
                     list.Add(parameterDescriptor.GetActualParameter(parameter));
                     break;
                 case ParameterFrom.Form:
-                    if (parameterDescriptor.IsSampleOrNullableType)
+                    if (parameterDescriptor.IsSingleType)
                     {
                         SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                     }
@@ -127,7 +127,7 @@ public class HttpParameterResolver : ParameterResolverBase
                     
                     break;
                 case ParameterFrom.Header:
-                    if (parameterDescriptor.IsSampleOrNullableType)
+                    if (parameterDescriptor.IsSingleType)
                     {
                         SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                     }
@@ -138,7 +138,7 @@ public class HttpParameterResolver : ParameterResolverBase
 
                     break;
                 case ParameterFrom.Path:
-                    if (parameterDescriptor.IsSampleOrNullableType)
+                    if (parameterDescriptor.IsSingleType)
                     {
                         var pathVal =
                             (IDictionary<string, object>)typeConvertibleService.Convert(parameter,
@@ -160,7 +160,7 @@ public class HttpParameterResolver : ParameterResolverBase
 
                     break;
                 case ParameterFrom.Query:
-                    if (parameterDescriptor.IsSampleOrNullableType)
+                    if (parameterDescriptor.IsSingleType)
                     {
                         SetSampleParameterValue(typeConvertibleService, parameter, parameterDescriptor, list);
                     }

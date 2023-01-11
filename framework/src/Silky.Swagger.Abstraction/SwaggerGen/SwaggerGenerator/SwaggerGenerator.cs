@@ -371,7 +371,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
             var requiredPropertyNames = new List<string>();
             foreach (var formParameter in formParameters)
             {
-                if (formParameter.IsSampleOrNullableType)
+                if (formParameter.IsSingleType)
                 {
                     var name = _options.DescribeAllParametersInCamelCase
                         ? formParameter.Name.ToCamelCase()
@@ -479,7 +479,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
         }
 
         private IList<OpenApiParameter> GenerateParameters(ServiceEntry serviceEntry,
-            SchemaRepository schemaRespository)
+            SchemaRepository schemaRepository)
         {
             var applicableApiParameters = serviceEntry.Parameters
                 .Where(apiParam =>
@@ -488,21 +488,21 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                     apiParam.From == ParameterFrom.Header
                 );
             return applicableApiParameters
-                .SelectMany(apiParam => GenerateParameter(apiParam, schemaRespository))
+                .SelectMany(apiParam => GenerateParameter(apiParam, schemaRepository))
                 .ToList();
         }
 
         private IEnumerable<OpenApiParameter> GenerateParameter(RpcParameter apiRpcParameter,
-            SchemaRepository schemaRespository)
+            SchemaRepository schemaRepository)
         {
             var parameters = new List<OpenApiParameter>();
-            if (apiRpcParameter.IsSampleOrNullableType)
+            if (apiRpcParameter.IsSingleType)
             {
-                parameters.Add(GenerateSampleParameter(apiRpcParameter, schemaRespository));
+                parameters.Add(GenerateSampleParameter(apiRpcParameter, schemaRepository));
             }
             else
             {
-                parameters.AddRange(GenerateComplexParameter(apiRpcParameter, schemaRespository));
+                parameters.AddRange(GenerateComplexParameter(apiRpcParameter, schemaRepository));
             }
 
             return parameters;
@@ -553,7 +553,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
             var propertyInfos = apiRpcParameter.Type.GetProperties();
             foreach (var propertyInfo in propertyInfos)
             {
-                // if (!propertyInfo.PropertyType.IsSampleOrNullableType())
+                // if (!propertyInfo.PropertyType.IsSingleType())
                 // {
                 //     throw new SilkyException("Specifying QString parameters does not allow specifying complex type parameters");
                 // }

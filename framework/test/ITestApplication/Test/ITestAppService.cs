@@ -50,13 +50,14 @@ namespace ITestApplication.Test
 
         [HttpGet]
         Task<PagedList<TestOut>> Search1([FromQuery] string name, [FromQuery] string address,
+            [FromQuery] IList<long> ids,
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = 10);
 
         [HttpGet]
         Task<PagedList<TestOut>> Search2([FromQuery] SearchInput query);
         
-        // Task<PagedList<TestOut>> Search3([FromQuery]long[] Ids);
+        Task<PagedList<TestOut>> Search3([FromQuery]long[] Ids,[FromQuery] Sort[] sorts);
 
         [HttpPost]
         [HttpPut]

@@ -59,6 +59,11 @@ namespace Silky.Http.Swagger.Builders
                 swaggerGenOptions.MultipleServiceKey();
             }
 
+            if (swaggerDocumentOptions.EnableHashRouteHeader)
+            {
+                swaggerGenOptions.AddHashRouteHeader();
+            }
+
             LoadXmlComments(swaggerGenOptions, swaggerDocumentOptions);
         }
 

@@ -185,6 +185,30 @@ namespace Silky.Core.Extensions
             return type.FullName.RemovePostFix("CacheItem");
         }
 
+
+        public static bool IsSampleEnumerable(this Type type)
+        {
+            if (type.IsArray)
+            {
+                var elementType = type.GetElementType();
+                return elementType.IsSample();
+            }
+            
+            var genericTypeTypes = type.GenericTypeArguments;
+            if (genericTypeTypes.Length > 1)
+            {
+                return false;
+            }
+
+            if (genericTypeTypes.Length == 1)
+            {
+                var genericTypeType = genericTypeTypes[0];
+                return type.IsEnumerable() && genericTypeType.IsSample();
+            }
+
+            return false;
+        }
+
         public static bool IsEnumerable(this Type type)
         {
             if (type.IsArray)

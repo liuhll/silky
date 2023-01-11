@@ -15,6 +15,7 @@ namespace Silky.Http.Swagger.Configuration
             OrganizationMode = OrganizationMode.AllAndGroup;
             ShowMode = ShowMode.All;
             EnableMultipleServiceKey = true;
+            EnableHashRouteHeader = true;
             ShowDashboardService = false;
             Description = "Swagger Document";
             Title = "Swagger UI";
@@ -59,6 +60,8 @@ namespace Silky.Http.Swagger.Configuration
         public ShowMode ShowMode { get; set; }
 
         public bool EnableMultipleServiceKey { get; set; }
+
+        public bool EnableHashRouteHeader { get; set; }
 
         public string Description { get; set; }
         public string Title { get; set; }

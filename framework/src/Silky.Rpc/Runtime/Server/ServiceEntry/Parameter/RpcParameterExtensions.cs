@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -9,7 +8,6 @@ using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
-using Silky.Core.Serialization;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -44,7 +42,11 @@ namespace Silky.Rpc.Runtime.Server
                     }
                 }
             }
-
+            if (rpcParameter.Type.IsEnumerable() && parameter.GetType() == typeof(string) && !parameter.ToString().IsValidJson())
+            {
+                parameter = $"[{parameter}]";
+            }
+            
             return rpcParameter.Type?.GetType() == parameter.GetType()
                 ? parameter
                 : _typeConvertibleService.Convert(parameter, rpcParameter.Type);

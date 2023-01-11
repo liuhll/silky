@@ -97,11 +97,12 @@ namespace TestApplication.AppService
             return "删除数据成功";
         }
 
-        public async Task<PagedList<TestOut>> Search1(string name, string address, int pageIndex = 1, int pageSize = 10)
+        public async Task<PagedList<TestOut>> Search1(string name, string address, IList<long> ids, int pageIndex = 1, int pageSize = 10)
         {
             return await _testRepository.AsQueryable(false)
                 .Where(!name.IsNullOrEmpty(), p => p.Name.Contains(name))
                 .Where(!address.IsNullOrEmpty(), p => p.Address.Contains(name))
+                .Where(!ids.IsNullOrEmpty(),p=> ids.Contains(p.Id))
                 .ProjectToType<TestOut>()
                 .ToPagedListAsync(pageIndex, pageSize);
         }
@@ -116,7 +117,7 @@ namespace TestApplication.AppService
                 .ToPagedListAsync(query.PageIndex, query.PageSize);
         }
 
-        public Task<PagedList<TestOut>> Search3(long[] Ids)
+        public Task<PagedList<TestOut>> Search3(long[] Ids,Sort[] sorts)
         {
             throw new System.NotImplementedException();
         }

@@ -122,7 +122,7 @@ namespace Silky.Rpc.Runtime.Server
                                 CacheKeyType = cacheKey.CacheKeyType,
                                 ParameterIndex = parameterDescriptor.Index,
                                 From = parameterDescriptor.From,
-                                IsSampleOrNullableType = parameterDescriptor.IsSampleOrNullableType,
+                                IsSampleOrNullableType = parameterDescriptor.IsSingleType,
                             });
                     }
                 }

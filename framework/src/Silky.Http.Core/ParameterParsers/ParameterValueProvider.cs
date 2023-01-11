@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Silky.Core.Extensions;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core;
@@ -21,7 +22,7 @@ public abstract class ParameterValueProvider
         var @params = _serviceEntry.Parameters.Where(p => p.From == from);
         foreach (var param in @params)
         {
-            if (param.IsSampleOrNullableType)
+            if (param.IsSingleType || param.Type.IsEnumerable())
             {
                 keys.Add(param.Name, param.Type);
             }

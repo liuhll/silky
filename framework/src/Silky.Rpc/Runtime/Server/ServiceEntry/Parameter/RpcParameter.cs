@@ -57,7 +57,7 @@ namespace Silky.Rpc.Runtime.Server
 
             foreach (var cacheKeyParameter in cacheKeyParameters)
             {
-                if (IsSampleType && SampleName.Equals(cacheKeyParameter, StringComparison.OrdinalIgnoreCase))
+                if (Type.IsSample() && SampleName.Equals(cacheKeyParameter, StringComparison.OrdinalIgnoreCase))
                 {
                     cacheKeys.Add(new NamedCacheKeyProvider(SampleName, Index));
                     break;
@@ -82,12 +82,12 @@ namespace Silky.Rpc.Runtime.Server
             var cacheKeys = new List<ICacheKeyProvider>();
             var parameterInfoCacheKeyProvider =
                 ParameterInfo.GetCustomAttributes().OfType<ICacheKeyProvider>().FirstOrDefault();
-            if (IsSampleOrNullableType && parameterInfoCacheKeyProvider != null)
+            if (IsSingleType && parameterInfoCacheKeyProvider != null)
             {
                 parameterInfoCacheKeyProvider.PropName = SampleName;
                 cacheKeys.Add(parameterInfoCacheKeyProvider);
             }
-            else if (!IsSampleOrNullableType && parameterInfoCacheKeyProvider != null)
+            else if (!IsSingleType && parameterInfoCacheKeyProvider != null)
             {
                 throw new SilkyException("Complex parameter types are not allowed to use CacheKeyAttribute");
             }
@@ -123,9 +123,8 @@ namespace Silky.Rpc.Runtime.Server
 
         public string PathTemplate { get; }
 
-        public bool IsSampleOrNullableType => Type.IsSample() || Type.IsNullableType();
-
-        public bool IsSampleType => Type.IsSample();
+        public bool IsSingleType => Type.IsSample() || Type.IsNullableType() || Type.IsEnumerable();
+        
 
         public bool IsNullableType => Type.IsNullableType();
 
