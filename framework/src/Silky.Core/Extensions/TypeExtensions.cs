@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -36,14 +37,15 @@ namespace Silky.Core.Extensions
 
         public static bool IsFormFileType(this Type type)
         {
-            return typeof(IFormFile).IsAssignableFrom(type) || typeof(IFormFileCollection).IsAssignableFrom(type);
+            return typeof(IFormFile).IsAssignableFrom(type) || typeof(IFormFileCollection).IsAssignableFrom(type) ||
+                   typeof(IEnumerable<IFormFile>).IsAssignableFrom(type);
         }
-        
+
         public static bool IsSingleFormFileType(this Type type)
         {
             return typeof(IFormFile).IsAssignableFrom(type);
         }
-        
+
         public static bool IsMultipleFormFileType(this Type type)
         {
             return typeof(IFormFileCollection).IsAssignableFrom(type);
@@ -181,6 +183,26 @@ namespace Silky.Core.Extensions
             }
 
             return type.FullName.RemovePostFix("CacheItem");
+        }
+
+        public static bool IsEnumerable(this Type type)
+        {
+            if (type.IsArray)
+            {
+                return true;
+            }
+
+            if (type == typeof(string))
+            {
+                return false;
+            }
+
+            if (typeof(IEnumerable).IsAssignableFrom(type) || typeof(IEnumerable<>).IsAssignableFrom(type))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Silky.Rpc.Runtime.Server;
@@ -37,15 +38,5 @@ public abstract class ParameterValueProvider
         return keys;
     }
 
-    protected bool IsEnumerable(Type type)
-    {
-        if (type == typeof(string))
-        {
-            return false;
-        }
-
-        var isEnumerableOfT = type.GetInterfaces()
-            .Any(ti => ti.IsGenericType && ti.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-        return isEnumerableOfT;
-    }
+  
 }

@@ -4,9 +4,9 @@ using System.Reflection;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
-using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Utils;
+using Silky.Rpc.Extensions;
 
 namespace Silky.Validation
 {

@@ -32,14 +32,14 @@ namespace Silky.Http.Core
             var parameters = new Dictionary<ParameterFrom, object>();
             if (request.HasFormContentType)
             {
-                var formValueProvider = new FormValueProvider(serviceEntry, request.Form);
+                var formValueProvider = new FormValueProvider(serviceEntry,_serializer, request.Form);
                 var formData = formValueProvider.GetFormData();
                 parameters.Add(ParameterFrom.Form, formData);
             }
 
             if (request.Query.Any())
             {
-                var queryValueProvider = new QueryStringValueProvider(serviceEntry, request.Query);
+                var queryValueProvider = new QueryStringValueProvider(serviceEntry,_serializer, request.Query);
                 var queryData = queryValueProvider.GetQueryData();
                 parameters.Add(ParameterFrom.Query, queryData);
             }
@@ -94,8 +94,7 @@ namespace Silky.Http.Core
                     }
                     parameters.Add(ParameterFrom.File,files);
                 }
-         
-               
+
             }
 
             if (request.Query.Any())

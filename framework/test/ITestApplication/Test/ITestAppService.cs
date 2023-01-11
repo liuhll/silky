@@ -55,6 +55,8 @@ namespace ITestApplication.Test
 
         [HttpGet]
         Task<PagedList<TestOut>> Search2([FromQuery] SearchInput query);
+        
+        // Task<PagedList<TestOut>> Search3([FromQuery]long[] Ids);
 
         [HttpPost]
         [HttpPut]

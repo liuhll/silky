@@ -116,6 +116,11 @@ namespace TestApplication.AppService
                 .ToPagedListAsync(query.PageIndex, query.PageSize);
         }
 
+        public Task<PagedList<TestOut>> Search3(long[] Ids)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<TestOut> Form(TestInput input)
         {
             return CreateOrUpdateAsync(input);

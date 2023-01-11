@@ -11,4 +11,13 @@ public class SearchInput
     public int PageSize { get; set; } = 10;
 
     public int PageIndex { get; set; } = 1;
+
+    public Sort[] Sorts { get; set; }
+}
+
+public class Sort
+{
+    public string Filed { get; set; }
+
+    public int OrderBy { get; set; }
 }

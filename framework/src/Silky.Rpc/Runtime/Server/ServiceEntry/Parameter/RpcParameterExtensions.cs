@@ -1,11 +1,15 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 using Silky.Core;
 using Silky.Core.Convertible;
+using Silky.Core.Extensions;
 using Silky.Core.MethodExecutor;
+using Silky.Core.Serialization;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -25,6 +29,22 @@ namespace Silky.Rpc.Runtime.Server
             {
                 return null;
             }
+
+            if (parameter is JObject jObjectParameter)
+            {
+                var rpcParameterProperties = rpcParameter.Type.GetProperties();
+                foreach (var item in jObjectParameter)
+                {
+                    var rpcParameterProperty = rpcParameterProperties.Single(p =>
+                        p.Name.Equals(item.Key, StringComparison.OrdinalIgnoreCase));
+                    if (rpcParameterProperty.PropertyType.IsEnumerable())
+                    {
+                        jObjectParameter[item.Key] =
+                            JToken.Parse($"[{item.Value}]");
+                    }
+                }
+            }
+
             return rpcParameter.Type?.GetType() == parameter.GetType()
                 ? parameter
                 : _typeConvertibleService.Convert(parameter, rpcParameter.Type);
@@ -48,16 +68,19 @@ namespace Silky.Rpc.Runtime.Server
 
             return parameterValue;
         }
-        
-        
-        public static object GetActualParameter(this RpcParameter rpcParameter, object parameter, IList<IFormFile> silkyFiles)
+
+
+        public static object GetActualParameter(this RpcParameter rpcParameter, object parameter,
+            IList<IFormFile> silkyFiles)
         {
             var parameterValue = rpcParameter.GetActualParameter(parameter);
             if (rpcParameter.HasFileProp(out var filePropName))
             {
                 parameterValue.GetType().GetProperty(filePropName)
-                    .SetValue(parameterValue, silkyFiles.Single(p=> p.Name.Equals(filePropName,StringComparison.OrdinalIgnoreCase)));
+                    .SetValue(parameterValue,
+                        silkyFiles.Single(p => p.Name.Equals(filePropName, StringComparison.OrdinalIgnoreCase)));
             }
+
             if (rpcParameter.HasFilesProp(out var filesPropName))
             {
                 var files = new FormFileCollection();
@@ -65,6 +88,7 @@ namespace Silky.Rpc.Runtime.Server
                 parameterValue.GetType().GetProperty(filesPropName)
                     .SetValue(parameterValue, files);
             }
+
             return parameterValue;
         }
 
@@ -125,11 +149,10 @@ namespace Silky.Rpc.Runtime.Server
         {
             return typeof(IFormFileCollection).IsAssignableFrom(rpcParameter.Type);
         }
-        
+
         public static bool HasFileType([NotNull] this RpcParameter rpcParameter)
         {
             return rpcParameter.ParameterInfo.HasFileType();
         }
-        
     }
 }
