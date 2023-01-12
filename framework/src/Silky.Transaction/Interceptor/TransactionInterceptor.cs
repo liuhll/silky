@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Exceptions;
@@ -15,7 +14,8 @@ namespace Silky.Transaction.Interceptor
         public override async Task InterceptAsync(ISilkyMethodInvocation invocation)
         {
             var serviceEntryDescriptor = invocation.GetServiceEntryDescriptor();
-            if (serviceEntryDescriptor != null && serviceEntryDescriptor.IsDistributeTransaction && !RpcContext.Context.IsGateway())
+            if (serviceEntryDescriptor != null && serviceEntryDescriptor.IsDistributeTransaction &&
+                !RpcContext.Context.IsGateway())
             {
                 throw new SilkyException(
                     "Distributed transactions must be called through the interface proxy,The station does not support the way to call through the template invoke");
@@ -33,7 +33,7 @@ namespace Silky.Transaction.Interceptor
             else
             {
                 var transactionContext = RpcContext.Context.GetTransactionContext();
-                await TransactionAspectInvoker.GetInstance().Invoke(transactionContext, invocation);
+                await TransactionAspectInvoker.GetInstance().Invoke(transactionContext, serviceEntry, invocation);
             }
         }
     }

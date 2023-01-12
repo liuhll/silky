@@ -80,7 +80,7 @@ namespace Silky.Transaction.Tcc.Handlers
                     await _executor.ParticipantCancel(invocation, cancelingParticipantList, context.ParticipantId);
                     break;
                 default:
-                    break;
+                    throw new InvalidOperationException();
             }
 
             WriteTracing(TransactionDiagnosticListenerNames.ParticipantEndHandle, context);

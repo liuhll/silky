@@ -1,4 +1,5 @@
-﻿using Silky.Core;
+﻿using System;
+using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Handler;
@@ -30,6 +31,8 @@ namespace Silky.Transaction.Tcc.Handlers
                     handler = EngineContext.Current.ResolveNamed<ITransactionHandler>(TransactionRole.Participant
                         .ToString());
                     break;
+                default:
+                    throw new InvalidOperationException();
             }
 
             return handler;

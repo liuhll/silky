@@ -2,6 +2,7 @@
 using Silky.Core;
 using Silky.Core.DynamicProxy;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Abstraction;
 
@@ -20,12 +21,12 @@ namespace Silky.Transaction
             return invoker;
         }
 
-        public async Task Invoke(TransactionContext transactionContext, ISilkyMethodInvocation invocation)
+        public async Task Invoke(TransactionContext transactionContext, ServiceEntry serviceEntry,
+            ISilkyMethodInvocation invocation)
         {
             var transactionHandlerFactory = EngineContext.Current.Resolve<ITransactionHandlerFactory>();
             if (transactionHandlerFactory != null)
             {
-                var serviceEntry = invocation.GetServiceEntry();
                 var serviceKey = invocation.GetServiceKey();
 
                 var transactionHandler =
