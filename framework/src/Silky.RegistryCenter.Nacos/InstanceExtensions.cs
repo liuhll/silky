@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nacos.V2.Naming.Dtos;
 using Silky.Core;
@@ -15,6 +16,10 @@ namespace Silky.RegistryCenter.Nacos
             var endpoints = new List<SilkyEndpointDescriptor>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             var endpointsJsonString = instance.Metadata["Endpoints"];
+            if (endpointsJsonString.IsNullOrEmpty())
+            {
+                return Array.Empty<SilkyEndpointDescriptor>();
+            }
             var endpointInfos =
                 serializer.Deserialize<Dictionary<ServiceProtocol, string>>(endpointsJsonString);
             foreach (var endpointInfo in endpointInfos)
