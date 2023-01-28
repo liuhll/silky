@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
@@ -56,10 +57,8 @@ namespace Silky.Rpc.Endpoint
             var address = server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
             if (address.IsNullOrEmpty())
             {
-                //throw new SilkyException("Failed to obtain http service rpcEndpoint");
-                return null;
+                throw new SilkyException("Failed to obtain http service rpcEndpoint");
             }
-
             var addressDescriptor = ParserSilkyEndpoint(address);
             return addressDescriptor;
         }

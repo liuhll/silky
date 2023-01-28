@@ -31,13 +31,9 @@ namespace Silky.Rpc.Utils
             var domainAndPort = address.TrimEnd('/').Split(":");
             string host;
             if (address.Contains("+") || address.Contains("*") ||
-                address.Contains("0.0.0.0"))
+                address.Contains("0.0.0.0") || address.Contains("[::]"))
             {
                 host = HostAddressUtil.GetLocalHostAnyIp();
-            }
-            else if (address.Contains("[::]")) 
-            {
-                host = "localhost";
             }
             else
             {
