@@ -43,7 +43,7 @@ namespace Silky.RegistryCenter.Consul
             _consulRegistryCenterOptions = consulRegistryCenterOptions.Value;
         }
 
-        protected override async Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
+        protected override async Task RemoveSilkyEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
         {
             using var consulClient = _consulClientFactory.CreateClient();
             var serviceId = silkyEndpoint.GetAddress();

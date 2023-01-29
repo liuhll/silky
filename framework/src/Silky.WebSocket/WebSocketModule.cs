@@ -18,8 +18,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Silky.Core.Reflection;
-using Silky.Core.Runtime.Rpc;
-using Silky.Rpc.Endpoint;
 using WebSocketSharp.Server;
 
 namespace Silky.WebSocket
@@ -58,7 +56,11 @@ namespace Silky.WebSocket
         {
             var webSocketOptions = privider.Resolve<IOptions<WebSocketOptions>>().Value;
             var hostEnvironment = privider.Resolve<IHostEnvironment>();
-            var wsAddressModel = SilkyEndpointHelper.GetEndpoint(webSocketOptions.Port, ServiceProtocol.Ws);
+            var serverProvider = privider.Resolve<IServerProvider>();
+            serverProvider.AddWsServices();
+            var server = serverProvider.GetServer();
+            var wsAddressModel = server.WsEndpoint;
+
             WebSocketServer socketServer = null;
             if (webSocketOptions.IsSsl)
             {
@@ -84,10 +86,6 @@ namespace Silky.WebSocket
             var webSocketServerBootstrap =
                 context.ServiceProvider.GetRequiredService<WebSocketServerBootstrap>();
             webSocketServerBootstrap.Initialize(webSocketServices);
-            var serverProvider =
-                context.ServiceProvider.GetRequiredService<IServerProvider>();
-
-            serverProvider.AddWsServices();
         }
 
         private (Type, string)[] GetWebSocketServices(ITypeFinder typeFinder)

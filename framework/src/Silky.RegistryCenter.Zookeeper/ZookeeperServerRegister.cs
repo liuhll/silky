@@ -187,7 +187,7 @@ namespace Silky.RegistryCenter.Zookeeper
             }
         }
 
-        protected override async Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
+        protected override async Task RemoveSilkyEndpoint(string hostName, ISilkyEndpoint silkyEndpoint)
         {
             var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             foreach (var zookeeperClient in zookeeperClients)

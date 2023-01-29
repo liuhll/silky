@@ -3,9 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
-using Silky.Core.Extensions;
 using Silky.Rpc.Endpoint;
-using static Silky.Rpc.Endpoint.SilkyEndpointHelper;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -13,6 +11,8 @@ namespace Silky.Rpc.Runtime.Server
     {
         protected readonly IServerManager _serverManager;
         protected readonly IServerProvider _serverProvider;
+        protected IServer _server;
+
         public ILogger<ServerRegisterBase> Logger { get; set; }
 
         protected ServerRegisterBase(IServerManager serverManager,
@@ -23,18 +23,18 @@ namespace Silky.Rpc.Runtime.Server
             Logger = NullLogger<ServerRegisterBase>.Instance;
             _serverManager.OnRemoveRpcEndpoint += async (hostName, rpcEndpoint) =>
             {
-                await RemoveRpcEndpoint(hostName, rpcEndpoint);
+                await RemoveSilkyEndpoint(hostName, rpcEndpoint);
             };
         }
 
         public virtual async Task RegisterServer()
         {
-            var server = _serverProvider.GetServer();
-            await RemoveServiceCenterExceptRpcEndpoint(server);
-            await RegisterServerToServiceCenter(server.ConvertToDescriptor());
+            _server = _serverProvider.GetServer();
+            await RemoveServiceCenterExceptRpcEndpoint(_server);
+            await RegisterServerToServiceCenter(_server.ConvertToDescriptor());
             await CacheServers();
         }
-        
+
         protected virtual async Task<bool> RepeatRegister()
         {
             var selfServerInfo = _serverManager.GetSelfServer();
@@ -59,29 +59,26 @@ namespace Silky.Rpc.Runtime.Server
 
         public virtual async Task RemoveSelf()
         {
-            if (EngineContext.Current.IsContainDotNettyTcpModule())
+            var tcpEndpoint = _server.RpcEndpoint;
+            if (tcpEndpoint != null)
             {
-                var tcpEndpoint = GetLocalRpcEndpoint();
-                await RemoveRpcEndpoint(EngineContext.Current.HostName, tcpEndpoint);
+                await RemoveSilkyEndpoint(EngineContext.Current.HostName, tcpEndpoint);
             }
 
-            if (EngineContext.Current.IsContainWebSocketModule())
+            var wsEndpoint = _server.WsEndpoint;
+            if (wsEndpoint != null)
             {
-                var wsEndpoint = GetWsEndpoint();
-                await RemoveRpcEndpoint(EngineContext.Current.HostName, wsEndpoint);
+                await RemoveSilkyEndpoint(EngineContext.Current.HostName, wsEndpoint);
             }
 
-            if (EngineContext.Current.IsContainHttpCoreModule())
+            var httpEndpoint = _server.WebEndpoint;
+            if (httpEndpoint != null)
             {
-                var httpEndpoint = GetLocalWebEndpoint();
-                if (httpEndpoint != null)
-                {
-                    await RemoveRpcEndpoint(EngineContext.Current.HostName, httpEndpoint);
-                }
+                await RemoveSilkyEndpoint(EngineContext.Current.HostName, httpEndpoint);
             }
         }
 
-        protected abstract Task RemoveRpcEndpoint(string hostName, ISilkyEndpoint silkyEndpoint);
+        protected abstract Task RemoveSilkyEndpoint(string hostName, ISilkyEndpoint silkyEndpoint);
 
         protected abstract Task CacheServers();
 

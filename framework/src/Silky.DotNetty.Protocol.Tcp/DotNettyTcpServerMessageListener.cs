@@ -4,7 +4,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
-using DotNetty.Codecs.Compression;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
@@ -18,10 +17,8 @@ using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
-using Silky.DotNetty.Abstraction;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
@@ -35,27 +32,35 @@ namespace Silky.DotNetty.Protocol.Tcp
         public ILogger<DotNettyTcpServerMessageListener> Logger { get; set; }
         private readonly RpcOptions _rpcOptions;
         private readonly IHostEnvironment _hostEnvironment;
-        private readonly ISilkyEndpoint _hostSilkyEndpoint;
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly ITransportMessageEncoder _transportMessageEncoder;
+        private readonly IServer _server;
         private GovernanceOptions _governanceOptions;
         private IChannel m_boundChannel;
         private IEventLoopGroup m_bossGroup;
         private IEventLoopGroup m_workerGroup;
 
+
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
             IOptionsMonitor<GovernanceOptions> governanceOptions,
             IHostEnvironment hostEnvironment,
+            IServerProvider _serverProvider,
             ITransportMessageDecoder transportMessageDecoder,
             ITransportMessageEncoder transportMessageEncoder)
         {
             _hostEnvironment = hostEnvironment;
+            _server = _serverProvider.GetServer();
+
+            if (_server.RpcEndpoint == null)
+            {
+                throw new SilkyException("The current server host does not support SilkyRpc");
+            }
+
             _transportMessageDecoder = transportMessageDecoder;
             _transportMessageEncoder = transportMessageEncoder;
             _rpcOptions = rpcOptions.Value;
             _governanceOptions = governanceOptions.CurrentValue;
             governanceOptions.OnChange((options, s) => _governanceOptions = options);
-            _hostSilkyEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
@@ -110,7 +115,7 @@ namespace Silky.DotNetty.Protocol.Tcp
                         pipeline.AddLast(
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }
-                    
+
                     pipeline.AddLast("encoder", new EncoderHandler(_transportMessageEncoder));
                     pipeline.AddLast("decoder", new DecoderHandler(_transportMessageDecoder));
                     pipeline.AddLast(new ServerHandler(async (channelContext, message) =>
@@ -124,9 +129,9 @@ namespace Silky.DotNetty.Protocol.Tcp
                 }));
             try
             {
-                m_boundChannel = await bootstrap.BindAsync(_hostSilkyEndpoint.IPEndPoint);
+                m_boundChannel = await bootstrap.BindAsync(_server.RpcEndpoint.IPEndPoint);
                 Logger.LogInformation(
-                    "Now Silky RPC server listening on: {0}", _hostSilkyEndpoint.IPEndPoint);
+                    "Now Silky RPC server listening on: {0}", _server.RpcEndpoint.IPEndPoint);
             }
             catch (Exception ex)
             {

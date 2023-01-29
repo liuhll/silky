@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Silky.Core;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 
 namespace Silky.Rpc.Runtime.Server
@@ -15,15 +15,14 @@ namespace Silky.Rpc.Runtime.Server
         }
 
         public string HostName { get; }
+        public ISilkyEndpoint? RpcEndpoint => Endpoints.FirstOrDefault(p => p.ServiceProtocol.IsRpc());
+        
+        public ISilkyEndpoint? WsEndpoint => Endpoints.FirstOrDefault(p => p.ServiceProtocol.IsWs());
+        
+        public ISilkyEndpoint? WebEndpoint => Endpoints.FirstOrDefault(p => p.ServiceProtocol.IsHttp());
+        
         public ICollection<ISilkyEndpoint> Endpoints { get; set; }
         public ICollection<ServiceDescriptor> Services { get; set; }
-
-        public void RemoveEndpoint(ISilkyEndpoint endpoint)
-        {
-            Endpoints = Endpoints.Where(p => !p.Equals(endpoint)).ToList();
-            var serverManager = EngineContext.Current.Resolve<IServerManager>();
-            serverManager.Update(this);
-        }
 
         public override bool Equals(object? obj)
         {
@@ -33,7 +32,7 @@ namespace Silky.Rpc.Runtime.Server
                 return false;
             }
 
-            
+
             if (!HostName.Equals(model.HostName))
             {
                 return false;
@@ -44,7 +43,6 @@ namespace Silky.Rpc.Runtime.Server
                 && Services.All(p => model.Services.Any(p.Equals))
                 && Endpoints.Count == model.Endpoints.Count
                 && Endpoints.All(p => model.Endpoints.Any(p.Equals));
-            
         }
 
         public static bool operator ==(Server model1, Server model2)

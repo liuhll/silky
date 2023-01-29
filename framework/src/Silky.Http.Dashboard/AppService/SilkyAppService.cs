@@ -442,14 +442,7 @@ namespace Silky.Http.Dashboard.AppService
                     || p.Address.Contains(input.SearchKey))
                 .ToPagedList(input.PageIndex, input.PageSize);
         }
-
-        private bool IsLocalAddress(string address)
-        {
-            var localAddress = SilkyEndpointHelper.GetLocalRpcEndpoint().GetAddress();
-            return localAddress.Equals(address);
-        }
-
-
+        
         public async Task<PagedList<ClientInvokeInfo>> GetServiceEntryInvokeInfos(string address,
             GetClientInvokePagedRequestDto input)
         {
