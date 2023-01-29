@@ -15,17 +15,7 @@ namespace Silky.Rpc.Runtime
                 return Received(sender, message);
             }
             return Task.CompletedTask;
-            // ThreadPool.QueueUserWorkItem(CallBack, new { Sender = sender, Message = message });
-            // return Task.CompletedTask;
         }
-
-        private async void CallBack(object state)
-        {
-            dynamic dy = state;
-            if (Received != null)
-            {
-                await Received((IMessageSender)dy.Sender, (TransportMessage)dy.Message);
-            }
-        }
+        
     }
 }
