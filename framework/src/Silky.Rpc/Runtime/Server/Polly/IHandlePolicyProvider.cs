@@ -6,6 +6,6 @@ namespace Silky.Rpc.Runtime.Server
 {
     public interface IHandlePolicyProvider : ISingletonDependency
     {
-        IAsyncPolicy Create(RemoteInvokeMessage message);
+        IAsyncPolicy Create(string serviceEntryId);
     }
 }

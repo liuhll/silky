@@ -1,5 +1,6 @@
 using System;
 using Polly;
+using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Transport.Messages;
 

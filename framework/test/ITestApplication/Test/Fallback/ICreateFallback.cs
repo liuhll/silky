@@ -5,6 +5,6 @@ namespace ITestApplication.Test.Fallback
 {
     public interface ICreateFallback
     {
-        Task<TestOut> Create(TestInput input);
+        Task<TestOut> CreateOrUpdateAsync(TestInput input);
     }
 }

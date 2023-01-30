@@ -20,8 +20,6 @@ namespace Silky.Rpc.Runtime.Client
         private readonly IInvokePolicyBuilder _invokePolicyBuilder;
         private readonly IFileParameterConverter _fileParameterConverter;
 
-        private readonly ConcurrentDictionary<string, IAsyncPolicy<object>> _policyCaches = new();
-
         public ILogger<DefaultRemoteExecutor> Logger { get; set; }
 
         public DefaultRemoteExecutor(IRemoteCaller remoteCaller,
@@ -51,15 +49,10 @@ namespace Silky.Rpc.Runtime.Client
                     $"The value of hashkey corresponding to this rpc request is:[{hashKey}]");
             }
 
-            if (!_policyCaches.TryGetValue(serviceEntry.Id, out var policyObject))
-            {
-                policyObject = _invokePolicyBuilder.Build(serviceEntry.Id);
-                _policyCaches.TryAdd(serviceEntry.Id, policyObject);
-            }
-
-            var policy = policyObject.WrapFallbackPolicy(serviceEntry.Id, parameters);
+            var policy = _invokePolicyBuilder.Build(serviceEntry.Id, parameters);
             var result = await policy
-                .ExecuteAsync(async () => await _remoteCaller.InvokeAsync(remoteInvokeMessage, serviceEntry.GovernanceOptions.ShuntStrategy,
+                .ExecuteAsync(async () => await _remoteCaller.InvokeAsync(remoteInvokeMessage,
+                    serviceEntry.GovernanceOptions.ShuntStrategy,
                     hashKey));
             return result;
         }

@@ -22,7 +22,7 @@ namespace ITestApplication.Test
         /// <param name="input"></param>
         /// <returns></returns>
         //[UnitOfWork]
-        // [Fallback(typeof(ICreateFallback))]
+        [Fallback(typeof(ICreateFallback))]
         //  [Authorize(Roles = "Administrator, PowerUser")]
         [HttpPost]
         [HttpPut]

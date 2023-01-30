@@ -1,5 +1,6 @@
 using System;
 using Polly;
+using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime.Server;
 
@@ -22,6 +23,11 @@ namespace Silky.Rpc.Runtime.Client
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(serviceEntryId);
             if (serviceEntry is { FallbackMethodExecutor: { }, FallbackProvider: { } })
             {
+                var isRegistered = EngineContext.Current.IsRegistered(serviceEntry.FallbackProvider.Type);
+                if (!isRegistered)
+                {
+                    return null;
+                }
                 var fallbackPolicy = Policy<object>.Handle<Exception>(ex =>
                     {
                         var isNotNeedFallback = ex is INotNeedFallback;

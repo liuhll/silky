@@ -1,13 +1,12 @@
 using System;
 using Polly.CircuitBreaker;
 using Silky.Core.DependencyInjection;
-using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
 {
     public interface IHandleCircuitBreakerPolicyProvider : ISingletonDependency
     {
-        AsyncCircuitBreakerPolicy Create(RemoteInvokeMessage message);
+        AsyncCircuitBreakerPolicy Create(string serviceEntryId);
 
         event Action<Exception, TimeSpan> OnBreak;
 

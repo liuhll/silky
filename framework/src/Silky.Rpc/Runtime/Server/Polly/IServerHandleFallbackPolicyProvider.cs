@@ -1,7 +1,12 @@
+using Polly;
+using Silky.Core.DependencyInjection;
+using Silky.Rpc.Transport.Messages;
+
 namespace Silky.Rpc.Runtime.Server
 {
-    public interface IServerHandleFallbackPolicyProvider : IHandlePolicyWithResultProvider
+    public interface IServerHandleFallbackPolicyProvider : ISingletonDependency
     {
         public event RpcHandleFallbackHandle OnHandleFallback;
+        IAsyncPolicy<RemoteResultMessage> Create(RemoteInvokeMessage message);
     }
 }

@@ -85,7 +85,9 @@ namespace Silky.Rpc.Runtime.Server
                 object result = null;
                 try
                 {
-                    var parameters = serviceEntry.ConvertParameters(message.Parameters);
+                    var parameterResolver =
+                        EngineContext.Current.ResolveNamed<IParameterResolver>(message.ParameterType.ToString());
+                    var parameters = parameterResolver.Parser(serviceEntry, message);
                     result = await serviceEntry.FallbackMethodExecutor.ExecuteMethodWithAuditingAsync(instance,
                         parameters, serviceEntry);
                     remoteResultMessage.Result = result;

@@ -21,7 +21,7 @@ namespace NormHostDemo.AppService.Fallback
         }
 
         [UnitOfWork]
-        public async Task<TestOut> Create(TestInput input)
+        public async Task<TestOut> CreateOrUpdateAsync(TestInput input)
         {
             _logger.LogDebug("fallback:" + _serializer.Serialize(input));
             return new TestOut()
