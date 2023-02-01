@@ -14,6 +14,8 @@ namespace Silky.Rpc.Endpoint.Monitor
 
         void ChangeStatus(IPAddress mapToIPv4, int port, ServiceProtocol serviceProtocol, bool isEnable,
             int unHealthCeilingTimes = 0);
+        
+        bool TryGetSilkyEndpoint(string host, int port, ServiceProtocol serviceProtocol, out ISilkyEndpoint silkyEndpoint);
 
         void RemoveRpcEndpoint(ISilkyEndpoint silkyEndpoint);
 
@@ -23,5 +25,6 @@ namespace Silky.Rpc.Endpoint.Monitor
         event RemoveSilkyEndpointEvent OnRemoveRpcEndpoint;
         event DisEnableEvent OnDisEnable;
         event AddMonitorEvent OnAddMonitor;
+     
     }
 }

@@ -44,6 +44,7 @@ public class NonSilkyExceptionFailoverPolicyProvider : InvokeFailoverPolicyProvi
         _logger.LogWarning(
             $"A non-framework exception occurred," +
             $" and the rpc call is retryed for the ({retryNumber})th time.");
+        serviceAddressModel.MakeFusing(1000);
         if (OnInvokeFailover != null)
         {
             await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,

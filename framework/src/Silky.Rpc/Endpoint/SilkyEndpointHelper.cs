@@ -13,6 +13,7 @@ using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint.Descriptor;
+using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Utils;
 
 namespace Silky.Rpc.Endpoint
@@ -59,6 +60,7 @@ namespace Silky.Rpc.Endpoint
             {
                 throw new SilkyException("Failed to obtain http service rpcEndpoint");
             }
+
             var addressDescriptor = ParserSilkyEndpoint(address);
             return addressDescriptor;
         }
@@ -67,7 +69,8 @@ namespace Silky.Rpc.Endpoint
         {
             var urlInfo = UrlUtil.Parser(address);
             var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(urlInfo.Item1);
-            return new SilkyEndpoint(urlInfo.Item2, urlInfo.Item3, serviceProtocol);
+            var silkyEndpoint = GetOrCreateSilkyEndpoint(urlInfo.Item2, urlInfo.Item3,serviceProtocol);
+            return silkyEndpoint;
         }
 
         public static ISilkyEndpoint GetLocalRpcEndpoint()
@@ -80,9 +83,9 @@ namespace Silky.Rpc.Endpoint
             var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
             var host = GetHostIp(rpcOptions.Host);
             var port = rpcOptions.Port;
-            var address = new SilkyEndpoint(host, port, ServiceProtocol.Rpc);
-            _ = _rpcEndpointCache.TryAdd("LocalRpcEndpoint", address);
-            return address;
+            var silkyEndpoint = GetOrCreateSilkyEndpoint(host,port,ServiceProtocol.Rpc);
+            _ = _rpcEndpointCache.TryAdd("LocalRpcEndpoint", silkyEndpoint);
+            return silkyEndpoint;
         }
 
         public static bool IsLocalRpcAddress(string address)
@@ -98,11 +101,11 @@ namespace Silky.Rpc.Endpoint
         }
 
 
-        public static ISilkyEndpoint GetEndpoint(int port, ServiceProtocol serviceProtocol)
+        public static ISilkyEndpoint GetLocalSilkyEndpoint(int port, ServiceProtocol serviceProtocol)
         {
             var host = GetIp(HostAddressUtil.GetLocalHostAnyIp());
-            var address = new SilkyEndpoint(host, port, serviceProtocol);
-            return address;
+            var silkyEndpoint = GetOrCreateSilkyEndpoint(host, port, serviceProtocol);
+            return silkyEndpoint;
         }
 
         public static ISilkyEndpoint GetWsEndpoint()
@@ -115,29 +118,24 @@ namespace Silky.Rpc.Endpoint
             var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
             var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
             var host = GetHostIp(rpcOptions.Host);
-            var address = new SilkyEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
+            var silkyEndpoint = GetOrCreateSilkyEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
             _rpcEndpointCache.TryAdd("WsEndpoint", wsEndpoint);
-            return address;
+            return silkyEndpoint;
         }
 
-        public static int GetWsPort()
+        public static ISilkyEndpoint GetOrCreateSilkyEndpoint(string host, int port, ServiceProtocol serviceProtocol)
         {
-            var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
-            return webSocketOptions.Port;
-        }
-
-        public static ISilkyEndpoint CreateRpcEndpoint(string host, int port, ServiceProtocol serviceProtocol)
-        {
-            var rpcEndpoint = new SilkyEndpoint(host, port, serviceProtocol);
+            var rpcEndpointMonitor = EngineContext.Current.Resolve<IRpcEndpointMonitor>();
+            if (rpcEndpointMonitor.TryGetSilkyEndpoint(host, port, serviceProtocol, out var rpcEndpoint))
+            {
+                return rpcEndpoint;
+            }
+            rpcEndpoint = new SilkyEndpoint(host, port, serviceProtocol);
+            rpcEndpointMonitor.Monitor(rpcEndpoint);
             return rpcEndpoint;
         }
 
-        public static ISilkyEndpoint CreateRpcEndpoint(string address, ServiceProtocol serviceProtocol)
-        {
-            var addressInfo = address.Split(":");
-            // var address = new RpcEndpoint(host, port, serviceProtocol);
-            return CreateRpcEndpoint(addressInfo[0], addressInfo[1].To<int>(), serviceProtocol);
-        }
+
 
         public static string GetIp(string host)
         {
