@@ -28,14 +28,14 @@ namespace Silky.Rpc.Endpoint.Selector
                 }
             };
 
-            _rpcEndpointMonitor.OnStatusChange += async (rpcEndpoint, isHealth) =>
+            _rpcEndpointMonitor.OnStatusChange += async (rpcEndpoint, isEnable) =>
             {
                 var changeItems = _consistentHashAddressPools
                     .Where(p => p.Value.ContainNode(rpcEndpoint))
                     .Select(p => p.Value);
                 foreach (var consistentHash in changeItems)
                 {
-                    if (!isHealth)
+                    if (!isEnable)
                     {
                         consistentHash.Remove(rpcEndpoint);
                     }

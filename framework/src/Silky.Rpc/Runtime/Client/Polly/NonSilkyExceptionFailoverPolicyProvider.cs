@@ -12,7 +12,8 @@ public class NonSilkyExceptionFailoverPolicyProvider : InvokeFailoverPolicyProvi
     private readonly ILogger<NonSilkyExceptionFailoverPolicyProvider> _logger;
     private readonly IServerManager _serverManager;
 
-    public NonSilkyExceptionFailoverPolicyProvider(ILogger<NonSilkyExceptionFailoverPolicyProvider> logger, IServerManager serverManager)
+    public NonSilkyExceptionFailoverPolicyProvider(ILogger<NonSilkyExceptionFailoverPolicyProvider> logger,
+        IServerManager serverManager)
     {
         _logger = logger;
         _serverManager = serverManager;
@@ -32,26 +33,27 @@ public class NonSilkyExceptionFailoverPolicyProvider : InvokeFailoverPolicyProvi
                         TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
                             .RetryIntervalMillSeconds),
                     (outcome, timeSpan, retryNumber, context)
-                        => OnRetry(retryNumber, outcome, context));
+                        => OnRetry(retryNumber, outcome, context, serviceEntryDescriptor));
         }
 
         return policy;
     }
-    
-    private async Task OnRetry(int retryNumber, DelegateResult<object> outcome, Context context)
+
+    private async Task OnRetry(int retryNumber, DelegateResult<object> outcome, Context context,
+        ServiceEntryDescriptor serviceEntryDescriptor)
     {
         var serviceAddressModel = GetSelectedServerEndpoint();
         _logger.LogWarning(
             $"A non-framework exception occurred," +
             $" and the rpc call is retryed for the ({retryNumber})th time.");
-        serviceAddressModel.MakeFusing(1000);
+        
         if (OnInvokeFailover != null)
         {
-            await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,
+            await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel, serviceEntryDescriptor,
                 FailoverType.NonSilkyFrameworkException);
         }
     }
-    
+
     public override event RpcInvokeFailoverHandle OnInvokeFailover;
 
     public override FailoverType FailoverType { get; } = FailoverType.NonSilkyFrameworkException;

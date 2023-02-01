@@ -14,6 +14,8 @@ namespace Silky.Rpc.Runtime.Server
         void UpdateAll([NotNull] ServerDescriptor[] serverDescriptors);
 
         void Update([NotNull] IServer server);
+        
+        void MakeFusing(ISilkyEndpoint silkyEndpoint, int breakerSeconds);
 
         void Remove(string hostName);
 
@@ -28,7 +30,7 @@ namespace Silky.Rpc.Runtime.Server
         IServer[]? Servers { get; }
 
         ISilkyEndpoint[] GetRpcEndpoints(string serviceId, ServiceProtocol serviceProtocol);
-
+        
         IServer GetSelfServer();
 
         ServiceEntryDescriptor GetServiceEntryDescriptor(string serviceEntryId);

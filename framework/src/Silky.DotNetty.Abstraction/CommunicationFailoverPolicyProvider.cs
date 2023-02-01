@@ -52,19 +52,21 @@ namespace Silky.DotNetty.Abstraction
             Context context, ServiceEntryDescriptor serviceEntryDescriptor)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();
-            if (outcome.Exception is CommunicationException || outcome.Exception is IOException || outcome.Exception is ChannelException)
+            if (outcome.Exception is CommunicationException || outcome.Exception is IOException ||
+                outcome.Exception is ChannelException)
             {
                 _rpcEndpointMonitor.RemoveRpcEndpoint(serviceAddressModel);
             }
             else
             {
-                _rpcEndpointMonitor.ChangeStatus(serviceAddressModel, false,
-                    serviceEntryDescriptor.GovernanceOptions.UnHealthAddressTimesAllowedBeforeRemoving);
+                _serverManager.MakeFusing(serviceAddressModel, serviceEntryDescriptor.GovernanceOptions.BreakerSeconds);
+
             }
 
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,
+                    serviceEntryDescriptor,
                     FailoverType.Communication);
             }
         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -129,7 +128,8 @@ namespace Silky.Rpc.Runtime.Server
         private void RemoveSilkyEndpointCache(ISilkyEndpoint silkyEndpoint)
         {
             var needRemoveRpcEndpointKvs =
-                _rpcRpcEndpointCache.Where(p => p.Value.Any(q => q.GetAddress() == silkyEndpoint.GetAddress() || q.Host == silkyEndpoint.Host));
+                _rpcRpcEndpointCache.Where(p =>
+                    p.Value.Any(q => q.GetAddress() == silkyEndpoint.GetAddress() || q.Host == silkyEndpoint.Host));
             foreach (var needRemoveRpcEndpointKv in needRemoveRpcEndpointKvs)
             {
                 _rpcRpcEndpointCache.TryRemove(needRemoveRpcEndpointKv.Key, out _);
@@ -251,6 +251,21 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
+        public void MakeFusing(ISilkyEndpoint silkyEndpoint, int breakerSeconds)
+        {
+            var servers = Servers?.Where(p => p.Endpoints.Any(e => e.Equals(silkyEndpoint)));
+            if (servers?.Any() == true)
+            {
+                foreach (var server in servers)
+                {
+                    server.Endpoints.Single(e => e.Equals(silkyEndpoint)).MakeFusing(breakerSeconds);
+                    Update(server);
+                }
+            }
+
+            RemoveSilkyEndpointCache(silkyEndpoint);
+        }
+
         public void Remove(string hostName)
         {
             if (_serverCache == null)
@@ -325,6 +340,11 @@ namespace Silky.Rpc.Runtime.Server
 
             if (_rpcRpcEndpointCache.TryGetValue(serviceId, out var endpoints))
             {
+                if (endpoints.Any(e => !e.Enabled))
+                {
+                    return CacheSilkyEndpoints();
+                }
+
                 var remoteAddress = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.SelectedServerEndpoint);
                 if (!remoteAddress.IsNullOrEmpty() &&
                     !endpoints.Any(e => e.GetAddress().Equals(remoteAddress) && e.Enabled))
@@ -337,6 +357,7 @@ namespace Silky.Rpc.Runtime.Server
 
             return CacheSilkyEndpoints();
         }
+
 
         public ServiceDescriptor GetServiceDescriptor(string serviceId)
         {

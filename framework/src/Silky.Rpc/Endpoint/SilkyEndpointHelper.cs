@@ -26,9 +26,7 @@ namespace Silky.Rpc.Endpoint
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
 
         private static ConcurrentDictionary<string, string> _ipCache = new();
-
-        private static ConcurrentDictionary<string, ISilkyEndpoint> _rpcEndpointCache = new();
-
+        
         public static string GetHostIp(string hostAddress)
         {
             if (_ipCache.TryGetValue($"HostIp_{hostAddress}", out var hostIp))
@@ -75,16 +73,11 @@ namespace Silky.Rpc.Endpoint
 
         public static ISilkyEndpoint GetLocalRpcEndpoint()
         {
-            if (_rpcEndpointCache.TryGetValue("LocalRpcEndpoint", out var localTcpEndpoint))
-            {
-                return localTcpEndpoint;
-            }
-
+            
             var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
             var host = GetHostIp(rpcOptions.Host);
             var port = rpcOptions.Port;
             var silkyEndpoint = GetOrCreateSilkyEndpoint(host,port,ServiceProtocol.Rpc);
-            _ = _rpcEndpointCache.TryAdd("LocalRpcEndpoint", silkyEndpoint);
             return silkyEndpoint;
         }
 
@@ -110,16 +103,10 @@ namespace Silky.Rpc.Endpoint
 
         public static ISilkyEndpoint GetWsEndpoint()
         {
-            if (_rpcEndpointCache.TryGetValue("WsEndpoint", out var wsEndpoint))
-            {
-                return wsEndpoint;
-            }
-
             var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
             var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
             var host = GetHostIp(rpcOptions.Host);
             var silkyEndpoint = GetOrCreateSilkyEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
-            _rpcEndpointCache.TryAdd("WsEndpoint", wsEndpoint);
             return silkyEndpoint;
         }
 

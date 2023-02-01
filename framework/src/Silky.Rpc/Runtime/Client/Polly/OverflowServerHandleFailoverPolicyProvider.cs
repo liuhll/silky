@@ -34,13 +34,14 @@ namespace Silky.Rpc.Runtime.Client
                             TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
                                 .RetryIntervalMillSeconds),
                         (outcome, timeSpan, retryNumber, context)
-                            => OnRetry(retryNumber, outcome, context));
+                            => OnRetry(retryNumber, outcome, context, serviceEntryDescriptor));
             }
 
             return policy;
         }
 
-        private async Task OnRetry(int retryNumber, DelegateResult<object> outcome, Context context)
+        private async Task OnRetry(int retryNumber, DelegateResult<object> outcome, Context context,
+            ServiceEntryDescriptor serviceEntryDescriptor)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();
             _logger.LogWarning(
@@ -49,6 +50,7 @@ namespace Silky.Rpc.Runtime.Client
             if (OnInvokeFailover != null)
             {
                 await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel,
+                    serviceEntryDescriptor,
                     FailoverType.Communication);
             }
         }

@@ -15,7 +15,7 @@ namespace Silky.Rpc.Endpoint.Monitor
         public event AddMonitorEvent OnAddMonitor;
 
 
-        public bool TryGetSilkyEndpoint(string host, int port, ServiceProtocol serviceProtocol, out ISilkyEndpoint silkyEndpoint)
+        public bool TryGetSilkyEndpoint(string host, int port, ServiceProtocol serviceProtocol, out ISilkyEndpoint? silkyEndpoint)
         {
             silkyEndpoint = m_checkEndpoints.Keys.FirstOrDefault(e =>
                 e.Host == host && e.Port == port && e.ServiceProtocol == serviceProtocol);
@@ -64,7 +64,7 @@ namespace Silky.Rpc.Endpoint.Monitor
             var rpcEndpoint = SilkyEndpointHelper.GetOrCreateSilkyEndpoint(ipAddress.ToString(), port, serviceProtocol);
             ChangeStatus(rpcEndpoint, isEnable, unHealthCeilingTimes);
         }
-
+        
         public void ChangeStatus(ISilkyEndpoint silkyEndpoint, bool isEnable, int unHealthCeilingTimes = 0)
         {
             if (m_checkEndpoints.TryGetValue(silkyEndpoint, out var healthCheckModel))
