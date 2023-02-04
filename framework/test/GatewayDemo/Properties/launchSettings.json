@@ -18,6 +18,7 @@
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
         "ASPNETCORE_ENVIRONMENT": "Development",
+        "DYLD_LIBRARY_PATH": "/opt/homebrew/lib",
         "ASPNETCORE_URLS": "http://[::]:8002;https://[::]:8001"
       }
     }
