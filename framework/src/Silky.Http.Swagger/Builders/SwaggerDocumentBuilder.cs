@@ -28,7 +28,7 @@ namespace Silky.Http.Swagger.Builders
 
         private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
         private static readonly string SilkyAppServicePrefix = "Silky.Http.Dashboard";
-     
+
         private static readonly string RpcAppService = "Silky.Rpc";
 
 
@@ -109,10 +109,20 @@ namespace Silky.Http.Swagger.Builders
             // 配置多语言和自动登录token
             AddDefaultInterceptor(swaggerUIOptions);
 
+            // 添加登录信息配置
+            var additionals = swaggerDocumentOptions.LoginInfo;
+            if (additionals != null)
+            {
+                swaggerUIOptions.ConfigObject.AdditionalItems.Add(nameof(swaggerDocumentOptions.LoginInfo),
+                    additionals);
+            }
+
+            // 登陆表单是否使用租户
+            swaggerUIOptions.UseTenantName = swaggerDocumentOptions.LoginInfo?.UseTenantName ?? false;
+            
             // 配置文档标题
             swaggerUIOptions.DocumentTitle = swaggerDocumentOptions.Title;
-
-
+            
             // 配置UI地址
             swaggerUIOptions.RoutePrefix = swaggerDocumentOptions.RoutePrefix;
 
@@ -184,7 +194,7 @@ namespace Silky.Http.Swagger.Builders
         private static ICollection<string> GetRegisterCenterGroupGroups()
         {
             var swaggerInfoProvider = EngineContext.Current.Resolve<ISwaggerInfoProvider>();
-            var registerCenterGroups = AsyncHelper.RunSync(()=> swaggerInfoProvider.GetGroups());
+            var registerCenterGroups = AsyncHelper.RunSync(() => swaggerInfoProvider.GetGroups());
             return registerCenterGroups;
         }
 

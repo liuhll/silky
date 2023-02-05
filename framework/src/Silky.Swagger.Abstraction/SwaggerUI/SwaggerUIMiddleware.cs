@@ -117,6 +117,7 @@ namespace Silky.Swagger.Abstraction.SwaggerUI
                     "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions)
                 },
                 { "%(Interceptors)", JsonSerializer.Serialize(_options.Interceptors) },
+                { "%(useTenantName)", _options.UseTenantName ? "block" : "none" },
             };
         }
     }

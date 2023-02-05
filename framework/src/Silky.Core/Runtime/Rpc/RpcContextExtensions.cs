@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 
@@ -77,7 +78,7 @@ namespace Silky.Core.Runtime.Rpc
         {
             rpcContext.SetInvokeAttachment(AttachmentKeys.ServiceKey, serviceKey);
         }
-        
+
         public static void SetHashKey(this RpcContext rpcContext, string hashKey)
         {
             var headers = rpcContext.GetRequestHeader() ?? new Dictionary<string, string>();
@@ -95,7 +96,6 @@ namespace Silky.Core.Runtime.Rpc
             var requestHeaders = rpcContext.GetInvokeAttachment(AttachmentKeys.RequestHeader);
             var serializer = EngineContext.Current.Resolve<ISerializer>();
             return serializer.Deserialize<Dictionary<string, string>>(requestHeaders);
-
         }
 
         public static void SetRequestParameters(this RpcContext rpcContext, string requestParameters)
@@ -144,6 +144,16 @@ namespace Silky.Core.Runtime.Rpc
         {
             var messageId = rpcContext.GetInvokeAttachment(AttachmentKeys.MessageId);
             return messageId?.ToString();
+        }
+
+        public static void SigninToSwagger(this RpcContext rpcContext, [NotNull] string token)
+        {
+            rpcContext.SetResponseHeader("access-token", token);
+        }
+
+        public static void SignoutToSwagger(this RpcContext rpcContext)
+        {
+            rpcContext.SetResponseHeader("access-token", "invalid_token");
         }
     }
 }

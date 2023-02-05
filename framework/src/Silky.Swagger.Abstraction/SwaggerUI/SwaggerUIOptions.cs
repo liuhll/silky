@@ -26,6 +26,11 @@ namespace Silky.Swagger.Abstraction.SwaggerUI
         public string DocumentTitle { get; set; } = "Swagger UI";
 
         /// <summary>
+        /// Whether the login form uses a tenant
+        /// </summary>
+        public bool UseTenantName { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets additional content to place in the head of the swagger-ui page
         /// </summary>
         public string HeadContent { get; set; } = "";

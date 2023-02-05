@@ -9,5 +9,7 @@ namespace Silky.Rpc.Runtime.Server
         public const string IsSilkyAppService = "IsSilkyAppService";
 
         public const string DisableAuditing = "DisableAuditing";
+
+        public const string UnWrapperResult = "UnWrapperResult";
     }
 }

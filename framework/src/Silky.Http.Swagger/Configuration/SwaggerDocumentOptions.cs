@@ -54,6 +54,8 @@ namespace Silky.Http.Swagger.Configuration
                 };
             }
         }
+        
+        public SwaggerLoginInfo LoginInfo { get; set; }
 
         public OrganizationMode OrganizationMode { get; set; }
         

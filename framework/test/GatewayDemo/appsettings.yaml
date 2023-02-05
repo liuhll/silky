@@ -42,6 +42,11 @@ swaggerDocument:
   injectMiniProfiler: true
   showDashboardService: true
   termsOfService: https://www.github.com/liuhll/silky
+  loginInfo:
+    enabled: false
+    checkUrl: /api/account/checkurl
+    submitUrl: /api/account/submiturl
+    useTenantName: false
 gateway:
   jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
 healthChecksUI:

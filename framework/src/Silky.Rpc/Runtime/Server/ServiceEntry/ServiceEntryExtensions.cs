@@ -173,5 +173,6 @@ namespace Silky.Rpc.Runtime.Server
         {
             return "Silky.Http.Dashboard.AppService.ISilkyAppService".Equals(serviceEntry.ServiceType.FullName);
         }
+        
     }
 }

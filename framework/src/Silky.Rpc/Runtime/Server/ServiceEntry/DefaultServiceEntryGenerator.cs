@@ -113,7 +113,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.IsSilkyAppService, true);
             }
-
+            
             serviceEntryDescriptor.Metadatas.Add(ServiceEntryConstant.DisableAuditing, serviceEntry.DisableAuditing());
             serviceEntryDescriptor.IsActionResult = typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType);
 

@@ -13,6 +13,7 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
 using Silky.Rpc.Extensions;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Middlewares
 {
@@ -41,17 +42,18 @@ namespace Silky.Http.Core.Middlewares
             {
                 var serviceEntry = context.GetServiceEntry();
                 var serviceEntryDescriptor = context.GetServiceEntryDescriptor();
-                if (serviceEntry != null && typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType))
+                if (serviceEntry != null && (typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType) ||
+                                             serviceEntry.ServiceEntryDescriptor.IsUnWrapperResult()))
                 {
                     await _next.Invoke(context);
                 }
-                else if (serviceEntryDescriptor != null && serviceEntryDescriptor.IsActionResult)
+                else if (serviceEntryDescriptor != null &&
+                         (serviceEntryDescriptor.IsActionResult || serviceEntryDescriptor.IsUnWrapperResult()))
                 {
                     await _next.Invoke(context);
                 }
                 else
                 {
-                    
                     var originalBodyStream = context.Response.Body;
                     await using var bodyStream = new MemoryStream();
                     try

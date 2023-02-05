@@ -15,5 +15,15 @@ namespace Silky.Rpc.Runtime.Server
             }
             return isEnabled && !serviceEntryDescriptor.GetMetadata<bool>(ServiceEntryConstant.DisableAuditing);
         }
+
+        public static bool IsUnWrapperResult(this ServiceEntryDescriptor serviceEntryDescriptor)
+        {
+            if (serviceEntryDescriptor == null)
+            {
+                return false;
+            }
+
+            return serviceEntryDescriptor.GetMetadata<bool>(ServiceEntryConstant.UnWrapperResult);
+        }
     }
 }
