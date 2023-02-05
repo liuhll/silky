@@ -141,6 +141,8 @@
         <div id="login-error"></div>
     </div>
 </div>
+<!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
+<script>
     if (window.navigator.userAgent.indexOf("Edge") > -1) {
         console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
         window.fetch = undefined;
@@ -394,74 +396,82 @@
         var loginObject = configObject.LoginInfo;
         if (loginObject && loginObject.enabled === true) {
             var loginForm = document.getElementById("login-form");
-            var userName = document.getElementById("userName");
-            var password = document.getElementById("password");
-            var tenantName = document.getElementById("tenantName");
-            var submit = document.getElementById("submit");
-            var loginError = document.getElementById("login-error");
-            loginForm.style.display = "block";
+            var accessToken = window.localStorage.getItem(tokenKey);
+            if (accessToken) {
+                loginForm.style.display = "none";
+                initSwaggerUI(configObject, oauthConfigObject);
+            } else {
+                var userName = document.getElementById("userName");
+                var password = document.getElementById("password");
+                var tenantName = document.getElementById("tenantName");
+                var submit = document.getElementById("submit");
+                var loginError = document.getElementById("login-error");
+                loginForm.style.display = "block";
 
-            sendRequest({
-                method: "POST",
-                url: loginObject.checkUrl,
-                success: function (res, headerMap) {
-                    if (res.toString() === "200") {
-                        loginForm.style.display = "none";
-                        initSwaggerUI(configObject, oauthConfigObject);
-                    } else {
-                        userName.focus();
+                sendRequest({
+                    method: "POST",
+                    url: loginObject.checkUrl,
+                    success: function (res, headerMap) {
+                        if (res.toString() === "200") {
+                            loginForm.style.display = "none";
+                            initSwaggerUI(configObject, oauthConfigObject);
+                        } else {
+                            userName.focus();
 
-                        submit.addEventListener("click", function (ev) {
-                            if (userName.value.trim().length === 0) {
-                                userName.focus();
-                                return;
-                            }
-                            if (password.value.trim().length === 0) {
-                                password.focus();
-                                return;
-                            }
-
-                            loginError.innerHTML = "";
-
-                            sendRequest({
-                                method: "POST",
-                                url: loginObject.submitUrl,
-                                data: {
-                                    userName: userName.value.trim(),
-                                    password: password.value.trim(),
-                                    tenantName: tenantName?.value
-                                },
-                                beforeSend: function (request) {
-                                    defaultRequestInterceptor(request)
-                                },
-                                success: function (res, headerMap) {
-                                    if (res.toString() === "200") {
-                                        loginForm.style.display = "none";
-                                        initSwaggerUI(configObject, oauthConfigObject);
-                                        defaultResponseInterceptor({headers: headerMap});
-                                    } else {
-                                        loginError.innerHTML = "Invalid UserName or Password.";
-                                    }
-                                },
-                                error: function (xhr) {
-                                    if (xhr.status === 404) {
-                                        loginError.innerHTML = "Not Found: " + loginObject.submitUrl;
-                                    } else {
-                                        loginError.innerHTML = "Internal ServerError: " + loginObject.submitUrl;
-                                    }
+                            submit.addEventListener("click", function (ev) {
+                                if (userName.value.trim().length === 0) {
+                                    userName.focus();
+                                    return;
                                 }
+                                if (password.value.trim().length === 0) {
+                                    password.focus();
+                                    return;
+                                }
+
+                                loginError.innerHTML = "";
+
+                                sendRequest({
+                                    method: "POST",
+                                    url: loginObject.submitUrl,
+                                    data: {
+                                        userName: userName.value.trim(),
+                                        password: password.value.trim(),
+                                        tenantName: tenantName?.value
+                                    },
+                                    beforeSend: function (request) {
+                                        defaultRequestInterceptor(request)
+                                    },
+                                    success: function (res, headerMap) {
+                                        if (res.toString() === "200") {
+                                            loginForm.style.display = "none";
+                                            initSwaggerUI(configObject, oauthConfigObject);
+                                            defaultResponseInterceptor({headers: headerMap});
+                                        } else {
+                                            loginError.innerHTML = "Invalid UserName or Password.";
+                                        }
+                                    },
+                                    error: function (xhr) {
+                                        if (xhr.status === 404) {
+                                            loginError.innerHTML = "Not Found: " + loginObject.submitUrl;
+                                        } else {
+                                            loginError.innerHTML = "Internal ServerError: " + loginObject.submitUrl;
+                                        }
+                                    }
+                                });
                             });
-                        });
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 404) {
+                            loginError.innerHTML = "Not Found: " + loginObject.checkUrl;
+                        } else {
+                            loginError.innerHTML = "Internal ServerError: " + loginObject.checkUrl;
+                        }
                     }
-                },
-                error: function (xhr) {
-                    if (xhr.status === 404) {
-                        loginError.innerHTML = "Not Found: " + loginObject.checkUrl;
-                    } else {
-                        loginError.innerHTML = "Internal ServerError: " + loginObject.checkUrl;
-                    }
-                }
-            });
+                });
+            }
+
+
         } else {
             initSwaggerUI(configObject, oauthConfigObject);
         }

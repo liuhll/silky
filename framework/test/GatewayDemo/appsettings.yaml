@@ -43,7 +43,7 @@ swaggerDocument:
   showDashboardService: true
   termsOfService: https://www.github.com/liuhll/silky
   loginInfo:
-    enabled: false
+    enabled: true
     checkUrl: /api/account/checkurl
     submitUrl: /api/account/submiturl
     useTenantName: false
