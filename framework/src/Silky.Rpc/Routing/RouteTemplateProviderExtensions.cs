@@ -3,6 +3,7 @@ using Castle.Core.Internal;
 using JetBrains.Annotations;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.Rpc.Routing.Template;
 
 namespace Silky.Rpc.Routing

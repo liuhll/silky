@@ -14,6 +14,7 @@ using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Transport.Messages;
+using Silky.Core.Extensions;
 
 namespace Silky.Http.Core
 {

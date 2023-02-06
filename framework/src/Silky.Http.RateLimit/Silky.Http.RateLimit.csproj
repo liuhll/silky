@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
         <TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
         <Description>Use AspNetCoreRateLimit to realize the current limit of http request</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="AspNetCoreRateLimit" Version="4.0.1" />
-        <PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.0" />
+      <PackageReference Include="AspNetCoreRateLimit" Version="4.0.1"/>
+      <PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />

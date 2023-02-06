@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Castle.Core.Internal;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Zookeeper;
@@ -15,6 +14,7 @@ using org.apache.zookeeper;
 using Silky.Core.Logging;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Rpc.RegistryCenters;
+using Silky.Core.Extensions;
 
 namespace Silky.RegistryCenter.Zookeeper
 {

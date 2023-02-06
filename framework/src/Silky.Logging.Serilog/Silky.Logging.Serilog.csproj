@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\..\..\common.props" />
     <PropertyGroup>
@@ -6,7 +6,7 @@
         <Description>Silky uses serilog as the log component</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />

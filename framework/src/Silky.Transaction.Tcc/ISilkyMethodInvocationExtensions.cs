@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
 using Silky.Core.DynamicProxy;
+using Silky.Core.Extensions.Collections.Generic;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;

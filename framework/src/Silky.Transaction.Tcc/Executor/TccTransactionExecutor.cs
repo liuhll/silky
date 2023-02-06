@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Extensions;
 using Silky.Core.Utils;
@@ -16,6 +15,7 @@ using Silky.Transaction.Cache;
 using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
+using Silky.Core.Extensions.Collections.Generic;
 
 namespace Silky.Transaction.Tcc.Executor
 {

@@ -80,5 +80,10 @@ namespace Silky.Core.Extensions.Collections.Generic
                 HasPrevPages = pageIndex - 1 > 0
             };
         }
+
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> source) 
+        {
+            return source == null || !source.Any();
+        }
     }
 }

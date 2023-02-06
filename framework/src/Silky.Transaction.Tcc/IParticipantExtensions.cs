@@ -13,6 +13,7 @@ using Silky.Transaction.Repository;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
 using Silky.Transaction.Tcc.Executor;
+using Silky.Core.Extensions.Collections.Generic;
 
 namespace Silky.Transaction.Tcc
 {
@@ -58,7 +59,7 @@ namespace Silky.Transaction.Tcc
                             }
                         }
 
-                        await excutor?.ExecuteMethodWithAuditingAsync(instance, actualParameters.ToArray(),
+                        await excutor.ExecuteMethodWithAuditingAsync(instance, actualParameters.ToArray(),
                             serviceEntry);
                     }
                 }

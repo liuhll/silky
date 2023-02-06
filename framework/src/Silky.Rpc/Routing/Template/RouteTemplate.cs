@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
+using Silky.Core.Extensions;
 
 namespace Silky.Rpc.Routing.Template
 {
