@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   silky.mysql:
-    image: mysql:8.0.15
+    image: mysql:8.0.32
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
