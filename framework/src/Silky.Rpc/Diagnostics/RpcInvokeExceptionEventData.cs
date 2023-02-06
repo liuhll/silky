@@ -14,6 +14,7 @@ namespace Silky.Rpc.Diagnostics
         public Exception Exception { get; set; }
 
         public long? ElapsedTimeMs { get; set; }
-        public string ClientAddress { get; set; }
+        
+        public string? ClientAddress { get; set; }
     }
 }
