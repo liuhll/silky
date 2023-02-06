@@ -7,6 +7,7 @@ using Mapster;
 using NormHostDemo.Tests;
 using Silky.Caching;
 using Silky.Core;
+using Silky.Core.DbContext.UnitOfWork;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
@@ -43,6 +44,7 @@ namespace TestApplication.AppService
         }
 
         // [UnitOfWork]
+        [UnitOfWork]
         public async Task<TestOut> CreateOrUpdateAsync(TestInput input)
         {
             if (input.Id.HasValue)
@@ -65,6 +67,7 @@ namespace TestApplication.AppService
             return test.Adapt<TestOut>();
         }
 
+        [UnitOfWork]
         public async Task<TestOut> Update(TestInput input)
         {
             var entity = await _testRepository.FindOrDefaultAsync(input.Id);

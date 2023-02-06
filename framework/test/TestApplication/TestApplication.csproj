@@ -21,7 +21,7 @@
 <!--        <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.0-preview5" Condition="'$(TargetFramework)' == 'net7.0'" />-->
 <!--        <PackageReference Include="MySql.EntityFrameworkCore" Version="6.0.7" Condition="'$(TargetFramework)' == 'net6.0'" />-->
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" Condition="'$(TargetFramework)' == 'net6.0'" />
-        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0-silver.1" Condition="'$(TargetFramework)' == 'net7.0'" />
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" Condition="'$(TargetFramework)' == 'net7.0'" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\ITestApplication\ITestApplication.csproj" />

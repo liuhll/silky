@@ -13,8 +13,8 @@ public class TestModule : SilkyModule
     {
         if (context.HostEnvironment.IsDevelopment())
         {
-            using var scope = context.ServiceProvider.CreateScope();
-            var demoDbContext = scope.ServiceProvider.GetRequiredService<DemoDbContext>();
+            // using var scope = context.ServiceProvider.CreateScope();
+            var demoDbContext = context.ServiceProvider.GetRequiredService<DemoDbContext>();
             return demoDbContext.Database.MigrateAsync();
         }
         return Task.CompletedTask;
