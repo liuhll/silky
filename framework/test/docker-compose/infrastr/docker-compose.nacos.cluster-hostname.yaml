@@ -3,7 +3,7 @@ services:
   nacos1:
     hostname: nacos1
     container_name: nacos1
-    image: nacos/nacos-server:v2.1.2
+    image: nacos/nacos-server:v2.2.0
     volumes:
       - ./.nacos/logs/nacos1:/home/nacos/logs
       - ./.nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties
@@ -17,7 +17,7 @@ services:
     
   nacos2:
     hostname: nacos2
-    image: nacos/nacos-server:v2.1.2
+    image: nacos/nacos-server:v2.2.0
     container_name: nacos2
     volumes:
       - ./.nacos/logs/nacos2:/home/nacos/logs
@@ -31,7 +31,7 @@ services:
     
   nacos3:
     hostname: nacos3
-    image: nacos/nacos-server:v2.1.2
+    image: nacos/nacos-server:v2.2.0
     container_name: nacos3
     volumes:
       - ./.nacos/logs/nacos3:/home/nacos/logs
