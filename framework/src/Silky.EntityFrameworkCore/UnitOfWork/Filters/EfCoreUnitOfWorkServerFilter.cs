@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Silky.Core;
 using Silky.Core.DbContext;
 using Silky.Core.DbContext.UnitOfWork;
 using Silky.Core.Extensions;
@@ -9,13 +10,7 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 {
     public class EfCoreUnitOfWorkServerFilter : IAsyncServerFilter
     {
-        private readonly ISilkyDbContextPool _silkyDbContextPool;
-
-        public EfCoreUnitOfWorkServerFilter(ISilkyDbContextPool silkyDbContextPool)
-        {
-            _silkyDbContextPool = silkyDbContextPool;
-        }
-
+        
         public async Task OnActionExecutionAsync(ServerInvokeExecutingContext context, ServerExecutionDelegate next)
         {
             var instanceMethod = context.InstanceType?.GetCompareMethod(context.ServiceEntry.MethodInfo,
@@ -24,10 +19,11 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
                 instanceMethod?.GetCustomAttributes(true).OfType<UnitOfWorkAttribute>().FirstOrDefault();
 
             var isManualSaveChanges = context.ServiceEntry.CustomAttributes.OfType<ManualCommitAttribute>().Any();
-
+            var silkyDbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>();
+            
             if (unitOfWorkAttribute != null)
             {
-                _silkyDbContextPool.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
+                silkyDbContextPool.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
             }
             var result = await next();
             try
@@ -35,16 +31,16 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
                 if (unitOfWorkAttribute == null)
                 {
                     if (result.Exception == null && !isManualSaveChanges)
-                        await _silkyDbContextPool.SavePoolNowAsync();
+                        await silkyDbContextPool.SavePoolNowAsync();
                 }
                 else
                 {
-                    _silkyDbContextPool.CommitTransaction(isManualSaveChanges, result.Exception);
+                    silkyDbContextPool.CommitTransaction(isManualSaveChanges, result.Exception);
                 }
             }
             finally
             {
-                _silkyDbContextPool.CloseAll();
+                silkyDbContextPool.CloseAll();
             }
         }
     }

@@ -1,6 +1,4 @@
 using System;
-using Microsoft.Extensions.DependencyInjection;
-using Silky.Core.DbContext;
 using Silky.Core.DependencyInjection;
 using Silky.Core.FilterMetadata;
 using Silky.Rpc.Filters;
@@ -13,6 +11,6 @@ public class EfCoreUnitOfWorkServerFilterFactory : IServerFilterFactory, ISingle
     
     public IServerFilterMetadata CreateInstance(IServiceProvider serviceProvider)
     {
-        return new EfCoreUnitOfWorkServerFilter(serviceProvider.GetRequiredService<ISilkyDbContextPool>());
+        return new EfCoreUnitOfWorkServerFilter();
     }
 }
