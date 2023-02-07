@@ -20,19 +20,18 @@ namespace Microsoft.Extensions.Hosting
     [DependsOn(
         typeof(RpcProxyModule),
         typeof(RpcMonitorModule),
-        typeof(SilkyHttpCoreModule),
-        typeof(SwaggerModule),
-        typeof(MiniProfilerModule),
-        typeof(RateLimitModule),
-        typeof(CorsModule),
         typeof(RpcCachingInterceptorModule),
-        typeof(DotNettyModule),
+        typeof(TransactionTccModule),
         typeof(ValidationModule),
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
-        typeof(TransactionTccModule),
         typeof(RedisTransactionRepositoryModule),
-        typeof(RedisDistributedLockModule)
+        typeof(RedisDistributedLockModule),
+        typeof(SilkyHttpCoreModule),
+        typeof(MiniProfilerModule),
+        typeof(RateLimitModule),
+        typeof(CorsModule),
+        typeof(SwaggerModule)
     )]
     public abstract class GatewayHostModule : HostAgentModule
     {

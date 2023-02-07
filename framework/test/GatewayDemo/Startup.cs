@@ -27,19 +27,21 @@ namespace GatewayDemo
         {
             //services.AddSilkySkyApm();
 
-            // services
-            //     .AddSilkyHttpCore()
-            //     .AddDashboard()
-            //     .AddResponseCaching()
-            //     .AddHttpContextAccessor()
-            //     .AddRouting()
-            //     .AddSilkyIdentity<TestAuthorizationHandler>()
-            //     .AddSilkyMiniProfiler()
-            //     .AddSwaggerDocuments();
+            //services
+            //    .AddSilkyHttpCore()
+            //    .AddDashboard()
+            //    .AddResponseCaching()
+            //    .AddHttpContextAccessor()
+            //    .AddRouting()
+            //    .AddSilkyIdentity<TestAuthorizationHandler>()
+            //    .AddSilkyMiniProfiler()
+            //    .AddSwaggerDocuments();
 
-            services.AddSilkyHttpServices<TestAuthorizationHandler>();
+            services.AddRouting();
+            services.AddControllers();
+           // services.AddSilkyHttpServices<TestAuthorizationHandler>();
 
-            services.AddCorsAccessor();
+            //services.AddCorsAccessor();
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
@@ -69,12 +71,12 @@ namespace GatewayDemo
             if (env.IsDevelopment() || env.IsEnvironment("ContainerDev"))
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerDocuments();
-                app.UseMiniProfiler();
+                //app.UseSwaggerDocuments();
+                //app.UseMiniProfiler();
             }
 
             //  app.UseSerilogRequestLogging();
-            app.UseDashboard();
+            //app.UseDashboard();
             // app.UseSilkyRpcHealthCheck()
             //     .UseSilkyGatewayHealthCheck()
             //     .UseHealthChecksPrometheusExporter("/metrics");
@@ -84,14 +86,15 @@ namespace GatewayDemo
             // app.UseIpRateLimiting();
             app.UseResponseCaching();
             // app.UseHttpsRedirection();
-            app.UseSilkyWebSocketsProxy();
-            app.UseSilkyWrapperResponse();
-            app.UseSilkyIdentity();
-            app.UseAuditing();
+            //app.UseSilkyWebSocketsProxy();
+            //app.UseSilkyWrapperResponse();
+            //app.UseSilkyIdentity();
+            //app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 // endpoints.MapHealthChecksUI();
-                endpoints.MapSilkyRpcServices();
+               // endpoints.MapSilkyRpcServices();
                 // endpoints.MapSilkyServiceEntries();
                 // endpoints.MapSilkyTemplateServices();
                 // endpoints.MapSilkyDashboardServices();
