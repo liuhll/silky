@@ -39,9 +39,9 @@ namespace GatewayDemo
 
             services.AddRouting();
             services.AddControllers();
-           // services.AddSilkyHttpServices<TestAuthorizationHandler>();
+            services.AddSilkyHttpServices<TestAuthorizationHandler>();
 
-            //services.AddCorsAccessor();
+            services.AddCorsAccessor();
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
@@ -57,12 +57,12 @@ namespace GatewayDemo
                 //options.ExcludedMimeTypes = new[] { "image/*", "audio/*", "video/*" };
             });
 
-            // services.AddHealthChecks()
-            //     .AddSilkyRpc()
-            //     .AddSilkyGateway();
-            // services
-            //     .AddHealthChecksUI()
-            //     .AddInMemoryStorage();
+            services.AddHealthChecks()
+                .AddSilkyRpc()
+                .AddSilkyGateway();
+            services
+                .AddHealthChecksUI()
+                .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,30 +71,30 @@ namespace GatewayDemo
             if (env.IsDevelopment() || env.IsEnvironment("ContainerDev"))
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwaggerDocuments();
-                //app.UseMiniProfiler();
+                app.UseSwaggerDocuments();
+                app.UseMiniProfiler();
             }
 
-            //  app.UseSerilogRequestLogging();
-            //app.UseDashboard();
-            // app.UseSilkyRpcHealthCheck()
-            //     .UseSilkyGatewayHealthCheck()
-            //     .UseHealthChecksPrometheusExporter("/metrics");
+         
+            app.UseDashboard();
+            app.UseSilkyRpcHealthCheck()
+                .UseSilkyGatewayHealthCheck()
+                .UseHealthChecksPrometheusExporter("/metrics");
 
             app.UseRouting();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
             app.UseResponseCaching();
             // app.UseHttpsRedirection();
-            //app.UseSilkyWebSocketsProxy();
-            //app.UseSilkyWrapperResponse();
-            //app.UseSilkyIdentity();
-            //app.UseAuditing();
+            app.UseSilkyWebSocketsProxy();
+            app.UseSilkyWrapperResponse();
+            app.UseSilkyIdentity();
+            app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+          
                 // endpoints.MapHealthChecksUI();
-               // endpoints.MapSilkyRpcServices();
+                 endpoints.MapSilkyRpcServices();
                 // endpoints.MapSilkyServiceEntries();
                 // endpoints.MapSilkyTemplateServices();
                 // endpoints.MapSilkyDashboardServices();

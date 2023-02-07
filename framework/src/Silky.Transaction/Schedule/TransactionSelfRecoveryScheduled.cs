@@ -19,7 +19,7 @@ using Silky.Transaction.Repository;
 
 namespace Silky.Transaction.Schedule
 {
-    public class TransactionSelfRecoveryScheduled : IHostedService, IDisposable
+    public class TransactionSelfRecoveryScheduled : IHostedService, IAsyncDisposable
     {
         private readonly ILogger<TransactionSelfRecoveryScheduled> _logger;
         private readonly ISerializer _serializer;
@@ -47,8 +47,6 @@ namespace Silky.Transaction.Schedule
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-         
-
             _selfTccRecoveryTimer = new Timer(SelfTccRecovery,
                 null,
                 TimeSpan.FromSeconds(_transactionConfig.ScheduledInitDelay),
@@ -223,14 +221,29 @@ namespace Silky.Transaction.Schedule
 
         public void Dispose()
         {
-            _selfTccRecoveryTimer?.Dispose();
-            _cleanRecoveryTimer?.Dispose();
-            _phyDeletedTimer?.Dispose();
+           
         }
 
         private DateTime AcquireDelayData(int delayTime)
         {
             return DateTime.Now.AddSeconds(-delayTime);
+        }
+
+        public async ValueTask DisposeAsync()
+        {  
+            if (_selfTccRecoveryTimer != null) 
+            {
+               await  _selfTccRecoveryTimer.DisposeAsync();
+            }
+            if (_cleanRecoveryTimer != null) 
+            {
+                await _cleanRecoveryTimer.DisposeAsync();
+            }
+
+            if (_phyDeletedTimer != null)
+            {
+                await _phyDeletedTimer.DisposeAsync();
+            }
         }
     }
 }

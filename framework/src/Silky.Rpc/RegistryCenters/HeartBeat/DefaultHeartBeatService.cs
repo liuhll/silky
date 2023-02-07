@@ -51,9 +51,12 @@ namespace Silky.Rpc.RegistryCenters.HeartBeat
         }
 
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _heartBeatTimer?.Dispose();
+            if (_heartBeatTimer != null) 
+            {
+                await _heartBeatTimer.DisposeAsync();
+            }
         }
     }
 }
