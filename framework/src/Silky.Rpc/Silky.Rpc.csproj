@@ -8,6 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Silky.Castle\Silky.Castle.csproj" />
         <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
+        <ProjectReference Include="..\Silky.DistributedLock.Redis\Silky.DistributedLock.Redis.csproj" />
     </ItemGroup>
 
     <ItemGroup>

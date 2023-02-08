@@ -6,16 +6,19 @@ using JetBrains.Annotations;
 using Medallion.Threading;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silky.Caching.StackExchangeRedis;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Logging;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
+using Silky.DistributedLock.Redis;
 using Silky.Transaction.Abstraction;
 using Silky.Transaction.Abstraction.Participant;
 using Silky.Transaction.Configuration;
 using Silky.Transaction.Repository;
+using StackExchange.Redis;
 
 namespace Silky.Transaction.Schedule
 {
@@ -23,7 +26,7 @@ namespace Silky.Transaction.Schedule
     {
         private readonly ILogger<TransactionSelfRecoveryScheduled> _logger;
         private readonly ISerializer _serializer;
-        private IDistributedLockProvider _distributedLockProvider;
+        private IRedisDistributedLockProvider _distributedLockProvider;
         private DistributedTransactionOptions _transactionConfig;
         private Timer _selfTccRecoveryTimer;
         private Timer _cleanRecoveryTimer;
@@ -37,12 +40,11 @@ namespace Silky.Transaction.Schedule
             _transactionConfig =
                 EngineContext.Current.GetOptionsMonitor<DistributedTransactionOptions>((options, s) =>
                     _transactionConfig = options);
-            _distributedLockProvider = EngineContext.Current.Resolve<IDistributedLockProvider>();
+            _distributedLockProvider = EngineContext.Current.Resolve<IRedisDistributedLockProvider>();
             if (_distributedLockProvider == null)
             {
                 throw new SilkyException("Failed to create distributed lock provider", StatusCode.TransactionError);
             }
-            
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -73,8 +75,10 @@ namespace Silky.Transaction.Schedule
             {
                 try
                 {
-                    await using var handle = await _distributedLockProvider.TryAcquireLockAsync(LockName.PhyDeleted);
-
+                    var redisOptions = EngineContext.Current.Configuration.GetRedisCacheOptions();
+                    using var connection = await ConnectionMultiplexer.ConnectAsync(redisOptions.Configuration);
+                    var @lock = _distributedLockProvider.Create(connection.GetDatabase(), LockName.PhyDeleted);
+                    await using var handle = await @lock.TryAcquireAsync();
                     if (handle == null)
                     {
                         _logger.LogDebug($"Silky scheduled phyDeleted failed to acquire distributed lock");
@@ -103,7 +107,10 @@ namespace Silky.Transaction.Schedule
         {
             try
             {
-                await using var handle = await _distributedLockProvider.TryAcquireLockAsync(LockName.CleanRecovery);
+                var redisOptions = EngineContext.Current.Configuration.GetRedisCacheOptions();
+                using var connection = await ConnectionMultiplexer.ConnectAsync(redisOptions.Configuration);
+                var @lock = _distributedLockProvider.Create(connection.GetDatabase(), LockName.CleanRecovery);
+                await using var handle = await @lock.TryAcquireAsync();
                 if (handle != null)
                 {
                     var transactionList = await TransRepositoryStore.ListLimitByDelay(
@@ -116,10 +123,10 @@ namespace Silky.Transaction.Schedule
 
                     foreach (var transaction in transactionList)
                     {
-                        await using var transactionLockHandle =
-                            await _distributedLockProvider.TryAcquireLockAsync(LockName.CleanRecoveryTransaction +
-                                                                               transaction.TransId);
-                        if (transactionLockHandle == null) continue;
+                        var @transactionLock = _distributedLockProvider.Create(connection.GetDatabase(),
+                            LockName.CleanRecoveryTransaction +
+                            transaction.TransId);
+                        await using var transactionHandle = await @transactionLock.AcquireAsync();
                         var exist = await TransRepositoryStore.ExistParticipantByTransId(transaction.TransId);
                         if (!exist)
                         {
@@ -139,7 +146,11 @@ namespace Silky.Transaction.Schedule
         {
             try
             {
-                await using var handle = await _distributedLockProvider.TryAcquireLockAsync(LockName.SelfTccRecovery);
+                var redisOptions = EngineContext.Current.Configuration.GetRedisCacheOptions();
+                using var connection = await ConnectionMultiplexer.ConnectAsync(redisOptions.Configuration);
+                var @lock = _distributedLockProvider.Create(connection.GetDatabase(), LockName.SelfTccRecovery);
+
+                await using var handle = await @lock.TryAcquireAsync();
                 if (handle != null)
                 {
                     var participantList = await TransRepositoryStore.ListParticipant(
@@ -152,9 +163,11 @@ namespace Silky.Transaction.Schedule
 
                     foreach (var participant in participantList)
                     {
+                        var participantLock = _distributedLockProvider.Create(connection.GetDatabase(),
+                            LockName.ParticipantTccRecovery +
+                            participant.ParticipantId);
                         await using var participantHandle =
-                            await _distributedLockProvider.TryAcquireLockAsync(LockName.ParticipantTccRecovery +
-                                                                               participant.ParticipantId);
+                            await participantLock.TryAcquireAsync();
 
                         if (participantHandle == null) continue;
                         if (participant.ReTry > _transactionConfig.RetryMax)
@@ -221,7 +234,6 @@ namespace Silky.Transaction.Schedule
 
         public void Dispose()
         {
-           
         }
 
         private DateTime AcquireDelayData(int delayTime)
@@ -230,12 +242,13 @@ namespace Silky.Transaction.Schedule
         }
 
         public async ValueTask DisposeAsync()
-        {  
-            if (_selfTccRecoveryTimer != null) 
+        {
+            if (_selfTccRecoveryTimer != null)
             {
-               await  _selfTccRecoveryTimer.DisposeAsync();
+                await _selfTccRecoveryTimer.DisposeAsync();
             }
-            if (_cleanRecoveryTimer != null) 
+
+            if (_cleanRecoveryTimer != null)
             {
                 await _cleanRecoveryTimer.DisposeAsync();
             }

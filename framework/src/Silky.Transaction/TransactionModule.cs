@@ -8,6 +8,7 @@ using Silky.Caching;
 using Silky.Castle;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
+using Silky.DistributedLock.Redis;
 using Silky.Rpc;
 using Silky.Rpc.Runtime.Server;
 using Silky.Transaction.Configuration;
@@ -23,7 +24,7 @@ namespace Silky.Transaction
         {
             services.AddOptions<DistributedTransactionOptions>()
                 .Bind(configuration.GetSection(DistributedTransactionOptions.DistributedTransaction));
-            services.AddHostedService<TransactionSelfRecoveryScheduled>();
+             services.AddHostedService<TransactionSelfRecoveryScheduled>();
         }
 
         protected override void RegisterServices(ContainerBuilder builder)
@@ -39,8 +40,8 @@ namespace Silky.Transaction
 
         public override async Task PreInitialize(ApplicationInitializationContext context)
         {
-            if (!context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IDistributedLockProvider)))
-            {
+            if (!context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IRedisDistributedLockProvider)))
+            { 
                 throw new SilkyException(
                     "You must specify the implementation of IDistributedLockProvider in the Transaction.Repository project of the distributed transaction");
             }

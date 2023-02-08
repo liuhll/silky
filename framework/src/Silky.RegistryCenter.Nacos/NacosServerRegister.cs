@@ -6,10 +6,15 @@ using Medallion.Threading;
 using Microsoft.Extensions.Options;
 using Nacos.V2;
 using Nacos.V2.Naming.Dtos;
+using Silky.Caching.StackExchangeRedis;
+using Silky.Core;
+using Silky.DistributedLock.Redis;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.RegistryCenter.Nacos.Listeners;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Server;
+using StackExchange.Redis;
+using IServer = Silky.Rpc.Runtime.Server.IServer;
 
 
 namespace Silky.RegistryCenter.Nacos
@@ -22,7 +27,7 @@ namespace Silky.RegistryCenter.Nacos
         private readonly IServerRegisterProvider _serverRegisterProvider;
 
         private ConcurrentDictionary<string, ServerListener> m_serverListeners = new();
-        private IDistributedLockProvider _distributedLockProvider;
+        private IRedisDistributedLockProvider _distributedLockProvider;
 
 
         public NacosServerRegister(IServerManager serverManager,
@@ -31,7 +36,7 @@ namespace Silky.RegistryCenter.Nacos
             INacosNamingService nacosNamingService,
             IOptionsMonitor<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
             IServerRegisterProvider serverRegisterProvider,
-            IDistributedLockProvider distributedLockProvider)
+            IRedisDistributedLockProvider distributedLockProvider)
             : base(serverManager,
                 serverProvider)
         {
@@ -68,8 +73,10 @@ namespace Silky.RegistryCenter.Nacos
         protected override async Task RegisterServerToServiceCenter(ServerDescriptor serverDescriptor)
         {
             await _serverRegisterProvider.AddServer();
-            await using (await _distributedLockProvider.AcquireLockAsync(
-                             $"RegisterServerToServiceCenterForNacos:{serverDescriptor.HostName}"))
+            var redisOptions = EngineContext.Current.Configuration.GetRedisCacheOptions();
+            using var connection = await ConnectionMultiplexer.ConnectAsync(redisOptions.Configuration);
+            var @lock = _distributedLockProvider.Create(connection.GetDatabase(), $"RegisterServerToServiceCenterForNacos:{serverDescriptor.HostName}");
+            await using (await @lock.AcquireAsync())
             {
                 await _serviceProvider.PublishServices(serverDescriptor.HostName, serverDescriptor.Services);
                 var instance = serverDescriptor.GetInstance();

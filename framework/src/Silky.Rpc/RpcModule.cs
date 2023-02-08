@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Medallion.Threading;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
@@ -19,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
 using Silky.Core.Runtime.Rpc;
+using Silky.DistributedLock.Redis;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.RegistryCenters.HeartBeat;
@@ -80,7 +79,7 @@ namespace Silky.Rpc
                     $"You did not specify the dependent {registryCenterType} service registry module");
             }
             
-            return !context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IDistributedLockProvider))
+            return !context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IRedisDistributedLockProvider))
                 ? throw new SilkyException(
                     "You must specify the implementation of IDistributedLockProvider in the Silky.RegistryCenter project of the distributed transaction")
                 : Task.CompletedTask;

@@ -1,22 +1,15 @@
-﻿using Medallion.Threading;
-using Medallion.Threading.Redis;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
-using Silky.Core.DependencyInjection;
-using StackExchange.Redis;
+﻿using Silky.Core.DependencyInjection;
+using Silky.DistributedLock.Redis;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class RedisLockServiceCollectionExtensions
 {
-    public static IServiceCollection AddRedisLock(this IServiceCollection services,
-        RedisCacheOptions redisCacheOption, int lockStoreDbIndex = 15)
+    public static IServiceCollection AddRedisLock(this IServiceCollection services)
     {
-        if (!services.IsAdded<IDistributedLockProvider>())
+        if (!services.IsAdded<IRedisDistributedLockProvider>())
         {
-            var connection = ConnectionMultiplexer.Connect(redisCacheOption.Configuration);
-            var distributedLockProvider =
-                new RedisDistributedSynchronizationProvider(connection.GetDatabase(lockStoreDbIndex));
-            services.AddSingleton<IDistributedLockProvider>(distributedLockProvider);
+            services.AddSingleton<IRedisDistributedLockProvider, DefaultRedisDistributedLockProvider>();
         }
 
         return services;

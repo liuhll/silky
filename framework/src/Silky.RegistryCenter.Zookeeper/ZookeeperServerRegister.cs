@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Medallion.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Silky.Caching.StackExchangeRedis;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Serialization;
+using Silky.DistributedLock.Redis;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.RegistryCenter.Zookeeper.Watchers;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.RegistryCenters.HeartBeat;
 using Silky.Rpc.Runtime.Server;
 using Silky.Zookeeper;
+using StackExchange.Redis;
+using IServer = Silky.Rpc.Runtime.Server.IServer;
 
 namespace Silky.RegistryCenter.Zookeeper
 {
@@ -29,7 +31,7 @@ namespace Silky.RegistryCenter.Zookeeper
         private ConcurrentDictionary<IZookeeperClient, ServerWatcher> m_serverWatchers = new();
         private ZookeeperRegistryCenterOptions _registryCenterOptions;
         private readonly IHeartBeatService _heartBeatService;
-        private readonly IDistributedLockProvider _distributedLockProvider;
+        private readonly IRedisDistributedLockProvider _distributedLockProvider;
 
         public ZookeeperServerRegister(IServerManager serverManager,
             IServerProvider serverProvider,
@@ -37,7 +39,7 @@ namespace Silky.RegistryCenter.Zookeeper
             IOptionsMonitor<ZookeeperRegistryCenterOptions> registryCenterOptions,
             ISerializer serializer,
             IHeartBeatService heartBeatService,
-            IDistributedLockProvider distributedLockProvider)
+            IRedisDistributedLockProvider distributedLockProvider)
             : base(serverManager,
                 serverProvider)
         {
@@ -65,10 +67,12 @@ namespace Silky.RegistryCenter.Zookeeper
         {
             var zookeeperClients = _zookeeperClientFactory.GetZooKeeperClients();
             var routePath = CreateRoutePath(serverDescriptor.HostName);
+            var redisOptions = EngineContext.Current.Configuration.GetRedisCacheOptions();
             foreach (var zookeeperClient in zookeeperClients)
             {
-                await using (await _distributedLockProvider.AcquireLockAsync(
-                                 $"RegisterServerToServiceCenter:Zookeeper:{zookeeperClient.Options.ConnectionString.Replace(":", "")}"))
+                using var connection = await ConnectionMultiplexer.ConnectAsync(redisOptions.Configuration);
+                var @lock = _distributedLockProvider.Create(connection.GetDatabase(),  $"RegisterServerToServiceCenter:Zookeeper:{zookeeperClient.Options.ConnectionString.Replace(":", "")}");
+                await using (await @lock.AcquireAsync())
                 {
                     // The latest routing data must be obtained from the service registry.
                     // When the service is expanded and contracted, the locally cached routing data is not the latest
@@ -230,8 +234,11 @@ namespace Silky.RegistryCenter.Zookeeper
         {
             var serverPath = _registryCenterOptions.RoutePath;
 
-            await using (await _distributedLockProvider.AcquireLockAsync(
-                             $"CreateSubscribeServersChange:Zookeeper:{zookeeperClient.Options.ConnectionString.Replace(":", "")}"))
+            var redisOptions = EngineContext.Current.Configuration.GetRedisCacheOptions();
+            
+            using var connection = await ConnectionMultiplexer.ConnectAsync(redisOptions.Configuration);
+            var @lock = _distributedLockProvider.Create(connection.GetDatabase(),$"CreateSubscribeServersChange:Zookeeper:{zookeeperClient.Options.ConnectionString.Replace(":", "")}");
+            await using (await @lock.AcquireAsync())
             {
                 if (!await zookeeperClient.ExistsAsync(serverPath))
                 {
