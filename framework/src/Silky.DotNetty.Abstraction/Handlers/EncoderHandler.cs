@@ -18,6 +18,8 @@ public class EncoderHandler : MessageToByteEncoder<TransportMessage>
     protected override void Encode(IChannelHandlerContext context, TransportMessage message, IByteBuffer output)
     {
         var bodyArray = _transportMessageEncoder.Encode(message);
-        output.WriteBytes(bodyArray);
+        var buffer =  Unpooled.WrappedBuffer(bodyArray);
+        output.WriteBytes(buffer);
+        buffer.Release();
     }
 }

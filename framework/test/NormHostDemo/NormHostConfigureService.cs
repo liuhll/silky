@@ -10,7 +10,7 @@ namespace NormHostDemo
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSilkySkyApm();
+            // services.AddSilkySkyApm();
             services.AddJwt();
             services.AddDatabaseAccessor(options => { options.AddDbPool<DemoDbContext>(); }, "TestApplication");
         

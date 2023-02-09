@@ -25,7 +25,7 @@ namespace GatewayDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSilkySkyApm();
+            // services.AddSilkySkyApm();
 
             services
                 .AddSilkyHttpCore()
@@ -57,12 +57,12 @@ namespace GatewayDemo
                 //options.ExcludedMimeTypes = new[] { "image/*", "audio/*", "video/*" };
             });
 
-            services.AddHealthChecks()
-                .AddSilkyRpc()
-                .AddSilkyGateway();
-            services
-                .AddHealthChecksUI()
-                .AddInMemoryStorage();
+            //services.AddHealthChecks()
+            //    .AddSilkyRpc()
+            //    .AddSilkyGateway();
+            //services
+            //    .AddHealthChecksUI()
+            //    .AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,23 +77,23 @@ namespace GatewayDemo
 
             //app.UseSerilogRequestLogging();
             app.UseDashboard();
-            app.UseSilkyRpcHealthCheck()
-                .UseSilkyGatewayHealthCheck()
-                .UseHealthChecksPrometheusExporter("/metrics");
+            //app.UseSilkyRpcHealthCheck()
+            //    .UseSilkyGatewayHealthCheck()
+            //    .UseHealthChecksPrometheusExporter("/metrics");
 
             app.UseRouting();
             // app.UseClientRateLimiting();
             // app.UseIpRateLimiting();
             app.UseResponseCaching();
             // app.UseHttpsRedirection();
-            //app.UseSilkyWebSocketsProxy();
-            //app.UseSilkyWrapperResponse();
-            //app.UseSilkyIdentity();
-            //app.UseAuditing();
+            app.UseSilkyWebSocketsProxy();
+            app.UseSilkyWrapperResponse();
+            app.UseSilkyIdentity();
+            app.UseAuditing();
             app.UseEndpoints(endpoints =>
             {
                 // endpoints.MapControllers();
-                endpoints.MapHealthChecksUI();
+                //endpoints.MapHealthChecksUI();
                 endpoints.MapSilkyRpcServices();
                 // endpoints.MapSilkyServiceEntries();
                 // endpoints.MapSilkyTemplateServices();

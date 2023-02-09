@@ -48,7 +48,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSilkyIdentity(authorizationOptionAction)
                 .AddSilkyMiniProfiler()
                 .AddSilkyCaching()
-                .AddSilkySkyApm()
                 .AddDashboard()
                 .AddSwaggerDocuments(swaggerOptionAction);
             services.AddMvc();
@@ -72,7 +71,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSilkyIdentity<TAuthorizationHandler>(authorizationOptionAction)
                 .AddSilkyMiniProfiler()
                 .AddSilkyCaching()
-                .AddSilkySkyApm()
                 .AddDashboard()
                 .AddSwaggerDocuments(swaggerOptionAction);
             services.AddMvc();

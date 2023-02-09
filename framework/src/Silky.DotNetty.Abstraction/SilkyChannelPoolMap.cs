@@ -31,8 +31,8 @@ public class SilkyChannelPoolMap : AbstractChannelPoolMap<ISilkyEndpoint, FixedC
     {
         get
         {
-            var transportClientPoolNumber = _rpcOptions.TransportClientPoolNumber <= 50
-                ? 50
+            var transportClientPoolNumber = _rpcOptions.TransportClientPoolNumber >= 5
+                ? 5
                 : _rpcOptions.TransportClientPoolNumber;
             return transportClientPoolNumber;
         }

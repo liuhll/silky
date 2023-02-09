@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
+using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
 using Silky.Core.Extensions;
 using Silky.DotNetty.Abstraction;
@@ -9,7 +10,7 @@ using Silky.Rpc.Transport.Codec;
 
 namespace Silky.DotNetty.Handlers;
 
-public class DecoderHandler : ByteToMessageDecoder
+public class DecoderHandler : ChannelHandlerAdapter
 {
     private readonly ITransportMessageDecoder _transportMessageDecoder;
 
@@ -18,12 +19,20 @@ public class DecoderHandler : ByteToMessageDecoder
         _transportMessageDecoder = transportMessageDecoder;
     }
 
-    protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
+    public override void ChannelRead(IChannelHandlerContext context, object message)
     {
-        var data = new byte[input.ReadableBytes];
-        input.ReadBytes(data);
-        if (data.SequenceEqual(HeartBeat.Semaphore.GetBytes())) return;
-        var message = _transportMessageDecoder.Decode(data);
-        output.Add(message);
+        try
+        {
+            var buffer = (IByteBuffer)message;
+            var data = new byte[buffer.ReadableBytes];
+            buffer.ReadBytes(data);
+            if (data.SequenceEqual(HeartBeat.Semaphore.GetBytes())) return;
+            var transportMessage = _transportMessageDecoder.Decode(data);
+            context.FireChannelRead(transportMessage);
+        }
+        finally
+        {
+            ReferenceCountUtil.Release(message);
+        }
     }
 }

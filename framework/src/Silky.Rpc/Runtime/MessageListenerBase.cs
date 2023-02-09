@@ -10,6 +10,7 @@ namespace Silky.Rpc.Runtime
 
         public Task OnReceived(IMessageSender sender, TransportMessage message)
         {
+            
             if (Received != null)
             {
                 return Received(sender, message);

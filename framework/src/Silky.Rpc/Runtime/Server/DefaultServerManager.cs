@@ -170,6 +170,8 @@ namespace Silky.Rpc.Runtime.Server
             Check.NotNull(serverDescriptors, nameof(serverDescriptors));
             Initialize();
 
+            var needUpdateRoute = false;
+
             foreach (var serverDescriptor in serverDescriptors)
             {
                 var cacheServer = _serverCache.GetValueOrDefault(serverDescriptor.HostName);
@@ -182,6 +184,7 @@ namespace Silky.Rpc.Runtime.Server
                     continue;
                 }
 
+                needUpdateRoute = true;
                 _serverCache.AddOrUpdate(server.HostName, server, (k, v) => server);
                 Logger.LogInformation(
                     "Update the server [{0}] data cache," +
@@ -209,10 +212,13 @@ namespace Silky.Rpc.Runtime.Server
                     "Remove the server [{0}] route data cache.", needRemoveServerName);
             }
 
-            var oldCancellationTokenSource = _cancellationTokenSource;
-            _cancellationTokenSource = new CancellationTokenSource();
-            _changeToken = new CancellationChangeToken(_cancellationTokenSource.Token);
-            oldCancellationTokenSource?.Cancel();
+            if (needUpdateRoute)
+            {
+                var oldCancellationTokenSource = _cancellationTokenSource;
+                _cancellationTokenSource = new CancellationTokenSource();
+                _changeToken = new CancellationChangeToken(_cancellationTokenSource.Token);
+                oldCancellationTokenSource?.Cancel();
+            }
         }
 
         public void Update([NotNull] IServer server)

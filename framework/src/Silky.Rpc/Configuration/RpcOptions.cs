@@ -16,7 +16,7 @@ namespace Silky.Rpc.Configuration
             ConnectTimeout = 300;
             RegisterFailureRetryCount = 10;
             TransportClientPoolNumber = 50;
-            UseTransportClientPool = true;
+            UseTransportClientPool = false;
             EnableMonitor = false;
         }
 

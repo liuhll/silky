@@ -5,18 +5,18 @@ rpc:
   isSSl: true
   sslCertificateName: test.silky-fk.com.pfx
   sslCertificatePassword: bdSpw3W7
-registrycenter:
-  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
-  type: Zookeeper
-#  scheme: Digest
-#  auth: "silky:pass4Word"
-  routePath: /silkytest/route
-  swaggerDocPath:  /silkytest/swagger  
-
 #registrycenter:
-#  type: Consul
-#  address: http://127.0.0.1:8500
-#  heartbeatintervalsecond: 40
+#  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+#  type: Zookeeper
+##  scheme: Digest
+##  auth: "silky:pass4Word"
+#  routePath: /silkytest/route
+#  swaggerDocPath:  /silkytest/swagger  
+
+registrycenter:
+  type: Consul
+  address: http://127.0.0.1:8500
+  heartbeatintervalsecond: 60
 #  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
 
 #registrycenter:
@@ -69,9 +69,9 @@ plugInSource:
       searchOption: TopDirectoryOnly
 #    - folder: ../../../../ITestApplication/bin/Debug/net7.0
 #      searchOption: TopDirectoryOnly
-  modulePlugIn:
-    types:
-      - TestApplication.TestModule,TestApplication
+#  modulePlugIn:
+#    types:
+#      - TestApplication.TestModule,TestApplication
         
   
 rabbitMq:
