@@ -20,18 +20,18 @@ namespace GatewayDemo
                 //    webBuilder.UseStartup<Startup>()
                 //        .UseSerilogDefault();
                 //})
-                //.ConfigureSilkyGatewayDefaults(webBuilder =>
-                //    {
-                //        webBuilder.UseStartup<Startup>()
-                //            .UseSerilogDefault();
-                //    },
-                //    options =>
-                //    {
-                //        options.ApplicationName = "SilkyGateway";
-                //        options.BannerMode = BannerMode.CONSOLE;
-                //        options.Filter.Clients.Add(new TestGlobalClientFilter());
-                //    })
-                .ConfigureSilkyGeneralHostDefaults();
+                .ConfigureSilkyGatewayDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>()
+                            .UseSerilogDefault();
+                    },
+                    options =>
+                    {
+                        options.ApplicationName = "SilkyGateway";
+                        options.BannerMode = BannerMode.CONSOLE;
+                        options.Filter.Clients.Add(new TestGlobalClientFilter());
+                    })
+                   //.ConfigureSilkyGeneralHostDefaults();
                    ;
 
             if (hostBuilder.IsEnvironment("Apollo"))

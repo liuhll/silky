@@ -94,7 +94,7 @@ namespace Silky.DotNetty.Protocol.Tcp
 
             bootstrap
                 .Option(ChannelOption.SoBacklog, _rpcOptions.SoBacklog)
-                .Option(ChannelOption.TcpNodelay, true)
+                // .Option(ChannelOption.TcpNodelay, true)
                 .Option(ChannelOption.RcvbufAllocator, new AdaptiveRecvByteBufAllocator())
                 .ChildOption(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                 .Group(m_bossGroup, m_workerGroup)
