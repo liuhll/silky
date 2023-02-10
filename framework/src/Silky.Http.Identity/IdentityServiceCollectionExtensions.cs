@@ -49,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
-            services.TryAddSingleton<IAuthorizationHandler, TAuthorizationHandler>();
+            services.TryAddTransient<IAuthorizationHandler, TAuthorizationHandler>();
             services.AddSilkyAuthorization(configure);
             return services;
         }
@@ -59,7 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
-            services.TryAddSingleton<IAuthorizationPolicyProvider, SilkyAuthorizationPolicyProvider>();
+            services.TryAddTransient<IAuthorizationPolicyProvider, SilkyAuthorizationPolicyProvider>();
             if (configure == null)
             {
                 services.AddAuthorization();

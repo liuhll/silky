@@ -5,7 +5,7 @@
         <Description>Use AspNetCoreRateLimit to realize the current limit of http request</Description>
     </PropertyGroup>
     <ItemGroup>
-      <PackageReference Include="AspNetCoreRateLimit" Version="4.0.1"/>
+      <PackageReference Include="AspNetCoreRateLimit" Version="4.0.*"/>
       <PackageReference Include="AspNetCoreRateLimit.Redis" Version="1.0.0" />
     </ItemGroup>
     <ItemGroup>

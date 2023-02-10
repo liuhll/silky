@@ -22,20 +22,19 @@ namespace Silky.DotNetty.Abstraction;
 public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
 {
     private readonly IBootstrapProvider _bootstrapProvider;
-    private GovernanceOptions _governanceOptions;
     private readonly ITransportMessageDecoder _transportMessageDecoder;
     private readonly ITransportMessageEncoder _transportMessageEncoder;
+    private readonly RpcOptions _rpcOptions;
 
     public DotNettyChannelProvider(IBootstrapProvider bootstrapProvider,
         ITransportMessageDecoder transportMessageDecoder,
         ITransportMessageEncoder transportMessageEncoder,
-        IOptionsMonitor<GovernanceOptions> governanceOptions)
+        IOptions<RpcOptions> rpcOptions)
     {
         _bootstrapProvider = bootstrapProvider;
         _transportMessageDecoder = transportMessageDecoder;
         _transportMessageEncoder = transportMessageEncoder;
-        _governanceOptions = governanceOptions.CurrentValue;
-        governanceOptions.OnChange((options, s) => _governanceOptions = options);
+        _rpcOptions = rpcOptions.Value;
     }
 
     public async Task<IChannel> Create(ISilkyEndpoint silkyEndpoint, IMessageListener messageListener,
@@ -59,11 +58,11 @@ public class DotNettyChannelProvider : ITransientDependency, IChannelProvider
 
                 pipeline.AddLast(new LengthFieldPrepender(4));
                 pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-                if (_governanceOptions.EnableHeartbeat &&
-                    _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
+                if (_rpcOptions.EnableHeartbeat &&
+                    _rpcOptions.HeartbeatWatchIntervalSeconds > 0)
                 {
                     pipeline.AddLast(new IdleStateHandler(
-                        _governanceOptions.HeartbeatWatchIntervalSeconds * 2, 0,
+                        _rpcOptions.HeartbeatWatchIntervalSeconds * 2, 0,
                         0));
                     pipeline.AddLast(new ChannelInboundHandlerAdapter());
                 }

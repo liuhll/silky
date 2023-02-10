@@ -10,8 +10,8 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddRpcSupervisor(this IServiceCollection services)
         {
-            services.TryAdd(ServiceDescriptor.Singleton<IServerHandleMonitor, DefaultServerHandleMonitor>());
-            services.TryAdd(ServiceDescriptor.Singleton<IInvokeMonitor, DefaultInvokeMonitor>());
+            services.TryAdd(ServiceDescriptor.Scoped<IServerHandleMonitor, DefaultServerHandleMonitor>());
+            services.TryAdd(ServiceDescriptor.Scoped<IInvokeMonitor, DefaultInvokeMonitor>());
             return services;
         }
     }
