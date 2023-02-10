@@ -23,10 +23,10 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="6.0.1" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="6.0.5" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.5" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="6.0.5" />
+        <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="7.0.0-rc2.4" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="7.0.0-rc2.7" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.0.0-rc2.7" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="7.0.0-rc2.7" />
         <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1" />
     </ItemGroup>
     <ItemGroup>

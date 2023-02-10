@@ -43,7 +43,6 @@ internal class DotNettyBootstrapProvider : IDisposable, IBootstrapProvider, ITra
         bootstrap
             .Channel<TcpSocketChannel>()
             .Option(ChannelOption.ConnectTimeout, TimeSpan.FromMilliseconds(_rpcOptions.ConnectTimeout))
-            // .Option(ChannelOption.TcpNodelay, true)
             .Option(ChannelOption.RcvbufAllocator, new AdaptiveRecvByteBufAllocator())
             .Option(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
             .Group(group)

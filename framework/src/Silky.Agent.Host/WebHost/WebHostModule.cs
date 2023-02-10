@@ -29,7 +29,6 @@ namespace Microsoft.Extensions.Hosting
         typeof(FluentValidationModule),
         typeof(RedisCachingModule),
         typeof(RedisTransactionRepositoryModule),
-        typeof(SwaggerGenModule),
         typeof(RedisDistributedLockModule),
         typeof(SilkyHttpCoreModule),
         typeof(MiniProfilerModule),

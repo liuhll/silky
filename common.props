@@ -25,11 +25,11 @@
 	
 	<EfCore5Version>5.0.*</EfCore5Version>
 
-    <DotNettyVersion>0.7.5</DotNettyVersion>
+    <DotNettyVersion>0.7.*</DotNettyVersion>
 
     <MassTransitVersion>8.0.*</MassTransitVersion>
     
-    <DistributedLockVersion>2.3.2</DistributedLockVersion>
+    <DistributedLockVersion>2.3.*</DistributedLockVersion>
     
     <SkyAPMVersion>2.1.*</SkyAPMVersion>
   </PropertyGroup>

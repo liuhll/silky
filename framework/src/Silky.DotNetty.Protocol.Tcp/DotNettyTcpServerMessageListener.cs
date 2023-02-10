@@ -36,14 +36,12 @@ namespace Silky.DotNetty.Protocol.Tcp
         private readonly ITransportMessageDecoder _transportMessageDecoder;
         private readonly ITransportMessageEncoder _transportMessageEncoder;
         private readonly IServer _server;
-        private GovernanceOptions _governanceOptions;
         private IChannel m_boundChannel;
         private IEventLoopGroup m_bossGroup;
         private IEventLoopGroup m_workerGroup;
 
 
         public DotNettyTcpServerMessageListener(IOptions<RpcOptions> rpcOptions,
-            IOptionsMonitor<GovernanceOptions> governanceOptions,
             IHostEnvironment hostEnvironment,
             IServerProvider _serverProvider,
             ITransportMessageDecoder transportMessageDecoder,
@@ -60,8 +58,6 @@ namespace Silky.DotNetty.Protocol.Tcp
             _transportMessageDecoder = transportMessageDecoder;
             _transportMessageEncoder = transportMessageEncoder;
             _rpcOptions = rpcOptions.Value;
-            _governanceOptions = governanceOptions.CurrentValue;
-            governanceOptions.OnChange((options, s) => _governanceOptions = options);
             if (_rpcOptions.IsSsl)
             {
                 Check.NotNullOrEmpty(_rpcOptions.SslCertificateName, nameof(_rpcOptions.SslCertificateName));
@@ -95,7 +91,6 @@ namespace Silky.DotNetty.Protocol.Tcp
 
             bootstrap
                 .Option(ChannelOption.SoBacklog, _rpcOptions.SoBacklog)
-                // .Option(ChannelOption.TcpNodelay, true)
                 .Option(ChannelOption.RcvbufAllocator, new AdaptiveRecvByteBufAllocator())
                 .ChildOption(ChannelOption.Allocator, PooledByteBufferAllocator.Default)
                 .Group(m_bossGroup, m_workerGroup)
@@ -109,10 +104,10 @@ namespace Silky.DotNetty.Protocol.Tcp
 
                     pipeline.AddLast(new LengthFieldPrepender(4));
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(int.MaxValue, 0, 4, 0, 4));
-                    if (_governanceOptions.EnableHeartbeat && _governanceOptions.HeartbeatWatchIntervalSeconds > 0)
+                    if (_rpcOptions.EnableHeartbeat && _rpcOptions.HeartbeatWatchIntervalSeconds > 0)
                     {
                         pipeline.AddLast(
-                            new IdleStateHandler(0, _governanceOptions.HeartbeatWatchIntervalSeconds, 0));
+                            new IdleStateHandler(0, _rpcOptions.HeartbeatWatchIntervalSeconds, 0));
                         pipeline.AddLast(
                             new ChannelInboundHandlerAdapter(EngineContext.Current.Resolve<IRpcEndpointMonitor>()));
                     }
@@ -158,7 +153,7 @@ namespace Silky.DotNetty.Protocol.Tcp
             return certificateFileName;
         }
 
-        public async void Dispose()
+        public async ValueTask DisposeAsync()
         {
             if (m_boundChannel != null) await m_boundChannel.CloseAsync();
             if (m_bossGroup != null)

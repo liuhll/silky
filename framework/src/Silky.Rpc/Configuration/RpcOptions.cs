@@ -16,8 +16,10 @@ namespace Silky.Rpc.Configuration
             ConnectTimeout = 300;
             RegisterFailureRetryCount = 10;
             TransportClientPoolNumber = 10;
-            UseTransportClientPool = false;
+            UseTransportClientPool = true;
             EnableMonitor = false;
+            _heartbeatWatchIntervalSeconds = 300;
+            EnableHeartbeat = true;
         }
 
         public string Host { get; set; }
@@ -33,5 +35,14 @@ namespace Silky.Rpc.Configuration
         public int TransportClientPoolNumber { get; set; }
         public bool UseTransportClientPool { get; set; }
         public bool EnableMonitor { get; set; }
+        
+        public bool EnableHeartbeat { get; set; }
+
+        private int _heartbeatWatchIntervalSeconds;
+        public int HeartbeatWatchIntervalSeconds
+        {
+            get => _heartbeatWatchIntervalSeconds;
+            set => _heartbeatWatchIntervalSeconds = value <= 60 ? 60 : value;
+        }
     }
 }
