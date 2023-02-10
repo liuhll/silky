@@ -11,7 +11,6 @@
   "profiles": {
     "GatewayDemo": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "index.html",
       "applicationUrl": "http://localhost:8002;https://localhost:8001",
