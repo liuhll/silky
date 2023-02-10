@@ -28,7 +28,7 @@ namespace Silky.Http.Identity.Authentication.Handlers
             [NotNull] ILoggerFactory logger,
             [NotNull] UrlEncoder encoder,
             [NotNull] ISystemClock clock,
-            IJwtDecoder jwtDecoder) :
+            [NotNull] IJwtDecoder jwtDecoder) :
             base(authenticationSchemeOptions,
                 logger,
                 encoder,

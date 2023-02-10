@@ -10,13 +10,13 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddSilkyHttpCore(this IServiceCollection services)
         {
-            services.AddSingleton<IMessageReceivedHandler, DefaultHttpMessageReceivedHandler>();
+            services.AddScoped<IMessageReceivedHandler, DefaultHttpMessageReceivedHandler>();
+            
             services.AddSingleton<IParameterParser, DefaultHttpRequestParameterParser>();
             services.AddSingleton<SilkyServiceEntryEndpointDataSource>();
             services.AddSingleton<SilkyDashboardEndpointDataSource>();
             services.AddSingleton<SilkyRpcServiceEndpointDataSource>();
             services.AddSingleton<ServiceEntryEndpointFactory>();
-
             services.AddSingleton<SilkyServiceEntryDescriptorEndpointDataSource>();
             services.AddSingleton<ServiceEntryDescriptorEndpointFactory>();
 

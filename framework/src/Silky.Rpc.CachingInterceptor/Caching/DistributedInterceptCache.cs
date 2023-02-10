@@ -20,7 +20,7 @@ namespace Silky.Rpc.CachingInterceptor
 {
     public class DistributedInterceptCache : DistributedCache<object, string>, IDistributedInterceptCache
     {
-        public DistributedInterceptCache(IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOption,
+        public DistributedInterceptCache(IOptions<SilkyDistributedCacheOptions> distributedCacheOption,
             IDistributedCache cache,
             ICancellationTokenProvider cancellationTokenProvider,
             IDistributedCacheSerializer serializer,

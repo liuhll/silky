@@ -1,5 +1,4 @@
-﻿using System;
-using DotNetty.Transport.Channels.Pool;
+﻿using DotNetty.Transport.Channels.Pool;
 using Microsoft.Extensions.Options;
 using Silky.Core.DependencyInjection;
 using Silky.DotNetty.Handlers;
@@ -31,8 +30,8 @@ public class SilkyChannelPoolMap : AbstractChannelPoolMap<ISilkyEndpoint, FixedC
     {
         get
         {
-            var transportClientPoolNumber = _rpcOptions.TransportClientPoolNumber >= 5
-                ? 5
+            var transportClientPoolNumber = _rpcOptions.TransportClientPoolNumber >= 10
+                ? 10
                 : _rpcOptions.TransportClientPoolNumber;
             return transportClientPoolNumber;
         }

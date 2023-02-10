@@ -47,14 +47,14 @@ namespace Silky.Caching
         protected SilkyDistributedCacheOptions _distributedCacheOption;
 
         public DistributedCache(
-            IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOption,
+            IOptions<SilkyDistributedCacheOptions> distributedCacheOption,
             IDistributedCache cache,
             ICancellationTokenProvider cancellationTokenProvider,
             IDistributedCacheSerializer serializer,
             IDistributedCacheKeyNormalizer keyNormalizer)
         {
-            _distributedCacheOption = distributedCacheOption.CurrentValue;
-            distributedCacheOption.OnChange((options, s) => _distributedCacheOption = options);
+            _distributedCacheOption = distributedCacheOption.Value;
+            // distributedCacheOption.OnChange((options, s) => _distributedCacheOption = options);
             Cache = cache;
             CancellationTokenProvider = cancellationTokenProvider;
             Logger = NullLogger<DistributedCache<TCacheItem, TCacheKey>>.Instance;
@@ -716,7 +716,7 @@ namespace Silky.Caching
         where TCacheItem : class
     {
         public DistributedCache(
-            IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOption,
+            IOptions<SilkyDistributedCacheOptions> distributedCacheOption,
             IDistributedCache cache,
             ICancellationTokenProvider cancellationTokenProvider,
             IDistributedCacheSerializer serializer,
