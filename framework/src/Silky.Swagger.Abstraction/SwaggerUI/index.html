@@ -246,15 +246,19 @@
 
     var tokenKey = "access-token";
     var cultureKey = "culture";
+    var silkyResultStatusKey = "silky-result-status";
 
     // default response interceptor
     function defaultResponseInterceptor(response) {
         // handle jwt token
         var accessToken = response.headers[tokenKey];
+        var silkyResultStatus = response.headers[silkyResultStatusKey];
         if (accessToken && accessToken != "invalid_token") {
             window.localStorage.setItem(tokenKey, accessToken);
             ui.preauthorizeApiKey("Bearer", accessToken);
         } else if (accessToken == "invalid_token") {
+            window.localStorage.removeItem(tokenKey);
+        } else if (silkyResultStatus && (silkyResultStatus.toString() === "401" || silkyResultStatus.toString() === "4011")) {
             window.localStorage.removeItem(tokenKey);
         }
 

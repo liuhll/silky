@@ -68,31 +68,31 @@ namespace Silky.Rpc.Extensions
 
         public static void SetResultStatusCode(this HttpResponse httpResponse, StatusCode statusCode)
         {
-            httpResponse.Headers["SilkyResultStatusCode"] = statusCode.ToString();
+            httpResponse.Headers["silky-result-status"] = statusCode.ToString();
         }
         
         public static StatusCode? GetResultStatusCode(this HttpResponse httpResponse)
         {
-            if (httpResponse.Headers.Keys.Contains("SilkyResultStatusCode"))
+            if (httpResponse.Headers.Keys.Contains("silky-result-status"))
             {
-                return httpResponse.Headers["SilkyResultStatusCode"].To<StatusCode>();
+                return httpResponse.Headers["silky-result-status"].To<StatusCode>();
             }
             return null;
         }
         
         public static void SetResultStatus(this HttpResponse httpResponse, int status)
         {
-            httpResponse.Headers["SilkyResultStatus"] = status.ToString();
+            httpResponse.Headers["silky-result-status"] = status.ToString();
         }
 
         public static void SetResultStatusCode(this IHeaderDictionary destination, StatusCode statusCode)
         {
-            destination["SilkyResultStatusCode"] = statusCode.ToString();
+            destination["silky-result-status"] = statusCode.ToString();
         }
         
         public static void SetResultStatus(this IHeaderDictionary destination, int status)
         {
-            destination["SilkyResultStatus"] = status.ToString();
+            destination["silky-result-status"] = status.ToString();
         }
 
         public static void SetHeaders(this HttpResponse httpResponse)
