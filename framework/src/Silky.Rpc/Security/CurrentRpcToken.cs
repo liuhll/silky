@@ -5,7 +5,7 @@ using Silky.Rpc.Configuration;
 
 namespace Silky.Rpc.Security
 {
-    public class CurrentRpcToken : ICurrentRpcToken, ISingletonDependency
+    public class CurrentRpcToken : ICurrentRpcToken, IScopedDependency
     {
         private string _token;
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -12,6 +11,8 @@ using Silky.Core.Runtime.Rpc;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Handlers;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
 namespace Silky.Http.Core.Routing.Builder.Internal;
 
@@ -24,7 +25,9 @@ internal class ServiceEntryDescriptorEndpointFactory
             var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
             rpcContextAccessor.RpcContext = RpcContext.Context;
             rpcContextAccessor.RpcContext.RpcServices = httpContext.RequestServices;
-
+            var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
+            currentRpcToken.SetRpcToken();
+            
             var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
             await messageReceivedHandler.Handle(serviceEntryDescriptor, httpContext);
         };

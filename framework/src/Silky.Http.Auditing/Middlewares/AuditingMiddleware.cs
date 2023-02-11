@@ -73,8 +73,6 @@ public class AuditingMiddleware
                 var auditingStore = EngineContext.Current.ServiceProvider.GetService<IAuditingStore>();
                 if (auditingStore != null)
                 {
-                    var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
-                    currentRpcToken.SetRpcToken();
                     await auditingStore.SaveAsync(auditLogInfo);
                 }
 

@@ -24,6 +24,8 @@ namespace Silky.Http.Core.Routing.Builder.Internal
                 var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
                 rpcContextAccessor.RpcContext = RpcContext.Context;
                 rpcContextAccessor.RpcContext.RpcServices = httpContext.RequestServices;
+                var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
+                currentRpcToken.SetRpcToken();
                 
                 var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
                 await messageReceivedHandler.Handle(serviceEntry, httpContext);
