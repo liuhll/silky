@@ -29,7 +29,7 @@ namespace GatewayDemo
                     {
                         options.ApplicationName = "SilkyGateway";
                         options.BannerMode = BannerMode.CONSOLE;
-                        options.Filter.Clients.Add(new TestGlobalClientFilter());
+                        // options.Filter.Clients.Add(new TestGlobalClientFilter());
                     })
                    //.ConfigureSilkyGeneralHostDefaults();
                    ;
@@ -37,6 +37,7 @@ namespace GatewayDemo
             if (hostBuilder.IsEnvironment("Apollo"))
             {
                 hostBuilder.AddApollo();
+                
             }
 
             return hostBuilder;

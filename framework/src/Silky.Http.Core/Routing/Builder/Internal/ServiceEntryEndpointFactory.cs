@@ -21,12 +21,11 @@ namespace Silky.Http.Core.Routing.Builder.Internal
         {
             return async httpContext =>
             {
-                var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
+                var rpcContextAccessor = httpContext.RequestServices.GetRequiredService<IRpcContextAccessor>();
+                RpcContext.Context.RpcServices = httpContext.RequestServices;
                 rpcContextAccessor.RpcContext = RpcContext.Context;
-                rpcContextAccessor.RpcContext.RpcServices = httpContext.RequestServices;
                 var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
                 currentRpcToken.SetRpcToken();
-                
                 var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
                 await messageReceivedHandler.Handle(serviceEntry, httpContext);
             };
