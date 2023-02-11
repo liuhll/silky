@@ -12,12 +12,12 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (!services.IsAdded(typeof(ITransportMessageDecoder)))
             {
-                services.AddSingleton<ITransportMessageDecoder, DefaultTransportMessageDecoder>();
+                services.AddTransient<ITransportMessageDecoder, DefaultTransportMessageDecoder>();
             }
 
             if (!services.IsAdded(typeof(ITransportMessageEncoder)))
             {
-                services.AddSingleton<ITransportMessageEncoder, DefaultTransportMessageEncoder>();
+                services.AddTransient<ITransportMessageEncoder, DefaultTransportMessageEncoder>();
             }
 
             return services;
@@ -27,7 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.AddOptions<AuditingOptions>()
                     .Bind(configuration.GetSection(AuditingOptions.Auditing));
-                services.AddSingleton<IAuditSerializer, JsonNetAuditSerializer>();
+                services.AddTransient<IAuditSerializer, JsonNetAuditSerializer>();
                 return services;
             }
     }

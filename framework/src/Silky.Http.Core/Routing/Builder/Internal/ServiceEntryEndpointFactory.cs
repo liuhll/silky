@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
+using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
+using Silky.Core.Runtime.Rpc;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Handlers;
 using Silky.Rpc.Runtime.Server;
@@ -19,6 +21,10 @@ namespace Silky.Http.Core.Routing.Builder.Internal
         {
             return async httpContext =>
             {
+                var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
+                rpcContextAccessor.RpcContext = RpcContext.Context;
+                rpcContextAccessor.RpcContext.RpcServices = httpContext.RequestServices;
+                
                 var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
                 await messageReceivedHandler.Handle(serviceEntry, httpContext);
             };

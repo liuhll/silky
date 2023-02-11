@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.AddRedisCaching(redisCacheOption);
             }
-            services.AddSingleton(typeof(ITransRepository), typeof(RedisTransRepository));
+            services.AddTransient(typeof(ITransRepository), typeof(RedisTransRepository));
             services.AddRedisLock(redisCacheOption);
             return services;
         }

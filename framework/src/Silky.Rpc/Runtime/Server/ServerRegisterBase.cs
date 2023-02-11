@@ -39,13 +39,18 @@ namespace Silky.Rpc.Runtime.Server
         {
             var selfServerInfo = _serverManager.GetSelfServer();
             var localServer = _serverProvider.GetServer();
-            var needRegister = false;
-            foreach (var endpoint in localServer.Endpoints)
+
+            bool needRegister = selfServerInfo == null;
+
+            if (!needRegister)
             {
-                if (!selfServerInfo.Endpoints.Any(e => e.Equals(endpoint)))
+                foreach (var endpoint in localServer.Endpoints)
                 {
-                    needRegister = true;
-                    break;
+                    if (!selfServerInfo.Endpoints.Any(e => e.Equals(endpoint)))
+                    {
+                        needRegister = true;
+                        break;
+                    }
                 }
             }
 

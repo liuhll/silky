@@ -7,7 +7,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core
 {
-    internal interface IParameterParser : ITransientDependency
+    internal interface IParameterParser : IScopedDependency
     {
         Task<object[]> Parser([NotNull] HttpRequest httpRequest, [NotNull] ServiceEntry serviceEntry);
 

@@ -2,7 +2,6 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
-using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Handlers
 {
