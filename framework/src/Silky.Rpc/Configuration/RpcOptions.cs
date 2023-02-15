@@ -20,7 +20,7 @@ namespace Silky.Rpc.Configuration
             EnableMonitor = true;
             _heartbeatWatchIntervalSeconds = 300;
             EnableHeartbeat = true;
-            SubmitMonitorInfoIntervalSeconds = 30;
+            CollectMonitorInfoIntervalSeconds = 30;
         }
 
         public string Host { get; set; }
@@ -38,7 +38,7 @@ namespace Silky.Rpc.Configuration
         public bool EnableMonitor { get; set; }
         public bool EnableHeartbeat { get; set; }
 
-        public int SubmitMonitorInfoIntervalSeconds { get; set; }
+        public int CollectMonitorInfoIntervalSeconds { get; set; }
 
         private int _heartbeatWatchIntervalSeconds;
 

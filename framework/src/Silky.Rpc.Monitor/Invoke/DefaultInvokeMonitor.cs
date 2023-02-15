@@ -29,6 +29,11 @@ namespace Silky.Rpc.Monitor.Invoke
 
         public ClientInvokeInfo Monitor((string, ISilkyEndpoint) item)
         {
+            if (item.Item2 == null)
+            {
+                return null;
+            }
+
             lock (_monitorProvider.InstanceInvokeInfo)
             {
                 _monitorProvider.InstanceInvokeInfo.ConcurrentCount++;
@@ -58,6 +63,11 @@ namespace Silky.Rpc.Monitor.Invoke
         public void ExecSuccess((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
+            if (item.Item2 == null || clientInvokeInfo == null)
+            {
+                return;
+            }
+
             lock (_monitorProvider.InstanceInvokeInfo)
             {
                 _monitorProvider.InstanceInvokeInfo.ConcurrentCount--;
@@ -82,6 +92,11 @@ namespace Silky.Rpc.Monitor.Invoke
         public void ExecFail((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
+            if (item.Item2 == null || clientInvokeInfo == null)
+            {
+                return;
+            }
+
             lock (_monitorProvider.InstanceInvokeInfo)
             {
                 _monitorProvider.InstanceInvokeInfo.ConcurrentCount--;
@@ -127,7 +142,5 @@ namespace Silky.Rpc.Monitor.Invoke
                 $"InvokeSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2.GetAddress()}";
             return cacheKey;
         }
-        
-        
     }
 }

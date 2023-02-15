@@ -50,8 +50,8 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         });
 
         _timer = new Timer(SubmitMonitorCallBack, null,
-            TimeSpan.FromSeconds(_rpcOptions.SubmitMonitorInfoIntervalSeconds),
-            TimeSpan.FromSeconds(_rpcOptions.SubmitMonitorInfoIntervalSeconds));
+            TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds),
+            TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds));
     }
 
     private void SubmitMonitorCallBack(object? state)
@@ -142,12 +142,10 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
             return serviceEntryHandleInfos;
         }
 
-        var serverHandleInfos =
-            (await _serverHandleDistributedCache.GetManyAsync(cacheKeys)).Select(p => p.Value).ToArray();
-        foreach (var serverHandleInfo in serverHandleInfos)
-        {
-            serviceEntryHandleInfos.Add(serverHandleInfo);
-        }
+        var cacheValues = await _serverHandleDistributedCache.GetManyAsync(cacheKeys);
+        
+        var serverHandleInfos = cacheValues.Select(p => p.Value).ToArray();
+        serviceEntryHandleInfos.AddRange(serverHandleInfos);
 
         return serviceEntryHandleInfos.OrderBy(p => p.ServiceEntryId).ToArray();
     }
