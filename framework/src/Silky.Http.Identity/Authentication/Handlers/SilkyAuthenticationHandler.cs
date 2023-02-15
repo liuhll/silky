@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Http.Core.Configuration;
+using Silky.Rpc.Extensions;
 
 namespace Silky.Http.Identity.Authentication.Handlers
 {
@@ -61,14 +62,17 @@ namespace Silky.Http.Identity.Authentication.Handlers
             }
             catch (TokenExpiredException ex)
             {
+                Context.Response.SetResultStatusCode(StatusCode.UnAuthentication);
                 throw new AuthenticationException("Token has expired");
             }
             catch (SignatureVerificationException ex)
             {
+                Context.Response.SetResultStatusCode(StatusCode.UnAuthentication);
                 throw new AuthenticationException("Token has invalid signature");
             }
             catch (Exception ex)
             {
+                Context.Response.SetResultStatusCode(StatusCode.UnAuthentication);
                 throw new AuthenticationException($"The token format is illegal, the reason: {ex.Message}");
             }
         }
