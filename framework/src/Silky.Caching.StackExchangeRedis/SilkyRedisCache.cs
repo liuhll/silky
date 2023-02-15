@@ -43,7 +43,9 @@ namespace Silky.Caching.StackExchangeRedis
 
             ConnectAsyncMethod = type.GetMethod("ConnectAsync", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            MapMetadataMethod = type.GetMethod("MapMetadata", BindingFlags.Instance | BindingFlags.NonPublic);
+            MapMetadataMethod = type.GetMethod("MapMetadata", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                                type.GetMethod("MapMetadata",
+                                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
 
             GetAbsoluteExpirationMethod =
                 type.GetMethod("GetAbsoluteExpiration", BindingFlags.Static | BindingFlags.NonPublic);

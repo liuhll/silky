@@ -13,13 +13,12 @@ using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.Threading;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Caching.Configuration;
 using Silky.Core;
+using Silky.Core.Extensions;
 
 namespace Silky.Caching
 {
@@ -129,13 +128,12 @@ namespace Silky.Caching
                     hideErrors
                 );
             }
-
-            var notCachedKeys = new List<TCacheKey>();
+            
             var cachedValues = new List<KeyValuePair<TCacheKey, TCacheItem>>();
             hideErrors = hideErrors ?? _distributedCacheOption.HideErrors;
             byte[][] cachedBytes;
 
-            var readKeys = notCachedKeys.Any() ? notCachedKeys.ToArray() : keyArray;
+            var readKeys = keyArray;
             try
             {
                 cachedBytes = cacheSupportsMultipleItems.GetMany(readKeys.Select(NormalizeKey));
@@ -170,12 +168,11 @@ namespace Silky.Caching
                     token
                 );
             }
-
-            var notCachedKeys = new List<TCacheKey>();
+            
             hideErrors = hideErrors ?? _distributedCacheOption.HideErrors;
             byte[][] cachedBytes;
 
-            var readKeys = notCachedKeys.Any() ? notCachedKeys.ToArray() : keyArray;
+            var readKeys = keyArray;
             try
             {
                 cachedBytes = await cacheSupportsMultipleItems.GetManyAsync(
@@ -731,14 +728,30 @@ namespace Silky.Caching
 
         public async Task<IReadOnlyCollection<string>> SearchKeys(string keyPattern)
         {
+            IReadOnlyCollection<string> normalizeKeys;
             var distributedInterceptCache = (Cache as ICacheSupportsMultipleItems);
             if (distributedInterceptCache == null)
             {
                 var cacheKeys = GetCacheKeys();
-                return cacheKeys.Where(k => Regex.IsMatch(k, keyPattern)).ToImmutableArray();
+                normalizeKeys = cacheKeys.Where(k => Regex.IsMatch(k, keyPattern)).ToImmutableArray();
+            }
+            else
+            {
+                normalizeKeys = await distributedInterceptCache.SearchKeys(keyPattern);
             }
 
-            return await distributedInterceptCache.SearchKeys(keyPattern);
+            return normalizeKeys.Select(GetKey).Where(p => !p.IsNullOrEmpty()).ToImmutableArray();
+        }
+
+        private string GetKey(string normalizeKey)
+        {
+            var normalizeKeyArray = normalizeKey.Split(",");
+            var key = normalizeKeyArray.SingleOrDefault(p => p.StartsWith("k:"));
+            if (!key.IsNullOrEmpty())
+            {
+                key = key.RemovePreFix("k:");
+            }
+            return key;
         }
 
         private List<string> GetCacheKeys()
