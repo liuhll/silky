@@ -5,8 +5,7 @@ using Microsoft.Extensions.Options;
 using Silky.Caching;
 using Silky.Core.Modularity;
 using Silky.Rpc.Configuration;
-using Silky.Rpc.Runtime.Client;
-using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Monitor.Provider;
 using IServiceProvider = System.IServiceProvider;
 
 
@@ -39,8 +38,9 @@ namespace Silky.Rpc.Monitor
             var rpcOption = serviceProvider.GetRequiredService<IOptions<RpcOptions>>();
             if (rpcOption.Value?.EnableMonitor == true)
             {
-                await serviceProvider.GetRequiredService<IServerHandleMonitor>().ClearCache();
-                await serviceProvider.GetRequiredService<IInvokeMonitor>().ClearCache();
+                var monitorProvider = serviceProvider.GetRequiredService<IMonitorProvider>();
+                await monitorProvider.ClearClientInvokeCache();
+                await monitorProvider.ClearServerHandleCache();
             }
         }
     }

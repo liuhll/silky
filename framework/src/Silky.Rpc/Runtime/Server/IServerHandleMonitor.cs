@@ -12,8 +12,6 @@ namespace Silky.Rpc.Runtime.Server
         void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds,
             ServerHandleInfo serverHandleInfo);
 
-        Task ClearCache();
-
         Task<ServerInstanceHandleInfo> GetServerInstanceHandleInfo();
 
         Task<IReadOnlyCollection<ServerHandleInfo>> GetServiceEntryHandleInfos();

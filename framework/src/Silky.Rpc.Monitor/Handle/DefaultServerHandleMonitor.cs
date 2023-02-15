@@ -1,51 +1,37 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using Silky.Caching;
-using Silky.Core;
-using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
-using Silky.Rpc.Configuration;
-using Silky.Rpc.Endpoint;
+using Silky.Rpc.Monitor.Provider;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Monitor.Handle
 {
     public class DefaultServerHandleMonitor : IServerHandleMonitor
     {
-        private readonly IDistributedCache<ServerHandleInfo> _distributedCache;
-        private ServerInstanceHandleInfo _serverInstanceHandleInfo = new();
+        private readonly IMonitorProvider _monitorProvider;
 
-
-        public DefaultServerHandleMonitor(IDistributedCache<ServerHandleInfo> distributedCache,IOptionsMonitor<GovernanceOptions> governanceOptions)
+        public DefaultServerHandleMonitor(IMonitorProvider monitorProvider)
         {
-            _distributedCache = distributedCache;
-            _serverInstanceHandleInfo.AllowMaxConcurrentCount = governanceOptions.CurrentValue.MaxConcurrentHandlingCount;
-            governanceOptions.OnChange(options =>
-            {
-                _serverInstanceHandleInfo.AllowMaxConcurrentCount = options.MaxConcurrentHandlingCount;
-            });
-           
+            _monitorProvider = monitorProvider;
         }
 
         public ServerHandleInfo Monitor((string, string) item)
         {
-            lock (_serverInstanceHandleInfo)
+            lock (_monitorProvider.InstanceHandleInfo)
             {
-                _serverInstanceHandleInfo.ConcurrentCount++;
-                if (_serverInstanceHandleInfo.ConcurrentCount > _serverInstanceHandleInfo.MaxConcurrentCount)
+                _monitorProvider.InstanceHandleInfo.ConcurrentCount++;
+                if (_monitorProvider.InstanceHandleInfo.ConcurrentCount > _monitorProvider.InstanceHandleInfo.MaxConcurrentCount)
                 {
-                    _serverInstanceHandleInfo.MaxConcurrentCount = _serverInstanceHandleInfo.ConcurrentCount;
+                    _monitorProvider.InstanceHandleInfo.MaxConcurrentCount = _monitorProvider.InstanceHandleInfo.ConcurrentCount;
                 }
 
-                _serverInstanceHandleInfo.FirstHandleTime ??= DateTime.Now;
-                _serverInstanceHandleInfo.FinalHandleTime = DateTime.Now;
-                _serverInstanceHandleInfo.TotalHandleCount += 1;
+                _monitorProvider.InstanceHandleInfo.FirstHandleTime ??= DateTime.Now;
+                _monitorProvider.InstanceHandleInfo.FinalHandleTime = DateTime.Now;
+                _monitorProvider.InstanceHandleInfo.TotalHandleCount += 1;
             }
 
-            var serverHandleInfo = _distributedCache.Get(GetCacheKey(item)) ?? new ServerHandleInfo();
+            var serverHandleInfo = _monitorProvider.GetServerHandleInfo(GetCacheKey(item));
             serverHandleInfo.ServiceEntryId = item.Item1;
             serverHandleInfo.Address = item.Item2;
             serverHandleInfo.TotalHandleCount++;
@@ -57,13 +43,13 @@ namespace Silky.Rpc.Monitor.Handle
         public void ExecSuccess((string, string) item, double elapsedTotalMilliseconds,
             ServerHandleInfo serverHandleInfo)
         {
-            lock (_serverInstanceHandleInfo)
+            lock (_monitorProvider.InstanceHandleInfo)
             {
-                _serverInstanceHandleInfo.ConcurrentCount--;
+                _monitorProvider.InstanceHandleInfo.ConcurrentCount--;
                 if (elapsedTotalMilliseconds > 0)
                 {
-                    _serverInstanceHandleInfo.AET = _serverInstanceHandleInfo.AET.HasValue
-                        ? (_serverInstanceHandleInfo.AET + elapsedTotalMilliseconds) / 2
+                    _monitorProvider.InstanceHandleInfo.AET = _monitorProvider.InstanceHandleInfo.AET.HasValue
+                        ? (_monitorProvider.InstanceHandleInfo.AET + elapsedTotalMilliseconds) / 2
                         : elapsedTotalMilliseconds;
                 }
             }
@@ -75,28 +61,28 @@ namespace Silky.Rpc.Monitor.Handle
                     : elapsedTotalMilliseconds;
             }
 
-            _distributedCache.Set(GetCacheKey(item), serverHandleInfo);
+            _monitorProvider.SetServerHandleInfo(GetCacheKey(item), serverHandleInfo);
         }
 
         public void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds,
             ServerHandleInfo serverHandleInfo)
         {
-            lock (_serverInstanceHandleInfo)
+            lock (_monitorProvider.InstanceHandleInfo)
             {
-                _serverInstanceHandleInfo.ConcurrentCount--;
-                _serverInstanceHandleInfo.FaultHandleCount++;
-                _serverInstanceHandleInfo.FinalFaultHandleTime = DateTime.Now;
+                _monitorProvider.InstanceHandleInfo.ConcurrentCount--;
+                _monitorProvider.InstanceHandleInfo.FaultHandleCount++;
+                _monitorProvider.InstanceHandleInfo.FinalFaultHandleTime = DateTime.Now;
 
                 if (isSeriousError)
                 {
-                    _serverInstanceHandleInfo.TotalSeriousErrorCount++;
-                    _serverInstanceHandleInfo.FinalSeriousErrorTime = DateTime.Now;
+                    _monitorProvider.InstanceHandleInfo.TotalSeriousErrorCount++;
+                    _monitorProvider.InstanceHandleInfo.FinalSeriousErrorTime = DateTime.Now;
                 }
 
                 if (elapsedTotalMilliseconds > 0)
                 {
-                    _serverInstanceHandleInfo.AET = _serverInstanceHandleInfo.AET.HasValue
-                        ? (_serverInstanceHandleInfo.AET + elapsedTotalMilliseconds) / 2
+                    _monitorProvider.InstanceHandleInfo.AET = _monitorProvider.InstanceHandleInfo.AET.HasValue
+                        ? (_monitorProvider.InstanceHandleInfo.AET + elapsedTotalMilliseconds) / 2
                         : elapsedTotalMilliseconds;
                 }
             }
@@ -116,37 +102,21 @@ namespace Silky.Rpc.Monitor.Handle
                     : elapsedTotalMilliseconds;
             }
 
-            _distributedCache.Set(GetCacheKey(item), serverHandleInfo);
+            _monitorProvider.SetServerHandleInfo(GetCacheKey(item), serverHandleInfo);
         }
 
         public Task<ServerInstanceHandleInfo> GetServerInstanceHandleInfo()
         {
-            lock (_serverInstanceHandleInfo)
+            lock (_monitorProvider.InstanceHandleInfo)
             {
-                return Task.FromResult(_serverInstanceHandleInfo);
+                return Task.FromResult(_monitorProvider.InstanceHandleInfo);
             }
         }
 
         public async Task<IReadOnlyCollection<ServerHandleInfo>> GetServiceEntryHandleInfos()
         {
-            var serviceEntryHandleInfos = new List<ServerHandleInfo>();
-            var cacheKeys =
-                await _distributedCache.SearchKeys(
-                    $"*:ServerHandleSupervisor:{RpcContext.Context.Connection.LocalAddress}:*");
-
-            if (cacheKeys.Count <= 0)
-            {
-                return serviceEntryHandleInfos;
-            }
-
-            var serverHandleInfos =
-                (await _distributedCache.GetManyAsync(cacheKeys)).Select(p => p.Value).ToArray();
-            foreach (var serverHandleInfo in serverHandleInfos)
-            {
-                serviceEntryHandleInfos.Add(serverHandleInfo);
-            }
-
-            return serviceEntryHandleInfos.OrderBy(p => p.ServiceEntryId).ToArray();
+            var serverHandleList = await _monitorProvider.GetServiceEntryHandleInfos();
+            return serverHandleList;
         }
 
         private string GetCacheKey((string, string) item)
@@ -155,34 +125,6 @@ namespace Silky.Rpc.Monitor.Handle
                 $"ServerHandleSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2}";
             return cacheKey;
         }
-
-        public async Task ClearCache()
-        {
-            if (EngineContext.Current.IsContainDotNettyTcpModule())
-            {
-                var localTcpEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
-                await RemoveCache(localTcpEndpoint.GetAddress());
-            }
-
-            if (EngineContext.Current.IsContainHttpCoreModule())
-            {
-                var localWebEndpoint = SilkyEndpointHelper.GetLocalWebEndpoint();
-                if (localWebEndpoint != null)
-                {
-                    await RemoveCache(localWebEndpoint.GetAddress());
-                }
-            }
-        }
-
-        private async Task RemoveCache(string address)
-        {
-            var cacheKeys =
-                await _distributedCache.SearchKeys(
-                    $"*:ServerHandleSupervisor:{address}:*");
-            foreach (var cacheKey in cacheKeys)
-            {
-                await _distributedCache.RemoveAsync(cacheKey);
-            }
-        }
+        
     }
 }

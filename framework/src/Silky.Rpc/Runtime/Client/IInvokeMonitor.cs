@@ -13,8 +13,6 @@ namespace Silky.Rpc.Runtime.Client
 
         void ExecFail((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds, ClientInvokeInfo clientInvokeInfo);
 
-        Task ClearCache();
-
         Task<ServerInstanceInvokeInfo> GetServerInstanceInvokeInfo();
 
         Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos();

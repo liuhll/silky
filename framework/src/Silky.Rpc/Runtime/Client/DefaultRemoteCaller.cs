@@ -64,9 +64,12 @@ namespace Silky.Rpc.Runtime.Client
                 selectedRpcEndpoint =
                     SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey,
                         out var confirmedShuntStrategy);
+                
+                clientInvokeInfo = invokeMonitor?.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
                 _clientInvokeDiagnosticListener.TracingSelectInvokeAddress(tracingTimestamp,
                     remoteInvokeMessage.ServiceEntryId, confirmedShuntStrategy,
                     rpcEndpoints, selectedRpcEndpoint);
+                
                 var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 remoteInvoker =
                     _clientRemoteInvokerFactory.CreateInvoker(new ClientInvokeContext(remoteInvokeMessage,
@@ -93,6 +96,7 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     Logger.LogException(ex);
                 }
+
                 throw;
             }
 

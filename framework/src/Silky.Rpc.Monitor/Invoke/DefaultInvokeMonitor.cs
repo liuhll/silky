@@ -1,51 +1,51 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Silky.Caching;
-using Silky.Core;
-using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
+using Silky.Rpc.Monitor.Provider;
 using Silky.Rpc.Runtime.Client;
 
 namespace Silky.Rpc.Monitor.Invoke
 {
     public class DefaultInvokeMonitor : IInvokeMonitor
     {
-        private readonly IDistributedCache<ClientInvokeInfo> _distributedCache;
+        private readonly IMonitorProvider _monitorProvider;
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-        private ServerInstanceInvokeInfo _serverInstanceInvokeInfo = new();
+
         public ILogger<DefaultInvokeMonitor> Logger { get; set; }
 
-        public DefaultInvokeMonitor(IDistributedCache<ClientInvokeInfo> distributedCache,
+        public DefaultInvokeMonitor(
+            IMonitorProvider monitorProvider,
             IRpcEndpointMonitor rpcEndpointMonitor)
         {
-            _distributedCache = distributedCache;
+            _monitorProvider = monitorProvider;
             _rpcEndpointMonitor = rpcEndpointMonitor;
             Logger = NullLogger<DefaultInvokeMonitor>.Instance;
         }
 
         public ClientInvokeInfo Monitor((string, ISilkyEndpoint) item)
         {
-            lock (_serverInstanceInvokeInfo)
+            lock (_monitorProvider.InstanceInvokeInfo)
             {
-                _serverInstanceInvokeInfo.ConcurrentCount++;
-                if (_serverInstanceInvokeInfo.ConcurrentCount > _serverInstanceInvokeInfo.MaxConcurrentCount)
+                _monitorProvider.InstanceInvokeInfo.ConcurrentCount++;
+                if (_monitorProvider.InstanceInvokeInfo.ConcurrentCount >
+                    _monitorProvider.InstanceInvokeInfo.MaxConcurrentCount)
                 {
-                    _serverInstanceInvokeInfo.MaxConcurrentCount = _serverInstanceInvokeInfo.ConcurrentCount;
+                    _monitorProvider.InstanceInvokeInfo.MaxConcurrentCount =
+                        _monitorProvider.InstanceInvokeInfo.ConcurrentCount;
                 }
 
-                _serverInstanceInvokeInfo.FirstInvokeTime ??= DateTime.Now;
-                _serverInstanceInvokeInfo.FinalInvokeTime = DateTime.Now;
-                _serverInstanceInvokeInfo.TotalInvokeCount += 1;
+                _monitorProvider.InstanceInvokeInfo.FirstInvokeTime ??= DateTime.Now;
+                _monitorProvider.InstanceInvokeInfo.FinalInvokeTime = DateTime.Now;
+                _monitorProvider.InstanceInvokeInfo.TotalInvokeCount += 1;
             }
 
             var cacheKey = GetCacheKey(item);
-            var clientInvokeInfo = _distributedCache.Get(cacheKey) ?? new ClientInvokeInfo();
+            var clientInvokeInfo = _monitorProvider.GetInvokeInfo(cacheKey);
             clientInvokeInfo.IsEnable = true;
             clientInvokeInfo.Address = item.Item2.GetAddress();
             clientInvokeInfo.ServiceEntryId = item.Item1;
@@ -58,13 +58,13 @@ namespace Silky.Rpc.Monitor.Invoke
         public void ExecSuccess((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
-            lock (_serverInstanceInvokeInfo)
+            lock (_monitorProvider.InstanceInvokeInfo)
             {
-                _serverInstanceInvokeInfo.ConcurrentCount--;
+                _monitorProvider.InstanceInvokeInfo.ConcurrentCount--;
                 if (elapsedTotalMilliseconds > 0)
                 {
-                    _serverInstanceInvokeInfo.AET = _serverInstanceInvokeInfo.AET.HasValue
-                        ? (_serverInstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                    _monitorProvider.InstanceInvokeInfo.AET = _monitorProvider.InstanceInvokeInfo.AET.HasValue
+                        ? (_monitorProvider.InstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
                         : elapsedTotalMilliseconds;
                 }
             }
@@ -76,21 +76,21 @@ namespace Silky.Rpc.Monitor.Invoke
                     : elapsedTotalMilliseconds;
             }
 
-            _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
+            _monitorProvider.SetClientInvokeInfo(GetCacheKey(item), clientInvokeInfo);
         }
 
         public void ExecFail((string, ISilkyEndpoint) item, double elapsedTotalMilliseconds,
             ClientInvokeInfo clientInvokeInfo)
         {
-            lock (_serverInstanceInvokeInfo)
+            lock (_monitorProvider.InstanceInvokeInfo)
             {
-                _serverInstanceInvokeInfo.ConcurrentCount--;
-                _serverInstanceInvokeInfo.FaultInvokeCount++;
-                _serverInstanceInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
+                _monitorProvider.InstanceInvokeInfo.ConcurrentCount--;
+                _monitorProvider.InstanceInvokeInfo.FaultInvokeCount++;
+                _monitorProvider.InstanceInvokeInfo.FinalFaultInvokeTime = DateTime.Now;
                 if (elapsedTotalMilliseconds > 0)
                 {
-                    _serverInstanceInvokeInfo.AET = _serverInstanceInvokeInfo.AET.HasValue
-                        ? (_serverInstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
+                    _monitorProvider.InstanceInvokeInfo.AET = _monitorProvider.InstanceInvokeInfo.AET.HasValue
+                        ? (_monitorProvider.InstanceInvokeInfo.AET + elapsedTotalMilliseconds) / 2
                         : elapsedTotalMilliseconds;
                 }
             }
@@ -105,32 +105,20 @@ namespace Silky.Rpc.Monitor.Invoke
                     : elapsedTotalMilliseconds;
             }
 
-            _distributedCache.Set(GetCacheKey(item), clientInvokeInfo);
+            _monitorProvider.SetClientInvokeInfo(GetCacheKey(item), clientInvokeInfo);
         }
 
         public Task<ServerInstanceInvokeInfo> GetServerInstanceInvokeInfo()
         {
-            lock (_serverInstanceInvokeInfo)
+            lock (_monitorProvider.InstanceInvokeInfo)
             {
-                return Task.FromResult(_serverInstanceInvokeInfo);
+                return Task.FromResult(_monitorProvider.InstanceInvokeInfo);
             }
         }
 
-        public async Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos()
+        public Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos()
         {
-            var clientInvokeInfos = new List<ClientInvokeInfo>();
-            var cacheKeys =
-                await _distributedCache.SearchKeys(
-                    $"*:InvokeSupervisor:{RpcContext.Context.Connection.LocalAddress}:*");
-            if (cacheKeys.Count <= 0)
-            {
-                return clientInvokeInfos;
-            }
-
-            clientInvokeInfos =
-                (await _distributedCache.GetManyAsync(cacheKeys)).Select(p => p.Value).OrderBy(p => p.ServiceEntryId)
-                .ToList();
-            return clientInvokeInfos;
+            return _monitorProvider.GetServiceEntryInvokeInfos();
         }
 
         private string GetCacheKey((string, ISilkyEndpoint) item)
@@ -139,34 +127,7 @@ namespace Silky.Rpc.Monitor.Invoke
                 $"InvokeSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2.GetAddress()}";
             return cacheKey;
         }
-
-        public async Task ClearCache()
-        {
-            if (EngineContext.Current.IsContainDotNettyTcpModule())
-            {
-                var localTcpEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
-                await RemoveCache(localTcpEndpoint.GetAddress());
-            }
-
-            if (EngineContext.Current.IsContainHttpCoreModule())
-            {
-                var localWebEndpoint = SilkyEndpointHelper.GetLocalWebEndpoint();
-                if (localWebEndpoint != null)
-                {
-                    await RemoveCache(localWebEndpoint.GetAddress());
-                }
-            }
-        }
-
-        private async Task RemoveCache(string address)
-        {
-            var cacheKeys =
-                await _distributedCache.SearchKeys(
-                    $"*:InvokeSupervisor:{address}:*");
-            foreach (var cacheKey in cacheKeys)
-            {
-                await _distributedCache.RemoveAsync(cacheKey);
-            }
-        }
+        
+        
     }
 }
