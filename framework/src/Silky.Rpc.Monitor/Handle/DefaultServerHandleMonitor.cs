@@ -107,10 +107,7 @@ namespace Silky.Rpc.Monitor.Handle
 
         public Task<ServerInstanceHandleInfo> GetServerInstanceHandleInfo()
         {
-            lock (_monitorProvider.InstanceHandleInfo)
-            {
-                return Task.FromResult(_monitorProvider.InstanceHandleInfo);
-            }
+            return _monitorProvider.GetInstanceHandleInfo();
         }
 
         public async Task<IReadOnlyCollection<ServerHandleInfo>> GetServiceEntryHandleInfos()

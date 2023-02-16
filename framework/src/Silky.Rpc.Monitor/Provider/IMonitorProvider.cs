@@ -13,6 +13,10 @@ public interface IMonitorProvider
     
     ServerInstanceHandleInfo InstanceHandleInfo { get; }
     
+    Task<ServerInstanceInvokeInfo> GetInstanceInvokeInfo();
+    
+    Task<ServerInstanceHandleInfo> GetInstanceHandleInfo();
+    
     void SetClientInvokeInfo(string cacheKey, ClientInvokeInfo clientInvokeInfo);
     
     Task<IReadOnlyCollection<ClientInvokeInfo>> GetServiceEntryInvokeInfos();
@@ -25,4 +29,6 @@ public interface IMonitorProvider
     
     Task<IReadOnlyCollection<ServerHandleInfo>> GetServiceEntryHandleInfos();
     Task ClearServerHandleCache();
+
+    
 }

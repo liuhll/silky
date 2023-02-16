@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Silky.Caching;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.Threading;
 using Silky.Rpc.Configuration;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Runtime.Client;
@@ -18,30 +19,35 @@ namespace Silky.Rpc.Monitor.Provider;
 public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 {
     private readonly IDistributedCache<ClientInvokeInfo> _clientInvokeDistributedCache;
+    private readonly IDistributedCache<ServerInstanceInvokeInfo> _serverInstanceInvokeInfoDistributedCache;
     private readonly ConcurrentDictionary<string, ClientInvokeInfo> _clientInvokeCache = new();
 
 
     private readonly IDistributedCache<ServerHandleInfo> _serverHandleDistributedCache;
+    private readonly IDistributedCache<ServerInstanceHandleInfo> _serverInstanceHandleInfoDistributedCache;
+
     private readonly ConcurrentDictionary<string, ServerHandleInfo> _serverHandleInvokeCache = new();
 
-    public ServerInstanceHandleInfo InstanceHandleInfo { get; }
+    public ServerInstanceHandleInfo InstanceHandleInfo { get; private set; }
 
-
-    public ServerInstanceInvokeInfo InstanceInvokeInfo { get; }
+    public ServerInstanceInvokeInfo InstanceInvokeInfo { get; private set; }
 
     private readonly RpcOptions _rpcOptions;
     private readonly Timer _timer;
 
     public DefaultMonitorProvider(IDistributedCache<ClientInvokeInfo> clientInvokeDistributedCache,
         IDistributedCache<ServerHandleInfo> serverHandleDistributedCache,
+        IDistributedCache<ServerInstanceInvokeInfo> serverInstanceInvokeInfoDistributedCache,
+        IDistributedCache<ServerInstanceHandleInfo> serverInstanceHandleInfoDistributedCache,
         IOptionsMonitor<GovernanceOptions> governanceOptions,
         IOptions<RpcOptions> rpcOptions)
     {
         _clientInvokeDistributedCache = clientInvokeDistributedCache;
         _serverHandleDistributedCache = serverHandleDistributedCache;
+        _serverInstanceInvokeInfoDistributedCache = serverInstanceInvokeInfoDistributedCache;
+        _serverInstanceHandleInfoDistributedCache = serverInstanceHandleInfoDistributedCache;
         _rpcOptions = rpcOptions.Value;
-        InstanceInvokeInfo = new();
-        InstanceHandleInfo = new();
+        AsyncHelper.RunSync(async () => await InitThisInstanceInfo());
 
         InstanceHandleInfo.AllowMaxConcurrentCount = governanceOptions.CurrentValue.MaxConcurrentHandlingCount;
         governanceOptions.OnChange(options =>
@@ -49,12 +55,34 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
             InstanceHandleInfo.AllowMaxConcurrentCount = options.MaxConcurrentHandlingCount;
         });
 
-        _timer = new Timer(SubmitMonitorCallBack, null,
+        _timer = new Timer(CollectMonitorCallBack, null,
             TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds),
             TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds));
     }
 
-    private void SubmitMonitorCallBack(object? state)
+    private async Task InitThisInstanceInfo()
+    {
+        var localAddress = GetLocalAddress();
+        InstanceInvokeInfo =
+            await _serverInstanceInvokeInfoDistributedCache.GetAsync($"InstanceInvokeInfo:{localAddress}");
+        if (InstanceInvokeInfo == null)
+        {
+            InstanceInvokeInfo = new();
+            await _serverInstanceInvokeInfoDistributedCache.SetAsync($"InstanceInvokeInfo:{localAddress}",
+                InstanceInvokeInfo);
+        }
+
+        InstanceHandleInfo =
+            await _serverInstanceHandleInfoDistributedCache.GetAsync($"InstanceHandleInfo:{localAddress}");
+        if (InstanceHandleInfo == null)
+        {
+            InstanceHandleInfo = new();
+            await _serverInstanceHandleInfoDistributedCache.SetAsync($"InstanceHandleInfo:{localAddress}",
+                InstanceHandleInfo);
+        }
+    }
+
+    private void CollectMonitorCallBack(object? state)
     {
         foreach (var invokeInfo in _clientInvokeCache)
         {
@@ -65,6 +93,28 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         {
             _serverHandleDistributedCache.Set(serverHandleInfo.Key, serverHandleInfo.Value);
         }
+
+        var localAddress = GetLocalAddress();
+        _serverInstanceInvokeInfoDistributedCache.Set($"InstanceInvokeInfo:{localAddress}",
+            InstanceInvokeInfo);
+        _serverInstanceHandleInfoDistributedCache.Set($"InstanceHandleInfo:{localAddress}",
+            InstanceHandleInfo);
+    }
+
+    public async Task<ServerInstanceInvokeInfo> GetInstanceInvokeInfo()
+    {
+        var localAddress = GetLocalAddress();
+        var instanceInvokeInfo =
+            await _serverInstanceInvokeInfoDistributedCache.GetAsync($"InstanceInvokeInfo:{localAddress}") ?? new();
+        return instanceInvokeInfo;
+    }
+
+    public async Task<ServerInstanceHandleInfo> GetInstanceHandleInfo()
+    {
+        var localAddress = GetLocalAddress();
+        var instanceHandleInfo =
+            await _serverInstanceHandleInfoDistributedCache.GetAsync($"InstanceHandleInfo:{localAddress}") ?? new();
+        return instanceHandleInfo;
     }
 
     public void SetClientInvokeInfo(string cacheKey, ClientInvokeInfo clientInvokeInfo)
@@ -104,6 +154,8 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         {
             await RemoveClientInvokeCache(localAddress);
         }
+
+        await _serverInstanceInvokeInfoDistributedCache.RemoveAsync($"InstanceInvokeInfo:{localAddress}");
     }
 
     public ServerHandleInfo GetServerHandleInfo(string cacheKey)
@@ -143,7 +195,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         }
 
         var cacheValues = await _serverHandleDistributedCache.GetManyAsync(cacheKeys);
-        
+
         var serverHandleInfos = cacheValues.Select(p => p.Value).ToArray();
         serviceEntryHandleInfos.AddRange(serverHandleInfos);
 
@@ -157,6 +209,8 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         {
             await RemoveServerHandleCache(localAddress);
         }
+
+        await _serverInstanceHandleInfoDistributedCache.RemoveAsync($"InstanceHandleInfo:{localAddress}");
     }
 
     private async Task RemoveClientInvokeCache(string address)
