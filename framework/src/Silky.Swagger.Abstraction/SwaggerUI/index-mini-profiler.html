@@ -264,10 +264,12 @@
             ui.preauthorizeApiKey("Bearer", accessToken);
         } else if (accessToken == "invalid_token") {
             window.localStorage.removeItem(tokenKey);
+            ui.authActions.logout(["Bearer"]);
         } else if (silkyResultStatus && 
             (silkyResultStatus.toString() === "401" || silkyResultStatus.toString() === "4011" 
                 || silkyResultStatus.toString() === "UnAuthentication" || silkyResultStatus.toString() === "IssueTokenError")) {
             window.localStorage.removeItem(tokenKey);
+            ui.authActions.logout(["Bearer"]);
         }
 
         return response;
