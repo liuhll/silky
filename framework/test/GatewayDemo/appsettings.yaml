@@ -36,6 +36,9 @@ distributedCache:
   redis:
     isEnabled: true
     configuration: 127.0.0.1:6379,defaultDatabase=0
+#  globalCacheEntryOptions:
+#    slidingExpiration: 100
+    
 allowedHosts: "*"
 swaggerDocument:
   organizationMode: AllAndGroup

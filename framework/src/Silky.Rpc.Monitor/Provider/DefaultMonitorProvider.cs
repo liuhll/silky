@@ -46,7 +46,6 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         _serverHandleDistributedCache = serverHandleDistributedCache;
         _serverInstanceInvokeInfoDistributedCache = serverInstanceInvokeInfoDistributedCache;
         _serverInstanceHandleInfoDistributedCache = serverInstanceHandleInfoDistributedCache;
-        CacheIgnoreMultiTenancy();
         _rpcOptions = rpcOptions.Value;
         AsyncHelper.RunSync(async () => await InitThisInstanceInfo());
 
@@ -59,14 +58,6 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         _timer = new Timer(CollectMonitorCallBack, null,
             TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds),
             TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds));
-    }
-
-    private void CacheIgnoreMultiTenancy()
-    {
-        _clientInvokeDistributedCache.SetIgnoreMultiTenancy(true);
-        _serverHandleDistributedCache.SetIgnoreMultiTenancy(true);
-        _serverInstanceInvokeInfoDistributedCache.SetIgnoreMultiTenancy(true);
-        _serverInstanceHandleInfoDistributedCache.SetIgnoreMultiTenancy(true);
     }
 
     private async Task InitThisInstanceInfo()

@@ -19,6 +19,7 @@ using Microsoft.Extensions.Options;
 using Silky.Caching.Configuration;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.Runtime.Session;
 
 namespace Silky.Caching
 {
@@ -593,7 +594,7 @@ namespace Silky.Caching
             CacheName = CacheNameAttribute.GetCacheName(typeof(TCacheItem));
 
             //IgnoreMultiTenancy
-            //IgnoreMultiTenancy = typeof(TCacheItem).IsDefined(typeof(IgnoreMultiTenancyAttribute), true);
+            IgnoreMultiTenancy = typeof(TCacheItem).IsDefined(typeof(IgnoreMultiTenancyAttribute), true);
 
             //Configure default cache entry options
             DefaultCacheOptions = GetDefaultCacheEntryOptions();
@@ -601,7 +602,7 @@ namespace Silky.Caching
 
         protected DistributedCacheEntryOptions GetDefaultCacheEntryOptions()
         {
-            return new DistributedCacheEntryOptions();
+            return _distributedCacheOption.GlobalCacheEntryOptions;
         }
 
         protected virtual void HandleException(Exception ex)

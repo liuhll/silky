@@ -1,7 +1,9 @@
 using System;
+using Silky.Core.Runtime.Session;
 
 namespace Silky.Rpc.Runtime.Server
 {
+    [IgnoreMultiTenancy]
     public class ServerInstanceHandleInfo
     {
         public DateTime? FirstHandleTime { get; set; }
@@ -14,11 +16,9 @@ namespace Silky.Rpc.Runtime.Server
         public int FaultHandleCount { get; set; } = 0;
         public int TotalSeriousErrorCount { get; set; } = 0;
         public int TotalHandleCount { get; set; } = 0;
-
         public DateTime? FinalSeriousErrorTime { get; set; }
         public int ConcurrentCount { get; set; } = 0;
         public int MaxConcurrentCount { get; set; } = 0;
-
         public int AllowMaxConcurrentCount { get; set; }
     }
 }

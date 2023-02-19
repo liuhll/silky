@@ -1,7 +1,9 @@
 using System;
+using Silky.Core.Runtime.Session;
 
 namespace Silky.Rpc.Runtime.Server
 {
+    [IgnoreMultiTenancy]
     public class ServerHandleInfo
     {
         public DateTime? FirstHandleTime { get; set; } = DateTime.Now;

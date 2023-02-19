@@ -1,7 +1,9 @@
 using System;
+using Silky.Core.Runtime.Session;
 
 namespace Silky.Rpc.Runtime.Client
 {
+    [IgnoreMultiTenancy]
     public class ClientInvokeInfo
     {
         public string ServiceEntryId { get; set; }

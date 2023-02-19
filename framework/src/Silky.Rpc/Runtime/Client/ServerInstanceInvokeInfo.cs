@@ -1,7 +1,9 @@
 using System;
+using Silky.Core.Runtime.Session;
 
 namespace Silky.Rpc.Runtime.Client
 {
+    [IgnoreMultiTenancy]
     public class ServerInstanceInvokeInfo
     {
         public DateTime? FirstInvokeTime { get; set; }
