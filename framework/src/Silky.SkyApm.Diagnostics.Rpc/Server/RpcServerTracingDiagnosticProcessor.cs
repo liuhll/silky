@@ -34,8 +34,8 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
         public void BeginRpcServerHandle([Object] RpcInvokeEventData eventData)
         {
             var rpcConnection = RpcContext.Context.Connection;
-            var localEndpoint = rpcConnection.LocalAddress;
-            var clientAddress = rpcConnection.ClientAddress;
+            var localUri = rpcConnection.LocalUri;
+            var clientUri = rpcConnection.ClientUri;
             var serviceKey = RpcContext.Context.GetServiceKey();
             var context = _silkySegmentContextFactory.GetEntryContext(eventData.ServiceEntryId);
             context.Span.AddLog(
@@ -49,9 +49,9 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
 
             context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
-            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientAddress);
+            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientUri);
             context.Span.AddTag(SilkyTags.RPC_REMOTE_PORT, rpcConnection.RemotePort?.ToString());
-            context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localEndpoint);
+            context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localUri);
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.EndRpcServerHandler)]

@@ -33,8 +33,8 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Fallback
         public void RpcFallbackBegin([Object] FallbackEventData eventData)
         {
             var rpcConnection = RpcContext.Context.Connection;
-            var localEndpoint = rpcConnection.LocalAddress;
-            var clientAddress = rpcConnection.ClientAddress;
+            var localUri = rpcConnection.LocalUri;
+            var clientUri = rpcConnection.ClientUri;
             var context = _silkySegmentContextFactory.GetCurrentContext(GetOperationName(eventData.ServiceEntryId));
             context.Span.AddLog(
                 LogEvent.Event("Fallback Begin Handle"),
@@ -46,9 +46,9 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Fallback
                                  $"--> FallbackType Method:{eventData.FallbackProvider.MethodName}.{Environment.NewLine}"));
 
             context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
-            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientAddress);
+            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientUri);
             context.Span.AddTag(SilkyTags.RPC_REMOTE_PORT, rpcConnection.RemotePort?.ToString());
-            context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localEndpoint);
+            context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localUri);
             context.Span.AddTag(SilkyTags.FALLBACK_EXEC_TYPE, eventData.FallbackExecType.ToString());
             context.Span.AddTag(SilkyTags.FALLBACK_TYPE, eventData.FallbackProvider.Type.FullName);
             context.Span.AddTag(SilkyTags.FALLBACK_METHOD, eventData.FallbackProvider.MethodName);

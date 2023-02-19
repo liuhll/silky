@@ -67,7 +67,7 @@ namespace Silky.Rpc.Runtime.Server
                     ServiceEntryId = serviceEntryId,
                     StatusCode = statusCode,
                     ElapsedTimeMs = now - tracingTimestamp.Value,
-                    ClientAddress = RpcContext.Context.Connection.ClientAddress,
+                    ClientAddress = RpcContext.Context.Connection.ClientUri,
                     Exception = ex
                 };
                 s_diagnosticListener.Write(RpcDiagnosticListenerNames.ErrorRpcServerHandler, eventData);

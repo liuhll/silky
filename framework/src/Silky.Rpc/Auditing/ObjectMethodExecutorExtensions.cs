@@ -30,7 +30,7 @@ public static class ObjectMethodExecutorExtensions
                 auditLogActionInfo = new AuditLogActionInfo()
                 {
                     HostName = EngineContext.Current.HostName,
-                    HostAddress = RpcContext.Context.Connection.LocalAddress,
+                    HostAddress = RpcContext.Context.Connection.LocalUri,
                     Parameters = serializer.Serialize(parameters),
                     ExecutionTime = DateTimeOffset.Now,
                     MethodName = executor.MethodInfo.Name,

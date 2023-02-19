@@ -25,11 +25,11 @@ namespace Silky.Core.Extensions
             return engine.ContainModule("WebSocket");
         }
 
-        // public static bool IsContainDotNettyTcpModule([NotNull] this IEngine engine)
-        // {
-        //     Check.NotNull(engine, nameof(engine));
-        //     return engine.ContainModule("DotNettyTcp");
-        // }
+        public static bool IsContainDotNettyTcpModule([NotNull] this IEngine engine)
+        {
+            Check.NotNull(engine, nameof(engine));
+            return engine.ContainModule("DotNettyTcp");
+        }
 
         public static bool IsRpcServerProvider([NotNull] this IEngine engine)
         {

@@ -10,7 +10,8 @@ namespace Silky.Rpc.Extensions
 {
     public static class RpcContextExtensions
     {
-        public static void SetRcpInvokeAddressInfo(this RpcContext rpcContext, SilkyEndpointDescriptor serverSilkyEndpoint)
+        public static void SetRcpInvokeAddressInfo(this RpcContext rpcContext,
+            SilkyEndpointDescriptor serverSilkyEndpoint)
         {
             rpcContext
                 .SetInvokeAttachment(AttachmentKeys.SelectedServerHost, serverSilkyEndpoint.Host);
@@ -20,20 +21,24 @@ namespace Silky.Rpc.Extensions
                 .SetInvokeAttachment(AttachmentKeys.SelectedServerServiceProtocol,
                     serverSilkyEndpoint.ServiceProtocol.ToString());
 
+            var localSilkyEndpoint = SilkyEndpointHelper.GetHostSilkyEndpoint();
+            if (localSilkyEndpoint != null)
+            {
+                rpcContext.SetInvokeAttachment(AttachmentKeys.ClientHost, localSilkyEndpoint.Host);
+                rpcContext.SetInvokeAttachment(AttachmentKeys.ClientServiceProtocol,
+                    localSilkyEndpoint.ServiceProtocol.ToString());
+                rpcContext.SetInvokeAttachment(AttachmentKeys.ClientPort, localSilkyEndpoint.Port.ToString());
+            }
 
-            var localRpcEndpointDescriptor = SilkyEndpointHelper.GetLocalRpcEndpoint();
-            rpcContext.SetInvokeAttachment(AttachmentKeys.ClientHost, localRpcEndpointDescriptor.Host);
-            rpcContext.SetInvokeAttachment(AttachmentKeys.ClientServiceProtocol, localRpcEndpointDescriptor.ServiceProtocol.ToString());
-            rpcContext.SetInvokeAttachment(AttachmentKeys.ClientPort, localRpcEndpointDescriptor.Port.ToString());
             if (RpcContext.Context.GetLocalHost().IsNullOrEmpty())
             {
-                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localRpcEndpointDescriptor.Host);
-                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localRpcEndpointDescriptor.Port.ToString());
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalAddress, localSilkyEndpoint.Host);
+                RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalPort, localSilkyEndpoint.Port.ToString());
                 RpcContext.Context.SetInvokeAttachment(AttachmentKeys.LocalServiceProtocol,
-                    localRpcEndpointDescriptor.ServiceProtocol.ToString());
+                    localSilkyEndpoint.ServiceProtocol.ToString());
             }
         }
-        
+
         public static void SetAuditingActionLog(this RpcContext rpcContext, AuditLogActionInfo auditLogActionInfo)
         {
             var auditSerializer = EngineContext.Current.Resolve<IAuditSerializer>();

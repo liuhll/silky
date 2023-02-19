@@ -7,5 +7,10 @@ namespace Silky.Rpc.Endpoint
             return $"{silkyEndpoint.Host}:{silkyEndpoint.Port}";
         }
         
+        public static string GetUri(this ISilkyEndpoint silkyEndpoint)
+        {
+            return $"{silkyEndpoint.ServiceProtocol}://{silkyEndpoint.Host}:{silkyEndpoint.Port}".ToLower();
+        }
+        
     }
 }

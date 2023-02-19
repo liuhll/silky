@@ -37,14 +37,14 @@ namespace Silky.Rpc.Runtime.Server
             var sp = Stopwatch.StartNew();
             var messageId = RpcContext.Context.GetMessageId();
             var rpcConnection = RpcContext.Context.Connection;
-            var clientRpcEndpoint = rpcConnection.ClientAddress;
+            var clientUri = rpcConnection.ClientUri;
             Logger.LogDebug(
-                "Received a request from the client [{0}].{1}messageId:[{2}],serviceEntryId:[{3}]", clientRpcEndpoint,
+                "Received a request from the client [{0}].{1}messageId:[{2}],serviceEntryId:[{3}]", clientUri,
                 Environment.NewLine, messageId, message.ServiceEntryId);
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
             var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
-            var serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientRpcEndpoint));
+            var serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientUri));
             var remoteResultMessage = new RemoteResultMessage()
             {
                 ServiceEntryId = serviceEntry?.Id
@@ -115,12 +115,12 @@ namespace Silky.Rpc.Runtime.Server
                 context[PollyContextNames.ElapsedTimeMs] = sp.ElapsedMilliseconds;
                 if (isHandleSuccess)
                 {
-                    serverHandleMonitor?.ExecSuccess((serviceEntry?.Id, clientRpcEndpoint), sp.ElapsedMilliseconds,
+                    serverHandleMonitor?.ExecSuccess((serviceEntry?.Id, clientUri), sp.ElapsedMilliseconds,
                         serverHandleInfo);
                 }
                 else
                 {
-                    serverHandleMonitor?.ExecFail((serviceEntry?.Id, clientRpcEndpoint),
+                    serverHandleMonitor?.ExecFail((serviceEntry?.Id, clientUri),
                         !remoteResultMessage.StatusCode.IsFriendlyStatus(), sp.ElapsedMilliseconds, serverHandleInfo);
                 }
 

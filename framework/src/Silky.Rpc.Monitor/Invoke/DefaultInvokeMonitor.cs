@@ -52,7 +52,7 @@ namespace Silky.Rpc.Monitor.Invoke
             var cacheKey = GetCacheKey(item);
             var clientInvokeInfo = _monitorProvider.GetInvokeInfo(cacheKey);
             clientInvokeInfo.IsEnable = true;
-            clientInvokeInfo.Address = item.Item2.GetAddress();
+            clientInvokeInfo.Address = item.Item2.GetUri();
             clientInvokeInfo.ServiceEntryId = item.Item1;
             clientInvokeInfo.TotalInvokeCount++;
             clientInvokeInfo.FinalInvokeTime = DateTime.Now;

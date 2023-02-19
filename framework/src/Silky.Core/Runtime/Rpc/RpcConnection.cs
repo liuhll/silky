@@ -20,8 +20,8 @@ namespace Silky.Core.Runtime.Rpc
 
         public string LocalAddress => $"{LocalHost}:{LocalPort}";
 
-        public string ClientRpcEndpoint => $"{ClientServiceProtocol}://{ClientHost}:{ClientPort}";
+        public string ClientUri => $"{ClientServiceProtocol}://{ClientHost}:{ClientPort}".ToLower();
 
-        public string LocalRpcEndpoint => $"{LocalServiceProtocol}://{LocalHost}:{LocalPort}";
+        public string LocalUri => $"{LocalServiceProtocol}://{LocalHost}:{LocalPort}".ToLower();
     }
 }

@@ -223,19 +223,10 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 
     private string GetLocalAddress()
     {
-        if (EngineContext.Current.IsRpcServerProvider())
+        var hostSilkyEndpoint = SilkyEndpointHelper.GetHostSilkyEndpoint();
+        if (hostSilkyEndpoint != null)
         {
-            var localTcpEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
-            return localTcpEndpoint.GetAddress();
-        }
-
-        if (EngineContext.Current.IsContainHttpCoreModule())
-        {
-            var localWebEndpoint = SilkyEndpointHelper.GetLocalWebEndpoint();
-            if (localWebEndpoint != null)
-            {
-                return localWebEndpoint.GetAddress();
-            }
+            return hostSilkyEndpoint.GetAddress();
         }
 
         return null;

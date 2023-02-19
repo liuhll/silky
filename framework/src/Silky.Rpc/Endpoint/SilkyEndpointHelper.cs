@@ -71,6 +71,25 @@ namespace Silky.Rpc.Endpoint
             return silkyEndpoint;
         }
 
+        public static ISilkyEndpoint GetHostSilkyEndpoint()
+        {
+            if (EngineContext.Current.IsRpcServerProvider())
+            {
+                var localTcpEndpoint = GetLocalRpcEndpoint();
+                return localTcpEndpoint;
+            }
+
+            if (EngineContext.Current.IsContainHttpCoreModule())
+            {
+                var localWebEndpoint = GetLocalWebEndpoint();
+                if (localWebEndpoint != null)
+                {
+                    return localWebEndpoint;
+                }
+            }
+            return null;
+        }
+
         public static ISilkyEndpoint GetLocalRpcEndpoint()
         {
             

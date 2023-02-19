@@ -41,7 +41,7 @@ public class AuditingServerFilter : IAsyncServerFilter
                 ExecutionTime = DateTimeOffset.Now,
                 MethodName = context.ServiceEntry.MethodInfo.Name,
                 HostName = EngineContext.Current.HostName,
-                HostAddress = RpcContext.Context.Connection.LocalAddress,
+                HostAddress = RpcContext.Context.Connection.LocalUri,
                 ServiceName = context.ServiceEntry.ServiceEntryDescriptor.ServiceName,
                 ServiceEntryId = context.ServiceEntry.Id,
                 ServiceKey = context.ServiceKey,

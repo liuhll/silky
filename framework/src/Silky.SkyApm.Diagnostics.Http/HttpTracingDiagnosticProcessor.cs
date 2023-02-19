@@ -145,8 +145,8 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
         [DiagnosticName(HttpDiagnosticListenerNames.BeginHttpHandle)]
         public void BeginHttpHandle([Object] HttpHandleEventData eventData)
         {
-            var localAddress = RpcContext.Context.Connection.LocalAddress;
-            var clientAddress = RpcContext.Context.Connection.ClientAddress;
+            var localUrl = RpcContext.Context.Connection.LocalUri;
+            var clientUrl = RpcContext.Context.Connection.ClientUri;
             var serviceKey = RpcContext.Context.GetServiceKey();
 
             var context =
@@ -159,8 +159,8 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
             context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.IS_LOCAL_SERVICEENTRY, eventData.IsLocal);
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
-            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientAddress);
-            context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localAddress);
+            context.Span.AddTag(SilkyTags.RPC_CLIENT_ENDPOINT, clientUrl);
+            context.Span.AddTag(SilkyTags.RPC_LOCAL_RPCENDPOINT, localUrl);
             context.Span.AddTag(SilkyTags.ISGATEWAY, RpcContext.Context.IsGateway());
         }
 

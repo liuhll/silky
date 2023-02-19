@@ -75,10 +75,10 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
             var context = _exitSegmentContextAccessor.Context;
             if (context == null)
             {
-                var serverEndpoint = RpcContext.Context.Connection.LocalAddress;
+                var serverAddress = RpcContext.Context.Connection.LocalAddress;
                 var operationName = isLocal ? $"[ServerHandle]{serviceEntryId}" : $"[ClientInvoke]{serviceEntryId}";
                 context = _tracingContext.CreateExitSegmentContext(operationName,
-                    serverEndpoint, new SilkyCarrierHeaderCollection(RpcContext.Context));
+                    serverAddress, new SilkyCarrierHeaderCollection(RpcContext.Context));
 
                 context.Span.SpanLayer = SpanLayer.RPC_FRAMEWORK;
                 context.Span.Component = SilkyComponents.SilkyRpc;
