@@ -65,6 +65,11 @@ namespace Silky.Caching
             SetDefaultOptions();
         }
 
+        public virtual void SetIgnoreMultiTenancy(bool ignoreMultiTenancy)
+        {
+            IgnoreMultiTenancy = ignoreMultiTenancy;
+        }
+
 
         public TCacheItem Get(TCacheKey key, bool? hideErrors = null)
         {
@@ -464,7 +469,7 @@ namespace Silky.Caching
             RemoveRealCache();
         }
 
-        public async virtual Task RemoveAsync(TCacheKey key, bool? hideErrors = null, CancellationToken token = default)
+        public virtual async Task RemoveAsync(TCacheKey key, bool? hideErrors = null, CancellationToken token = default)
         {
             async Task RemoveRealCache()
             {
@@ -487,6 +492,84 @@ namespace Silky.Caching
             }
 
             await RemoveRealCache();
+        }
+
+        public virtual async Task RemoveNormalizeKeyAsync(string key, bool? hideErrors = null,
+            CancellationToken token = default)
+        {
+            async Task RemoveRealCache()
+            {
+                hideErrors = hideErrors ?? _distributedCacheOption.HideErrors;
+
+                try
+                {
+                    await Cache.RemoveAsync(key, CancellationTokenProvider.FallbackToProvider(token));
+                }
+                catch (Exception ex)
+                {
+                    if (hideErrors == true)
+                    {
+                        await HandleExceptionAsync(ex);
+                        return;
+                    }
+
+                    throw;
+                }
+            }
+
+            await RemoveRealCache();
+        }
+
+        public async Task RemoveMatchKeyAsync(TCacheKey key, bool? hideErrors = null,
+            CancellationToken token = default)
+        {
+            using (await SyncSemaphore.LockAsync(token))
+            {
+                try
+                {
+                    if (Cache is not ICacheSupportsMultipleItems cacheSupportsMultipleItems)
+                    {
+                        var matchKeys = await SearchKeys(key);
+                        foreach (var matchKey in matchKeys)
+                        {
+                            await RemoveNormalizeKeyAsync(matchKey, hideErrors, token);
+                        }
+                    }
+                    else
+                    {
+                        var keyPattern = CacheName.IsNullOrEmpty() ? key.ToString() : NormalizeKey(key);
+                        await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, token);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (hideErrors == true)
+                    {
+                        await HandleExceptionAsync(ex);
+                    }
+
+                    Logger.LogException(ex);
+                    throw;
+                }
+            }
+        }
+
+        public async Task<IReadOnlyCollection<string>> SearchKeys(TCacheKey key)
+        {
+            IReadOnlyCollection<string> normalizeKeys;
+            var distributedInterceptCache = (Cache as ICacheSupportsMultipleItems);
+            var keyPattern = CacheName.IsNullOrEmpty() ? key.ToString() : NormalizeKey(key);
+            if (distributedInterceptCache == null)
+            {
+                var cacheKeys = GetCacheKeys();
+                normalizeKeys = cacheKeys.Where(k => Regex.IsMatch(k, keyPattern)).ToImmutableArray();
+            }
+            else
+            {
+                normalizeKeys = await distributedInterceptCache.SearchKeys(keyPattern);
+            }
+
+            return normalizeKeys.Select(GetKey).Where(p => !p.IsNullOrEmpty()).ToImmutableArray();
         }
 
         protected virtual string NormalizeKey(TCacheKey key)
@@ -712,42 +795,6 @@ namespace Silky.Caching
                 throw;
             }
         }
-    }
-
-    public class DistributedCache<TCacheItem> : DistributedCache<TCacheItem, string>, IDistributedCache<TCacheItem>
-        where TCacheItem : class
-    {
-        public DistributedCache(
-            IOptions<SilkyDistributedCacheOptions> distributedCacheOption,
-            IDistributedCache cache,
-            ICancellationTokenProvider cancellationTokenProvider,
-            IDistributedCacheSerializer serializer,
-            IDistributedCacheKeyNormalizer keyNormalizer) : base(
-            distributedCacheOption: distributedCacheOption,
-            cache: cache,
-            cancellationTokenProvider: cancellationTokenProvider,
-            serializer: serializer,
-            keyNormalizer: keyNormalizer)
-        {
-        }
-
-        public async Task<IReadOnlyCollection<string>> SearchKeys(string keyPattern)
-        {
-            IReadOnlyCollection<string> normalizeKeys;
-            var distributedInterceptCache = (Cache as ICacheSupportsMultipleItems);
-            keyPattern = CacheName.IsNullOrEmpty() ? keyPattern : NormalizeKey(keyPattern);
-            if (distributedInterceptCache == null)
-            {
-                var cacheKeys = GetCacheKeys();
-                normalizeKeys = cacheKeys.Where(k => Regex.IsMatch(k, keyPattern)).ToImmutableArray();
-            }
-            else
-            {
-                normalizeKeys = await distributedInterceptCache.SearchKeys(keyPattern);
-            }
-
-            return normalizeKeys.Select(GetKey).Where(p => !p.IsNullOrEmpty()).ToImmutableArray();
-        }
 
         private string GetKey(string normalizeKey)
         {
@@ -776,6 +823,24 @@ namespace Silky.Caching
             }
 
             return keys;
+        }
+    }
+
+    public class DistributedCache<TCacheItem> : DistributedCache<TCacheItem, string>, IDistributedCache<TCacheItem>
+        where TCacheItem : class
+    {
+        public DistributedCache(
+            IOptions<SilkyDistributedCacheOptions> distributedCacheOption,
+            IDistributedCache cache,
+            ICancellationTokenProvider cancellationTokenProvider,
+            IDistributedCacheSerializer serializer,
+            IDistributedCacheKeyNormalizer keyNormalizer) : base(
+            distributedCacheOption: distributedCacheOption,
+            cache: cache,
+            cancellationTokenProvider: cancellationTokenProvider,
+            serializer: serializer,
+            keyNormalizer: keyNormalizer)
+        {
         }
     }
 }

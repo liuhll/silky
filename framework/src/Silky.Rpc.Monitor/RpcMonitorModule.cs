@@ -23,7 +23,7 @@ namespace Silky.Rpc.Monitor
             }
         }
 
-        public override async Task Initialize(ApplicationInitializationContext context)
+        public override async Task PostInitialize(ApplicationInitializationContext context)
         {
             await CleanMonitorCache(context.ServiceProvider);
         }

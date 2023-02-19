@@ -46,6 +46,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         _serverHandleDistributedCache = serverHandleDistributedCache;
         _serverInstanceInvokeInfoDistributedCache = serverInstanceInvokeInfoDistributedCache;
         _serverInstanceHandleInfoDistributedCache = serverInstanceHandleInfoDistributedCache;
+        CacheIgnoreMultiTenancy();
         _rpcOptions = rpcOptions.Value;
         AsyncHelper.RunSync(async () => await InitThisInstanceInfo());
 
@@ -58,6 +59,14 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         _timer = new Timer(CollectMonitorCallBack, null,
             TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds),
             TimeSpan.FromSeconds(_rpcOptions.CollectMonitorInfoIntervalSeconds));
+    }
+
+    private void CacheIgnoreMultiTenancy()
+    {
+        _clientInvokeDistributedCache.SetIgnoreMultiTenancy(true);
+        _serverHandleDistributedCache.SetIgnoreMultiTenancy(true);
+        _serverInstanceInvokeInfoDistributedCache.SetIgnoreMultiTenancy(true);
+        _serverInstanceHandleInfoDistributedCache.SetIgnoreMultiTenancy(true);
     }
 
     private async Task InitThisInstanceInfo()
@@ -152,10 +161,9 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         var localAddress = GetLocalAddress();
         if (!localAddress.IsNullOrEmpty())
         {
-            await RemoveClientInvokeCache(localAddress);
+            await _clientInvokeDistributedCache.RemoveMatchKeyAsync($"InvokeSupervisor:{localAddress}:*");
+            await _serverInstanceInvokeInfoDistributedCache.RemoveAsync($"InstanceInvokeInfo:{localAddress}");
         }
-
-        await _serverInstanceInvokeInfoDistributedCache.RemoveAsync($"InstanceInvokeInfo:{localAddress}");
     }
 
     public ServerHandleInfo GetServerHandleInfo(string cacheKey)
@@ -187,7 +195,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 
         var cacheKeys =
             await _serverHandleDistributedCache.SearchKeys(
-                $"ServerHandleSupervisor:{localAddress}:*");
+                $"HandleSupervisor:{localAddress}:*");
 
         if (cacheKeys.Count <= 0)
         {
@@ -207,33 +215,11 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         var localAddress = GetLocalAddress();
         if (!localAddress.IsNullOrEmpty())
         {
-            await RemoveServerHandleCache(localAddress);
-        }
-
-        await _serverInstanceHandleInfoDistributedCache.RemoveAsync($"InstanceHandleInfo:{localAddress}");
-    }
-
-    private async Task RemoveClientInvokeCache(string address)
-    {
-        var cacheKeys =
-            await _clientInvokeDistributedCache.SearchKeys(
-                $"InvokeSupervisor:{address}:*");
-        foreach (var cacheKey in cacheKeys)
-        {
-            await _clientInvokeDistributedCache.RemoveAsync(cacheKey);
+            await _serverHandleDistributedCache.RemoveMatchKeyAsync($"HandleSupervisor:{localAddress}:*");
+            await _serverInstanceHandleInfoDistributedCache.RemoveAsync($"InstanceHandleInfo:{localAddress}");
         }
     }
 
-    private async Task RemoveServerHandleCache(string address)
-    {
-        var cacheKeys =
-            await _serverHandleDistributedCache.SearchKeys(
-                $"ServerHandleSupervisor:{address}:*");
-        foreach (var cacheKey in cacheKeys)
-        {
-            await _serverHandleDistributedCache.RemoveAsync(cacheKey);
-        }
-    }
 
     private string GetLocalAddress()
     {

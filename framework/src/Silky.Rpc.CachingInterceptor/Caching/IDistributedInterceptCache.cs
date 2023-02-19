@@ -11,12 +11,8 @@ namespace Silky.Rpc.CachingInterceptor
     public interface IDistributedInterceptCache : IDistributedCache<object, string>, IScopedDependency
     {
         void UpdateCacheName(string cacheName);
-
-        void SetIgnoreMultiTenancy(bool ignoreMultiTenancy);
-
-        Task RemoveMatchKeyAsync([NotNull] string keyPattern, bool? hideErrors = null,
-            CancellationToken token = default);
-
+        
+        
         Task<object> GetOrAddAsync(
             [NotNull] string key,
             [NotNull] Type type,

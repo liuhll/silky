@@ -38,45 +38,7 @@ namespace Silky.Rpc.CachingInterceptor
         {
             CacheName = cacheName;
         }
-
-        public void SetIgnoreMultiTenancy(bool ignoreMultiTenancy)
-        {
-            IgnoreMultiTenancy = ignoreMultiTenancy;
-        }
-
-        public async Task RemoveMatchKeyAsync(string keyPattern, bool? hideErrors = null,
-            CancellationToken token = default)
-        {
-            using (await SyncSemaphore.LockAsync(token))
-            {
-                try
-                {
-                    keyPattern = CacheName.IsNullOrEmpty() ? keyPattern : NormalizeKey(keyPattern);
-                    if (Cache is not ICacheSupportsMultipleItems cacheSupportsMultipleItems)
-                    {
-                        var matchKeys = SearchKeys(keyPattern);
-                        foreach (var matchKey in matchKeys)
-                        {
-                            await RemoveAsync(matchKey, hideErrors, token);
-                        }
-                    }
-                    else
-                    {
-                        await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, token);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (hideErrors == true)
-                    {
-                        await HandleExceptionAsync(ex);
-                    }
-
-                    Logger.LogException(ex);
-                    throw;
-                }
-            }
-        }
+        
 
         public async Task<object> GetOrAddAsync(string key, Type type, Func<Task<object>> factory,
             Func<DistributedCacheEntryOptions> optionsFactory = null, bool? hideErrors = null,

@@ -10,6 +10,8 @@ namespace Silky.Caching
     public interface IDistributedCache<TCacheItem, TCacheKey>
         where TCacheItem : class
     {
+        void SetIgnoreMultiTenancy(bool ignoreMultiTenancy);
+        
         TCacheItem Get(
             TCacheKey key,
             bool? hideErrors = null
@@ -96,11 +98,16 @@ namespace Silky.Caching
             bool? hideErrors = null,
             CancellationToken token = default
         );
+        
+        Task RemoveMatchKeyAsync(TCacheKey key, bool? hideErrors = null,
+            CancellationToken token = default);
+        
+        Task<IReadOnlyCollection<string>> SearchKeys(TCacheKey key);
     }
 
     public interface IDistributedCache<TCacheItem> : IDistributedCache<TCacheItem, string>
         where TCacheItem : class
     {
-        Task<IReadOnlyCollection<string>> SearchKeys(string keyPattern);
+       
     }
 }

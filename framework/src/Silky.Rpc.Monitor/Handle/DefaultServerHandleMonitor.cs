@@ -119,7 +119,7 @@ namespace Silky.Rpc.Monitor.Handle
         private string GetCacheKey((string, string) item)
         {
             var cacheKey =
-                $"ServerHandleSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2}";
+                $"HandleSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2}";
             return cacheKey;
         }
         
