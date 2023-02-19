@@ -84,7 +84,7 @@ namespace Silky.Transaction.Repository.Redis
 
         public async Task<int> RemoveTransactionByDate(DateTime date)
         {
-            var transactionKeyPattern = "*" + GetTransactionKey("*");
+            var transactionKeyPattern = GetTransactionKey("*");
             var transactionKeys = await _participantDistributedCache.SearchKeys(transactionKeyPattern);
             if (transactionKeys.IsNullOrEmpty())
             {
@@ -236,7 +236,7 @@ namespace Silky.Transaction.Repository.Redis
 
         public async Task<IReadOnlyCollection<ITransaction>> ListLimitByDelay(DateTime dateTime, int limit)
         {
-            var transactionKeyPattern = "*" + GetTransactionKey("*");
+            var transactionKeyPattern = GetTransactionKey("*");
             var transactionKeys = await _participantDistributedCache.SearchKeys(transactionKeyPattern);
 
             var transactions = (await _transactionDistributedCache.GetManyAsync(transactionKeys)).Select(p => p.Value);
@@ -250,7 +250,7 @@ namespace Silky.Transaction.Repository.Redis
 
         private async Task<IReadOnlyCollection<string>> GetParticipantKeys(string transId)
         {
-            var participantsCacheKeyPattern = "*" + GetParticipantKey(transId, "*");
+            var participantsCacheKeyPattern = GetParticipantKey(transId, "*");
             var participantKeys =
                 await _participantDistributedCache.SearchKeys(participantsCacheKeyPattern);
             return participantKeys.ToArray();

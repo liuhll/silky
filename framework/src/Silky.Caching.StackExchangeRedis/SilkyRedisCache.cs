@@ -134,16 +134,16 @@ namespace Silky.Caching.StackExchangeRedis
             await Task.WhenAll(PipelineSetMany(items, options));
         }
 
-        public async Task RemoveMatchKeyAsync(string key, bool? hideErrors, CancellationToken token)
+        public async Task RemoveMatchKeyAsync(string pattern, CancellationToken token)
         {
-            Check.NotNull(key, nameof(key));
+            Check.NotNull(pattern, nameof(pattern));
 
             await ConnectAsync(token);
 
             RedisDatabase.ScriptEvaluate(@" local keys = redis.call('keys', ARGV[1]) 
                 for i=1,#keys,5000 do 
                 redis.call('del', unpack(keys, i, math.min(i+4999, #keys)))
-                end", values: new RedisValue[] { Instance + key });
+                end", values: new RedisValue[] { Instance + pattern });
         }
 
         public async Task<IReadOnlyCollection<string>> SearchKeys(string pattern, CancellationToken token = default)

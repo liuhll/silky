@@ -133,7 +133,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 
         var cacheKeys =
             await _clientInvokeDistributedCache.SearchKeys(
-                $"*:InvokeSupervisor:{localAddress}:*");
+                $"InvokeSupervisor:{localAddress}:*");
         if (cacheKeys.Count <= 0)
         {
             return clientInvokeInfos;
@@ -187,7 +187,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 
         var cacheKeys =
             await _serverHandleDistributedCache.SearchKeys(
-                $"*:ServerHandleSupervisor:{localAddress}:*");
+                $"ServerHandleSupervisor:{localAddress}:*");
 
         if (cacheKeys.Count <= 0)
         {
@@ -196,7 +196,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 
         var cacheValues = await _serverHandleDistributedCache.GetManyAsync(cacheKeys);
 
-        var serverHandleInfos = cacheValues.Select(p => p.Value).ToArray();
+        var serverHandleInfos = cacheValues.Where(p=> p.Value != null).Select(p => p.Value).ToArray();
         serviceEntryHandleInfos.AddRange(serverHandleInfos);
 
         return serviceEntryHandleInfos.OrderBy(p => p.ServiceEntryId).ToArray();
@@ -217,7 +217,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
     {
         var cacheKeys =
             await _clientInvokeDistributedCache.SearchKeys(
-                $"*:InvokeSupervisor:{address}:*");
+                $"InvokeSupervisor:{address}:*");
         foreach (var cacheKey in cacheKeys)
         {
             await _clientInvokeDistributedCache.RemoveAsync(cacheKey);
@@ -228,7 +228,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
     {
         var cacheKeys =
             await _serverHandleDistributedCache.SearchKeys(
-                $"*:ServerHandleSupervisor:{address}:*");
+                $"ServerHandleSupervisor:{address}:*");
         foreach (var cacheKey in cacheKeys)
         {
             await _serverHandleDistributedCache.RemoveAsync(cacheKey);

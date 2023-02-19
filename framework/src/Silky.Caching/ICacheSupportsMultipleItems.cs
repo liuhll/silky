@@ -27,7 +27,7 @@ namespace Silky.Caching
             CancellationToken token = default
         );
 
-        Task RemoveMatchKeyAsync(string key, bool? hideErrors, CancellationToken token);
+        Task RemoveMatchKeyAsync(string pattern, CancellationToken token);
 
         Task<IReadOnlyCollection<string>> SearchKeys(string pattern, CancellationToken token = default);
     }

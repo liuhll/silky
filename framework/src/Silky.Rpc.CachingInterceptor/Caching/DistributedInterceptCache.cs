@@ -13,6 +13,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Silky.Caching;
 using Silky.Caching.Configuration;
+using Silky.Core.Extensions;
 using Silky.Core.Logging;
 using Silky.Core.Threading;
 
@@ -25,7 +26,7 @@ namespace Silky.Rpc.CachingInterceptor
             ICancellationTokenProvider cancellationTokenProvider,
             IDistributedCacheSerializer serializer,
             IDistributedCacheKeyNormalizer keyNormalizer)
-            : base(distributedCacheOption, 
+            : base(distributedCacheOption,
                 cache,
                 cancellationTokenProvider,
                 serializer,
@@ -48,17 +49,31 @@ namespace Silky.Rpc.CachingInterceptor
         {
             using (await SyncSemaphore.LockAsync(token))
             {
-                if (Cache is not ICacheSupportsMultipleItems cacheSupportsMultipleItems)
+                try
                 {
-                    var matchKeys = SearchKeys(keyPattern);
-                    foreach (var matchKey in matchKeys)
+                    keyPattern = CacheName.IsNullOrEmpty() ? keyPattern : NormalizeKey(keyPattern);
+                    if (Cache is not ICacheSupportsMultipleItems cacheSupportsMultipleItems)
                     {
-                        await RemoveAsync(matchKey, hideErrors, token);
+                        var matchKeys = SearchKeys(keyPattern);
+                        foreach (var matchKey in matchKeys)
+                        {
+                            await RemoveAsync(matchKey, hideErrors, token);
+                        }
+                    }
+                    else
+                    {
+                        await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, token);
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, hideErrors, token);
+                    if (hideErrors == true)
+                    {
+                        await HandleExceptionAsync(ex);
+                    }
+
+                    Logger.LogException(ex);
+                    throw;
                 }
             }
         }
@@ -142,29 +157,6 @@ namespace Silky.Rpc.CachingInterceptor
             return ToCacheItem(cachedBytes, type);
         }
 
-        public override async Task RemoveAsync(string key, bool? hideErrors = null, CancellationToken token = default)
-        {
-            if (key.Contains("*") || key.Contains("^") || key.Contains("$") || key.Contains("?"))
-            {
-                var distributedInterceptCache = (Cache as ICacheSupportsMultipleItems);
-                if (distributedInterceptCache == null)
-                {
-                    var matchKeys = SearchKeys(key);
-                    foreach (var matchKey in matchKeys)
-                    {
-                        await base.RemoveAsync(matchKey, hideErrors, token);
-                    }
-                }
-                else
-                {
-                    await distributedInterceptCache.RemoveMatchKeyAsync(NormalizeKey(key), hideErrors, token);
-                }
-            }
-            else
-            {
-                await base.RemoveAsync(key, hideErrors, token);
-            }
-        }
 
         protected virtual IReadOnlyCollection<string> SearchKeys(string key)
         {

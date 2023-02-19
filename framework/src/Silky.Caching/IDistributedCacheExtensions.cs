@@ -52,14 +52,15 @@ namespace Silky.Caching
             }
             else
             {
-                await cacheSupportsMultipleItems.RemoveMatchKeyAsync(key, hideErrors, token);
+                await cacheSupportsMultipleItems.RemoveMatchKeyAsync(key, token);
             }
         }
-        
+
 
         public static async Task RemoveMatchKeyAsync([NotNull] this IDistributedCache distributedCache,
-            [NotNull] string keyPattern, bool? hideErrors = null, CancellationToken token = default)
+            [NotNull] string keyPattern, CancellationToken token = default)
         {
+            
             var cacheSupportsMultipleItems = (distributedCache as ICacheSupportsMultipleItems);
             if (cacheSupportsMultipleItems == null)
             {
@@ -71,7 +72,7 @@ namespace Silky.Caching
             }
             else
             {
-                await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, hideErrors, token);
+                await cacheSupportsMultipleItems.RemoveMatchKeyAsync(keyPattern, token);
             }
         }
 

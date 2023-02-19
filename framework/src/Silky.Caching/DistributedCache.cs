@@ -128,7 +128,7 @@ namespace Silky.Caching
                     hideErrors
                 );
             }
-            
+
             var cachedValues = new List<KeyValuePair<TCacheKey, TCacheItem>>();
             hideErrors = hideErrors ?? _distributedCacheOption.HideErrors;
             byte[][] cachedBytes;
@@ -168,7 +168,7 @@ namespace Silky.Caching
                     token
                 );
             }
-            
+
             hideErrors = hideErrors ?? _distributedCacheOption.HideErrors;
             byte[][] cachedBytes;
 
@@ -491,6 +491,11 @@ namespace Silky.Caching
 
         protected virtual string NormalizeKey(TCacheKey key)
         {
+            if (CacheName.IsNullOrEmpty())
+            {
+                throw new SilkyException("CacheName does not allow null when Normalizing the cache key");
+            }
+
             return KeyNormalizer.NormalizeKey(
                 new DistributedCacheKeyNormalizeArgs(
                     key.ToString(),
@@ -730,6 +735,7 @@ namespace Silky.Caching
         {
             IReadOnlyCollection<string> normalizeKeys;
             var distributedInterceptCache = (Cache as ICacheSupportsMultipleItems);
+            keyPattern = CacheName.IsNullOrEmpty() ? keyPattern : NormalizeKey(keyPattern);
             if (distributedInterceptCache == null)
             {
                 var cacheKeys = GetCacheKeys();
@@ -751,6 +757,7 @@ namespace Silky.Caching
             {
                 key = key.RemovePreFix("k:");
             }
+
             return key;
         }
 

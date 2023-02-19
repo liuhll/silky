@@ -1,21 +1,25 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Silky.Core.Extensions;
 
 namespace Silky.Rpc.CachingInterceptor
 {
     public static class DistributedInterceptCacheExtensions
     {
-        public static async Task RemoveAsync(this IDistributedInterceptCache cache, string cacheKey, string cacheName,
+        public static async Task RemoveForInterceptAsync(this IDistributedInterceptCache cache, string cacheKey, string cacheName,
+            bool isMatchKey,
             bool? hideErrors = null,
             CancellationToken token = default)
         {
-            if (!cacheName.IsNullOrEmpty())
+            cache.UpdateCacheName(cacheName);
+            if (isMatchKey)
             {
-                cache.UpdateCacheName(cacheName);
+                
+                await cache.RemoveMatchKeyAsync(cacheKey, hideErrors, token);
             }
-
-            await cache.RemoveAsync(cacheKey, hideErrors, token);
+            else
+            {
+                await cache.RemoveAsync(cacheKey, hideErrors, token);
+            }
         }
     }
 }
