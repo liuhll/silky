@@ -4,7 +4,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
-using DotNetty.Common.Utilities;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;

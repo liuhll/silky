@@ -18,17 +18,30 @@ namespace Silky.Core.Extensions
             Check.NotNull(engine, nameof(engine));
             return engine.ContainModule("SilkyHttpCore");
         }
-        
+
         public static bool IsContainWebSocketModule([NotNull] this IEngine engine)
         {
             Check.NotNull(engine, nameof(engine));
             return engine.ContainModule("WebSocket");
         }
 
-        public static bool IsContainDotNettyTcpModule([NotNull] this IEngine engine)
+        // public static bool IsContainDotNettyTcpModule([NotNull] this IEngine engine)
+        // {
+        //     Check.NotNull(engine, nameof(engine));
+        //     return engine.ContainModule("DotNettyTcp");
+        // }
+
+        public static bool IsRpcServerProvider([NotNull] this IEngine engine)
         {
             Check.NotNull(engine, nameof(engine));
-            return engine.ContainModule("DotNettyTcp");
+            var serverMessageListenerTypeName = "Silky.Rpc.Runtime.Server.IServerMessageListener,Silky.Rpc";
+            var serverMessageListenerType = Type.GetType(serverMessageListenerTypeName);
+            if (serverMessageListenerType == null)
+            {
+                return false;
+            }
+
+            return engine.IsRegistered(serverMessageListenerType);
         }
 
         public static bool IsEnvironment([NotNull] this IEngine engine, string environmentName)

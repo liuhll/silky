@@ -85,7 +85,7 @@ namespace Silky.Rpc.SkyApm.Configuration
             var guid = Guid.NewGuid().ToString("N");
             try
             {
-                if (EngineContext.Current.ContainModule("DotNettyTcp"))
+                if (EngineContext.Current.IsRpcServerProvider())
                 {
                     var address = SilkyEndpointHelper.GetLocalRpcEndpoint().GetAddress();
                     return $"{address}";

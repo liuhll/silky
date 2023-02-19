@@ -196,7 +196,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 
         var cacheValues = await _serverHandleDistributedCache.GetManyAsync(cacheKeys);
 
-        var serverHandleInfos = cacheValues.Where(p=> p.Value != null).Select(p => p.Value).ToArray();
+        var serverHandleInfos = cacheValues.Where(p => p.Value != null).Select(p => p.Value).ToArray();
         serviceEntryHandleInfos.AddRange(serverHandleInfos);
 
         return serviceEntryHandleInfos.OrderBy(p => p.ServiceEntryId).ToArray();
@@ -237,7 +237,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
 
     private string GetLocalAddress()
     {
-        if (EngineContext.Current.IsContainDotNettyTcpModule())
+        if (EngineContext.Current.IsRpcServerProvider())
         {
             var localTcpEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
             return localTcpEndpoint.GetAddress();

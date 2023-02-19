@@ -84,7 +84,7 @@ namespace Silky.Rpc.Endpoint
         public static bool IsLocalRpcAddress(string address)
         {
             var localAddress = GetLocalRpcEndpoint().GetAddress();
-            return localAddress.Equals(address);
+            return localAddress.Equals(address) && EngineContext.Current.IsRpcServerProvider();
         }
 
         public static string GetLocalAddress()
