@@ -329,7 +329,9 @@
                 let requestMap = {};
                 requestMap.url = params.url;
                 requestMap.headers = {};
-                params.beforeSend(requestMap);
+                if (params.beforeSend) {
+                    params.beforeSend(requestMap);
+                }
                 for (let key in requestMap.headers) {
                     xhr.setRequestHeader(key, requestMap.headers[key])
                 }
@@ -347,12 +349,20 @@
 
         let qs = objectToString(params.data);
 
+        let accessToken = window.localStorage.getItem(tokenKey);
+
         if (params.method.toUpperCase() == 'GET') {
             xhr.open('GET', params.url + '?' + qs);
+            if (accessToken) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            }
             xhr.send();
         } else if (params.method.toUpperCase() == 'POST') {
             xhr.open('POST', params.url);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            if (accessToken) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            }
             xhr.send(qs);
         }
     }
@@ -402,7 +412,7 @@
 
         window.ui = ui
     }
-
+    
     window.onload = function () {
         var configObject = JSON.parse('%(ConfigObject)');
         var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
@@ -410,80 +420,74 @@
         var loginObject = configObject.LoginInfo;
         if (loginObject && loginObject.enabled === true) {
             var loginForm = document.getElementById("login-form");
-            var accessToken = window.localStorage.getItem(tokenKey);
-            if (accessToken) {
-                loginForm.style.display = "none";
-                initSwaggerUI(configObject, oauthConfigObject);
-            } else {
-                var userName = document.getElementById("userName");
-                var password = document.getElementById("password");
-                var tenantName = document.getElementById("tenantName");
-                var submit = document.getElementById("submit");
-                var loginError = document.getElementById("login-error");
-                loginForm.style.display = "block";
+            var userName = document.getElementById("userName");
+            var password = document.getElementById("password");
+            var tenantName = document.getElementById("tenantName");
+            var submit = document.getElementById("submit");
+            var loginError = document.getElementById("login-error");
+            loginForm.style.display = "block";
 
-                sendRequest({
-                    method: "POST",
-                    url: loginObject.checkUrl,
-                    success: function (res, headerMap) {
-                        if (res.toString() === "200") {
-                            loginForm.style.display = "none";
-                            initSwaggerUI(configObject, oauthConfigObject);
-                        } else {
-                            userName.focus();
+            sendRequest({
+                method: "POST",
+                url: loginObject.checkUrl,
+                success: function (res, headerMap) {
+                    if (res.toString() === "200") {
+                        loginForm.style.display = "none";
+                        initSwaggerUI(configObject, oauthConfigObject);
+                    } else {
+                        
+                        userName.focus();
+                        submit.addEventListener("click", function (ev) {
+                            if (userName.value.trim().length === 0) {
+                                userName.focus();
+                                return;
+                            }
+                            if (password.value.trim().length === 0) {
+                                password.focus();
+                                return;
+                            }
 
-                            submit.addEventListener("click", function (ev) {
-                                if (userName.value.trim().length === 0) {
-                                    userName.focus();
-                                    return;
-                                }
-                                if (password.value.trim().length === 0) {
-                                    password.focus();
-                                    return;
-                                }
-
-                                loginError.innerHTML = "";
-
-                                sendRequest({
-                                    method: "POST",
-                                    url: loginObject.submitUrl,
-                                    data: {
-                                        userName: userName.value.trim(),
-                                        password: password.value.trim(),
-                                        tenantName: tenantName?.value
-                                    },
-                                    beforeSend: function (request) {
-                                        defaultRequestInterceptor(request)
-                                    },
-                                    success: function (res, headerMap) {
-                                        if (res.toString() === "200") {
-                                            loginForm.style.display = "none";
-                                            initSwaggerUI(configObject, oauthConfigObject);
-                                            defaultResponseInterceptor({headers: headerMap});
-                                        } else {
-                                            loginError.innerHTML = "Invalid UserName or Password.";
-                                        }
-                                    },
-                                    error: function (xhr) {
-                                        if (xhr.status === 404) {
-                                            loginError.innerHTML = "Not Found: " + loginObject.submitUrl;
-                                        } else {
-                                            loginError.innerHTML = "Internal ServerError: " + loginObject.submitUrl;
-                                        }
+                            loginError.innerHTML = "";
+                            
+                            sendRequest({
+                                method: "POST",
+                                url: loginObject.submitUrl,
+                                data: {
+                                    userName: userName.value.trim(),
+                                    password: password.value.trim(),
+                                    tenantName: tenantName?.value
+                                },
+                                beforeSend: function (request) {
+                                    defaultRequestInterceptor(request)
+                                },
+                                success: function (res, headerMap) {
+                                    if (res.toString() === "200") {
+                                        loginForm.style.display = "none";
+                                        initSwaggerUI(configObject, oauthConfigObject);
+                                        defaultResponseInterceptor({headers: headerMap});
+                                    } else {
+                                        loginError.innerHTML = "Invalid UserName or Password.";
                                     }
-                                });
+                                },
+                                error: function (xhr) {
+                                    if (xhr.status === 404) {
+                                        loginError.innerHTML = "Not Found: " + loginObject.submitUrl;
+                                    } else {
+                                        loginError.innerHTML = "Internal ServerError: " + loginObject.submitUrl;
+                                    }
+                                }
                             });
-                        }
-                    },
-                    error: function (xhr) {
-                        if (xhr.status === 404) {
-                            loginError.innerHTML = "Not Found: " + loginObject.checkUrl;
-                        } else {
-                            loginError.innerHTML = "Internal ServerError: " + loginObject.checkUrl;
-                        }
+                        });
                     }
-                });
-            }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 404) {
+                        loginError.innerHTML = "Not Found: " + loginObject.checkUrl;
+                    } else {
+                        loginError.innerHTML = "Internal ServerError: " + loginObject.checkUrl;
+                    }
+                }
+            });
 
 
         } else {
