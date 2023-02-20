@@ -480,6 +480,10 @@
                     } else {
                         loginError.innerHTML = "Internal ServerError: " + loginObject.checkUrl;
                     }
+                    window.localStorage.removeItem(tokenKey);
+                    if (ui) {
+                        ui.authActions.logout(["Bearer"]);
+                    }
                 }
             });
 
