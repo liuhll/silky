@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Extensions;
+using Silky.Core.Runtime.Session;
 using Silky.Core.Serialization;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Extensions;
@@ -105,6 +106,22 @@ namespace Silky.Rpc.Runtime.Server
             return returnType.GetCacheName();
         }
 
+        public static bool GetCacheIgnoreMultiTenancy([NotNull] this ServiceEntry serviceEntry,
+            ICachingInterceptProvider cachingInterceptProvider)
+        {
+            Check.NotNull(serviceEntry, nameof(serviceEntry));
+
+            if ((cachingInterceptProvider.CachingMethod == CachingMethod.Get ||
+                 cachingInterceptProvider.CachingMethod == CachingMethod.Update) &&
+                !cachingInterceptProvider.IgnoreMultiTenancy)
+            {
+                var returnType = serviceEntry.ReturnType;
+                return returnType.IsDefined(typeof(IgnoreMultiTenancyAttribute), true);
+            }
+
+            return cachingInterceptProvider.IgnoreMultiTenancy;
+        }
+
         public static bool IsEnableAuditing(this ServiceEntry serviceEntry, bool isEnable)
         {
             if (serviceEntry == null)
@@ -173,6 +190,5 @@ namespace Silky.Rpc.Runtime.Server
         {
             return "Silky.Http.Dashboard.AppService.ISilkyAppService".Equals(serviceEntry.ServiceType.FullName);
         }
-        
     }
 }

@@ -21,7 +21,7 @@ using FilterDescriptor = Silky.Rpc.Filters.FilterDescriptor;
 
 namespace Silky.Rpc.Runtime.Server
 {
-    public class ServiceEntry 
+    public class ServiceEntry
     {
         private readonly ObjectMethodExecutor _methodExecutor;
 
@@ -83,11 +83,13 @@ namespace Silky.Rpc.Runtime.Server
             var cachingInterceptorProviders = this.GetAllCachingInterceptProviders();
             foreach (var cachingInterceptorProvider in cachingInterceptorProviders)
             {
+                var ignoreMultiTenancy = this.GetCacheIgnoreMultiTenancy(cachingInterceptorProvider);
+                cachingInterceptorProvider.IgnoreMultiTenancy = ignoreMultiTenancy;
                 var cachingInterceptorDescriptor = new CachingInterceptorDescriptor()
                 {
                     KeyTemplate = cachingInterceptorProvider.KeyTemplate,
                     OnlyCurrentUserData = cachingInterceptorProvider.OnlyCurrentUserData,
-                    IgnoreMultiTenancy = cachingInterceptorProvider.IgnoreMultiTenancy,
+                    IgnoreMultiTenancy = ignoreMultiTenancy,
                     CachingMethod = cachingInterceptorProvider.CachingMethod,
                     CacheName = this.GetCacheName(),
                     IsRemoveMatchKeyProvider = cachingInterceptorProvider is IRemoveMatchKeyCachingInterceptProvider,
@@ -163,7 +165,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filterDescriptors.Add(new FilterDescriptor(serverFilter, FilterScope.Global));
             }
-            
+
             return filterDescriptors.ToArray();
         }
 
@@ -190,7 +192,7 @@ namespace Silky.Rpc.Runtime.Server
             {
                 filterDescriptors.Add(new FilterDescriptor(clientFilterFactory, FilterScope.Global));
             }
-            
+
             foreach (var clientFilter in EngineContext.Current.ApplicationOptions.Filter.Clients)
             {
                 filterDescriptors.Add(new FilterDescriptor(clientFilter, FilterScope.Global));
