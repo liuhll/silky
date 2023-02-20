@@ -21,14 +21,16 @@ namespace Silky.Rpc.Monitor.Handle
             lock (_monitorProvider.InstanceHandleInfo)
             {
                 _monitorProvider.InstanceHandleInfo.ConcurrentCount++;
-                if (_monitorProvider.InstanceHandleInfo.ConcurrentCount > _monitorProvider.InstanceHandleInfo.MaxConcurrentCount)
+                if (_monitorProvider.InstanceHandleInfo.ConcurrentCount >
+                    _monitorProvider.InstanceHandleInfo.MaxConcurrentCount)
                 {
-                    _monitorProvider.InstanceHandleInfo.MaxConcurrentCount = _monitorProvider.InstanceHandleInfo.ConcurrentCount;
+                    _monitorProvider.InstanceHandleInfo.MaxConcurrentCount =
+                        _monitorProvider.InstanceHandleInfo.ConcurrentCount;
                 }
 
                 _monitorProvider.InstanceHandleInfo.FirstHandleTime ??= DateTime.Now;
                 _monitorProvider.InstanceHandleInfo.FinalHandleTime = DateTime.Now;
-                _monitorProvider.InstanceHandleInfo.TotalHandleCount += 1;
+                _monitorProvider.InstanceHandleInfo.TotalHandleCount++;
             }
 
             var serverHandleInfo = _monitorProvider.GetServerHandleInfo(GetCacheKey(item));
@@ -122,6 +124,5 @@ namespace Silky.Rpc.Monitor.Handle
                 $"HandleSupervisor:{RpcContext.Context.Connection.LocalAddress}:{item.Item1}:{item.Item2}";
             return cacheKey;
         }
-        
     }
 }

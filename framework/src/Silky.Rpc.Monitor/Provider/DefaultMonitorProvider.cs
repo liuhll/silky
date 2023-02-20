@@ -63,23 +63,13 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
     private async Task InitThisInstanceInfo()
     {
         var localAddress = GetLocalAddress();
-        InstanceInvokeInfo =
-            await _serverInstanceInvokeInfoDistributedCache.GetAsync($"InstanceInvokeInfo:{localAddress}");
-        if (InstanceInvokeInfo == null)
-        {
-            InstanceInvokeInfo = new();
-            await _serverInstanceInvokeInfoDistributedCache.SetAsync($"InstanceInvokeInfo:{localAddress}",
-                InstanceInvokeInfo);
-        }
 
-        InstanceHandleInfo =
-            await _serverInstanceHandleInfoDistributedCache.GetAsync($"InstanceHandleInfo:{localAddress}");
-        if (InstanceHandleInfo == null)
-        {
-            InstanceHandleInfo = new();
-            await _serverInstanceHandleInfoDistributedCache.SetAsync($"InstanceHandleInfo:{localAddress}",
-                InstanceHandleInfo);
-        }
+        InstanceInvokeInfo = new();
+        await _serverInstanceInvokeInfoDistributedCache.SetAsync($"InstanceInvokeInfo:{localAddress}",
+            InstanceInvokeInfo);
+        InstanceHandleInfo = new();
+        await _serverInstanceHandleInfoDistributedCache.SetAsync($"InstanceHandleInfo:{localAddress}",
+            InstanceHandleInfo);
     }
 
     private void CollectMonitorCallBack(object? state)

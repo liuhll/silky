@@ -46,7 +46,7 @@ namespace Silky.Rpc.Monitor.Invoke
 
                 _monitorProvider.InstanceInvokeInfo.FirstInvokeTime ??= DateTime.Now;
                 _monitorProvider.InstanceInvokeInfo.FinalInvokeTime = DateTime.Now;
-                _monitorProvider.InstanceInvokeInfo.TotalInvokeCount += 1;
+                _monitorProvider.InstanceInvokeInfo.TotalInvokeCount++;
             }
 
             var cacheKey = GetCacheKey(item);
