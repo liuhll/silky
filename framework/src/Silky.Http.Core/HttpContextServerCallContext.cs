@@ -16,6 +16,7 @@ using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
@@ -257,9 +258,9 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
     private TimeSpan GetTimeout()
     {
-        var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
-        return gatewayOptions.TimeoutMillSeconds > 0
-            ? TimeSpan.FromMilliseconds(gatewayOptions.TimeoutMillSeconds)
+        var governanceOptions = EngineContext.Current.GetOptions<GovernanceOptions>();
+        return governanceOptions.TimeoutMillSeconds > 0
+            ? TimeSpan.FromMilliseconds(governanceOptions.TimeoutMillSeconds)
             : TimeSpan.Zero;
     }
 

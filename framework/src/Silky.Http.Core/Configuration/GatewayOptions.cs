@@ -14,13 +14,10 @@ namespace Silky.Http.Core.Configuration
                 "\\/(healthchecks|healthz)"
             };
             GlobalAuthorize = false;
-            TimeoutMillSeconds = 0;
         }
 
         public string ResponseContentType { get; set; }
-
-        public int TimeoutMillSeconds { get; set; }
-
+        
         public string JwtSecret { get; set; }
 
         public bool GlobalAuthorize { get; set; }
