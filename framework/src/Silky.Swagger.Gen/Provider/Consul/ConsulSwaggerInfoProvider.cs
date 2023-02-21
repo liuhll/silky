@@ -55,8 +55,18 @@ public class ConsulSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCente
         var documents = await GetGroups(consulClient);
         foreach (var document in documents)
         {
-            var openApiDocument = await GetSwagger(document, consulClient);
-            openApiDocuments.Add(openApiDocument);
+            try
+            {
+                var openApiDocument = await GetSwagger(document, consulClient);
+                if (openApiDocument != null)
+                {
+                    openApiDocuments.Add(openApiDocument);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogWarning($"Failed to fetch {document} openApiDocument from service registry");
+            }
         }
 
         return openApiDocuments;

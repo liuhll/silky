@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Silky.Core;
 using Silky.Core.Extensions;
+using Silky.Core.Logging;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
@@ -22,6 +23,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
     private readonly IZookeeperClientFactory _zookeeperClientFactory;
     private ZookeeperRegistryCenterOptions _registryCenterOptions;
     private readonly ISerializer _serializer;
+
 
     private static readonly string RouteTemplate = "/swagger/{documentName}/swagger.json";
 
@@ -59,6 +61,7 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
         {
             return null;
         }
+
         await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
         var datas = await zookeeperClient.GetDataAsync(documentPath);
         if (datas == null || !datas.Any())
@@ -68,7 +71,8 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
         var jsonString = datas.ToArray().GetString();
 
-        return _serializer.Deserialize<OpenApiDocument>(jsonString,camelCase: false,typeNameHandling: TypeNameHandling.Auto);
+        return _serializer.Deserialize<OpenApiDocument>(jsonString, camelCase: false,
+            typeNameHandling: TypeNameHandling.Auto);
     }
 
 
@@ -79,8 +83,18 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
         var documents = await GetDocuments(zookeeperClient);
         foreach (var document in documents)
         {
-            var openApiDocument = await GetSwagger(document, zookeeperClient);
-            openApiDocuments.Add(openApiDocument);
+            try
+            {
+                var openApiDocument = await GetSwagger(document, zookeeperClient);
+                if (openApiDocument != null)
+                {
+                    openApiDocuments.Add(openApiDocument);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogWarning($"Failed to fetch {document} openApiDocument from service registry");
+            }
         }
 
         return openApiDocuments;
@@ -101,11 +115,11 @@ public class ZookeeperSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCe
 
     private async Task<string[]> GetDocuments(IZookeeperClient zookeeperClient)
     {
-      
         if (!await zookeeperClient.ExistsAsync(_registryCenterOptions.SwaggerDocPath))
         {
             return Array.Empty<string>();
         }
+
         await zookeeperClient.Authorize(_registryCenterOptions.Scheme, _registryCenterOptions.Auth);
         var children = await zookeeperClient.GetChildrenAsync(_registryCenterOptions.SwaggerDocPath);
         if (children == null)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Nacos.V2;
@@ -18,6 +20,8 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
     private readonly ISerializer _serializer;
     private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
 
+    public ILogger<NacosSwaggerInfoProvider> Logger { get; set; }
+
     public NacosSwaggerInfoProvider(INacosConfigService nacosConfigService,
         ISerializer serializer,
         IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions)
@@ -25,6 +29,7 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
         _nacosConfigService = nacosConfigService;
         _serializer = serializer;
         _nacosRegistryCenterOptions = nacosRegistryCenterOptions.Value;
+        Logger = NullLogger<NacosSwaggerInfoProvider>.Instance;
     }
 
     public override async Task<string[]> GetGroups()
@@ -58,12 +63,19 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
         var openApiDocuments = new List<OpenApiDocument>();
 
         var allDocumentNames = await GetAllDocuments();
-        foreach (var documentName in allDocumentNames)
+        foreach (var document in allDocumentNames)
         {
-            var openApiDocument = await GetSwagger(documentName);
-            if (openApiDocument != null)
+            try
             {
-                openApiDocuments.Add(openApiDocument);
+                var openApiDocument = await GetSwagger(document);
+                if (openApiDocument != null)
+                {
+                    openApiDocuments.Add(openApiDocument);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogWarning($"Failed to fetch {document} openApiDocument from service registry");
             }
         }
 
@@ -82,7 +94,8 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
                 return Array.Empty<string>();
             }
 
-            return _serializer.Deserialize<string[]>(allDocumentsValue,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
+            return _serializer.Deserialize<string[]>(allDocumentsValue, camelCase: false,
+                typeNameHandling: TypeNameHandling.Auto);
         }
         catch (Exception e)
         {

@@ -1,0 +1,25 @@
+registryCenter:
+  type: Zookeeper
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+  scheme: Digest
+  auth: "silky:pass4Word"
+
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+swaggerDocument:
+  organizationMode: AllAndGroup
+  injectMiniProfiler: true
+  showDashboardService: false
+  termsOfService: https://www.github.com/liuhll/silky
+rpc:
+  host: 0.0.0.0
+  port: 2205
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+  useLibuv: true
+jwtSettings:
+  secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
+  expiredTime: 30
+gateway:
+  jwtSecret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh

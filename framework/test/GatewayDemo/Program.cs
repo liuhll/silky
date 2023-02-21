@@ -3,6 +3,7 @@ using GatewayDemo.ClientFilters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Silky.Core;
+using Silky.Core.Configuration;
 
 namespace GatewayDemo
 {

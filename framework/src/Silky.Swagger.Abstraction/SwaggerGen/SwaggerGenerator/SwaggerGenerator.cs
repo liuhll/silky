@@ -42,7 +42,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
             string basePath = null,
             bool onlyLocalServices = false)
         {
-            if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
+            if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info) && !onlyLocalServices)
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
 
             var registerCenterSwaggerProvider = EngineContext.Current.Resolve<IRegisterCenterSwaggerInfoProvider>();
@@ -63,7 +63,6 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
                 var localOpenApiDocument = GetLocalSwagger(documentName, host, basePath, onlyLocalServices, info);
 
                 var remoteOpenApiDocuments = AsyncHelper.RunSync(() => registerCenterSwaggerProvider.GetSwaggers());
-                ;
                 foreach (var remoteOpenApiDocument in remoteOpenApiDocuments)
                 {
                     foreach (var path in remoteOpenApiDocument.Paths)

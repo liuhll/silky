@@ -5,7 +5,7 @@ lang: zh-cn
 
 ## 必要前提
 
-1. (**必须**) 安装 .net5 或是 .net6 sdk。
+1. (**必须**) 安装 .net5+ sdk。
 
 2. (**必须**) 您可以使用visual studio 或是rider作为开发工具。 
 
@@ -22,7 +22,7 @@ lang: zh-cn
 
 我们通过如下步骤可以快速的构建一个使用Web 主机构建的Silky微服务应用。
 
-1. 新增一个控制台应用或是ASP.NET Core Empty应用
+1. 通过Rider或是visual studio创建一个空的结局方案项目
 
 ![quick-start1.png](/assets/imgs/quick-start1.png)
 
@@ -34,10 +34,10 @@ lang: zh-cn
 
 ![quick-start2.png](/assets/imgs/quick-start2.png)
 
-或是通过控制台命令安装包:
+或是通过控制台命令安装`Silky.Agent.Host`最新的nuget包:
 
 ```powershell
-PM> Install-Package Silky.Agent.Host -Version 3.0.2
+PM> Install-Package Silky.Agent.Host -Version 3.6.5
 ```
 
 3. 在`Main`方法中构建silky主机
@@ -122,36 +122,35 @@ namespace Silky.Sample
 
 4. 更新配置
 
-silky支持通过`json`或是`yml`格式进行配置。您可以通过`appsettings.json`为公共配置项指定配置信息,也可以通过新增`appsettings.${ENVIRONMENT}.json`文件为指定的环境更新配置属性。
+silky支持通过`yaml`或是`yml`或是`json`格式进行配置。默认使用`yaml`格式作为服务配置,您可以通过`appsettings.yaml`为公共配置项指定配置信息,也可以通过新增`appsettings.${ENVIRONMENT}.yaml`文件为指定的环境更新配置属性。
 
-一般地,您必须指定rpc通信的`token`,服务注册中心地址等配置项。如果您使用redis作为缓存服务,那么您还需要将`distributedCache:redis:isEnabled`配置项设置为`true`,并给出redis服务缓存的地址。
+一般地,您必须指定rpc通信的`token`,服务注册中心地址等配置项。使用redis作为缓存服务,需要将`distributedCache:redis:isEnabled`配置项设置为`true`,并给出redis服务缓存的地址，在`distributedCache:redis`配置节点下,还支持redis的其他配置项目,开发者可以参考[StackExchange.Redis的配置文档](https://stackexchange.github.io/StackExchange.Redis/Configuration)来对redis进行配置.
 
 在`appsettings.json`配置文件中新增如下配置属性:
 
-```json
-{
-  "RegistryCenter": {
-    "Type": "Zookeeper",
-    "ConnectionStrings": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186"
-  },
-  "DistributedCache": {
-    "Redis": {
-      "IsEnabled": true,
-      "Configuration": "127.0.0.1:6379,defaultDatabase=0"
-    }
-  },
-  "Rpc": {
-    "Token": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
-    "Port": 2200
-  }
-}
+```yaml
+registryCenter:
+  type: Zookeeper
+  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
+  scheme: Digest
+  auth: "silky:pass4Word"
+
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0
+rpc:
+  host: 0.0.0.0
+  port: 2200
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+
 ```
 
 将配置文件属性的**复制到输出目录**,设置为: *始终复制* 或是 *如果较新则复制*。
 
 ![quick-start3.png](/assets/imgs/quick-start3.png)
 
-5. 创建zookeeper服务和redis缓存服务
+1. 创建zookeeper服务和redis缓存服务
 
 在该示例项目中,我们使用`Zookeeper`作为服务注册中心。我们在silky的示例项目中给出各种基础服务的[docker-compose的编排文件](https://github.com/liuhll/silky/tree/main/samples/docker-compose/infrastr),其中,也包括了zookeeper和redis服务的。
 
