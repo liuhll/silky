@@ -1,9 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
-using Silky.Caching.StackExchangeRedis;
 using Silky.Core;
 using Silky.Core.Exceptions;
+using Silky.Core.Extensions;
 using Silky.RegistryCenter.Consul;
 using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
 
@@ -12,9 +12,9 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class HostAgentCollectionExtensions
     {
         internal static IServiceCollection AddDefaultRegistryCenter(this IServiceCollection services,
-            string registerType, IConfiguration configuration)
+            string? registerType, IConfiguration configuration)
         {
-            switch (registerType.ToLower())
+            switch (registerType?.ToLower())
             {
                 case "zookeeper":
                     services.AddZookeeperRegistryCenter();
@@ -26,8 +26,16 @@ namespace Microsoft.Extensions.DependencyInjection
                     services.AddConsulRegistryCenter();
                     break;
                 default:
-                    throw new SilkyException(
-                        $"The system does not provide a service registration center of type {registerType}");
+                    if (!EngineContext.Current.ApplicationOptions.IgnoreCheckingRegisterType)
+                    {
+                        if (registerType.IsNullOrEmpty())
+                        {
+                            throw new SilkyException("You did not specify the service registry type");
+                        }
+                        throw new SilkyException(
+                            $"The system does not provide a service registration center of type {registerType}");
+                    }
+                    break;
             }
 
             return services;

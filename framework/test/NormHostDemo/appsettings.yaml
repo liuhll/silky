@@ -17,7 +17,7 @@ registrycenter:
   type: Consul
   address: http://127.0.0.1:8500
   heartbeatintervalsecond: 60
-#  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
+  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
 
 #registrycenter:
 #  type: Nacos
@@ -31,19 +31,19 @@ registrycenter:
 #  clusterName: DEFAULT
 #  registerEnabled: true
 #  instanceEnabled: true
-#  
+
 distributedCache:
   redis:
     isEnabled: true
     configuration: 127.0.0.1:6379,defaultDatabase=0,password=qwe!P4ss
-#  globalCacheEntryOptions:
-#    slidingExpiration: 100
+  globalCacheEntryOptions:
+    slidingExpiration: 100
+    
 connectionStrings:
   demoDbContext: "server=127.0.0.1;port=3306;database=test;uid=root;pwd=qwe!P4ss;"
 jwtSettings:
   secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
   expiredTime: 30
-
 governance:
   timeoutMillSeconds: 0
   maxConcurrentHandlingCount: 100
@@ -64,18 +64,18 @@ serilog:
       args:
         outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u11}] {Message:lj} {NewLine}{Exception}{NewLine}"
         theme: "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"
-  
+
 plugInSource:
   appServicePlugIns:
     - folder: ../../../TestApplication/bin/Debug/net7.0
       searchOption: TopDirectoryOnly
-#    - folder: ../../../../ITestApplication/bin/Debug/net7.0
-#      searchOption: TopDirectoryOnly
-#  modulePlugIn:
-#    types:
-#      - TestApplication.TestModule,TestApplication
-        
-  
+        #    - folder: ../../../../ITestApplication/bin/Debug/net7.0
+        #      searchOption: TopDirectoryOnly
+        #  modulePlugIn:
+        #    types:
+      #      - TestApplication.TestModule,TestApplication
+
+
 rabbitMq:
   host: 127.0.0.1
   port: 5672

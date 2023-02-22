@@ -22,15 +22,10 @@ public abstract class HostAgentModule : SilkyModule
         if (!services.IsAdded(typeof(IServerRegister)))
         {
             var registerType = configuration.GetValue<string>("registrycenter:type");
-            if (registerType.IsNullOrEmpty())
-            {
-                throw new SilkyException("You did not specify the service registry type");
-            }
-
-            services.AddDefaultRegistryCenter(registerType,configuration);
+            services.AddDefaultRegistryCenter(registerType, configuration);
         }
     }
-    
+
     public override async Task Initialize(ApplicationInitializationContext context)
     {
         var options = EngineContext.Current.GetOptions<RpcOptions>();

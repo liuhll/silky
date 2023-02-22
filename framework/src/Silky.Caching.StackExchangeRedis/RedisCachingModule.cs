@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Silky.Core;
+using Silky.Core.Exceptions;
 using Silky.Core.Modularity;
 
 namespace Silky.Caching.StackExchangeRedis
@@ -10,6 +12,7 @@ namespace Silky.Caching.StackExchangeRedis
         public override void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             var redisEnabled = configuration.GetValue<bool>("DistributedCache:Redis:IsEnabled");
+
             if (redisEnabled)
             {
                 var redisCacheOptions = configuration.GetRedisCacheOptions();

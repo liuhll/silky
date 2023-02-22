@@ -10,7 +10,7 @@ using TestApplication.Contexts;
 namespace TestApplication.Migrations
 {
     [DbContext(typeof(DemoDbContext))]
-    [Migration("20230101104321_v1.0")]
+    [Migration("20230222153050_v1.0")]
     partial class v10
     {
         /// <inheritdoc />
@@ -18,7 +18,7 @@ namespace TestApplication.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.1")
+                .HasAnnotation("ProductVersion", "7.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("NormHostDemo.Tests.Test", b =>

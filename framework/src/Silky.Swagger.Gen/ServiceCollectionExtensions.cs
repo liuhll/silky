@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
 {
     private static IServiceCollection AddSwaggerInfoService(this IServiceCollection services, string registerType)
     {
-        switch (registerType.ToLower())
+        switch (registerType?.ToLower())
         {
             case "zookeeper":
                 services.AddSingleton<ISwaggerInfoRegister, ZookeeperSwaggerInfoRegister>();
@@ -35,17 +35,27 @@ public static class ServiceCollectionExtensions
                 break;
             case "nacos":
                 services.AddSingleton<ISwaggerInfoRegister, NacosSwaggerInfoRegister>();
-                services.AddSingleton<ISwaggerInfoProvider,NacosSwaggerInfoProvider>();
+                services.AddSingleton<ISwaggerInfoProvider, NacosSwaggerInfoProvider>();
                 services.AddScoped<IRegisterCenterSwaggerInfoProvider, NacosSwaggerInfoProvider>();
                 break;
             case "consul":
                 services.AddSingleton<ISwaggerInfoRegister, ConsulSwaggerInfoRegister>();
-                services.AddSingleton<ISwaggerInfoProvider,ConsulSwaggerInfoProvider>();
+                services.AddSingleton<ISwaggerInfoProvider, ConsulSwaggerInfoProvider>();
                 services.AddScoped<IRegisterCenterSwaggerInfoProvider, ConsulSwaggerInfoProvider>();
                 break;
             default:
-                throw new SilkyException(
-                    $"The system does not provide a service registration center of type {registerType}");
+                if (!EngineContext.Current.ApplicationOptions.IgnoreCheckingRegisterType)
+                {
+                    if (registerType.IsNullOrEmpty())
+                    {
+                        throw new SilkyException("You did not specify the service registry type");
+                    }
+
+                    throw new SilkyException(
+                        $"The system does not provide a service registration center of type {registerType}");
+                }
+
+                break;
         }
 
         return services;
@@ -54,10 +64,6 @@ public static class ServiceCollectionExtensions
     public static void AddSwaggerInfoService(this IServiceCollection services, IConfiguration configuration)
     {
         var registerType = configuration.GetValue<string>("registrycenter:type");
-        if (registerType.IsNullOrEmpty())
-        {
-            throw new SilkyException("You did not specify the service registry type");
-        }
 
         if (!services.IsAdded(typeof(ISwaggerInfoRegister)) || !services.IsAdded(typeof(ISwaggerInfoProvider)))
         {
@@ -81,17 +87,16 @@ public static class ServiceCollectionExtensions
                             Version = VersionHelper.GetCurrentVersion()
                         });
                 }
-                
+
                 options.MultipleServiceKey();
                 options.AddHashRouteHeader();
                 options.SchemaFilter<EnumSchemaFilter>();
-               
+
                 LoadXmlComments(options);
-               
             });
         }
     }
-    
+
     private static void LoadXmlComments(SwaggerGenOptions swaggerGenOptions)
     {
         var projectAssemblies = EngineContext.Current.TypeFinder.GetAssemblies();
@@ -104,7 +109,5 @@ public static class ServiceCollectionExtensions
                 swaggerGenOptions.IncludeXmlComments(xmlPath);
             }
         }
-
     }
-    
 }

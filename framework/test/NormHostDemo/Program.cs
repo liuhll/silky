@@ -19,6 +19,9 @@ namespace NormHostDemo
                     {
                         options.ApplicationName = "NormHost";
                         options.BannerMode = BannerMode.CONSOLE;
+#if DEBUG
+                        options.IgnoreCheckingRegisterType = true;
+#endif
                     })
                     .UseSerilogDefault()
                 ;

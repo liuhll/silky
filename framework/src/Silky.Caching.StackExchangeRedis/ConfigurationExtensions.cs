@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Silky.Caching.Configuration;
+using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using StackExchange.Redis;
@@ -11,7 +12,7 @@ public static class ConfigurationExtensions
 {
     public static RedisCacheOptions GetRedisCacheOptions(this IConfiguration configuration)
     {
-        var redisOptions = configuration.GetSection("DistributedCache:Redis").Get<RedisOptions>();
+        var redisOptions = configuration.GetSection("DistributedCache:Redis").Get<RedisOptions?>();
 
         if (!redisOptions.IsEnabled)
         {

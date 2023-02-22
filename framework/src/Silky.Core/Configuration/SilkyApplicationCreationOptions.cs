@@ -1,6 +1,5 @@
 using System.Reflection;
 using JetBrains.Annotations;
-using Silky.Core.FilterMetadata;
 using Silky.Core.Modularity.PlugIns;
 
 namespace Silky.Core.Configuration;
@@ -13,11 +12,12 @@ public class SilkyApplicationCreationOptions
 
     [NotNull] public FilterOptions Filter { get; }
     public bool DisplayFullErrorStack { get; set; }
-    
+
     public bool LogEntityFrameworkCoreSqlExecuteCommand { get; set; }
 
-    
     public bool AutoValidationParameters { get; set; }
+
+    public bool IgnoreCheckingRegisterType { get; set; }
 
 
     public string? ApplicationName { get; set; }
@@ -35,6 +35,7 @@ public class SilkyApplicationCreationOptions
         DisplayFullErrorStack = false;
         AutoValidationParameters = true;
         LogEntityFrameworkCoreSqlExecuteCommand = false;
+        IgnoreCheckingRegisterType = false;
         ModulePlugInSources = new PlugInSourceList();
         AppServicePlugInSources = new AppServicePlugInSourceList();
         Configuration = new SilkyConfigurationBuilderOptions();
