@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
+using Silky.Caching.Configuration;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using StackExchange.Redis;
 
 namespace Silky.Caching.StackExchangeRedis;
 
@@ -9,19 +11,23 @@ public static class ConfigurationExtensions
 {
     public static RedisCacheOptions GetRedisCacheOptions(this IConfiguration configuration)
     {
-        var redisEnabled = configuration.GetValue<bool>("DistributedCache:Redis:IsEnabled");
+        var redisOptions = configuration.GetSection("DistributedCache:Redis").Get<RedisOptions>();
 
-        if (!redisEnabled)
+        if (!redisOptions.IsEnabled)
         {
             throw new SilkyException("The redis cache service is unavailable");
         }
 
-        var redisCacheOptions = configuration.GetSection("DistributedCache:Redis").Get<RedisCacheOptions>();
-        if (redisCacheOptions == null || redisCacheOptions.Configuration.IsNullOrEmpty())
+        if (redisOptions.Configuration.IsNullOrEmpty())
         {
             throw new SilkyException("You must specify the Configuration of the redis service");
         }
 
+        var redisCacheOptions = new RedisCacheOptions()
+        {
+            Configuration = redisOptions.Configuration,
+            ConfigurationOptions = ConfigurationOptions.Parse(redisOptions.Configuration),
+        };
         return redisCacheOptions;
     }
 }

@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\pfx.props"/>
+    <Import Project="..\pfx.props" />
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj"/>
+        <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj" />
     </ItemGroup>
 
     <ItemGroup>
