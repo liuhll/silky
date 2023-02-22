@@ -17,28 +17,26 @@ rpc:
 registrycenter:
   type: Consul
   address: http://127.0.0.1:8500
-#  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
-
-#registrycenter:
-#  type: Nacos
-#  namespace: silky
-#  serverAddresses:
-#    - http://127.0.0.1:8848/
-#    - http://127.0.0.1:8849/
-#    - http://127.0.0.1:8850/
-#  userName: nacos
-#  password: nacos
-#  clusterName: DEFAULT
-#  registerEnabled: true
-#  instanceEnabled: true
+  #  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
   
+  #registrycenter:
+  #  type: Nacos
+  #  namespace: silky
+  #  serverAddresses:
+  #    - http://127.0.0.1:8848/
+  #    - http://127.0.0.1:8849/
+  #    - http://127.0.0.1:8850/
+  #  userName: nacos
+  #  password: nacos
+  #  clusterName: DEFAULT
+  #  registerEnabled: true
+  #  instanceEnabled: true
+
 distributedCache:
   redis:
     isEnabled: true
-    configuration: 127.0.0.1:6379,defaultDatabase=0
-#  globalCacheEntryOptions:
-#    slidingExpiration: 100
-    
+    configuration: 127.0.0.1:6379,defaultDatabase=0,password=qwe!P4ss
+
 allowedHosts: "*"
 swaggerDocument:
   organizationMode: AllAndGroup
@@ -65,8 +63,8 @@ governance:
   maxConcurrentHandlingCount: 100
 dashboard:
   useAuth: true
-#  wrapperResponse: true
-#  dashboardLoginApi: /api/account/login
+  #  wrapperResponse: true
+  #  dashboardLoginApi: /api/account/login
   externalLinks:
     - title: "message.swagger"
       path: "http://localhost:5002"
