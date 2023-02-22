@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silky.Core;
 using Silky.Core.Modularity;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Silky.Core.Configuration;
 
@@ -31,6 +32,10 @@ namespace Silky.TestBase.Testing
             var hostEnvironment = CreateHostEnvironment();
             services.AddSingleton(Configuration);
             services.AddSingleton(hostEnvironment);
+            services.AddLogging(builder =>
+            {
+                builder.AddConsole();
+            });
 
             Engine = services.AddSilkyServices<TStartupModule>(Configuration, hostEnvironment,
                 new SilkyApplicationCreationOptions());
@@ -79,6 +84,7 @@ namespace Silky.TestBase.Testing
 
         protected virtual void AfterAddApplication(IServiceCollection services)
         {
+            
         }
 
 
