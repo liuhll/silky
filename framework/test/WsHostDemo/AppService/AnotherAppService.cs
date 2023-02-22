@@ -4,7 +4,7 @@ using IAnotherApplication.Dtos;
 using ITestApplication.Test;
 using Silky.Transaction.Tcc;
 
-namespace AnotherHostDemo.AppService
+namespace WsHostDemo.AppService
 {
     public class AnotherAppService : IAnotherAppService
     {

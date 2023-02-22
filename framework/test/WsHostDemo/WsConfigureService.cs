@@ -1,20 +1,20 @@
-﻿using AnotherHostDemo.Mq.Consumer;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Extensions;
+using WsHostDemo.Mq.Consumer;
 
-namespace AnotherHostDemo
+namespace WsHostDemo
 {
-    public class AnotherConfigureService : IConfigureService
+    public class WsConfigureService : IConfigureService
     {
-        public ILogger<AnotherConfigureService> Logger { get; set; }
+        public ILogger<WsConfigureService> Logger { get; set; }
 
-        public AnotherConfigureService()
+        public WsConfigureService()
         {
-            Logger = NullLogger<AnotherConfigureService>.Instance;
+            Logger = NullLogger<WsConfigureService>.Instance;
         }
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

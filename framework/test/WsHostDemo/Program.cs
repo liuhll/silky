@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 
-namespace AnotherHostDemo
+namespace WsHostDemo
 {
     public class Program
     {

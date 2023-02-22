@@ -5,7 +5,7 @@ using MassTransit;
 using Silky.Core.Runtime.Session;
 using Silky.MassTransit.Consumer;
 
-namespace AnotherHostDemo.Mq.Consumer;
+namespace WsHostDemo.Mq.Consumer;
 
 public class TestConsumer : SilkyConsumer<TestMessage>
 {

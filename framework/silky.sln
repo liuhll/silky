@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Transaction.Tcc", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IAnotherApplication", "test\IAnotherApplication\IAnotherApplication.csproj", "{4C0493DB-AC99-4189-BAFB-93EC82DD46D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnotherHostDemo", "test\AnotherHostDemo\AnotherHostDemo.csproj", "{B076C910-08A0-4820-BC34-CA936E980077}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WsHostDemo", "test\WsHostDemo\WsHostDemo.csproj", "{B076C910-08A0-4820-BC34-CA936E980077}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silky.Caching.StackExchangeRedis", "src\Silky.Caching.StackExchangeRedis\Silky.Caching.StackExchangeRedis.csproj", "{239843BB-C84C-4AF0-BAA0-01323991EA21}"
 EndProject

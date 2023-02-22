@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Silky.Agent.Host\Silky.Agent.Host.csproj"/>
-        <ProjectReference Include="..\TestApplication\TestApplication.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

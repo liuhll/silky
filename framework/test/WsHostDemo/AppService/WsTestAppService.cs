@@ -4,7 +4,7 @@ using Silky.Core.Exceptions;
 using Silky.WebSocket;
 using WebSocketSharp;
 
-namespace AnotherHostDemo.AppService
+namespace WsHostDemo.AppService
 {
     public class WsTestAppService : WsAppServiceBase, IWsTestAppService
     {
