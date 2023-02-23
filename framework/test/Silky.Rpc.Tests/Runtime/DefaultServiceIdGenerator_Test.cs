@@ -1,3 +1,4 @@
+using Shouldly;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Tests.AppService;
@@ -19,10 +20,10 @@ namespace Silky.Rpc.Tests.Runtime
         public void Should_GenerateServiceId()
         {
             var type = typeof(ITestAppService);
-            // foreach (var method in type.GetMethods())
-            // {
-            //     _serviceIdGenerator.GenerateServiceId(method).ShouldNotBeEmpty();
-            // }
+            foreach (var method in type.GetMethods())
+            {
+                _idGenerator.GetDefaultServiceEntryId(method).ShouldContain(method.Name);
+            }
         }
     }
 }
