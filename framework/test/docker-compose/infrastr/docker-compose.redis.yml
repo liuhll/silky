@@ -10,7 +10,7 @@ services:
       - REDIS_PASSWORD=qwe!P4ss
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     volumes:
-      - './redis_data:/bitnami/redis/data'
+      - '.redis_data:/bitnami/redis/data'
     networks:
       - silky_service_net
       
