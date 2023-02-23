@@ -95,7 +95,7 @@ namespace Silky.Http.Core.Middlewares
                     var exceptionStatusCode = exceptionFeature.Error.GetExceptionStatusCode();
                     responseResultDto.Status = (int)exceptionStatusCode;
                     responseResultDto.Code = exceptionStatusCode.ToString();
-                    responseResultDto.ErrorMessage = exceptionFeature.Error.Message;
+                    responseResultDto.ErrorMessage = exceptionFeature.Error.GetExceptionMessage();
                     if (exceptionFeature.Error is ValidationException validationException)
                     {
                         responseResultDto.ValidErrors = validationException.GetValidateErrors();

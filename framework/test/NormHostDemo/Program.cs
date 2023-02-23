@@ -17,6 +17,7 @@ namespace NormHostDemo
                     .CreateDefaultBuilder(args)
                     .ConfigureSilkyGeneralHostDefaults(options =>
                     {
+                        options.DisplayFullErrorStack = true;
                         options.ApplicationName = "NormHost";
                         options.BannerMode = BannerMode.CONSOLE;
 #if DEBUG

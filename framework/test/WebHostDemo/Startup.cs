@@ -30,8 +30,6 @@ public class Startup
         // 判断是否开发环境
         if (env.IsDevelopment())
         {
-            // 开发环境使用开发者异常调式页面
-            app.UseDeveloperExceptionPage();
             // 开发环境使用Swagger在线文档
             app.UseSwaggerDocuments();
         }
@@ -42,7 +40,7 @@ public class Startup
         // 添加其他asp.net core中间件...
         app.UseDashboard();
         app.UseSilkyIdentity();
-        // app.UseSilkyWrapperResponse();
+        app.UseSilkyWrapperResponse();
         // 配置路由
         app.UseEndpoints(endpoints =>
         {

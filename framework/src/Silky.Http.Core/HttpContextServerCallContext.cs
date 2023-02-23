@@ -136,6 +136,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         HttpContext.Response.SetExceptionResponseStatus(exception);
         HttpContext.Response.SetResultStatusCode(exception.GetExceptionStatusCode());
         HttpContext.Response.SetResultStatus(exception.GetExceptionStatus());
+        HttpContext.Response.WriteAsync(exception.GetExceptionMessage());
     }
 
     public Task EndCallAsync()
