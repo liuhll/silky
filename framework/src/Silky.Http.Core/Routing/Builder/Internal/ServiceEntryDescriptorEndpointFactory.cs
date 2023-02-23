@@ -87,7 +87,7 @@ internal class ServiceEntryDescriptorEndpointFactory
                     builder.Metadata.Add(authorizeAttribute);
                 }
             }
-            else if (gatewayOptions.GlobalAuthorize)
+            else if (EngineContext.Current.ApplicationOptions.GlobalAuthorize)
             {
                 builder.Metadata.Add(new AuthorizeAttribute());
             }

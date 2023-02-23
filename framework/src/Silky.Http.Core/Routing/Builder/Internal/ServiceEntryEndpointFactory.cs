@@ -74,7 +74,6 @@ namespace Silky.Http.Core.Routing.Builder.Internal
             builder.Metadata.Add(new HttpMethodMetadata(new[] { serviceEntry.Router.HttpMethod.ToString() }));
             if (!serviceEntry.ServiceEntryDescriptor.IsAllowAnonymous && serviceEntry.AuthorizeData != null)
             {
-                var gatewayOptions = EngineContext.Current.GetOptions<GatewayOptions>();
                 if (serviceEntry.AuthorizeData.Any())
                 {
                     foreach (var data in serviceEntry.AuthorizeData)
@@ -82,7 +81,7 @@ namespace Silky.Http.Core.Routing.Builder.Internal
                         builder.Metadata.Add(data);
                     }
                 }
-                else if (gatewayOptions.GlobalAuthorize)
+                else if (EngineContext.Current.ApplicationOptions.GlobalAuthorize)
                 {
                     builder.Metadata.Add(new AuthorizeAttribute());
                 }

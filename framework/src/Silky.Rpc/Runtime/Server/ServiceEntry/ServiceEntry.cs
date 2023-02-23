@@ -17,6 +17,7 @@ using Silky.Rpc.Filters;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Security;
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 using FilterDescriptor = Silky.Rpc.Filters.FilterDescriptor;
 
 namespace Silky.Rpc.Runtime.Server
@@ -210,6 +211,14 @@ namespace Silky.Rpc.Runtime.Server
             authorizeData.AddRange(serviceEntryAuthorizeData);
             var serviceAuthorizeData = ServiceType.GetCustomAttributes().OfType<IAuthorizeData>();
             authorizeData.AddRange(serviceAuthorizeData);
+
+            if (!ServiceEntryDescriptor.IsAllowAnonymous
+                && EngineContext.Current.ApplicationOptions.GlobalAuthorize &&
+                !authorizeData.Any())
+            {
+                authorizeData.Add(new AuthorizeAttribute());
+            }
+
             foreach (var item in authorizeData)
             {
                 ServiceEntryDescriptor.AuthorizeData.Add(new AuthorizeDescriptor()

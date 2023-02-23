@@ -29,6 +29,8 @@ public class SilkyApplicationCreationOptions
     public string DocUrl { get; set; }
 
     public SilkyConfigurationBuilderOptions Configuration { get; set; }
+    
+    public bool GlobalAuthorize { get; set; }
 
     public SilkyApplicationCreationOptions()
     {
@@ -42,6 +44,7 @@ public class SilkyApplicationCreationOptions
         Filter = new FilterOptions();
         ApplicationName = Assembly.GetEntryAssembly()?.GetName()?.Name;
         BannerMode = BannerMode.CONSOLE;
+        GlobalAuthorize = false;
         DocUrl = "https://docs.silky-fk.com";
     }
 }
