@@ -1,11 +1,32 @@
 version: "3.7"
 
 services:
-  silky.redis:
-    image: redis:latest
-    restart: always
+  redis-primary:
+    image: docker.io/bitnami/redis:7.0
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=qwe!P4ss
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    volumes:
+      - '.redis_data:/bitnami/redis/data'
+    networks:
+      - silky_service_net
+      
+  redis-secondary:
+    image: docker.io/bitnami/redis:7.0
+    ports:
+      - '6379'
+    depends_on:
+      - redis-primary
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-primary
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_PASSWORD=qwe!P4ss
+      - REDIS_PASSWORD=qwe!P4ss
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     networks:
       - silky_service_net
 networks:

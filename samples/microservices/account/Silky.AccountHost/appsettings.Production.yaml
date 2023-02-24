@@ -10,6 +10,6 @@ registrycenter:
 distributedCache:
   redis:
     isEnabled: true
-    configuration: 127.0.0.1:6379,defaultDatabase=0
+    configuration: 127.0.0.1:6379,defaultDatabase=0,password=qwe!P4ss
 connectionStrings:
     default: server=127.0.0.1;port=3306;database=account;uid=root;pwd=qwe!P4ss;
