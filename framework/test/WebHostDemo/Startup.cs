@@ -17,6 +17,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddSilkySkyApm();
         // 新增必要的服务
         services.AddSilkyHttpCore()
             .AddSwaggerDocuments()
