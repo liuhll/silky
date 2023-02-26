@@ -25,7 +25,8 @@ registrycenter:
 #  registerEnabled: true
 #  instanceEnabled: true
 #  
-
+governance:
+  timeoutMillSeconds: 0
 distributedCache:
   redis:
     isEnabled: true
@@ -40,6 +41,9 @@ rpc:
   port: 2205
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
   useLibuv: true
+  isSSl: true
+  sslCertificateName: test.silky-fk.com.pfx
+  sslCertificatePassword: bdSpw3W7
 jwtSettings:
   secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
   expiredTime: 30

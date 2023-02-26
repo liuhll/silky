@@ -17,7 +17,7 @@ registrycenter:
   type: Consul
   address: http://127.0.0.1:8500
   heartbeatintervalsecond: 60
-  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
+#  token: 3c8e65c4-c86b-3856-d05c-99ed32c57b06
 
 #registrycenter:
 #  type: Nacos
