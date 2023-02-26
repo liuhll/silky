@@ -17,8 +17,11 @@ namespace Silky.Rpc.SkyApm.Configuration
             var defaultLogFile = Path.Combine("logs", "skyapm-{Date}.log");
             var defaultConfig = new Dictionary<string, string>
             {
-                { "SkyWalking:Namespace", configuration?.GetSection("SkyWalking:Namespace").Value ?? string.Empty },
-                { "SkyWalking:ServiceName", configuration?.GetSection("SkyWalking:ServiceName").Value ?? EngineContext.Current.HostName },
+ SkyWalking               { "SkyWalking:Namespace", configuration?.GetSection("SkyWalking:Namespace").Value ?? string.Empty },
+                {
+                    ":ServiceName",
+                    configuration?.GetSection("SkyWalking:ServiceName").Value ?? EngineContext.Current.HostName
+                },
                 {
                     "Skywalking:ServiceInstanceName",
                     configuration?.GetSection("SkyWalking:ServiceInstanceName").Value ??
@@ -85,9 +88,10 @@ namespace Silky.Rpc.SkyApm.Configuration
             var guid = Guid.NewGuid().ToString("N");
             try
             {
-                if (EngineContext.Current.IsRpcServerProvider())
+                if (EngineContext.Current.IsContainDotNettyTcpModule())
                 {
-                    var address = SilkyEndpointHelper.GetLocalRpcEndpoint().GetAddress();
+                    var silkyEndpoint = SilkyEndpointHelper.GetLocalRpcEndpoint();
+                    var address = silkyEndpoint.GetAddress();
                     return $"{address}";
                 }
 
@@ -100,7 +104,7 @@ namespace Silky.Rpc.SkyApm.Configuration
 
                 return guid;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return guid;
             }
