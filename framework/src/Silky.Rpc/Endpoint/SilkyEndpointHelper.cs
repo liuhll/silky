@@ -26,7 +26,7 @@ namespace Silky.Rpc.Endpoint
         private const string IP_PATTERN = "\\d{1,3}(\\.\\d{1,3}){3,5}$";
 
         private static ConcurrentDictionary<string, string> _ipCache = new();
-        
+
         public static string GetHostIp(string hostAddress)
         {
             if (_ipCache.TryGetValue($"HostIp_{hostAddress}", out var hostIp))
@@ -67,7 +67,7 @@ namespace Silky.Rpc.Endpoint
         {
             var urlInfo = UrlUtil.Parser(address);
             var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(urlInfo.Item1);
-            var silkyEndpoint = GetOrCreateSilkyEndpoint(urlInfo.Item2, urlInfo.Item3,serviceProtocol);
+            var silkyEndpoint = GetOrCreateSilkyEndpoint(urlInfo.Item2, urlInfo.Item3, serviceProtocol);
             return silkyEndpoint;
         }
 
@@ -87,16 +87,16 @@ namespace Silky.Rpc.Endpoint
                     return localWebEndpoint;
                 }
             }
+
             return null;
         }
 
         public static ISilkyEndpoint GetLocalRpcEndpoint()
         {
-            
-            var rpcOptions = EngineContext.Current.GetOptionsSnapshot<RpcOptions>();
+            var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
             var host = GetHostIp(rpcOptions.Host);
             var port = rpcOptions.Port;
-            var silkyEndpoint = GetOrCreateSilkyEndpoint(host,port,ServiceProtocol.Rpc);
+            var silkyEndpoint = GetOrCreateSilkyEndpoint(host, port, ServiceProtocol.Rpc);
             return silkyEndpoint;
         }
 
@@ -132,15 +132,20 @@ namespace Silky.Rpc.Endpoint
         public static ISilkyEndpoint GetOrCreateSilkyEndpoint(string host, int port, ServiceProtocol serviceProtocol)
         {
             var rpcEndpointMonitor = EngineContext.Current.Resolve<IRpcEndpointMonitor>();
+            if (rpcEndpointMonitor == null)
+            {
+                return new SilkyEndpoint(host, port, serviceProtocol);
+            }
+
             if (rpcEndpointMonitor.TryGetSilkyEndpoint(host, port, serviceProtocol, out var rpcEndpoint))
             {
                 return rpcEndpoint;
             }
+
             rpcEndpoint = new SilkyEndpoint(host, port, serviceProtocol);
             rpcEndpointMonitor.Monitor(rpcEndpoint);
             return rpcEndpoint;
         }
-
 
 
         public static string GetIp(string host)
