@@ -17,9 +17,9 @@ namespace Silky.Rpc.SkyApm.Configuration
             var defaultLogFile = Path.Combine("logs", "skyapm-{Date}.log");
             var defaultConfig = new Dictionary<string, string>
             {
- SkyWalking               { "SkyWalking:Namespace", configuration?.GetSection("SkyWalking:Namespace").Value ?? string.Empty },
+                { "SkyWalking:Namespace", configuration?.GetSection("SkyWalking:Namespace").Value ?? string.Empty },
                 {
-                    ":ServiceName",
+                    "SkyWalking:ServiceName",
                     configuration?.GetSection("SkyWalking:ServiceName").Value ?? EngineContext.Current.HostName
                 },
                 {
