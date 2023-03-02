@@ -358,7 +358,7 @@ public interface ITestAppService
 我们需要在 **应用层(Silky.Sample.Application)** 安装 `Silky.WebSocket`包。
 
 ```powershell
-PM> Install-Package Silky.WebSocket -Version 3.0.2
+PM> Install-Package Silky.WebSocket -Version 3.6.6
 ```
 
 并新增一个 `TestAppService`类, 通过它来实现 `ITestAppService`, 除此之外,我们需要 `TestAppService`类继承 `WsAppServiceBase`基类。

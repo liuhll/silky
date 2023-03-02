@@ -31,7 +31,7 @@ silky网关被设计为对微服务应用集群的聚合，需要安装每个微
 
 ## 构建网关应用
 
-1. 通过nuget安装`Silky.WebHost`包，在主函数中注册和构建主机
+1. 通过nuget安装`Silky.Agent.Host`包，在主函数中注册和构建主机
 
 ```csharp
     public class Program
@@ -41,35 +41,32 @@ silky网关被设计为对微服务应用集群的聚合，需要安装每个微
             await CreateHostBuilder(args).Build().RunAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .RegisterSilkyServices<WebHostModule>()
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                    .ConfigureSilkyGatewayDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>()
+                            .UseSerilogDefault();
+                    },
+                    options =>
+                    {
+                        options.ApplicationName = "SilkyGateway";
+                        options.BannerMode = BannerMode.CONSOLE;
+
+                    })
+                   ;
     }
 ```
 
-2. 在`Startup`类中添加**swagger在线文档**,和配置silky请求管道(自动注册一系列的silky中间件)。
+2. 在`Startup`类中添加**swagger在线文档**,和配置Silky路由终结点。
 
 ```csharp
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Silky Gateway Demo", Version = "v1" });
-                c.MultipleServiceKey();
-                var applicationAssemblies = EngineContext.Current.TypeFinder.GetAssemblies()
-                    .Where(p => p.FullName.Contains("Application"));
-                foreach (var applicationAssembly in applicationAssemblies)
-                {
-                    var xmlFile = $"{applicationAssembly.GetName().Name}.xml";
-                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                    if (File.Exists(xmlPath))
-                    {
-                        c.IncludeXmlComments(xmlPath);
-                    }
-                }
-
-            });
+             services
+                .AddSilkyHttpCore()
+                .AddRouting()
+                .AddSwaggerDocuments();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,13 +75,36 @@ silky网关被设计为对微服务应用集群的聚合，需要安装每个微
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Silky Gateway Demo v1"));
+                app.UseSwaggerDocuments();
             }
-            app.ConfigureSilkyRequestPipeline();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapSilkyRpcServices();
+            });
         }
 ```
 
-3. 通过项目引用的方式或是nuget包的方式安装各个微服务应用的应用服务接口层(包)
+3. 通过配置指定集群的`token`、服务注册中心和分布式缓存相关配置
 
-silky通过引用各个微服务应用的应用接口,可以为每个应用服务接口生成webapi,开发者可以通过swagger在线文档进行开发调式。
+```yml
+rpc:
+  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+registrycenter:
+  type: Consul
+  address: http://127.0.0.1:8500
+distributedCache:
+  redis:
+    isEnabled: true
+    configuration: 127.0.0.1:6379,defaultDatabase=0,password=qwe!P4ss
+```
+
+
+4. 在silky框架中,网关无需引用各个微服务应用的任何包或是各个微服务应用接口层,只需要保证接入业务微服务所在的集群(与业务微服务共享同一个服务注册中心),这样开发者就可以通过网关完成对微服务应用提供的服务进行调用。网关还可以通过swagger生成在线的WebAPI文档。
+
+## 通过网关实现微服务集群的健康检查
+
+## 通过网关实现集群的统一认证与授权
+
+## 微服务集群的管理控制端的集成
+
+

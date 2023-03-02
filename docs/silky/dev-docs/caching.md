@@ -123,6 +123,51 @@ public class TestAppService : ITestAppService
 
 ![caching2.png](/assets/imgs/caching2.png)
 
+## 缓存模板参数的设置
+
+在上述文档中,我们看到，如果在服务通信过程中，如果想要使用**缓存拦截**功能,就必不可少的对缓存拦截的key进行模板配置,我们在上述模板中看到,多数情况下使用`{0}`以及配合`[CacheKey(0)]`等这样的占位符的方式配置缓存拦截`Key`的模板,这样使用起来无疑是不方便的。
+
+在Silky的新版本中,我们支持通过参数或是属性名称实现对缓存拦截模板的设置。
+
+例如:
+
+```csharp
+
+[HttpGet("{id:long}")]
+[GetCachingIntercept("id:{id}", OnlyCurrentUserData = true)]
+Task<GetOrganizationOutput> GetAsync(long id);
+
+```
+
+在上述代码中,缓存拦截特性`[GetCachingIntercept("id:{id}", OnlyCurrentUserData = true)]`中的模板(`"id:{id}"`)参数`{id}`将会被`id`的实参替换掉,在RPC通信过程中,如果在分布式缓存中已经存在当前登录用户(`OnlyCurrentUserData=true`)对应的数据,那么缓存数据将会命中,直接从缓存中获取数据,从而减少网络请求。
+
+缓存拦截的模板参数除了可以指定简单类型的实参之外，也可以指定复杂数据类型的属性名称，或是通过正则表达式模糊匹配，例如:
+
+```csharp
+[RemoveMatchKeyCachingIntercept(typeof(GetOrganizationOutput), "id:{Id}:*")]
+[RemoveMatchKeyCachingIntercept(typeof(ICollection<GetOrganizationTreeOutput>),"OrganizationTree:userId:*")]
+[RemoveCachingIntercept(typeof(bool), "HasOrganization:{Id}")]
+[RemoveCachingIntercept(typeof(ICollection<long>), "GetSelfAndChildrenOrganizationIds:{Id}")]
+[Authorize(OrganizationPermissions.Organizations.Update)]
+Task UpdateAsync(UpdateOrganizationInput input);
+
+// 以下是UpdateOrganizationInput的定义
+
+public class UpdateOrganizationInput : OrganizationDtoBase
+{
+    /// <summary>
+    /// 主键Id
+    /// </summary>
+    public long Id { get; set; }
+}
+
+```
+
+上述代码中显示,如果在更新某个组织机构的数据后,数据变化后需要清除缓存中的某些数据,缓存模板中指定的参数`{Id}`指的就是参数`UpdateOrganizationInput`类型的一个属性`Id`。
+
+我们明显的可以看到,在使用缓存拦截的功能上，如果我们通过参数的名称这是缓存模板参数占位符会更加的方便和自由,也无需通过`[CacheKey(0)]`来指定参数的占位位置。
+
+
 ## 使用redis作为缓存中间件
 
 silky框架默认使用`MemoryCaching`作为缓存,但是如果开发者需要将微服务集群部署到多台服务器,那么您需要使用`redis`服务作为缓存服务。
@@ -131,9 +176,9 @@ silky使用redis作为分布式缓存服务非常简单,您只要提供一个red
 
 配置如下所示:
 
-```yml
+```yaml
 distributedCache:
   redis:
     isEnabled: true
-    configuration: 127.0.0.1:6379,defaultDatabase=0 //redis缓存链接配置
+    configuration: 127.0.0.1:6379,defaultDatabase=0,password=passW0rd //redis缓存链接配置
 ```
