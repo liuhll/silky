@@ -42,9 +42,11 @@
     "vuepress-plugin-social-share": "^1.0.0",
     "vuepress-theme-antdocs": "^1.2.2",
     "vuepress-theme-reco": "^1.6.6"
+    
   },
   "dependencies": {
-    "vuepress-plugin-sitemap": "^2.3.1"
+    "vuepress-plugin-sitemap": "^2.3.1",
+    "moment": "^2.24.0"
   },
   "engines": {
     "node": "16.x"

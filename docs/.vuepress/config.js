@@ -13,7 +13,16 @@ module.exports = {
         headerAnchorSelector: '.header-anchor'
     }],
         '@vuepress/back-to-top',
-        '@vuepress/last-updated',
+        [
+            '@vuepress/last-updated',
+            {
+                transformer: (timestamp, lang) => {
+                    const moment = require('moment')
+                    moment.locale(lang)
+                    return moment(timestamp).toString()
+                }
+            }
+        ],
         '@vuepress/nprogress',
     [
         '@vuepress/pwa', {
