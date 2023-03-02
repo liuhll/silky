@@ -5,7 +5,7 @@ lang: zh-cn
 
 ## 必要前提
 
-1. (**必须**) 安装 .net5+ sdk。
+1. (**必须**) 安装 .net5/.net6/.net7 sdk。
 
 2. (**必须**) 您可以使用visual studio 或是rider作为开发工具。 
 
@@ -22,7 +22,7 @@ lang: zh-cn
 
 我们通过如下步骤可以快速的构建一个使用Web 主机构建的Silky微服务应用。
 
-1. 通过Rider或是visual studio创建一个空的结局方案项目
+1. 通过Rider或是visual studio创建一个空的解决方案
 
 ![quick-start1.png](/assets/imgs/quick-start1.png)
 
@@ -37,29 +37,33 @@ lang: zh-cn
 或是通过控制台命令安装`Silky.Agent.Host`最新的nuget包:
 
 ```powershell
-PM> Install-Package Silky.Agent.Host -Version 3.6.5
+PM> Install-Package Silky.Agent.Host -Version 3.6.6
 ```
 
 3. 在`Main`方法中构建silky主机
 
 ```csharp
+using Microsoft.Extensions.Hosting;
+using Silky.Core.Configuration;
+
 namespace Silky.Sample
 {
-    using Microsoft.Extensions.Hosting;
-    using System.Threading.Tasks;
-    class Program
+    public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            await CreateHostBuilder(args).Build().RunAsync();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        private static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                    .ConfigureSilkyWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
-               
-        }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureSilkyWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                },
+                options => {
+                    options.Configuration.FileType = ConfigurationFileType.Json;
+                });
     }
 }
 ```
@@ -122,27 +126,29 @@ namespace Silky.Sample
 
 4. 更新配置
 
-silky支持通过`yaml`或是`yml`或是`json`格式进行配置。默认使用`yaml`格式作为服务配置,您可以通过`appsettings.yaml`为公共配置项指定配置信息,也可以通过新增`appsettings.${ENVIRONMENT}.yaml`文件为指定的环境更新配置属性。
+silky支持通过`yaml`或是`yml`或是`json`格式进行配置。默认使用`yaml`格式作为服务配置,您可以通过`appsettings.yaml`为公共配置项指定配置信息,也可以通过新增`appsettings.${ENVIRONMENT}.yaml`文件为指定的环境更新配置属性。如果想要使用`Json`作为配置格式,可以通过应用启动时将配置格式修改为`json`。
 
 一般地,您必须指定rpc通信的`token`,服务注册中心地址等配置项。使用redis作为缓存服务,需要将`distributedCache:redis:isEnabled`配置项设置为`true`,并给出redis服务缓存的地址，在`distributedCache:redis`配置节点下,还支持redis的其他配置项目,开发者可以参考[StackExchange.Redis的配置文档](https://stackexchange.github.io/StackExchange.Redis/Configuration)来对redis进行配置.
 
 在`appsettings.json`配置文件中新增如下配置属性:
 
-```yaml
-registryCenter:
-  type: Zookeeper
-  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
-  scheme: Digest
-  auth: "silky:pass4Word"
-
-distributedCache:
-  redis:
-    isEnabled: true
-    configuration: 127.0.0.1:6379,defaultDatabase=0
-rpc:
-  host: 0.0.0.0
-  port: 2200
-  token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+```json
+{
+  "RegistryCenter": {
+    "Type": "Zookeeper",
+    "ConnectionStrings": "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186"
+  },
+  "DistributedCache": {
+    "Redis": {
+      "IsEnabled": true,
+      "Configuration": "127.0.0.1:6379,defaultDatabase=0,password=qwe!P4ss"
+    }
+  },
+  "Rpc": {
+    "Token": "ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW",
+    "Port": 2200
+  }
+}
 
 ```
 
@@ -197,7 +203,7 @@ docker-compose -f docker-compose.zookeeper.yml -f docker-compose.redis.yml up -d
 或是通过控制台命令安装包:
 
 ```powershell
-PM> Install-Package Silky.Rpc -Version 3.0.2
+PM> Install-Package Silky.Rpc -Version 3.6.6
 ```
 
 新增一个服务接口`IGreetingAppService`,并且定义一个`Say()`方法,应用接口需要使用`[ServiceRoute]`特性进行标识。
@@ -255,7 +261,9 @@ namespace Silky.Sample
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                    .ConfigureSilkyGeneralHostDefaults();
+                    .ConfigureSilkyGeneralHostDefaults(options => {
+                       options.Configuration.FileType = ConfigurationFileType.Json;
+                    });
                
         }
     }
