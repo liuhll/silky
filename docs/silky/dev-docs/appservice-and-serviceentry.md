@@ -1,25 +1,28 @@
 ---
-title: 应用服务和服务条目
+title:  应用服务和服务条目
 lang: zh-cn
 ---
 
 ## 服务的定义
 
-服务接口是微服务定义服务的基本单位，定义的应用服务接口可以被其他微服务引用，其他微服务通过rpc框架与该微服务进行通信。
+服务接口是微服务应用定义服务的基本单位，定义的应用服务接口可以被其他微服务引用，其他微服务通过rpc框架与该微服务进行通信。这里的服务也就是是RPC框架中所指的服务提供者。
 
 通过`ServiceRouteAttribute`特性对一个接口进行标识即可成为一个应用服务接口。
 
 例如:
 
 ```csharp
+namespace Test;
+
 [ServiceRoute]
 public interface ITestAppService
 {
+   Task<string> Echo(string ping);
 }
 
 ```
 
-虽然我们通过使用`[ServiceRoute]`特性可以对任何一个接口标识为一个服务，服务定义的方法会通过应用服务的模板和方法特性的模板生成对应的webapi(该方法没有服务特性标识为禁用外网)。但是良好的命名规范可以为我们构建服务省去很多不必要的麻烦(通俗的说就是:**约定大约配置**)。
+我们通过使用`[ServiceRoute]`特性可以对任何一个接口标识为一个服务，服务定义的方法会通过应用服务的模板和方法特性的模板生成对应的webapi(该方法没有服务特性标识为禁用外网)。良好的命名规范可以为我们构建服务省去很多不必要的麻烦(通俗的说就是:**约定大约配置**)。
 
 一般地,我们推荐使用`AppService`作为定义的服务的后缀。即推荐使用`IXxxxAppService`作为应用服务接口名称,默认生成的服务模板为:`api/{appservice}`,使用`XxxxAppService`作为应用服务实现类的名称。
 
@@ -35,6 +38,35 @@ public interface ITestAppService
 
 **服务条目(ServiceEntry)**: 服务接口中定义的每一个方法都会生成微服务集群的一个服务条目。对微服务应用本身而言,服务条目就相当于MVC中的`Action`，应用服务就相当于`Controller`。
 
+每个服务条目都会在运行时生成一个相应的服务条目信息,在rpc通信过程中,可以通过`服务条目Id`或是其对应的`WebAPI + Http谓词`来定位到相应的服务条目。
+
+
+### 服务条目Id
+
+每个微服务条目都会生成唯一的服务条目Id,他将会用于定位(路由)相应的服务条目,服务条目Id的生成规则如下:
+
+```shell
+
+服务条目Id = 方法的完全限定名 + 参数名 + _ + Http谓词
+
+```
+
+例如如下的`Echo`方法生成的服务条目Id为：`Test.ITestAppService.Echo.ping_Get`
+
+```csharp
+namespace Test;
+
+[ServiceRoute]
+public interface ITestAppService
+{
+   [HttpGet]
+   Task<string> Echo(string ping);
+}
+```
+
+开发者可以通过网关开启微服务集群的管理端(`Dashboard`),然后登录管理端后,查询各个微服务应用生成的服务以及相应的服务条目,并查询该服务条目的配置参数,他将会影响服务之间的RPC通信行为。
+
+
 ### 根据服务条目生成WebAPI
 
 应用接口被web主机应用或是网关引用后,会根据服务应用接口的路由模板和服务条目方法的Http动词特性指定的路由信息或是方法名称生成相应的webapi,服务条目生成的WebAPI支持restfulAPI风格。
@@ -42,7 +74,7 @@ public interface ITestAppService
 
 服务条目生成webapi的规则为:
 
-1. 禁止集群外部访问的服务条目(`[Governance(ProhibitExtranet = true)]`)不会生成webapi;
+1. 通过特性`[ProhibitExtranet]`(或是`[Governance(ProhibitExtranet = true)]`)可以禁止生成的服务条目被外网访问;
 
 2. 可以通过` [ServiceRoute("{appservice=templateName}")]`为应用接口指定统一的路由模板;
 
@@ -74,6 +106,7 @@ public interface ITestAppService
 | DeleteXXX | /api/test/name/{name} | [HttpDelete("name/{name:strig}")] | delete |
 | UpdateXXX | /api/test/email | [HttpPatch("email")] | patch |
 | CreateXXX | /api/test/user | [HttpPost("user")] | post |
+
 
 
 ### 服务条目的治理特性
