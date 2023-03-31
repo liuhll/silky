@@ -31,7 +31,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 sp => new SilkyRpcHealthCheck(
                     sp.GetRequiredService<IServerManager>(),
                     sp.GetRequiredService<IServerHealthCheck>(),
-                    sp.GetRequiredService<ICurrentRpcToken>(),
                     sp.GetRequiredService<ISerializer>(),
                     sp.GetRequiredService<IHttpHandleDiagnosticListener>(),
                     sp.GetRequiredService<IHttpContextAccessor>(),
@@ -55,7 +54,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 sp => new SilkyGatewayHealthCheck(
                     sp.GetRequiredService<IServerManager>(),
                     sp.GetRequiredService<IServerHealthCheck>(),
-                    sp.GetRequiredService<ICurrentRpcToken>(),
                     sp.GetRequiredService<ISerializer>(),
                     sp.GetRequiredService<IHttpHandleDiagnosticListener>(),
                     sp.GetRequiredService<IHttpContextAccessor>(),

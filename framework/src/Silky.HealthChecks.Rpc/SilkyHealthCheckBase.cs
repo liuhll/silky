@@ -24,7 +24,6 @@ namespace Silky.HealthChecks.Rpc
     {
         protected readonly IServerManager _serverManager;
         protected readonly IServerHealthCheck _serverHealthCheck;
-        protected readonly ICurrentRpcToken _currentRpcToken;
         protected readonly ISerializer _serializer;
         protected readonly IHttpHandleDiagnosticListener _httpHandleDiagnosticListener;
         protected readonly IHttpContextAccessor _httpContextAccessor;
@@ -36,7 +35,6 @@ namespace Silky.HealthChecks.Rpc
 
         protected SilkyHealthCheckBase(IServerManager serverManager,
             IServerHealthCheck serverHealthCheck,
-            ICurrentRpcToken currentRpcToken,
             ISerializer serializer,
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
             IHttpContextAccessor httpContextAccessor,
@@ -46,7 +44,6 @@ namespace Silky.HealthChecks.Rpc
         {
             _serverManager = serverManager;
             _serverHealthCheck = serverHealthCheck;
-            _currentRpcToken = currentRpcToken;
             _serializer = serializer;
             _httpHandleDiagnosticListener = httpHandleDiagnosticListener;
             _httpContextAccessor = httpContextAccessor;

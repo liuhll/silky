@@ -28,7 +28,6 @@ namespace Silky.Rpc.Runtime.Client
         private readonly IClientRemoteInvokerFactory _clientRemoteInvokerFactory;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
-        private readonly ICurrentRpcToken _currentRpcToken;
 
         public ILogger<DefaultRemoteCaller> Logger { get; set; }
 
@@ -36,15 +35,13 @@ namespace Silky.Rpc.Runtime.Client
             ISerializer serializer,
             IClientRemoteInvokerFactory clientRemoteInvokerFactory,
             ITransportClientFactory transportClientFactory,
-            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener, 
-            ICurrentRpcToken currentRpcToken)
+            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener)
         {
             _serverManager = serverManager;
             _serializer = serializer;
             _clientRemoteInvokerFactory = clientRemoteInvokerFactory;
             _transportClientFactory = transportClientFactory;
             _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
-            _currentRpcToken = currentRpcToken;
 
             Logger = NullLogger<DefaultRemoteCaller>.Instance;
         }
@@ -52,7 +49,6 @@ namespace Silky.Rpc.Runtime.Client
         public async Task<object?> InvokeAsync(RemoteInvokeMessage remoteInvokeMessage,
             ShuntStrategy shuntStrategy, string? hashKey = null)
         {
-            _currentRpcToken.SetRpcToken();
             var sp = Stopwatch.StartNew();
             var messageId = GuidGenerator.CreateGuidStrWithNoUnderline();
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,

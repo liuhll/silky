@@ -21,7 +21,6 @@ namespace Silky.Rpc.Security
         {
             if (_currentRpcToken.Token.IsNullOrEmpty())
             {
-                var rpcToken = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.RpcToken);
                 return false;
             }
 

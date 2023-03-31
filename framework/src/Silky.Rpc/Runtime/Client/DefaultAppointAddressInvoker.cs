@@ -7,6 +7,7 @@ using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 
 namespace Silky.Rpc.Runtime.Client
 {
@@ -16,16 +17,19 @@ namespace Silky.Rpc.Runtime.Client
         private readonly IRemoteExecutor _remoteExecutor;
         private readonly IServiceEntryLocator _serviceEntryLocator;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICurrentRpcToken _currentRpcToken;
 
         public DefaultAppointAddressInvoker(ILocalExecutor localExecutor,
             IRemoteExecutor remoteExecutor,
             IServiceEntryLocator serviceEntryLocator,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ICurrentRpcToken currentRpcToken)
         {
             _localExecutor = localExecutor;
             _remoteExecutor = remoteExecutor;
             _serviceEntryLocator = serviceEntryLocator;
             _httpContextAccessor = httpContextAccessor;
+            _currentRpcToken = currentRpcToken;
         }
 
 
@@ -41,6 +45,7 @@ namespace Silky.Rpc.Runtime.Client
 
             Check.NotNull(address, nameof(address));
             Check.NotNull(serviceEntry, nameof(serviceEntry));
+            _currentRpcToken.SetRpcToken();
             if (SilkyEndpointHelper.IsLocalRpcAddress(address))
             {
                 return _localExecutor.Execute(serviceEntry, parameters, serviceKey);

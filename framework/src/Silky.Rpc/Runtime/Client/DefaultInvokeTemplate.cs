@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core.Convertible;
 using Silky.Core.Exceptions;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 
 namespace Silky.Rpc.Runtime.Client;
 
@@ -13,15 +14,18 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
     private readonly IExecutor _executor;
     private readonly IServerManager _serverManager;
     private readonly ITypeConvertibleService _typeConvertibleService;
+    private readonly ICurrentRpcToken _currentRpcToken;
 
 
     public DefaultInvokeTemplate(IExecutor executor,
         IServerManager serverManager,
-        ITypeConvertibleService typeConvertibleService)
+        ITypeConvertibleService typeConvertibleService,
+        ICurrentRpcToken currentRpcToken)
     {
         _executor = executor;
         _serverManager = serverManager;
         _typeConvertibleService = typeConvertibleService;
+        _currentRpcToken = currentRpcToken;
     }
 
     public async Task<T> GetForObjectAsync<T>(string api, params object[] parameters)
@@ -188,7 +192,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
         {
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {api}-{method}");
         }
-
+        _currentRpcToken.SetRpcToken();
         var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }
@@ -200,7 +204,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
         {
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {api}-{method}");
         }
-
+        _currentRpcToken.SetRpcToken();
         var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }
@@ -212,7 +216,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
         {
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {id}");
         }
-
+        _currentRpcToken.SetRpcToken();
         var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }
@@ -224,7 +228,7 @@ internal class DefaultInvokeTemplate : IInvokeTemplate
         {
             throw new NotFindServiceEntryException($"Relevant service entry descriptor not found via {id}");
         }
-
+        _currentRpcToken.SetRpcToken();
         var result = await _executor.Execute(serviceEntryDescriptor, parameters);
         return result;
     }

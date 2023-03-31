@@ -5,7 +5,7 @@ using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Rpc.Runtime.Client
 {
-    public interface IAppointAddressInvoker : IScopedDependency
+    public interface IAppointAddressInvoker : ITransientDependency
     {
         Task<object> Invoke([NotNull] string address, [NotNull] ServiceEntry serviceEntry,
             object[] parameters, string serviceKey = null);

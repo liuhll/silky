@@ -17,11 +17,10 @@ namespace Silky.HealthChecks.Rpc
 {
     public class SilkyRpcHealthCheck : SilkyHealthCheckBase
     {
-        public SilkyRpcHealthCheck(IServerManager serverManager, IServerHealthCheck serverHealthCheck,
-            ICurrentRpcToken currentRpcToken, ISerializer serializer,
+        public SilkyRpcHealthCheck(IServerManager serverManager, IServerHealthCheck serverHealthCheck, ISerializer serializer,
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener, IHttpContextAccessor httpContextAccessor,
             IServiceEntryLocator serviceEntryLocator, IRpcEndpointMonitor rpcEndpointMonitor,
-            IOptions<GovernanceOptions> governanceOptions) : base(serverManager, serverHealthCheck, currentRpcToken,
+            IOptions<GovernanceOptions> governanceOptions) : base(serverManager, serverHealthCheck, 
             serializer, httpHandleDiagnosticListener, httpContextAccessor, serviceEntryLocator, rpcEndpointMonitor,
             governanceOptions)
         {

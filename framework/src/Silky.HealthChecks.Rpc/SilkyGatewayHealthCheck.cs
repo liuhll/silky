@@ -17,10 +17,10 @@ namespace Silky.HealthChecks.Rpc;
 public class SilkyGatewayHealthCheck : SilkyHealthCheckBase
 {
     public SilkyGatewayHealthCheck(IServerManager serverManager, IServerHealthCheck serverHealthCheck,
-        ICurrentRpcToken currentRpcToken, ISerializer serializer,
+        ISerializer serializer,
         IHttpHandleDiagnosticListener httpHandleDiagnosticListener, IHttpContextAccessor httpContextAccessor,
         IServiceEntryLocator serviceEntryLocator, IRpcEndpointMonitor rpcEndpointMonitor,
-        IOptions<GovernanceOptions> governanceOptions) : base(serverManager, serverHealthCheck, currentRpcToken,
+        IOptions<GovernanceOptions> governanceOptions) : base(serverManager, serverHealthCheck,
         serializer, httpHandleDiagnosticListener, httpContextAccessor, serviceEntryLocator, rpcEndpointMonitor,
         governanceOptions)
     {
@@ -32,7 +32,9 @@ public class SilkyGatewayHealthCheck : SilkyHealthCheckBase
         if (_serverManager.Servers == null)
         {
             return Array.Empty<IServer>();
-;        }
+            ;
+        }
+
         return _serverManager.Servers.Where(p =>
                 p.Endpoints.Any(e =>
                     e.ServiceProtocol == ServiceProtocol.Http || e.ServiceProtocol == ServiceProtocol.Https))
