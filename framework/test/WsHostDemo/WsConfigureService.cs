@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Extensions;
+using Sundial;
+using WsHostDemo.Job;
 using WsHostDemo.Mq.Consumer;
 
 namespace WsHostDemo
@@ -20,8 +22,12 @@ namespace WsHostDemo
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSilkySkyApm();
-            // services.AddMessagePackCodec();
 
+            services.AddSchedule(options =>
+            {
+                options.AddJob<MyJob>(Triggers.PeriodSeconds(10));
+            });
+            
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, configurator) =>

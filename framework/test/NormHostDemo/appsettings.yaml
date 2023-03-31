@@ -71,9 +71,9 @@ plugInSource:
       searchOption: TopDirectoryOnly
         #    - folder: ../../../../ITestApplication/bin/Debug/net7.0
         #      searchOption: TopDirectoryOnly
-        #  modulePlugIn:
-        #    types:
-      #      - TestApplication.TestModule,TestApplication
+  modulePlugIn:
+    types:
+    - TestApplication.TestModule,TestApplication
 
 
 rabbitMq:

@@ -15,6 +15,7 @@ using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
+using Silky.Rpc.Security;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
 
@@ -27,6 +28,7 @@ namespace Silky.Rpc.Runtime.Client
         private readonly IClientRemoteInvokerFactory _clientRemoteInvokerFactory;
         private readonly ITransportClientFactory _transportClientFactory;
         private readonly IClientInvokeDiagnosticListener _clientInvokeDiagnosticListener;
+        private readonly ICurrentRpcToken _currentRpcToken;
 
         public ILogger<DefaultRemoteCaller> Logger { get; set; }
 
@@ -34,13 +36,15 @@ namespace Silky.Rpc.Runtime.Client
             ISerializer serializer,
             IClientRemoteInvokerFactory clientRemoteInvokerFactory,
             ITransportClientFactory transportClientFactory,
-            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener)
+            IClientInvokeDiagnosticListener clientInvokeDiagnosticListener, 
+            ICurrentRpcToken currentRpcToken)
         {
             _serverManager = serverManager;
             _serializer = serializer;
             _clientRemoteInvokerFactory = clientRemoteInvokerFactory;
             _transportClientFactory = transportClientFactory;
             _clientInvokeDiagnosticListener = clientInvokeDiagnosticListener;
+            _currentRpcToken = currentRpcToken;
 
             Logger = NullLogger<DefaultRemoteCaller>.Instance;
         }
@@ -48,14 +52,15 @@ namespace Silky.Rpc.Runtime.Client
         public async Task<object?> InvokeAsync(RemoteInvokeMessage remoteInvokeMessage,
             ShuntStrategy shuntStrategy, string? hashKey = null)
         {
+            _currentRpcToken.SetRpcToken();
             var sp = Stopwatch.StartNew();
             var messageId = GuidGenerator.CreateGuidStrWithNoUnderline();
-            var tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(remoteInvokeMessage, messageId);
             Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
                 "The rpc request call start{0} serviceEntryId:[{1}]",
                 args: new[] { Environment.NewLine, remoteInvokeMessage.ServiceEntryId });
             ClientInvokeInfo? clientInvokeInfo = null;
             ISilkyEndpoint? selectedRpcEndpoint = null;
+            long? tracingTimestamp = null;
             IRemoteInvoker remoteInvoker;
             var invokeMonitor = EngineContext.Current.Resolve<IInvokeMonitor>();
             try
@@ -64,12 +69,13 @@ namespace Silky.Rpc.Runtime.Client
                 selectedRpcEndpoint =
                     SelectedRpcEndpoint(rpcEndpoints, shuntStrategy, remoteInvokeMessage.ServiceEntryId, hashKey,
                         out var confirmedShuntStrategy);
-                
+                RpcContext.Context.SetRcpInvokeAddressInfo(selectedRpcEndpoint.Descriptor);
+                tracingTimestamp = _clientInvokeDiagnosticListener.TracingBefore(remoteInvokeMessage, messageId);
                 clientInvokeInfo = invokeMonitor?.Monitor((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint));
                 _clientInvokeDiagnosticListener.TracingSelectInvokeAddress(tracingTimestamp,
                     remoteInvokeMessage.ServiceEntryId, confirmedShuntStrategy,
                     rpcEndpoints, selectedRpcEndpoint);
-                
+
                 var client = await _transportClientFactory.GetClient(selectedRpcEndpoint);
                 remoteInvoker =
                     _clientRemoteInvokerFactory.CreateInvoker(new ClientInvokeContext(remoteInvokeMessage,

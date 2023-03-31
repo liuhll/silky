@@ -58,7 +58,6 @@ namespace Silky.HealthChecks.Rpc
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            _currentRpcToken.SetRpcToken();
             _httpContextAccessor.HttpContext?.SetHttpHandleAddressInfo();
             var messageId = GetMessageId(_httpContextAccessor.HttpContext);
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(HealthCheckConstants.HealthCheckServiceEntryId);

@@ -43,8 +43,8 @@ namespace Silky.Core.Runtime.Rpc
 
         public static ServiceProtocol GetClientServiceProtocol(this RpcContext rpcContext)
         {
-            var clientPort = rpcContext.GetInvokeAttachment(AttachmentKeys.ClientServiceProtocol);
-            return clientPort.To<ServiceProtocol>();
+            var clientServiceProtocol = rpcContext.GetInvokeAttachment(AttachmentKeys.ClientServiceProtocol);
+            return clientServiceProtocol.To<ServiceProtocol>();
         }
 
 

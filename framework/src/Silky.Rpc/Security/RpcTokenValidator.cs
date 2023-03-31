@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Options;
+using Silky.Core.Extensions;
+using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Configuration;
 
 namespace Silky.Rpc.Security
@@ -17,7 +19,14 @@ namespace Silky.Rpc.Security
 
         public bool Validate()
         {
-            return _currentRpcToken.Token == _rpcOptions.Token;
+            if (_currentRpcToken.Token.IsNullOrEmpty())
+            {
+                var rpcToken = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.RpcToken);
+                return false;
+            }
+
+            var isEquals = _currentRpcToken.Token.Equals(_rpcOptions.Token);
+            return isEquals;
         }
     }
 }
