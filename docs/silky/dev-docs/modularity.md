@@ -88,16 +88,29 @@ protected override void RegisterServices(ContainerBuilder builder)
 }
 ```
 
-## 使用模块初始化任务
+## 模块的初始化方法
 
-在应用程序启动过程中,开发者可以重写`Initialize`方法来实现模块的初始化任务。开发者可以通过`applicationContext.ServiceProvider`属性来解析注册的服务。
+在应用程序启动过程中,开发者可以重写`PreInitialize`、`Initialize`、`PostInitialize`方法来实现模块的初始化任务之前、初始化任务、初始化任务之后的方法。
+
+开发者可以通过`applicationContext.ServiceProvider`属性来解析注册的服务。
 
 ```csharp
+
+public virtual Task PreInitialize(ApplicationInitializationContext context)
+{
+    return Task.CompletedTask;
+}
+
 public override async Task Initialize(ApplicationContext applicationContext)
 {
     var serverRouteRegister =
         applicationContext.ServiceProvider.GetRequiredService<IServerRegister>();
     await serverRouteRegister.RegisterServer();
+}
+
+public virtual Task PostInitialize(ApplicationInitializationContext context)
+{
+    return Task.CompletedTask;
 }
 ```
 
@@ -182,3 +195,39 @@ public class CustomStartHostModule : StartUpModule
 4. 构建只能作为服务消费者网关应用的`GatewayHostModule`模块
 
 开发者可以选择继承如上的启动模块,并且配置Host主机提供API就可以构建相应的主机。
+
+## 以插件的方式注册模块
+
+在模块的依赖关系设置中,我们知道开发者除非改写启动模块,不然无法将用户扩展的模块添加到应用服务的依赖中；但是,改写启动模块时一件麻烦的工作，我们在开发中可以尽量避免启动模块的修改;
+
+Silky提供给开发者可以通过模块插件的方式将模块添加到应用模块中,这样模块在应用启动时也将会被执行。
+
+例如:用户自定义了一个模块`TestModule`,用于在应用启动时,通过该执行数据库迁移:
+
+```csharp
+public class TestModule : SilkyModule
+{
+    public override Task Initialize(ApplicationInitializationContext context)
+    {
+        if (context.HostEnvironment.IsDevelopment())
+        {
+            // using var scope = context.ServiceProvider.CreateScope();
+            var demoDbContext = context.ServiceProvider.GetRequiredService<DemoDbContext>();
+            return demoDbContext.Database.MigrateAsync();
+        }
+        return Task.CompletedTask;
+    }
+}
+```
+
+我们知道如果我们没有指定在启动模块中依赖该模块的话,该模块在应用启动时是得不到执行的,但是修改启动模块是一件比较麻烦的事；
+我们可以通过配置的方式,指定改模块为插件模块,这样就可以通过配置的方式将模块加入到应用启动时.
+
+在`appsetting.yaml`配置文件下增加如下配置:
+
+```yaml
+plugInSource:
+  modulePlugIn:
+    types:
+    - TestApplication.TestModule,TestApplication # 模块所在类的完全限定名,应用程序集
+```
