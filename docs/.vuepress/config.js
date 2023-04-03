@@ -168,6 +168,7 @@ document.write('<script src="' + src + '" id="sozz"><\/script>');
                         'dev-docs/templete',
                         'dev-docs/host',
                         'dev-docs/modularity',
+                        'dev-docs/plugin',
                         'dev-docs/appservice-and-serviceentry',
                         'dev-docs/service-registry',
                         'dev-docs/rpc',
