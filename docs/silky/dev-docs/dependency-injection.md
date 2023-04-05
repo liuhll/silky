@@ -9,6 +9,8 @@ lang: zh-cn
 
 ## 将对象注入到ioc容器的方式
 
+### 模块化
+
 1. 在模块中通过`RegisterServices()`方法的`ContainerBuilder`注册服务
   
    开发者如果自定义自定义模块,可以通过模块的定义类注册服务，通过模块定义类向ioc容器注册服务,本质是通过Autofac框架的`ContainerBuilder`实现服务的注册。
@@ -22,11 +24,14 @@ lang: zh-cn
      {
          protected override void RegisterServices(ContainerBuilder builder)
          {
+            //在此处注入依赖项
              builder.RegisterType<MessagePackTransportMessageDecoder>().AsSelf().AsImplementedInterfaces().InstancePerDependency();
              builder.RegisterType<MessagePackTransportMessageEncoder>().AsSelf().AsImplementedInterfaces().InstancePerDependency();
          }
      }  
    ```
+
+### 通过ConfigureService实现注册
 
 2. 通过继承`IConfigureService`或是`ISilkyStartup`,通过`Configure()`方法的`IServiceCollection`注册服务
   
@@ -76,25 +81,66 @@ lang: zh-cn
 
 :::
 
-3. 通过继承依赖注入标识接口实现服务的注册(**推荐**)
+### 依照约定的注册
 
-   silky框架提供了三个依赖注册的相关标识接口：`ISingletonDependency`(单例模式)、`IScopedDependency`(区域模式)、`ITransientDependency`(瞬态模式)。在微服务应用启动时,会扫描继承了这些标识接口的类(服务),并将其自身和继承的接口注册到Ioc容器中。
+3. 通过继承依赖注入标识接口实现服务的注册(**推荐**),如果实现这些接口,则会自动将类注册到依赖注入:
+
+- `ITransientDependency` 注册为transient生命周期.
+- `ISingletonDependency` 注册为singleton生命周期.
+- `IScopedDependency` 注册为scoped生命周期.
    
    开发者一般情况下,如果需要将自定义的一个类注册到ioc容器时,可以选择继承相应的标识接口。例如:自定义的领域服务、仓库等。
+
+   示例:
    
    ```csharp
    public class AccountDomainService : ITransientDependency, IAccountDomainService
    {
    }
    ```
+  `AccountDomainService`因为实现了`ITransientDependency`,所以它会自动注册为transient生命周期. 
 
-## 获取服务对象
+### 命名的服务注册(InjectNamedAttribute)
+
+在通过继承标识接口实现的依赖注入中,可以通过特性`[InjectNamed("服务名称")]`来实现命名服务的注册;
+
+   示例:
+   
+   ```csharp
+   [InjectNamed("Account")]
+   public class AccountDomainService : ITransientDependency, IAccountDomainService
+   {
+   }
+   ```
+命名服务无法通过构造注入或是属性注入来获取,只能通过通过服务引擎提供的`ResolveNamed()`方法从Ioc容器中解析对应的命名服务,如下所示:
+
+```csharp
+
+var accountDomainService =  EngineContext.Current.ResolveNamed<IAccountDomainService>("Account");
+```
+
+
+### 固有的注册类型
+
+4. 一些特定类型会默认注册到依赖注入.例子:
+
+- 应用服务代理(被标识了`[ServiceRoute]`的代理接口)被注册为scope.
+- 存储库（实现`IRepository`接口）注册为scope.
+
+
+
+## 注入依赖关系
+
+使用已注册的服务有三种常用方法.
+### 构造方法注入
 
 1. 通过构造注入的方式获取服务对象
-
+     
    通过以上三种方式被注册的的服务都可以通过构造注入的方式获取服务实例对象。
    
    在应用其他微服务应用的应用接口层(包)后,应用服务接口是通过构造注入的方式获取动态代理对象。
+
+   这是将服务注入类的最常用方法.例如:
    
    ```csharp
     public class AccountAppService : IAccountAppService
@@ -108,7 +154,11 @@ lang: zh-cn
     }
    ```
 
-3. 通过属性注入的方式获取服务对象
+   构造方法注入是将依赖项注入类的首选方式.这样,除非提供了所有构造方法注入的依赖项,否则无法构造类.因此,该类明确的声明了它必需的服务.需要注意的是,
+
+### 属性注入
+
+2. 通过属性注入的方式获取服务对象
 
    通过继承标识接口注册服务的类,也支持属性注入的方式获取服务对象。如果通过自定义模块类注册服务的时候,也可以指定支持通过属性的方式获取服务。
    
@@ -142,6 +192,10 @@ lang: zh-cn
         }
    }
    ```
+
+   为了使依赖项成为可选的,我们通常会为依赖项设置默认/后备(fallback)值.在此示例中,`NullLogger`用作后备.因此,如果DI框架或你在创建`DotNettyRemoteServiceInvoker`后未设置Logger属性,则`DotNettyRemoteServiceInvoker`依然可以工作但不写日志.
+
+### 通过服务引擎解析服务
 
 3. 通过服务引擎`IEngine`解析服务实例
    
