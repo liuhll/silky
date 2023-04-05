@@ -119,7 +119,7 @@ public interface ITestAppService
 
 在服务应用接口被其他微服务应用引用后,可以通过缓存拦截特性(`GetCachingIntercept`)在rpc通信过程中,直接从分布式缓存中读取数据,避免通过网络通信,而从提高系统性能。
 
-更多关于缓存拦截请参考[缓存拦截](caching)。
+更多关于缓存拦截请参考[缓存拦截](caching.html#缓存拦截)。
 
 ### 服务条目的例子
 
