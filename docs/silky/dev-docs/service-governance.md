@@ -33,27 +33,44 @@ silky支持服务的自动注册和发现,支持使用 **Zookeeper** 、**Nacos*
 
 3. 如果使用 **Consul** 作为服务注册中心，则会通过心跳的方式从服务注册中心 **拉取** 最新的服务元数据和服务实例的终结点(实例地址)信息。当服务注册中心的终结点(地址信息)发生变化,服务实例的内存中服务路由表信息也将得到更新。
 
-4. 当在RPC通信过程中发生IO异常或是通信异常时,服务实例将会在n(配置属性为:`Governance:UnHealthAddressTimesAllowedBeforeRemoving`)次后从服务注册中心移除。(`UnHealthAddressTimesAllowedBeforeRemoving`如果的值等于0,则服务实例将会被立即移除)。
+4. 当在RPC通信过程中发生IO异常或是通信异常时,选择的服务提供者的实例将会在n(配置属性为:`Governance:UnHealthAddressTimesAllowedBeforeRemoving`)次后从服务注册中心移除。(`Governance:UnHealthAddressTimesAllowedBeforeRemoving`如果的值等于0,则该服务实例将会被立即移除)。
 
-5. 在RPC通信过程中,采用长链接, 支持心跳检测。在服务之间建立连接后,如果`Governance:EnableHeartbeat`配置为`true`，那么会定时(通过配置`Governance:HeartbeatWatchIntervalSeconds`)发送一个心跳包,从而保证会话链接的可靠性。如果心跳检测到通信异常,则会根据配置属性(`Governance:UnHealthAddressTimesAllowedBeforeRemoving`)n次后,从服务注册中心移除。
+5. 在RPC通信过程中,采用长链接, 支持心跳检测。在服务之间建立连接后,如果`Rpc:EnableHeartbeat`配置为`true`，那么建立起来的客户端会定时(通过配置`Rpc:HeartbeatWatchIntervalSeconds`)发送一个心跳包,从而保证会话链接的可靠性。如果心跳检测到通信异常,则会根据配置属性(`Governance:UnHealthAddressTimesAllowedBeforeRemoving`)n次后,从服务注册中心移除。
+
+6. 关于服务注册与发现的更多内容请参考[服务注册中心](service-registry.html#服务注册中心简介)。
 
 ## 负载均衡
 
-在RPC通信过程中,silky框架支持 **轮询(Polling)**、 **随机(Random)** 、 **哈希一致性(HashAlgorithm)** 等负载均衡算法。负载均衡的缺省值为 **轮询(Polling)** ,开发者可以通过配置属性 `Governance:ShuntStrategy` 来统一指定负载均衡算法。同时,开发者也可以通过`GovernanceAttribute`特性来重置应用服务方法(服务条目)的负载均衡算法。
+在RPC通信过程中,silky框架支持 **轮询(Polling)**、 **随机(Random)** 、 **哈希一致性(HashAlgorithm)** 等负载均衡算法。负载均衡的缺省值为 **轮询(Polling)** ,开发者可以通过配置属性 `Governance:ShuntStrategy` 来统一指定负载均衡算法。
+
+```yaml
+governance:
+  shuntStrategy: Random
+```
+
+同时,开发者也可以通过`GovernanceAttribute`特性来重置应用服务方法(服务条目)的负载均衡算法。
 
 例如:
 
 ```csharp
 [HttpGet("{name}")]
-[Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
-Task<TestOut> Get([HashKey]string name);
+[Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)] //负载均衡算法指定为Hash算法
+Task<TestOut> Get([HashKey]string name); // 通过[HashKey]指定哪个参数为作为hash路由的参数标识
 ```
 
 如果选择使用 **哈希一致性(HashAlgorithm)** 作为负载均衡算法,则需要使用`[HashKey]`对某一个参数进行标识,这样,相同参数的请求,在RPC通信过程中,都会被路由到通一个服务实例。
 
 ## 超时
 
-在RPC通信中,如果在给定的配置时长没有返回结果,则会抛出超时异常。一般地,开发者可以通过配置属性`Governance:TimeoutMillSeconds`来统一的配置RPC调用超时时长,缺省值为`5000`ms。同样地,开发者也可以通过`GovernanceAttribute`特性来重置应用服务方法的超时时长。
+在RPC通信中,如果在给定的配置时长没有返回结果,则会抛出超时异常。一般地,开发者可以通过配置属性`Governance:TimeoutMillSeconds`来统一的配置RPC调用超时时长,缺省值为`5000`ms。
+
+```yaml
+governance:
+  timeoutMillSeconds: 1000
+```
+
+
+同样地,开发者也可以通过`GovernanceAttribute`特性来重置应用服务方法的超时时长。
 
 
 ```csharp
@@ -82,6 +99,13 @@ Task<TestOut> Get([HashKey]string name);
 3. 其他类型的异常不会导致失败重试。
 
 开发者通过`Governance:RetryTimes`配置项来确定失败重试的次数，缺省值等于`3`。同样地,开发者也可以通过`GovernanceAttribute`特性来重置失败重试次数。如果`RetryTimes`被设置为小于等于`0`,则不会发生失败重试。通过`Governance:RetryIntervalMillSeconds` 可以配置失败重试的间隔时间。
+
+
+```yaml
+governance:
+  retryTimes: 5
+```
+
 
 ```csharp
 [HttpGet("{name}")]
