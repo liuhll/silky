@@ -20,7 +20,7 @@ using Silky.Swagger.Gen.Provider;
 
 namespace Silky.Http.Swagger.Builders
 {
-    internal static class SwaggerDocumentBuilder
+    public static class SwaggerDocumentBuilder
     {
         private static readonly IEnumerable<string> DocumentGroups;
         private static readonly IEnumerable<Assembly> ApplicationInterfaceAssemblies;
