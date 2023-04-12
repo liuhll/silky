@@ -49,7 +49,7 @@ namespace Silky.Rpc
             builder.RegisterTypes(localServiceTypes)
                 .PropertiesAutowired()
                 .AsSelf()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .AsImplementedInterfaces();
 
             var serviceKeyTypes =
@@ -61,7 +61,7 @@ namespace Silky.Rpc
                     .Named(serviceKeyAttribute.Name,
                         serviceKeyType.GetInterfaces().First(p =>
                             p.GetCustomAttributes().OfType<IRouteTemplateProvider>().Any()))
-                    .InstancePerLifetimeScope()
+                    .InstancePerDependency()
                     .AsImplementedInterfaces()
                     ;
             }
@@ -164,17 +164,17 @@ namespace Silky.Rpc
         {
             builder.RegisterType<DefaultLocalExecutor>()
                 .As<ILocalExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 ;
 
             builder.RegisterType<DefaultRemoteExecutor>()
                 .As<IRemoteExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 ;
 
             builder.RegisterType<DefaultExecutor>()
                 .As<IExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 ;
         }
     }

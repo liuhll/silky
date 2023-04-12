@@ -30,7 +30,7 @@ namespace Silky.Transaction
         {
             builder.RegisterType<DefaultLocalExecutor>()
                 .As<ILocalExecutor>()
-                .InstancePerLifetimeScope()
+                .InstancePerDependency()
                 .AddInterceptors(
                     typeof(TransactionInterceptor)
                 )

@@ -42,7 +42,7 @@ namespace Silky.WebSocket
                 builder.RegisterType(serviceKeyType).Named(serviceKeyAttribute.Name,
                         serviceKeyType.GetInterfaces().First(p =>
                             p.GetCustomAttributes().OfType<IRouteTemplateProvider>().Any()))
-                    .InstancePerLifetimeScope()
+                    .InstancePerDependency()
                     .AsImplementedInterfaces();
             }
 
