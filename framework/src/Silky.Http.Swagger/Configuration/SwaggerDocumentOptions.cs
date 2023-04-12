@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Silky.Http.Swagger.Internal;
+using Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator;
 using Silky.Swagger.Abstraction.SwaggerUI;
 
 namespace Silky.Http.Swagger.Configuration
@@ -23,6 +24,7 @@ namespace Silky.Http.Swagger.Configuration
             Groups = new List<GroupDescription>();
             RoutePrefix = "";
             EnableAuthorized = true;
+            FilterTypes = new List<string>();
             if (EnableAuthorized)
             {
                 SecurityDefinitions ??= new SpecificationOpenApiSecurityScheme[]
@@ -86,6 +88,24 @@ namespace Silky.Http.Swagger.Configuration
         public string[] XmlComments { get; set; }
         
         public bool ShowDashboardService { get; set; }
+        
+        public IList<string> FilterTypes { get; set; }
+        
+        internal IList<Type> GetFilterTypes()
+        {
+            var types = new List<Type>();
+            foreach (var filterTypeLine in FilterTypes)
+            {
+                var filterType = Type.GetType(filterTypeLine);
+                if (typeof(IOperationFilter).IsAssignableFrom(filterType))
+                {
+                    types.Add(filterType);
+                }
+            
+            }
+
+            return types;
+        }
     }
 
     public enum OrganizationMode

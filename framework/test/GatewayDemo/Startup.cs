@@ -1,15 +1,12 @@
 using System.IO.Compression;
 using System.Linq;
 using GatewayDemo.Authorization;
-using GatewayDemo.Swagger.Filter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Silky.Http.Core;
-using Silky.Http.MiniProfiler;
 using Silky.Http.Swagger.Builders;
 
 
@@ -39,7 +36,7 @@ namespace GatewayDemo
                 .AddSilkyMiniProfiler()
                 .AddSwaggerDocuments(options =>
                 {
-                    options.OperationFilter<AddTestHeaderOperationFilter>(); 
+                   // options.OperationFilter<AddTestHeaderOperationFilter>(); 
                     SwaggerDocumentBuilder.BuildGen(options, Configuration);
                    
                 });

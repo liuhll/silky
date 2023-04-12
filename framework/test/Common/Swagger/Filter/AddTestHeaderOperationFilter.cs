@@ -1,7 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator;
 
-namespace GatewayDemo.Swagger.Filter;
+namespace Common.Swagger.Filter;
 
 public class AddTestHeaderOperationFilter : IOperationFilter
 {
@@ -11,7 +11,7 @@ public class AddTestHeaderOperationFilter : IOperationFilter
         {
             Name = "Test",
             In = ParameterLocation.Header,
-            Required = true,
+            Required = false,
             Schema = new OpenApiSchema()
             {
                 Type = "string"

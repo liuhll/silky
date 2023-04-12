@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,6 +63,15 @@ namespace Silky.Http.Swagger.Builders
             if (swaggerDocumentOptions.EnableHashRouteHeader)
             {
                 swaggerGenOptions.AddHashRouteHeader();
+            }
+
+            foreach (var filterType in swaggerDocumentOptions.GetFilterTypes())
+            {
+                swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor()
+                {
+                    Type = filterType,
+                    Arguments = Array.Empty<object>()
+                });
             }
 
             LoadXmlComments(swaggerGenOptions, swaggerDocumentOptions);

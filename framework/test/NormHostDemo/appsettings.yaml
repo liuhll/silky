@@ -75,10 +75,15 @@ plugInSource:
     types:
     - TestApplication.TestModule,TestApplication
 
-
 rabbitMq:
   host: 127.0.0.1
   port: 5672
   userName: rabbitmq
   password: rabbitmq
   virtualHost: /        
+  
+swaggerGen:
+  filterTypes:
+    - Common.Swagger.Filter.AddTestHeaderOperationFilter,Common
+  title: NormHost
+    

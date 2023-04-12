@@ -11,6 +11,8 @@ using Silky.Rpc.Runtime.Server;
 using Silky.Swagger.Abstraction;
 using Silky.Swagger.Abstraction.SwaggerGen.DependencyInjection;
 using Silky.Swagger.Abstraction.SwaggerGen.Filters;
+using Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator;
+using Silky.Swagger.Gen.Configuration;
 using Silky.Swagger.Gen.Provider;
 using Silky.Swagger.Gen.Provider.Consul;
 using Silky.Swagger.Gen.Provider.Nacos;
@@ -75,6 +77,10 @@ public static class ServiceCollectionExtensions
     {
         if (!services.IsAdded(typeof(ISwaggerProvider)))
         {
+            services.AddOptions<SilkySwaggerGenOptions>()
+                .Bind(EngineContext.Current.Configuration.GetSection(SilkySwaggerGenOptions.SwaggerDocument));
+            var swaggerGenOption = configuration.GetSection(SilkySwaggerGenOptions.SwaggerDocument)
+                .Get<SilkySwaggerGenOptions>();
             services.AddSwaggerGen(options =>
             {
                 var groups = SwaggerGroupUtils.ReadGroupInfos(ServiceHelper.ReadInterfaceAssemblies());
@@ -83,13 +89,34 @@ public static class ServiceCollectionExtensions
                     options.SwaggerDoc(group.Item1,
                         new OpenApiInfo()
                         {
-                            Title = group.Item1,
-                            Version = VersionHelper.GetCurrentVersion()
+                            Title = swaggerGenOption.Title ?? group.Item1,
+                            Version = swaggerGenOption.Version,
+                            Description = swaggerGenOption.Description,
+                            License = swaggerGenOption.License,
+                            TermsOfService = swaggerGenOption.TermsOfService,
+                            Contact = swaggerGenOption.Contact,
                         });
                 }
 
-                options.MultipleServiceKey();
-                options.AddHashRouteHeader();
+                if (swaggerGenOption.EnableHashRouteHeader)
+                {
+                    options.AddHashRouteHeader();
+                }
+
+                if (swaggerGenOption.EnableMultipleServiceKey)
+                {
+                    options.MultipleServiceKey();
+                }
+
+                foreach (var filterType in swaggerGenOption.GetFilterTypes())
+                {
+                    options.OperationFilterDescriptors.Add(new FilterDescriptor()
+                    {
+                        Type = filterType,
+                        Arguments = Array.Empty<object>()
+                    });
+                }
+                
                 options.SchemaFilter<EnumSchemaFilter>();
 
                 LoadXmlComments(options);
