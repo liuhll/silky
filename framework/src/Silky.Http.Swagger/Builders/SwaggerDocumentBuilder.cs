@@ -129,10 +129,10 @@ namespace Silky.Http.Swagger.Builders
 
             // 登陆表单是否使用租户
             swaggerUIOptions.UseTenantName = swaggerDocumentOptions.LoginInfo?.UseTenantName ?? false;
-            
+
             // 配置文档标题
             swaggerUIOptions.DocumentTitle = swaggerDocumentOptions.Title;
-            
+
             // 配置UI地址
             swaggerUIOptions.RoutePrefix = swaggerDocumentOptions.RoutePrefix;
 

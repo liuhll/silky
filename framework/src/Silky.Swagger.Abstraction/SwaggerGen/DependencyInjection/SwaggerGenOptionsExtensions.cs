@@ -24,7 +24,11 @@ namespace Microsoft.Extensions.DependencyInjection
             string name,
             OpenApiInfo info)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Add(name, info);
+            if (!swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.ContainsKey(name))
+            {
+                swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Add(name, info);
+            }
+           
         }
 
         /// <summary>

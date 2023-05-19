@@ -13,14 +13,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddSwaggerDocuments(this IServiceCollection services,
             Action<SwaggerGenOptions> setupAction = null)
         {
-            if (!services.IsAdded(typeof(ISwaggerProvider)))
-            {
-                services.AddOptions<SwaggerDocumentOptions>()
-                    .Bind(EngineContext.Current.Configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
 
-                services.AddSwaggerGen(setupAction ?? (options =>
-                    SwaggerDocumentBuilder.BuildGen(options, EngineContext.Current.Configuration)));
-            }
+            services.AddOptions<SwaggerDocumentOptions>()
+                .Bind(EngineContext.Current.Configuration.GetSection(SwaggerDocumentOptions.SwaggerDocument));
+
+            services.AddSwaggerGen(setupAction ?? (options =>
+                SwaggerDocumentBuilder.BuildGen(options, EngineContext.Current.Configuration)));
             
             return services;
         }
