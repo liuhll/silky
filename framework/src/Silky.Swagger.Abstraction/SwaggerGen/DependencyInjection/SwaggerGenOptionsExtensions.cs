@@ -145,7 +145,11 @@ namespace Microsoft.Extensions.DependencyInjection
             string name,
             OpenApiSecurityScheme securityScheme)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemes.Add(name, securityScheme);
+            if (!swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemes.ContainsKey(name))
+            {
+                swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemes.Add(name, securityScheme);
+            }
+            
         }
 
         /// <summary>
@@ -160,7 +164,11 @@ namespace Microsoft.Extensions.DependencyInjection
             this SwaggerGenOptions swaggerGenOptions,
             OpenApiSecurityRequirement securityRequirement)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Add(securityRequirement);
+            if (!swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Contains(securityRequirement))
+            {
+                swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Add(securityRequirement);
+            }
+            
         }
 
         /// <summary>
@@ -174,7 +182,11 @@ namespace Microsoft.Extensions.DependencyInjection
             Type type,
             Func<OpenApiSchema> schemaFactory)
         {
-            swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
+            if (!swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.ContainsKey(type))
+            {
+                swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
+            }
+            
         }
 
         /// <summary>
