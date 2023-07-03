@@ -5,7 +5,6 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silky.Core.FilterMetadata;
-using Silky.Core.Utils;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Transport;
 
@@ -15,18 +14,19 @@ internal class RemoteInvoker : RemoteInvokerBase
 {
     private ClientInvokeExecutingContextSealed _invokeExecutingContext;
     private ClientInvokeExecutedContextSealed _invokeExecutedContext;
-    
+
     public RemoteInvoker(ILogger logger, ClientInvokeContext context,
         IClientInvokeContextAccessor clientInvokeContextAccessor,
         string messageId,
         ITransportClient client,
-        IClientFilterMetadata[] filters)
+        IClientFilterMetadata[] filters, int timeoutMillSeconds)
         : base(logger,
             context,
             clientInvokeContextAccessor,
             messageId,
-            client, 
-            filters)
+            client,
+            filters,
+            timeoutMillSeconds)
     {
     }
 
@@ -234,7 +234,8 @@ internal class RemoteInvoker : RemoteInvokerBase
 
     private async Task InvokeRemoteCallMethodAsync()
     {
-        var result = await _client.SendAsync(_clientInvokeContext.RemoteInvokeMessage, _messageId!);
+        var result =
+            await _client.SendAsync(_clientInvokeContext.RemoteInvokeMessage, _messageId!, _timeoutMillSeconds);
         _result = result;
     }
 
@@ -302,6 +303,7 @@ internal class RemoteInvoker : RemoteInvokerBase
 
         Debug.Assert(_invokeExecutedContext != null);
         return Task.CompletedTask;
+
         static async Task Awaited(RemoteInvoker invoker, Task lastTask, State next, Scope scope,
             object state, bool isCompleted)
         {
@@ -326,7 +328,7 @@ internal class RemoteInvoker : RemoteInvokerBase
             Debug.Assert(invoker._invokeExecutedContext != null);
         }
     }
-    
+
     private static void Rethrow(ClientInvokeExecutedContextSealed context)
     {
         if (context == null)
@@ -362,7 +364,8 @@ internal class RemoteInvoker : RemoteInvokerBase
 
     private sealed class ClientInvokeExecutedContextSealed : ClientInvokeExecutedContext
     {
-        public ClientInvokeExecutedContextSealed(ClientInvokeContext serviceEntryContext, IList<IFilterMetadata> filters) :
+        public ClientInvokeExecutedContextSealed(ClientInvokeContext serviceEntryContext,
+            IList<IFilterMetadata> filters) :
             base(serviceEntryContext, filters)
         {
         }

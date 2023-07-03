@@ -21,7 +21,7 @@ namespace Silky.Rpc.Runtime.Client
             {
                 return Policy.TimeoutAsync(
                     TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions.TimeoutMillSeconds),
-                    TimeoutStrategy.Pessimistic);
+                    TimeoutStrategy.Optimistic);
             }
 
             return null;

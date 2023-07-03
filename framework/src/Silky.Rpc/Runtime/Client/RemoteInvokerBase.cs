@@ -4,11 +4,7 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Silky.Core;
-using Silky.Core.Exceptions;
 using Silky.Core.FilterMetadata;
-using Silky.Core.Utils;
-using Silky.Rpc.Endpoint;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
@@ -26,6 +22,7 @@ internal abstract partial class RemoteInvokerBase : IRemoteInvoker
     protected readonly string _messageId;
     protected FilterCursor _cursor;
     protected RemoteResultMessage _result;
+    protected int _timeoutMillSeconds;
 
     private ClientInvokeExceptionContextSealed? _exceptionContext;
     private ClientResultExecutingContextSealed? _resultExecutingContext;
@@ -39,7 +36,8 @@ internal abstract partial class RemoteInvokerBase : IRemoteInvoker
         IClientInvokeContextAccessor clientInvokeContextAccessor,
         string messageId,
         ITransportClient client,
-        IClientFilterMetadata[] filters)
+        IClientFilterMetadata[] filters,
+        int timeoutMillSeconds)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _clientInvokeContext = clientInvokeContext ?? throw new ArgumentNullException(nameof(clientInvokeContext));
@@ -48,6 +46,7 @@ internal abstract partial class RemoteInvokerBase : IRemoteInvoker
         _messageId = messageId ?? throw new ArgumentNullException(nameof(messageId));
         _filters = filters ?? throw new ArgumentNullException(nameof(filters));
         _client = client ?? throw new ArgumentNullException(nameof(client));
+        _timeoutMillSeconds = timeoutMillSeconds;
         
         _cursor = new FilterCursor(filters);
     }

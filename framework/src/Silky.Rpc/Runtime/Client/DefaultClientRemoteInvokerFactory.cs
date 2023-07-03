@@ -6,6 +6,7 @@ using Silky.Core.DependencyInjection;
 using Silky.Core.FilterMetadata;
 using Silky.Rpc.Endpoint;
 using Silky.Rpc.Filters;
+using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 
 namespace Silky.Rpc.Runtime.Client;
@@ -17,16 +18,17 @@ public class DefaultClientRemoteInvokerFactory : IClientRemoteInvokerFactory, IS
     private ConcurrentDictionary<string, FilterItem[]> _cacheFilters = new();
     private readonly IClientInvokeContextAccessor _clientInvokeContextAccessor;
     private readonly IClientFilterDescriptorProvider _clientFilterDescriptorProvider;
-
+    private readonly IServerManager _serverManager;
 
     public DefaultClientRemoteInvokerFactory(ILoggerFactory loggerFactory,
         IFilterProvider filterProvider,
         IClientInvokeContextAccessor? clientInvokeContextAccessor,
-        IClientInvokeDiagnosticListener clientInvokeDiagnosticListener,
-        IClientFilterDescriptorProvider clientFilterDescriptorProvider)
+        IClientFilterDescriptorProvider clientFilterDescriptorProvider,
+        IServerManager serverManager)
     {
         _filterProvider = filterProvider;
         _clientFilterDescriptorProvider = clientFilterDescriptorProvider;
+        _serverManager = serverManager;
         _clientInvokeContextAccessor = clientInvokeContextAccessor ?? ClientInvokeContextAccessor.Null;
 
         _logger = loggerFactory.CreateLogger<RemoteInvokerBase>();
@@ -52,8 +54,11 @@ public class DefaultClientRemoteInvokerFactory : IClientRemoteInvokerFactory, IS
             filters = ClientFilterFactory.CreateUncachedFilters(_filterProvider, cachedFilterItems);
         }
 
-        var invoker = new RemoteInvoker(_logger, context, _clientInvokeContextAccessor,messageId,
-            client, filters);
+        var serviceEntryDescriptor =
+            _serverManager.GetServiceEntryDescriptor(context.RemoteInvokeMessage.ServiceEntryId);
+
+        var invoker = new RemoteInvoker(_logger, context, _clientInvokeContextAccessor, messageId,
+            client, filters, serviceEntryDescriptor.GovernanceOptions.TimeoutMillSeconds);
         return invoker;
     }
 }
