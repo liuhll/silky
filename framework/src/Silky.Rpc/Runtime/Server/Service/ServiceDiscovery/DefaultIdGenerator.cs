@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Silky.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Silky.Rpc.Routing;
 
 namespace Silky.Rpc.Runtime.Server
 {
@@ -30,7 +31,20 @@ namespace Silky.Rpc.Runtime.Server
         {
             Check.NotNull(method, nameof(method));
 
+            if (EngineContext.Current.ApplicationOptions.UsingServiceShortName)
+            {
+                return GetShortServiceEntryId(method, httpMethod);
+            }
+            else
+            {
+                return GetLongServiceEntryId(method, httpMethod);
+            }
 
+           
+        }
+
+        private string GetLongServiceEntryId(MethodInfo method, HttpMethod httpMethod)
+        {
             var type = method.DeclaringType;
             if (type == null)
                 throw new ArgumentNullException(nameof(method.DeclaringType),
@@ -43,13 +57,24 @@ namespace Silky.Rpc.Runtime.Server
                 id += "." + string.Join(".", parameters.Select(i => i.Name));
             }
 
-            id += $"_{httpMethod.ToString()}";
+            id += $":{httpMethod.ToString()}";
 
             Logger.LogDebug("Generate ServiceEntry [{0}] for the method {1}", id, method.Name);
             return id;
         }
 
-        public string GetDefaultServiceEntryId(MethodInfo method)
+        private string GetShortServiceEntryId(MethodInfo method, HttpMethod httpMethod)
+        {
+            var type = method.DeclaringType;
+            if (type == null)
+                throw new ArgumentNullException(nameof(method.DeclaringType),
+                    "The definition type of the method cannot be empty.");
+            var serviceRoute = type.GetCustomAttribute<ServiceRouteAttribute>()!;
+            var id = $"{EngineContext.Current.HostName}.{serviceRoute.GetServiceName(type)}.{method.Name}:{httpMethod.ToString()}";
+            return id;
+        }
+
+        public string GetDefaultServiceEntryId([NotNull]MethodInfo method)
         {
             if (_serviceEntryIdCache.TryGetServiceEntryId(method, out var id))
             {
@@ -63,9 +88,14 @@ namespace Silky.Rpc.Runtime.Server
             return id;
         }
 
-        public string GenerateServiceId(Type serviceType)
+        public string GenerateServiceId([NotNull]Type serviceType)
         {
             Check.NotNull(serviceType, nameof(serviceType));
+            if (EngineContext.Current.ApplicationOptions.UsingServiceShortName)
+            {
+                var serviceRoute = serviceType.GetCustomAttribute<ServiceRouteAttribute>()!;
+                return serviceRoute.GetServiceId(serviceType);
+            }
             return serviceType.FullName;
         }
     }

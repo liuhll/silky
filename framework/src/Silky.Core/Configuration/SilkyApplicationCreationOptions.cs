@@ -19,6 +19,9 @@ public class SilkyApplicationCreationOptions
 
     public bool IgnoreCheckingRegisterType { get; set; }
 
+    public bool UsingServiceShortName { get; set; }
+
+    public string ServiceTemplateName { get; set; }
 
     public string? ApplicationName { get; set; }
 
@@ -45,6 +48,8 @@ public class SilkyApplicationCreationOptions
         ApplicationName = Assembly.GetEntryAssembly()?.GetName()?.Name;
         BannerMode = BannerMode.CONSOLE;
         GlobalAuthorize = false;
+        UsingServiceShortName = true;
+        ServiceTemplateName = "AppService";
         DocUrl = "https://docs.silky-fk.com";
     }
 }
