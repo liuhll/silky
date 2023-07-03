@@ -12,7 +12,7 @@
     <Description>Templates to use when creating an application for Silky App.</Description>
     <PackageTags>silky,app,microservice,aspnetcore,host</PackageTags>
 
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
 
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
