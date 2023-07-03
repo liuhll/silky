@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using Silky.Core.Modularity.PlugIns;
@@ -45,7 +46,7 @@ public class SilkyApplicationCreationOptions
         AppServicePlugInSources = new AppServicePlugInSourceList();
         Configuration = new SilkyConfigurationBuilderOptions();
         Filter = new FilterOptions();
-        ApplicationName = Assembly.GetEntryAssembly()?.GetName()?.Name;
+        ApplicationName = Assembly.GetEntryAssembly()?.GetName()?.Name.Split(".").Last();
         BannerMode = BannerMode.CONSOLE;
         GlobalAuthorize = false;
         UsingServiceShortName = true;

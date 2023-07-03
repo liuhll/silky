@@ -130,7 +130,7 @@ namespace TestApplication.AppService
             return CreateOrUpdateAsync(input);
         }
 
-        public async Task<TestOut> Get(string name)
+        public async Task<TestOut> Get1(string name)
         {
             var entity = await _testRepository.FirstOrDefaultAsync(p => p.Name == name);
             if (entity == null)

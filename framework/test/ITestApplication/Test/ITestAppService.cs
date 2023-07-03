@@ -68,7 +68,7 @@ namespace ITestApplication.Test
         [HttpGet("{name}")]
         [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
         [GetCachingIntercept("name:{0}")]
-        Task<TestOut> Get([CacheKey(0)] string name);
+        Task<TestOut> Get1([CacheKey(0)] string name);
 
         // [HttpGet("{id:long}")]
         // [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]

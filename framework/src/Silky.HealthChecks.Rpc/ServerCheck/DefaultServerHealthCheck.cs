@@ -27,12 +27,12 @@ namespace Silky.HealthChecks.Rpc.ServerCheck
             try
             {
                 return
-                    await _appointAddressInvoker.Invoke<bool>(address, HealthCheckConstants.HealthCheckServiceEntryId,
+                    await _appointAddressInvoker.Invoke<bool>(address, Utils.GetHealthCheckServiceEntryId(),
                         Array.Empty<object>());
             }
             catch (Exception e)
             {
-                _logger.LogWarning("Address[{0}] UnHealth, exception messagess {1}", address, e.Message);
+                _logger.LogWarning("Address[{0}] UnHealth, exception message {1}", address, e.Message);
                 return false;
             }
         }

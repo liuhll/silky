@@ -15,5 +15,7 @@ namespace Silky.Rpc.Runtime.Server
         public const string WebSocketBaseTypeName = "Silky.WebSocket.WsAppServiceBase";
 
         public const string IsSilkyDashboardService = "DashboardService";
+        
+        public const string IgnoreHostNameService = "IgnoreHostNameService";
     }
 }

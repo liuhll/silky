@@ -57,7 +57,7 @@ namespace Silky.HealthChecks.Rpc
         {
             _httpContextAccessor.HttpContext?.SetHttpHandleAddressInfo();
             var messageId = GetMessageId(_httpContextAccessor.HttpContext);
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(HealthCheckConstants.HealthCheckServiceEntryId);
+            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(Utils.GetHealthCheckServiceEntryId());
             var tracingTimestamp =
                 _httpHandleDiagnosticListener.TracingBefore(messageId, serviceEntry.Id, serviceEntry.IsLocal,
                     _httpContextAccessor.HttpContext,
