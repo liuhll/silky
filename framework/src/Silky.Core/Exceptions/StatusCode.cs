@@ -16,7 +16,7 @@ namespace Silky.Core.Exceptions
 
         [Description("非框架异常")] NonSilkyException = 505,
 
-        [Description("通信异常")] CommunicatonError = 506,
+        [Description("通信异常")] CommunicationError = 506,
 
         [Description("未找到本地服务条目")] NotFindLocalServiceEntry = 507,
 
