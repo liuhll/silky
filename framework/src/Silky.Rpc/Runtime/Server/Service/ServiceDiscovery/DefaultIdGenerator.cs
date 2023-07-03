@@ -101,11 +101,7 @@ namespace Silky.Rpc.Runtime.Server
         public string GenerateServiceId([NotNull]Type serviceType)
         {
             Check.NotNull(serviceType, nameof(serviceType));
-            if (EngineContext.Current.ApplicationOptions.UsingServiceShortName)
-            {
-                var serviceRoute = serviceType.GetCustomAttribute<ServiceRouteAttribute>()!;
-                return serviceRoute.GetServiceId(serviceType);
-            }
+          
             return serviceType.FullName;
         }
     }

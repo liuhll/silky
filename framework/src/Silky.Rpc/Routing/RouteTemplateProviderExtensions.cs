@@ -39,22 +39,18 @@ namespace Silky.Rpc.Routing
         public static string GetServiceName([NotNull] this IRouteTemplateProvider routeTemplateProvider,
             Type serviceType)
         {
-            var serviceId = GetServiceId(routeTemplateProvider, serviceType);
-            if (!EngineContext.Current.ApplicationOptions.ServiceTemplateName.IsNullOrEmpty())
-            {
-                return serviceId.Replace(EngineContext.Current.ApplicationOptions.ServiceTemplateName, "");
-            }
-
-            return serviceId;
-        }
-        
-        public static string GetServiceId([NotNull] this IRouteTemplateProvider routeTemplateProvider,
-            Type serviceType)
-        {
-            return routeTemplateProvider.ServiceName.IsNullOrEmpty()
+            var serviceName = routeTemplateProvider.ServiceName.IsNullOrEmpty()
                 ? serviceType.Name.StartsWith("I") ? serviceType.Name.Remove(0, 1) : serviceType.Name
                 : routeTemplateProvider.ServiceName;
+
+            if (!EngineContext.Current.ApplicationOptions.ServiceTemplateName.IsNullOrEmpty())
+            {
+                return serviceName.Replace(EngineContext.Current.ApplicationOptions.ServiceTemplateName, "");
+            }
+
+            return serviceName;
         }
+        
 
         private static string ParseAppServiceName(string segemnetVal, string serviceName)
         {
