@@ -70,18 +70,16 @@ namespace Silky.Rpc.Runtime.Server
                 throw new ArgumentNullException(nameof(method.DeclaringType),
                     "The definition type of the method cannot be empty.");
             var serviceRoute = type.GetCustomAttribute<ServiceRouteAttribute>()!;
-            if (type.GetCustomAttribute<SilkyAppServiceAttribute>() != null)
+            var id = $"{serviceRoute.GetServiceName(type)}.{method.Name}";
+            var parameters = method.GetParameters();
+            if (parameters.Any())
             {
-                var id = $"{serviceRoute.GetServiceName(type)}.{method.Name}:{httpMethod.ToString()}";
-                return id;
+                id += "." + string.Join(".", parameters.Select(i => i.Name));
             }
-            else
-            {
-                var id = $"{EngineContext.Current.HostName}.{serviceRoute.GetServiceName(type)}.{method.Name}:{httpMethod.ToString()}";
-                return id;
-            }
+            id += $":{httpMethod.ToString()}";
+            
+            return id;
 
-           
         }
 
         public string GetDefaultServiceEntryId([NotNull]MethodInfo method)
