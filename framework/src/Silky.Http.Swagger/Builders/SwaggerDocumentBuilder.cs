@@ -251,6 +251,11 @@ namespace Silky.Http.Swagger.Builders
                 .GetSection(SwaggerDocumentOptions.SwaggerDocument)
                 .Get<SwaggerDocumentOptions>() ?? new SwaggerDocumentOptions();
 
+            if (!swaggerDocumentOptions.ShowDashboardService)
+            {
+                return !serviceEntry.ServiceEntryDescriptor.GetMetadata<bool>(ServiceEntryConstant.IsSilkyAppService);
+            }
+
             if (serviceEntry.Id.StartsWith(SilkyAppServicePrefix) && !swaggerDocumentOptions.ShowDashboardService)
             {
                 return false;

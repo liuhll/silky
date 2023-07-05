@@ -41,7 +41,7 @@ allowedHosts: "*"
 swaggerDocument:
   organizationMode: AllAndGroup
   injectMiniProfiler: true
-  showDashboardService: true
+  showDashboardService: false
   termsOfService: https://www.github.com/liuhll/silky
   loginInfo:
     enabled: true
