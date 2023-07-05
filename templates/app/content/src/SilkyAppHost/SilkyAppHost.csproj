@@ -6,17 +6,17 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Silky.Agent.Host" Version="$(SilkyVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0" Condition="'$(type)' != 'gateway'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0" Condition="'$(type)' != 'gateway'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0" Condition="'$(type)' != 'gateway'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0" Condition="'$(type)' != 'gateway'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="6.0.5" Condition="'$(type)' == 'gateway'" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.5" Condition="'$(type)' == 'gateway'" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="6.0.5" Condition="'$(type)' == 'gateway'" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="7.0.*" Condition="'$(type)' == 'gateway'" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.0.*" Condition="'$(type)' == 'gateway'" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="7.0.*" Condition="'$(type)' == 'gateway'" />
     </ItemGroup>
 
     <ItemGroup>
