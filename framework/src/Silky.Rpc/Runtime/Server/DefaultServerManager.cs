@@ -70,6 +70,11 @@ namespace Silky.Rpc.Runtime.Server
 
         public ServiceEntryDescriptor GetServiceEntryDescriptor(string api, HttpMethod httpMethod)
         {
+            if (api.StartsWith("/"))
+            {
+                api = api.TrimStart('/');
+            }
+            
             if (_serviceEntryDescriptorCacheForApi.TryGetValue((api, httpMethod), out var serviceEntryDescriptor))
             {
                 return serviceEntryDescriptor;
