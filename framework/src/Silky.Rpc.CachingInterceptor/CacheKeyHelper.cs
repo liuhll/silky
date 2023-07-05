@@ -146,8 +146,9 @@ public static class CacheKeyHelper
             };
             cacheKeyProviders.Add(cacheKeyProvider);
         }
-
+        
         return cacheKeyProviders.OrderBy(p => p.Index).ToArray();
+        
     }
 
     private static CacheKeyProvider[] GetCacheKeyProviders(ServiceEntry serviceEntry,
@@ -245,7 +246,7 @@ public static class CacheKeyHelper
                     if (httpParameterDict.TryOrdinalIgnoreCaseGetValue(cacheKeyProviderDescriptor.PropName,
                             out var cacheKeyValue))
                     {
-                        if (cacheKeyProviderDescriptor.IsSampleOrNullableType && !cacheKeyValue.IsValidJson())
+                        if (!cacheKeyValue.IsValidJson())
                         {
                             return cacheKeyValue;
                         }
@@ -262,9 +263,8 @@ public static class CacheKeyHelper
 
                 if (httpParameterValue.GetType() == typeof(string))
                 {
-                    if (cacheKeyProviderDescriptor.IsSampleOrNullableType &&
-                        !httpParameterValue.ToString().IsValidJson())
-
+                    if (!httpParameterValue.ToString().IsValidJson())
+                        
                     {
                         return httpParameterValue.ToString();
                     }

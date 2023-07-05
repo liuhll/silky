@@ -5,7 +5,6 @@ using ITestApplication.Test.Dtos;
 using ITestApplication.Test.Fallback;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Mvc;
-using Silky.Core.DbContext.UnitOfWork;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Routing;
 using Silky.Rpc.Security;
@@ -45,10 +44,10 @@ namespace ITestApplication.Test
         [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
         Task<TestOut> Update(TestInput input);
 
-        [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "id:{0}")]
+        [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "id:{id}")]
         [Governance(RetryTimes = 2)]
         [HttpDelete]
-        Task<string> DeleteAsync([CacheKey(0)] long id);
+        Task<string> DeleteAsync(long id);
 
         [HttpGet]
         Task<PagedList<TestOut>> Search1([FromQuery] string name, [FromQuery] string address,
@@ -67,8 +66,8 @@ namespace ITestApplication.Test
 
         [HttpGet("{name}")]
         [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
-        [GetCachingIntercept("name:{0}")]
-        Task<TestOut> Get1([CacheKey(0)] string name);
+        [GetCachingIntercept("name:{name}")]
+        Task<TestOut> Get1(string name);
 
         // [HttpGet("{id:long}")]
         // [Governance(ShuntStrategy = ShuntStrategy.HashAlgorithm)]
@@ -85,6 +84,10 @@ namespace ITestApplication.Test
 
         [HttpGet]
         Task<TestOut> TestFromHeader([FromHeader]string id);
+        
+        [HttpGet]
+        [GetCachingIntercept("get:{name}")]
+        Task<TestOut> TestCache(TestInput input);
 
         Task<IList<object>> GetObjectList();
 

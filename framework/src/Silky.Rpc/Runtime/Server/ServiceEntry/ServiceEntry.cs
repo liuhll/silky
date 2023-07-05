@@ -116,17 +116,26 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     foreach (var cacheKey in parameterDescriptor.CacheKeys)
                     {
-                        cachingInterceptorDescriptor
+
+                        if (!cacheKey.Key.Equals(cachingInterceptorProvider.KeyTemplate))
+                        {
+                            continue;
+                        }
+
+                        foreach (var cacheKeyProvider in cacheKey.Value)
+                        {
+                            cachingInterceptorDescriptor
                             .CacheKeyProviderDescriptors
                             .Add(new CacheKeyProviderDescriptor()
                             {
-                                PropName = cacheKey.PropName,
-                                Index = cacheKey.Index,
-                                CacheKeyType = cacheKey.CacheKeyType,
+                                PropName = cacheKeyProvider.PropName,
+                                Index = cacheKeyProvider.Index,
+                                CacheKeyType = cacheKeyProvider.CacheKeyType,
                                 ParameterIndex = parameterDescriptor.Index,
                                 From = parameterDescriptor.From,
                                 IsSampleOrNullableType = parameterDescriptor.IsSingleType,
                             });
+                        }
                     }
                 }
 

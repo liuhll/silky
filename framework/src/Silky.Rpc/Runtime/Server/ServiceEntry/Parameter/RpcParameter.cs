@@ -32,28 +32,28 @@ namespace Silky.Rpc.Runtime.Server
             }
         }
 
-        private IReadOnlyCollection<ICacheKeyProvider> CreateCacheKeys(string[] cacheKeyTemplates)
+        private IDictionary<string,ICacheKeyProvider[]> CreateCacheKeys(string[] cacheKeyTemplates)
         {
-            var cacheKeys = new List<ICacheKeyProvider>();
-            var attributeInfoCacheKeyProviders = ParserAttributeCacheKeyProviders();
 
-            if (attributeInfoCacheKeyProviders != null)
+            var cacheKeyDict = new Dictionary<string, ICacheKeyProvider[]>();
+            foreach (var cacheKeyTemplate in cacheKeyTemplates)
             {
-                cacheKeys.AddRange(attributeInfoCacheKeyProviders);
+                // var cacheKeys = new List<ICacheKeyProvider>();
+                // var attributeInfoCacheKeyProviders = ParserAttributeCacheKeyProviders();
+                var namedCacheKeyProviders = ParserNamedCacheKeyProviders(cacheKeyTemplate);
+                cacheKeyDict[cacheKeyTemplate] = namedCacheKeyProviders.ToArray();
+
             }
 
-            var namedCacheKeyProviders = ParserNamedCacheKeyProviders(cacheKeyTemplates);
-            cacheKeys.AddRange(namedCacheKeyProviders);
-            return cacheKeys;
+            return cacheKeyDict;
+
         }
 
-        private ICollection<ICacheKeyProvider> ParserNamedCacheKeyProviders(string[] cacheKeyTemplates)
+        private ICollection<ICacheKeyProvider> ParserNamedCacheKeyProviders(string cacheKeyTemplate)
         {
             var cacheKeys = new List<ICacheKeyProvider>();
-            var cacheKeyParameters =
-                cacheKeyTemplates.SelectMany(p =>
-                    Regex.Matches(p, CacheKeyConstants.CacheKeyParameterRegex)
-                        .Select(q => q.Value.RemoveCurlyBraces()));
+            var cacheKeyParameters = Regex.Matches(cacheKeyTemplate, CacheKeyConstants.CacheKeyParameterRegex)
+                .Select(q => q.Value.RemoveCurlyBraces());
 
             foreach (var cacheKeyParameter in cacheKeyParameters)
             {
@@ -131,6 +131,8 @@ namespace Silky.Rpc.Runtime.Server
 
         public ParameterInfo ParameterInfo { get; }
 
-        public IReadOnlyCollection<ICacheKeyProvider> CacheKeys { get; }
+        // public IReadOnlyCollection<ICacheKeyProvider> CacheKeys { get; }
+
+        public IDictionary<string, ICacheKeyProvider[]> CacheKeys { get; }
     }
 }

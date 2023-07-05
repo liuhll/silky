@@ -169,6 +169,12 @@ namespace TestApplication.AppService
             throw new System.NotImplementedException();
         }
 
+        public async Task<TestOut> TestCache(TestInput input)
+        {
+            var test = await _testRepository.FirstOrDefaultAsync(p => p.Name == input.Name);
+            return test.Adapt<TestOut>();
+        }
+
 
         public async Task<IList<object>> GetObjectList()
         {
