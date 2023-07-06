@@ -10,19 +10,20 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Extensions;
 
 namespace Silky.Swagger.Gen.Register.Nacos;
 
 public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
 {
     private readonly INacosConfigService _nacosConfigService;
-    private readonly ISerializer _serializer;
     private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
+    private readonly ISerializer _serializer;
 
     public NacosSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         INacosConfigService nacosConfigService,
-        ISerializer serializer,
-        IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions) : base(swaggerProvider)
+        IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
+        ISerializer serializer) : base(swaggerProvider)
     {
         _nacosConfigService = nacosConfigService;
         _serializer = serializer;
@@ -35,7 +36,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
         if (!allDocumentNames.Contains(documentName))
         {
             var registerDocumentNames = allDocumentNames.Concat(new[] { documentName });
-            var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
+            var registerDocumentNamesValue = _serializer.Serialize(registerDocumentNames);
             var documentNamePublishResult = await _nacosConfigService.PublishConfig(
                 _nacosRegistryCenterOptions.SwaggerDocKey,
                 _nacosRegistryCenterOptions.ServerGroupName,
@@ -46,7 +47,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
             }
         }
 
-        var openApiDocumentValue = _serializer.Serialize(openApiDocument,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
+        var openApiDocumentValue = openApiDocument.ToJson();
         var openApiDocumentResult = await _nacosConfigService.PublishConfig(documentName,
             _nacosRegistryCenterOptions.ServerGroupName,
             openApiDocumentValue);
@@ -68,7 +69,7 @@ public class NacosSwaggerInfoRegister : SwaggerInfoRegisterBase
                 return Array.Empty<string>();
             }
 
-            return _serializer.Deserialize<string[]>(allDocumentsValue,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
+            return _serializer.Deserialize<string[]>(allDocumentsValue);
         }
         catch (Exception e)
         {

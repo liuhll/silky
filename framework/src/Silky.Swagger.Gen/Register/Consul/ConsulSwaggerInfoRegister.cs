@@ -12,6 +12,7 @@ using Silky.Core.Serialization;
 using Silky.RegistryCenter.Consul;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Extensions;
 
 namespace Silky.Swagger.Gen.Register.Consul;
 
@@ -19,17 +20,15 @@ public class ConsulSwaggerInfoRegister : SwaggerInfoRegisterBase
 {
     private readonly IConsulClientFactory _consulClientFactory;
     private readonly ConsulRegistryCenterOptions _consulRegistryCenterOptions;
-    private readonly ISerializer _serializer;
+
     public ILogger<ConsulSwaggerInfoRegister> Logger { get; set; }
 
     public ConsulSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         IConsulClientFactory consulClientFactory,
-        ISerializer serializer,
         IOptions<ConsulRegistryCenterOptions> consulRegistryCenterOptions)
         : base(swaggerProvider)
     {
         _consulClientFactory = consulClientFactory;
-        _serializer = serializer;
         _consulRegistryCenterOptions = consulRegistryCenterOptions.Value;
         Logger = NullLogger<ConsulSwaggerInfoRegister>.Instance;
     }
@@ -37,7 +36,7 @@ public class ConsulSwaggerInfoRegister : SwaggerInfoRegisterBase
     protected override async Task Register(string documentName, OpenApiDocument openApiDocument)
     {
         using var consulClient = _consulClientFactory.CreateClient();
-        var openApiDocumentJsonString = _serializer.Serialize(openApiDocument,camelCase: false, typeNameHandling: TypeNameHandling.Auto);
+        var openApiDocumentJsonString = openApiDocument.ToJson();
         var servicesPutResult = await consulClient.KV.Put(
             new KVPair(CreateServicePath(_consulRegistryCenterOptions.SwaggerDocPath, documentName))
             {

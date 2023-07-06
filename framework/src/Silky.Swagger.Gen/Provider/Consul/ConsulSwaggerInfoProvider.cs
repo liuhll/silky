@@ -15,6 +15,7 @@ using Silky.Core.Serialization;
 using Silky.RegistryCenter.Consul;
 using Silky.RegistryCenter.Consul.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Extensions;
 
 namespace Silky.Swagger.Gen.Provider.Consul;
 
@@ -22,16 +23,13 @@ public class ConsulSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCente
 {
     private readonly IConsulClientFactory _consulClientFactory;
     private readonly ConsulRegistryCenterOptions _consulRegistryCenterOptions;
-    private readonly ISerializer _serializer;
     public ILogger<ConsulSwaggerInfoProvider> Logger { get; set; }
 
     public ConsulSwaggerInfoProvider(IConsulClientFactory consulClientFactory,
-        IOptions<ConsulRegistryCenterOptions> consulRegistryCenterOptions,
-        ISerializer serializer)
+        IOptions<ConsulRegistryCenterOptions> consulRegistryCenterOptions)
     {
         _consulClientFactory = consulClientFactory;
         _consulRegistryCenterOptions = consulRegistryCenterOptions.Value;
-        _serializer = serializer;
         Logger = NullLogger<ConsulSwaggerInfoProvider>.Instance;
     }
 
@@ -106,8 +104,7 @@ public class ConsulSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCente
         try
         {
             var openApiDocumentJsonString = getKvResult.Response.Value.GetString();
-            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentJsonString, camelCase: false,
-                typeNameHandling: TypeNameHandling.Auto);
+            var openApiDocument = openApiDocumentJsonString.ToOpenApiDocument();
             return openApiDocument;
         }
         catch (Exception e)

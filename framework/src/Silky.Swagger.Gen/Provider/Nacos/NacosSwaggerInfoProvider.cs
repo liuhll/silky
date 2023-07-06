@@ -11,23 +11,26 @@ using Silky.Core.Extensions;
 using Silky.Core.Serialization;
 using Silky.RegistryCenter.Nacos.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Extensions;
 
 namespace Silky.Swagger.Gen.Provider.Nacos;
 
 public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenterSwaggerInfoProvider
 {
     private readonly INacosConfigService _nacosConfigService;
-    private readonly ISerializer _serializer;
+
     private readonly NacosRegistryCenterOptions _nacosRegistryCenterOptions;
+    private readonly ISerializer _serializer;
 
     public ILogger<NacosSwaggerInfoProvider> Logger { get; set; }
 
     public NacosSwaggerInfoProvider(INacosConfigService nacosConfigService,
-        ISerializer serializer,
-        IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions)
+        IOptions<NacosRegistryCenterOptions> nacosRegistryCenterOptions,
+        ISerializer serializer)
     {
         _nacosConfigService = nacosConfigService;
         _serializer = serializer;
+
         _nacosRegistryCenterOptions = nacosRegistryCenterOptions.Value;
         Logger = NullLogger<NacosSwaggerInfoProvider>.Instance;
     }
@@ -48,8 +51,7 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
                 return null;
             }
 
-            var openApiDocument = _serializer.Deserialize<OpenApiDocument>(openApiDocumentValue, camelCase: false,
-                typeNameHandling: TypeNameHandling.Auto);
+            var openApiDocument = openApiDocumentValue.ToOpenApiDocument();
             return openApiDocument;
         }
         catch (Exception e)
@@ -94,8 +96,7 @@ public class NacosSwaggerInfoProvider : SwaggerInfoProviderBase, IRegisterCenter
                 return Array.Empty<string>();
             }
 
-            return _serializer.Deserialize<string[]>(allDocumentsValue, camelCase: false,
-                typeNameHandling: TypeNameHandling.Auto);
+            return _serializer.Deserialize<string[]>(allDocumentsValue);
         }
         catch (Exception e)
         {

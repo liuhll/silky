@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Writers;
 using Newtonsoft.Json;
 using Silky.Core;
 using Silky.Core.Extensions;
@@ -10,6 +11,7 @@ using Silky.Core.Serialization;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
 using Silky.Swagger.Abstraction;
+using Silky.Swagger.Gen.Extensions;
 using Silky.Zookeeper;
 
 namespace Silky.Swagger.Gen.Register.Zookeeper;
@@ -18,17 +20,16 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
 {
     private readonly IZookeeperClientFactory _zookeeperClientFactory;
     private ZookeeperRegistryCenterOptions _registryCenterOptions;
-    private readonly ISerializer _serializer;
+
     public ILogger<ZookeeperSwaggerInfoRegister> Logger { get; set; }
 
     public ZookeeperSwaggerInfoRegister(ISwaggerProvider swaggerProvider,
         IZookeeperClientFactory zookeeperClientFactory,
-        ISerializer serializer,
         IOptions<ZookeeperRegistryCenterOptions> registryCenterOptions) : base(
         swaggerProvider)
     {
         _zookeeperClientFactory = zookeeperClientFactory;
-        _serializer = serializer;
+   
         _registryCenterOptions = registryCenterOptions.Value;
         Check.NotNullOrEmpty(_registryCenterOptions.SwaggerDocPath, nameof(_registryCenterOptions.SwaggerDocPath));
         Logger = NullLogger<ZookeeperSwaggerInfoRegister>.Instance;
@@ -49,8 +50,7 @@ internal class ZookeeperSwaggerInfoRegister : SwaggerInfoRegisterBase
                 await zookeeperClient.CreateRecursiveAsync(routePath, null,
                     AclUtils.GetAcls(_registryCenterOptions.Scheme, _registryCenterOptions.Auth));
             }
-
-            var jsonString = _serializer.Serialize(openApiDocument,camelCase: false,typeNameHandling: TypeNameHandling.Auto);
+            var jsonString = openApiDocument.ToJson();
             var data = jsonString.GetBytes();
             if (!await zookeeperClient.ExistsAsync(swaggerDocPath))
             {
