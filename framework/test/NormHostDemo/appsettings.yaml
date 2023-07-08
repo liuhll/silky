@@ -67,13 +67,17 @@ serilog:
 
 plugInSource:
   appServicePlugIns:
-    - folder: ../../../TestApplication/bin/Debug/net7.0
+    - folder: ../../../../TestApplication/bin/Debug/net7.0
       searchOption: TopDirectoryOnly
         #    - folder: ../../../../ITestApplication/bin/Debug/net7.0
         #      searchOption: TopDirectoryOnly
   modulePlugIn:
-    types:
-    - TestApplication.TestModule,TestApplication
+    folders:
+      - folder: ../../../../TestApplication/bin/Debug/net7.0
+        searchOption: TopDirectoryOnly
+        pattern: TestApplication
+#    types:
+#    - TestApplication.TestModule,TestApplication
 
 rabbitMq:
   host: 127.0.0.1

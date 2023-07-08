@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
@@ -20,6 +22,8 @@ public class FolderPlugInSource : IPlugInSource
 
     public string Pattern { get; set; }
 
+    public ILogger<FolderPlugInSource> Logger { get; set; }
+
     public FolderPlugInSource(
         [NotNull] string folder,
         string pattern = null,
@@ -30,6 +34,7 @@ public class FolderPlugInSource : IPlugInSource
         Folder = folder;
         Pattern = pattern;
         SearchOption = searchOption;
+        Logger = NullLogger<FolderPlugInSource>.Instance;
     }
 
 
@@ -40,24 +45,23 @@ public class FolderPlugInSource : IPlugInSource
         {
             try
             {
-                foreach (var type in assembly.GetTypes())
+                var moduleType = assembly.GetTypes().FirstOrDefault(type => SilkyModule.IsSilkyPluginModule(type));
+                if (moduleType != null)
                 {
-                    if (SilkyModule.IsSilkyModule(type))
-                    {
-                        modules.AddIfNotContains(type);
-                    }
+                    modules.AddIfNotContains(moduleType);
                 }
             }
             catch (Exception ex)
             {
                 throw new SilkyException("Could not get module types from assembly: " + assembly.FullName, ex);
+                // Logger.LogWarning("Could not get module types from assembly: " + assembly.FullName);
             }
         }
 
         return modules.ToArray();
     }
 
-    private List<Assembly> GetAssemblies()
+    private IEnumerable<Assembly> GetAssemblies()
     {
         var assemblyFiles = AssemblyHelper.GetAssemblyFiles(Folder, SearchOption);
 
@@ -66,6 +70,10 @@ public class FolderPlugInSource : IPlugInSource
             assemblyFiles = assemblyFiles.Where(a => AssemblyHelper.Matches(a, Pattern));
         }
 
-        return assemblyFiles.Select(AssemblyLoadContext.Default.LoadFromAssemblyPath).ToList();
+        var assemblies = assemblyFiles.Select(AssemblyLoadContext.Default.LoadFromAssemblyPath)
+            .Where(a => AssemblyHelper.Matches(a.FullName))
+            ;
+
+        return assemblies;
     }
 }

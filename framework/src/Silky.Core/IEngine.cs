@@ -29,8 +29,8 @@ namespace Silky.Core
 
         string HostName { get; }
 
-        internal void SetTypeFinder([NotNull]IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
-            AppServicePlugInSourceList appServicePlugInSources);
+        internal void SetTypeFinder([NotNull] IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
+            AppServicePlugInSourceList appServicePlugInSources, PlugInSourceList modulePlugInSources);
 
         internal void SetHostEnvironment([NotNull] IHostEnvironment hostEnvironment);
 

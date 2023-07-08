@@ -47,13 +47,14 @@ namespace Silky.Core
         }
 
         void IEngine.SetTypeFinder([NotNull] IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
-            [NotNull] AppServicePlugInSourceList appServicePlugInSources)
+            [NotNull] AppServicePlugInSourceList appServicePlugInSources, PlugInSourceList modulePlugInSources)
         {
             Check.NotNull(services, nameof(services));
             Check.NotNull(fileProvider, nameof(fileProvider));
             Check.NotNull(appServicePlugInSources, nameof(appServicePlugInSources));
+            Check.NotNull(modulePlugInSources, nameof(modulePlugInSources));
 
-            _typeFinder = new SilkyAppTypeFinder(appServicePlugInSources, fileProvider);
+            _typeFinder = new SilkyAppTypeFinder(appServicePlugInSources, modulePlugInSources, fileProvider);
             services.AddSingleton(_typeFinder);
         }
 
@@ -97,13 +98,7 @@ namespace Silky.Core
         public TOptions GetOptions<TOptions>(string optionName)
             where TOptions : class, new()
         {
-            var options = GetOptions<TOptions>();
-            if (options != null)
-            {
-                return options;
-            }
-
-            options = Configuration.GetSection(optionName).Get<TOptions>() ?? new TOptions();
+            var options = Configuration.GetSection(optionName).Get<TOptions>() ?? new TOptions();
             return options;
         }
 
@@ -142,6 +137,33 @@ namespace Silky.Core
             {
                 HostName = ApplicationOptions.ApplicationName;
             }
+
+            LoadConfigPlugIns(applicationOptions);
+        }
+
+
+        private void LoadConfigPlugIns(SilkyApplicationCreationOptions options)
+        {
+            var plugInOptions = GetOptions<PlugInSourceOptions>(PlugInSourceOptions.PlugInSource);
+
+            if (plugInOptions.ModulePlugIn == null) return;
+            if (plugInOptions.ModulePlugIn.Types != null)
+            {
+                options.ModulePlugInSources.AddTypeNames(plugInOptions.ModulePlugIn.Types);
+            }
+
+            if (plugInOptions.ModulePlugIn.FilePaths != null)
+            {
+                options.ModulePlugInSources.AddFiles(plugInOptions.ModulePlugIn.FilePaths);
+            }
+
+            if (plugInOptions.ModulePlugIn.Folders != null)
+            {
+                options.ModulePlugInSources.AddFolders(plugInOptions.ModulePlugIn.Folders);
+            }
+
+            if (plugInOptions.AppServicePlugIns == null) return;
+            options.AppServicePlugInSources.AddRange(plugInOptions.AppServicePlugIns);
         }
 
         void IEngine.ConfigureRequestPipeline(IApplicationBuilder application)
@@ -276,7 +298,7 @@ namespace Silky.Core
 
             return serviceProvider;
         }
-        
+
 
         public void RegisterDependencies(ContainerBuilder containerBuilder)
         {
@@ -302,7 +324,9 @@ namespace Silky.Core
             var tf = _typeFinder;
             if (tf == null)
                 return null;
+
             assembly = tf.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
+
             return assembly;
         }
 
@@ -330,35 +354,12 @@ namespace Silky.Core
                 throw new SilkyException($"{startUpType.FullName} is not a Silky module type.");
             }
 
-            LoadConfigPlugInModules(plugInSources);
-
             Modules = moduleLoader.LoadModules(services, startUpType, plugInSources);
-        }
-
-        private void LoadConfigPlugInModules(PlugInSourceList plugInSources)
-        {
-            var plugInOptions = GetOptions<PlugInSourceOptions>(PlugInSourceOptions.PlugInSource);
-
-            if (plugInOptions.ModulePlugIn == null) return;
-            if (plugInOptions.ModulePlugIn.Types != null)
-            {
-                plugInSources.AddTypeNames(plugInOptions.ModulePlugIn.Types);
-            }
-
-            if (plugInOptions.ModulePlugIn.FilePaths != null)
-            {
-                plugInSources.AddFiles(plugInOptions.ModulePlugIn.FilePaths);
-            }
-
-            if (plugInOptions.ModulePlugIn.Folders != null)
-            {
-                plugInSources.AddFolders(plugInOptions.ModulePlugIn.Folders);
-            }
         }
 
 
         public SilkyApplicationCreationOptions ApplicationOptions { get; private set; }
-        
+
         public IServiceProvider ServiceProvider { get; set; }
 
         public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; private set; }

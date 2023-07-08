@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using Silky.Core.Configuration;
+using Silky.Core.Modularity.PlugIns;
 
 namespace Silky.Core.Reflection
 {
@@ -11,8 +12,10 @@ namespace Silky.Core.Reflection
         private bool _binFolderAssembliesLoaded;
 
         public SilkyAppTypeFinder([NotNull] AppServicePlugInSourceList servicePlugInSources,
-            ISilkyFileProvider fileProvider = null) : base(servicePlugInSources,
-            fileProvider)
+            [NotNull] PlugInSourceList modulePlugInSources,
+            ISilkyFileProvider fileProvider = null)
+            : base(servicePlugInSources, modulePlugInSources,
+                fileProvider)
         {
         }
 

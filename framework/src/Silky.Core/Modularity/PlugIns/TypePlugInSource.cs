@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
 
@@ -9,10 +10,15 @@ public class TypePlugInSource : IPlugInSource
 {
     private readonly Type[] _moduleTypes;
 
+    private readonly string[] _moduleTypeNames;
+
+
+    public string[] ModuleTypeNames => _moduleTypeNames;
+    
 
     public TypePlugInSource(params string[] moduleTypeNames)
     {
-        _moduleTypes = LoadModuleTypes(moduleTypeNames);
+        _moduleTypeNames = moduleTypeNames;
     }
 
     public TypePlugInSource(params Type[] moduleTypes)
@@ -33,7 +39,7 @@ public class TypePlugInSource : IPlugInSource
                     throw new SilkyException($"Cannot load plugin of {moduleTypeName} Type");
                 }
 
-                if (!SilkyModule.IsSilkyModule(type))
+                if (!SilkyModule.IsSilkyPluginModule(type))
                 {
                     throw new SilkyException(type.FullName + "is not a module type ");
                 }
@@ -48,6 +54,17 @@ public class TypePlugInSource : IPlugInSource
 
     public Type[] GetModules()
     {
-        return _moduleTypes;
+        var moduleTypes = new List<Type>();
+        if (_moduleTypeNames?.Any() == true)
+        {
+            moduleTypes.AddRange(LoadModuleTypes(_moduleTypeNames));
+        }
+
+        if (_moduleTypes?.Any() == true)
+        {
+            moduleTypes.AddRange(_moduleTypes);
+        }
+
+        return moduleTypes.ToArray();
     }
 }

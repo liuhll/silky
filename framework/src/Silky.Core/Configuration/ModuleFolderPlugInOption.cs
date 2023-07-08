@@ -6,7 +6,7 @@ public class ModuleFolderPlugInOption : FolderPlugInOption
 {
     public ModuleFolderPlugInOption()
     {
-        Pattern = "Module";
+        Pattern = null;
         SearchOption = SearchOption.TopDirectoryOnly;
     }
 }

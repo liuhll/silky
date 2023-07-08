@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
+using Silky.Core.Extensions.Collections.Generic;
 
 namespace Silky.Core.Reflection;
 
@@ -25,9 +26,21 @@ public static class AssemblyHelper
     public static IEnumerable<string> GetAssemblyFiles(string folderPath, SearchOption searchOption)
     {
         return Directory
-            .EnumerateFiles(folderPath, "*.*", searchOption)
-            .Where(s => s.EndsWith(".dll") || s.EndsWith(".exe"));
+                .EnumerateFiles(folderPath, "*.*", searchOption)
+                .Where(p => p.EndsWith(".dll") || p.EndsWith(".exe"))
+                .Select(p => Path.GetFullPath(p))
+            ;
     }
+
+    // public static IEnumerable<Assembly> GetAssemblies(string folderPath, SearchOption searchOption,
+    //     bool skipLoadingSystem = true)
+    // {
+    //     var assemblyFiles = GetAssemblyFiles(folderPath, searchOption);
+    //     var assemblies = assemblyFiles
+    //         .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath)
+    //         .WhereIf(skipLoadingSystem, p => Matches(p.FullName));
+    //     return assemblies;
+    // }
 
     public static bool Matches(string assemblyFullName)
     {

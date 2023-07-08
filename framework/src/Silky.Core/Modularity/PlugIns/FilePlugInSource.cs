@@ -25,7 +25,7 @@ public class FilePlugInSource : IPlugInSource
             {
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (SilkyModule.IsSilkyModule(type))
+                    if (SilkyModule.IsSilkyPluginModule(type))
                     {
                         modules.AddIfNotContains(type);
                     }

@@ -7,7 +7,9 @@ using System.Reflection;
 using System.Runtime.Loader;
 using JetBrains.Annotations;
 using Silky.Core.Configuration;
+using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
+using Silky.Core.Modularity.PlugIns;
 
 namespace Silky.Core.Reflection
 {
@@ -16,12 +18,16 @@ namespace Silky.Core.Reflection
         private bool _ignoreReflectionErrors = true;
         protected ISilkyFileProvider _fileProvider;
         protected AppServicePlugInSourceList _servicePlugInSources;
+        protected PlugInSourceList _modulePlugInSources;
 
         public AppDomainTypeFinder([NotNull] AppServicePlugInSourceList servicePlugInSources,
+            [NotNull] PlugInSourceList modulePlugInSources,
             ISilkyFileProvider fileProvider = null)
         {
             Check.NotNull(servicePlugInSources, nameof(servicePlugInSources));
+            Check.NotNull(modulePlugInSources, nameof(modulePlugInSources));
             _servicePlugInSources = servicePlugInSources;
+            _modulePlugInSources = modulePlugInSources;
             _fileProvider = fileProvider ?? CommonSilkyHelpers.DefaultFileProvider;
         }
 
@@ -42,6 +48,7 @@ namespace Silky.Core.Reflection
                 addedAssemblyNames.Add(assembly.FullName);
             }
         }
+
 
         protected virtual void AddConfiguredAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
@@ -205,18 +212,61 @@ namespace Silky.Core.Reflection
 
             if (LoadAppDomainAssemblies)
                 AddAssembliesInAppDomain(addedAssemblyNames, assemblies);
+
             AddConfiguredAssemblies(addedAssemblyNames, assemblies);
             AddAppServiceAssemblies(addedAssemblyNames, assemblies);
+            AddAssembliesInModulePlugin(addedAssemblyNames, assemblies);
             return assemblies;
         }
 
         protected virtual void AddAppServiceAssemblies(List<string> addedAssemblyNames, List<Assembly> assemblies)
         {
-            var appServiceSources = _servicePlugInSources.GetAppServiceSources();
-            foreach (var appService in appServiceSources)
+            foreach (var appService in _servicePlugInSources)
             {
                 LoadServiceAssemblies(appService.Folder, appService.Pattern, appService.SearchOption,
                     addedAssemblyNames, assemblies);
+            }
+        }
+
+        private void AddAssembliesInModulePlugin(List<string> addedAssemblyNames, List<Assembly> assemblies)
+        {
+            foreach (var modulePlugInSource in _modulePlugInSources)
+            {
+                if (modulePlugInSource is FolderPlugInSource folderPlugInSource)
+                {
+                    LoadServiceAssemblies(folderPlugInSource.Folder, folderPlugInSource.Pattern,
+                        folderPlugInSource.SearchOption, addedAssemblyNames, assemblies);
+                }
+
+                if (modulePlugInSource is FilePlugInSource filePlugInSource)
+                {
+                    foreach (var filePath in filePlugInSource.FilePaths)
+                    {
+                        var assembly = Assembly.Load(filePath);
+                        if (addedAssemblyNames.Contains(assembly.FullName))
+                            continue;
+                        assemblies.Add(assembly);
+                        addedAssemblyNames.Add(assembly.FullName);
+                    }
+                }
+
+                if (modulePlugInSource is TypePlugInSource typePlugInSource)
+                {
+                    foreach (var moduleTypeName in typePlugInSource.ModuleTypeNames)
+                    {
+                        var type = Type.GetType(moduleTypeName);
+                        if (type == null)
+                        {
+                            throw new SilkyException($"Cannot load plugin of {moduleTypeName} Type");
+                        }
+
+                        var assembly = type.Assembly;
+                        if (addedAssemblyNames.Contains(assembly.FullName))
+                            continue;
+                        assemblies.Add(assembly);
+                        addedAssemblyNames.Add(assembly.FullName);
+                    }
+                }
             }
         }
 
@@ -226,14 +276,14 @@ namespace Silky.Core.Reflection
             List<string> loadedAssemblyNames,
             List<Assembly> assemblies)
         {
-            if (folder.IsNullOrWhiteSpace() || pattern.IsNullOrEmpty())
+            if (folder.IsNullOrWhiteSpace())
             {
-                return;
+                throw new ArgumentNullException(nameof(folder));
             }
 
             if (!_fileProvider.DirectoryExists(folder))
             {
-                return;
+                throw new SilkyException($"The specified {folder} directory does not exist in the system");
             }
 
             var assemblyFiles = AssemblyHelper.GetAssemblyFiles(folder, searchOption);
@@ -243,7 +293,10 @@ namespace Silky.Core.Reflection
             }
 
             var loadAssemblies =
-                assemblyFiles.Select(f => AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.GetFullPath(f)));
+                    assemblyFiles.Select(f =>
+                            AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.GetFullPath(f)))
+                        .Where(a => AssemblyHelper.Matches(a.FullName))
+                ;
             foreach (var loadAssembly in loadAssemblies)
             {
                 if (loadedAssemblyNames.Contains(loadAssembly.FullName))

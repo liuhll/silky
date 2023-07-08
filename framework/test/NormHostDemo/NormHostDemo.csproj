@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.12" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.16" />
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.*">

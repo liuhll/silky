@@ -77,7 +77,7 @@ namespace Silky.Core.Exceptions
         {
             return statusCode.IsBusinessStatus() || statusCode.IsUserFriendlyStatus() || statusCode.IsUnauthorized();
         }
-        
+
         public static bool IsCommunicationErrorStatus(this StatusCode statusCode)
         {
             return statusCode == StatusCode.CommunicationError;
@@ -86,6 +86,11 @@ namespace Silky.Core.Exceptions
         public static bool IsNotFindServiceError(this StatusCode statusCode)
         {
             return statusCode == StatusCode.NotFindServiceEntry || statusCode == StatusCode.NotFindServiceRoute;
+        }
+
+        public static bool IsNotFind(this StatusCode statusCode)
+        {
+            return statusCode == StatusCode.NotFound || statusCode == StatusCode.NotFindServiceRoute;
         }
     }
 

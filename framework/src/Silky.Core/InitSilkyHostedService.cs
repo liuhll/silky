@@ -35,7 +35,8 @@ namespace Silky.Core
             {
                 await _moduleManager.InitializeModules();
                 await _moduleManager.PostInitializeModules();
-                _logger.LogInformation("Initialized all Silky modules.");
+              
+                _logger.LogInformation($"{EngineContext.Current.HostName} Host Started Successfully!");
             });
         }
 

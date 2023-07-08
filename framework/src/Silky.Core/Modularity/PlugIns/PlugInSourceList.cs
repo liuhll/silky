@@ -16,5 +16,5 @@ public class PlugInSourceList : List<IPlugInSource>
             .Distinct()
             .ToArray();
     }
-    
+  
 }

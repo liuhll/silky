@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Silky.Core.Extensions;
+using Silky.Core.Modularity.PlugIns;
 
 namespace Silky.Core.Modularity
 {
@@ -49,8 +50,19 @@ namespace Silky.Core.Modularity
                 typeof(ISilkyModule).GetTypeInfo().IsAssignableFrom(type);
         }
         
-        public virtual string Name { get; }
+        public static bool IsSilkyPluginModule(Type type)
+        {
+            var typeInfo = type.GetTypeInfo();
 
+            return
+                typeInfo.IsClass &&
+                !typeInfo.IsAbstract &&
+                !typeInfo.IsGenericType &&
+                typeof(PlugInModule).GetTypeInfo().IsAssignableFrom(type);
+        }
+
+        public virtual string Name { get; }
+        
         public virtual Task PreInitialize(ApplicationInitializationContext context)
         {
             return Task.CompletedTask;

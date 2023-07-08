@@ -54,15 +54,16 @@ namespace Silky.Core.Exceptions
         {
             return exception.GetExceptionStatusCode().IsFriendlyStatus();
         }
-        
+
         public static bool IsCommunicationError(this Exception exception)
         {
             return exception.GetExceptionStatusCode().IsCommunicationErrorStatus();
         }
-        
+
         public static bool IsNotFindServiceError(this Exception exception)
         {
-            return exception.GetExceptionStatusCode().IsNotFindServiceError();
+            return exception.GetExceptionStatusCode().IsNotFindServiceError() ||
+                   exception.GetExceptionStatusCode().IsNotFind();
         }
 
 
