@@ -7,7 +7,7 @@ using SilkyApp.EntityFrameworkCore.DbContexts;
 
 namespace SilkyApp.EntityFrameworkCore;
 
-public class EfCoreModule : SilkyModule
+public class EfCoreModule : PlugInModule
 {
     public override async Task Initialize(ApplicationInitializationContext context)
     {
