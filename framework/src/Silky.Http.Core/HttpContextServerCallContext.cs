@@ -90,7 +90,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         RpcContext.Context.SetInvokeAttachment(AttachmentKeys.HttpMethod, method);
         EngineContext.Current.Resolve<ICurrentRpcToken>().SetRpcToken();
 
-        var timeout = GetTimeout();
+        var timeout = GetTimeout(ServiceEntryDescriptor);
         if (timeout != TimeSpan.Zero)
         {
             DeadlineManager = new ServerCallDeadlineManager(this, clock ?? SystemClock.Instance, timeout);
@@ -257,11 +257,11 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         }
     }
 
-    private TimeSpan GetTimeout()
+    private TimeSpan GetTimeout(ServiceEntryDescriptor serviceEntryDescriptor)
     {
-        var governanceOptions = EngineContext.Current.GetOptions<GovernanceOptions>();
-        return governanceOptions.TimeoutMillSeconds > 0
-            ? TimeSpan.FromMilliseconds(governanceOptions.TimeoutMillSeconds)
+        var timeoutMillSeconds = serviceEntryDescriptor.GovernanceOptions.TimeoutMillSeconds;
+        return timeoutMillSeconds > 0
+            ? TimeSpan.FromMilliseconds(timeoutMillSeconds)
             : TimeSpan.Zero;
     }
 
