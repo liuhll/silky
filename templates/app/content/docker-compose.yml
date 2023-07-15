@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   silkyapp:
-    image: silkyapp:${TAG:-latest}
+    image: ${REGISTRY:-sliky}/silkyapp:${TAG:-latest}
     build:
-      context: ../..
+      context: .
       dockerfile: src/SilkyApp/SilkyAppHost/Dockerfile
     volumes:
       - ./logs/silkyapp:/app/logs    

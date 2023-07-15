@@ -48,13 +48,6 @@
         "isRequired": false,
         "description": "Set dotnet env"
       },
-      "module": {
-        "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "false",
-        "isRequired": false,
-        "description": "Is it a module project"
-      },
       "type": {
         "type": "parameter",
         "datatype": "string",
@@ -153,25 +146,6 @@
               "Gateway.DockerCompose.sln",
               "SilkyApp.Blank.sln",
               "src/SilkyAppHost/Startup.cs"
-            ]
-          },
-          {
-            "condition": "(module)",
-            "exclude": [
-              ".dockerignore",
-              ".gitignore",
-              ".env",
-              "common.props",
-              ".DS_Store",
-              "docker-compose.yml",
-              "docker-compose.dcproj",
-              "SilkyApp.sln",
-              "Gateway.sln",
-              "Gateway.DockerCompose.sln",
-              "SilkyApp.DockerCompose.sln",
-              "docker-compose.yml",
-              "docker-compose.dcproj",
-              "infrastr/**"
             ]
           }
         ]

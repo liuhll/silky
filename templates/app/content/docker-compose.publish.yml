@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  silkyapp:
+    image: ${REGISTRY:-sliky}/silkyapp:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/SilkyApp/SilkyAppHost/Dockerfile.publish
+      args:
+        publish_dir: src/SilkyApp/SilkyAppHost/publish
