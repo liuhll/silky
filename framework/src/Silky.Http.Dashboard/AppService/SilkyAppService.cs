@@ -36,13 +36,13 @@ namespace Silky.Http.Dashboard.AppService
             @"([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])";
 
         private const string getInstanceSupervisorServiceEntryId =
-            "Silky.Rpc.AppService.IRpcAppService.GetInstanceDetail:Get";
+            "Rpc.GetInstanceDetail:Get";
 
         private const string getGetServiceEntrySupervisorServiceHandleServiceEntryId =
-            "Silky.Rpc.AppService.IRpcAppService.GetServiceEntryHandleInfos:Get";
+            "Rpc.GetServiceEntryHandleInfos:Get";
 
         private const string getGetServiceEntrySupervisorServiceInvokeServiceEntryId =
-            "Silky.Rpc.AppService.IRpcAppService.GetServiceEntryInvokeInfos:Get";
+            "Rpc.GetServiceEntryInvokeInfos:Get";
 
         public SilkyAppService(
             IServerManager serverManager,
