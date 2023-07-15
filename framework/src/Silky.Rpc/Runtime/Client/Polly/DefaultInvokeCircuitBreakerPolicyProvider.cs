@@ -23,7 +23,11 @@ namespace Silky.Rpc.Runtime.Client
                 var policy = Policy
                     .Handle<Exception>(ex =>
                     {
-                        var isNotCircuitBreakerException = ex.IsFriendlyException() || ex.IsNotFindServiceError(); // 又好类异常和找不到服务类异常不发生熔断
+                        var isNotCircuitBreakerException = ex.IsFriendlyException()
+                                                           || ex.IsNotFindServiceError()
+                                                           || ex.IsFrameworkException()
+                                                           || ex.IsNotImplemented()
+                                                           ; // 友好类异常|找不到服务类异常|框架类异常不发生熔断
                         return !isNotCircuitBreakerException;
                     })
                     .CircuitBreakerAsync(

@@ -27,7 +27,7 @@ public class NonSilkyExceptionFailoverPolicyProvider : InvokeFailoverPolicyProvi
         if (serviceEntryDescriptor?.GovernanceOptions.RetryTimes > 0)
         {
             policy = Policy<object>
-                .Handle<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.NonSilkyException)
+                .Handle<SilkyException>(ex => ex.GetExceptionStatusCode() == StatusCode.ServerError)
                 .WaitAndRetryAsync(serviceEntryDescriptor.GovernanceOptions.RetryTimes,
                     retryAttempt =>
                         TimeSpan.FromMilliseconds(serviceEntryDescriptor.GovernanceOptions
@@ -46,7 +46,7 @@ public class NonSilkyExceptionFailoverPolicyProvider : InvokeFailoverPolicyProvi
         _logger.LogWarning(
             $"A non-framework exception occurred," +
             $" and the rpc call is retryed for the ({retryNumber})th time.");
-        
+
         if (OnInvokeFailover != null)
         {
             await OnInvokeFailover.Invoke(outcome, retryNumber, context, serviceAddressModel, serviceEntryDescriptor,

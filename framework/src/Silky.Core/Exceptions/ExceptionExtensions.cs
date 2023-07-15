@@ -66,6 +66,16 @@ namespace Silky.Core.Exceptions
                    exception.GetExceptionStatusCode().IsNotFind();
         }
 
+        public static bool IsFrameworkException(this Exception exception)
+        {
+            return exception.GetExceptionStatusCode() == StatusCode.FrameworkException;
+        }
+
+        public static bool NotImplemented(this Exception exception)
+        {
+            return exception.GetExceptionStatusCode().IsNotImplementedError();
+        }
+
 
         public static bool IsUserFriendlyException(this Exception exception)
         {
@@ -90,9 +100,19 @@ namespace Silky.Core.Exceptions
             return false;
         }
 
+        public static bool IsNotImplemented(this Exception exception)
+        {
+            if (exception is NotImplementedException)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool IsPollyException(this Exception exception)
         {
-            if (exception is TimeoutException || exception.GetType().FullName.Contains("Polly"))
+            if (exception.GetType().FullName.Contains("Polly", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -102,7 +122,7 @@ namespace Silky.Core.Exceptions
 
         public static StatusCode GetExceptionStatusCode(this Exception exception)
         {
-            var statusCode = StatusCode.NonSilkyException;
+            var statusCode = StatusCode.ServerError;
 
             if (exception is IHasErrorCode errorCode)
             {
@@ -116,9 +136,9 @@ namespace Silky.Core.Exceptions
                 return statusCode;
             }
 
-            if (exception.IsPollyException())
+            if (exception.IsNotImplemented())
             {
-                statusCode = StatusCode.ServerError;
+                statusCode = StatusCode.NotImplemented;
                 return statusCode;
             }
 

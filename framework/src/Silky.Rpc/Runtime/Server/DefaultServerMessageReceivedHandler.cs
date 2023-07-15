@@ -71,7 +71,7 @@ namespace Silky.Rpc.Runtime.Server
                     }
                 }
 
-                
+
                 context[PollyContextNames.ServiceEntry] = serviceEntry;
 
                 var parameterResolver =
@@ -85,7 +85,7 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     remoteResultMessage.IsFile = true;
                 }
-              
+
                 remoteResultMessage.StatusCode = StatusCode.Success;
             }
             catch (Exception ex)
@@ -96,12 +96,13 @@ namespace Silky.Rpc.Runtime.Server
                     remoteResultMessage.ValidateErrors = validationException.ValidationErrors.ToArray();
                 }
 
-                if (ex.IsFriendlyException())
+                else if (ex.IsFriendlyException())
                 {
                     Logger.LogWarning(ex.Message);
                     remoteResultMessage.ExceptionMessage = ex.Message;
                     remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
                 }
+
                 else
                 {
                     Logger.LogException(ex);

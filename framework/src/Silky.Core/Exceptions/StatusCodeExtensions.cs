@@ -63,6 +63,11 @@ namespace Silky.Core.Exceptions
             return false;
         }
 
+        public static bool IsNotImplementedError(this StatusCode statusCode)
+        {
+            return statusCode == StatusCode.NotImplemented;
+        }
+
         public static bool IsUnauthorized(this StatusCode statusCode)
         {
             if (statusCode.GetAttribute<IsUnAuthorizedExceptionAttribute>() != null)

@@ -14,7 +14,7 @@ namespace Silky.Core.Exceptions
 
         [Description("未找到可用的服务地址")] NotFindServiceRouteAddress = 504,
 
-        [Description("非框架异常")] NonSilkyException = 505,
+        // [Description("非框架异常")] NonSilkyException = 505,
 
         [Description("通信异常")] CommunicationError = 506,
 
@@ -37,6 +37,7 @@ namespace Silky.Core.Exceptions
         [Description("UnServiceKeyImplementation")]
         UnServiceKeyImplementation = 516,
 
+
         [Description("rpc通信认证失败")] RpcUnAuthentication = 517,
 
         [Description("缓存拦截存在异常")] CachingInterceptError = 518,
@@ -46,6 +47,9 @@ namespace Silky.Core.Exceptions
         [Description("服务器异常")] ServerError = 520,
 
         [Description("没有内容")] NoContent = 521,
+
+        [Description("接口未实现")] [IsUserFriendlyException]
+        NotImplemented = 1003,
 
         [Description("业务异常")] [IsBusinessException]
         BusinessError = 1000,
@@ -68,9 +72,9 @@ namespace Silky.Core.Exceptions
         IssueTokenError = 4011,
 
         [Description("禁止外网访问")] FuseProtection = 406,
-        
+
         [Description("请求异常")] BadRequest = 400,
-        
+
         [Description("请求超时")] DeadlineExceeded = 408,
     }
 }
