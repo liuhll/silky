@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nacos.V2;
 using Nacos.V2.DependencyInjection;
 using Silky.Core;
@@ -40,10 +41,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddNacosRegistryCenterCore(this IServiceCollection services)
         {
-            services.AddSingleton<IServerRegister, NacosServerRegister>();
-            services.AddSingleton<IServiceProvider, NacosServiceProvider>();
-            services.AddSingleton<IServerRegisterProvider, NacosServerRegisterProvider>();
-            services.AddSingleton<IRegisterCenterHealthProvider, NocasRegisterCenterHealthProvider>();
+            services.TryAddSingleton<IServerRegister, NacosServerRegister>();
+            services.TryAddSingleton<IServiceProvider, NacosServiceProvider>();
+            services.TryAddSingleton<IServerRegisterProvider, NacosServerRegisterProvider>();
+            services.TryAddSingleton<IRegisterCenterHealthProvider, NocasRegisterCenterHealthProvider>();
             return services;
         }
     }

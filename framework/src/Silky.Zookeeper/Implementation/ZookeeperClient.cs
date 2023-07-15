@@ -130,7 +130,34 @@ namespace Silky.Zookeeper.Implementation
 #endif
                     this.WaitForRetry();
                 }
-
+                catch (KeeperException.OperationTimeoutException)
+                {
+#if NET40
+                    await TaskEx.Yield();
+#else
+                    await Task.Yield();
+#endif
+                    this.WaitForRetry();
+                }
+                catch (KeeperException.SessionMovedException)
+                {
+#if NET40
+                    await TaskEx.Yield();
+#else
+                    await Task.Yield();
+#endif
+                    this.WaitForRetry();
+                }
+                catch (KeeperException.NotReadOnlyException)
+                {
+#if NET40
+                    await TaskEx.Yield();
+#else
+                    await Task.Yield();
+#endif
+                    this.WaitForRetry();
+                }
+                
                 if (DateTime.Now - operationStartTime > Options.OperatingTimeout)
                 {
                     throw new TimeoutException(
@@ -314,6 +341,7 @@ namespace Silky.Zookeeper.Implementation
                 {
                     ZooKeeper.addAuthInfo(authScheme.ToString().ToLower(), Encoding.UTF8.GetBytes(auth));
                 }
+
                 return 0;
             });
         }

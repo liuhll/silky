@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silky.Core;
 using Silky.RegistryCenter.Zookeeper;
 using Silky.RegistryCenter.Zookeeper.Configuration;
@@ -13,10 +14,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddOptions<ZookeeperRegistryCenterOptions>()
                 .Bind(EngineContext.Current.Configuration.GetSection(section));
-            services.AddSingleton<IServerRegister, ZookeeperServerRegister>();
-            services.AddSingleton<IZookeeperClientFactory, DefaultZookeeperClientFactory>();
-            services.AddSingleton<IZookeeperStatusChange, ZookeeperServerRegister>();
-            services.AddSingleton<IRegisterCenterHealthProvider, ZookeeperRegisterCenterHealthProvider>();
+            services.TryAddSingleton<IServerRegister, ZookeeperServerRegister>();
+            services.TryAddSingleton<IZookeeperClientFactory, DefaultZookeeperClientFactory>();
+            services.TryAddSingleton<IZookeeperStatusChange, ZookeeperServerRegister>();
+            services.TryAddSingleton<IRegisterCenterHealthProvider, ZookeeperRegisterCenterHealthProvider>();
             return services;
         }
     }

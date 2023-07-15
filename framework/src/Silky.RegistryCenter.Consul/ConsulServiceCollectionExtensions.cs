@@ -33,8 +33,8 @@ namespace Silky.RegistryCenter.Consul
 
         private static IServiceCollection AddConsulRegistryCenter(this IServiceCollection services)
         {
-            services.AddTransient<IServiceDescriptorProvider, ConsulServiceDescriptorProvider>();
-            services.AddTransient<IServerConverter, ConsulServerConverter>();
+            services.TryAddTransient<IServiceDescriptorProvider, ConsulServiceDescriptorProvider>();
+            services.TryAddTransient<IServerConverter, ConsulServerConverter>();
             
             services.TryAddSingleton<IServerRegister, ConsulServerRegister>();
             services.TryAddSingleton<IConsulClientFactory, ConsulClientFactory>();
