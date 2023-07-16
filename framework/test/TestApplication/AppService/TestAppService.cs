@@ -117,6 +117,7 @@ namespace TestApplication.AppService
                 .Where(!query.Address.IsNullOrEmpty(), p => p.Address.Contains(query.Address))
                 .Where(!query.Ids.IsNullOrEmpty(),p=> query.Ids.Contains(p.Id))
                 .ProjectToType<TestOut>()
+                .SortBy("Name-Asc")
                 .ToPagedListAsync(query.PageIndex, query.PageSize);
         }
 

@@ -11,7 +11,7 @@ using Silky.EntityFrameworkCore.Extras.DataRange;
 using Silky.EntityFrameworkCore.Extras.Entities;
 using Silky.EntityFrameworkCore.Repositories;
 
-namespace Silky.EntityFrameworkCore.Extras.RepositoryExtensions;
+namespace Silky.EntityFrameworkCore.Repositories;
 
 public static class RepositoryExtensions
 {
