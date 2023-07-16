@@ -26,14 +26,13 @@ namespace Silky.Core.Modularity
 
         public async Task PreInitializeModules()
         {
-            await using var scope = _serviceProvider.CreateAsyncScope();
             foreach (var module in _moduleContainer.Modules)
             {
                 try
                 {
                     Logger.LogDebug("PreInitialize the module {0}", module.Name);
                     await module.Instance.PreInitialize(
-                        new ApplicationInitializationContext(scope.ServiceProvider, _hostEnvironment));
+                        new ApplicationInitializationContext(_serviceProvider, _hostEnvironment));
                 }
                 catch (Exception e)
                 {
@@ -41,19 +40,19 @@ namespace Silky.Core.Modularity
                     throw;
                 }
             }
+
             Logger.LogInformation("PreInitialize all Silky modules.");
         }
 
         public async Task InitializeModules()
         {
-            await using var scope = _serviceProvider.CreateAsyncScope();
             foreach (var module in _moduleContainer.Modules)
             {
                 try
                 {
                     Logger.LogDebug("Initialize the module {0}", module.Name);
                     await module.Instance.Initialize(
-                        new ApplicationInitializationContext(scope.ServiceProvider, _hostEnvironment));
+                        new ApplicationInitializationContext(_serviceProvider, _hostEnvironment));
                 }
                 catch (Exception e)
                 {
@@ -61,19 +60,19 @@ namespace Silky.Core.Modularity
                     throw;
                 }
             }
+
             Logger.LogInformation("Initialize all Silky modules.");
         }
 
         public async Task PostInitializeModules()
         {
-            await using var scope = _serviceProvider.CreateAsyncScope();
             foreach (var module in _moduleContainer.Modules)
             {
                 try
                 {
                     Logger.LogDebug("PostInitialize the module {0}", module.Name);
                     await module.Instance.PostInitialize(
-                        new ApplicationInitializationContext(scope.ServiceProvider, _hostEnvironment));
+                        new ApplicationInitializationContext(_serviceProvider, _hostEnvironment));
                 }
                 catch (Exception e)
                 {
@@ -87,13 +86,12 @@ namespace Silky.Core.Modularity
 
         public async Task ShutdownModules()
         {
-            await using var scope = _serviceProvider.CreateAsyncScope();
             foreach (var module in _moduleContainer.Modules)
             {
                 try
                 {
                     Logger.LogDebug("Shutdown the module {0}", module.Name);
-                    await module.Instance.Shutdown(new ApplicationShutdownContext(scope.ServiceProvider,
+                    await module.Instance.Shutdown(new ApplicationShutdownContext(_serviceProvider,
                         _hostEnvironment));
                 }
                 catch (Exception e)
