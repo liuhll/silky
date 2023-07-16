@@ -13,11 +13,11 @@ namespace Silky.RegistryCenter.Zookeeper.Configuration
 
         public bool EnableHeartBeat { get; set; } = true;
 
-        public double ConnectionTimeout { get; set; } = 1000;
+        public double ConnectionTimeout { get; set; } = 2000;
 
-        public double SessionTimeout { get; set; } = 3000;
+        public double SessionTimeout { get; set; } = 8000;
 
-        public double OperatingTimeout { get; set; } = 5000;
+        public double OperatingTimeout { get; set; } =15000;
 
         public string ConnectionStrings { get; set; }
 
