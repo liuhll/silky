@@ -106,6 +106,7 @@ namespace Silky.Swagger.Abstraction.SwaggerGen.SwaggerGenerator
         {
             var schemaRepository = new SchemaRepository(documentName);
             var entries = _serviceEntryManager.GetAllEntries()
+                .Where(serviceEntry => !serviceEntry.ServiceEntryDescriptor.ProhibitExtranet)
                 .Where(serviceEntry => !(_options.IgnoreObsoleteActions &&
                                          serviceEntry.CustomAttributes.OfType<ObsoleteAttribute>().Any()))
                 .Where(serviceEntry => _options.DocInclusionPredicate(documentName, serviceEntry));
