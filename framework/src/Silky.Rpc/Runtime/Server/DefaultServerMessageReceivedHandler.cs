@@ -93,7 +93,10 @@ namespace Silky.Rpc.Runtime.Server
                 isHandleSuccess = false;
                 if (ex is ValidationException validationException)
                 {
+                    Logger.LogWarning(ex.Message);
                     remoteResultMessage.ValidateErrors = validationException.ValidationErrors.ToArray();
+                    remoteResultMessage.ExceptionMessage = ex.Message;
+                    remoteResultMessage.StatusCode = ex.GetExceptionStatusCode();
                 }
 
                 else if (ex.IsFriendlyException())
