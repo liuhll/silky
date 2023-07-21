@@ -47,7 +47,7 @@ jwtSettings:
 governance:
   timeoutMillSeconds: 0
   maxConcurrentHandlingCount: 100
-  enableCircuitBreaker: true
+  enableCircuitBreaker: false
 serilog:
   minimumLevel:
     default: Information

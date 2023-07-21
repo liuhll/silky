@@ -134,6 +134,7 @@ namespace Silky.Rpc.Runtime.Server
                                 ParameterIndex = parameterDescriptor.Index,
                                 From = parameterDescriptor.From,
                                 IsSampleOrNullableType = parameterDescriptor.IsSingleType,
+                                IsNullableType = parameterDescriptor.IsNullableType,
                             });
                         }
                     }

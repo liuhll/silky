@@ -61,6 +61,7 @@ healthChecksUI:
 governance:
   timeoutMillSeconds: 0
   maxConcurrentHandlingCount: 100
+  EnableCircuitBreaker: false
 dashboard:
   useAuth: true
   #  wrapperResponse: true

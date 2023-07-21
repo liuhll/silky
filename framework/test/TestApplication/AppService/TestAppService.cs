@@ -16,6 +16,7 @@ using Silky.Core.Runtime.Session;
 using Silky.Core.Serialization;
 using Silky.EntityFrameworkCore.Extensions;
 using Silky.EntityFrameworkCore.Repositories;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using TestApplication.AppService.DomainService;
 
@@ -29,17 +30,19 @@ namespace TestApplication.AppService
         private readonly ISerializer _serializer;
         private readonly ISession _session;
         private readonly IRpcContextAccessor _rpcContextAccessor;
+        private readonly IInvokeTemplate _invokeTemplate;
 
         public TestAppService(
             IDistributedCache<TestOut> distributedCache,
             IRepository<Test> testRepository,
             ISerializer serializer,
-            IRpcContextAccessor rpcContextAccessor)
+            IRpcContextAccessor rpcContextAccessor, IInvokeTemplate invokeTemplate)
         {
             _distributedCache = distributedCache;
             _testRepository = testRepository;
             _serializer = serializer;
             _rpcContextAccessor = rpcContextAccessor;
+            _invokeTemplate = invokeTemplate;
             _session = NullSession.Instance;
         }
 
@@ -203,6 +206,12 @@ namespace TestApplication.AppService
             }
 
             return objects;
+        }
+
+        public async Task<string> InvokeQuery1()
+        {
+           var result = await _invokeTemplate.GetForObjectAsync<string>("/api/another/query1/{id:long}", 1,2);
+           return result;
         }
 
         public async Task<object> GetObject()

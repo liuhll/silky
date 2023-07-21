@@ -41,6 +41,11 @@ namespace WsHostDemo.AppService
             return input;
         }
 
+        public async Task<string> Query1(long id, long? code)
+        {
+            return id.ToString() + code ?? "";
+        }
+
         public Task ReturnNullTest()
         {
             return Task.CompletedTask;

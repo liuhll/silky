@@ -61,13 +61,13 @@ public static class CacheKeyHelper
     private static string GetCachingInterceptKey(CacheKeyProvider[] cacheKeyProviders,
         CachingInterceptorDescriptor cachingInterceptProvider, string? serviceKey)
     {
-        if (cachingInterceptProvider.CachingMethod != CachingMethod.Update &&
-            cacheKeyProviders.Any(p => p.Value.IsNullOrEmpty()))
-        {
-            throw new SilkyException(
-                $"Failed to get parameter value of cache interception with {cachingInterceptProvider.KeyTemplate} - {cachingInterceptProvider.CachingMethod}.",
-                StatusCode.CachingInterceptError);
-        }
+        // if (cachingInterceptProvider.CachingMethod != CachingMethod.Update &&
+        //     cacheKeyProviders.Any(p => p.Value.IsNullOrEmpty()))
+        // {
+        //     throw new SilkyException(
+        //         $"Failed to get parameter value of cache interception with {cachingInterceptProvider.KeyTemplate} - {cachingInterceptProvider.CachingMethod}.",
+        //         StatusCode.CachingInterceptError);
+        // }
 
         if (cachingInterceptProvider.CachingMethod == CachingMethod.Update &&
             cachingInterceptProvider.IgnoreWhenCacheKeyNull == false &&
@@ -117,7 +117,7 @@ public static class CacheKeyHelper
                     StatusCode.CachingInterceptError);
             }
 
-            keyTemplate = keyTemplate.Replace("{" + keyTemplateParameter + "}", cacheKeyProvider.Value);
+            keyTemplate = keyTemplate.Replace("{" + keyTemplateParameter + "}", cacheKeyProvider.Value ?? "");
             index++;
         }
 
@@ -146,9 +146,8 @@ public static class CacheKeyHelper
             };
             cacheKeyProviders.Add(cacheKeyProvider);
         }
-        
+
         return cacheKeyProviders.OrderBy(p => p.Index).ToArray();
-        
     }
 
     private static CacheKeyProvider[] GetCacheKeyProviders(ServiceEntry serviceEntry,
@@ -167,6 +166,8 @@ public static class CacheKeyHelper
                 CacheKeyType = cacheKeyProviderDescriptor.CacheKeyType,
                 Value = GetCacheKeyValue(serviceEntry, cacheKeyProviderDescriptor, parameters)
             };
+
+
             cacheKeyProviders.Add(cacheKeyProvider);
         }
 
@@ -264,7 +265,7 @@ public static class CacheKeyHelper
                 if (httpParameterValue.GetType() == typeof(string))
                 {
                     if (!httpParameterValue.ToString().IsValidJson())
-                        
+
                     {
                         return httpParameterValue.ToString();
                     }

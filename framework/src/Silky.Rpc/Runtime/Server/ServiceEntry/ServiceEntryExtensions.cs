@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Silky.Core;
 using Silky.Core.Convertible;
 using Silky.Core.Extensions;
+using Silky.Core.MethodExecutor;
 using Silky.Core.Runtime.Session;
 using Silky.Core.Serialization;
 using Silky.Rpc.Auditing;
@@ -42,33 +43,43 @@ namespace Silky.Rpc.Runtime.Server
 
         public static object[] ConvertParameters(this ServiceEntry serviceEntry, object[] parameters)
         {
+            var convertParameters = new List<object>();
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-            for (int i = 0; i < parameters.Length; i++)
+            for (var i = 0; i < serviceEntry.Parameters.Count; i++)
             {
-                if (parameters[i] != null && parameters[i].GetType() != serviceEntry.Parameters[i].Type &&
-                    !serviceEntry.Parameters[i].Type.IsInstanceOfType(parameters[i]))
+                if (i > parameters.Length - 1)
+                {
+                    convertParameters.Add(serviceEntry.Parameters[i].ParameterInfo.GetDefaultValue());
+                }
+                else if (parameters[i] != null && parameters[i].GetType() != serviceEntry.Parameters[i].Type &&
+                         !serviceEntry.Parameters[i].Type.IsInstanceOfType(parameters[i]))
                 {
                     if (serviceEntry.Parameters[i].IsSingleFileParameter())
                     {
                         var silkyFormFile = serializer.Deserialize<SilkyFormFile>(parameters[i].ToString());
-                        parameters[i] = silkyFormFile.ConventToFormFile();
+
+                        convertParameters.Add(silkyFormFile.ConventToFormFile());
                         continue;
                     }
 
                     if (serviceEntry.Parameters[i].IsMultipleFileParameter())
                     {
                         var silkyFormFile = serializer.Deserialize<SilkyFormFile[]>(parameters[i].ToString());
-                        parameters[i] = silkyFormFile.ConventToFileCollection();
+                        convertParameters.Add(silkyFormFile.ConventToFileCollection());
                         continue;
                     }
 
                     var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
-                    parameters[i] =
-                        typeConvertibleService.Convert(parameters[i], serviceEntry.Parameters[i].Type);
+                    convertParameters.Add(
+                        typeConvertibleService.Convert(parameters[i], serviceEntry.Parameters[i].Type));
+                }
+                else
+                {
+                    convertParameters.Add(parameters[i]);
                 }
             }
 
-            return parameters;
+            return convertParameters.ToArray();
         }
 
         public static bool IsTransactionServiceEntry([NotNull] this ServiceEntry serviceEntry)

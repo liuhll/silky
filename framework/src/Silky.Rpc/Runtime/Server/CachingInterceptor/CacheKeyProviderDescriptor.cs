@@ -13,4 +13,6 @@ public class CacheKeyProviderDescriptor
     public CacheKeyType CacheKeyType { get; set; }
 
     public bool IsSampleOrNullableType { get; set; }
+    
+    public bool IsNullableType { get; set; }
 }

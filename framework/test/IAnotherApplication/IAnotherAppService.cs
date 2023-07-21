@@ -29,6 +29,10 @@ namespace IAnotherApplication
         [GetCachingIntercept("another:name:{name}")]
         Task<TestDto> Test(TestDto input);
 
+        [HttpGet("query1/{id:long}")]
+        [GetCachingIntercept("Query1:id{id}:code:{code}")]
+        Task<string> Query1(long id, long? code);
+
         Task ReturnNullTest();
     }
 }

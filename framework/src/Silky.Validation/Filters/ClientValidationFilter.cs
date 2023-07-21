@@ -17,7 +17,7 @@ namespace Silky.Validation.Filters
             _methodInvocationValidator = methodInvocationValidator;
             _serviceEntryLocator = serviceEntryLocator;
         }
-        
+
         public void OnActionExecuting(ClientInvokeExecutingContext context)
         {
             var remoteInvokeMessage = context.RemoteInvokeMessage;
@@ -26,6 +26,7 @@ namespace Silky.Validation.Filters
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
             if (serviceEntry == null) return;
             if (serviceEntry.IsLocal) return;
+            if (serviceEntry.MethodInfo.GetParameters().Length != remoteInvokeMessage.Parameters.Length) return;
             _methodInvocationValidator.Validate(
                 new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);
@@ -33,7 +34,6 @@ namespace Silky.Validation.Filters
 
         public void OnActionExecuted(ClientInvokeExecutedContext context)
         {
-            
         }
     }
 }

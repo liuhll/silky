@@ -39,6 +39,7 @@ distributedCache:
 #    slidingExpiration: 100
 governance:
   timeoutMillSeconds: 0
+  enableCircuitBreaker: false
 serilog:
   minimumLevel:
     default: Information

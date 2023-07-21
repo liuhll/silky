@@ -23,10 +23,10 @@ namespace WsHostDemo
         {
             services.AddSilkySkyApm();
 
-            services.AddSchedule(options =>
-            {
-                options.AddJob<MyJob>(Triggers.PeriodSeconds(10));
-            });
+            // services.AddSchedule(options =>
+            // {
+            //     options.AddJob<MyJob>(Triggers.PeriodSeconds(10));
+            // });
             
             services.AddMassTransit(x =>
             {

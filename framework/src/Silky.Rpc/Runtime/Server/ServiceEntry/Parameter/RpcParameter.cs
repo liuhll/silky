@@ -23,18 +23,18 @@ namespace Silky.Rpc.Runtime.Server
             Name = !name.IsNullOrEmpty() ? name : parameterInfo.Name;
             SampleName = Name.Split(":")[0];
             Type = parameterInfo.ParameterType;
+            Index = index;
             CacheKeys = CreateCacheKeys(cacheKeyTemplates);
             PathTemplate = pathTemplate;
-            Index = index;
+
             if (@from == ParameterFrom.Path && PathTemplate.IsNullOrEmpty())
             {
                 PathTemplate = "{" + Name + "}";
             }
         }
 
-        private IDictionary<string,ICacheKeyProvider[]> CreateCacheKeys(string[] cacheKeyTemplates)
+        private IDictionary<string, ICacheKeyProvider[]> CreateCacheKeys(string[] cacheKeyTemplates)
         {
-
             var cacheKeyDict = new Dictionary<string, ICacheKeyProvider[]>();
             foreach (var cacheKeyTemplate in cacheKeyTemplates)
             {
@@ -42,22 +42,21 @@ namespace Silky.Rpc.Runtime.Server
                 // var attributeInfoCacheKeyProviders = ParserAttributeCacheKeyProviders();
                 var namedCacheKeyProviders = ParserNamedCacheKeyProviders(cacheKeyTemplate);
                 cacheKeyDict[cacheKeyTemplate] = namedCacheKeyProviders.ToArray();
-
             }
 
             return cacheKeyDict;
-
         }
 
         private ICollection<ICacheKeyProvider> ParserNamedCacheKeyProviders(string cacheKeyTemplate)
         {
             var cacheKeys = new List<ICacheKeyProvider>();
             var cacheKeyParameters = Regex.Matches(cacheKeyTemplate, CacheKeyConstants.CacheKeyParameterRegex)
-                .Select(q => q.Value.RemoveCurlyBraces());
+                .Select(q => q.Value.RemoveCurlyBraces()).ToList();
 
             foreach (var cacheKeyParameter in cacheKeyParameters)
             {
-                if (Type.IsSample() && SampleName.Equals(cacheKeyParameter, StringComparison.OrdinalIgnoreCase))
+                if ((Type.IsSample() || Type.IsNullableType()) &&
+                    SampleName.Equals(cacheKeyParameter, StringComparison.OrdinalIgnoreCase))
                 {
                     cacheKeys.Add(new NamedCacheKeyProvider(SampleName, Index));
                     break;
@@ -110,11 +109,11 @@ namespace Silky.Rpc.Runtime.Server
 
             return cacheKeys;
         }
-        
+
         public ParameterFrom From { get; }
 
         public Type Type { get; }
-        
+
         public int Index { get; }
 
         public string Name { get; }
@@ -124,7 +123,7 @@ namespace Silky.Rpc.Runtime.Server
         public string PathTemplate { get; }
 
         public bool IsSingleType => Type.IsSample() || Type.IsNullableType() || Type.IsEnumerable();
-        
+
 
         public bool IsNullableType => Type.IsNullableType();
 

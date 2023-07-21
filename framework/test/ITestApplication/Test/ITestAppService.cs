@@ -90,6 +90,8 @@ namespace ITestApplication.Test
         Task<TestOut> TestCache(TestInput input);
 
         Task<IList<object>> GetObjectList();
+        
+        Task<string> InvokeQuery1();
 
         Task<object> GetObject();
 
