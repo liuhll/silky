@@ -17,7 +17,7 @@ namespace Silky.Rpc.CachingInterceptor;
 
 public static class CacheKeyHelper
 {
-    public static (string, bool) GetCachingInterceptKey(object parameters,
+    public static string GetCachingInterceptKey(object parameters,
         [NotNull] CachingInterceptorDescriptor cachingInterceptProvider, string? serviceKey)
     {
         Check.NotNull(cachingInterceptProvider, nameof(cachingInterceptProvider));
@@ -30,8 +30,7 @@ public static class CacheKeyHelper
         }
 
         var cacheKeyProviders = GetCacheKeyProviders(cachingInterceptProvider, parameters);
-        return (GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider, serviceKey),
-            cacheKeyProviders.Any(p => p.Value.IsNullOrEmpty()));
+        return GetCachingInterceptKey(cacheKeyProviders, cachingInterceptProvider, serviceKey);
     }
 
 
