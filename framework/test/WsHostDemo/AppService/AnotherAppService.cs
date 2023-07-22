@@ -46,6 +46,16 @@ namespace WsHostDemo.AppService
             return id.ToString() + code ?? "";
         }
 
+        public async Task<string> Update(long id, long? code)
+        {
+            return id.ToString() + code ?? "";
+        }
+
+        public async Task<string> Delete(long id)
+        {
+            return id.ToString();
+        }
+
         public Task ReturnNullTest()
         {
             return Task.CompletedTask;

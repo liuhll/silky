@@ -33,6 +33,14 @@ namespace IAnotherApplication
         [GetCachingIntercept("Query1:id{id}:code:{code}")]
         Task<string> Query1(long id, long? code);
 
+        [HttpPut("update/{id:long}")]
+        [UpdateCachingIntercept("Query1:id{id}:code:{code}")]
+        Task<string> Update(long id, long? code);
+
+        [HttpDelete("delete/{id:long}")]
+        [RemoveMatchKeyCachingIntercept(typeof(string), "Query1:id{id}:code:*")]
+        Task<string> Delete(long id);
+
         Task ReturnNullTest();
     }
 }

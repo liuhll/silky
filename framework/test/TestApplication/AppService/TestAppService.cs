@@ -67,6 +67,7 @@ namespace TestApplication.AppService
             {
                 throw new UserFriendlyException($"不存在Id为{id}的数据");
             }
+
             return test.Adapt<TestOut>();
         }
 
@@ -97,18 +98,19 @@ namespace TestApplication.AppService
             {
                 throw new UserFriendlyException($"不存在Id为{id}的数据");
             }
-            
+
             await _testRepository.DeleteAsync(entity);
             await _distributedCache.RemoveAsync($"name:{entity.Name}");
             return "删除数据成功";
         }
 
-        public async Task<PagedList<TestOut>> Search1(string name, string address, IList<long> ids, int pageIndex = 1, int pageSize = 10)
+        public async Task<PagedList<TestOut>> Search1(string name, string address, IList<long> ids, int pageIndex = 1,
+            int pageSize = 10)
         {
             return await _testRepository.AsQueryable(false)
                 .Where(!name.IsNullOrEmpty(), p => p.Name.Contains(name))
                 .Where(!address.IsNullOrEmpty(), p => p.Address.Contains(name))
-                .Where(!ids.IsNullOrEmpty(),p=> ids.Contains(p.Id))
+                .Where(!ids.IsNullOrEmpty(), p => ids.Contains(p.Id))
                 .ProjectToType<TestOut>()
                 .ToPagedListAsync(pageIndex, pageSize);
         }
@@ -118,13 +120,13 @@ namespace TestApplication.AppService
             return await _testRepository.AsQueryable(false)
                 .Where(!query.Name.IsNullOrEmpty(), p => p.Name.Contains(query.Name))
                 .Where(!query.Address.IsNullOrEmpty(), p => p.Address.Contains(query.Address))
-                .Where(!query.Ids.IsNullOrEmpty(),p=> query.Ids.Contains(p.Id))
+                .Where(!query.Ids.IsNullOrEmpty(), p => query.Ids.Contains(p.Id))
                 .ProjectToType<TestOut>()
                 .SortBy("Name-Asc")
                 .ToPagedListAsync(query.PageIndex, query.PageSize);
         }
 
-        public Task<PagedList<TestOut>> Search3(long[] Ids,Sort[] sorts)
+        public Task<PagedList<TestOut>> Search3(long[] Ids, Sort[] sorts)
         {
             throw new System.NotImplementedException();
         }
@@ -210,8 +212,8 @@ namespace TestApplication.AppService
 
         public async Task<string> InvokeQuery1()
         {
-           var result = await _invokeTemplate.GetForObjectAsync<string>("/api/another/query1/{id:long}", 1,2);
-           return result;
+            var result = await _invokeTemplate.GetForObjectAsync<string>("/api/another/query1/{id:long}", 1, 2);
+            return result;
         }
 
         public async Task<object> GetObject()
