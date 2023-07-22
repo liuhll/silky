@@ -472,7 +472,11 @@
                                 error: function (xhr) {
                                     if (xhr.status === 404) {
                                         loginError.innerHTML = "Not Found: " + loginObject.submitUrl;
-                                    } else {
+                                    }
+                                    else if (xhr.status === 401 || xhr.status === 403) {
+                                        loginError.innerHTML = "Token is invalid or timed out ";
+                                    }
+                                    else {
                                         loginError.innerHTML = "Internal ServerError: " + loginObject.submitUrl;
                                     }
                                 }
@@ -483,7 +487,12 @@
                 error: function (xhr) {
                     if (xhr.status === 404) {
                         loginError.innerHTML = "Not Found: " + loginObject.checkUrl;
-                    } else {
+                    }
+                    
+                   else if (xhr.status === 401 || xhr.status === 403) {
+                        loginError.innerHTML = "Token is invalid or timed out ";
+                    }
+                    else {
                         loginError.innerHTML = "Internal ServerError: " + loginObject.checkUrl;
                     }
                     window.localStorage.removeItem(tokenKey);
