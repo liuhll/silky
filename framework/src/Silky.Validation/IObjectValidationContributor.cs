@@ -1,7 +1,9 @@
-﻿namespace Silky.Validation
+﻿using System.Threading.Tasks;
+
+namespace Silky.Validation
 {
     public interface IObjectValidationContributor
     {
-        void AddErrors(ObjectValidationContext context);
+        Task AddErrors(ObjectValidationContext context);
     }
 }

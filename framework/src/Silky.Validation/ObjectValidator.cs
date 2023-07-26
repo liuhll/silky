@@ -2,6 +2,7 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,9 +21,9 @@ namespace Silky.Validation
             Options = options.Value;
         }
 
-        public virtual void Validate(object validatingObject, string name = null, bool allowNull = false)
+        public virtual async Task Validate(object validatingObject, string name = null, bool allowNull = false)
         {
-            var errors = GetErrors(validatingObject, name, allowNull);
+            var errors = await GetErrors(validatingObject, name, allowNull);
 
             if (errors.Any())
             {
@@ -33,7 +34,7 @@ namespace Silky.Validation
             }
         }
 
-        public virtual List<ValidationResult> GetErrors(object validatingObject, string name = null,
+        public virtual async Task<List<ValidationResult>> GetErrors(object validatingObject, string name = null,
             bool allowNull = false)
         {
             if (validatingObject == null)
@@ -61,7 +62,7 @@ namespace Silky.Validation
                 {
                     var contributor = (IObjectValidationContributor)
                         scope.ServiceProvider.GetRequiredService(contributorType);
-                    contributor.AddErrors(context);
+                    await contributor.AddErrors(context);
                 }
             }
 

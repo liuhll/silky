@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace Silky.Validation
 {
     public interface IObjectValidator
     {
-        void Validate(
+        Task Validate(
             object validatingObject,
             string name = null,
             bool allowNull = false
         );
 
-        List<ValidationResult> GetErrors(
+        Task<List<ValidationResult>> GetErrors(
             object validatingObject,
             string name = null,
             bool allowNull = false

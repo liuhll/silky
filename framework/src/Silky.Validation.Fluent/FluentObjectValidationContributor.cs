@@ -2,8 +2,8 @@
 using System.Linq;
 using FluentValidation;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
-using Silky.Validation;
 
 namespace Silky.Validation.Fluent
 {
@@ -17,7 +17,7 @@ namespace Silky.Validation.Fluent
             _serviceProvider = serviceProvider;
         }
 
-        public void AddErrors(ObjectValidationContext context)
+        public async Task AddErrors(ObjectValidationContext context)
         {
             var serviceType = typeof(IValidator<>).MakeGenericType(context.ValidatingObject.GetType());
             var validator = _serviceProvider.GetService(serviceType) as IValidator;
@@ -26,7 +26,7 @@ namespace Silky.Validation.Fluent
                 return;
             }
 
-            var result = validator.Validate((IValidationContext)Activator.CreateInstance(
+            var result = await validator.ValidateAsync((IValidationContext)Activator.CreateInstance(
                 typeof(ValidationContext<>).MakeGenericType(context.ValidatingObject.GetType()),
                 context.ValidatingObject));
 

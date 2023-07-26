@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Exceptions;
@@ -19,7 +20,7 @@ namespace Silky.Validation
             _objectValidator = objectValidator;
         }
 
-        public virtual void Validate(MethodInvocationValidationContext context)
+        public virtual async Task Validate(MethodInvocationValidationContext context)
         {
             Check.NotNull(context, nameof(context));
 
@@ -49,7 +50,7 @@ namespace Silky.Validation
                 ThrowValidationError(context);
             }
 
-            AddMethodParameterValidationErrors(context);
+            await AddMethodParameterValidationErrors(context);
 
             if (context.Errors.Any())
             {
@@ -65,7 +66,7 @@ namespace Silky.Validation
             }
 
             if (ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableValidationAttribute>(
-                context.Method) != null)
+                    context.Method) != null)
             {
                 return true;
             }
@@ -86,16 +87,16 @@ namespace Silky.Validation
             );
         }
 
-        protected virtual void AddMethodParameterValidationErrors(MethodInvocationValidationContext context)
+        protected virtual async Task AddMethodParameterValidationErrors(MethodInvocationValidationContext context)
         {
             for (var i = 0; i < context.Parameters.Length; i++)
             {
                 var parameterValue = context.Parameters[i].GetActualValue(context.ParameterValues[i]);
-                AddMethodParameterValidationErrors(context, context.Parameters[i], parameterValue);
+                await AddMethodParameterValidationErrors(context, context.Parameters[i], parameterValue);
             }
         }
 
-        protected virtual void AddMethodParameterValidationErrors(ISilkyValidationResult context,
+        protected virtual async Task AddMethodParameterValidationErrors(ISilkyValidationResult context,
             ParameterInfo parameterInfo, object parameterValue)
         {
             var allowNulls = parameterInfo.IsOptional ||
@@ -103,7 +104,7 @@ namespace Silky.Validation
                              TypeHelper.IsPrimitiveExtended(parameterInfo.ParameterType, includeEnums: true);
 
             context.Errors.AddRange(
-                _objectValidator.GetErrors(
+                await _objectValidator.GetErrors(
                     parameterValue,
                     parameterInfo.Name,
                     allowNulls

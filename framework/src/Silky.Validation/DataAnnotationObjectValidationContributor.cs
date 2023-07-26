@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 using Silky.Core.Extensions.Collections.Generic;
 using Silky.Core.Utils;
@@ -27,10 +28,19 @@ namespace Silky.Validation
             Options = options.Value;
         }
 
-        public void AddErrors(ObjectValidationContext context)
+        public  Task AddErrors(ObjectValidationContext context)
         {
             ValidateObjectRecursively(context.Errors, context.ValidatingObject, currentDepth: 1);
+            return Task.CompletedTask;
         }
+
+        public  Task AddErrorsAsync(ObjectValidationContext context)
+        {
+            ValidateObjectRecursively(context.Errors, context.ValidatingObject, currentDepth: 1);
+            return Task.CompletedTask;
+        }
+
+       
 
         protected virtual void ValidateObjectRecursively(List<ValidationResult> errors, object validatingObject,
             int currentDepth)

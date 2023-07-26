@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Filters;
@@ -6,7 +7,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Validation.Filters
 {
-    public class ClientValidationFilter : IClientFilter
+    public class ClientValidationFilter : IAsyncClientFilter
     {
         private readonly IMethodInvocationValidator _methodInvocationValidator;
         private readonly IServiceEntryLocator _serviceEntryLocator;
@@ -18,7 +19,9 @@ namespace Silky.Validation.Filters
             _serviceEntryLocator = serviceEntryLocator;
         }
 
-        public void OnActionExecuting(ClientInvokeExecutingContext context)
+
+        public async Task OnActionExecutionAsync(ClientInvokeExecutingContext context,
+            ClientInvokeExecutionDelegate next)
         {
             var remoteInvokeMessage = context.RemoteInvokeMessage;
             if (!EngineContext.Current.ApplicationOptions.AutoValidationParameters) return;
@@ -26,14 +29,10 @@ namespace Silky.Validation.Filters
             var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
             if (serviceEntry == null) return;
             if (serviceEntry.IsLocal) return;
-            if (serviceEntry.MethodInfo.GetParameters().Length != remoteInvokeMessage.Parameters.Length) return;
-            _methodInvocationValidator.Validate(
+            await _methodInvocationValidator.Validate(
                 new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);
-        }
-
-        public void OnActionExecuted(ClientInvokeExecutedContext context)
-        {
+            await next();
         }
     }
 }

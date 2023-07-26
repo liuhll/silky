@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
@@ -5,7 +6,7 @@ using Silky.Rpc.Filters;
 
 namespace Silky.Validation.Filters;
 
-public class ServerValidationFilter : IServerFilter
+public class ServerValidationFilter : IAsyncServerFilter
 {
     private readonly IMethodInvocationValidator _methodInvocationValidator;
 
@@ -13,17 +14,14 @@ public class ServerValidationFilter : IServerFilter
     {
         _methodInvocationValidator = methodInvocationValidator;
     }
-
-    public void OnActionExecuting(ServerInvokeExecutingContext context)
+    
+    public async Task OnActionExecutionAsync(ServerInvokeExecutingContext context, ServerExecutionDelegate next)
     {
         if (!EngineContext.Current.ApplicationOptions.AutoValidationParameters) return;
         if (RpcContext.Context.GetInvokeAttachment(AttachmentKeys.ValidationParametersInClient)?.ConventTo<bool>() ==
             true) return;
-        _methodInvocationValidator.Validate(
+        await _methodInvocationValidator.Validate(
             new MethodInvocationValidationContext(context.ServiceEntry.MethodInfo, context.Parameters));
-    }
-
-    public void OnActionExecuted(ServerInvokeExecutedContext context)
-    {
+        await next();
     }
 }

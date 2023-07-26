@@ -1,7 +1,9 @@
-﻿namespace Silky.Validation
+﻿using System.Threading.Tasks;
+
+namespace Silky.Validation
 {
     public interface IMethodInvocationValidator
     {
-        void Validate(MethodInvocationValidationContext context);
+        Task Validate(MethodInvocationValidationContext context);
     }
 }
