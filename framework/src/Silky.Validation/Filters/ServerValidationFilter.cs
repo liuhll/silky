@@ -14,14 +14,25 @@ public class ServerValidationFilter : IAsyncServerFilter
     {
         _methodInvocationValidator = methodInvocationValidator;
     }
-    
+
     public async Task OnActionExecutionAsync(ServerInvokeExecutingContext context, ServerExecutionDelegate next)
     {
-        if (!EngineContext.Current.ApplicationOptions.AutoValidationParameters) return;
-        if (RpcContext.Context.GetInvokeAttachment(AttachmentKeys.ValidationParametersInClient)?.ConventTo<bool>() ==
-            true) return;
-        await _methodInvocationValidator.Validate(
-            new MethodInvocationValidationContext(context.ServiceEntry.MethodInfo, context.Parameters));
-        await next();
+        if (!EngineContext.Current.ApplicationOptions.AutoValidationParameters)
+        {
+            await next();
+        }
+
+        else if (RpcContext.Context.GetInvokeAttachment(AttachmentKeys.ValidationParametersInClient)
+                     ?.ConventTo<bool>() ==
+                 true)
+        {
+            await next();
+        }
+        else
+        {
+            await _methodInvocationValidator.Validate(
+                new MethodInvocationValidationContext(context.ServiceEntry.MethodInfo, context.Parameters));
+            await next();
+        }
     }
 }

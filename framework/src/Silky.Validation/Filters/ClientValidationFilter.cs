@@ -23,16 +23,39 @@ namespace Silky.Validation.Filters
         public async Task OnActionExecutionAsync(ClientInvokeExecutingContext context,
             ClientInvokeExecutionDelegate next)
         {
-            var remoteInvokeMessage = context.RemoteInvokeMessage;
-            if (!EngineContext.Current.ApplicationOptions.AutoValidationParameters) return;
-            if (remoteInvokeMessage.ParameterType != ParameterType.Rpc) return;
-            var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
-            if (serviceEntry == null) return;
-            if (serviceEntry.IsLocal) return;
-            await _methodInvocationValidator.Validate(
-                new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
-            RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);
-            await next();
+            if (!EngineContext.Current.ApplicationOptions.AutoValidationParameters)
+            {
+                await next();
+            }
+            else
+            {
+                var remoteInvokeMessage = context.RemoteInvokeMessage;
+
+                if (remoteInvokeMessage.ParameterType != ParameterType.Rpc)
+                {
+                    await next();
+                }
+                else
+                {
+                    var serviceEntry = _serviceEntryLocator.GetServiceEntryById(remoteInvokeMessage.ServiceEntryId);
+                    if (serviceEntry == null)
+                    {
+                        await next();
+                    }
+                    else if (serviceEntry.IsLocal)
+                    {
+                        await next();
+                    }
+                    else
+                    {
+                        await _methodInvocationValidator.Validate(
+                            new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
+                        RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);
+                        await next();
+                    }
+                }
+            }
+
         }
     }
 }
