@@ -285,6 +285,11 @@ public static class CacheKeyHelper
             }
             case object[] sortedParameters:
             {
+                if (cacheKeyProviderDescriptor.ParameterIndex > sortedParameters.Length - 1)
+                {
+                    return default;
+                }
+
                 var sortedParameterValue = sortedParameters[cacheKeyProviderDescriptor.ParameterIndex];
                 if (cacheKeyProviderDescriptor.IsSampleOrNullableType)
                 {
