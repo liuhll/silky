@@ -46,16 +46,20 @@ namespace Silky.Validation.Filters
                     {
                         await next();
                     }
+                    else if (serviceEntry.MethodInfo.GetParameters().Length != remoteInvokeMessage.Parameters.Length)
+                    {
+                        await next();
+                    }
                     else
                     {
                         await _methodInvocationValidator.Validate(
-                            new MethodInvocationValidationContext(serviceEntry.MethodInfo, remoteInvokeMessage.Parameters));
+                            new MethodInvocationValidationContext(serviceEntry.MethodInfo,
+                                remoteInvokeMessage.Parameters, ValidationType.Client));
                         RpcContext.Context.SetInvokeAttachment(AttachmentKeys.ValidationParametersInClient, true);
                         await next();
                     }
                 }
             }
-
         }
     }
 }

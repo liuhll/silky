@@ -39,7 +39,8 @@ namespace Silky.Validation
                 return;
             }
 
-            if (context.Parameters.Length != context.ParameterValues.Length)
+            if (context.Parameters.Length != context.ParameterValues.Length &&
+                context.ValidationType == ValidationType.Server)
             {
                 throw new Exception("Method parameter count does not match with argument count!");
             }

@@ -212,7 +212,7 @@ namespace TestApplication.AppService
 
         public async Task<string> InvokeQuery1()
         {
-            var result = await _invokeTemplate.GetForObjectAsync<string>("/api/another/query1/{id:long}", 1, 2);
+            var result = await _invokeTemplate.GetForObjectAsync<string>("/api/another/query1/{id:long}", 1);
             return result;
         }
 

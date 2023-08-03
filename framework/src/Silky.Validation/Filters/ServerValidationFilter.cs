@@ -31,7 +31,8 @@ public class ServerValidationFilter : IAsyncServerFilter
         else
         {
             await _methodInvocationValidator.Validate(
-                new MethodInvocationValidationContext(context.ServiceEntry.MethodInfo, context.Parameters));
+                new MethodInvocationValidationContext(context.ServiceEntry.MethodInfo, context.Parameters,
+                    ValidationType.Server));
             await next();
         }
     }

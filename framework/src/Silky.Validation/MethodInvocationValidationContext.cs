@@ -10,10 +10,15 @@ namespace Silky.Validation
 
         public ParameterInfo[] Parameters { get; }
 
-        public MethodInvocationValidationContext(MethodInfo method, object[] parameterValues)
+        public ValidationType ValidationType { get; set; }
+
+        public MethodInvocationValidationContext(MethodInfo method, 
+            object[] parameterValues, 
+            ValidationType validationType)
         {
             Method = method;
             ParameterValues = parameterValues;
+            ValidationType = validationType;
             Parameters = method.GetParameters();
         }
     }
