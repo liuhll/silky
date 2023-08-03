@@ -15,9 +15,6 @@ namespace Silky.Http.Core
             builder.RegisterType<DefaultHttpExecutor>()
                 .As<IHttpExecutor>()
                 .InstancePerLifetimeScope()
-                .AddInterceptors(
-                    typeof(TransactionInterceptor)
-                )
                 ;
         }
     }

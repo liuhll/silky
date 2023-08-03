@@ -1,5 +1,6 @@
 using Silky.Rpc.Routing;
 using Silky.Rpc.Security;
+using Silky.Transaction;
 
 namespace WebHostDemo.Hello;
 
@@ -7,4 +8,7 @@ namespace WebHostDemo.Hello;
 public interface IHelloAppService
 {
     Task Exception();
+
+    [Transaction]
+    Task TccTest();
 }
