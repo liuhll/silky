@@ -71,6 +71,11 @@ namespace Silky.Core.Exceptions
             return exception.GetExceptionStatusCode() == StatusCode.FrameworkException;
         }
 
+        public static bool IsServerException(this Exception exception)
+        {
+            return exception.GetExceptionStatusCode() == StatusCode.ServerError;
+        }
+
         public static bool NotImplemented(this Exception exception)
         {
             return exception.GetExceptionStatusCode().IsNotImplementedError();

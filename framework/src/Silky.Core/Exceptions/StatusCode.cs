@@ -44,7 +44,7 @@ namespace Silky.Core.Exceptions
 
         [Description("执行超时")] Timeout = 519,
 
-        [Description("服务器异常")] ServerError = 520,
+        [Description("服务异常")] ServerError = 520,
 
         [Description("没有内容")] NoContent = 521,
 

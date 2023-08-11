@@ -27,7 +27,8 @@ namespace Silky.Rpc.Runtime.Client
                                                            || ex.IsNotFindServiceError()
                                                            || ex.IsFrameworkException()
                                                            || ex.IsNotImplemented()
-                                                           ; // 友好类异常|找不到服务类异常|框架类异常不发生熔断
+                                                           || ex.IsServerException()
+                            ; // 友好类异常|找不到服务类异常|框架类异常不发生熔断|服务异常
                         return !isNotCircuitBreakerException;
                     })
                     .CircuitBreakerAsync(
