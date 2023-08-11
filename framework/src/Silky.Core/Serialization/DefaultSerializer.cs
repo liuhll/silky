@@ -16,7 +16,7 @@ namespace Silky.Core.Serialization
             if (camelCase)
             {
                 settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                settings.Converters.Add(new JObjectConverter());
+               
             }
             else
             {
