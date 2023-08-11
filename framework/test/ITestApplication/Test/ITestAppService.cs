@@ -50,6 +50,10 @@ namespace ITestApplication.Test
         Task<string> DeleteAsync(long id);
 
         [HttpGet]
+        Task<IDictionary<string, string>> TestDict1();
+        
+
+        [HttpGet]
         Task<PagedList<TestOut>> Search1([FromQuery] string name, [FromQuery] string address,
             [FromQuery] IList<long> ids,
             [FromQuery] int pageIndex = 1,

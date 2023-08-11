@@ -92,7 +92,7 @@ namespace TestApplication.AppService
             // await _anotherAppService.DeleteOne(input.Name);
             // await _anotherAppService.DeleteTwo(input.Address);
             // // throw new BusinessException("test exception");
-            //
+            // 
             var entity = await _testRepository.FindOrDefaultAsync(id);
             if (entity == null)
             {
@@ -102,6 +102,15 @@ namespace TestApplication.AppService
             await _testRepository.DeleteAsync(entity);
             await _distributedCache.RemoveAsync($"name:{entity.Name}");
             return "删除数据成功";
+        }
+
+        public async Task<IDictionary<string, string>> TestDict1()
+        {
+            return new Dictionary<string, string>()
+            {
+                { "Id", "1" },
+                { "Name", "Name" }
+            };
         }
 
         public async Task<PagedList<TestOut>> Search1(string name, string address, IList<long> ids, int pageIndex = 1,
