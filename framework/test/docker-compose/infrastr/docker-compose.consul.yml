@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   consul-agent-1: &consul-agent
-    image: consul:latest
+    image: consul:1.15.4
     restart: always
     networks:
       - silky_service_net
