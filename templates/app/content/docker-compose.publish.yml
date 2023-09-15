@@ -5,6 +5,6 @@ services:
     image: ${REGISTRY:-sliky}/silkyapp:${TAG:-latest}
     build:
       context: .
-      dockerfile: src/SilkyApp/SilkyAppHost/Dockerfile.publish
+      dockerfile: src/SilkyAppHost/Dockerfile.publish
       args:
-        publish_dir: src/SilkyApp/SilkyAppHost/publish
+        publish_dir: src/SilkyAppHost/publish
