@@ -7,5 +7,7 @@ namespace Silky.Rpc.Transport
     public interface ITransportClientFactory : ISingletonDependency
     {
         Task<ITransportClient> GetClient(ISilkyEndpoint silkyEndpoint);
+
+        void RemoveClient(ISilkyEndpoint silkyEndpoint);
     }
 }

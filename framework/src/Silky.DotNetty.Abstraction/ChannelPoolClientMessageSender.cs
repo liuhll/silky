@@ -1,11 +1,9 @@
+using System;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
-using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Pool;
 using Silky.Core.Runtime.Rpc;
-using Silky.Core.Threading;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
@@ -13,7 +11,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Abstraction;
 
-public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
+public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IDisposable
 {
     private readonly IChannelPool _channelPool;
     private readonly IMessageListener _messageListener;
@@ -75,5 +73,10 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
         {
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, localAddress.Port.ToString());
         }
+    }
+
+    public void Dispose()
+    {
+        _channelPool.Dispose();
     }
 }

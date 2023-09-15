@@ -14,7 +14,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport
 {
-    public class DefaultTransportClient : ITransportClient
+    public class DefaultTransportClient : ITransportClient, IDisposable
     {
         private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
 
@@ -89,14 +89,23 @@ namespace Silky.Rpc.Transport
 
             if (remoteResultMessage.StatusCode == StatusCode.ValidateError)
             {
-                var validateException = new ValidationException(remoteResultMessage.ExceptionMessage,remoteResultMessage.ValidateErrors);
-                
+                var validateException = new ValidationException(remoteResultMessage.ExceptionMessage,
+                    remoteResultMessage.ValidateErrors);
+
 
                 throw validateException;
             }
 
             throw new SilkyException(remoteResultMessage.ExceptionMessage, remoteResultMessage.StatusCode,
                 remoteResultMessage.Status);
+        }
+
+        public void Dispose()
+        {
+            if (MessageSender is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
     }
 }

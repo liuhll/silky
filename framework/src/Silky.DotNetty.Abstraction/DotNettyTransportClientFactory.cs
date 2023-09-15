@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -37,6 +35,11 @@ namespace Silky.DotNetty
             IOptions<RpcOptions> rpcOptions)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
+            _rpcEndpointMonitor.OnRemoveRpcEndpoint += endpoint =>
+            {
+                RemoveClient(endpoint);
+                return Task.CompletedTask;
+            };
             _silkyChannelPoolMap = silkyChannelPoolMap;
             _channelProvider = channelProvider;
             _rpcOptions = rpcOptions.Value;
@@ -87,6 +90,17 @@ namespace Silky.DotNetty
             {
                 Logger.LogException(ex);
                 throw new CommunicationException(ex.Message, ex);
+            }
+        }
+
+        public void RemoveClient(ISilkyEndpoint silkyEndpoint)
+        {
+            if (m_clients.TryRemove(silkyEndpoint, out var client))
+            {
+                if (client is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
             }
         }
 
