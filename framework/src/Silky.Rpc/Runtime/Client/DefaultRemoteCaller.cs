@@ -94,14 +94,6 @@ namespace Silky.Rpc.Runtime.Client
                 {
                     Logger.LogWarning(ex.Message);
                 }
-                else if (ex.IsCommunicationError())
-                {
-                    Logger.LogException(ex);
-                    if (selectedRpcEndpoint != null)
-                    {
-                        _transportClientFactory.RemoveClient(selectedRpcEndpoint);
-                    }
-                }
                 else
                 {
                     Logger.LogException(ex);

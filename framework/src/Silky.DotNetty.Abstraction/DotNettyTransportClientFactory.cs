@@ -89,6 +89,7 @@ namespace Silky.DotNetty
             catch (Exception ex)
             {
                 Logger.LogException(ex);
+                _rpcEndpointMonitor.RemoveRpcEndpoint(silkyEndpoint);
                 throw new CommunicationException(ex.Message, ex);
             }
         }
