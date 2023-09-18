@@ -11,7 +11,7 @@ using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Abstraction;
 
-public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IDisposable
+public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
 {
     private readonly IChannelPool _channelPool;
     private readonly IMessageListener _messageListener;
@@ -74,9 +74,5 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IDispos
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, localAddress.Port.ToString());
         }
     }
-
-    public void Dispose()
-    {
-        _channelPool.Dispose();
-    }
+    
 }

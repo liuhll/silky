@@ -76,13 +76,13 @@ namespace Silky.DotNetty
                     return client;
                 }
 
-                if (_rpcOptions.UseTransportClientPool)
-                {
-                    var pool = _silkyChannelPoolMap.Get(silkyEndpoint);
-                    var messageSender =
-                        new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
-                    client.MessageSender = messageSender;
-                }
+                // if (_rpcOptions.UseTransportClientPool)
+                // {
+                //     var pool = _silkyChannelPoolMap.Get(silkyEndpoint);
+                //     var messageSender =
+                //         new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
+                //     client.MessageSender = messageSender;
+                // }
 
                 return client;
             }
