@@ -10,6 +10,7 @@ using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Runtime;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Transport
@@ -20,10 +21,10 @@ namespace Silky.Rpc.Transport
 
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
-        public IMessageSender MessageSender { get; set; }
+        public IClientMessageSender MessageSender { get; set; }
         private readonly IMessageListener _messageListener;
 
-        public DefaultTransportClient(IMessageSender messageSender, IMessageListener messageListener)
+        public DefaultTransportClient(IClientMessageSender messageSender, IMessageListener messageListener)
         {
             MessageSender = messageSender;
             _messageListener = messageListener;
@@ -38,7 +39,7 @@ namespace Silky.Rpc.Transport
                 return;
             task.SetResult(message);
         }
-
+        
         public virtual async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
             int timeout = Timeout.Infinite)
         {

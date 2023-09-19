@@ -7,15 +7,18 @@ using Silky.Core.Runtime.Rpc;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
+using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.DotNetty.Abstraction;
 
-public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
+public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IClientMessageSender
 {
     private readonly IChannelPool _channelPool;
     private readonly IMessageListener _messageListener;
     private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
+    private bool _enabled = true;
+    private bool _disposed = false;
 
 
     public ChannelPoolClientMessageSender(IChannelPool channelPool,
@@ -32,6 +35,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
         var channel = await _channelPool.AcquireAsync();
         try
         {
+            _enabled = channel.Active;
             SetChannelClientHandler(channel);
             SetClientPort(channel);
             await channel.WriteAsync(message);
@@ -48,6 +52,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
         var channel = await _channelPool.AcquireAsync();
         try
         {
+            _enabled = channel.Active;
             SetChannelClientHandler(channel);
             SetClientPort(channel);
             await channel.WriteAndFlushAsync(message);
@@ -69,10 +74,17 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase
 
     private void SetClientPort(IChannel channel)
     {
-        if (channel.LocalAddress is IPEndPoint localAddress) 
+        if (channel.LocalAddress is IPEndPoint localAddress)
         {
             RpcContext.Context.SetInvokeAttachment(AttachmentKeys.RpcRequestPort, localAddress.Port.ToString());
         }
     }
-    
+
+
+    public bool Enabled => _enabled && !_disposed;
+
+    public void Dispose()
+    {
+        _disposed = true;
+    }
 }

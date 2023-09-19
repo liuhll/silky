@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.DotNetty.Abstraction;
@@ -16,32 +17,35 @@ using Silky.Rpc.Transport;
 
 namespace Silky.DotNetty
 {
-    public class DotNettyTransportClientFactory : IDisposable, ITransportClientFactory
+    public class DotNettyTransportClientFactory : ITransportClientFactory
     {
         public ILogger<DotNettyTransportClientFactory> Logger { get; set; }
         private readonly RpcOptions _rpcOptions;
 
         private readonly IRpcEndpointMonitor _rpcEndpointMonitor;
-        private readonly SilkyChannelPoolMap _silkyChannelPoolMap;
-        private readonly IChannelProvider _channelProvider;
 
         private readonly IMessageListener _clientMessageListener;
+
+        private readonly SilkyChannelPoolMap _silkyChannelPoolMap;
+        private readonly IChannelProvider _channelProvider;
 
         private ConcurrentDictionary<ISilkyEndpoint, ITransportClient> m_clients = new();
 
         public DotNettyTransportClientFactory(IRpcEndpointMonitor rpcEndpointMonitor,
+            IOptions<RpcOptions> rpcOptions,
             SilkyChannelPoolMap silkyChannelPoolMap,
-            IChannelProvider channelProvider,
-            IOptions<RpcOptions> rpcOptions)
+            IChannelProvider channelProvider)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
+            _silkyChannelPoolMap = silkyChannelPoolMap;
+            _channelProvider = channelProvider;
             _rpcEndpointMonitor.OnRemoveRpcEndpoint += endpoint =>
             {
                 RemoveClient(endpoint);
                 return Task.CompletedTask;
             };
-            _silkyChannelPoolMap = silkyChannelPoolMap;
-            _channelProvider = channelProvider;
+            // _silkyChannelPoolMap = silkyChannelPoolMap;
+            // _channelProvider = channelProvider;
             _rpcOptions = rpcOptions.Value;
             _clientMessageListener = new ClientMessageListener();
             Logger = NullLogger<DotNettyTransportClientFactory>.Instance;
@@ -57,32 +61,18 @@ namespace Silky.DotNetty
 
                 if (!m_clients.TryGetValue(silkyEndpoint, out var client))
                 {
-                    if (_rpcOptions.UseTransportClientPool)
-                    {
-                        var pool = _silkyChannelPoolMap.Get(silkyEndpoint);
-                        var messageSender =
-                            new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
-                        client = new DefaultTransportClient(messageSender, _clientMessageListener);
-                    }
-                    else
-                    {
-                        var channel =
-                            await _channelProvider.Create(silkyEndpoint, _clientMessageListener, _rpcEndpointMonitor);
-                        var messageSender = new DotNettyClientMessageSender(channel);
-                        client = new DefaultTransportClient(messageSender, _clientMessageListener);
-                    }
-
+                    var clientMessageSender =
+                        await CreateClientMessageSender(silkyEndpoint, _rpcOptions.UseTransportClientPool);
+                    client = new DefaultTransportClient(clientMessageSender, _clientMessageListener);
                     _ = m_clients.TryAdd(silkyEndpoint, client);
                     return client;
                 }
 
-                // if (_rpcOptions.UseTransportClientPool)
-                // {
-                //     var pool = _silkyChannelPoolMap.Get(silkyEndpoint);
-                //     var messageSender =
-                //         new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
-                //     client.MessageSender = messageSender;
-                // }
+                if (!client.MessageSender.Enabled)
+                {
+                    client.MessageSender =
+                        await CreateClientMessageSender(silkyEndpoint, _rpcOptions.UseTransportClientPool);
+                }
 
                 return client;
             }
@@ -91,6 +81,25 @@ namespace Silky.DotNetty
                 Logger.LogException(ex);
                 _rpcEndpointMonitor.RemoveRpcEndpoint(silkyEndpoint);
                 throw new CommunicationException(ex.Message, ex);
+            }
+        }
+
+        private async Task<IClientMessageSender> CreateClientMessageSender(ISilkyEndpoint silkyEndpoint,
+            bool useTransportClientPool)
+        {
+            if (useTransportClientPool)
+            {
+                var pool = _silkyChannelPoolMap.Get(silkyEndpoint);
+                var messageSender =
+                    new ChannelPoolClientMessageSender(pool, _clientMessageListener, _rpcEndpointMonitor);
+                return messageSender;
+            }
+            else
+            {
+                var channel =
+                    await _channelProvider.Create(silkyEndpoint, _clientMessageListener, _rpcEndpointMonitor);
+                var messageSender = new DotNettyClientMessageSender(channel);
+                return messageSender;
             }
         }
 
@@ -108,7 +117,7 @@ namespace Silky.DotNetty
 
         public void Dispose()
         {
-            _silkyChannelPoolMap?.Dispose();
+            // _silkyChannelPoolMap?.Dispose();
         }
     }
 }
