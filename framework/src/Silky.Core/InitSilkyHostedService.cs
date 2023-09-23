@@ -30,11 +30,12 @@ namespace Silky.Core
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _moduleManager.PreInitializeModules();
+            await _moduleManager.PreInitializeModules(EngineContext.Current.ServiceProvider);
             _hostApplicationLifetime.ApplicationStarted.Register(async () =>
             {
-                await _moduleManager.InitializeModules();
-                await _moduleManager.PostInitializeModules();
+                
+                await _moduleManager.InitializeModules(EngineContext.Current.ServiceProvider);
+                await _moduleManager.PostInitializeModules(EngineContext.Current.ServiceProvider);
               
                 _logger.LogInformation($"{EngineContext.Current.HostName} Host Started Successfully!");
             });
@@ -42,9 +43,9 @@ namespace Silky.Core
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            _hostApplicationLifetime.ApplicationStopping.Register(async () =>
+            _hostApplicationLifetime.ApplicationStopped.Register(async () =>
             {
-                await _moduleManager.ShutdownModules();
+                await _moduleManager.ShutdownModules(EngineContext.Current.ServiceProvider);
                 _logger.LogInformation("Shutdown all Silky modules.");
             });
         }

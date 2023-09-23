@@ -36,6 +36,7 @@ namespace Silky.Rpc.Monitor
         private async Task CleanMonitorCache(IServiceProvider serviceProvider)
         {
             var rpcOption = serviceProvider.GetRequiredService<IOptions<RpcOptions>>();
+           
             if (rpcOption.Value?.EnableMonitor == true)
             {
                 var monitorProvider = serviceProvider.GetRequiredService<IMonitorProvider>();

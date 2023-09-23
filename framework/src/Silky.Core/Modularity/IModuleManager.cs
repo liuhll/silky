@@ -1,17 +1,17 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Threading.Tasks;
 using Silky.Core.DependencyInjection;
 
 namespace Silky.Core.Modularity
 {
     public interface IModuleManager : ISingletonDependency
     {
-        Task PreInitializeModules();
+        Task PreInitializeModules(IServiceProvider serviceProvider);
         
-        Task InitializeModules();
+        Task InitializeModules(IServiceProvider serviceProvider);
         
-        Task PostInitializeModules();
+        Task PostInitializeModules(IServiceProvider serviceProvider);
 
-        Task ShutdownModules();
+        Task ShutdownModules(IServiceProvider serviceProvider);
     }
 }

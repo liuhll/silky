@@ -56,8 +56,20 @@ namespace TestApplication.AppService
             }
 
             var test = input.Adapt<Test>();
-            var result = await _testRepository.InsertNowAsync(test);
+            var result = await _testRepository.InsertAsync(test);
             return result.Entity.Adapt<TestOut>();
+        }
+        
+        [UnitOfWork]
+        public Task CreateOrUpdate2Async(TestInput input)
+        {
+            if (input.Id.HasValue)
+            {
+                return  Update(input);
+            }
+
+            var test = input.Adapt<Test>();
+            return _testRepository.InsertAsync(test);
         }
 
         public async Task<TestOut> Get(long id)

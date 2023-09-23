@@ -29,6 +29,11 @@ namespace ITestApplication.Test
         [UpdateCachingIntercept("id:{id}")]
    
         Task<TestOut> CreateOrUpdateAsync(TestInput input);
+        
+        
+        [HttpPost("v2")]
+        [HttpPut("v2")]
+        Task CreateOrUpdate2Async(TestInput input);
 
         // [HttpPost]
         // [HttpPut]
