@@ -7,7 +7,7 @@ namespace Silky.Rpc.Filters;
 [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Method,
     AllowMultiple = true,
     Inherited = true)]
-public class ClientFilterAttribute :
+public abstract class ClientFilterAttribute :
     Attribute,
     IClientFilter,
     IAsyncClientFilter,
