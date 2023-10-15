@@ -10,11 +10,11 @@ public class ServerResultExecutedContext : ServerFilterContext
 {
     private Exception? _exception;
     private ExceptionDispatchInfo? _exceptionDispatchInfo;
-    
+
     public ServerResultExecutedContext(ServiceEntryContext context, IList<IFilterMetadata> filters, object result) :
         base(context, filters)
     {
-        if (result == null)
+        if (result == null && context.ServiceEntry.ReturnType != typeof(void))
         {
             throw new ArgumentNullException(nameof(result));
         }
@@ -25,7 +25,7 @@ public class ServerResultExecutedContext : ServerFilterContext
     public virtual bool Canceled { get; set; }
 
     public virtual object Result { get; }
-    
+
     public virtual Exception? Exception
     {
         get
@@ -46,13 +46,10 @@ public class ServerResultExecutedContext : ServerFilterContext
             _exception = value;
         }
     }
-    
+
     public virtual ExceptionDispatchInfo? ExceptionDispatchInfo
     {
-        get
-        {
-            return _exceptionDispatchInfo;
-        }
+        get { return _exceptionDispatchInfo; }
 
         set
         {
@@ -60,6 +57,6 @@ public class ServerResultExecutedContext : ServerFilterContext
             _exceptionDispatchInfo = value;
         }
     }
-    
+
     public virtual bool ExceptionHandled { get; set; }
 }

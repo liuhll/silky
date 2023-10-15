@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITestApplication.Test.Dtos;
 using ITestApplication.Test.Fallback;
+using ITestApplication.Test.Filters;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.AspNetCore.Mvc;
 using Silky.Rpc.Endpoint.Selector;
@@ -33,6 +34,7 @@ namespace ITestApplication.Test
         
         [HttpPost("v2")]
         [HttpPut("v2")]
+        [TestServerFilter]
         Task CreateOrUpdate2Async(TestInput input);
 
         // [HttpPost]
