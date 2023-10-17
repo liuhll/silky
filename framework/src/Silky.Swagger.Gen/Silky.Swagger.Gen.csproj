@@ -13,6 +13,6 @@
       <ProjectReference Include="..\Silky.Swagger.Abstraction\Silky.Swagger.Abstraction.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.5" />
+      <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.9" />
     </ItemGroup>
 </Project>

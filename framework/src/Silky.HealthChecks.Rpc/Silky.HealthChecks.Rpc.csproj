@@ -20,7 +20,7 @@
 
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.0.0-rc2.7" />
+		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.1.*" />
 	</ItemGroup>
 
 

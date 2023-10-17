@@ -12,8 +12,5 @@
       <ProjectReference Include="..\Silky.Core\Silky.Core.csproj" />
       <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Producer" />
-    </ItemGroup>
 
 </Project>
