@@ -14,11 +14,6 @@ public class ServerResultExecutedContext : ServerFilterContext
     public ServerResultExecutedContext(ServiceEntryContext context, IList<IFilterMetadata> filters, object result) :
         base(context, filters)
     {
-        if (result == null && context.ServiceEntry.ReturnType != typeof(void))
-        {
-            throw new ArgumentNullException(nameof(result));
-        }
-
         Result = result;
     }
 
