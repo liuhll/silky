@@ -19,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Silky.Core.Reflection;
 using WebSocketSharp.Server;
+using ServiceKeyAttribute = Silky.Rpc.Runtime.Server.ServiceKeyAttribute;
 
 namespace Silky.WebSocket
 {

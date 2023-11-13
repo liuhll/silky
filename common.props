@@ -9,7 +9,7 @@
 
     <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
 
-    <Version>3.7.21</Version>
+    <Version>3.8.1</Version>
 
     <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
 
@@ -19,6 +19,8 @@
 
     <RepositoryType>Github</RepositoryType>
 
+    <EfCore8Version>8.0.0-rc.2.23480.1</EfCore8Version>
+    
     <EfCore7Version>7.0.*</EfCore7Version>
     
 	<EfCore6Version>6.0.*</EfCore6Version>

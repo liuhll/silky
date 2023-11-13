@@ -22,6 +22,7 @@ using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.RegistryCenters.HeartBeat;
 using Silky.Rpc.Transport.Messages;
+using ServiceKeyAttribute = Silky.Rpc.Runtime.Server.ServiceKeyAttribute;
 
 namespace Silky.Rpc
 {
