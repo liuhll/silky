@@ -13,6 +13,7 @@ using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Monitor;
 using Silky.Rpc.Runtime;
 using Silky.Rpc.Runtime.Client;
+using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
 
 namespace Silky.DotNetty
@@ -28,22 +29,40 @@ namespace Silky.DotNetty
 
         private readonly SilkyChannelPoolMap _silkyChannelPoolMap;
         private readonly IChannelProvider _channelProvider;
+        private readonly IServerManager _serverManager;
 
         private ConcurrentDictionary<ISilkyEndpoint, ITransportClient> m_clients = new();
 
         public DotNettyTransportClientFactory(IRpcEndpointMonitor rpcEndpointMonitor,
             IOptions<RpcOptions> rpcOptions,
             SilkyChannelPoolMap silkyChannelPoolMap,
-            IChannelProvider channelProvider)
+            IChannelProvider channelProvider,
+            IServerManager serverManager)
         {
             _rpcEndpointMonitor = rpcEndpointMonitor;
             _silkyChannelPoolMap = silkyChannelPoolMap;
             _channelProvider = channelProvider;
+            _serverManager = serverManager;
             _rpcEndpointMonitor.OnRemoveRpcEndpoint += endpoint =>
             {
                 RemoveClient(endpoint);
                 return Task.CompletedTask;
             };
+            _serverManager.OnUpdateRpcEndpoint += (name, endpoints) =>
+            {
+                foreach (var endpoint in endpoints)
+                {
+                    RemoveClient(endpoint);
+                }
+
+                return Task.CompletedTask;
+            };
+            _serverManager.OnRemoveRpcEndpoint += (name, endpoint) =>
+            {
+                RemoveClient(endpoint);
+                return Task.CompletedTask;
+            };
+
             // _silkyChannelPoolMap = silkyChannelPoolMap;
             // _channelProvider = channelProvider;
             _rpcOptions = rpcOptions.Value;

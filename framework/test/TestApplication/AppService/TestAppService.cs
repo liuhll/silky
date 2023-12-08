@@ -56,7 +56,7 @@ namespace TestApplication.AppService
             }
 
             var test = input.Adapt<Test>();
-            var result = await _testRepository.InsertAsync(test);
+            var result = await _testRepository.InsertNowAsync(test);
             return result.Entity.Adapt<TestOut>();
         }
         
