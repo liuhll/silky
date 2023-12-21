@@ -12,23 +12,14 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseProvider
     /// </summary>
     internal static class Penetrates
     {
-        /// <summary>
-        /// 数据库上下文和定位器缓存
-        /// </summary>
-        internal static readonly ConcurrentDictionary<Type, Type> DbContextWithLocatorCached;
-
-        /// <summary>
-        /// 数据库上下文定位器缓存
-        /// </summary>
-        internal static readonly ConcurrentDictionary<string, Type> DbContextLocatorTypeCached;
+        internal static readonly ConcurrentDictionary<Type, Type> DbContextDescriptors;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         static Penetrates()
         {
-            DbContextWithLocatorCached = new ConcurrentDictionary<Type, Type>();
-            DbContextLocatorTypeCached = new ConcurrentDictionary<string, Type>();
+            DbContextDescriptors = new ConcurrentDictionary<Type, Type>();
         }
 
         /// <summary>
@@ -37,8 +28,30 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseProvider
         /// <param name="optionBuilder">数据库上下文选项构建器</param>
         /// <param name="interceptors">拦截器</param>
         /// <returns></returns>
+        // internal static Action<IServiceProvider, DbContextOptionsBuilder> ConfigureDbContext(
+        //     Action<DbContextOptionsBuilder> optionBuilder, params IInterceptor[] interceptors)
+        // {
+        //     return (serviceProvider, options) =>
+        //     {
+        //         // 只有开发环境开启
+        //         if (EngineContext.Current.HostEnvironment.IsDevelopment())
+        //         {
+        //             options /*.UseLazyLoadingProxies()*/
+        //                 .EnableDetailedErrors()
+        //                 .EnableSensitiveDataLogging();
+        //         }
+        //
+        //         optionBuilder.Invoke(options);
+        //
+        //         // 添加拦截器
+        //         AddInterceptors(interceptors, options);
+        //
+        //         // .NET 5 版本已不再起作用
+        //         // options.UseInternalServiceProvider(serviceProvider);
+        //     };
+        // }
         internal static Action<IServiceProvider, DbContextOptionsBuilder> ConfigureDbContext(
-            Action<DbContextOptionsBuilder> optionBuilder, params IInterceptor[] interceptors)
+            Action<IServiceProvider, DbContextOptionsBuilder> optionBuilder, params IInterceptor[] interceptors)
         {
             return (serviceProvider, options) =>
             {
@@ -50,14 +63,17 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseProvider
                         .EnableSensitiveDataLogging();
                 }
 
-                optionBuilder.Invoke(options);
+                optionBuilder?.Invoke(serviceProvider, options);
 
                 // 添加拦截器
                 AddInterceptors(interceptors, options);
-
-                // .NET 5 版本已不再起作用
-                // options.UseInternalServiceProvider(serviceProvider);
             };
+        }
+
+        internal static void CheckDbContextLocator(Type dbContextLocatorType, out Type dbContextType)
+        {
+            if (!DbContextDescriptors.TryGetValue(dbContextLocatorType, out dbContextType))
+                throw new InvalidCastException($" The dbcontext locator `{dbContextLocatorType.Name}` is not bind.");
         }
 
         /// <summary>
@@ -74,7 +90,6 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseProvider
             {
                 interceptorList.AddRange(interceptors);
             }
-
             options.AddInterceptors(interceptorList.ToArray());
         }
     }

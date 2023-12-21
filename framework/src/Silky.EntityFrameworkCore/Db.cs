@@ -21,7 +21,7 @@ namespace Silky.EntityFrameworkCore
         public static DbContext GetDbContext(Type dbContextLocator)
         {
             // 判断是否注册了数据库上下文
-            if (!Penetrates.DbContextWithLocatorCached.ContainsKey(dbContextLocator)) return default;
+            Penetrates.CheckDbContextLocator(dbContextLocator, out _);
 
             var dbContextResolve = EngineContext.Current.Resolve<Func<Type, IScopedDependency, DbContext>>();
             return dbContextResolve(dbContextLocator, default);

@@ -6,8 +6,6 @@ namespace Silky.Core.DbContext
 {
     public interface ISilkyDbContextPool
     {
-        void EnsureDbContextAddToPools();
-
         int SavePoolNow();
 
         int SavePoolNow(bool acceptAllChangesOnSuccess);
@@ -18,7 +16,7 @@ namespace Silky.Core.DbContext
 
         void BeginTransaction(bool ensureTransaction = false);
 
-        void CommitTransaction(bool isManualSaveChanges = true, Exception exception = default,
+        void CommitTransaction(bool isManualSaveChanges = true, Exception? exception = default,
             bool withCloseAll = false);
 
         void CloseAll();

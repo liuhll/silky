@@ -31,6 +31,7 @@ namespace TestApplication.AppService
         private readonly ISession _session;
         private readonly IRpcContextAccessor _rpcContextAccessor;
         private readonly IInvokeTemplate _invokeTemplate;
+        private static object locker = new object();
 
         public TestAppService(
             IDistributedCache<TestOut> distributedCache,
@@ -59,13 +60,13 @@ namespace TestApplication.AppService
             var result = await _testRepository.InsertNowAsync(test);
             return result.Entity.Adapt<TestOut>();
         }
-        
+
         [UnitOfWork]
         public Task CreateOrUpdate2Async(TestInput input)
         {
             if (input.Id.HasValue)
             {
-                return  Update(input);
+                return Update(input);
             }
 
             var test = input.Adapt<Test>();
@@ -96,6 +97,31 @@ namespace TestApplication.AppService
             var result = await _testRepository.UpdateAsync(entity);
 
             return result.Entity.Adapt<TestOut>();
+        }
+
+        [UnitOfWork]
+        public async Task<string> Update2(long id)
+        {
+            var entity = await _testRepository.FindOrDefaultAsync(id);
+            if (entity == null)
+            {
+                throw new UserFriendlyException($"不存在Id为{id}的数据");
+            }
+
+            if (entity.Address.IsNullOrEmpty())
+            {
+                entity.Address = "1";
+            }
+            else
+            {
+                var addressList = entity.Address.Split(",").ToList();
+                var newValue = (addressList.Count + 1).ToString();
+                addressList.Add(newValue);
+                entity.Address = string.Join(",", addressList);
+            }
+
+            await _testRepository.UpdateNowAsync(entity);
+            return entity.Address;
         }
 
 

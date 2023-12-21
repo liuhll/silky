@@ -105,7 +105,9 @@ namespace Silky.EntityFrameworkCore.Contexts
         /// 保存失败自动回滚
         /// </summary>
         public virtual bool FailedAutoRollback { get; protected set; } = true;
-        
+
+        public virtual bool UseUnitOfWork { get; protected set; } = true;
+
         /// <summary>
         /// 正在更改并跟踪的数据
         /// </summary>

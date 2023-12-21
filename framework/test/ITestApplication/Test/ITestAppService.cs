@@ -50,6 +50,10 @@ namespace ITestApplication.Test
         [HttpPut("modify")]
         [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
         Task<TestOut> Update(TestInput input);
+        
+        
+        [HttpPut("modify2")]
+        Task<string> Update2(long id);
 
         [RemoveCachingIntercept("ITestApplication.Test.Dtos.TestOut", "id:{id}")]
         [Governance(RetryTimes = 2)]

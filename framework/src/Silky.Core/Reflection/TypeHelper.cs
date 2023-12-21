@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using JetBrains.Annotations;
 using Silky.Core.Extensions;
 using Silky.Core.Extensions.Collections.Generic;
@@ -375,4 +376,21 @@ public static class TypeHelper
 
         return obj.Equals(GetDefaultValue(obj.GetType()));
     }
+    
+    public static Assembly GetAssembly(string assemblyName)
+    {
+        // 加载程序集
+        return AssemblyLoadContext.Default.LoadFromAssemblyName(new AssemblyName(assemblyName));
+    }
+    
+    public static Type GetType(string assemblyName, string typeFullName)
+    {
+        return GetAssembly(assemblyName).GetType(typeFullName);
+    }
+    
+    public static Type GetType(Assembly assembly, string typeFullName)
+    {
+        return assembly.GetType(typeFullName);
+    }
+
 }

@@ -488,8 +488,9 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
                 // 组装对象
                 foreach (var entityCorrelationType in dbContextEntityCorrelationTypes)
                 {
-                    // 只要继承 IEntityDependency 接口，都是实体
-                    if (typeof(IPrivateEntity).IsAssignableFrom(entityCorrelationType))
+                    // 只要继承 IEntityDependency 接口，都是实体，且不贴 [NotMapper] 特性
+                    if (typeof(IPrivateEntity).IsAssignableFrom(entityCorrelationType) &&
+                        !entityCorrelationType.IsDefined(typeof(NotMappedAttribute), false))
                     {
                         // 添加实体
                         result.EntityTypes.Add(entityCorrelationType);
@@ -518,7 +519,7 @@ namespace Silky.EntityFrameworkCore.Contexts.Builders
                             if (typeof(DbContext).IsAssignableFrom(entityCorrelationType))
                             {
                                 // 判断是否已经注册了上下文并且是否等于当前上下文
-                                if (Penetrates.DbContextWithLocatorCached.Values.Contains(entityCorrelationType) &&
+                                if (Penetrates.DbContextDescriptors.Values.Contains(entityCorrelationType) &&
                                     entityCorrelationType == dbContext.GetType())
                                 {
                                     result.ModelBuilderFilterInstances.Add(dbContext as IPrivateModelBuilderFilter);
