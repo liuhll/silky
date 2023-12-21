@@ -20,7 +20,7 @@ internal class ServiceEntryDescriptorEndpointFactory
 {
     private RequestDelegate CreateRequestDelegate(ServiceEntryDescriptor serviceEntryDescriptor)
     {
-        return async httpContext =>
+        return httpContext =>
         {
             var rpcContextAccessor = httpContext.RequestServices.GetRequiredService<IRpcContextAccessor>();
             RpcContext.Context.RpcServices = httpContext.RequestServices;
@@ -28,7 +28,7 @@ internal class ServiceEntryDescriptorEndpointFactory
             var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
             currentRpcToken.SetRpcToken();
             var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
-            await messageReceivedHandler.Handle(serviceEntryDescriptor, httpContext);
+            return messageReceivedHandler.Handle(serviceEntryDescriptor, httpContext);
         };
     }
 

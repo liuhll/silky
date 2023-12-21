@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -238,6 +239,11 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
         SilkyRpcEventSource.Log.CallStop();
     }
+
+    protected CancellationToken CancellationTokenCore =>
+        DeadlineManager?.CancellationToken ?? HttpContext.RequestAborted;
+    
+    public CancellationToken CancellationToken => CancellationTokenCore;
 
     private async Task EndCallAsyncCore()
     {

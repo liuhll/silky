@@ -29,7 +29,7 @@ namespace Silky.Http.Core.Handlers
                 serviceEntry.ServiceEntryDescriptor,
                 _serializer, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
-
+            httpContext.RequestAborted = serverCallContext.CancellationToken;
             try
             {
                 serverCallContext.Initialize();
@@ -59,7 +59,7 @@ namespace Silky.Http.Core.Handlers
                 serviceEntryDescriptor,
                 _serializer, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
-
+            httpContext.RequestAborted = serverCallContext.CancellationToken;
             try
             {
                 serverCallContext.Initialize();

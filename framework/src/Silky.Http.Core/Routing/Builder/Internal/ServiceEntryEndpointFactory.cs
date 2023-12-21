@@ -19,7 +19,7 @@ namespace Silky.Http.Core.Routing.Builder.Internal
     {
         private RequestDelegate CreateRequestDelegate(ServiceEntry serviceEntry)
         {
-            return async httpContext =>
+            return httpContext =>
             {
                 var rpcContextAccessor = httpContext.RequestServices.GetRequiredService<IRpcContextAccessor>();
                 RpcContext.Context.RpcServices = httpContext.RequestServices;
@@ -27,7 +27,7 @@ namespace Silky.Http.Core.Routing.Builder.Internal
                 var currentRpcToken = EngineContext.Current.Resolve<ICurrentRpcToken>();
                 currentRpcToken.SetRpcToken();
                 var messageReceivedHandler = EngineContext.Current.Resolve<IMessageReceivedHandler>();
-                await messageReceivedHandler.Handle(serviceEntry, httpContext);
+                return messageReceivedHandler.Handle(serviceEntry, httpContext);
             };
         }
 
