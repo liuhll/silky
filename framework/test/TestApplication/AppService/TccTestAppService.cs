@@ -3,6 +3,7 @@ using IAnotherApplication;
 using IAnotherApplication.Dtos;
 using ITestApplication.Test;
 using ITestApplication.Test.Dtos;
+using Silky.Core.DbContext.UnitOfWork;
 using Silky.Transaction.Tcc;
 
 namespace TestApplication.AppService;
@@ -17,6 +18,7 @@ public class TccTestAppService : ITccTestAppService
     }
 
     [TccTransaction(ConfirmMethod = "TestConfirm", CancelMethod = "TestCancel")]
+    [UnitOfWork]
     public async Task<string> Test(TestTccInput input)
     {
         var one = await _anotherAppService.DeleteOne(input.Name);
@@ -29,11 +31,13 @@ public class TccTestAppService : ITccTestAppService
         return "Tcc for Try";
     }
 
+    [UnitOfWork]
     public async Task<string> TestConfirm(TestTccInput input)
     {
         return "Tcc for Confirm";
     }
 
+    [UnitOfWork]
     public async Task<string> TestCancel(TestTccInput input)
     {
         return "Tcc for Cancel";

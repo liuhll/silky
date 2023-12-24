@@ -14,6 +14,7 @@ namespace Silky.Core.DbContext.UnitOfWork
             EnsureTransaction = ensureTransaction;
         }
 
-        public bool EnsureTransaction { get; set; } = false;
+        public bool EnsureTransaction { get; set; } = true
+            ;
     }
 }

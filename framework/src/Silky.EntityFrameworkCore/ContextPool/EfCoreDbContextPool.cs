@@ -107,7 +107,7 @@ namespace Silky.EntityFrameworkCore.ContextPool
             return Task.CompletedTask;
         }
 
-        private void EnsureDbContextAddToPools()
+        private void EnsureDbContextAddToPool()
         {
             if (_dbContexts.Any()) return;
             var defaultDbContextLocator = Penetrates.DbContextDescriptors.LastOrDefault();
