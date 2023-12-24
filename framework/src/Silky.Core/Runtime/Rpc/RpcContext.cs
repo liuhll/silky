@@ -72,7 +72,7 @@ namespace Silky.Core.Runtime.Rpc
         {
             resultAttachments.TryRemove(key, out _);
         }
-        
+
         public void RemoveTransAttachment([NotNull] string key)
         {
             transAttachments.TryRemove(key, out _);
@@ -135,7 +135,7 @@ namespace Silky.Core.Runtime.Rpc
         {
             return resultAttachments.ContainsKey(key);
         }
-        
+
         public bool HasTransAttachment([NotNull] string key)
         {
             return transAttachments.ContainsKey(key);
@@ -152,11 +152,27 @@ namespace Silky.Core.Runtime.Rpc
             resultAttachments.TryGetValue(key, out string? result);
             return result;
         }
-        
+
         public string? GetTransAttachment([NotNull] string key)
         {
             transAttachments.TryGetValue(key, out string result);
             return result;
+        }
+
+
+        public bool TryGetInvokeAttachment([NotNull] string key, out string? result)
+        {
+            return invokeAttachments.TryGetValue(key, out result);
+        }
+
+        public bool TryGetResultAttachment([NotNull] string key, out string? result)
+        {
+            return resultAttachments.TryGetValue(key, out result);
+        }
+
+        public bool TryGetTransAttachment([NotNull] string key, out string? result)
+        {
+            return transAttachments.TryGetValue(key, out result);
         }
 
         public void SetInvokeAttachments(IDictionary<string, string> attachments)
@@ -166,7 +182,7 @@ namespace Silky.Core.Runtime.Rpc
                 SetInvokeAttachment(item.Key, item.Value);
             }
         }
-        
+
         public void SetTransAttachments(IDictionary<string, string> attachments)
         {
             foreach (var item in attachments)
@@ -215,7 +231,7 @@ namespace Silky.Core.Runtime.Rpc
         {
             return resultAttachments;
         }
-        
+
         public IDictionary<string, string> GetTransAttachments()
         {
             return transAttachments;
