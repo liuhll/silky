@@ -28,6 +28,7 @@ namespace Silky.Transaction.Tcc
 
         {
             SetContext(stage, participant);
+            UpdateRpcContext();
             var serviceEntryLocator = EngineContext.Current.Resolve<IServiceEntryLocator>();
             var serviceEntry = serviceEntryLocator.GetServiceEntryById(participant.ServiceEntryId);
 
@@ -87,6 +88,11 @@ namespace Silky.Transaction.Tcc
                 var executor = EngineContext.Current.Resolve<IExecutor>();
                 await executor.Execute(serviceEntry, participant.Parameters, participant.ServiceKey);
             }
+        }
+
+        private static void UpdateRpcContext()
+        {
+           
         }
 
         private static void SetContext(ActionStage action, IParticipant participant)

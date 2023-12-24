@@ -12,11 +12,13 @@ namespace Silky.Rpc.Transport.Messages
         public object[] Parameters { get; set; }
 
         public IDictionary<string, object> DictParameters { get; set; }
-        
+
         public IDictionary<ParameterFrom, object> HttpParameters { get; set; }
 
         public ParameterType ParameterType { get; set; }
 
         public IDictionary<string, string> Attachments { get; set; }
+
+        public IDictionary<string, string> TransAttachments { get; set; }
     }
 }

@@ -38,13 +38,14 @@ namespace Silky.Core.MethodExecutor
                 executor.MethodInfo.GetCustomAttributes().OfType<UnitOfWorkAttribute>().FirstOrDefault();
             var isManualSaveChanges =
                 executor.MethodInfo.GetCustomAttributes().OfType<ManualCommitAttribute>().Any();
-            if (unitOfWorkAttribute != null)
-            {
-                dbContextPool.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
-            }
 
             try
             {
+                if (unitOfWorkAttribute != null)
+                {
+                    dbContextPool.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
+                }
+
                 if (executor.IsMethodAsync)
                 {
                     execResult = await executor.ExecuteAsync(target, parameters);
@@ -63,12 +64,12 @@ namespace Silky.Core.MethodExecutor
                 }
                 else
                 {
-                    dbContextPool.CommitTransaction(isManualSaveChanges);
+                    dbContextPool.CommitTransaction();
                 }
             }
             catch (Exception e)
             {
-                dbContextPool.CommitTransaction(isManualSaveChanges, e);
+                dbContextPool.RollbackTransaction();
                 throw;
             }
             finally

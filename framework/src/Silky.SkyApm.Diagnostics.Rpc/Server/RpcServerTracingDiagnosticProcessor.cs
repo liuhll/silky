@@ -45,7 +45,8 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
                                  $"--> ServiceKey:{serviceKey}.{Environment.NewLine}" +
                                  $"--> MessageId:{eventData.MessageId}." +
                                  $"--> Parameters:{_serializer.Serialize(eventData.Message.Parameters)}.{Environment.NewLine}" +
-                                 $"--> InvokeAttachments:{_serializer.Serialize(eventData.Message.Attachments)}"));
+                                 $"--> InvokeAttachments:{_serializer.Serialize(eventData.Message.Attachments)}.{Environment.NewLine}" + 
+                                 $"--> TransAttachments:{_serializer.Serialize(eventData.Message.TransAttachments)}" ));
 
             context.Span.AddTag(SilkyTags.SERVICEENTRYID, eventData.ServiceEntryId);
             context.Span.AddTag(SilkyTags.SERVICEKEY, serviceKey);
@@ -68,6 +69,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
                         $"--> ServiceEntryId:{eventData.ServiceEntryId}.{Environment.NewLine}" +
                         $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
                         $"--> ResultAttachments: {_serializer.Serialize(RpcContext.Context.GetResultAttachments())}.{Environment.NewLine}" +
+                        $"--> InvokeAttachments: {_serializer.Serialize(RpcContext.Context.GetTransAttachments())}.{Environment.NewLine}" +
                         $"--> RemoteResult: {_serializer.Serialize(eventData.Result)}"));
                 context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
                 context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");

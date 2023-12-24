@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Silky.Core;
 using Silky.Core.DbContext;
@@ -10,7 +11,6 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 {
     public class EfCoreUnitOfWorkServerFilter : IAsyncServerFilter
     {
-        
         public async Task OnActionExecutionAsync(ServerInvokeExecutingContext context, ServerExecutionDelegate next)
         {
             var instanceMethod = context.InstanceType?.GetCompareMethod(context.ServiceEntry.MethodInfo,
@@ -20,11 +20,12 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
 
             var isManualSaveChanges = context.ServiceEntry.CustomAttributes.OfType<ManualCommitAttribute>().Any();
             var silkyDbContextPool = EngineContext.Current.Resolve<ISilkyDbContextPool>();
-            
+
             if (unitOfWorkAttribute != null)
             {
                 silkyDbContextPool.BeginTransaction(unitOfWorkAttribute.EnsureTransaction);
             }
+
             var result = await next();
             try
             {
@@ -35,8 +36,13 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
                 }
                 else
                 {
-                    silkyDbContextPool.CommitTransaction(isManualSaveChanges, result.Exception);
+                    silkyDbContextPool.CommitTransaction();
                 }
+            }
+            catch (Exception ex)
+            {
+                silkyDbContextPool.RollbackTransaction();
+                throw;
             }
             finally
             {

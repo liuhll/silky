@@ -201,6 +201,7 @@ namespace Silky.Transaction.Schedule
                     .TransactionType
                     .ToString());
             RpcContext.Context.SetInvokeAttachments(participant.InvokeAttachments);
+            RpcContext.Context.SetInvokeAttachments(participant.TransAttachments);
             switch (stage)
             {
                 case ActionStage.Trying:

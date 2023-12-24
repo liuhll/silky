@@ -110,6 +110,7 @@ namespace Silky.Transaction.Filters
                 ServiceKey = serviceKey,
                 Parameters = parameters,
                 InvokeAttachments = RpcContext.Context.GetInvokeAttachments().ToDictionary(p => p.Key, p => p.Value),
+                TransAttachments =  RpcContext.Context.GetTransAttachments().ToDictionary(p => p.Key, p => p.Value),
                 Role = TransactionRole.Participant
                 // Status = context.Action
             };

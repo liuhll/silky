@@ -10,6 +10,7 @@ public class InvokeRemoteEmptyResult : RemoteResultMessage
         ServiceEntryId = context.RemoteInvokeMessage.ServiceEntryId;
         StatusCode = StatusCode.NoContent;
         Attachments = context.RemoteInvokeMessage.Attachments;
+        TransAttachments = context.RemoteInvokeMessage.TransAttachments;
         ExceptionMessage = "Remote RemoteResult Empty!";
     }
 }

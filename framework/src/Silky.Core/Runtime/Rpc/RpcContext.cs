@@ -12,12 +12,14 @@ namespace Silky.Core.Runtime.Rpc
     {
         private ConcurrentDictionary<string, string> invokeAttachments;
         private ConcurrentDictionary<string, string> resultAttachments;
+        private ConcurrentDictionary<string, string> transAttachments;
         private static AsyncLocal<RpcContext> rpcContextThreadLocal = new();
 
         private RpcContext()
         {
             invokeAttachments = new(StringComparer.OrdinalIgnoreCase);
             resultAttachments = new(StringComparer.OrdinalIgnoreCase);
+            transAttachments = new(StringComparer.OrdinalIgnoreCase);
         }
 
         public static RpcContext Context
@@ -70,6 +72,11 @@ namespace Silky.Core.Runtime.Rpc
         {
             resultAttachments.TryRemove(key, out _);
         }
+        
+        public void RemoveTransAttachment([NotNull] string key)
+        {
+            transAttachments.TryRemove(key, out _);
+        }
 
         public void SetInvokeAttachment([NotNull] string key, string value)
         {
@@ -90,6 +97,20 @@ namespace Silky.Core.Runtime.Rpc
             }
         }
 
+
+        public void SetTransAttachment([NotNull] string key, object value)
+        {
+            if (value is string stringValue)
+            {
+                transAttachments.AddOrUpdate(key, stringValue, (k, v) => stringValue);
+            }
+            else
+            {
+                var serializer = EngineContext.Current.Resolve<ISerializer>();
+                var jsonValue = serializer.Serialize(value);
+                transAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+            }
+        }
 
         public void SetResultAttachment([NotNull] string key, object value)
         {
@@ -114,6 +135,11 @@ namespace Silky.Core.Runtime.Rpc
         {
             return resultAttachments.ContainsKey(key);
         }
+        
+        public bool HasTransAttachment([NotNull] string key)
+        {
+            return transAttachments.ContainsKey(key);
+        }
 
         public string? GetInvokeAttachment([NotNull] string key)
         {
@@ -126,12 +152,26 @@ namespace Silky.Core.Runtime.Rpc
             resultAttachments.TryGetValue(key, out string? result);
             return result;
         }
+        
+        public string? GetTransAttachment([NotNull] string key)
+        {
+            transAttachments.TryGetValue(key, out string result);
+            return result;
+        }
 
         public void SetInvokeAttachments(IDictionary<string, string> attachments)
         {
             foreach (var item in attachments)
             {
                 SetInvokeAttachment(item.Key, item.Value);
+            }
+        }
+        
+        public void SetTransAttachments(IDictionary<string, string> attachments)
+        {
+            foreach (var item in attachments)
+            {
+                SetTransAttachment(item.Key, item.Value);
             }
         }
 
@@ -174,6 +214,11 @@ namespace Silky.Core.Runtime.Rpc
         public IDictionary<string, string> GetResultAttachments()
         {
             return resultAttachments;
+        }
+        
+        public IDictionary<string, string> GetTransAttachments()
+        {
+            return transAttachments;
         }
 
         public IDictionary<string, string> GetResponseHeaders()

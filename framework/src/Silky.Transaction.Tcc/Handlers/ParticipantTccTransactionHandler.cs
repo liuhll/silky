@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Logging;
-using Silky.Rpc.Extensions;
 using Silky.Transaction.Cache;
 using Silky.Transaction.Handler;
 using Silky.Transaction.Repository;

@@ -16,8 +16,10 @@ namespace Silky.Core.DbContext
 
         void BeginTransaction(bool ensureTransaction = false);
 
-        void CommitTransaction(bool isManualSaveChanges = true, Exception? exception = default,
-            bool withCloseAll = false);
+        void RollbackTransaction(bool withCloseAll = false);
+
+        void CommitTransaction(bool withCloseAll = false);
+          
 
         void CloseAll();
     }

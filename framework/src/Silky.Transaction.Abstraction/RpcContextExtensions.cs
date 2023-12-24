@@ -25,7 +25,6 @@ namespace Silky.Transaction.Abstraction
         public static void SetTransactionContext(this RpcContext rpcContext, TransactionContext transactionContext)
         {
             var serializer = EngineContext.Current.Resolve<ISerializer>();
-
             rpcContext.SetInvokeAttachment(AttachmentKeys.TransactionContext, serializer.Serialize(transactionContext));
         }
 

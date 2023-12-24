@@ -195,7 +195,8 @@ namespace Silky.EntityFrameworkCore.ContextPool
             if (Transaction.Current != null) return;
 
             // 判断 dbContextPool 中是否包含DbContext，如果是，则使用第一个数据库上下文开启事务，并应用于其他数据库上下文
-            EnsureTransaction: if (_dbContexts.Any())
+            EnsureTransaction:
+            if (_dbContexts.Any())
             {
                 // 如果共享事务不为空，则直接共享
                 if (DbContextTransaction != null) goto ShareTransaction;
@@ -209,10 +210,11 @@ namespace Silky.EntityFrameworkCore.ContextPool
                     : _dbContexts.First().Value.Database.BeginTransaction();
 
                 // 共享事务
-            ShareTransaction: ShareTransaction(DbContextTransaction.GetDbTransaction());
+                ShareTransaction:
+                ShareTransaction(DbContextTransaction.GetDbTransaction());
 
                 // 打印事务实际开启信息
-                _logger.LogInformation( "Began Transaction");
+                _logger.LogInformation("Began Transaction");
             }
             else
             {
@@ -233,58 +235,58 @@ namespace Silky.EntityFrameworkCore.ContextPool
         /// 提交事务
         /// </summary>
         /// <param name="withCloseAll">是否自动关闭所有连接</param>
-        public void CommitTransaction(bool isManualSaveChanges = true, Exception? exception = default,
-            bool withCloseAll = false)
+        public void CommitTransaction(bool withCloseAll = false)
+
         {
             // 判断是否启用了分布式环境事务，如果是，则跳过
             if (Transaction.Current != null) return;
             try
             {
-                if (exception == null)
+                // 将所有数据库上下文修改 SaveChanges();，这里另外判断是否需要手动提交
+                var hasChangesCount = SavePoolNow();
+
+                // 如果事务为空，则执行完毕后关闭连接
+                if (DbContextTransaction == null)
                 {
-                    // 将所有数据库上下文修改 SaveChanges();，这里另外判断是否需要手动提交
-                    var hasChangesCount = !isManualSaveChanges ? SavePoolNow() : 0;
-
-                    // 如果事务为空，则执行完毕后关闭连接
-                    if (DbContextTransaction == null)
-                    {
-                        if (withCloseAll) CloseAll();
-                        return;
-                    }
-
-                    // 提交共享事务
-                    DbContextTransaction?.Commit();
-
-                    // 打印事务提交消息
-                    _logger.LogInformation($"Transaction Completed! Has {hasChangesCount} DbContext Changes.");
+                    if (withCloseAll) CloseAll();
+                    return;
                 }
-                else
-                {
-                    throw exception;
-                }
+
+                // 提交共享事务
+                DbContextTransaction?.Commit();
+
+                // 打印事务提交消息
+                _logger.LogInformation($"Transaction Completed! Has {hasChangesCount} DbContext Changes.");
             }
             catch
             {
-                // 回滚事务
-                if (DbContextTransaction?.GetDbTransaction()?.Connection != null) DbContextTransaction?.Rollback();
-
-                // 打印事务回滚消息
+                IDbContextTransaction contextTransaction = this.DbContextTransaction;
+                if ((contextTransaction != null
+                        ? contextTransaction.GetDbTransaction()?.Connection
+                        : (DbConnection)null) != null)
+                    this.DbContextTransaction?.Rollback();
                 _logger.LogError("Transaction Rollback");
-
                 throw;
             }
             finally
             {
-                if (DbContextTransaction?.GetDbTransaction()?.Connection != null)
+                IDbContextTransaction contextTransaction = this.DbContextTransaction;
+                if ((contextTransaction != null
+                        ? contextTransaction.GetDbTransaction()?.Connection
+                        : (DbConnection)null) != null)
                 {
-                    DbContextTransaction = null;
-                    DbContextTransaction?.Dispose();
+                    this.DbContextTransaction = (IDbContextTransaction)null;
+                    this.DbContextTransaction?.Dispose();
+                }
+                else
+                {
+                    this.DbContextTransaction = (IDbContextTransaction)null;
                 }
             }
 
-
-            // 关闭所有连接
-            if (withCloseAll) CloseAll();
+            if (!withCloseAll)
+                return;
+            this.CloseAll();
         }
 
         /// <summary>
@@ -294,18 +296,22 @@ namespace Silky.EntityFrameworkCore.ContextPool
         public void RollbackTransaction(bool withCloseAll = false)
         {
             // 判断是否启用了分布式环境事务，如果是，则跳过
-            if (Transaction.Current != null) return;
-
-            // 回滚事务
-            if (DbContextTransaction?.GetDbTransaction()?.Connection != null) DbContextTransaction?.Rollback();
-            DbContextTransaction?.Dispose();
-            DbContextTransaction = null;
+            if (Transaction.Current != null)
+                return;
+            IDbContextTransaction contextTransaction = this.DbContextTransaction;
+            if ((contextTransaction != null ? contextTransaction.GetDbTransaction()?.Connection : (DbConnection)null) !=
+                null)
+                this.DbContextTransaction?.Rollback();
+            this.DbContextTransaction?.Dispose();
+            this.DbContextTransaction = null;
 
             // 打印事务回滚消息
             _logger.LogError("Transaction Rollback");
 
             // 关闭所有连接
-            if (withCloseAll) CloseAll();
+            if (!withCloseAll)
+                return;
+            this.CloseAll();
         }
 
         /// <summary>

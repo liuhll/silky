@@ -153,6 +153,7 @@ namespace Silky.Transaction.Tcc.Executor
                 ServiceKey = serviceKey,
                 Parameters = parameters,
                 InvokeAttachments = RpcContext.Context.GetInvokeAttachments().ToDictionary(p=> p.Key,p=> p.Value),
+                TransAttachments = RpcContext.Context.GetTransAttachments().ToDictionary(p=> p.Key,p=> p.Value),
             };
             if (participantId.IsNullOrEmpty())
             {

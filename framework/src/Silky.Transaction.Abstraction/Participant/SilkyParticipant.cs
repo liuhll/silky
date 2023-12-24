@@ -26,6 +26,8 @@ namespace Silky.Transaction.Abstraction.Participant
         public object[] Parameters { get; set; }
 
         public Dictionary<string, string> InvokeAttachments { get; set; }
+        
+        public  Dictionary<string, string> TransAttachments { get; set; }
 
         public string HostName { get; set; }
         public string ParticipantRefId { get; set; }

@@ -20,5 +20,7 @@ namespace Silky.Rpc.Transport.Messages
         public bool IsFile { get; set; } = false;
 
         public IDictionary<string, string> Attachments { get; set; }
+
+        public IDictionary<string, string> TransAttachments { get; set; }
     }
 }
