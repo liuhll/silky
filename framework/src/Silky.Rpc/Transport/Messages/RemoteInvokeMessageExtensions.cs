@@ -21,6 +21,7 @@ namespace Silky.Rpc.Transport.Messages
                 RpcContext.Context.SetInvokeAttachment(messageAttachment.Key, messageAttachment.Value);
             }
 
+            
             foreach (var transAttachment in message.TransAttachments)
             {
                 RpcContext.Context.SetTransAttachment(transAttachment.Key, transAttachment.Value);

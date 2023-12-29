@@ -132,6 +132,7 @@ namespace Silky.Rpc.Runtime.Server
                     messageId,
                     message.ServiceEntryId, isHandleSuccess);
                 remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
+                remoteResultMessage.TransAttachments = RpcContext.Context.GetTransAttachments();
             }
 
             return remoteResultMessage;

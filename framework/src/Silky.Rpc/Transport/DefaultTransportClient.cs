@@ -78,6 +78,7 @@ namespace Silky.Rpc.Transport
             finally
             {
                 RpcContext.Context.SetResultAttachments(remoteResultMessage?.Attachments);
+                RpcContext.Context.SetTransAttachments(remoteResultMessage?.TransAttachments);
                 m_resultDictionary.TryRemove(id, out tcs);
             }
         }

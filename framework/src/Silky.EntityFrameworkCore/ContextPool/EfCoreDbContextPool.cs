@@ -261,10 +261,11 @@ namespace Silky.EntityFrameworkCore.ContextPool
             catch
             {
                 IDbContextTransaction contextTransaction = this.DbContextTransaction;
-                if ((contextTransaction != null
-                        ? contextTransaction.GetDbTransaction()?.Connection
-                        : (DbConnection)null) != null)
+                if ((contextTransaction != null  ? contextTransaction.GetDbTransaction()?.Connection : (DbConnection)null) != null)
+                {
                     this.DbContextTransaction?.Rollback();
+                }
+
                 _logger.LogError("Transaction Rollback");
                 throw;
             }

@@ -98,6 +98,7 @@ namespace Silky.Rpc.Runtime.Server
 
                     remoteResultMessage.StatusCode = StatusCode.Success;
                     remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
+                    remoteResultMessage.TransAttachments = RpcContext.Context.GetTransAttachments();
                     _fallbackDiagnosticListener.TracingFallbackAfter(fallbackTracingTimestamp,
                         RpcContext.Context.GetMessageId(), serviceEntry.Id, result,
                         serviceEntry.FallbackProvider);
@@ -116,12 +117,14 @@ namespace Silky.Rpc.Runtime.Server
                 finally
                 {
                     remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
+                    remoteResultMessage.TransAttachments = RpcContext.Context.GetTransAttachments();
                 }
             }
 
             remoteResultMessage.StatusCode = exception.GetExceptionStatusCode();
             remoteResultMessage.ExceptionMessage = exception.GetExceptionMessage();
             remoteResultMessage.Attachments = RpcContext.Context.GetResultAttachments();
+            remoteResultMessage.TransAttachments = RpcContext.Context.GetTransAttachments();
             return remoteResultMessage;
         }
     }

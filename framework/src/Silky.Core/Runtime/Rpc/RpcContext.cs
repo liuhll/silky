@@ -177,6 +177,10 @@ namespace Silky.Core.Runtime.Rpc
 
         public void SetInvokeAttachments(IDictionary<string, string> attachments)
         {
+            if (attachments == null)
+            {
+                return;
+            }
             foreach (var item in attachments)
             {
                 SetInvokeAttachment(item.Key, item.Value);
@@ -185,6 +189,10 @@ namespace Silky.Core.Runtime.Rpc
 
         public void SetTransAttachments(IDictionary<string, string> attachments)
         {
+            if (attachments == null)
+            {
+                return;
+            }
             foreach (var item in attachments)
             {
                 SetTransAttachment(item.Key, item.Value);
