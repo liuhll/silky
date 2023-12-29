@@ -48,15 +48,15 @@ namespace Silky.DotNetty
                 RemoveClient(endpoint);
                 return Task.CompletedTask;
             };
-            _serverManager.OnUpdateRpcEndpoint += (name, endpoints) =>
-            {
-                foreach (var endpoint in endpoints)
-                {
-                    RemoveClient(endpoint);
-                }
-
-                return Task.CompletedTask;
-            };
+            // _serverManager.OnUpdateRpcEndpoint += (name, endpoints) =>
+            // {
+            //     foreach (var endpoint in endpoints)
+            //     {
+            //         RemoveClient(endpoint);
+            //     }
+            //
+            //     return Task.CompletedTask;
+            // };
             _serverManager.OnRemoveRpcEndpoint += (name, endpoint) =>
             {
                 RemoveClient(endpoint);
