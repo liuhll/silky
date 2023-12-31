@@ -28,7 +28,7 @@ namespace Silky.Core
         internal  Banner Banner { get; set; }
 
         string HostName { get; }
-
+        
         internal void SetTypeFinder([NotNull] IServiceCollection services, [NotNull] ISilkyFileProvider fileProvider,
             AppServicePlugInSourceList appServicePlugInSources, PlugInSourceList modulePlugInSources);
 

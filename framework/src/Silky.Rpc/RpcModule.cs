@@ -79,7 +79,7 @@ namespace Silky.Rpc
                 throw new SilkyException(
                     $"You did not specify the dependent {registryCenterType} service registry module");
             }
-            
+
             return !context.ServiceProvider.GetAutofacRoot().IsRegistered(typeof(IDistributedLockProvider))
                 ? throw new SilkyException(
                     "You must specify the implementation of IDistributedLockProvider in the Silky.RegistryCenter project of the distributed transaction")
@@ -95,7 +95,8 @@ namespace Silky.Rpc
                 {
                     messageListener.Received += async (sender, message) =>
                     {
-                        using var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
+                        var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
+                        EngineContext.UnmanagedObjects.Add(serviceScope);
                         message.SetRpcMessageId();
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
                         remoteInvokeMessage.SetRpcAttachments();
@@ -122,6 +123,8 @@ namespace Silky.Rpc
                         await sender.SendMessageAsync(resultTransportMessage);
                         serverDiagnosticListener.TracingAfter(tracingTimestamp, message.Id,
                             remoteInvokeMessage.ServiceEntryId, result);
+
+                        EngineContext.DisposeUnmanagedObjects();
                     };
                 }
             }

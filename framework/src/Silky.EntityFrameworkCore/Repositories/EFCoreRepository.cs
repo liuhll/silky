@@ -68,7 +68,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             var repository = scoped.ServiceProvider.GetService<IRepository<TEntity>>();
 
             // 添加未托管对象
-            // App.UnmanagedObjects.Add(scoped);
+            EngineContext.UnmanagedObjects.Add(scoped);
 
             return (repository, scoped);
         }
@@ -89,7 +89,7 @@ namespace Silky.EntityFrameworkCore.Repositories
             var repository = scoped.ServiceProvider.GetService<IRepository<TEntity, TDbContextLocator>>();
 
             // 添加未托管对象
-            // App.UnmanagedObjects.Add(scoped);
+            EngineContext.UnmanagedObjects.Add(scoped);
 
             return (repository, scoped);
         }
