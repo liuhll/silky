@@ -95,8 +95,7 @@ namespace Silky.Rpc
                 {
                     messageListener.Received += async (sender, message) =>
                     {
-                        var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
-                        EngineContext.UnmanagedObjects.Add(serviceScope);
+                        using var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
                         message.SetRpcMessageId();
                         var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
                         remoteInvokeMessage.SetRpcAttachments();
