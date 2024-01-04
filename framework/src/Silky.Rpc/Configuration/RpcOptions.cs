@@ -15,7 +15,7 @@ namespace Silky.Rpc.Configuration
             SoBacklog = 1024;
             ConnectTimeout = 300;
             RegisterFailureRetryCount = 10;
-            TransportClientPoolNumber = 5;
+            TransportClientPoolNumber = 10;
             UseTransportClientPool = true;
             EnableMonitor = true;
             _heartbeatWatchIntervalSeconds = 300;

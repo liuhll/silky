@@ -62,9 +62,6 @@ namespace Silky.DotNetty
                 RemoveClient(endpoint);
                 return Task.CompletedTask;
             };
-
-            // _silkyChannelPoolMap = silkyChannelPoolMap;
-            // _channelProvider = channelProvider;
             _rpcOptions = rpcOptions.Value;
             _clientMessageListener = new ClientMessageListener();
             Logger = NullLogger<DotNettyTransportClientFactory>.Instance;
@@ -89,6 +86,8 @@ namespace Silky.DotNetty
 
                 if (!client.MessageSender.Enabled)
                 {
+                    client.MessageSender.Dispose();
+
                     client.MessageSender =
                         await CreateClientMessageSender(silkyEndpoint, _rpcOptions.UseTransportClientPool);
                 }

@@ -45,6 +45,7 @@ namespace Silky.DotNetty
             _disposed = true;
         }
 
-        public bool Enabled => _channel.Active && !_disposed;
+        public bool Enabled =>
+            _channel is { Active: true, Open: true, IsWritable: true, Registered: true } && !_disposed;
     }
 }

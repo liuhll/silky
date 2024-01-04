@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Pool;
+using Silky.Core.Exceptions;
 using Silky.Core.Runtime.Rpc;
 using Silky.DotNetty.Handlers;
 using Silky.Rpc.Endpoint.Monitor;
@@ -32,34 +33,61 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IClient
 
     protected override async Task SendAsync(TransportMessage message)
     {
-        var channel = await _channelPool.AcquireAsync();
+        IChannel? channel = null;
         try
         {
-            _enabled = channel.Active;
+            channel = await _channelPool.AcquireAsync();
+            if (channel == null)
+            {
+                throw new CommunicationException("No communication channel has been applied for");
+            }
+
+            _enabled = channel is { Active: true, IsWritable: true, Open: true, Registered: true };
+            if (!_enabled)
+            {
+                throw new CommunicationException("The current channel cannot be used");
+            }
             SetChannelClientHandler(channel);
             SetClientPort(channel);
             await channel.WriteAsync(message);
         }
         finally
         {
-            await _channelPool.ReleaseAsync(channel);
+            if (channel != null)
+            {
+                await _channelPool.ReleaseAsync(channel);
+            }
         }
     }
 
 
     protected override async Task SendAndFlushAsync(TransportMessage message)
     {
-        var channel = await _channelPool.AcquireAsync();
+        IChannel? channel = null;
+
         try
         {
-            _enabled = channel.Active;
+            channel = await _channelPool.AcquireAsync();
+            if (channel == null)
+            {
+                throw new CommunicationException("No communication channel has been applied for");
+            }
+
+            _enabled = channel is { Active: true, IsWritable: true, Open: true, Registered: true };
+            if (!_enabled)
+            {
+                throw new CommunicationException("The current channel cannot be used");
+            }
             SetChannelClientHandler(channel);
             SetClientPort(channel);
             await channel.WriteAndFlushAsync(message);
         }
         finally
         {
-            await _channelPool.ReleaseAsync(channel);
+            if (channel != null)
+            {
+                await _channelPool.ReleaseAsync(channel);
+            }
         }
     }
 
@@ -85,6 +113,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IClient
 
     public void Dispose()
     {
+        _channelPool.Dispose();
         _disposed = true;
     }
 }
