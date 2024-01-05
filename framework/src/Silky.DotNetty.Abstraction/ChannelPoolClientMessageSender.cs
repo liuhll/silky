@@ -47,6 +47,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IClient
             {
                 throw new CommunicationException("The current channel cannot be used");
             }
+
             SetChannelClientHandler(channel);
             SetClientPort(channel);
             await channel.WriteAsync(message);
@@ -78,6 +79,7 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IClient
             {
                 throw new CommunicationException("The current channel cannot be used");
             }
+
             SetChannelClientHandler(channel);
             SetClientPort(channel);
             await channel.WriteAndFlushAsync(message);
@@ -113,7 +115,6 @@ public class ChannelPoolClientMessageSender : DotNettyMessageSenderBase, IClient
 
     public void Dispose()
     {
-        _channelPool.Dispose();
         _disposed = true;
     }
 }
