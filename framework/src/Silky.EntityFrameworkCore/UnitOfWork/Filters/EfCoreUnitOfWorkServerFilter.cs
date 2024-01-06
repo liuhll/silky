@@ -36,7 +36,14 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
                 }
                 else
                 {
-                    silkyDbContextPool.CommitTransaction();
+                    if (result.Exception == null)
+                    {
+                        silkyDbContextPool.CommitTransaction();
+                    }
+                    else
+                    {
+                        silkyDbContextPool.RollbackTransaction();
+                    }
                 }
             }
             catch (Exception ex)
