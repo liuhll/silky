@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.Extensions;
 using Sundial;
+using WsHostDemo.Contexts;
 using WsHostDemo.Job;
 using WsHostDemo.Mq.Consumer;
 
@@ -27,7 +28,7 @@ namespace WsHostDemo
             // {
             //     options.AddJob<MyJob>(Triggers.PeriodSeconds(10));
             // });
-            
+            services.AddDatabaseAccessor(options => { options.AddDbPool<StudentDbContext>(); }, "WsHostDemo");
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, configurator) =>

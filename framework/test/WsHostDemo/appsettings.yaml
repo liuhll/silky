@@ -63,3 +63,9 @@ rabbitMq:
   userName: rabbitmq
   password: rabbitmq
   virtualHost: /
+plugInSource:
+  modulePlugIn:
+    types:
+    - WsHostDemo.WsModule,WsHostDemo
+connectionStrings:
+  studentDbContext: "server=127.0.0.1;port=3306;database=student;uid=root;pwd=qwe!P4ss;"
