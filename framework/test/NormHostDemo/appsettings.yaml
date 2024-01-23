@@ -2,9 +2,9 @@ rpc:
   host: 0.0.0.0
   port: 2203
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
-  isSSl: true
-  sslCertificateName: test.silky-fk.com.pfx
-  sslCertificatePassword: bdSpw3W7
+#  isSSl: true
+#  sslCertificateName: test.silky-fk.com.pfx
+#  sslCertificatePassword: bdSpw3W7
 #registrycenter:
 #  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186
 #  type: Zookeeper

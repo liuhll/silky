@@ -3,9 +3,9 @@ rpc:
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
   transportClientPoolNumber: 50
   useTransportClientPool: true
-  isSSl: true
-  sslCertificateName: test.silky-fk.com.pfx
-  sslCertificatePassword: bdSpw3W7
+#  isSSl: true
+#  sslCertificateName: test.silky-fk.com.pfx
+#  sslCertificatePassword: bdSpw3W7
 #registrycenter:
 #  type: Zookeeper
 #  connectionStrings: 127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183;127.0.0.1:2184,127.0.0.1:2185,127.0.0.1:2186

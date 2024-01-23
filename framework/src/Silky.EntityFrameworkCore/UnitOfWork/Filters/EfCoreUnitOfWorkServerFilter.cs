@@ -48,8 +48,11 @@ namespace Silky.EntityFrameworkCore.UnitOfWork
             }
             catch (Exception ex)
             {
-                silkyDbContextPool.RollbackTransaction();
-                throw;
+               if (unitOfWorkAttribute != null) 
+               {
+                    silkyDbContextPool.RollbackTransaction();
+               }
+               throw;
             }
             finally
             {
