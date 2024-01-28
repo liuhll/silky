@@ -11,7 +11,7 @@ namespace Silky.Rpc.Utils
         {
             try
             {
-                var urlInfo = Parser(url);
+                var urlInfo = Parser(url,string.Empty);
                 exMessage = "";
                 return SocketCheck.TestConnection(urlInfo.Item2, urlInfo.Item3);
             }
@@ -22,7 +22,7 @@ namespace Silky.Rpc.Utils
             }
         }
 
-        public static (string, string, int) Parser(string url)
+        public static (string, string, int) Parser(string url,string cidr)
         {
             var addressSegments = url.Split("://");
             var scheme = addressSegments.First();
@@ -33,7 +33,8 @@ namespace Silky.Rpc.Utils
             if (address.Contains("+") || address.Contains("*") ||
                 address.Contains("0.0.0.0") || address.Contains("[::]"))
             {
-                host = HostAddressUtil.GetLocalHostAnyIp();
+                
+                host = HostAddressUtil.GetLocalHostAnyIp(cidr);
             }
             else
             {

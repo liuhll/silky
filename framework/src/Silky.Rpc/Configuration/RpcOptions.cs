@@ -24,6 +24,9 @@ namespace Silky.Rpc.Configuration
         }
 
         public string Host { get; set; }
+
+        public string Cidr { get; set; }
+        
         public int Port { get; set; }
         public bool UseLibuv { get; set; }
         public bool IsSsl { get; set; }

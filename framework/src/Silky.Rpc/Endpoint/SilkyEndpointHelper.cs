@@ -2,8 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -27,7 +25,7 @@ namespace Silky.Rpc.Endpoint
 
         private static ConcurrentDictionary<string, string> _ipCache = new();
 
-        public static string GetHostIp(string hostAddress)
+        public static string GetHostIp(string hostAddress, string cidr)
         {
             if (_ipCache.TryGetValue($"HostIp_{hostAddress}", out var hostIp))
             {
@@ -37,7 +35,7 @@ namespace Silky.Rpc.Endpoint
             var result = hostAddress;
             if ((!IsValidAddress(hostAddress) && !IsLocalHost(hostAddress)) || IsAnyHost(hostAddress))
             {
-                result = HostAddressUtil.GetLocalHostAnyIp();
+                result = HostAddressUtil.GetLocalHostAnyIp(cidr);
             }
 
             _ = _ipCache.TryAdd($"HostIp_{hostAddress}", result);
@@ -59,13 +57,14 @@ namespace Silky.Rpc.Endpoint
                 throw new SilkyException("Failed to obtain http service rpcEndpoint");
             }
 
-            var addressDescriptor = ParserSilkyEndpoint(address);
+            var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
+            var addressDescriptor = ParserSilkyEndpoint(address, rpcOptions.Cidr);
             return addressDescriptor;
         }
 
-        private static ISilkyEndpoint ParserSilkyEndpoint(string address)
+        private static ISilkyEndpoint ParserSilkyEndpoint(string address, string cidr)
         {
-            var urlInfo = UrlUtil.Parser(address);
+            var urlInfo = UrlUtil.Parser(address, cidr);
             var serviceProtocol = ServiceProtocolUtil.GetServiceProtocol(urlInfo.Item1);
             var silkyEndpoint = GetOrCreateSilkyEndpoint(urlInfo.Item2, urlInfo.Item3, serviceProtocol);
             return silkyEndpoint;
@@ -94,7 +93,7 @@ namespace Silky.Rpc.Endpoint
         public static ISilkyEndpoint GetLocalRpcEndpoint()
         {
             var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
-            var host = GetHostIp(rpcOptions.Host);
+            var host = GetHostIp(rpcOptions.Host, rpcOptions.Cidr);
             var port = rpcOptions.Port;
             var silkyEndpoint = GetOrCreateSilkyEndpoint(host, port, ServiceProtocol.Rpc);
             return silkyEndpoint;
@@ -108,23 +107,16 @@ namespace Silky.Rpc.Endpoint
 
         public static string GetLocalAddress()
         {
-            var host = GetHostIp(ANYHOST);
+            var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
+            var host = GetHostIp(rpcOptions.Host, rpcOptions.Cidr);
             return host;
-        }
-
-
-        public static ISilkyEndpoint GetLocalSilkyEndpoint(int port, ServiceProtocol serviceProtocol)
-        {
-            var host = GetIp(HostAddressUtil.GetLocalHostAnyIp());
-            var silkyEndpoint = GetOrCreateSilkyEndpoint(host, port, serviceProtocol);
-            return silkyEndpoint;
         }
 
         public static ISilkyEndpoint GetWsEndpoint()
         {
             var webSocketOptions = EngineContext.Current.GetOptions<WebSocketOptions>();
             var rpcOptions = EngineContext.Current.GetOptions<RpcOptions>();
-            var host = GetHostIp(rpcOptions.Host);
+            var host = GetHostIp(rpcOptions.Host, rpcOptions.Cidr);
             var silkyEndpoint = GetOrCreateSilkyEndpoint(host, webSocketOptions.Port, ServiceProtocol.Ws);
             return silkyEndpoint;
         }
