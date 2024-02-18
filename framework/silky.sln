@@ -130,6 +130,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHostDemo", "test\WebHost
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "test\Common\Common.csproj", "{0E6151B2-B16B-43F7-A3CC-94CB1D67BE30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeSqlHostDemo", "test\FreeSqlHostDemo\FreeSqlHostDemo.csproj", "{7C2A0F21-EE79-45B3-9970-694B677234EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -372,6 +374,10 @@ Global
 		{0E6151B2-B16B-43F7-A3CC-94CB1D67BE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E6151B2-B16B-43F7-A3CC-94CB1D67BE30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E6151B2-B16B-43F7-A3CC-94CB1D67BE30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C2A0F21-EE79-45B3-9970-694B677234EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C2A0F21-EE79-45B3-9970-694B677234EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C2A0F21-EE79-45B3-9970-694B677234EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C2A0F21-EE79-45B3-9970-694B677234EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -436,6 +442,7 @@ Global
 		{898184DF-F0FD-4A5D-8BA2-A3D4A310F689} = {BBAACB71-9C7B-47EB-80A1-E7D9DF73F076}
 		{A92A48AC-945E-4365-82AF-A459CBAB2E63} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 		{0E6151B2-B16B-43F7-A3CC-94CB1D67BE30} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
+		{7C2A0F21-EE79-45B3-9970-694B677234EE} = {0ADAAB32-452C-4B2B-9EF7-BE57131C96F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42B14424-34C2-4891-A02A-690A57FE2795}

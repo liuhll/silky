@@ -1,6 +1,6 @@
 rpc:
   host: 0.0.0.0
-  port: 2203
+  port: 2206
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
   cidr: 192.168.0.0/20
 #  isSSl: true
@@ -41,7 +41,7 @@ distributedCache:
     slidingExpiration: 100
     
 connectionStrings:
-  demoDbContext: "server=127.0.0.1;port=3306;database=test;uid=root;pwd=qwe!P4ss;"
+  default: "server=127.0.0.1;port=3306;database=freesql_test;uid=root;pwd=qwe!P4ss;"
 jwtSettings:
   secret: jaoaNPA1fo1rcPfK23iNufsQKkhTy8eh
   expiredTime: 30
@@ -66,19 +66,6 @@ serilog:
         outputTemplate: "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u11}] {Message:lj} {NewLine}{Exception}{NewLine}"
         theme: "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"
 
-plugInSource:
-  appServicePlugIns:
-    - folder: ../../../../TestApplication/bin/Debug/net7.0
-      searchOption: TopDirectoryOnly
-        #    - folder: ../../../../ITestApplication/bin/Debug/net7.0
-        #      searchOption: TopDirectoryOnly
-  modulePlugIn:
-    folders:
-      - folder: ../../../../TestApplication/bin/Debug/net7.0
-        searchOption: TopDirectoryOnly
-        pattern: TestApplication
-#    types:
-#    - TestApplication.TestModule,TestApplication
 
 rabbitMq:
   host: 127.0.0.1
@@ -88,7 +75,5 @@ rabbitMq:
   virtualHost: /        
   
 swaggerGen:
-  filterTypes:
-    - Common.Swagger.Filter.AddTestHeaderOperationFilter,Common
-  title: NormHost
+  title: FreeSqlHostDemo
     
