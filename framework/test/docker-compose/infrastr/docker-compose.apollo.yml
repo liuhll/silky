@@ -78,5 +78,5 @@ services:
       - silky_service_net                         
 networks:
   silky_service_net:
-    external:
-      name: silky_service_net
+    external: true
+    name: silky_service_net

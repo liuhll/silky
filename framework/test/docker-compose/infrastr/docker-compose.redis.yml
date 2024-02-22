@@ -9,6 +9,9 @@ services:
       - REDIS_REPLICATION_MODE=master
       - REDIS_PASSWORD=qwe!P4ss
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    deploy:
+      restart_policy: 
+        condition: on-failure
     volumes:
       - '.redis_data:/bitnami/redis/data'
     networks:
@@ -20,6 +23,9 @@ services:
       - '6379'
     depends_on:
       - redis-primary
+    deploy:
+      restart_policy: 
+        condition: on-failure
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-primary
@@ -31,5 +37,5 @@ services:
       - silky_service_net
 networks:
   silky_service_net:
-    external:
-      name: silky_service_net
+    external: true
+    name: silky_service_net

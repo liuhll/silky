@@ -1,14 +1,17 @@
 version: "3.7"
 
 services:
-  silky.rabbitmq:
-    image: rabbitmq:3.7-management
-    restart: always
+  rabbitmq:
+    image: rabbitmq:3.12.13-management
+    hostname: rabbitmq
     environment:
       RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
       RABBITMQ_DEFAULT_USER: "rabbitmq"
-      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "5TBBN6h2sufjRzXPwifJ"
       RABBITMQ_DEFAULT_VHOST: "/"
+    deploy:
+      restart_policy: 
+        condition: on-failure
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -17,5 +20,5 @@ services:
 
 networks:
   silky_service_net:
-    external:
-      name: silky_service_net
+    external: true
+    name: silky_service_net
