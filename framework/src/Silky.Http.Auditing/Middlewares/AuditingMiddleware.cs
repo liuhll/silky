@@ -61,7 +61,7 @@ public class AuditingMiddleware
             }
             finally
             {
-                auditLogInfo.UserId = _session.UserId;
+                auditLogInfo.UserId = _session.UserId.ToString();
                 auditLogInfo.UserName = _session.UserName;
                 auditLogInfo.TenantId = _session.TenantId;
                 auditLogInfo.HttpStatusCode = context.Response.StatusCode;
