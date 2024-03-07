@@ -19,7 +19,7 @@ public interface IFileAppService
 
     public Task PostFormWithFile(FormWithFile formWithFile);
 
-    public Task<IActionResult> Download();
+    public Task<IActionResult> Download([FromBody]DownloadInput input);
 }
 
 public class FormWithFile
@@ -27,4 +27,9 @@ public class FormWithFile
     public string Name { get; set; }
 
     public IFormFile File { get; set; }
+}
+
+public class DownloadInput
+{
+    public string FileName { get; set; }
 }

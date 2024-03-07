@@ -3,7 +3,7 @@ rpc:
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
   transportClientPoolNumber: 50
   useTransportClientPool: true
-  cidr: 192.168.0.0/20
+#  cidr: 192.168.0.0/20
 #  isSSl: true
 #  sslCertificateName: test.silky-fk.com.pfx
 #  sslCertificatePassword: bdSpw3W7

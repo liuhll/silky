@@ -2,7 +2,7 @@ rpc:
   host: 0.0.0.0
   port: 2203
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
-  cidr: 192.168.0.0/20
+#  cidr: 192.168.0.0/20
 #  isSSl: true
 #  sslCertificateName: test.silky-fk.com.pfx
 #  sslCertificatePassword: bdSpw3W7

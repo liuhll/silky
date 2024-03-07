@@ -33,12 +33,12 @@ public class FileAppService : IFileAppService
         await formWithFile.File.CopyToAsync(stream);
     }
 
-    public async Task<IActionResult> Download()
+    public async Task<IActionResult> Download(DownloadInput input)
     {
         var bytes = System.IO.File.ReadAllBytes("./Contents/测试.xlsx").ToArray();
         return new FileContentResult(bytes, "application/octet-stream")
         {
-            FileDownloadName = "测试文件.xlsx",
+            FileDownloadName = input.FileName,
         };
     }
 }
