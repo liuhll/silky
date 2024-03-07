@@ -8,7 +8,7 @@ namespace Silky.Rpc.Auditing;
 
 public class AuditLogInfo
 {
-    public string? UserId { get; set; }
+    public object? UserId { get; set; }
 
     public string UserName { get; set; }
 
