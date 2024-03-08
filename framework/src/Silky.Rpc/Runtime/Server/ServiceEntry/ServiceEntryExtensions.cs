@@ -181,11 +181,34 @@ namespace Silky.Rpc.Runtime.Server
 
         public static bool NeedHttpProtocolSupport(this ServiceEntry serviceEntry)
         {
-            // if (typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType))
-            // {
-            //     return true;
-            // }
+            if (typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType))
+            {
+                return true;
+            }
 
+            foreach (var parameterDescriptor in serviceEntry.Parameters)
+            {
+                if (parameterDescriptor.IsSupportFileParameter())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool ActionResultSupport(this ServiceEntry serviceEntry)
+        {
+            if (typeof(IActionResult).IsAssignableFrom(serviceEntry.ReturnType))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool HasFileParameter(this ServiceEntry serviceEntry)
+        {
             foreach (var parameterDescriptor in serviceEntry.Parameters)
             {
                 if (parameterDescriptor.IsSupportFileParameter())

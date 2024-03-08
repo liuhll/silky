@@ -116,7 +116,6 @@ namespace Silky.Rpc.Runtime.Server
                 {
                     foreach (var cacheKey in parameterDescriptor.CacheKeys)
                     {
-
                         if (!cacheKey.Key.Equals(cachingInterceptorProvider.KeyTemplate))
                         {
                             continue;
@@ -125,17 +124,17 @@ namespace Silky.Rpc.Runtime.Server
                         foreach (var cacheKeyProvider in cacheKey.Value)
                         {
                             cachingInterceptorDescriptor
-                            .CacheKeyProviderDescriptors
-                            .Add(new CacheKeyProviderDescriptor()
-                            {
-                                PropName = cacheKeyProvider.PropName,
-                                Index = cacheKeyProvider.Index,
-                                CacheKeyType = cacheKeyProvider.CacheKeyType,
-                                ParameterIndex = parameterDescriptor.Index,
-                                From = parameterDescriptor.From,
-                                IsSampleOrNullableType = parameterDescriptor.IsSingleType,
-                                IsNullableType = parameterDescriptor.IsNullableType,
-                            });
+                                .CacheKeyProviderDescriptors
+                                .Add(new CacheKeyProviderDescriptor()
+                                {
+                                    PropName = cacheKeyProvider.PropName,
+                                    Index = cacheKeyProvider.Index,
+                                    CacheKeyType = cacheKeyProvider.CacheKeyType,
+                                    ParameterIndex = parameterDescriptor.Index,
+                                    From = parameterDescriptor.From,
+                                    IsSampleOrNullableType = parameterDescriptor.IsSingleType,
+                                    IsNullableType = parameterDescriptor.IsNullableType,
+                                });
                         }
                     }
                 }
@@ -342,7 +341,7 @@ namespace Silky.Rpc.Runtime.Server
 
         private void CreateDefaultSupportedResponseMediaTypes()
         {
-            if (!this.NeedHttpProtocolSupport() && (ReturnType != null || ReturnType == typeof(void)))
+            if (!this.ActionResultSupport() && (ReturnType != null || ReturnType == typeof(void)))
             {
                 SupportedResponseMediaTypes.Add("application/json");
                 SupportedResponseMediaTypes.Add("text/json");
@@ -351,7 +350,7 @@ namespace Silky.Rpc.Runtime.Server
 
         private void CreateDefaultSupportedRequestMediaTypes()
         {
-            if (Parameters.Any(p => p.From == ParameterFrom.Form) || this.NeedHttpProtocolSupport())
+            if (Parameters.Any(p => p.From == ParameterFrom.Form) || this.HasFileParameter())
             {
                 SupportedRequestMediaTypes.Add("multipart/form-data");
             }
