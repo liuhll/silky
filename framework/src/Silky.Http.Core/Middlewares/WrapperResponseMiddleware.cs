@@ -84,8 +84,15 @@ namespace Silky.Http.Core.Middlewares
             };
             if (status == StatusCode.Success)
             {
-                var resultData = _serializer.Deserialize<dynamic>(body);
-                responseResultDto.Result = resultData;
+                if (body.IsValidJson())
+                {
+                    var resultData = _serializer.Deserialize<dynamic>(body);
+                    responseResultDto.Result = resultData;
+                }
+                else
+                {
+                    responseResultDto.Result = body;
+                }
             }
             else
             {

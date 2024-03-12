@@ -74,22 +74,32 @@ namespace Silky.Http.Core.Handlers
             try
             {
                 var executeResult = await _executor.Execute(serviceEntry, parameters, serviceKey);
+
                 var cancellationToken = serverCallContext.HttpContext.RequestAborted;
                 if (!serverCallContext.HttpContext.Response.HasStarted && !cancellationToken.IsCancellationRequested)
                 {
-                    if (executeResult is IActionResult actionResult)
+                    serverCallContext.WriteResponseHeaderCore();
+                    if (executeResult != null)
                     {
-                        await actionResult.ExecuteResultAsync(new ActionContext
+                        if (executeResult is IActionResult actionResult)
                         {
-                            HttpContext = serverCallContext.HttpContext,
-                        });
-                    }
-                    else
-                    {
-                        serverCallContext.WriteResponseHeaderCore();
-                        if (executeResult != null)
+                            await actionResult.ExecuteResultAsync(new ActionContext()
+                            {
+                                HttpContext = serverCallContext.HttpContext
+                            });
+                        }
+                        else
                         {
-                            var responseData = _serializer.Serialize(executeResult);
+                            string responseData;
+                            if (executeResult is string || executeResult.GetType().IsSample())
+                            {
+                                responseData = executeResult?.ToString() ?? string.Empty;
+                            }
+                            else
+                            {
+                                responseData = _serializer.Serialize(executeResult);
+                            }
+
                             await serverCallContext.HttpContext.Response.WriteAsync(responseData,
                                 cancellationToken: cancellationToken);
                         }
@@ -187,7 +197,7 @@ namespace Silky.Http.Core.Handlers
                             {
                                 responseData = _serializer.Serialize(executeResult);
                             }
-                            
+
                             await serverCallContext.HttpContext.Response.WriteAsync(responseData,
                                 cancellationToken: cancellationToken);
                         }
