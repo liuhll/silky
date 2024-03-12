@@ -62,6 +62,7 @@ namespace Silky.Rpc.Routing
                 {
                     continue;
                 }
+
                 routeParameters.Add(TemplateSegmentHelper.GetVariableName(routeSegment.Value), apiSegment);
             }
 
@@ -119,7 +120,7 @@ namespace Silky.Rpc.Routing
             }
 
             if (!methodInfo.GetParameters().Any(p =>
-                p.Name.Equals(parameterName, StringComparison.OrdinalIgnoreCase) && p.IsSampleType()))
+                    p.Name.Equals(parameterName, StringComparison.OrdinalIgnoreCase) && p.IsSampleType()))
             {
                 throw new SilkyException(
                     "The setting of routing parameters is abnormal, and it is only allowed to set path parameters for simple data types",
@@ -171,7 +172,8 @@ namespace Silky.Rpc.Routing
                 return false;
             }
 
-            return HttpMethod == router.HttpMethod && RoutePath.Equals(router.RoutePath);
+            return HttpMethod == router.HttpMethod &&
+                   RoutePath.Equals(router.RoutePath, StringComparison.OrdinalIgnoreCase);
         }
 
         public override int GetHashCode()
