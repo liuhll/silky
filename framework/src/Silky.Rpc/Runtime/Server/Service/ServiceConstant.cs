@@ -17,5 +17,6 @@ namespace Silky.Rpc.Runtime.Server
         public const string IsSilkyDashboardService = "DashboardService";
         
         public const string IgnoreHostNameService = "IgnoreHostNameService";
+        public const string ResponseContentTypeKey = "ResponseContextType";
     }
 }

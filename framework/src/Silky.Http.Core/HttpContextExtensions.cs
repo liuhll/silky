@@ -6,6 +6,8 @@ using Microsoft.Extensions.Primitives;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Http.Core.Configuration;
+using Silky.Rpc.Extensions;
+using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core
 {
@@ -22,6 +24,13 @@ namespace Silky.Http.Core
                 }
             }
 
+            var serviceEntryDescriptor = httpContext.GetServiceEntryDescriptor();
+            var responseContextType = serviceEntryDescriptor.GetMetadata<string>(ServiceConstant.ResponseContentTypeKey);
+            if (!responseContextType.IsNullOrEmpty())
+            {
+                return responseContextType;
+            }
+
             if (!gatewayOptions.ResponseContentType.IsNullOrEmpty())
             {
                 return gatewayOptions.ResponseContentType;
@@ -30,7 +39,7 @@ namespace Silky.Http.Core
             return defaultResponseContextType;
         }
 
-        public static string GetClientIp(this HttpContext httpContext,bool tryUseXForwardHeader = true)
+        public static string GetClientIp(this HttpContext httpContext, bool tryUseXForwardHeader = true)
         {
             string ip = null;
 
@@ -51,18 +60,19 @@ namespace Silky.Http.Core
 
             return ip;
         }
-        
+
         public static T GetHeaderValue<T>(this HttpRequest request, string headerName)
         {
             StringValues values;
 
             if (request.Headers?.TryGetValue(headerName, out values) ?? false)
             {
-                string rawValues = values.ToString();   // writes out as Csv when there are multiple.
+                string rawValues = values.ToString(); // writes out as Csv when there are multiple.
 
                 if (!rawValues.IsNullOrEmpty())
                     return (T)Convert.ChangeType(values.ToString(), typeof(T));
             }
+
             return default(T);
         }
 
