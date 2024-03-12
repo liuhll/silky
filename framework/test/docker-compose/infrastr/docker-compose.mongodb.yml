@@ -1,0 +1,41 @@
+version: "3.7"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: on-failure
+    ports:
+      - 27017:27017
+    environment:
+      TZ: Asia/Shanghai
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: wO2eNch1O4lvTDCZIsA6PRWtDYtZ0LV53o2soZJG5BklmViY8xqn5xia248qOt0L
+    volumes:
+      - ./.mongodb:/data/db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    networks:
+      - silky_service_net 
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    ports:
+      - 27018:27018
+    environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: 3024-night
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: wO2eNch1O4lvTDCZIsA6PRWtDYtZ0LV53o2soZJG5BklmViY8xqn5xia248qOt0L
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: wO2eNch1O4lvTDCZIsA6PRWtDYtZ0LV53o2soZJG5BklmViY8xqn5xia248qOt0L
+    depends_on:
+      - mongodb
+    networks:
+      - silky_service_net 
+networks:
+  silky_service_net:
+    external: true
+    name: silky_service_net

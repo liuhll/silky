@@ -266,3 +266,4 @@ package-lock.json
 !./framework/src/Silky.Http.Dashboard/wwwroot/dist
 !**/test.silky-fk.com.pfx
 **/.redis_data/*
+**/..mongodb/*
