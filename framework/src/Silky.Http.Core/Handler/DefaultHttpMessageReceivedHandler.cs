@@ -178,12 +178,22 @@ namespace Silky.Http.Core.Handlers
                         }
                         else
                         {
-                            var responseData = _serializer.Serialize(executeResult);
+                            string responseData;
+                            if (executeResult is string || executeResult.GetType().IsSample())
+                            {
+                                responseData = executeResult?.ToString() ?? string.Empty;
+                            }
+                            else
+                            {
+                                responseData = _serializer.Serialize(executeResult);
+                            }
+                            
                             await serverCallContext.HttpContext.Response.WriteAsync(responseData,
                                 cancellationToken: cancellationToken);
                         }
                     }
                 }
+
                 _httpHandleDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
                     serviceEntryDescriptor.Id,
                     false,

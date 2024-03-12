@@ -28,10 +28,9 @@ namespace ITestApplication.Test
         [HttpPost]
         [HttpPut]
         [UpdateCachingIntercept("id:{id}")]
-   
         Task<TestOut> CreateOrUpdateAsync(TestInput input);
-        
-        
+
+
         [HttpPost("v2")]
         [HttpPut("v2")]
         [TestServerFilter]
@@ -50,8 +49,8 @@ namespace ITestApplication.Test
         [HttpPut("modify")]
         [RemoveCachingIntercept(typeof(TestOut), "id:{Id}")]
         Task<TestOut> Update(TestInput input);
-        
-        
+
+
         [HttpPut("modify2")]
         Task<string> Update2(long id);
 
@@ -62,7 +61,7 @@ namespace ITestApplication.Test
 
         [HttpGet]
         Task<IDictionary<string, string>> TestDict1();
-        
+
 
         [HttpGet]
         Task<PagedList<TestOut>> Search1([FromQuery] string name, [FromQuery] string address,
@@ -72,8 +71,8 @@ namespace ITestApplication.Test
 
         [HttpGet]
         Task<PagedList<TestOut>> Search2([FromQuery] SearchInput query);
-        
-        Task<PagedList<TestOut>> Search3([FromQuery]long[] Ids,[FromQuery] Sort[] sorts);
+
+        Task<PagedList<TestOut>> Search3([FromQuery] long[] Ids, [FromQuery] Sort[] sorts);
 
         [HttpPost]
         [HttpPut]
@@ -98,14 +97,14 @@ namespace ITestApplication.Test
         Task<TestOut> UpdatePart(TestUpdatePart input);
 
         [HttpGet]
-        Task<TestOut> TestFromHeader([FromHeader]string id);
-        
+        Task<TestOut> TestFromHeader([FromHeader] string id);
+
         [HttpGet]
         [GetCachingIntercept("get:{name}")]
         Task<TestOut> TestCache(TestInput input);
 
         Task<IList<object>> GetObjectList();
-        
+
         Task<string> InvokeQuery1();
 
         Task<object> GetObject();
@@ -113,5 +112,12 @@ namespace ITestApplication.Test
         Task<OcrOutput> GetOcr();
 
         Task<string> TestNamedService(string serviceName);
+
+        [AllowAnonymous]
+        [UnWrapperResult]
+        [HttpPost("message")]
+        [ResponseContextType("text/plain;charset=UTF-8")]
+        [IgnoreBodyData]
+        Task<string> TestIgnoreBodyData([FromQuery] TestInput input);
     }
 }

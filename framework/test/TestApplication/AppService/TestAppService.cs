@@ -321,5 +321,11 @@ namespace TestApplication.AppService
 
             return await service.Test();
         }
+
+        public async Task<string> TestIgnoreBodyData(TestInput input)
+        {
+            var requestParameters = RpcContext.Context.GetRequestParameters();
+            return input.Name;
+        }
     }
 }

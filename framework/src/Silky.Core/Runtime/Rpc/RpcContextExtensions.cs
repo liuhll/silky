@@ -108,6 +108,17 @@ namespace Silky.Core.Runtime.Rpc
             return rpcContext.GetInvokeAttachment(AttachmentKeys.RequestParameters)?.ToString();
         }
 
+        public static IDictionary<string, object> GetRequestParameterInfo(this RpcContext rpcContext)
+        {
+            var requestParameters = rpcContext.GetRequestParameters();
+            if (requestParameters.IsNullOrEmpty())
+            {
+                return null;
+            }
+            var serializer = EngineContext.Current.Resolve<ISerializer>();
+            return serializer.Deserialize<Dictionary<string, object>>(requestParameters);
+        }
+
         public static string GetSelectedServerAddress(this RpcContext rpcContext)
         {
             var selectedServerHost = rpcContext.GetSelectedServerHost();
@@ -130,8 +141,7 @@ namespace Silky.Core.Runtime.Rpc
             var selectedServerPort = rpcContext.GetInvokeAttachment(AttachmentKeys.SelectedServerPort);
             return selectedServerPort.To<int>();
         }
-
-
+        
         public static ServiceProtocol GetSelectedServerServiceProtocol(this RpcContext rpcContext)
         {
             var selectedServerServiceProtocol = rpcContext

@@ -11,5 +11,7 @@ namespace Silky.Rpc.Runtime.Server
         public const string DisableAuditing = "DisableAuditing";
 
         public const string UnWrapperResult = "UnWrapperResult";
+
+        public const string IgnoreBodyData = "IgnoreBodyData";
     }
 }

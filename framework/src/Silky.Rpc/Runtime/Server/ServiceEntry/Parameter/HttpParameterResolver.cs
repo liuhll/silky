@@ -47,7 +47,7 @@ public class HttpParameterResolver : ParameterResolverBase
 
     public override object[] Parser(ServiceEntry serviceEntry, IDictionary<ParameterFrom, object> parameters,
         HttpContext httpContext)
-    { 
+    {
         var list = new List<object>();
         var typeConvertibleService = EngineContext.Current.Resolve<ITypeConvertibleService>();
         foreach (var parameterDescriptor in serviceEntry.Parameters)
@@ -63,7 +63,10 @@ public class HttpParameterResolver : ParameterResolverBase
             switch (parameterDescriptor.From)
             {
                 case ParameterFrom.Body:
-                    list.Add(parameterDescriptor.GetActualParameter(parameter));
+                    if (!serviceEntry.ServiceEntryDescriptor.GetMetadata(ServiceEntryConstant.IgnoreBodyData, false))
+                    {
+                        list.Add(parameterDescriptor.GetActualParameter(parameter));
+                    }
                     break;
                 case ParameterFrom.Form:
                     if (parameterDescriptor.IsSingleType)
@@ -88,7 +91,7 @@ public class HttpParameterResolver : ParameterResolverBase
                         {
                             var fileParameter = parameters[ParameterFrom.File];
                             var silkyFiles = GetFormFiles(fileParameter.ToString());
-                            list.Add(parameterDescriptor.GetActualParameter(parameter,silkyFiles));
+                            list.Add(parameterDescriptor.GetActualParameter(parameter, silkyFiles));
                         }
                         else
                         {
@@ -124,7 +127,7 @@ public class HttpParameterResolver : ParameterResolverBase
                             list.Add(files);
                         }
                     }
-                    
+
                     break;
                 case ParameterFrom.Header:
                     if (parameterDescriptor.IsSingleType)
