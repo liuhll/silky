@@ -36,7 +36,7 @@ namespace Silky.Transaction.Tcc.Schedule
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Recovery executor cancel exception param{_serializer.Serialize(participant)}", ex);
+                Logger.LogError($"Recovery executor cancel exception param{_serializer.Serialize(participant.InvokeAttachments)}", ex);
                 Logger.LogException(ex);
                 return false;
             }
@@ -55,7 +55,7 @@ namespace Silky.Transaction.Tcc.Schedule
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Recovery executor confirm exception param{_serializer.Serialize(participant)}", ex);
+                Logger.LogError($"Recovery executor confirm exception param{_serializer.Serialize(participant.InvokeAttachments)}", ex);
                 Logger.LogException(ex);
                 return false;
             }
