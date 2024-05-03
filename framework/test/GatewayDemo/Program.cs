@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using GatewayDemo.ClientFilters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Silky.Core;
 using Silky.Core.Configuration;
 
@@ -23,8 +24,7 @@ namespace GatewayDemo
                 //})
                 .ConfigureSilkyGatewayDefaults(webBuilder =>
                     {
-                        webBuilder.UseStartup<Startup>()
-                            .UseSerilogDefault();
+                        webBuilder.UseStartup<Startup>();
                     },
                     options =>
                     {
@@ -32,6 +32,7 @@ namespace GatewayDemo
                         options.BannerMode = BannerMode.CONSOLE;
                         // options.Filter.Clients.Add(new TestGlobalClientFilter());
                     })
+                .UseSerilogDefault()
                    //.ConfigureSilkyGeneralHostDefaults();
                    ;
 

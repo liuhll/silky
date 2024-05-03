@@ -23,11 +23,11 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="7.0.0" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="7.0.2" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.0.2" />
-        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="7.0.0" />
-        <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.4.1.1" />
+        <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="8.0.1" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="8.0.1" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.1" />
+        <PackageReference Include="Com.Ctrip.Framework.Apollo.AspNetCoreHosting" Version="2.10.1" />
     </ItemGroup>
     <ItemGroup>
         <Content Update="skyapm.json">

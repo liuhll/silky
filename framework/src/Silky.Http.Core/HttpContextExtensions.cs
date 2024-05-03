@@ -25,6 +25,10 @@ namespace Silky.Http.Core
             }
 
             var serviceEntryDescriptor = httpContext.GetServiceEntryDescriptor();
+            if (serviceEntryDescriptor == null)
+            {
+                return defaultResponseContextType;
+            }
             var responseContextType = serviceEntryDescriptor.GetMetadata<string>(ServiceConstant.ResponseContentTypeKey);
             if (!responseContextType.IsNullOrEmpty())
             {

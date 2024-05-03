@@ -6,6 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Silky.Http.Core\Silky.Http.Core.csproj" />
+        <ProjectReference Include="..\Silky.Http.RateLimit\Silky.Http.RateLimit.csproj" />
         <ProjectReference Include="..\Silky.Http.Swagger\Silky.Http.Swagger.csproj" />
         <ProjectReference Include="..\Silky.Rpc\Silky.Rpc.csproj" />
     </ItemGroup>

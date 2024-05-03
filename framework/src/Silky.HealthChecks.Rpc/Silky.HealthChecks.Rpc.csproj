@@ -24,7 +24,7 @@
 	</ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.1.*" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.*" />
     </ItemGroup>
 
 
