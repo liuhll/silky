@@ -9,7 +9,7 @@
 
     <LicenseUrl>https://raw.githubusercontent.com/liuhll/silky/main/LICENSE</LicenseUrl>
 
-    <Version>3.8.22</Version>
+    <Version>3.8.23</Version>
 
     <PackageIconUrl>https://raw.githubusercontent.com/liuhll/silky/main/docs/.vuepress/public/assets/logo/logo.png</PackageIconUrl>
 
@@ -27,12 +27,12 @@
 	
 	<EfCore5Version>5.0.*</EfCore5Version>
 
-    <DotNettyVersion>0.7.*</DotNettyVersion>
+    <DotNettyVersion>0.7.6</DotNettyVersion>
 
     <MassTransitVersion>8.0.*</MassTransitVersion>
     
     <DistributedLockVersion>2.3.*</DistributedLockVersion>
     
-    <SkyAPMVersion>2.1.*</SkyAPMVersion>
+    <SkyAPMVersion>2.2.*</SkyAPMVersion>
   </PropertyGroup>
 </Project>
