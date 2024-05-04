@@ -18,14 +18,17 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
         private readonly TracingConfig _tracingConfig;
         private readonly ISerializer _serializer;
         private readonly ISilkySegmentContextFactory _silkySegmentContextFactory;
+        private readonly ITracingContext _tracingContext;
 
         public RpcServerTracingDiagnosticProcessor(IConfigAccessor configAccessor,
             ISilkySegmentContextFactory silkySegmentContextFactory,
-            ISerializer serializer)
+            ISerializer serializer,
+            ITracingContext tracingContext)
         {
             _tracingConfig = configAccessor.Get<TracingConfig>();
             _serializer = serializer;
             _silkySegmentContextFactory = silkySegmentContextFactory;
+            _tracingContext = tracingContext;
         }
 
         #region Rpc Servce Handle
@@ -73,7 +76,8 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Server
                         $"--> RemoteResult: {_serializer.Serialize(eventData.Result)}"));
                 context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
                 context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
-                _silkySegmentContextFactory.ReleaseContext(context);
+                _tracingContext.Release(context);
+
             }
         }
 

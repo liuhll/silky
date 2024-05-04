@@ -172,7 +172,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
 
             context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
             context.Span.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
-            _silkySegmentContextFactory.ReleaseContext(context);
+            _tracingContext.Release(context);
         }
 
         [DiagnosticName(HttpDiagnosticListenerNames.ErrorHttpHandle)]
@@ -181,7 +181,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Http
             var context = _silkySegmentContextFactory.GetHttpHandleExitContext(eventData.ServiceEntryId,eventData.IsLocal);
             context.Span?.AddTag(SilkyTags.RPC_STATUSCODE, $"{eventData.StatusCode}");
             context.Span?.ErrorOccurred(eventData.Exception, _tracingConfig);
-            _silkySegmentContextFactory.ReleaseContext(context);
+            _tracingContext.Release(context);
         }
 
         private string CollectCookies(HttpContext httpContext, IEnumerable<string> keys)

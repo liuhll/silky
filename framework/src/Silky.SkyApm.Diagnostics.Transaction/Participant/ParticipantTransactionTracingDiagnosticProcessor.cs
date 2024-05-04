@@ -3,6 +3,7 @@ using Silky.SkyApm.Diagnostics.Abstraction.Factory;
 using Silky.Transaction.Abstraction.Diagnostics;
 using SkyApm;
 using SkyApm.Diagnostics;
+using SkyApm.Tracing;
 using SkyApm.Tracing.Segments;
 
 namespace Silky.SkyApm.Diagnostics.Transaction.Participant
@@ -14,12 +15,15 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Participant
 
         private readonly ISilkySegmentContextFactory _segmentContextFactory;
         private readonly ISerializer _serializer;
+        private readonly ITracingContext _tracingContext;
 
         public ParticipantTransactionTracingDiagnosticProcessor(ISilkySegmentContextFactory segmentContextFactory,
-            ISerializer serializer)
+            ISerializer serializer,
+            ITracingContext tracingContext)
         {
             _segmentContextFactory = segmentContextFactory;
             _serializer = serializer;
+            _tracingContext = tracingContext;
         }
 
         [DiagnosticName(TransactionDiagnosticListenerNames.ParticipantBeginHandle)]
@@ -41,7 +45,7 @@ namespace Silky.SkyApm.Diagnostics.Transaction.Participant
             var context =
                 _segmentContextFactory.GetTransactionContext(GetOperationName(eventData));
             context.Span.AddLog(LogEvent.Event($"Tcc Participant Transaction Action {eventData.Context.Action}End"));
-            _segmentContextFactory.ReleaseContext(context);
+            _tracingContext.Release(context);
         }
 
         private string GetOperationName(ParticipantTransactionEventData eventData)

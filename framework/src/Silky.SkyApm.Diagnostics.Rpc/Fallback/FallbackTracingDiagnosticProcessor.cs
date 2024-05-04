@@ -19,14 +19,17 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Fallback
         private readonly TracingConfig _tracingConfig;
         private readonly ISerializer _serializer;
         private readonly ISilkySegmentContextFactory _silkySegmentContextFactory;
+        private readonly ITracingContext _tracingContext;
 
         public FallbackTracingDiagnosticProcessor(IConfigAccessor configAccessor,
             ISerializer serializer,
-            ISilkySegmentContextFactory silkySegmentContextFactory)
+            ISilkySegmentContextFactory silkySegmentContextFactory,
+            ITracingContext tracingContext)
         {
             _serializer = serializer;
             _silkySegmentContextFactory = silkySegmentContextFactory;
             _tracingConfig = configAccessor.Get<TracingConfig>();
+            _tracingContext = tracingContext;
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.RpcFallbackBegin)]
@@ -67,7 +70,7 @@ namespace Silky.SkyApm.Diagnostics.Rpc.Fallback
                     $"--> MessageId: {eventData.MessageId}.{Environment.NewLine}" +
                     $"--> RemoteResult: {_serializer.Serialize(eventData.Result)}"));
             context.Span.AddTag(SilkyTags.ELAPSED_TIME, $"{eventData.ElapsedTimeMs}");
-            _silkySegmentContextFactory.ReleaseContext(context);
+            _tracingContext.Release(context);
         }
 
         [DiagnosticName(RpcDiagnosticListenerNames.RpcFallbackError)]
