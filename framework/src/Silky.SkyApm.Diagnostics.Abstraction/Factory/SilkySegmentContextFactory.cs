@@ -113,10 +113,6 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
             return context;
         }
 
-
-        public void ReleaseContext(SegmentContext context)
-        {
-            _tracingContext.Release(context);
-        }
+        
     }
 }

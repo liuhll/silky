@@ -17,7 +17,5 @@ namespace Silky.SkyApm.Diagnostics.Abstraction.Factory
         SegmentContext GetCurrentContext(string operationName);
 
         SegmentContext GetTransactionContext(string operationName);
-
-        void ReleaseContext(SegmentContext context);
     }
 }
