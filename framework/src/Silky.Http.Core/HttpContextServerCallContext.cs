@@ -37,7 +37,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
     private StatusCode _statusCode;
     private string? _peer;
     private Activity? _activity;
-    private HttpContextSerializationContext? _serializationContext;
+
 
     internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntryDescriptor serviceEntryDescriptor,
         ISerializer serializer,
@@ -64,12 +64,6 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
             return _peer;
         }
     }
-
-    internal HttpContextSerializationContext SerializationContext
-    {
-        get => _serializationContext ??= new HttpContextSerializationContext(this);
-    }
-
 
     public void Initialize(ISystemClock? clock = null)
     {
@@ -170,10 +164,20 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
             await completionFeature.CompleteAsync();
         }
 
+        CancelRequest();
+    }
+
+    internal void CancelRequest()
+    {
+        // HttpResetFeature should always be set on context,
+        // but in case it isn't, fall back to HttpContext.Abort.
+        // Abort will send error code INTERNAL_ERROR.
         var resetFeature = HttpContext.Features.Get<IHttpResetFeature>();
         if (resetFeature != null)
         {
-            resetFeature.Reset(0x8);
+            var errorCode = HttpProtocol.IsHttp3(HttpContext.Request.Protocol) ? 0x010c : 0x08;
+
+            resetFeature.Reset(errorCode);
         }
         else
         {
@@ -242,7 +246,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
 
     protected CancellationToken CancellationTokenCore =>
         DeadlineManager?.CancellationToken ?? HttpContext.RequestAborted;
-    
+
     public CancellationToken CancellationToken => CancellationTokenCore;
 
     private async Task EndCallAsyncCore()

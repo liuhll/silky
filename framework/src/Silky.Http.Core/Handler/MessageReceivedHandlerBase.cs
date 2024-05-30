@@ -29,11 +29,10 @@ namespace Silky.Http.Core.Handlers
                 serviceEntry.ServiceEntryDescriptor,
                 _serializer, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
-            httpContext.RequestAborted = serverCallContext.CancellationToken;
             try
             {
                 serverCallContext.Initialize();
-
+                httpContext.RequestAborted = serverCallContext.CancellationToken;
                 var handleCallTask = HandleCallAsyncCore(httpContext, serverCallContext, serviceEntry);
                 if (handleCallTask.IsCompletedSuccessfully)
                 {
@@ -59,11 +58,11 @@ namespace Silky.Http.Core.Handlers
                 serviceEntryDescriptor,
                 _serializer, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
-            httpContext.RequestAborted = serverCallContext.CancellationToken;
+           
             try
             {
                 serverCallContext.Initialize();
-
+                httpContext.RequestAborted = serverCallContext.CancellationToken;
                 var handleCallTask = HandleCallAsyncCore(httpContext, serverCallContext, serviceEntryDescriptor);
                 if (handleCallTask.IsCompletedSuccessfully)
                 {

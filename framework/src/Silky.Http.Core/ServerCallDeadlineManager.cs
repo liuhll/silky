@@ -10,8 +10,10 @@ namespace Silky.Http.Core;
 
 internal sealed class ServerCallDeadlineManager : IAsyncDisposable
 {
+    // Max System.Threading.Timer due time
     private const long DefaultMaxTimerDueTime = uint.MaxValue - 1;
 
+    // Avoid allocating delegates
     private static readonly TimerCallback DeadlineExceededDelegate = DeadlineExceededCallback;
     private static readonly TimerCallback DeadlineExceededLongDelegate = DeadlineExceededLongCallback;
 
@@ -27,6 +29,7 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
     public bool IsCallComplete { get; private set; }
     public bool IsDeadlineExceededStarted => _deadlineExceededCompleteTcs != null;
 
+    // Accessed by developers via ServerCallContext.CancellationToken
     public CancellationToken CancellationToken
     {
         get
@@ -48,8 +51,7 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
                         else
                         {
                             // Deadline CT should be cancelled if the request is aborted
-                            _requestAbortedRegistration =
-                                _serverCallContext.HttpContext.RequestAborted.Register(RequestAborted);
+                            _requestAbortedRegistration = _serverCallContext.HttpContext.RequestAborted.Register(RequestAborted);
                         }
                     }
                 }
@@ -59,8 +61,7 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
         }
     }
 
-    public ServerCallDeadlineManager(HttpContextServerCallContext serverCallContext, ISystemClock clock,
-        TimeSpan timeout, long maxTimerDueTime = DefaultMaxTimerDueTime)
+    public ServerCallDeadlineManager(HttpContextServerCallContext serverCallContext, ISystemClock clock, TimeSpan timeout, long maxTimerDueTime = DefaultMaxTimerDueTime)
     {
         // Set fields that need to exist before setting up deadline CTS
         // Ensures callback can run successfully before CTS timer starts
@@ -77,16 +78,19 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
             // Ensures there is no weird situation where the timer triggers
             // before the field is set. Shouldn't happen because only long deadlines
             // will take this path but better to be safe than sorry.
-            _longDeadlineTimer = new Timer(DeadlineExceededLongDelegate, (this, maxTimerDueTime), Timeout.Infinite,
-                Timeout.Infinite);
+            _longDeadlineTimer = CommonSilkyHelpers.Create(DeadlineExceededLongDelegate, (this, maxTimerDueTime), Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
             _longDeadlineTimer.Change(timerMilliseconds, Timeout.Infinite);
         }
         else
         {
-            _longDeadlineTimer = new Timer(DeadlineExceededDelegate, this, timerMilliseconds, Timeout.Infinite);
+            _longDeadlineTimer = CommonSilkyHelpers.Create(DeadlineExceededDelegate, this, TimeSpan.FromMilliseconds(timerMilliseconds), Timeout.InfiniteTimeSpan);
         }
     }
 
+    // Task to wait for when a call is being completed to ensure that registered deadline cancellation
+    // events have finished processing.
+    // - Avoids a race condition between deadline being raised and the call completing.
+    // - Required because OCE error thrown from token happens before registered events.
     public Task WaitDeadlineCompleteAsync()
     {
         Debug.Assert(_deadlineExceededCompleteTcs != null, "Can only be called if deadline is started.");
@@ -94,8 +98,7 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
         return _deadlineExceededCompleteTcs.Task;
     }
 
-    private static void DeadlineExceededCallback(object? state) =>
-        _ = ((ServerCallDeadlineManager)state!).DeadlineExceededAsync();
+    private static void DeadlineExceededCallback(object? state) => _ = ((ServerCallDeadlineManager)state!).DeadlineExceededAsync();
 
     private static void DeadlineExceededLongCallback(object? state)
     {
@@ -190,8 +193,7 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
             // but before deadline exceeded registration has been disposed
             if (!IsCallComplete)
             {
-                _deadlineExceededCompleteTcs =
-                    new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
+                _deadlineExceededCompleteTcs = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
                 return true;
             }
 
@@ -199,9 +201,14 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
         }
     }
 
-
     public ValueTask DisposeAsync()
     {
+        // Timer.DisposeAsync will wait until any in-progress callbacks are complete.
+        // By itself, this isn't enough to ensure the deadline has finished being raised because
+        // the callback doesn't return Task. _deadlineExceededCompleteTcs must also be awaited
+        // (it is set when a deadline starts being raised) to ensure the deadline manager is finished
+        // and resources can be disposed.
+
         var disposeTask = _longDeadlineTimer.DisposeAsync();
 
         if (disposeTask.IsCompletedSuccessfully &&
@@ -224,7 +231,6 @@ internal sealed class ServerCallDeadlineManager : IAsyncDisposable
         {
             await _deadlineExceededCompleteTcs.Task;
         }
-
         DisposeCore();
     }
 
