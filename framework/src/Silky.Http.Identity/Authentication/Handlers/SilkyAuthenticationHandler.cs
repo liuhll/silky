@@ -42,14 +42,21 @@ namespace Silky.Http.Identity.Authentication.Handlers
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var token = GetAuthorizationToken(Context);
-            if (token.IsNullOrEmpty())
-            {
-                return AuthenticateResult.Fail(new AuthenticationException("You have not logged in to the system."));
-            }
-
             try
             {
+                var serviceEntryDescriptor = Context.GetServiceEntryDescriptor();
+                if (serviceEntryDescriptor.IsAllowAnonymous)
+                {
+                    return AuthenticateResult.NoResult();
+                }
+
+                var token = GetAuthorizationToken(Context);
+                if (token.IsNullOrEmpty())
+                {
+                    return AuthenticateResult.Fail(
+                        new AuthenticationException("You have not logged in to the system."));
+                }
+
                 if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
                 {
                     return AuthenticateResult.Fail(new AuthenticationException(
