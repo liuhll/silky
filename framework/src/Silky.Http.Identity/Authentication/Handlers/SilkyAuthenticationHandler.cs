@@ -42,15 +42,16 @@ namespace Silky.Http.Identity.Authentication.Handlers
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            var token = GetAuthorizationToken(Context);
+            var serviceEntryDescriptor = Context.GetServiceEntryDescriptor();
+
             try
             {
-                var serviceEntryDescriptor = Context.GetServiceEntryDescriptor();
-                if (serviceEntryDescriptor.IsAllowAnonymous)
+                if (serviceEntryDescriptor.IsAllowAnonymous && token.IsNullOrEmpty())
                 {
                     return AuthenticateResult.NoResult();
                 }
 
-                var token = GetAuthorizationToken(Context);
                 if (token.IsNullOrEmpty())
                 {
                     return AuthenticateResult.Fail(
@@ -69,6 +70,11 @@ namespace Silky.Http.Identity.Authentication.Handlers
             }
             catch (TokenExpiredException ex)
             {
+                if (serviceEntryDescriptor.IsAllowAnonymous)
+                {
+                    return AuthenticateResult.NoResult();
+                }
+
                 Context.Response.SetResultStatusCode(StatusCode.UnAuthentication);
                 throw new AuthenticationException("Token has expired");
             }
