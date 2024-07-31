@@ -10,10 +10,9 @@ namespace Silky.Rpc.Security
     {
         private string _token;
 
-        public CurrentRpcToken(IOptionsMonitor<RpcOptions> rpcOptions)
+        public CurrentRpcToken(IOptions<RpcOptions> rpcOptions)
         {
-            _token = rpcOptions.CurrentValue.Token;
-            rpcOptions.OnChange(options => { _token = rpcOptions.CurrentValue.Token; });
+            _token = rpcOptions.Value.Token;
         }
 
         public string? Token { get; } = RpcContext.Context.GetInvokeAttachment(AttachmentKeys.RpcToken);

@@ -21,18 +21,21 @@ namespace Microsoft.Extensions.Hosting
 
             builder
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureServices((hostBuilder, services) =>
+                .ConfigureServices((context, services) =>
                 {
-                    engine = services.AddSilkyServices<T>(hostBuilder.Configuration,
-                        hostBuilder.HostingEnvironment, options);
+                    engine = services.AddSilkyServices<T>(
+                        context.Configuration,
+                        context.HostingEnvironment,
+                        options
+                    );
+
                     var bannerPrinter = engine.Resolve<IBannerPrinter>();
                     bannerPrinter.Print();
- 
                 })
-                .ConfigureContainer<ContainerBuilder>(builder =>
+                .ConfigureContainer<ContainerBuilder>(containerBuilder =>
                 {
-                    engine!.RegisterModules(builder);
-                    engine!.RegisterDependencies(builder);
+                    engine!.RegisterModules(containerBuilder);
+                    engine!.RegisterDependencies(containerBuilder);
                 }).ConfigureAppConfiguration((hostBuilder, configurationBuilder) =>
                 {
                     hostBuilder.Configuration = ConfigurationHelper

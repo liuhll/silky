@@ -36,9 +36,8 @@ namespace GatewayDemo
                 .AddSilkyMiniProfiler()
                 .AddSwaggerDocuments(options =>
                 {
-                   // options.OperationFilter<AddTestHeaderOperationFilter>(); 
+                    // options.OperationFilter<AddTestHeaderOperationFilter>(); 
                     SwaggerDocumentBuilder.BuildGen(options, Configuration);
-                   
                 });
 
             services.AddRouting();
@@ -76,7 +75,7 @@ namespace GatewayDemo
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwaggerDocuments();
-                app.UseMiniProfiler();
+                // app.UseMiniProfiler();
             }
 
             //app.UseSerilogRequestLogging();

@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Builder
             Action<SwaggerOptions> swaggerSetupAction = null, Action<SwaggerUIOptions>
                 swaggerUiSetupAction = null)
         {
-            var swaggerDocumentOptions = EngineContext.Current.GetOptionsSnapshot<SwaggerDocumentOptions>();
+            var swaggerDocumentOptions = EngineContext.Current.GetOptions<SwaggerDocumentOptions>();
             app.UseSwagger(swaggerSetupAction ??
                            (options => SwaggerDocumentBuilder.Build(options, swaggerDocumentOptions)));
 
@@ -23,6 +23,5 @@ namespace Microsoft.AspNetCore.Builder
 
             return app;
         }
-        
     }
 }

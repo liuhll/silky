@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using Medallion.Threading;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions.Collections.Generic;
@@ -24,46 +25,44 @@ namespace Silky.Transaction.Schedule
         private readonly ILogger<TransactionSelfRecoveryScheduled> _logger;
         private readonly ISerializer _serializer;
         private IDistributedLockProvider _distributedLockProvider;
-        private DistributedTransactionOptions _transactionConfig;
+        private DistributedTransactionOptions TransactionConfig => _distributedTransactionOptionsMonitor.CurrentValue;
+        private readonly IOptionsMonitor<DistributedTransactionOptions> _distributedTransactionOptionsMonitor;
         private Timer _selfTccRecoveryTimer;
         private Timer _cleanRecoveryTimer;
         private Timer _phyDeletedTimer;
 
         public TransactionSelfRecoveryScheduled(ILogger<TransactionSelfRecoveryScheduled> logger,
-            ISerializer serializer)
+            ISerializer serializer,
+            IOptionsMonitor<DistributedTransactionOptions> distributedTransactionOptionsMonitor)
         {
             _logger = logger;
             _serializer = serializer;
-            _transactionConfig =
-                EngineContext.Current.GetOptionsMonitor<DistributedTransactionOptions>((options, s) =>
-                    _transactionConfig = options);
+            _distributedTransactionOptionsMonitor = distributedTransactionOptionsMonitor;
+
             _distributedLockProvider = EngineContext.Current.Resolve<IDistributedLockProvider>();
             if (_distributedLockProvider == null)
             {
                 throw new SilkyException("Failed to create distributed lock provider", StatusCode.TransactionError);
             }
-            
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-         
-
             _selfTccRecoveryTimer = new Timer(SelfTccRecovery,
                 null,
-                TimeSpan.FromSeconds(_transactionConfig.ScheduledInitDelay),
-                TimeSpan.FromSeconds(_transactionConfig.ScheduledRecoveryDelay));
+                TimeSpan.FromSeconds(TransactionConfig.ScheduledInitDelay),
+                TimeSpan.FromSeconds(TransactionConfig.ScheduledRecoveryDelay));
             _cleanRecoveryTimer = new Timer(CleanRecovery,
                 null,
-                TimeSpan.FromSeconds(_transactionConfig.ScheduledInitDelay),
-                TimeSpan.FromSeconds(_transactionConfig.ScheduledCleanDelay)
+                TimeSpan.FromSeconds(TransactionConfig.ScheduledInitDelay),
+                TimeSpan.FromSeconds(TransactionConfig.ScheduledCleanDelay)
             );
-            if (!_transactionConfig.PhyDeleted)
+            if (!TransactionConfig.PhyDeleted)
             {
-                int seconds = _transactionConfig.StoreDays * 24 * 60 * 60;
+                int seconds = TransactionConfig.StoreDays * 24 * 60 * 60;
                 _phyDeletedTimer = new Timer(PhyDeleted,
                     null,
-                    TimeSpan.FromSeconds(_transactionConfig.ScheduledInitDelay),
+                    TimeSpan.FromSeconds(TransactionConfig.ScheduledInitDelay),
                     TimeSpan.FromSeconds(seconds)
                 );
             }
@@ -71,7 +70,7 @@ namespace Silky.Transaction.Schedule
 
         private async void PhyDeleted([CanBeNull] object state)
         {
-            if (!_transactionConfig.PhyDeleted)
+            if (!TransactionConfig.PhyDeleted)
             {
                 try
                 {
@@ -83,7 +82,7 @@ namespace Silky.Transaction.Schedule
                     }
                     else
                     {
-                        var seconds = _transactionConfig.StoreDays * 24 * 60 * 60;
+                        var seconds = TransactionConfig.StoreDays * 24 * 60 * 60;
                         var removeTransCount =
                             await TransRepositoryStore.RemoveTransactionByDate(AcquireDelayData(seconds));
                         var removeParticipantCount =
@@ -109,8 +108,8 @@ namespace Silky.Transaction.Schedule
                 if (handle != null)
                 {
                     var transactionList = await TransRepositoryStore.ListLimitByDelay(
-                        AcquireDelayData(_transactionConfig.CleanDelayTime),
-                        _transactionConfig.Limit);
+                        AcquireDelayData(TransactionConfig.CleanDelayTime),
+                        TransactionConfig.Limit);
                     if (transactionList.IsNullOrEmpty())
                     {
                         return;
@@ -145,8 +144,8 @@ namespace Silky.Transaction.Schedule
                 if (handle != null)
                 {
                     var participantList = await TransRepositoryStore.ListParticipant(
-                        AcquireDelayData(_transactionConfig.RecoverDelayTime), TransactionType.Tcc,
-                        _transactionConfig.Limit);
+                        AcquireDelayData(TransactionConfig.RecoverDelayTime), TransactionType.Tcc,
+                        TransactionConfig.Limit);
                     if (participantList.IsNullOrEmpty())
                     {
                         return;
@@ -159,7 +158,7 @@ namespace Silky.Transaction.Schedule
                                                                                participant.ParticipantId);
 
                         if (participantHandle == null) continue;
-                        if (participant.ReTry > _transactionConfig.RetryMax)
+                        if (participant.ReTry > TransactionConfig.RetryMax)
                         {
                             _logger.LogError(
                                 "This tcc transaction exceeds the maximum number of retries and no retries will occur：{Serialize}",
@@ -197,7 +196,7 @@ namespace Silky.Transaction.Schedule
         private async Task TccRecovery(ActionStage stage, IParticipant participant)
         {
             var transactionRecoveryService =
-                EngineContext.Current.ResolveNamed<ITransactionRecoveryService>(_transactionConfig
+                EngineContext.Current.ResolveNamed<ITransactionRecoveryService>(TransactionConfig
                     .TransactionType
                     .ToString());
             RpcContext.Context.SetInvokeAttachments(participant.InvokeAttachments);

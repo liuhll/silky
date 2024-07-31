@@ -1,5 +1,4 @@
 using Silky.Core.MiniProfiler;
-using Silky.Http.MiniProfiler;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -21,7 +20,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.IgnoredPaths.Add("/js");
                 options.IgnoredPaths.Add("/swagger");
             });
-            services.AddTransient<IMiniProfiler, DefaultMiniProfiler>();
             return services;
         }
     }

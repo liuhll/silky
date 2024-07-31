@@ -78,11 +78,11 @@ namespace Silky.Core.Logging
             logger.LogWithLevel(level.Value, message, args);
             if (args != null && args.Any())
             {
-                MiniProfilerPrinter.Print(category, state, string.Format(message, args), isError);
+                MiniProfilerHelper.Print(category, state, string.Format(message, args), isError);
             }
             else
             {
-                MiniProfilerPrinter.Print(category, state, message, isError);
+                MiniProfilerHelper.Print(category, state, message, isError);
             }
         }
 

@@ -95,35 +95,44 @@ namespace Silky.Rpc
                 {
                     messageListener.Received += async (sender, message) =>
                     {
-                        using var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
-                        message.SetRpcMessageId();
-                        var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
-                        remoteInvokeMessage.SetRpcAttachments();
-                        var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
-                        rpcContextAccessor.RpcContext = RpcContext.Context;
-                        rpcContextAccessor.RpcContext.RpcServices = serviceScope.ServiceProvider;
-                        var serverDiagnosticListener = EngineContext.Current.Resolve<IServerDiagnosticListener>();
-                        var tracingTimestamp = serverDiagnosticListener.TracingBefore(remoteInvokeMessage, message.Id);
-                        var handlePolicyBuilder = EngineContext.Current.Resolve<IHandlePolicyBuilder>();
-                        var policy = handlePolicyBuilder.Build(remoteInvokeMessage);
-                        var context = new Context(PollyContextNames.ServerHandlerOperationKey)
+                        try
                         {
-                            [PollyContextNames.TracingTimestamp] = tracingTimestamp
-                        };
-                        var result = await policy.ExecuteAsync(async ct =>
-                        {
-                            var messageReceivedHandler = EngineContext.Current.Resolve<IServerMessageReceivedHandler>();
-                            var remoteResultMessage =
-                                await messageReceivedHandler.Handle(remoteInvokeMessage, ct,
-                                    CancellationToken.None);
-                            return remoteResultMessage;
-                        }, context);
-                        var resultTransportMessage = new TransportMessage(result, message.Id);
-                        await sender.SendMessageAsync(resultTransportMessage);
-                        serverDiagnosticListener.TracingAfter(tracingTimestamp, message.Id,
-                            remoteInvokeMessage.ServiceEntryId, result);
+                            using var serviceScope = EngineContext.Current.ServiceProvider.CreateScope();
+                            message.SetRpcMessageId();
+                            var remoteInvokeMessage = message.GetContent<RemoteInvokeMessage>();
+                            remoteInvokeMessage.SetRpcAttachments();
+                            var rpcContextAccessor = EngineContext.Current.Resolve<IRpcContextAccessor>();
+                            rpcContextAccessor.RpcContext = RpcContext.Context;
+                            rpcContextAccessor.RpcContext.RpcServices = serviceScope.ServiceProvider;
+                            var serverDiagnosticListener = EngineContext.Current.Resolve<IServerDiagnosticListener>();
+                            var tracingTimestamp =
+                                serverDiagnosticListener.TracingBefore(remoteInvokeMessage, message.Id);
+                            var handlePolicyBuilder = EngineContext.Current.Resolve<IHandlePolicyBuilder>();
+                            var policy = handlePolicyBuilder.Build(remoteInvokeMessage);
+                            var context = new Context(PollyContextNames.ServerHandlerOperationKey)
+                            {
+                                [PollyContextNames.TracingTimestamp] = tracingTimestamp
+                            };
+                            var result = await policy.ExecuteAsync(async ct =>
+                            {
+                                var messageReceivedHandler =
+                                    EngineContext.Current.Resolve<IServerMessageReceivedHandler>();
+                                var remoteResultMessage =
+                                    await messageReceivedHandler.Handle(remoteInvokeMessage, ct,
+                                        CancellationToken.None);
+                                return remoteResultMessage;
+                            }, context);
+                            var resultTransportMessage = new TransportMessage(result, message.Id);
+                            await sender.SendMessageAsync(resultTransportMessage);
+                            serverDiagnosticListener.TracingAfter(tracingTimestamp, message.Id,
+                                remoteInvokeMessage.ServiceEntryId, result);
 
-                        EngineContext.DisposeUnmanagedObjects();
+                            EngineContext.DisposeUnmanagedObjects();
+                        }
+                        finally
+                        {
+                            RpcContext.Context.Reset();
+                        }
                     };
                 }
             }

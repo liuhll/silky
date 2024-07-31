@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -37,16 +38,18 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
     private StatusCode _statusCode;
     private string? _peer;
     private Activity? _activity;
-
+    private GatewayOptions _gatewayOptions;
 
     internal HttpContextServerCallContext(HttpContext httpContext, ServiceEntryDescriptor serviceEntryDescriptor,
         ISerializer serializer,
+        GatewayOptions gatewayOptions,
         ILogger logger)
     {
         HttpContext = httpContext;
         ServiceEntryDescriptor = serviceEntryDescriptor;
         Serializer = serializer;
         Logger = logger;
+        _gatewayOptions = gatewayOptions;
     }
 
     public HttpContextServerCallContext ServerCallContext => this;
@@ -100,8 +103,7 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
             throw new InvalidOperationException("Response headers can only be sent once per call.");
         }
 
-        var gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>();
-        HttpContext.Response.ContentType = HttpContext.GetResponseContentType(gatewayOptions);
+        HttpContext.Response.ContentType = HttpContext.GetResponseContentType(_gatewayOptions);
         HttpContext.Response.SetHeaders();
         _statusCode = StatusCode.Success;
         HttpContext.Response.StatusCode = (int)_statusCode.GetHttpStatusCode();
@@ -117,9 +119,8 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         }
 
         _statusCode = exception.GetExceptionStatusCode();
-        var gatewayOptions = EngineContext.Current.GetOptionsMonitor<GatewayOptions>();
         HttpContext.Response.ContentType = exception is ValidationException
-            ? HttpContext.GetResponseContentType(gatewayOptions)
+            ? HttpContext.GetResponseContentType(_gatewayOptions)
             : "text/plain;charset=utf-8";
 
         HttpContext.Response.HttpContext.Features.Set(new ExceptionHandlerFeature()

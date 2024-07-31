@@ -5,19 +5,21 @@ using Silky.Core.Runtime.Session;
 
 namespace Silky.Caching
 {
-    public class DistributedCacheKeyNormalizer : IDistributedCacheKeyNormalizer, ITransientDependency
+    public class DistributedCacheKeyNormalizer : IDistributedCacheKeyNormalizer, ISingletonDependency
     {
         protected ISession Session { get; }
 
-        protected SilkyDistributedCacheOptions DistributedCacheOptions { get; private set; }
+
+        private IOptionsMonitor<SilkyDistributedCacheOptions> _distributedCacheOptionsMonitor;
+
+        protected SilkyDistributedCacheOptions DistributedCacheOptions => _distributedCacheOptionsMonitor.CurrentValue;
 
 
         public DistributedCacheKeyNormalizer(
-            IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOptions)
+            IOptionsMonitor<SilkyDistributedCacheOptions> distributedCacheOptionsMonitor)
         {
-            DistributedCacheOptions = distributedCacheOptions.CurrentValue;
+            _distributedCacheOptionsMonitor = distributedCacheOptionsMonitor;
             Session = NullSession.Instance;
-            distributedCacheOptions.OnChange((options, s) => DistributedCacheOptions = options);
         }
 
         public virtual string NormalizeKey(DistributedCacheKeyNormalizeArgs args)

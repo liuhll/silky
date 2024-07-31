@@ -55,24 +55,16 @@ namespace Silky.Core
 
         TOptions GetOptions<TOptions>(string optionName)
             where TOptions : class, new();
+        
 
-        TOptions GetOptionsMonitor<TOptions>()
-            where TOptions : class, new();
+        T Resolve<T>(IServiceScope scope = null) where T : class;
 
-        TOptions GetOptionsMonitor<TOptions>(Action<TOptions, string> listener)
-            where TOptions : class, new();
-
-        TOptions GetOptionsSnapshot<TOptions>()
-            where TOptions : class, new();
-
-        T Resolve<T>() where T : class;
-
-        object Resolve(Type type);
-        object ResolveNamed(string name, Type type);
+        object Resolve(Type type, IServiceScope scope = null);
+        object ResolveNamed(string name, Type type, IServiceScope scope = null);
 
         object ResolveServiceInstance(string? serviceKey, Type serviceType);
 
-        T ResolveNamed<T>(string name);
+        T ResolveNamed<T>(string name,IServiceScope scope = null);
 
         IEnumerable<T> ResolveAll<T>();
 

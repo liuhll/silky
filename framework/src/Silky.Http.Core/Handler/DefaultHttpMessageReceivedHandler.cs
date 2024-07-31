@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -12,6 +13,7 @@ using Silky.Core.Logging;
 using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
+using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Auditing;
 using Silky.Rpc.Extensions;
@@ -31,7 +33,8 @@ namespace Silky.Http.Core.Handlers
             ISerializer serializer,
             IParameterParser parameterParser,
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
-            IAuditSerializer auditSerializer) : base(serializer)
+            IAuditSerializer auditSerializer, IOptionsMonitor<GatewayOptions> gatewayOptionsMonitor) : base(serializer,
+            gatewayOptionsMonitor)
         {
             _executor = executor;
             _parameterParser = parameterParser;

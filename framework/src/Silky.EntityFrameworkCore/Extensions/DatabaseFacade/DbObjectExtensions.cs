@@ -269,9 +269,6 @@ namespace Silky.EntityFrameworkCore.Extensions.DatabaseFacade
         private static void LogSqlExecuteCommand(
             Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade databaseFacade, DbCommand dbCommand)
         {
-            // 打印执行 SQL
-            //App.PrintToMiniProfiler("sql", "Execution", dbCommand.CommandText);
-
             // 判断是否启用
             if (!IsLogEntityFrameworkCoreSqlExecuteCommand) return;
 

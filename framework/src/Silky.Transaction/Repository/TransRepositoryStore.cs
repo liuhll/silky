@@ -13,12 +13,12 @@ namespace Silky.Transaction.Repository
     {
         private static ITransRepository _transRepository;
         private static DistributedTransactionOptions _transactionOptions;
+        
 
         static TransRepositoryStore()
         {
             _transactionOptions =
-                EngineContext.Current.GetOptionsMonitor<DistributedTransactionOptions>((options, s) =>
-                    _transactionOptions = options);
+                EngineContext.Current.GetOptions<DistributedTransactionOptions>();
 
             _transRepository = EngineContext.Current.Resolve<ITransRepository>();
 

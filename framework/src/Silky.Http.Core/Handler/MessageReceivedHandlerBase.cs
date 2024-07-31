@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Serialization;
+using Silky.Http.Core.Configuration;
 using Silky.Rpc.Runtime.Server;
 
 namespace Silky.Http.Core.Handlers
@@ -12,10 +14,15 @@ namespace Silky.Http.Core.Handlers
     internal abstract class MessageReceivedHandlerBase : IMessageReceivedHandler
     {
         protected readonly ISerializer _serializer;
+        protected readonly IOptionsMonitor<GatewayOptions> _gatewayOptionsMonitor;
 
-        protected MessageReceivedHandlerBase(ISerializer serializer)
+        internal GatewayOptions GatewayOptions => _gatewayOptionsMonitor.CurrentValue;
+
+        protected MessageReceivedHandlerBase(ISerializer serializer,
+            IOptionsMonitor<GatewayOptions> gatewayOptionsMonitor)
         {
             _serializer = serializer;
+            _gatewayOptionsMonitor = gatewayOptionsMonitor;
         }
 
         public virtual ILogger<MessageReceivedHandlerBase> Logger { get; set; }
@@ -27,7 +34,7 @@ namespace Silky.Http.Core.Handlers
 
             var serverCallContext = new HttpContextServerCallContext(httpContext,
                 serviceEntry.ServiceEntryDescriptor,
-                _serializer, Logger);
+                _serializer, GatewayOptions, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
             try
             {
@@ -56,9 +63,9 @@ namespace Silky.Http.Core.Handlers
 
             var serverCallContext = new HttpContextServerCallContext(httpContext,
                 serviceEntryDescriptor,
-                _serializer, Logger);
+                _serializer, GatewayOptions, Logger);
             httpContext.Features.Set<IServerCallContextFeature>(serverCallContext);
-           
+
             try
             {
                 serverCallContext.Initialize();

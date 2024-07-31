@@ -27,18 +27,18 @@ namespace Silky.Core
         private ITypeFinder _typeFinder;
         private Banner _banner;
 
-
         public IConfiguration Configuration { get; private set; }
-
         public IHostEnvironment HostEnvironment { get; private set; }
+        public string HostName { get; private set; }
+        public SilkyApplicationCreationOptions ApplicationOptions { get; private set; }
+        public IServiceProvider ServiceProvider { get; set; }
+        public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; private set; }
 
         Banner IEngine.Banner
         {
             get => _banner;
             set => _banner = value;
         }
-
-        public string HostName { get; private set; }
 
         internal SilkyEngine()
         {
@@ -64,7 +64,6 @@ namespace Silky.Core
             HostEnvironment = hostEnvironment;
         }
 
-
         void IEngine.SetConfiguration([NotNull] IConfiguration configuration)
         {
             Check.NotNull(configuration, nameof(configuration));
@@ -75,17 +74,17 @@ namespace Silky.Core
         {
             Check.NotNull(services, nameof(services));
             Check.NotNull(configuration, nameof(configuration));
+
             var configureServices = _typeFinder.FindClassesOfType<IConfigureService>();
-            //create and sort instances of startup configurations
             var instances = configureServices
                 .Select(configureService => (IConfigureService)Activator.CreateInstance(configureService));
 
-            //configure services
             foreach (var instance in instances)
                 instance.ConfigureServices(services, Configuration);
-            // configure modules 
+
             foreach (var module in Modules)
                 module.Instance.ConfigureServices(services, Configuration);
+
             ServiceProvider = services.BuildServiceProvider();
         }
 
@@ -102,33 +101,7 @@ namespace Silky.Core
             return options;
         }
 
-        public TOptions GetOptionsMonitor<TOptions>()
-            where TOptions : class, new()
-        {
-            return Resolve<IOptionsMonitor<TOptions>>()?.CurrentValue;
-        }
-
-        public TOptions GetOptionsMonitor<TOptions>(Action<TOptions, string> listener)
-            where TOptions : class, new()
-        {
-            var optionsMonitor = Resolve<IOptionsMonitor<TOptions>>();
-            if (optionsMonitor != null)
-            {
-                optionsMonitor.OnChange(listener);
-            }
-
-            return optionsMonitor?.CurrentValue;
-        }
-
-
-        public TOptions GetOptionsSnapshot<TOptions>()
-            where TOptions : class, new()
-        {
-            return Resolve<IOptionsSnapshot<TOptions>>()?.Value;
-        }
-
         public ITypeFinder TypeFinder => _typeFinder;
-
 
         void IEngine.SetApplicationOptions(SilkyApplicationCreationOptions applicationOptions)
         {
@@ -141,12 +114,12 @@ namespace Silky.Core
             LoadConfigPlugIns(applicationOptions);
         }
 
-
         private void LoadConfigPlugIns(SilkyApplicationCreationOptions options)
         {
             var plugInOptions = GetOptions<PlugInSourceOptions>(PlugInSourceOptions.PlugInSource);
 
             if (plugInOptions.ModulePlugIn == null) return;
+
             if (plugInOptions.ModulePlugIn.Types != null)
             {
                 options.ModulePlugInSources.AddTypeNames(plugInOptions.ModulePlugIn.Types);
@@ -169,70 +142,61 @@ namespace Silky.Core
         void IEngine.ConfigureRequestPipeline(IApplicationBuilder application)
         {
             ServiceProvider = application.ApplicationServices;
-            var typeFinder = Resolve<ITypeFinder>();
-            var startupConfigurations = typeFinder.FindClassesOfType<ISilkyStartup>();
 
-            //create and sort instances of startup configurations
-            var instances = startupConfigurations
+            var startupConfigurations = _typeFinder.FindClassesOfType<ISilkyStartup>()
                 .Select(startup => (ISilkyStartup)Activator.CreateInstance(startup))
                 .OrderBy(startup => startup.Order);
 
-            //configure request pipeline
-            foreach (var instance in instances)
+            foreach (var instance in startupConfigurations)
                 instance.Configure(application);
 
-            var webSilkyModules = Modules.Where(p => p.Instance is HttpSilkyModule);
-            foreach (var webSilkyModule in webSilkyModules)
+            foreach (var webSilkyModule in Modules.Where(p => p.Instance is HttpSilkyModule))
             {
                 ((HttpSilkyModule)webSilkyModule.Instance).Configure(application);
             }
         }
 
-        public T Resolve<T>() where T : class
+        public T Resolve<T>(IServiceScope scope = null) where T : class
         {
-            return (T)Resolve(typeof(T));
+            return (T)Resolve(typeof(T), scope);
         }
 
-        public object Resolve(Type type)
+        public object Resolve(Type type, IServiceScope scope = null)
         {
-            var sp = GetServiceProvider();
-            if (sp == null)
-                return null;
-            return sp.GetService(type);
+            var sp = GetServiceProvider(scope);
+            return sp?.GetService(type);
         }
 
-        public object ResolveNamed(string name, Type type)
+        public object ResolveNamed(string name, Type type, IServiceScope scope = null)
         {
-            var sp = GetServiceProvider();
-            if (sp == null)
-                return null;
-            return sp.GetAutofacRoot().ResolveNamed(name, type);
+            var sp = GetServiceProvider(scope);
+            return sp?.GetAutofacRoot().ResolveNamed(name, type);
         }
 
         public object ResolveServiceInstance(string? serviceKey, Type serviceType)
         {
-            object instance = null;
-            if (!serviceKey.IsNullOrEmpty())
+            object instance;
+            if (!string.IsNullOrEmpty(serviceKey))
             {
-                if (!EngineContext.Current.IsRegisteredWithName(serviceKey, serviceType))
+                if (!IsRegisteredWithName(serviceKey, serviceType))
                 {
                     throw new UnServiceKeyImplementationException(
                         $"There is no implementation class of the {serviceType.FullName} interface whose serviceKey is {serviceKey} in the system");
                 }
 
-                instance = EngineContext.Current.ResolveNamed(serviceKey, serviceType);
+                instance = ResolveNamed(serviceKey, serviceType);
             }
             else
             {
-                instance = EngineContext.Current.Resolve(serviceType);
+                instance = Resolve(serviceType);
             }
 
             return instance;
         }
 
-        public T ResolveNamed<T>(string name)
+        public T ResolveNamed<T>(string name, IServiceScope scope = null)
         {
-            return (T)ResolveNamed(name, typeof(T));
+            return (T)ResolveNamed(name, typeof(T), scope);
         }
 
         public IEnumerable<T> ResolveAll<T>()
@@ -257,7 +221,6 @@ namespace Silky.Core
             {
                 try
                 {
-                    //try to resolve constructor parameters
                     var parameters = constructor.GetParameters().Select(parameter =>
                     {
                         var service = Resolve(parameter.ParameterType);
@@ -266,7 +229,6 @@ namespace Silky.Core
                         return service;
                     });
 
-                    //all is ok, so create instance
                     return Activator.CreateInstance(type, parameters.ToArray());
                 }
                 catch (Exception ex)
@@ -279,19 +241,21 @@ namespace Silky.Core
                 innerException);
         }
 
-        private IServiceProvider GetServiceProvider()
+        private IServiceProvider GetServiceProvider(IServiceScope scope = null)
         {
-            if (ServiceProvider == null)
+            var serviceProvider = scope?.ServiceProvider ?? ServiceProvider;
+
+            if (serviceProvider == null)
                 return null;
-            var serviceProvider = ServiceProvider;
-            var httpContextAccessor = serviceProvider?.GetService<IHttpContextAccessor>();
-            if (httpContextAccessor is { HttpContext: { } })
+
+            var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor?.HttpContext != null)
             {
                 serviceProvider = httpContextAccessor.HttpContext.RequestServices;
             }
 
-            var rpcContextAccessor = serviceProvider?.GetService<IRpcContextAccessor>();
-            if (rpcContextAccessor is { RpcContext: { RpcServices: { } } })
+            var rpcContextAccessor = serviceProvider.GetService<IRpcContextAccessor>();
+            if (rpcContextAccessor?.RpcContext?.RpcServices != null)
             {
                 serviceProvider = rpcContextAccessor.RpcContext.RpcServices;
             }
@@ -299,40 +263,33 @@ namespace Silky.Core
             return serviceProvider;
         }
 
-
         public void RegisterDependencies(ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterInstance(this).As<IEngine>().SingleInstance();
             containerBuilder.RegisterInstance(_typeFinder).As<ITypeFinder>().SingleInstance();
 
-            var dependencyRegistrars = _typeFinder.FindClassesOfType<IDependencyRegistrar>();
-            var instances = dependencyRegistrars
-                .Select(dependencyRegistrar => (IDependencyRegistrar)Activator.CreateInstance(dependencyRegistrar))
+            var dependencyRegistrars = _typeFinder.FindClassesOfType<IDependencyRegistrar>()
+                .Select(dependencyRegistrar => (IDependencyRegistrar)Activator.CreateInstance(dependencyRegistrar)!)
                 .OrderBy(dependencyRegistrar => dependencyRegistrar.Order);
-            foreach (var dependencyRegistrar in instances)
+
+            foreach (var dependencyRegistrar in dependencyRegistrars)
                 dependencyRegistrar.Register(containerBuilder, _typeFinder);
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            //check for assembly already loaded
             var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
             if (assembly != null)
                 return assembly;
 
-            //get assembly from TypeFinder
             var tf = _typeFinder;
-            if (tf == null)
-                return null;
-
-            assembly = tf.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
-
-            return assembly;
+            return tf?.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
         }
 
         public void RegisterModules(ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterInstance(this).As<IModuleContainer>().SingleInstance();
+
             var assemblyNames = ((AppDomainTypeFinder)_typeFinder).AssemblyNames;
             foreach (var module in Modules)
             {
@@ -356,12 +313,5 @@ namespace Silky.Core
 
             Modules = moduleLoader.LoadModules(services, startUpType, plugInSources);
         }
-
-
-        public SilkyApplicationCreationOptions ApplicationOptions { get; private set; }
-
-        public IServiceProvider ServiceProvider { get; set; }
-
-        public IReadOnlyList<ISilkyModuleDescriptor> Modules { get; private set; }
     }
 }

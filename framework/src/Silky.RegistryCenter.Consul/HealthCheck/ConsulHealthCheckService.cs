@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Consul;
 using Medallion.Threading;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Rpc.Configuration;
 
@@ -12,16 +13,18 @@ public class ConsulHealthCheckService : IHealthCheckService
 {
     private ConcurrentDictionary<string, int> _serverInstanceUnHealthCache = new();
 
-    private GovernanceOptions _governanceOptions;
+
+    private GovernanceOptions GovernanceOptions => _governanceOptionsMonitor.CurrentValue;
+
+    private IOptionsMonitor<GovernanceOptions> _governanceOptionsMonitor;
+
     private readonly IDistributedLockProvider _distributedLockProvider;
 
-    public ConsulHealthCheckService(IDistributedLockProvider distributedLockProvider)
+    public ConsulHealthCheckService(IDistributedLockProvider distributedLockProvider,
+        IOptionsMonitor<GovernanceOptions> governanceOptionsMonitor)
     {
         _distributedLockProvider = distributedLockProvider;
-        _governanceOptions = EngineContext.Current.GetOptionsMonitor<GovernanceOptions>(((options, s) =>
-        {
-            _governanceOptions = options;
-        }));
+        _governanceOptionsMonitor = governanceOptionsMonitor;
     }
 
 
@@ -46,7 +49,7 @@ public class ConsulHealthCheckService : IHealthCheckService
             }
 
             _serverInstanceUnHealthCache.AddOrUpdate(healthCheck.ServiceID, unHealthCount, (k, v) => unHealthCount);
-            if (unHealthCount >= _governanceOptions.UnHealthAddressTimesAllowedBeforeRemoving)
+            if (unHealthCount >= GovernanceOptions.UnHealthAddressTimesAllowedBeforeRemoving)
             {
                 await consulClient.Agent.ServiceDeregister(healthCheck.ServiceID);
                 _serverInstanceUnHealthCache.TryRemove(healthCheck.ServiceID, out _);

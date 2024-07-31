@@ -20,12 +20,12 @@ namespace Silky.Http.Identity.Authentication.Handlers
 {
     internal class SilkyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private GatewayOptions _gatewayOptions;
+        private IOptionsMonitor<GatewayOptions> _gatewayOptionsMonitor;
         private readonly IJwtDecoder _jwtDecoder;
 
         public SilkyAuthenticationHandler(
             [NotNull] [ItemNotNull] IOptionsMonitor<AuthenticationSchemeOptions> authenticationSchemeOptions,
-            IOptionsMonitor<GatewayOptions> gatewayOptions,
+            IOptionsMonitor<GatewayOptions> gatewayOptionsMonitor,
             [NotNull] ILoggerFactory logger,
             [NotNull] UrlEncoder encoder,
             [NotNull] ISystemClock clock,
@@ -36,14 +36,19 @@ namespace Silky.Http.Identity.Authentication.Handlers
                 clock)
         {
             _jwtDecoder = jwtDecoder;
-            _gatewayOptions = gatewayOptions.CurrentValue;
-            gatewayOptions.OnChange((options, s) => _gatewayOptions = options);
+            _gatewayOptionsMonitor = gatewayOptionsMonitor;
         }
+
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var token = GetAuthorizationToken(Context);
             var serviceEntryDescriptor = Context.GetServiceEntryDescriptor();
+
+            if (serviceEntryDescriptor == null) 
+            {
+                throw new NotFindServiceEntryException($"Not find service entry by API {Context.Request.Path}-{Context.Request.Path}");
+            }
 
             try
             {
@@ -58,13 +63,15 @@ namespace Silky.Http.Identity.Authentication.Handlers
                         new AuthenticationException("You have not logged in to the system."));
                 }
 
-                if (_gatewayOptions.JwtSecret.IsNullOrEmpty())
+                var gatewayOptions = _gatewayOptionsMonitor.CurrentValue;
+
+                if (gatewayOptions.JwtSecret.IsNullOrEmpty())
                 {
                     return AuthenticateResult.Fail(new AuthenticationException(
                         "You have not set JwtSecret on the Gateway configuration node, and the validity of the token cannot be verified"));
                 }
 
-                var payload = _jwtDecoder.DecodeToObject(token, _gatewayOptions.JwtSecret, true);
+                var payload = _jwtDecoder.DecodeToObject(token, gatewayOptions.JwtSecret, true);
                 var ticket = CreateTicket(payload);
                 return AuthenticateResult.Success(ticket);
             }

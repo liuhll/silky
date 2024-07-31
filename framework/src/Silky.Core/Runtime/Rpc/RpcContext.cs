@@ -181,6 +181,7 @@ namespace Silky.Core.Runtime.Rpc
             {
                 return;
             }
+
             foreach (var item in attachments)
             {
                 SetInvokeAttachment(item.Key, item.Value);
@@ -193,6 +194,7 @@ namespace Silky.Core.Runtime.Rpc
             {
                 return;
             }
+
             foreach (var item in attachments)
             {
                 SetTransAttachment(item.Key, item.Value);
@@ -254,6 +256,14 @@ namespace Silky.Core.Runtime.Rpc
             }
 
             return responseHeadersValue.ConventTo<IDictionary<string, string>>();
+        }
+
+        public void Reset()
+        {
+            invokeAttachments.Clear();
+            resultAttachments.Clear();
+            transAttachments.Clear();
+            rpcContextThreadLocal.Value = null;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
@@ -30,6 +31,7 @@ namespace Silky.Http.Dashboard.AppService
         private readonly IRegisterCenterHealthProvider _registerCenterHealthProvider;
         private readonly IServerHealthCheck _serverHealthCheck;
         private readonly IAppointAddressInvoker _appointAddressInvoker;
+        private readonly DashboardOptions _dashboardOptions;
 
 
         private const string ipEndpointRegex =
@@ -51,7 +53,7 @@ namespace Silky.Http.Dashboard.AppService
             IServiceEntryLocator serviceEntryLocator,
             IRegisterCenterHealthProvider registerCenterHealthProvider,
             IServerHealthCheck serverHealthCheck,
-            IAppointAddressInvoker appointAddressInvoker)
+            IAppointAddressInvoker appointAddressInvoker, IOptions<DashboardOptions> dashboardOptions)
         {
             _serverManager = serverManager;
             _serviceEntryManager = serviceEntryManager;
@@ -61,6 +63,7 @@ namespace Silky.Http.Dashboard.AppService
             _appointAddressInvoker = appointAddressInvoker;
             _serviceManager = serviceManager;
             _serviceEntryLocator = serviceEntryLocator;
+            _dashboardOptions = dashboardOptions.Value;
         }
 
         public PagedList<GetHostOutput> GetHosts(PagedRequestDto input)
@@ -442,7 +445,7 @@ namespace Silky.Http.Dashboard.AppService
                     || p.Address.Contains(input.SearchKey))
                 .ToPagedList(input.PageIndex, input.PageSize);
         }
-        
+
         public async Task<PagedList<ClientInvokeInfo>> GetServiceEntryInvokeInfos(string address,
             GetClientInvokePagedRequestDto input)
         {
@@ -558,8 +561,8 @@ namespace Silky.Http.Dashboard.AppService
         public IReadOnlyCollection<GetExternalRouteOutput> GetExternalRoutes()
         {
             var externalRoutes = new List<GetExternalRouteOutput>();
-            var dashboardOptions = EngineContext.Current.GetOptionsSnapshot<DashboardOptions>();
-            if (dashboardOptions.ExternalLinks != null && dashboardOptions.ExternalLinks.Any())
+
+            if (_dashboardOptions.ExternalLinks != null && _dashboardOptions.ExternalLinks.Any())
             {
                 var externalRoute = CreateExternalRoute("/external");
                 externalRoute.Meta["Icon"] = "el-icon-link";
@@ -568,7 +571,7 @@ namespace Silky.Http.Dashboard.AppService
                 externalRoute.Meta["ShowLink"] = true;
                 externalRoute.Meta["SavedPosition"] = false;
                 externalRoute.Name = "external";
-                foreach (var externalLink in dashboardOptions.ExternalLinks)
+                foreach (var externalLink in _dashboardOptions.ExternalLinks)
                 {
                     var externalRouteChild = CreateExternalRoute(externalLink.Path);
                     externalRouteChild.Meta["Icon"] = externalLink.Icon ?? "el-icon-link";

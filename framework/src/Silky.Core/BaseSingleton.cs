@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Silky.Core
 {
@@ -7,9 +7,9 @@ namespace Silky.Core
     {
         static BaseSingleton()
         {
-            AllSingletons = new Dictionary<Type, object>();
+            AllSingletons = new ConcurrentDictionary<Type, object>();
         }
 
-        public static IDictionary<Type, object> AllSingletons { get; }
+        public static ConcurrentDictionary<Type, object> AllSingletons { get; }
     }
 }
