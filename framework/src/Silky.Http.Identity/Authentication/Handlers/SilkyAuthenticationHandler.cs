@@ -45,9 +45,10 @@ namespace Silky.Http.Identity.Authentication.Handlers
             var token = GetAuthorizationToken(Context);
             var serviceEntryDescriptor = Context.GetServiceEntryDescriptor();
 
-            if (serviceEntryDescriptor == null) 
+            if (serviceEntryDescriptor == null)
             {
-                throw new NotFindServiceEntryException($"Not find service entry by API {Context.Request.Path}-{Context.Request.Path}");
+                throw new NotFindServiceEntryException(
+                    $"Not find service entry by WebAPI {Context.Request.Method}-{Context.Request.Path}");
             }
 
             try
