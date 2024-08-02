@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
 using Silky.Core.Logging;
-using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
@@ -61,9 +61,8 @@ namespace Silky.Http.Core.Handlers
             if (!serviceKey.IsNullOrEmpty())
             {
                 RpcContext.Context.SetServiceKey(serviceKey);
-                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
-                    MiniProfileConstant.Route.State.FindServiceKey,
-                    $"serviceKey => {serviceKey}");
+                Logger.LogInformation(
+                    $"serviceKey => {serviceKey} for serviceEntryId {serviceEntry.Id}");
             }
 
             var rpcConnection = RpcContext.Context.Connection;
@@ -162,9 +161,8 @@ namespace Silky.Http.Core.Handlers
             if (!serviceKey.IsNullOrEmpty())
             {
                 RpcContext.Context.SetServiceKey(serviceKey);
-                Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
-                    MiniProfileConstant.Route.State.FindServiceKey,
-                    $"serviceKey => {serviceKey}");
+                Logger.LogInformation(
+                    $"serviceKey => {serviceKey} for serviceEntryId {serviceEntryDescriptor.Id}");
             }
 
             var clientRpcEndpoint = RpcContext.Context.Connection.ClientHost;

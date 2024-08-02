@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Http;
+using Silky.Core;
 using Silky.Core.Extensions;
 using StackExchange.Profiling;
 
-namespace Silky.Core.MiniProfiler
+namespace Silky.Http.MiniProfiler
 {
     public static class MiniProfilerHelper
     {

@@ -5,8 +5,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core.DependencyInjection;
 using Silky.Core.DynamicProxy;
 using Silky.Core.Extensions;
-using Silky.Core.Logging;
-using Silky.Core.MiniProfiler;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 
@@ -170,9 +168,8 @@ namespace Silky.Rpc.CachingInterceptor
             {
                 if (serviceEntry.IsTransactionServiceEntry())
                 {
-                    Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
-                        MiniProfileConstant.Caching.State.GetCaching,
-                        $"Cache interception is invalid in distributed transaction processing");
+                    Logger.LogDebug(
+                        $"Cache interception is invalid in distributed transaction processing for the serviceEntry method {serviceEntry.GetCacheName()}");
 
                     await invocation.ProceedAsync();
                     proceed = ProceedType.ForExec;
@@ -182,8 +179,7 @@ namespace Silky.Rpc.CachingInterceptor
                     _distributedCache.SetIgnoreMultiTenancy(getCachingInterceptProvider.IgnoreMultiTenancy);
                     var getCacheKeyInfo = CacheKeyHelper.GetCachingInterceptKey(serviceEntry, parameters,
                         serviceEntry.GetGetCachingInterceptProvider(), serviceKey);
-                    Logger.LogWithMiniProfiler(MiniProfileConstant.Caching.Name,
-                        MiniProfileConstant.Caching.State.GetCaching,
+                    Logger.LogDebug(
                         $"Ready to get data from the cache service:[cacheName=>{serviceEntry.GetCacheName()};cacheKey=>{getCacheKeyInfo.Item1}]");
                     if (getCacheKeyInfo.Item2)
                     {

@@ -1,4 +1,4 @@
-using Silky.Core.MiniProfiler;
+using Silky.Http.MiniProfiler;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

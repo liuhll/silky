@@ -9,16 +9,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Extensions;
-using Silky.Core.Logging;
-using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
-using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Security;
@@ -79,9 +75,8 @@ internal sealed partial class HttpContextServerCallContext : IServerCallContextF
         SilkyRpcEventSource.Log.CallStart(ServiceEntryDescriptor.Id);
         var path = HttpContext.Request.Path;
         var method = HttpContext.Request.Method.ToEnum<HttpMethod>();
-        Logger.LogWithMiniProfiler(MiniProfileConstant.Route.Name,
-            MiniProfileConstant.Route.State.FindServiceEntry,
-            $"Find the ServiceEntryDescriptor {ServiceEntryDescriptor.Id} through {path}-{method}");
+        Logger.LogInformation(
+            $"Find the ServiceEntryDescriptor {ServiceEntryDescriptor.Id} through {method} - {path}");
         HttpContext.SetUserClaims();
         HttpContext.SetHttpHandleAddressInfo();
         RpcContext.Context.SetInvokeAttachment(AttachmentKeys.Path, path.ToString());

@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
-using Silky.Core.MiniProfiler;
 using Silky.Core.Runtime.Rpc;
 using Silky.Core.Serialization;
 using Silky.Core.Utils;
@@ -15,7 +14,6 @@ using Silky.Rpc.Endpoint;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
-using Silky.Rpc.Security;
 using Silky.Rpc.Transport;
 using Silky.Rpc.Transport.Messages;
 
@@ -51,7 +49,7 @@ namespace Silky.Rpc.Runtime.Client
         {
             var sp = Stopwatch.StartNew();
             var messageId = GuidGenerator.CreateGuidStrWithNoUnderline();
-            Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Start,
+            Logger.LogDebug(
                 "The rpc request call start{0} serviceEntryId:[{1}]",
                 args: new[] { Environment.NewLine, remoteInvokeMessage.ServiceEntryId });
             ClientInvokeInfo? clientInvokeInfo = null;
@@ -83,8 +81,6 @@ namespace Silky.Rpc.Runtime.Client
             catch (Exception ex)
             {
                 sp.Stop();
-                Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name, MiniProfileConstant.Rpc.State.Fail,
-                    $"The rpc request call failed");
                 _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, messageId,
                     remoteInvokeMessage.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
 
@@ -105,9 +101,6 @@ namespace Silky.Rpc.Runtime.Client
             sp.Stop();
             invokeMonitor?.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
                 sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
-            Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
-                MiniProfileConstant.Rpc.State.Success,
-                $"The rpc request call succeeded");
             var invokeResult = remoteInvoker.RemoteResult;
             _clientInvokeDiagnosticListener.TracingAfter(tracingTimestamp, messageId,
                 remoteInvokeMessage.ServiceEntryId, invokeResult);
@@ -117,7 +110,7 @@ namespace Silky.Rpc.Runtime.Client
         private ISilkyEndpoint[] FindRpcEndpoint(RemoteInvokeMessage remoteInvokeMessage)
         {
             var rpcEndpoints = _serverManager.GetRpcEndpoints(remoteInvokeMessage.ServiceId, ServiceProtocol.Rpc);
-             if (rpcEndpoints == null || !rpcEndpoints.Any())
+            if (rpcEndpoints == null || !rpcEndpoints.Any())
             {
                 throw new NotFindServiceRouteException(
                     $"The service routing could not be found via [{remoteInvokeMessage.ServiceId}]");
@@ -154,8 +147,7 @@ namespace Silky.Rpc.Runtime.Client
                     hashKey));
             }
 
-            Logger.LogWithMiniProfiler(MiniProfileConstant.Rpc.Name,
-                MiniProfileConstant.Rpc.State.SelectedAddress,
+            Logger.LogDebug(
                 "There are currently available service provider addresses:{0}{1}" +
                 "The selected service provider rpcEndpoint is:[{2}]",
                 args: new[]
