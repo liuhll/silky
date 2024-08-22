@@ -260,10 +260,10 @@ namespace Silky.Core.Runtime.Rpc
 
         public void Reset()
         {
+            EngineContext.DisposeUnmanagedObjects();
             invokeAttachments.Clear();
             resultAttachments.Clear();
             transAttachments.Clear();
-            rpcContextThreadLocal.Value = null;
         }
     }
 }

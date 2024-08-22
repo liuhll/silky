@@ -126,8 +126,6 @@ namespace Silky.Rpc
                             await sender.SendMessageAsync(resultTransportMessage);
                             serverDiagnosticListener.TracingAfter(tracingTimestamp, message.Id,
                                 remoteInvokeMessage.ServiceEntryId, result);
-
-                            EngineContext.DisposeUnmanagedObjects();
                         }
                         finally
                         {

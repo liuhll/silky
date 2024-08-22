@@ -156,20 +156,20 @@ namespace Silky.Core
             }
         }
 
-        public T Resolve<T>(IServiceScope scope = null) where T : class
+        public T Resolve<T>() where T : class
         {
-            return (T)Resolve(typeof(T), scope);
+            return (T)Resolve(typeof(T));
         }
 
-        public object Resolve(Type type, IServiceScope scope = null)
+        public object Resolve(Type type)
         {
-            var sp = GetServiceProvider(scope);
+            var sp = GetServiceProvider();
             return sp?.GetService(type);
         }
 
-        public object ResolveNamed(string name, Type type, IServiceScope scope = null)
+        public object ResolveNamed(string name, Type type)
         {
-            var sp = GetServiceProvider(scope);
+            var sp = GetServiceProvider();
             return sp?.GetAutofacRoot().ResolveNamed(name, type);
         }
 
@@ -194,9 +194,9 @@ namespace Silky.Core
             return instance;
         }
 
-        public T ResolveNamed<T>(string name, IServiceScope scope = null)
+        public T ResolveNamed<T>(string name)
         {
-            return (T)ResolveNamed(name, typeof(T), scope);
+            return (T)ResolveNamed(name, typeof(T));
         }
 
         public IEnumerable<T> ResolveAll<T>()

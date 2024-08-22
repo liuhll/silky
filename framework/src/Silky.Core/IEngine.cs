@@ -57,14 +57,14 @@ namespace Silky.Core
             where TOptions : class, new();
         
 
-        T Resolve<T>(IServiceScope scope = null) where T : class;
+        T Resolve<T>() where T : class;
 
-        object Resolve(Type type, IServiceScope scope = null);
-        object ResolveNamed(string name, Type type, IServiceScope scope = null);
+        object Resolve(Type type);
+        object ResolveNamed(string name, Type type);
 
         object ResolveServiceInstance(string? serviceKey, Type serviceType);
 
-        T ResolveNamed<T>(string name,IServiceScope scope = null);
+        T ResolveNamed<T>(string name);
 
         IEnumerable<T> ResolveAll<T>();
 

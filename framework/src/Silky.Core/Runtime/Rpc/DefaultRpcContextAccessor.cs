@@ -4,7 +4,7 @@ using Silky.Core.DependencyInjection;
 
 namespace Silky.Core.Runtime.Rpc
 {
-    public class DefaultRpcContextAccessor : IRpcContextAccessor, IScopedDependency
+    public class DefaultRpcContextAccessor : IRpcContextAccessor, ISingletonDependency
     {
         private static AsyncLocal<RpcContextHolder> _rpcContextCurrent = new();
 
