@@ -13,7 +13,7 @@ lang: zh-cn
 
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
 
@@ -66,9 +66,9 @@ plugInSource:
 
 ## 以插件的方式添加模块
 
-我们知道,在silky的模块系统中,模块具有依赖关系,我们通过[启动模块](modularity.html#构建主机时指定启动模块)来确定模块与模块的依赖关系以及解析出系统所依赖的所有模块,也就是说,只有直接或是间接的的对模块进行依赖,才可以被系统解析到并在应用启动时被加载和执行。
+我们知道,在 silky 的模块系统中,模块具有依赖关系,我们通过[启动模块](modularity.html#构建主机时指定启动模块)来确定模块与模块的依赖关系以及解析出系统所依赖的所有模块,也就是说,只有直接或是间接的的对模块进行依赖,才可以被系统解析到并在应用启动时被加载和执行。
 
-silky框架提供的注册silky服务已经默认指定了启动模块,所以,一般地我们无需修改启动模块，这个时候如果我们需要添加额外的业务模块,最好的方式就是以插件的方式添加模块。添加模块插件的方式与添加应用服务的方式雷同;
+silky 框架提供的注册 silky 服务已经默认指定了启动模块,所以,一般地我们无需修改启动模块，这个时候如果我们需要添加额外的业务模块,最好的方式就是以插件的方式添加模块。添加模块插件的方式与添加应用服务的方式雷同;
 
 1. 通过配置的方式指定模块类
 
@@ -78,7 +78,7 @@ silky框架提供的注册silky服务已经默认指定了启动模块,所以,�
 plugInSource:
   modulePlugIn:
     types:
-    - TestApplication.TestModule,TestApplication
+      - TestApplication.TestModule,TestApplication
 ```
 
 2. 通过应用服务启动配置项指定模块类

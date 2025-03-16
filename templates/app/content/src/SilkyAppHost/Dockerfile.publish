@@ -1,4 +1,4 @@
-ARG NET_IMAGE=7.0-bullseye-slim
+ARG NET_IMAGE=8.0.1-bookworm-slim
 FROM mcr.microsoft.com/dotnet/aspnet:${NET_IMAGE}
 WORKDIR /app
 ARG rpc_port=2200

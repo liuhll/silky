@@ -14,6 +14,8 @@ namespace Silky.Rpc.Filters
         IOrderedFilter,
         IServerResultFilter,
         IAsyncServerResultFilter,
+        IAsyncAlwaysRunServerResultFilter,
+        IAlwaysRunServerResultFilter,
         IServerFilterMetadata
     {
         
