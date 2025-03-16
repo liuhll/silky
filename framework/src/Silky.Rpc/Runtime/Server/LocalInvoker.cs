@@ -19,15 +19,13 @@ internal class LocalInvoker : LocalInvokerBase
 
     public LocalInvoker(ILogger logger, ServiceEntryContext serviceEntryContext,
         IServiceEntryContextAccessor serviceEntryContextAccessor, IServerFilterMetadata[] filters)
-        : base(logger,
-            serviceEntryContext,
-            serviceEntryContextAccessor,
-            filters)
+        : base(logger, serviceEntryContext, serviceEntryContextAccessor, filters)
     {
     }
 
     protected override ValueTask ReleaseResources()
     {
+        // 无需额外资源释放，直接返回默认ValueTask
         return default;
     }
 
@@ -37,7 +35,7 @@ internal class LocalInvoker : LocalInvokerBase
         {
             var next = State.ActionBegin;
             var scope = Scope.Invoker;
-            var state = (object?)null;
+            object? state = null;
             var isCompleted = false;
 
             while (!isCompleted)
@@ -53,34 +51,34 @@ internal class LocalInvoker : LocalInvokerBase
         }
         catch (Exception ex)
         {
-            // Wrap non task-wrapped exceptions in a Task,
-            // as this isn't done automatically since the method is not async.
+            // 对非任务包装的异常进行包装
             return Task.FromException(ex);
         }
 
-        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope,
-            object? state, bool isCompleted)
+        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state, bool isCompleted)
         {
-            await lastTask;
-
+            await lastTask.ConfigureAwait(false);
             while (!isCompleted)
             {
-                await invoker.Next(ref next, ref scope, ref state, ref isCompleted);
+                await invoker.Next(ref next, ref scope, ref state, ref isCompleted).ConfigureAwait(false);
             }
         }
     }
 
+    /// <summary>
+    /// 状态机实现过滤器调用逻辑
+    /// </summary>
     private Task Next(ref State next, ref Scope scope, ref object? state, ref bool isCompleted)
     {
         switch (next)
         {
             case State.ActionBegin:
             {
-                var serviceEntryContext = _serviceEntryContext;
+                // 初始化参数绑定
                 _arguments = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
                 var task = BindArgumentsAsync();
-                if (task.Status != TaskStatus.RanToCompletion)
+                if (!task.IsCompletedSuccessfully)
                 {
                     next = State.ActionNext;
                     return task;
@@ -91,6 +89,7 @@ internal class LocalInvoker : LocalInvokerBase
             }
             case State.ActionNext:
             {
+                // 获取下一个过滤器
                 var current = _cursor.GetNextFilter<IServerFilter, IAsyncServerFilter>();
                 if (current.FilterAsync != null)
                 {
@@ -99,7 +98,6 @@ internal class LocalInvoker : LocalInvokerBase
                         _serviceEntryInvokeExecutingContext =
                             new ServerInvokeExecutingContextSealed(_serviceEntryContext, _filters, _arguments);
                     }
-
                     state = current.FilterAsync;
                     goto case State.ActionAsyncBegin;
                 }
@@ -110,7 +108,6 @@ internal class LocalInvoker : LocalInvokerBase
                         _serviceEntryInvokeExecutingContext =
                             new ServerInvokeExecutingContextSealed(_serviceEntryContext, _filters, _arguments);
                     }
-
                     state = current.Filter;
                     goto case State.ActionSyncBegin;
                 }
@@ -125,15 +122,12 @@ internal class LocalInvoker : LocalInvokerBase
                 Debug.Assert(_serviceEntryInvokeExecutingContext != null);
 
                 var filter = (IAsyncServerFilter)state;
-                var serviceEntryExecutingContext = _serviceEntryInvokeExecutingContext;
-                var task = filter.OnActionExecutionAsync(serviceEntryExecutingContext,
-                    InvokeNextServerFilterAwaitedAsync);
-                if (task.Status != TaskStatus.RanToCompletion)
+                var asyncTask = filter.OnActionExecutionAsync(_serviceEntryInvokeExecutingContext, InvokeNextServerFilterAwaitedAsync);
+                if (!asyncTask.IsCompletedSuccessfully)
                 {
                     next = State.ActionAsyncEnd;
-                    return task;
+                    return asyncTask;
                 }
-
                 goto case State.ActionAsyncEnd;
             }
             case State.ActionAsyncEnd:
@@ -141,10 +135,9 @@ internal class LocalInvoker : LocalInvokerBase
                 Debug.Assert(state != null);
                 Debug.Assert(_serviceEntryInvokeExecutingContext != null);
                 var filter = (IAsyncServerFilter)state;
+                // 如果异步过滤器未调用 next，则认为短路执行
                 if (_serviceEntryInvokeExecutedContext == null)
                 {
-                    // If we get here then the filter didn't call 'next' indicating a short circuit.
-
                     _serviceEntryInvokeExecutedContext = new ServerInvokeExecutedContextSealed(
                         _serviceEntryContext,
                         _filters)
@@ -153,7 +146,6 @@ internal class LocalInvoker : LocalInvokerBase
                         Result = _serviceEntryInvokeExecutingContext.Result,
                     };
                 }
-
                 goto case State.ActionEnd;
             }
             case State.ActionSyncBegin:
@@ -161,9 +153,8 @@ internal class LocalInvoker : LocalInvokerBase
                 Debug.Assert(state != null);
                 Debug.Assert(_serviceEntryInvokeExecutingContext != null);
                 var filter = (IServerFilter)state;
-                var serviceEntryExecutingContext = _serviceEntryInvokeExecutingContext;
-                filter.OnActionExecuting(serviceEntryExecutingContext);
-                if (serviceEntryExecutingContext.Result != null)
+                filter.OnActionExecuting(_serviceEntryInvokeExecutingContext);
+                if (_serviceEntryInvokeExecutingContext.Result != null)
                 {
                     _serviceEntryInvokeExecutedContext = new ServerInvokeExecutedContextSealed(
                         _serviceEntryContext,
@@ -174,14 +165,12 @@ internal class LocalInvoker : LocalInvokerBase
                     };
                     goto case State.ActionEnd;
                 }
-
                 var task = InvokeNextServerFilterAsync();
-                if (task.Status != TaskStatus.RanToCompletion)
+                if (!task.IsCompletedSuccessfully)
                 {
                     next = State.ActionSyncEnd;
                     return task;
                 }
-
                 goto case State.ActionSyncEnd;
             }
             case State.ActionSyncEnd:
@@ -189,21 +178,18 @@ internal class LocalInvoker : LocalInvokerBase
                 Debug.Assert(state != null);
                 Debug.Assert(_serviceEntryInvokeExecutingContext != null);
                 Debug.Assert(_serviceEntryInvokeExecutedContext != null);
-
                 var filter = (IServerFilter)state;
-                var serviceEntryExecutedContext = _serviceEntryInvokeExecutedContext;
-                filter.OnActionExecuted(serviceEntryExecutedContext);
+                filter.OnActionExecuted(_serviceEntryInvokeExecutedContext);
                 goto case State.ActionEnd;
             }
             case State.ActionInside:
             {
                 var task = InvokeServiceEntryMethodAsync();
-                if (task.Status != TaskStatus.RanToCompletion)
+                if (!task.IsCompletedSuccessfully)
                 {
                     next = State.ActionEnd;
                     return task;
                 }
-
                 goto case State.ActionEnd;
             }
             case State.ActionEnd:
@@ -217,18 +203,14 @@ internal class LocalInvoker : LocalInvokerBase
                             Result = _result,
                         };
                     }
-
                     isCompleted = true;
                     return Task.CompletedTask;
                 }
-
-                var serviceEntryExecutedContext = _serviceEntryInvokeExecutedContext;
-                Rethrow(serviceEntryExecutedContext);
-                if (serviceEntryExecutedContext != null)
+                Rethrow(_serviceEntryInvokeExecutedContext);
+                if (_serviceEntryInvokeExecutedContext != null)
                 {
-                    _result = serviceEntryExecutedContext.Result;
+                    _result = _serviceEntryInvokeExecutedContext.Result;
                 }
-
                 isCompleted = true;
                 return Task.CompletedTask;
             }
@@ -237,17 +219,19 @@ internal class LocalInvoker : LocalInvokerBase
         }
     }
 
+    /// <summary>
+    /// 异步调用下一个服务器过滤器，返回执行上下文
+    /// </summary>
     private Task<ServerInvokeExecutedContext> InvokeNextServerFilterAwaitedAsync()
     {
         Debug.Assert(_serviceEntryInvokeExecutingContext != null);
         if (_serviceEntryInvokeExecutingContext.Result != null)
         {
-            // If we get here, it means that an async filter set a result AND called next(). This is forbidden.
+            // 不允许异步过滤器既设置结果又调用 next
             return Throw();
         }
 
         var task = InvokeNextServerFilterAsync();
-
         if (!task.IsCompletedSuccessfully)
         {
             return Awaited(this, task);
@@ -258,28 +242,28 @@ internal class LocalInvoker : LocalInvokerBase
 
         static async Task<ServerInvokeExecutedContext> Awaited(LocalInvoker invoker, Task task)
         {
-            await task;
-
-            Debug.Assert(invoker._serviceEntryContext != null);
+            await task.ConfigureAwait(false);
+            Debug.Assert(invoker._serviceEntryInvokeExecutedContext != null);
             return invoker._serviceEntryInvokeExecutedContext;
         }
 
 #pragma warning disable CS1998
         static async Task<ServerInvokeExecutedContext> Throw()
         {
-            var message = "InvokeAsync Server Filter Fail";
-
-            throw new InvalidOperationException(message);
+            throw new InvalidOperationException("InvokeAsync Server Filter Fail");
         }
 #pragma warning restore CS1998
     }
 
+    /// <summary>
+    /// 调用下一个服务器过滤器
+    /// </summary>
     private Task InvokeNextServerFilterAsync()
     {
         try
         {
             var next = State.ActionNext;
-            var state = (object)null;
+            object? state = null;
             var scope = Scope.Action;
             var isCompleted = false;
             while (!isCompleted)
@@ -293,7 +277,7 @@ internal class LocalInvoker : LocalInvokerBase
         }
         catch (Exception exception)
         {
-            _serviceEntryInvokeExecutedContext = new ServerInvokeExecutedContextSealed(_serviceEntryInvokeExecutedContext, _filters)
+            _serviceEntryInvokeExecutedContext = new ServerInvokeExecutedContextSealed(_serviceEntryContext, _filters)
             {
                 ExceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception),
             };
@@ -302,16 +286,14 @@ internal class LocalInvoker : LocalInvokerBase
         Debug.Assert(_serviceEntryInvokeExecutedContext != null);
         return Task.CompletedTask;
 
-        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope,
-            object state, bool isCompleted)
+        static async Task Awaited(LocalInvoker invoker, Task lastTask, State next, Scope scope, object? state, bool isCompleted)
         {
             try
             {
-                await lastTask;
-
+                await lastTask.ConfigureAwait(false);
                 while (!isCompleted)
                 {
-                    await invoker.Next(ref next, ref scope, ref state, ref isCompleted);
+                    await invoker.Next(ref next, ref scope, ref state, ref isCompleted).ConfigureAwait(false);
                 }
             }
             catch (Exception exception)
@@ -322,11 +304,13 @@ internal class LocalInvoker : LocalInvokerBase
                         ExceptionDispatchInfo = ExceptionDispatchInfo.Capture(exception),
                     };
             }
-
             Debug.Assert(invoker._serviceEntryInvokeExecutedContext != null);
         }
     }
 
+    /// <summary>
+    /// 参数绑定（同步完成）
+    /// </summary>
     private Task BindArgumentsAsync()
     {
         var serviceEntry = _serviceEntryContext.ServiceEntry;
@@ -349,20 +333,23 @@ internal class LocalInvoker : LocalInvokerBase
         public ServerInvokeExecutingContextSealed(
             ServiceEntryContext serviceEntryContext,
             IList<IFilterMetadata> filters,
-            IDictionary<string, object> arguments
-        ) : base(serviceEntryContext, filters, arguments)
+            IDictionary<string, object> arguments)
+            : base(serviceEntryContext, filters, arguments)
         {
         }
     }
 
     private sealed class ServerInvokeExecutedContextSealed : ServerInvokeExecutedContext
     {
-        public ServerInvokeExecutedContextSealed(ServiceEntryContext serviceEntryContext, IList<IFilterMetadata> filters) :
-            base(serviceEntryContext, filters)
+        public ServerInvokeExecutedContextSealed(ServiceEntryContext serviceEntryContext, IList<IFilterMetadata> filters)
+            : base(serviceEntryContext, filters)
         {
         }
     }
 
+    /// <summary>
+    /// 真正调用服务入口方法，支持异步和同步执行
+    /// </summary>
     private async Task InvokeServiceEntryMethodAsync()
     {
         var serviceEntry = _serviceEntryInvokeExecutingContext.ServiceEntry;
@@ -381,24 +368,16 @@ internal class LocalInvoker : LocalInvokerBase
         }
     }
 
-
     private static void Rethrow(ServerInvokeExecutedContextSealed context)
     {
-        if (context == null)
+        if (context == null || context.ExceptionHandled)
         {
             return;
         }
-
-        if (context.ExceptionHandled)
-        {
-            return;
-        }
-
         if (context.ExceptionDispatchInfo != null)
         {
             context.ExceptionDispatchInfo.Throw();
         }
-
         if (context.Exception != null)
         {
             throw context.Exception;

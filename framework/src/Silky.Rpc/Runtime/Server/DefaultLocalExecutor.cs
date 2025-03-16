@@ -20,7 +20,7 @@ namespace Silky.Rpc.Runtime.Server
             var localInvoker =
                 _serverLocalInvokerFactory.CreateInvoker(new ServiceEntryContext(serviceEntry, parameters, serviceKey,
                     instance));
-             await localInvoker.InvokeAsync();
+             await localInvoker.InvokeAsync().ConfigureAwait(false);
              return localInvoker.Result;
         }
 

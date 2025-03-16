@@ -10,26 +10,26 @@ namespace Silky.Rpc.Runtime
     {
         public async Task<object> Execute(ServiceEntry serviceEntry, object[] parameters, string serviceKey = null)
         {
-            return await serviceEntry.Executor(serviceKey, parameters);
+            return await serviceEntry.Executor(serviceKey, parameters).ConfigureAwait(false);
         }
 
-        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor,
+        public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor,
             IDictionary<ParameterFrom, object> parameters, string serviceKey)
         {
             var remoteExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
-            return remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+            return await remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey).ConfigureAwait(false);
         }
 
-        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters, string serviceKey = null)
+        public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, object[] parameters, string serviceKey = null)
         {
             var remoteExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
-            return remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+            return await remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey).ConfigureAwait(false);
         }
 
-        public Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters, string serviceKey = null)
+        public async Task<object> Execute(ServiceEntryDescriptor serviceEntryDescriptor, IDictionary<string, object> parameters, string serviceKey = null)
         {
             var remoteExecutor = EngineContext.Current.Resolve<IRemoteExecutor>();
-            return remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey);
+            return await remoteExecutor.Execute(serviceEntryDescriptor, parameters, serviceKey).ConfigureAwait(false);
         }
     }
 }
