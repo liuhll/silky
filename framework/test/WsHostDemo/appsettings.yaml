@@ -2,6 +2,7 @@ rpc:
   host: 0.0.0.0
   port: 2201
   token: ypjdYOzNd4FwENJiEARMLWwK0v7QUHPW
+  useTransportClientPool: false
 #  isSSl: true
 #  sslCertificateName: test.silky-fk.com.pfx
 #  sslCertificatePassword: bdSpw3W7

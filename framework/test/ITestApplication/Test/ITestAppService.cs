@@ -112,6 +112,8 @@ namespace ITestApplication.Test
         Task<OcrOutput> GetOcr();
 
         Task<string> TestNamedService(string serviceName);
+        
+        Task<bool> TestForLongTime();
 
         [AllowAnonymous]
         [UnWrapperResult]

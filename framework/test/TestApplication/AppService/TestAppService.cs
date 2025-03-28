@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -326,6 +327,30 @@ namespace TestApplication.AppService
         {
             var requestParameters = RpcContext.Context.GetRequestParameters();
             return input.Name;
+        }
+
+        public async Task<bool> TestForLongTime()
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var x = "";
+                    for (int i = 0; i < 999999999999999999; i++)
+                    {
+                        x += i;
+                    }
+                });
+                
+               
+                //  await Task.Delay(20 * 1000);
+
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+            return true;
         }
     }
 }
