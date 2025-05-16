@@ -16,6 +16,7 @@ using Silky.Core.Serialization;
 using Silky.Http.Core.Configuration;
 using Silky.Http.Core.Executor;
 using Silky.Rpc.Auditing;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.Runtime.Server;
 
@@ -27,12 +28,14 @@ namespace Silky.Http.Core.Handlers
         private readonly IParameterParser _parameterParser;
         private readonly IHttpHandleDiagnosticListener _httpHandleDiagnosticListener;
         private readonly IAuditSerializer _auditSerializer;
+        private RpcOptions rpcOption;
 
         public DefaultHttpMessageReceivedHandler(
             IHttpExecutor executor,
             ISerializer serializer,
             IParameterParser parameterParser,
             IHttpHandleDiagnosticListener httpHandleDiagnosticListener,
+            IOptions<RpcOptions>  rpcOption,
             IAuditSerializer auditSerializer, IOptionsMonitor<GatewayOptions> gatewayOptionsMonitor) : base(serializer,
             gatewayOptionsMonitor)
         {
@@ -40,7 +43,7 @@ namespace Silky.Http.Core.Handlers
             _parameterParser = parameterParser;
             _httpHandleDiagnosticListener = httpHandleDiagnosticListener;
             _auditSerializer = auditSerializer;
-
+            this.rpcOption = rpcOption.Value;
             Logger = NullLogger<DefaultHttpMessageReceivedHandler>.Instance;
         }
 
@@ -67,9 +70,15 @@ namespace Silky.Http.Core.Handlers
 
             var rpcConnection = RpcContext.Context.Connection;
             var clientRpcEndpoint = rpcConnection.ClientHost;
-            var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
-            var serverHandleInfo =
-                serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
+            ServerHandleInfo?  serverHandleInfo = null;
+            IServerHandleMonitor serverHandleMonitor = null;
+            if (rpcOption.EnableMonitor)
+            {
+                serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
+                 serverHandleInfo =
+                    serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
+            }
+           
 
             var isHandleSuccess = true;
             var isFriendlyStatus = false;
@@ -166,9 +175,16 @@ namespace Silky.Http.Core.Handlers
             }
 
             var clientRpcEndpoint = RpcContext.Context.Connection.ClientHost;
-            var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
-            var serverHandleInfo =
-                serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
+
+            IServerHandleMonitor  serverHandleMonitor = null;
+            ServerHandleInfo?   serverHandleInfo = null;
+            if (rpcOption.EnableMonitor)
+            {
+                serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
+                serverHandleInfo =
+                    serverHandleMonitor?.Monitor((serverCallContext.ServiceEntryDescriptor.Id, clientRpcEndpoint));
+            }
+            
             var isHandleSuccess = true;
             var isFriendlyStatus = false;
             try

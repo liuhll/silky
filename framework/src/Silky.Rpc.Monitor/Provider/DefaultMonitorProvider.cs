@@ -23,10 +23,10 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
     private readonly ConcurrentDictionary<string, ClientInvokeInfo> _clientInvokeCache = new();
 
 
-    private readonly IDistributedCache<ServerHandleInfo> _serverHandleDistributedCache;
+    private readonly IDistributedCache<ServerHandleInfo?> _serverHandleDistributedCache;
     private readonly IDistributedCache<ServerInstanceHandleInfo> _serverInstanceHandleInfoDistributedCache;
 
-    private readonly ConcurrentDictionary<string, ServerHandleInfo> _serverHandleInvokeCache = new();
+    private readonly ConcurrentDictionary<string, ServerHandleInfo?> _serverHandleInvokeCache = new();
 
     public ServerInstanceHandleInfo InstanceHandleInfo { get; private set; }
 
@@ -36,7 +36,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
     private readonly Timer _timer;
 
     public DefaultMonitorProvider(IDistributedCache<ClientInvokeInfo> clientInvokeDistributedCache,
-        IDistributedCache<ServerHandleInfo> serverHandleDistributedCache,
+        IDistributedCache<ServerHandleInfo?> serverHandleDistributedCache,
         IDistributedCache<ServerInstanceInvokeInfo> serverInstanceInvokeInfoDistributedCache,
         IDistributedCache<ServerInstanceHandleInfo> serverInstanceHandleInfoDistributedCache,
         IOptionsMonitor<GovernanceOptions> governanceOptions,
@@ -147,7 +147,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         }
     }
 
-    public ServerHandleInfo GetServerHandleInfo(string cacheKey)
+    public ServerHandleInfo? GetServerHandleInfo(string cacheKey)
     {
         if (_serverHandleInvokeCache.TryGetValue(cacheKey, out var serverHandleInfo))
         {
@@ -160,7 +160,7 @@ public class DefaultMonitorProvider : IMonitorProvider, IAsyncDisposable
         return serverHandleInfo;
     }
 
-    public void SetServerHandleInfo(string cacheKey, ServerHandleInfo serverHandleInfo)
+    public void SetServerHandleInfo(string cacheKey, ServerHandleInfo? serverHandleInfo)
     {
         _serverHandleInvokeCache.AddOrUpdate(cacheKey, serverHandleInfo, (k, v) => serverHandleInfo);
     }

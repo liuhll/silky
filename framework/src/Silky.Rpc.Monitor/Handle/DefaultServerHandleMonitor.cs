@@ -16,7 +16,7 @@ namespace Silky.Rpc.Monitor.Handle
             _monitorProvider = monitorProvider;
         }
 
-        public ServerHandleInfo Monitor((string, string) item)
+        public ServerHandleInfo? Monitor((string, string) item)
         {
             lock (_monitorProvider.InstanceHandleInfo)
             {
@@ -43,7 +43,7 @@ namespace Silky.Rpc.Monitor.Handle
 
 
         public void ExecSuccess((string, string) item, double elapsedTotalMilliseconds,
-            ServerHandleInfo serverHandleInfo)
+            ServerHandleInfo? serverHandleInfo)
         {
             lock (_monitorProvider.InstanceHandleInfo)
             {
@@ -67,7 +67,7 @@ namespace Silky.Rpc.Monitor.Handle
         }
 
         public void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds,
-            ServerHandleInfo serverHandleInfo)
+            ServerHandleInfo? serverHandleInfo)
         {
             lock (_monitorProvider.InstanceHandleInfo)
             {

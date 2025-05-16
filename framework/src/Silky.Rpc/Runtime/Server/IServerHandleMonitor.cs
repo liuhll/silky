@@ -5,12 +5,12 @@ namespace Silky.Rpc.Runtime.Server
 {
     public interface IServerHandleMonitor
     {
-        ServerHandleInfo Monitor((string, string) item);
+        ServerHandleInfo? Monitor((string, string) item);
 
-        void ExecSuccess((string, string) item, double elapsedTotalMilliseconds, ServerHandleInfo serverHandleInfo);
+        void ExecSuccess((string, string) item, double elapsedTotalMilliseconds, ServerHandleInfo? serverHandleInfo);
 
         void ExecFail((string, string) item, bool isSeriousError, double elapsedTotalMilliseconds,
-            ServerHandleInfo serverHandleInfo);
+            ServerHandleInfo? serverHandleInfo);
 
         Task<ServerInstanceHandleInfo> GetServerInstanceHandleInfo();
 

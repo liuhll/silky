@@ -16,12 +16,14 @@ using Silky.Rpc.Runtime.Client;
 using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Polly;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint.Selector;
 using Silky.Rpc.Extensions;
 using Silky.Rpc.RegistryCenters.HeartBeat;
 using Silky.Rpc.Transport.Messages;
+using System;
 using ServiceKeyAttribute = Silky.Rpc.Runtime.Server.ServiceKeyAttribute;
 
 namespace Silky.Rpc
@@ -86,8 +88,21 @@ namespace Silky.Rpc
                 : Task.CompletedTask;
         }
 
-        public override async Task PostInitialize(ApplicationInitializationContext context)
+        public override Task PostInitialize(ApplicationInitializationContext context)
         {
+            var rpcOptions = context.ServiceProvider.GetService<IOptions<RpcOptions>>()?.Value;
+            if (rpcOptions != null && rpcOptions.MinThreadPoolSize <= rpcOptions.MaxThreadPoolSize)
+            {
+                ThreadPool.SetMaxThreads(rpcOptions.MaxThreadPoolSize, rpcOptions.MaxThreadPoolSize);
+                ThreadPool.SetMinThreads(rpcOptions.MinThreadPoolSize, rpcOptions.MinThreadPoolSize);
+            }
+            else
+            {
+                var minThreadPoolSize = Environment.ProcessorCount * 4;
+                var maxThreadPoolSize = Environment.ProcessorCount * 10;
+                ThreadPool.SetMaxThreads(maxThreadPoolSize, maxThreadPoolSize);
+                ThreadPool.SetMinThreads(minThreadPoolSize, minThreadPoolSize);
+            }
             var messageListeners = context.ServiceProvider.GetServices<IServerMessageListener>();
             if (messageListeners.Any())
             {
@@ -134,6 +149,7 @@ namespace Silky.Rpc
                     };
                 }
             }
+            return Task.CompletedTask;
         }
 
         private void RegisterServicesForAddressSelector(ContainerBuilder builder)

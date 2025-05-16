@@ -5,11 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Polly;
 using Silky.Core;
 using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Core.Runtime.Rpc;
+using Silky.Rpc.Configuration;
 using Silky.Rpc.Transport.Messages;
 
 namespace Silky.Rpc.Runtime.Server
@@ -22,11 +24,15 @@ namespace Silky.Rpc.Runtime.Server
 
         public ILogger<DefaultServerMessageReceivedHandler> Logger { get; set; }
 
+        private readonly RpcOptions rpcOption;
+
         public DefaultServerMessageReceivedHandler(IServiceEntryLocator serviceEntryLocator,
+            IOptions<RpcOptions> rpcOptions,
             IServiceKeyExecutor serviceKeyExecutor)
         {
             _serviceEntryLocator = serviceEntryLocator;
             _serviceKeyExecutor = serviceKeyExecutor;
+            this.rpcOption = rpcOptions.Value;
         }
 
         public async Task<RemoteResultMessage> Handle(RemoteInvokeMessage message, Context context,
@@ -42,8 +48,15 @@ namespace Silky.Rpc.Runtime.Server
                 Environment.NewLine, messageId, message.ServiceEntryId);
             var serviceEntry =
                 _serviceEntryLocator.GetLocalServiceEntryById(message.ServiceEntryId);
-            var serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
-            var serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientUri));
+
+            ServerHandleInfo? serverHandleInfo = null;
+            IServerHandleMonitor? serverHandleMonitor = null;
+            if (rpcOption.EnableMonitor)
+            {
+                serverHandleMonitor = EngineContext.Current.Resolve<IServerHandleMonitor>();
+                serverHandleInfo = serverHandleMonitor?.Monitor((serviceEntry.Id, clientUri));
+            }
+
             var remoteResultMessage = new RemoteResultMessage()
             {
                 ServiceEntryId = serviceEntry?.Id

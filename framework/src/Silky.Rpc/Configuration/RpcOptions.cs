@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 
 namespace Silky.Rpc.Configuration
 {
@@ -17,12 +18,18 @@ namespace Silky.Rpc.Configuration
             RegisterFailureRetryCount = 10;
             TransportClientPoolNumber = 50;
             UseTransportClientPool = true;
-            EnableMonitor = true;
+            EnableMonitor = false;
             _heartbeatWatchIntervalSeconds = 300;
             EnableHeartbeat = true;
             CollectMonitorInfoIntervalSeconds = 30;
+            
+            MinThreadPoolSize = Environment.ProcessorCount * 4;
+            MaxThreadPoolSize = Environment.ProcessorCount * 10;
         }
 
+        public int MinThreadPoolSize { get; set; }
+        public int MaxThreadPoolSize { get; set; }
+        
         public string Host { get; set; }
 
         public string Cidr { get; set; }

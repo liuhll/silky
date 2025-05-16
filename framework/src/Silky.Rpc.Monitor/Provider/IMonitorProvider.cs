@@ -23,9 +23,9 @@ public interface IMonitorProvider
     
     Task ClearClientInvokeCache();
     
-    ServerHandleInfo GetServerHandleInfo(string cacheKey);
+    ServerHandleInfo? GetServerHandleInfo(string cacheKey);
     
-    void SetServerHandleInfo(string cacheKey, ServerHandleInfo serverHandleInfo);
+    void SetServerHandleInfo(string cacheKey, ServerHandleInfo? serverHandleInfo);
     
     Task<IReadOnlyCollection<ServerHandleInfo>> GetServiceEntryHandleInfos();
     Task ClearServerHandleCache();
