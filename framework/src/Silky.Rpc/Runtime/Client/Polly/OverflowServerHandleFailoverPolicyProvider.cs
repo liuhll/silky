@@ -19,9 +19,9 @@ namespace Silky.Rpc.Runtime.Client
             _serverManager = serverManager;
         }
 
-        public override IAsyncPolicy<object> Create(string serviceEntryId)
+        public override IAsyncPolicy<object?> Create(string serviceEntryId)
         {
-            IAsyncPolicy<object> policy = null;
+            IAsyncPolicy<object?> policy = null;
             var serviceEntryDescriptor = _serverManager.GetServiceEntryDescriptor(serviceEntryId);
 
             if (serviceEntryDescriptor?.GovernanceOptions.RetryTimes > 0)
@@ -40,7 +40,7 @@ namespace Silky.Rpc.Runtime.Client
             return policy;
         }
 
-        private async Task OnRetry(int retryNumber, DelegateResult<object> outcome, Context context,
+        private async Task OnRetry(int retryNumber, DelegateResult<object?> outcome, Context context,
             ServiceEntryDescriptor serviceEntryDescriptor)
         {
             var serviceAddressModel = GetSelectedServerEndpoint();

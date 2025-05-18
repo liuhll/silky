@@ -2,38 +2,26 @@ using System.Threading;
 using JetBrains.Annotations;
 using Silky.Core.DependencyInjection;
 
-namespace Silky.Core.Runtime.Rpc
+namespace Silky.Core.Runtime.Rpc;
+
+public class DefaultRpcContextAccessor : IRpcContextAccessor, ISingletonDependency
 {
-    public class DefaultRpcContextAccessor : IRpcContextAccessor, ISingletonDependency
+    private static readonly AsyncLocal<RpcContextHolder> _context = new();
+
+    public RpcContext RpcContext
     {
-        private static AsyncLocal<RpcContextHolder> _rpcContextCurrent = new();
-
-        [CanBeNull]
-        public RpcContext RpcContext
+        get => _context.Value?.Context;
+        set
         {
-            get => _rpcContextCurrent.Value?.RpcContext;
-            set
-            {
-                var rpcContextHolder = _rpcContextCurrent.Value;
-                if (rpcContextHolder != null)
-                    rpcContextHolder.RpcContext = null;
-                if (value == null)
-                    return;
-                _rpcContextCurrent.Value = new RpcContextHolder()
-                {
-                    RpcContext = value
-                };
-            }
+            if (_context.Value != null)
+                _context.Value.Context = value;
+            else
+                _context.Value = new RpcContextHolder { Context = value };
         }
+    }
 
-        private class RpcContextHolder
-        {
-            public RpcContext RpcContext;
-        }
-
-        public void Dispose()
-        {
-            _rpcContextCurrent.Value = null;
-        }
+    private class RpcContextHolder
+    {
+        public RpcContext Context;
     }
 }

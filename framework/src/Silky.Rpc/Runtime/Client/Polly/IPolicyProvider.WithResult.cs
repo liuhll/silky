@@ -5,6 +5,6 @@ namespace Silky.Rpc.Runtime.Client
 {
     public interface IPolicyWithResultProvider : ISingletonDependency
     {
-        IAsyncPolicy<object> Create(string serviceEntryId);
+        IAsyncPolicy<object?> Create(string serviceEntryId);
     }
 }

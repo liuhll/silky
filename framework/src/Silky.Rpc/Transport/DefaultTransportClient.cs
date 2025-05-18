@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -17,7 +16,8 @@ namespace Silky.Rpc.Transport
 {
     public class DefaultTransportClient : ITransportClient, IDisposable
     {
-        private ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
+        private readonly ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
+        private readonly ConcurrentDictionary<string, TransportMessage> _earlyMessageBuffer = new();
 
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
@@ -35,9 +35,14 @@ namespace Silky.Rpc.Transport
 
         private async Task MessageListenerOnReceived(IMessageSender sender, TransportMessage message)
         {
-            if (!m_resultDictionary.TryGetValue(message.Id, out var task))
-                return;
-            task.SetResult(message);
+            if (m_resultDictionary.TryGetValue(message.Id, out var tcs))
+            {
+                tcs.TrySetResult(message);
+            }
+            else
+            {
+                _earlyMessageBuffer.TryAdd(message.Id, message);
+            }
         }
         
         public virtual async Task<RemoteResultMessage> SendAsync(RemoteInvokeMessage message, string messageId,
@@ -61,9 +66,12 @@ namespace Silky.Rpc.Transport
         private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id, string serviceEntryId,
             int timeout = Timeout.Infinite)
         {
-            var tcs = new TaskCompletionSource<TransportMessage>();
-
+            var tcs = new TaskCompletionSource<TransportMessage>(TaskCreationOptions.RunContinuationsAsynchronously);
             m_resultDictionary.TryAdd(id, tcs);
+            if (_earlyMessageBuffer.TryRemove(id, out var earlyMessage))
+            {
+                tcs.TrySetResult(earlyMessage);
+            }
             RemoteResultMessage remoteResultMessage = null;
             try
             {
@@ -77,8 +85,11 @@ namespace Silky.Rpc.Transport
             }
             finally
             {
-                RpcContext.Context.SetResultAttachments(remoteResultMessage?.Attachments);
-                RpcContext.Context.SetTransAttachments(remoteResultMessage?.TransAttachments);
+                if (remoteResultMessage != null)
+                {
+                    RpcContext.Context.SetResultAttachments(remoteResultMessage.Attachments);
+                    RpcContext.Context.SetTransAttachments(remoteResultMessage.TransAttachments);
+                }
                 m_resultDictionary.TryRemove(id, out tcs);
             }
         }
@@ -102,13 +113,18 @@ namespace Silky.Rpc.Transport
             throw new SilkyException(remoteResultMessage.ExceptionMessage, remoteResultMessage.StatusCode,
                 remoteResultMessage.Status);
         }
-
+        
+        private bool _disposed;
         public void Dispose()
         {
+            if (_disposed) return;
+            _disposed = true;
             if (MessageSender is IDisposable disposable)
             {
                 disposable.Dispose();
             }
+
+            _messageListener.Received -= MessageListenerOnReceived;
         }
     }
 }

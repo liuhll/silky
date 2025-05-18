@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using JetBrains.Annotations;
@@ -10,9 +9,9 @@ namespace Silky.Core.Runtime.Rpc
 {
     public class RpcContext
     {
-        private ConcurrentDictionary<string, string> invokeAttachments;
-        private ConcurrentDictionary<string, string> resultAttachments;
-        private ConcurrentDictionary<string, string> transAttachments;
+        private Dictionary<string, string> invokeAttachments;
+        private Dictionary<string, string> resultAttachments;
+        private Dictionary<string, string> transAttachments;
         private static AsyncLocal<RpcContext> rpcContextThreadLocal = new();
 
         private RpcContext()
@@ -65,35 +64,44 @@ namespace Silky.Core.Runtime.Rpc
 
         public void RemoveInvokeAttachment([NotNull] string key)
         {
-            invokeAttachments.TryRemove(key, out _);
+            if (invokeAttachments.ContainsKey(key))
+            {
+                invokeAttachments.Remove(key, out _);
+            }
         }
 
         public void RemoveResultAttachment([NotNull] string key)
         {
-            resultAttachments.TryRemove(key, out _);
+            if (resultAttachments.ContainsKey(key))
+            {
+                resultAttachments.Remove(key, out _);
+            }
         }
 
         public void RemoveTransAttachment([NotNull] string key)
         {
-            transAttachments.TryRemove(key, out _);
+            if (transAttachments.ContainsKey(key))
+            {
+                transAttachments.Remove(key, out _);
+            }
         }
 
         public void SetInvokeAttachment([NotNull] string key, string value)
         {
-            invokeAttachments.AddOrUpdate(key, value, (k, v) => value);
+            invokeAttachments[key] = value;
         }
 
         public void SetInvokeAttachment([NotNull] string key, object value)
         {
             if (value is string stringValue)
             {
-                invokeAttachments.AddOrUpdate(key, stringValue, (k, v) => stringValue);
+                invokeAttachments[key] = stringValue;
             }
             else
             {
                 var serializer = EngineContext.Current.Resolve<ISerializer>();
                 var jsonValue = serializer.Serialize(value);
-                invokeAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+                invokeAttachments[key] = jsonValue;
             }
         }
 
@@ -102,13 +110,13 @@ namespace Silky.Core.Runtime.Rpc
         {
             if (value is string stringValue)
             {
-                transAttachments.AddOrUpdate(key, stringValue, (k, v) => stringValue);
+                transAttachments[key] = stringValue;
             }
             else
             {
                 var serializer = EngineContext.Current.Resolve<ISerializer>();
                 var jsonValue = serializer.Serialize(value);
-                transAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+                transAttachments[key] = jsonValue;
             }
         }
 
@@ -116,13 +124,13 @@ namespace Silky.Core.Runtime.Rpc
         {
             if (value is string stringValue)
             {
-                resultAttachments.AddOrUpdate(key, stringValue, (k, v) => stringValue);
+                resultAttachments[key] = stringValue;
             }
             else
             {
                 var serializer = EngineContext.Current.Resolve<ISerializer>();
                 var jsonValue = serializer.Serialize(value);
-                resultAttachments.AddOrUpdate(key, jsonValue, (k, v) => jsonValue);
+                resultAttachments[key] = jsonValue;
             }
         }
 
@@ -250,12 +258,7 @@ namespace Silky.Core.Runtime.Rpc
         public IDictionary<string, string> GetResponseHeaders()
         {
             var responseHeadersValue = GetResultAttachment(AttachmentKeys.ResponseHeader);
-            if (responseHeadersValue == null)
-            {
-                return null;
-            }
-
-            return responseHeadersValue.ConventTo<IDictionary<string, string>>();
+            return responseHeadersValue == null ? new Dictionary<string, string>() : responseHeadersValue.ConventTo<IDictionary<string, string>>();
         }
 
         public void Reset()

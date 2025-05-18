@@ -80,7 +80,6 @@ namespace Silky.Rpc.Runtime.Client
             }
             catch (Exception ex)
             {
-                sp.Stop();
                 _clientInvokeDiagnosticListener.TracingError(tracingTimestamp, messageId,
                     remoteInvokeMessage.ServiceEntryId, ex.GetExceptionStatusCode(), ex);
 
@@ -97,8 +96,11 @@ namespace Silky.Rpc.Runtime.Client
 
                 throw;
             }
+            finally
+            {
+                sp.Stop();
+            }
 
-            sp.Stop();
             invokeMonitor?.ExecSuccess((remoteInvokeMessage.ServiceEntryId, selectedRpcEndpoint),
                 sp.Elapsed.TotalMilliseconds, clientInvokeInfo);
             var invokeResult = remoteInvoker.RemoteResult;
@@ -145,6 +147,7 @@ namespace Silky.Rpc.Runtime.Client
                 selectedSilkyEndpoint = addressSelector.Select(new RpcEndpointSelectContext(serviceEntryId,
                     rpcEndpoints,
                     hashKey));
+                confirmedShuntStrategy = shuntStrategy;
             }
 
             Logger.LogDebug(
@@ -157,7 +160,6 @@ namespace Silky.Rpc.Runtime.Client
                     selectedSilkyEndpoint!.ToString()
                 });
             RpcContext.Context.SetRcpInvokeAddressInfo(selectedSilkyEndpoint.Descriptor);
-            confirmedShuntStrategy = shuntStrategy;
             return selectedSilkyEndpoint;
         }
     }

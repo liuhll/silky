@@ -39,38 +39,37 @@ namespace Silky.Rpc.Runtime.Server
 
         private IAsyncPolicy<RemoteResultMessage> BuildNormPolicy(string serviceEntryId)
         {
-            if (_policyCaches.TryGetValue(serviceEntryId,out var policy))
+            return _policyCaches.GetOrAdd(serviceEntryId, id =>
             {
+                IAsyncPolicy<RemoteResultMessage> policy = Policy.NoOpAsync<RemoteResultMessage>();
+                
+                foreach (var handlePolicyProvider in _handlePolicyProviders)
+                {
+                    var policyItem = handlePolicyProvider.Create(serviceEntryId);
+                    if (policyItem != null)
+                    {
+                        policy = policy.WrapAsync(policyItem);
+                    }
+                }
+                
+                foreach (var handlePolicyWithResultProvider in _handlePolicyWithResultProviders)
+                {
+                    var policyItem = handlePolicyWithResultProvider.Create(serviceEntryId);
+                    if (policyItem != null)
+                    {
+                        policy = policy.WrapAsync(policyItem);
+                    }
+                }
+                
+                foreach (var circuitBreakerPolicyProvider in _circuitBreakerPolicyProviders)
+                {
+                    var policyItem = circuitBreakerPolicyProvider.Create(serviceEntryId);
+                    policy = policy.WrapAsync(policyItem);
+                }
+                
+                _policyCaches.TryAdd(serviceEntryId, policy);
                 return policy;
-            }
-            policy = Policy.NoOpAsync<RemoteResultMessage>();
-
-            foreach (var handlePolicyProvider in _handlePolicyProviders)
-            {
-                var policyItem = handlePolicyProvider.Create(serviceEntryId);
-                if (policyItem != null)
-                {
-                    policy = policy.WrapAsync(policyItem);
-                }
-            }
-
-            foreach (var handlePolicyWithResultProviders in _handlePolicyWithResultProviders)
-            {
-                var policyItem = handlePolicyWithResultProviders.Create(serviceEntryId);
-                if (policyItem != null)
-                {
-                    policy = policy.WrapAsync(policyItem);
-                }
-            }
-
-            foreach (var circuitBreakerPolicyProvider in _circuitBreakerPolicyProviders)
-            {
-                var policyItem = circuitBreakerPolicyProvider.Create(serviceEntryId);
-                policy = policy.WrapAsync(policyItem);
-            }
-
-            _policyCaches.TryAdd(serviceEntryId, policy);
-            return policy;
+            });
         }
     }
 }

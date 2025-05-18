@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using Silky.Core;
-using Silky.Core.Exceptions;
 using Silky.Core.Logging;
 using Silky.Rpc.Transport.Messages;
 

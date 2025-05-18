@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Channels;
@@ -28,12 +29,24 @@ namespace Silky.DotNetty.Handlers
         {
             Logger = NullLogger<ChannelInboundHandlerAdapter>.Instance;
         }
-
-        public override async void UserEventTriggered(IChannelHandlerContext context, object evt)
+        
+        public override void UserEventTriggered(IChannelHandlerContext context, object evt)
+        {
+            if (evt is IdleStateEvent idleEvent)
+            {
+                _ = HandleIdleEventAsync(context, idleEvent);
+            }
+            else
+            {
+                base.UserEventTriggered(context, evt);
+            }
+        }
+        
+        private async Task HandleIdleEventAsync(IChannelHandlerContext context, IdleStateEvent evt)
         {
             try
             {
-                if (evt is IdleStateEvent { State: IdleState.ReaderIdle })
+                if (evt.State == IdleState.ReaderIdle)
                 {
                     if (context.Channel.RemoteAddress is IPEndPoint remoteAddress)
                     {
@@ -44,41 +57,38 @@ namespace Silky.DotNetty.Handlers
                     }
                 }
 
-                if (evt is IdleStateEvent { State: IdleState.WriterIdle })
+                if (evt.State == IdleState.WriterIdle)
                 {
                     var buffer = Unpooled.WrappedBuffer(HeartBeat.Semaphore.GetBytes());
                     await context.Channel.WriteAndFlushAsync(buffer);
                 }
-                else
-                {
-                    base.UserEventTriggered(context, evt);
-                }
             }
             catch (Exception e)
             {
-                Logger.LogError(e.Message, e);
+                Logger.LogError(e, "Error handling IdleStateEvent");
                 try
                 {
                     await context.CloseAsync();
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex.Message, ex);
+                    Logger.LogError(ex, "Error closing context on failure");
                 }
             }
         }
-
-        public override void ChannelRead(IChannelHandlerContext context, object message)
+        
+        public override void ChannelInactive(IChannelHandlerContext context)
         {
             if (context.Channel.RemoteAddress is IPEndPoint remoteAddress)
             {
                 _rpcEndpointMonitor?.ChangeStatus(remoteAddress.Address.MapToIPv4(),
                     remoteAddress.Port,
                     ServiceProtocol.Rpc,
-                    true);
+                    false);
             }
 
-            base.ChannelRead(context, message);
+            base.ChannelInactive(context);
         }
+        
     }
 }

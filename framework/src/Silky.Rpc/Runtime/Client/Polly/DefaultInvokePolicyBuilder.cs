@@ -13,7 +13,7 @@ namespace Silky.Rpc.Runtime.Client
         private readonly ICollection<IInvokeCircuitBreakerPolicyProvider> _circuitBreakerPolicyProviders;
         private readonly ICollection<IInvokeFallbackPolicyProvider> _invokeFallbackPolicyProviders;
 
-        private readonly ConcurrentDictionary<string, IAsyncPolicy<object>> _policyCaches = new();
+        private readonly ConcurrentDictionary<string, IAsyncPolicy<object?>> _policyCaches = new();
 
         public DefaultInvokePolicyBuilder(
             ICollection<IInvokePolicyProvider> policyProviders,
@@ -28,7 +28,7 @@ namespace Silky.Rpc.Runtime.Client
         }
 
 
-        public IAsyncPolicy<object> Build(string serviceEntryId)
+        public IAsyncPolicy<object?> Build(string serviceEntryId)
         {
             if (_policyCaches.TryGetValue(serviceEntryId, out var policy))
             {
@@ -68,7 +68,7 @@ namespace Silky.Rpc.Runtime.Client
             return policy;
         }
 
-        public IAsyncPolicy<object> Build(string serviceEntryId, object[] parameters)
+        public IAsyncPolicy<object?> Build(string serviceEntryId, object[] parameters)
         {
             var policy = Build(serviceEntryId);
             foreach (var invokeFallbackPolicyProvider in _invokeFallbackPolicyProviders)
