@@ -18,6 +18,7 @@ using Silky.Rpc.Runtime.Server;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Polly;
 using Silky.Core.Runtime.Rpc;
 using Silky.Rpc.Endpoint.Selector;
@@ -90,6 +91,19 @@ namespace Silky.Rpc
 
         public override async Task PostInitialize(ApplicationInitializationContext context)
         {
+            var rpcOptions = context.ServiceProvider.GetService<IOptions<RpcOptions>>()?.Value;
+            if (rpcOptions != null && rpcOptions.MinThreadPoolSize <= rpcOptions.MaxThreadPoolSize)
+            {
+                ThreadPool.SetMaxThreads(rpcOptions.MaxThreadPoolSize, rpcOptions.MaxThreadPoolSize);
+                ThreadPool.SetMinThreads(rpcOptions.MinThreadPoolSize, rpcOptions.MinThreadPoolSize);
+            }
+            else
+            {
+                var minThreadPoolSize = Environment.ProcessorCount * 4;
+                var maxThreadPoolSize = Environment.ProcessorCount * 10;
+                ThreadPool.SetMaxThreads(maxThreadPoolSize, maxThreadPoolSize);
+                ThreadPool.SetMinThreads(minThreadPoolSize, minThreadPoolSize);
+            }
             var messageListeners = context.ServiceProvider.GetServices<IServerMessageListener>();
             var logger = context.ServiceProvider.GetService<ILogger<RpcModule>>();
             if (messageListeners.Any())
