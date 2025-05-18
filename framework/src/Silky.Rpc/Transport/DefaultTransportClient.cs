@@ -17,8 +17,8 @@ namespace Silky.Rpc.Transport
     public class DefaultTransportClient : ITransportClient, IDisposable
     {
         private readonly ConcurrentDictionary<string, TaskCompletionSource<TransportMessage>> m_resultDictionary = new();
-        private readonly ConcurrentDictionary<string, TransportMessage> _earlyMessageBuffer = new();
-
+        private readonly ConcurrentDictionary<string, (TransportMessage Message, DateTime InsertedAt)> _earlyMessageBuffer = new();
+        private readonly Timer _cleanupTimer;
         public ILogger<DefaultTransportClient> Logger { get; set; }
 
         public IClientMessageSender MessageSender { get; set; }
@@ -31,6 +31,19 @@ namespace Silky.Rpc.Transport
             _messageListener.Received += MessageListenerOnReceived;
             Logger = EngineContext.Current.Resolve<ILogger<DefaultTransportClient>>() ??
                      NullLogger<DefaultTransportClient>.Instance;
+            _cleanupTimer = new Timer(CleanupExpiredMessages, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+        }
+        
+        private void CleanupExpiredMessages(object? state)
+        {
+            var expiration = DateTime.UtcNow.AddSeconds(-30);
+            foreach (var item in _earlyMessageBuffer)
+            {
+                if (item.Value.InsertedAt < expiration)
+                {
+                    _earlyMessageBuffer.TryRemove(item.Key, out _);
+                }
+            }
         }
 
         private async Task MessageListenerOnReceived(IMessageSender sender, TransportMessage message)
@@ -41,7 +54,7 @@ namespace Silky.Rpc.Transport
             }
             else
             {
-                _earlyMessageBuffer.TryAdd(message.Id, message);
+                _earlyMessageBuffer[message.Id] = (message, DateTime.UtcNow);
             }
         }
         
@@ -58,23 +71,33 @@ namespace Silky.Rpc.Transport
                 "Preparing to send RPC message{0}" +
                 "messageId:[{1}],serviceEntryId:[{2}]", Environment.NewLine, transportMessage.Id,
                 message.ServiceEntryId);
-
-            await MessageSender.SendMessageAsync(transportMessage);
-            return await callbackTask;
+            try
+            {
+                await MessageSender.SendMessageAsync(transportMessage);
+                return await callbackTask;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "RPC Send Message Failure，messageId:{MessageId}, serviceEntryId:{ServiceEntryId}",
+                    transportMessage.Id, message.ServiceEntryId);
+                throw;
+            }
+           
         }
 
         private async Task<RemoteResultMessage> RegisterResultCallbackAsync(string id, string serviceEntryId,
             int timeout = Timeout.Infinite)
         {
             var tcs = new TaskCompletionSource<TransportMessage>(TaskCreationOptions.RunContinuationsAsynchronously);
-            m_resultDictionary.TryAdd(id, tcs);
-            if (_earlyMessageBuffer.TryRemove(id, out var earlyMessage))
-            {
-                tcs.TrySetResult(earlyMessage);
-            }
+           
             RemoteResultMessage remoteResultMessage = null;
             try
             {
+                m_resultDictionary.TryAdd(id, tcs);
+                if (_earlyMessageBuffer.TryRemove(id, out var tuple))
+                {
+                    tcs.TrySetResult(tuple.Message);
+                }
                 var resultMessage = await tcs.WaitAsync(timeout);
                 remoteResultMessage = resultMessage.GetContent<RemoteResultMessage>();
                 Logger.LogDebug(
@@ -117,14 +140,23 @@ namespace Silky.Rpc.Transport
         private bool _disposed;
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        protected virtual void Dispose(bool disposing)
+        {
             if (_disposed) return;
             _disposed = true;
-            if (MessageSender is IDisposable disposable)
+            if (disposing)
             {
-                disposable.Dispose();
+                if (MessageSender is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+                _messageListener.Received -= MessageListenerOnReceived;
+                _cleanupTimer?.Dispose();
             }
-
-            _messageListener.Received -= MessageListenerOnReceived;
         }
     }
 }
