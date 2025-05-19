@@ -16,6 +16,11 @@ public class ServiceEntryContextAccessor : IServiceEntryContextAccessor, IScoped
             get => null;
             set { }
         }
+
+        public void ClearContext()
+        {
+           
+        }
     }
     /// <inheritdoc/>
     [DisallowNull]
@@ -23,5 +28,10 @@ public class ServiceEntryContextAccessor : IServiceEntryContextAccessor, IScoped
     {
         get { return _storage.Value; }
         set { _storage.Value = value; }
+    }
+
+    public void ClearContext()
+    {
+        _storage.Value = null;
     }
 }

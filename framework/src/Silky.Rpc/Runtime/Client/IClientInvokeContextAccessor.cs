@@ -6,4 +6,6 @@ public interface IClientInvokeContextAccessor
 {
     [DisallowNull]
     ClientInvokeContext? ClientInvokeContext { get; set; }
+    
+    void ClearContext();
 }

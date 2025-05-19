@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silky.Core.DependencyInjection;
 using Silky.Core.FilterMetadata;
-using Silky.Rpc.Endpoint;
 using Silky.Rpc.Filters;
 using Silky.Rpc.Runtime.Server;
 using Silky.Rpc.Transport;
@@ -54,11 +53,18 @@ public class DefaultClientRemoteInvokerFactory : IClientRemoteInvokerFactory, IS
             filters = ClientFilterFactory.CreateUncachedFilters(_filterProvider, cachedFilterItems);
         }
 
-        var serviceEntryDescriptor =
-            _serverManager.GetServiceEntryDescriptor(context.RemoteInvokeMessage.ServiceEntryId);
+        try
+        {
+            var serviceEntryDescriptor =
+                _serverManager.GetServiceEntryDescriptor(context.RemoteInvokeMessage.ServiceEntryId);
 
-        var invoker = new RemoteInvoker(_logger, context, _clientInvokeContextAccessor, messageId,
-            client, filters, serviceEntryDescriptor.GovernanceOptions.TimeoutMillSeconds);
-        return invoker;
+            var invoker = new RemoteInvoker(_logger, context, _clientInvokeContextAccessor, messageId,
+                client, filters, serviceEntryDescriptor.GovernanceOptions.TimeoutMillSeconds);
+            return invoker;
+        }
+        finally
+        {
+            _clientInvokeContextAccessor.ClearContext();
+        }
     }
 }

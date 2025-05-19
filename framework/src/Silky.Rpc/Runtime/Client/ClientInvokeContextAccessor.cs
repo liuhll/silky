@@ -16,6 +16,11 @@ public class ClientInvokeContextAccessor : IClientInvokeContextAccessor, IScoped
             get => null;
             set { }
         }
+
+        public void ClearContext()
+        {
+            // do nothing
+        }
     }
     /// <inheritdoc/>
     [DisallowNull]
@@ -23,5 +28,10 @@ public class ClientInvokeContextAccessor : IClientInvokeContextAccessor, IScoped
     {
         get { return _storage.Value; }
         set { _storage.Value = value; }
+    }
+    
+    public void ClearContext()
+    {
+        _storage.Value = null;
     }
 }

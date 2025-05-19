@@ -25,16 +25,13 @@ namespace Silky.Core.Runtime.Rpc
         {
             get
             {
-                var context = rpcContextThreadLocal.Value;
-                if (context == null)
-                {
-                    context = new RpcContext();
-                    rpcContextThreadLocal.Value = context;
-                }
-
-                return rpcContextThreadLocal.Value;
+                rpcContextThreadLocal.Value ??= new RpcContext();
+                return rpcContextThreadLocal.Value!;
             }
         }
+        
+        private static readonly ISerializer Serializer = EngineContext.Current.Resolve<ISerializer>();
+
 
         public RpcConnection Connection => GetRpcConnection();
 
@@ -99,8 +96,7 @@ namespace Silky.Core.Runtime.Rpc
             }
             else
             {
-                var serializer = EngineContext.Current.Resolve<ISerializer>();
-                var jsonValue = serializer.Serialize(value);
+                var jsonValue = Serializer.Serialize(value);
                 invokeAttachments[key] = jsonValue;
             }
         }
@@ -114,8 +110,7 @@ namespace Silky.Core.Runtime.Rpc
             }
             else
             {
-                var serializer = EngineContext.Current.Resolve<ISerializer>();
-                var jsonValue = serializer.Serialize(value);
+                var jsonValue = Serializer.Serialize(value);
                 transAttachments[key] = jsonValue;
             }
         }
@@ -128,8 +123,7 @@ namespace Silky.Core.Runtime.Rpc
             }
             else
             {
-                var serializer = EngineContext.Current.Resolve<ISerializer>();
-                var jsonValue = serializer.Serialize(value);
+                var jsonValue = Serializer.Serialize(value);
                 resultAttachments[key] = jsonValue;
             }
         }
@@ -215,7 +209,7 @@ namespace Silky.Core.Runtime.Rpc
             if (AttachmentKeys.ResponseHeader.Equals(key))
             {
                 var responseHeaderValue = GetResultAttachment(AttachmentKeys.ResponseHeader);
-                responseHeader = responseHeaderValue.ConventTo<IDictionary<string, string>>();
+                responseHeader = responseHeaderValue?.ConventTo<IDictionary<string, string>>() ?? new Dictionary<string, string>();
             }
             else
             {
@@ -260,13 +254,11 @@ namespace Silky.Core.Runtime.Rpc
             var responseHeadersValue = GetResultAttachment(AttachmentKeys.ResponseHeader);
             return responseHeadersValue == null ? new Dictionary<string, string>() : responseHeadersValue.ConventTo<IDictionary<string, string>>();
         }
-
-        public void Reset()
+        
+        
+        public static void Clear()
         {
-            EngineContext.DisposeUnmanagedObjects();
-            invokeAttachments.Clear();
-            resultAttachments.Clear();
-            transAttachments.Clear();
+            rpcContextThreadLocal.Value = null;
         }
     }
 }

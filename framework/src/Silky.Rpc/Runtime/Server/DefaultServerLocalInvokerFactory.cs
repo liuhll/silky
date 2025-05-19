@@ -41,7 +41,14 @@ internal class DefaultServerLocalInvokerFactory : IServerLocalInvokerFactory, IS
         {
             filters = ServerFilterFactory.CreateUncachedFilters(_filterProvider, cachedFilterItems);
         }
-        var invoker = new LocalInvoker(_logger,serviceEntryContext,_serviceEntryContextAccessor, filters);
-        return invoker;
+        try
+        {
+            var invoker = new LocalInvoker(_logger, serviceEntryContext, _serviceEntryContextAccessor, filters);
+            return invoker;
+        }
+        finally
+        {
+            _serviceEntryContextAccessor.ClearContext();
+        }
     }
 }  
